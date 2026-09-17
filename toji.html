@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Toji / Maki Zenin Tracker</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#08080a" id="theme-color-meta">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TojiWorkout">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+<style>
+:root {
+  --bg: #08080a;
+  --card: #121217;
+  --border: #272730;
+  --primary: #f97316;
+  --primary-glow: #c2410c;
+  --primary-shadow: rgba(249,115,22,0.35);
+  --accent: #ef4444;
+  --success: #22c55e;
+  --text: #f4f4f5;
+  --muted: #71717a;
+  --banner-img: url('https://superherojacked.com/wp-content/uploads/2021/07/Toji-Fushiguro-Workout.jpg');
+}
+body[data-mode="maki"] {
+  --primary: #22c55e;
+  --primary-glow: #15803d;
+  --primary-shadow: rgba(34,197,94,0.35);
+  --accent: #a855f7;
+  --success: #eab308;
+  --banner-img: url('https://superherojacked.b-cdn.net/wp-content/uploads/2021/02/Maki-Zenin-Workout-Routine.jpg');
+}
+* { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+html, body { background: var(--bg); }
+body {
+  color: var(--text); margin: 0; min-height: 100vh; user-select: none;
+  transition: background 0.4s ease;
+}
+
+/* ======= Overlay scelta personaggio ======= */
+.mode-overlay {
+  position: fixed; inset: 0; background: var(--bg); z-index: 999;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 22px; padding: 24px; text-align: center;
+}
+.mode-overlay.hidden { display: none; }
+.mode-eyebrow { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+.mode-heading { font-size: 1.35rem; font-weight: 900; margin-top: 6px; }
+.mode-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.mode-card { width: 150px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px 12px; cursor: pointer; transition: transform .12s ease, border-color .12s ease; }
+.mode-card:active { transform: scale(0.96); }
+.mode-card.toji-card:hover, .mode-card.toji-card:focus-visible { border-color: #ef4444; outline: none; }
+.mode-card.maki-card:hover, .mode-card.maki-card:focus-visible { border-color: #22c55e; outline: none; }
+.mode-emoji { font-size: 2.2rem; margin-bottom: 8px; }
+.mode-name { font-weight: 900; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.5px; }
+.mode-sub { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+.mode-hint { font-size: 0.7rem; color: var(--muted); max-width: 280px; }
+.mode-cancel { background: transparent; border: none; color: var(--muted); font-size: 0.75rem; text-decoration: underline; cursor: pointer; padding: 4px; }
+
+/* ======= Shell app ======= */
+.app-shell { max-width: 480px; margin: 0 auto; padding: 14px 14px calc(90px + env(safe-area-inset-bottom)) 14px; display: flex; flex-direction: column; gap: 14px; }
+
+.banner {
+  position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(8,8,10,0.1), rgba(8,8,10,0.95)), var(--banner-img) center/cover no-repeat;
+  height: 130px; display: flex; flex-direction: column; justify-content: flex-end; padding: 12px;
+}
+.gear-btn {
+  position: absolute; top: 8px; right: 8px; width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(8,8,10,0.55); border: 1px solid rgba(255,255,255,0.15); color: #fff;
+  font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.banner-quote { font-size: 0.72rem; color: var(--accent); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+.banner-title { font-size: 1.35rem; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+
+/* ======= Barra giorni ======= */
+.day-bar-wrap { display: flex; }
+.days-bar { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; width: 100%; }
+.days-bar::-webkit-scrollbar { display: none; }
+.day-chip { background: var(--card); border: 1px solid var(--border); color: var(--muted); padding: 8px 12px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0; }
+.day-chip.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 0 10px var(--primary-shadow); }
+
+/* ======= Tab panels ======= */
+.tab-panel { display: none; flex-direction: column; gap: 14px; }
+.tab-panel.active { display: flex; }
+
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+.section-title { font-size: 0.85rem; font-weight: 800; margin-bottom: 8px; text-transform: uppercase; }
+.section-hint { font-size: 0.78rem; color: var(--muted); margin-bottom: 12px; }
+.muted { color: var(--muted); font-size: 0.85rem; }
+
+/* ======= Form Piano ======= */
+.grid-form { display: flex; flex-direction: column; gap: 8px; }
+input, select {
+  background: #08080a; border: 1px solid var(--border); color: var(--text);
+  padding: 10px; border-radius: 8px; font-size: 0.9rem; width: 100%; outline: none;
+}
+input:focus, select:focus { border-color: var(--primary); }
+.stepper-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.stepper-label { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; font-weight: 800; margin-bottom: 3px; display: block; }
+.stepper { display: flex; align-items: stretch; }
+.stepper input { text-align: center; border-radius: 0; border-left: none; border-right: none; padding: 10px 2px; }
+.stepper-btn { background: #1a1a24; border: 1px solid var(--border); color: var(--text); width: 34px; font-size: 1.1rem; font-weight: 800; cursor: pointer; flex-shrink: 0; }
+.stepper-btn.minus { border-radius: 8px 0 0 8px; }
+.stepper-btn.plus { border-radius: 0 8px 8px 0; }
+
+.btn-main { background: var(--primary); color: #fff; border: none; padding: 11px; border-radius: 8px; font-weight: 800; font-size: 0.9rem; cursor: pointer; width: 100%; text-transform: uppercase; letter-spacing: 0.5px; }
+.btn-main:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(50%); }
+.btn-archive { background: #1a1a24; color: var(--accent); border: 1px solid var(--accent); padding: 10px; border-radius: 8px; font-weight: 800; font-size: 0.85rem; cursor: pointer; width: 100%; text-transform: uppercase; }
+#load-default-btn { display: none; }
+body[data-mode] #load-default-btn { display: block; }
+
+.exercise-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.exercise-item:last-child { border-bottom: none; }
+.ex-name { font-weight: 700; font-size: 0.95rem; }
+.ex-data { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+.del-btn { background: transparent; border: none; color: var(--primary); font-size: 1rem; cursor: pointer; }
+
+/* ======= Piano: card esercizio in stile scheda ======= */
+.plan-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
+.plan-summary { font-size: 0.72rem; color: var(--muted); font-weight: 600; }
+.plan-tool-btn { background: #1a1a24; border: 1px solid var(--border); color: var(--text); padding: 7px 10px; border-radius: 8px; font-size: 0.72rem; font-weight: 800; cursor: pointer; white-space: nowrap; }
+.plan-tool-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+.plan-card { background: #0d0d12; border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 8px; }
+.plan-card.superset { border-left: 3px solid var(--accent); }
+.plan-card-top { display: flex; align-items: flex-start; gap: 8px; }
+.plan-order-num { flex-shrink: 0; width: 22px; height: 22px; border-radius: 6px; background: var(--primary); color: #fff; font-size: 0.72rem; font-weight: 900; display: flex; align-items: center; justify-content: center; margin-top: 2px; }
+.plan-card-main { flex: 1; min-width: 0; }
+.plan-ex-name { font-weight: 700; font-size: 0.92rem; word-break: break-word; }
+.plan-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.plan-badge { background: #1a1a24; border: 1px solid var(--border); border-radius: 999px; padding: 3px 9px; font-size: 0.72rem; font-weight: 800; }
+.plan-badge.reps { background: var(--primary); border-color: var(--primary); color: #fff; }
+.plan-badge.rest { color: var(--accent); border-color: var(--accent); }
+.plan-badge.superset-tag { color: var(--accent); border-color: var(--accent); }
+.plan-note { font-size: 0.74rem; color: var(--muted); font-style: italic; margin-top: 6px; word-break: break-word; }
+.plan-card-actions { display: flex; gap: 4px; flex-shrink: 0; }
+.plan-icon-btn { background: transparent; border: none; color: var(--muted); font-size: 0.95rem; cursor: pointer; padding: 3px 4px; border-radius: 6px; }
+.plan-icon-btn:hover { color: var(--text); background: #1a1a24; }
+.plan-icon-btn.danger { color: var(--accent); }
+.reorder-arrows { display: none; flex-direction: column; gap: 2px; flex-shrink: 0; }
+body.reorder-mode .reorder-arrows { display: flex; }
+body.reorder-mode .plan-card { border-color: var(--primary); }
+.reorder-btn { background: #1a1a24; border: 1px solid var(--border); color: var(--text); width: 30px; height: 24px; border-radius: 5px; font-size: 0.7rem; font-weight: 800; cursor: pointer; line-height: 1; }
+.reorder-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.btn-start-workout {
+  width: 100%; margin-top: 10px; padding: 14px; border: none; border-radius: 10px; cursor: pointer;
+  background: linear-gradient(135deg, var(--primary), var(--primary-glow));
+  color: #fff; font-weight: 900; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px;
+  box-shadow: 0 4px 14px var(--primary-shadow);
+}
+.btn-start-workout:active { transform: scale(0.98); }
+
+/* ======= Allenamento: lista set-by-set ======= */
+.workout-item { padding: 10px 0; border-bottom: 1px solid var(--border); }
+.workout-item:last-child { border-bottom: none; }
+.workout-item-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+.flame-tag { filter: drop-shadow(0 0 4px rgba(249,115,22,0.8)); }
+.ss-tag { color: var(--accent); }
+.drop-btn { background: #1a1a24; border: 1px solid var(--border); color: var(--muted); padding: 7px 10px; border-radius: 7px; font-size: 0.72rem; font-weight: 800; cursor: pointer; white-space: nowrap; }
+.drop-btn.armed { background: rgba(239,68,68,0.18); border-color: #ef4444; color: #ef4444; }
+.set-rows { display: flex; flex-direction: column; gap: 6px; }
+.set-row { display: flex; align-items: center; gap: 6px; background: #0d0d12; border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; }
+.set-row.done { border-color: var(--success); background: rgba(34,197,94,0.08); }
+.set-row.armed { border-color: #ef4444; box-shadow: 0 0 0 1px #ef4444 inset; }
+.set-num { width: 20px; flex-shrink: 0; font-weight: 800; font-size: 0.78rem; color: var(--muted); text-align: center; }
+.set-input { width: 52px; flex-shrink: 0; text-align: center; padding: 7px 2px; font-size: 0.85rem; }
+.set-input:disabled { opacity: 0.75; border-color: transparent; background: transparent; color: var(--text); }
+.set-x { color: var(--muted); font-size: 0.75rem; flex-shrink: 0; }
+.set-kg-label { color: var(--muted); font-size: 0.7rem; flex-shrink: 0; }
+.set-flame-btn { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; background: #1a1a24; border: 1px solid var(--border); font-size: 0.85rem; cursor: pointer; opacity: 0.55; }
+.set-flame-btn.armed { background: rgba(239,68,68,0.2); border-color: #ef4444; opacity: 1; }
+.set-row .flame-done-tag { flex-shrink: 0; font-size: 0.8rem; }
+.set-check { margin-left: auto; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: #1a1a24; border: 1px solid var(--border); color: transparent; font-weight: 900; cursor: pointer; }
+.set-check.checked { background: var(--success); border-color: var(--success); color: #08080a; }
+.edit-btn { background: transparent; border: none; color: var(--accent); font-size: 0.95rem; cursor: pointer; padding: 0 2px; }
+.piano-item-actions { display: flex; align-items: center; gap: 10px; }
+#cancel-edit-btn { display: none; background: transparent; border: none; color: var(--muted); font-size: 0.75rem; text-decoration: underline; cursor: pointer; padding: 4px 0; }
+
+/* ======= Modulo Cedimento (Drop) ======= */
+.drop-card { border: 1px solid var(--border); position: relative; }
+.drop-hint { font-size: 0.78rem; color: var(--accent); font-weight: 700; margin-bottom: 10px; min-height: 1.2em; }
+.source-tabs { display: flex; gap: 6px; background: #1a1a24; padding: 4px; border-radius: 10px; margin-bottom: 10px; }
+.source-tab-btn { flex: 1; background: transparent; border: none; color: var(--muted); padding: 8px 4px; border-radius: 7px; font-weight: 800; font-size: 0.7rem; text-transform: uppercase; cursor: pointer; }
+.source-tab-btn.active { background: var(--primary); color: #fff; }
+.source-panel { display: none; }
+.source-panel.active { display: block; }
+
+.upload-label { display: block; background: #1a1a24; border: 1.5px dashed var(--border); color: var(--muted); text-align: center; padding: 16px; border-radius: 10px; font-size: 0.8rem; font-weight: 700; cursor: pointer; }
+.upload-label:hover { border-color: var(--primary); color: var(--text); }
+#upload-status { display: block; font-weight: 400; font-size: 0.7rem; margin-top: 4px; color: var(--accent); }
+.track-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); gap: 8px; }
+.track-item:last-child { border-bottom: none; }
+.track-name { font-weight: 700; font-size: 0.85rem; word-break: break-word; }
+.track-meta { font-size: 0.72rem; color: var(--muted); }
+.track-select-btn { background: #1a1a24; border: 1px solid var(--border); color: var(--text); padding: 5px 9px; border-radius: 6px; font-size: 0.68rem; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.track-select-btn.selected { background: rgba(239,68,68,0.18); border-color: var(--primary); color: var(--primary); }
+
+.web-link-row { display: flex; gap: 6px; }
+.web-link-row input { flex: 1; }
+.web-link-row button { flex-shrink: 0; background: #1a1a24; border: 1px solid var(--border); color: var(--text); padding: 0 14px; border-radius: 8px; font-weight: 800; font-size: 0.78rem; cursor: pointer; }
+#web-status { font-size: 0.75rem; color: var(--muted); margin-top: 8px; min-height: 1.1em; }
+.youtube-wrap, .spotify-wrap { display: none; margin-top: 10px; border-radius: 8px; overflow: hidden; }
+.youtube-wrap iframe, .spotify-wrap iframe { width: 100%; border: none; display: block; }
+.youtube-wrap iframe { height: 90px; }
+.spotify-wrap iframe { height: 80px; }
+
+.range-row { display: flex; flex-direction: column; gap: 4px; margin-top: 12px; }
+input[type="range"] { width: 100%; accent-color: var(--primary); }
+input[type="range"]:disabled { opacity: 0.4; }
+.range-labels { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--muted); }
+
+.volume-row { margin-top: 12px; }
+.volume-row-head { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--muted); text-transform: uppercase; font-weight: 800; margin-bottom: 4px; }
+
+.drop-timer-display { font-size: 2.8rem; font-weight: 900; text-align: center; color: #ef4444; font-variant-numeric: tabular-nums; margin-top: 12px; }
+.drop-status { text-align: center; font-size: 0.85rem; color: var(--accent); font-weight: 800; min-height: 1.3em; margin: 4px 0 10px 0; }
+#start-drop-btn { background: linear-gradient(135deg, #ef4444, #f97316); }
+.stop-btn { background: #1a1a24; color: var(--text); border: 1px solid var(--border); padding: 8px 4px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; }
+.stop-btn.danger { background: var(--primary-glow); color: #fff; border-color: #ef4444; }
+
+/* ======= Timer di Recupero — pannello flottante con anello (ispirato ad app commerciali) ======= */
+.recovery-overlay {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 70;
+  background: linear-gradient(160deg, var(--primary-glow), #0d0d12 85%);
+  border-top: 1px solid rgba(255,255,255,0.12);
+  padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+  transform: translateY(110%); transition: transform 0.3s ease;
+}
+.recovery-overlay.visible { transform: translateY(0); }
+.recovery-overlay.expanded { top: 0; padding-top: calc(24px + env(safe-area-inset-top)); display: flex; flex-direction: column; justify-content: center; }
+.recovery-inner { max-width: 480px; margin: 0 auto; }
+.recovery-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.recovery-title { font-weight: 800; font-size: 0.85rem; color: #fff; }
+.recovery-icon-btn { background: rgba(255,255,255,0.12); border: none; color: #fff; width: 30px; height: 30px; border-radius: 50%; font-size: 0.85rem; cursor: pointer; }
+.recovery-body { display: flex; align-items: center; gap: 16px; }
+.recovery-ring-wrap { position: relative; width: 110px; height: 110px; flex-shrink: 0; }
+.expanded .recovery-ring-wrap { width: 190px; height: 190px; margin: 0 auto; }
+.recovery-ring-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.recovery-ring-track { fill: none; stroke: rgba(255,255,255,0.15); stroke-width: 8; }
+.recovery-ring-progress { fill: none; stroke: #fff; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
+.recovery-time-big { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 900; color: #fff; font-variant-numeric: tabular-nums; }
+.expanded .recovery-time-big { font-size: 2.6rem; }
+.recovery-side { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.expanded .recovery-side { flex-direction: row; justify-content: center; max-width: 480px; margin: 18px auto 0; }
+.recovery-pill { background: rgba(255,255,255,0.15); border: none; color: #fff; padding: 9px 4px; border-radius: 999px; font-weight: 800; font-size: 0.8rem; cursor: pointer; text-align: center; }
+.recovery-close-btn { background: rgba(0,0,0,0.4); border: none; color: #fff; padding: 9px 4px; border-radius: 999px; font-weight: 800; font-size: 0.78rem; cursor: pointer; text-align: center; }
+.recovery-mute-btn { background: transparent; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; flex-shrink: 0; opacity: 0.85; }
+
+/* ======= Storico ======= */
+.history-card { border-left: 3px solid var(--primary); padding: 10px 12px; margin-bottom: 8px; background: #16161f; border-radius: 6px; }
+.history-card.berserk { border-left: 3px solid #ef4444; background: linear-gradient(135deg, rgba(239,68,68,0.16), #0d0d12 70%); }
+.berserk-score { font-size: 0.75rem; font-weight: 900; color: #f97316; letter-spacing: 0.5px; margin-bottom: 4px; text-shadow: 0 0 8px rgba(249,115,22,0.5); }
+.history-date { font-size: 0.75rem; color: var(--accent); font-weight: bold; margin-bottom: 4px; }
+.history-body { font-size: 0.85rem; }
+.history-body div { margin-bottom: 2px; }
+
+/* ======= Bottom nav ======= */
+.bottom-nav-fixed { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; background: #0d0d12; border-top: 1px solid var(--border); padding-bottom: env(safe-area-inset-bottom); }
+.bottom-nav { max-width: 480px; margin: 0 auto; display: flex; }
+.nav-btn { flex: 1; background: transparent; border: none; color: var(--muted); padding: 9px 4px 7px; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; cursor: pointer; }
+.nav-btn .nav-icon { font-size: 1.25rem; }
+.nav-btn.active { color: var(--primary); }
+
+/* ======= FIRE MODE ======= */
+@keyframes fire-glow-bg {
+  0%, 100% { background: radial-gradient(ellipse at 50% 15%, rgba(239,68,68,0.35), var(--bg) 62%); }
+  50% { background: radial-gradient(ellipse at 50% 15%, rgba(249,115,22,0.5), var(--bg) 62%); }
+}
+body.fire-mode { animation: fire-glow-bg 1s ease-in-out infinite; }
+
+@keyframes shake-intense {
+  0%, 100% { transform: translate(0,0) rotate(0deg); }
+  20% { transform: translate(-2px,1px) rotate(-0.3deg); }
+  40% { transform: translate(2px,-1px) rotate(0.3deg); }
+  60% { transform: translate(-1px,2px) rotate(-0.2deg); }
+  80% { transform: translate(1px,-2px) rotate(0.2deg); }
+}
+body.fire-mode .drop-card { animation: shake-intense 0.22s infinite; border-color: #f97316; }
+
+@keyframes text-burn {
+  0%, 100% { text-shadow: 0 0 6px #facc15, 0 0 14px #ef4444; color: #fde68a; }
+  50% { text-shadow: 0 0 18px #ef4444, 0 0 28px #f97316; color: #fff7ed; }
+}
+body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
+</style>
+</head>
+<body>
+
+<!-- Overlay scelta personaggio -->
+<div class="mode-overlay" id="mode-overlay">
+  <div>
+    <div class="mode-eyebrow">Prima di iniziare</div>
+    <div class="mode-heading">Scegli il tuo protocollo</div>
+  </div>
+  <div class="mode-row">
+    <div class="mode-card toji-card" tabindex="0" role="button" aria-label="Modalità Toji Fushiguro"
+         onclick="chooseMode('toji')" onkeydown="if(event.key==='Enter'){chooseMode('toji')}">
+      <div class="mode-emoji">🥋</div>
+      <div class="mode-name">Toji</div>
+      <div class="mode-sub">Modalità Toji Fushiguro</div>
+    </div>
+    <div class="mode-card maki-card" tabindex="0" role="button" aria-label="Modalità Maki Zenin"
+         onclick="chooseMode('maki')" onkeydown="if(event.key==='Enter'){chooseMode('maki')}">
+      <div class="mode-emoji">⚔️</div>
+      <div class="mode-name">Maki</div>
+      <div class="mode-sub">Modalità Maki Zenin</div>
+    </div>
+  </div>
+  <div class="mode-hint">Potrai cambiare protocollo in qualsiasi momento dall'icona ⚙️ sul banner, senza perdere i dati.</div>
+  <button class="mode-cancel" id="mode-cancel-btn" style="display:none;" onclick="closeModeOverlay()">Annulla</button>
+</div>
+
+<div class="app-shell" id="app-root" style="display:none;">
+  <div class="banner">
+    <button class="gear-btn" onclick="openModeOverlay()" aria-label="Cambia protocollo" title="Cambia protocollo">⚙️</button>
+    <div class="banner-quote" id="banner-quote">Nessuna Energia Maledetta • Solo Forza Pura</div>
+    <div class="banner-title" id="banner-title">Toji Protocol</div>
+  </div>
+
+  <div class="day-bar-wrap" id="day-bar-wrap">
+    <div class="days-bar" id="days-container"></div>
+  </div>
+
+  <!-- TAB: PIANO -->
+  <section id="tab-piano" class="tab-panel active">
+    <div class="card">
+      <form id="exercise-form" class="grid-form">
+        <select id="exercise-select" onchange="handleSelectExercise(this.value)">
+          <option value="">-- Seleziona un esercizio --</option>
+          <optgroup label="💪 Petto">
+            <option value="💪 Panca Piana Bilanciere">💪 Panca Piana Bilanciere</option>
+            <option value="💪 Panca Inclinata Manubri">💪 Panca Inclinata Manubri</option>
+            <option value="💪 Croci ai Cavi">💪 Croci ai Cavi</option>
+            <option value="💪 Dip alle Parallele">💪 Dip alle Parallele</option>
+          </optgroup>
+          <optgroup label="🏹 Schiena">
+            <option value="🏹 Stacco da Terra (Deadlift)">🏹 Stacco da Terra (Deadlift)</option>
+            <option value="🏹 Trazioni alla Sbarra (Pull-ups)">🏹 Trazioni alla Sbarra (Pull-ups)</option>
+            <option value="🏹 Lat Machine">🏹 Lat Machine</option>
+            <option value="🏹 Rematore con Bilanciere">🏹 Rematore con Bilanciere</option>
+            <option value="🏹 Pulley Basso">🏹 Pulley Basso</option>
+          </optgroup>
+          <optgroup label="🦵 Gambe">
+            <option value="🦵 Squat con Bilanciere">🦵 Squat con Bilanciere</option>
+            <option value="🦵 Leg Press">🦵 Leg Press</option>
+            <option value="🦵 Affondi Manubri">🦵 Affondi Manubri</option>
+            <option value="🦵 Leg Extension">🦵 Leg Extension</option>
+            <option value="🦵 Leg Curl">🦵 Leg Curl</option>
+            <option value="🦵 Calf Raise">🦵 Calf Raise</option>
+          </optgroup>
+          <optgroup label="🍑 Glutei">
+            <option value="🍑 Hip Thrust">🍑 Hip Thrust</option>
+            <option value="🍑 Stacco Rumeno">🍑 Stacco Rumeno</option>
+            <option value="🍑 Affondi Bulgari">🍑 Affondi Bulgari</option>
+            <option value="🍑 Abductor Machine">🍑 Abductor Machine</option>
+            <option value="🍑 Ponte Glutei">🍑 Ponte Glutei</option>
+          </optgroup>
+          <optgroup label="🛡️ Spalle">
+            <option value="🛡️ Military Press">🛡️ Military Press</option>
+            <option value="🛡️ Alzate Laterali">🛡️ Alzate Laterali</option>
+            <option value="🛡️ Arnold Press">🛡️ Arnold Press</option>
+            <option value="🛡️ Face Pull">🛡️ Face Pull</option>
+          </optgroup>
+          <optgroup label="🦾 Braccia">
+            <option value="🦾 Curl Bilanciere Bicipiti">🦾 Curl Bilanciere Bicipiti</option>
+            <option value="🦾 Hammer Curl">🦾 Hammer Curl</option>
+            <option value="🦾 Pushdown Tricipiti ai Cavi">🦾 Pushdown Tricipiti ai Cavi</option>
+            <option value="🦾 French Press">🦾 French Press</option>
+          </optgroup>
+          <optgroup label="🎯 Core & Addome">
+            <option value="🎯 Plank">🎯 Plank</option>
+            <option value="🎯 Crunch al Cavo">🎯 Crunch al Cavo</option>
+            <option value="🎯 Leg Raise alla Sbarra">🎯 Leg Raise alla Sbarra</option>
+          </optgroup>
+        </select>
+
+        <input type="text" id="exercise-name" placeholder="Oppure scrivi esercizio libero" required>
+
+        <div class="stepper-grid">
+          <div>
+            <span class="stepper-label">Serie</span>
+            <div class="stepper">
+              <button type="button" class="stepper-btn minus" onclick="stepValue('sets',-1,0)">−</button>
+              <input type="number" id="sets" value="3" required>
+              <button type="button" class="stepper-btn plus" onclick="stepValue('sets',1,0)">+</button>
+            </div>
+          </div>
+          <div>
+            <span class="stepper-label">Reps</span>
+            <div class="stepper">
+              <button type="button" class="stepper-btn minus" onclick="stepValue('reps',-1,0)">−</button>
+              <input type="number" id="reps" value="10" required>
+              <button type="button" class="stepper-btn plus" onclick="stepValue('reps',1,0)">+</button>
+            </div>
+          </div>
+          <div>
+            <span class="stepper-label">Kg</span>
+            <div class="stepper">
+              <button type="button" class="stepper-btn minus" onclick="stepValue('weight',-2.5,0)">−</button>
+              <input type="number" id="weight" value="0" step="0.5" required>
+              <button type="button" class="stepper-btn plus" onclick="stepValue('weight',2.5,0)">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <span class="stepper-label">Recupero (sec)</span>
+          <div class="stepper">
+            <button type="button" class="stepper-btn minus" onclick="stepValue('rest',-15,0)">−</button>
+            <input type="number" id="rest" value="90" step="15" required>
+            <button type="button" class="stepper-btn plus" onclick="stepValue('rest',15,0)">+</button>
+          </div>
+        </div>
+
+        <input type="text" id="note" placeholder="Nota (facoltativa): es. tenuta 2s in basso">
+
+        <button type="submit" class="btn-main" id="form-submit-btn">+ Inserisci Esercizio</button>
+        <button type="button" id="cancel-edit-btn" onclick="cancelEditExercise()">Annulla modifica</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="plan-head">
+        <div>
+          <div class="section-title" id="piano-day-label" style="margin-bottom:2px;">Piano del giorno</div>
+          <div class="plan-summary" id="plan-summary"></div>
+        </div>
+        <button class="plan-tool-btn" id="reorder-toggle-btn" onclick="toggleReorderMode()">⇅ Riordina</button>
+      </div>
+      <div id="piano-list"></div>
+      <button class="btn-archive" id="load-default-btn" style="margin-top:10px;" onclick="loadDefaultProgram()">↻ Carica Esercizi Base (Lunedì)</button>
+      <button class="btn-start-workout" onclick="startWorkoutFromPlan()">▶ INIZIA ALLENAMENTO</button>
+    </div>
+  </section>
+
+  <!-- TAB: ALLENAMENTO -->
+  <section id="tab-allenamento" class="tab-panel">
+    <div class="card drop-card">
+      <div class="section-title fire-text">🔥 Cedimento 90s — Modalità Berserk</div>
+      <div class="drop-hint" id="drop-hint">Tocca l'icona 🔥 accanto a una serie per portarla a cedimento.</div>
+
+      <div class="source-tabs">
+        <button type="button" class="source-tab-btn active" data-source="mp3" onclick="switchAudioSourceTab('mp3')">🎵 MP3 Locale</button>
+        <button type="button" class="source-tab-btn" data-source="web" onclick="switchAudioSourceTab('web')">🌐 Link Web</button>
+      </div>
+
+      <div id="source-panel-mp3" class="source-panel active">
+        <label class="upload-label" for="audio-upload">
+          📀 Tocca per caricare un MP3
+          <span id="upload-status"></span>
+        </label>
+        <input type="file" id="audio-upload" accept="audio/*" style="display:none;" onchange="handleAudioUpload(this.files)">
+        <div style="margin-top:10px;" id="track-list"></div>
+        <audio id="failure-audio" controls style="width:100%; margin-top:10px; display:none;"></audio>
+        <div class="range-row" id="mp3-range-row" style="display:none;">
+          <input type="range" id="segment-start-mp3" min="0" max="0" value="0" step="1" oninput="onMp3RangeInput()">
+          <div class="range-labels">
+            <span>Inizio brano</span>
+            <span id="segment-label-mp3">--:-- → --:--</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="source-panel-web" class="source-panel">
+        <div class="web-link-row">
+          <input type="text" id="web-link-input" placeholder="Incolla link YouTube o Spotify">
+          <button type="button" onclick="handleWebLinkSubmit()">Carica</button>
+        </div>
+        <div id="web-status"></div>
+        <div class="youtube-wrap" id="youtube-embed-wrap">
+          <div id="youtube-player-el"></div>
+        </div>
+        <div class="spotify-wrap" id="spotify-embed-wrap">
+          <iframe id="spotify-iframe" src="" allow="encrypted-media"></iframe>
+        </div>
+        <div class="range-row" id="web-range-row">
+          <input type="range" id="segment-start-web" min="0" max="0" value="0" step="1" disabled oninput="onWebRangeInput()">
+          <div class="range-labels">
+            <span>Inizio brano</span>
+            <span id="segment-label-web">--:-- → --:--</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="volume-row">
+        <div class="volume-row-head"><span>Volume</span><span id="drop-volume-label">80%</span></div>
+        <input type="range" id="drop-volume" min="0" max="100" value="80" oninput="onDropVolumeInput()">
+      </div>
+
+      <div class="drop-timer-display fire-text" id="drop-timer-display">01:30</div>
+      <div class="drop-status fire-text" id="drop-status"></div>
+
+      <button class="btn-main" id="start-drop-btn" disabled onclick="startDropSet()">🔥 Inizia Cedimento</button>
+      <button class="stop-btn danger" style="width:100%; margin-top:8px;" onclick="stopDropSet()">Stop</button>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+        <div class="section-title" id="allenamento-day-label" style="margin-bottom:0;">Sessione del giorno</div>
+        <button class="drop-btn" onclick="startManualRecovery()" title="Avvia un recupero manuale">⏱ Recupero</button>
+      </div>
+      <div id="allenamento-list"></div>
+    </div>
+
+    <button class="btn-main" style="background:var(--success); color:#08080a;" onclick="endWorkout()">✅ Termina Allenamento</button>
+  </section>
+
+  <!-- TAB: STORICO -->
+  <section id="tab-storico" class="tab-panel">
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div style="font-weight:800; font-size:0.9rem; text-transform:uppercase;">Cronologia Sessioni</div>
+        <button class="del-btn" style="font-size:0.75rem;" onclick="clearHistory()">Svuota Storico</button>
+      </div>
+      <div id="history-list"></div>
+    </div>
+  </section>
+</div>
+
+<div class="bottom-nav-fixed" id="bottom-nav" style="display:none;">
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-tab="piano" onclick="switchTab('piano')"><span class="nav-icon">📝</span><span>Piano</span></button>
+    <button class="nav-btn" data-tab="allenamento" onclick="switchTab('allenamento')"><span class="nav-icon">🏋️</span><span>Allenamento</span></button>
+    <button class="nav-btn" data-tab="storico" onclick="switchTab('storico')"><span class="nav-icon">📖</span><span>Storico</span></button>
+  </nav>
+</div>
+
+<div class="recovery-overlay" id="recovery-overlay">
+  <div class="recovery-inner">
+    <div class="recovery-head">
+      <div class="recovery-title" id="recovery-title">Recupero</div>
+      <button class="recovery-icon-btn" id="recovery-expand-btn" onclick="toggleRecoveryExpand()" aria-label="Espandi">⤢</button>
+    </div>
+    <div class="recovery-body">
+      <button class="recovery-mute-btn" id="recovery-mute-btn" onclick="toggleRecoveryMute()" aria-label="Attiva/disattiva suono">🔊</button>
+      <div class="recovery-ring-wrap">
+        <svg class="recovery-ring-svg" viewBox="0 0 120 120">
+          <circle class="recovery-ring-track" cx="60" cy="60" r="52"></circle>
+          <circle class="recovery-ring-progress" id="recovery-ring-progress" cx="60" cy="60" r="52"></circle>
+        </svg>
+        <div class="recovery-time-big" id="recovery-time-big">01:30</div>
+      </div>
+      <div class="recovery-side">
+        <button class="recovery-pill" onclick="adjustRecoveryTimer(-10)">−10 s</button>
+        <button class="recovery-pill" onclick="adjustRecoveryTimer(10)">+10 s</button>
+        <button class="recovery-close-btn" onclick="closeRecoveryPanel()">Chiudi ✕</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW failed:', err));
+    });
+  }
+</script>
+
+<script>
+/* ============================================================
+   COSTANTI & STATO GLOBALE
+   ============================================================ */
+const DAYS = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
+let currentDay = DAYS[0];
+let currentMode = null;
+let currentTab = 'piano';
+
+const MODE_KEY = 'tz_app_mode';
+
+const MODE_META = {
+  toji: { quote: 'Nessuna Energia Maledetta • Solo Forza Pura', title: 'Toji Protocol', themeColor: '#08080a' },
+  maki: { quote: 'Senza Energia Maledetta • Solo Lame e Disciplina', title: 'Maki Protocol', themeColor: '#052e13' }
+};
+
+const DEFAULT_MONDAY_PROGRAM = {
+  toji: [
+    { name: '💪 Panca Piana Bilanciere', sets: 4, reps: 8, weight: 60, rest: 90 },
+    { name: '🏹 Trazioni alla Sbarra (Pull-ups)', sets: 4, reps: 8, weight: 0, rest: 90 },
+    { name: '🛡️ Military Press', sets: 3, reps: 10, weight: 40, rest: 75 }
+  ],
+  maki: [
+    { name: '🍑 Hip Thrust', sets: 4, reps: 15, weight: 40, rest: 75 },
+    { name: '🍑 Affondi Bulgari', sets: 3, reps: 12, weight: 12, rest: 60 }
+  ]
+};
+
+const FAILURE_SET_SECONDS = 90;
+
+/* Timer di recupero (pannello flottante) */
+let recoveryInterval = null;
+let recoveryRemaining = 0;
+let recoveryTotal = 90;
+let recoveryMuted = localStorage.getItem('tz_recovery_muted') === '1';
+const RECOVERY_RING_CIRCUMFERENCE = 2 * Math.PI * 52;
+
+/* Modulo Cedimento (Drop) — ora armato per singola serie, non per intero esercizio */
+let dropInterval = null;
+let dropRemaining = FAILURE_SET_SECONDS;
+let dropActive = false;
+let armedSet = null; /* { exIdx, setIdx } | null */
+let activeSourceTab = 'mp3';
+let currentWebMode = null; /* 'youtube' | 'spotify' | null */
+
+/* MP3 locale (IndexedDB) */
+const AUDIO_DB_NAME = 'tz_audio_db';
+const AUDIO_DB_VERSION = 1;
+const AUDIO_STORE = 'tracks';
+let failureTracks = [];
+let selectedTrackId = null;
+let selectedTrackUrl = null;
+
+/* YouTube */
+let ytPlayer = null;
+let ytPlayerReady = false;
+
+/* ============================================================
+   STORAGE (namespaced per modalità) + NORMALIZZAZIONE DATI
+   ============================================================ */
+const dataKey = () => `coach_plus_data_${currentMode}`;
+const historyKey = () => `coach_plus_history_${currentMode}`;
+
+function normalizeExerciseRecord(e) {
+  const sets = Number(e.sets) || 0;
+  const reps = Number(e.reps) || 0;
+  const weight = Number(e.weight) || 0;
+  const rest = e.rest !== undefined && e.rest !== null && e.rest !== '' ? Number(e.rest) || 0 : 90;
+
+  let cs = Array.isArray(e.completedSets) ? e.completedSets : [];
+  cs = cs.map(item => {
+    if (item && typeof item === 'object') {
+      return {
+        done: !!item.done,
+        reps: Number(item.reps) || reps,
+        weight: item.weight !== undefined && item.weight !== null && item.weight !== '' ? Number(item.weight) : weight,
+        wasBerserk: !!item.wasBerserk
+      };
+    }
+    /* formato precedente: booleano semplice */
+    return { done: !!item, reps, weight, wasBerserk: false };
+  });
+  while (cs.length < sets) cs.push({ done: false, reps, weight, wasBerserk: false });
+  if (cs.length > sets) cs = cs.slice(0, sets);
+
+  e.completedSets = cs;
+  e.sets = sets;
+  e.reps = reps;
+  e.weight = weight;
+  e.rest = rest;
+  e.note = typeof e.note === 'string' ? e.note : '';
+  e.superset = !!e.superset;
+  delete e.wasBerserk; /* ora tracciato per singola serie in completedSets[i].wasBerserk */
+  delete e.done;
+  return e;
+}
+
+function loadData() {
+  const raw = JSON.parse(localStorage.getItem(dataKey()) || '{}');
+  const out = {};
+  DAYS.forEach(d => {
+    out[d] = Array.isArray(raw[d]) ? raw[d].map(normalizeExerciseRecord) : [];
+  });
+  return out;
+}
+const saveData = (data) => localStorage.setItem(dataKey(), JSON.stringify(data));
+
+function normalizeHistoryEntry(session) {
+  return {
+    day: session.day,
+    date: session.date,
+    berserk: !!session.berserk,
+    exercises: (session.exercises || []).map(e => ({
+      name: e.name,
+      weight: e.weight,
+      totalSets: e.totalSets !== undefined ? e.totalSets : (e.sets !== undefined ? e.sets : 0),
+      doneSets: e.doneSets !== undefined ? e.doneSets : 0,
+      wasBerserk: !!e.wasBerserk
+    }))
+  };
+}
+function loadHistory() {
+  const raw = JSON.parse(localStorage.getItem(historyKey()) || '[]');
+  return raw.map(normalizeHistoryEntry);
+}
+const saveHistory = (data) => localStorage.setItem(historyKey(), JSON.stringify(data));
+
+function migrateLegacyDataIfNeeded(mode) {
+  const legacyData = localStorage.getItem('coach_plus_data');
+  if (legacyData && !localStorage.getItem(dataKey()) && mode === 'toji') {
+    localStorage.setItem(dataKey(), legacyData);
+  }
+  const legacyHist = localStorage.getItem('coach_plus_history');
+  if (legacyHist && !localStorage.getItem(historyKey()) && mode === 'toji') {
+    localStorage.setItem(historyKey(), legacyHist);
+  }
+}
+
+function seedDefaultsIfNeeded(mode) {
+  const seededKey = `tz_seeded_${mode}`;
+  if (localStorage.getItem(seededKey) === '1') return;
+  const existing = loadData();
+  const hasAny = Object.values(existing).some(list => list.length > 0);
+  if (hasAny) { localStorage.setItem(seededKey, '1'); return; }
+
+  const preset = DEFAULT_MONDAY_PROGRAM[mode] || [];
+  const data = {};
+  DAYS.forEach(d => { data[d] = []; });
+  data['Lunedì'] = preset.map(e => normalizeExerciseRecord({ ...e, completedSets: [] }));
+  saveData(data);
+  localStorage.setItem(seededKey, '1');
+}
+
+window.loadDefaultProgram = function() {
+  if (!currentMode) return;
+  if (!confirm('Questo sovrascriverà il piano del Lunedì con gli esercizi base. Continuare?')) return;
+  const data = loadData();
+  const preset = DEFAULT_MONDAY_PROGRAM[currentMode] || [];
+  data['Lunedì'] = preset.map(e => normalizeExerciseRecord({ ...e, completedSets: [] }));
+  saveData(data);
+  armedSet = null;
+  renderPiano();
+  renderAllenamento();
+};
+
+/* ============================================================
+   MODALITÀ (Toji / Maki)
+   ============================================================ */
+function getStoredMode() { return localStorage.getItem(MODE_KEY); }
+
+window.chooseMode = function(mode) {
+  localStorage.setItem(MODE_KEY, mode);
+  activateMode(mode);
+  document.getElementById('mode-overlay').classList.add('hidden');
+  document.getElementById('app-root').style.display = 'flex';
+  document.getElementById('bottom-nav').style.display = 'block';
+};
+
+window.openModeOverlay = function() {
+  document.getElementById('mode-cancel-btn').style.display = currentMode ? 'inline-block' : 'none';
+  document.getElementById('mode-overlay').classList.remove('hidden');
+};
+window.closeModeOverlay = function() {
+  document.getElementById('mode-overlay').classList.add('hidden');
+};
+
+function activateMode(mode) {
+  currentMode = mode;
+  document.body.dataset.mode = mode;
+  const meta = MODE_META[mode];
+  document.getElementById('banner-quote').innerText = meta.quote;
+  document.getElementById('banner-title').innerText = meta.title;
+  const themeMeta = document.getElementById('theme-color-meta');
+  if (themeMeta) themeMeta.setAttribute('content', meta.themeColor);
+
+  migrateLegacyDataIfNeeded(mode);
+  seedDefaultsIfNeeded(mode);
+
+  currentDay = DAYS[0];
+  armedSet = null;
+  stopDropSet();
+  closeRecoveryPanel();
+  renderDayBar();
+  renderPiano();
+  renderAllenamento();
+  switchTab('piano');
+}
+
+/* ============================================================
+   NAVIGAZIONE: giorni e tab
+   ============================================================ */
+const daysContainer = document.getElementById('days-container');
+
+function renderDayBar() {
+  daysContainer.innerHTML = DAYS.map(d => `
+    <div class="day-chip ${d === currentDay ? 'active' : ''}" onclick="selectDay('${d}')">${d}</div>
+  `).join('');
+  document.getElementById('piano-day-label').innerText = `Piano: ${currentDay}`;
+  document.getElementById('allenamento-day-label').innerText = `Sessione: ${currentDay}`;
+}
+
+window.selectDay = function(day) {
+  currentDay = day;
+  armedSet = null;
+  stopDropSet();
+  renderDayBar();
+  renderPiano();
+  renderAllenamento();
+};
+
+window.switchTab = function(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + tab));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  document.getElementById('day-bar-wrap').style.display = tab === 'storico' ? 'none' : 'flex';
+  if (tab === 'storico') renderStorico();
+};
+
+/* ============================================================
+   UTILITY
+   ============================================================ */
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function formatMMSS(totalSeconds) {
+  const s = Math.max(0, Math.round(totalSeconds));
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+}
+function formatNow() {
+  const now = new Date();
+  return `${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()} ore ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+}
+function handleSelectExercise(val) {
+  if (val) document.getElementById('exercise-name').value = val;
+}
+function playBeep() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    osc.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.25);
+  } catch (e) {}
+}
+window.stepValue = function(id, delta, min) {
+  const input = document.getElementById(id);
+  let val = parseFloat(input.value) || 0;
+  val = +(val + delta).toFixed(2);
+  if (val < min) val = min;
+  input.value = val;
+};
+
+/* ============================================================
+   TAB PIANO
+   ============================================================ */
+function renderPiano() {
+  const data = loadData();
+  const list = data[currentDay] || [];
+  const container = document.getElementById('piano-list');
+  const summaryEl = document.getElementById('plan-summary');
+
+  /* Riepilogo in testa: esercizi, serie totali e durata stimata
+     (tempo di lavoro approssimato + recuperi pianificati) */
+  if (list.length === 0) {
+    summaryEl.innerText = 'Nessun esercizio';
+    container.innerHTML = '<span class="muted">Nessun esercizio impostato. Aggiungine uno col form qui sopra.</span>';
+    return;
+  }
+  const totalSets = list.reduce((sum, e) => sum + e.sets, 0);
+  const estSeconds = list.reduce((sum, e) => sum + e.sets * (30 + e.rest), 0);
+  summaryEl.innerText = `${list.length} esercizi • ${totalSets} serie • ~${Math.round(estSeconds / 60)} min`;
+
+  container.innerHTML = list.map((e, idx) => `
+    <div class="plan-card ${e.superset ? 'superset' : ''}">
+      <div class="plan-card-top">
+        <div class="reorder-arrows">
+          <button class="reorder-btn" onclick="moveExercise(${idx},-1)" ${idx === 0 ? 'disabled' : ''} aria-label="Sposta su">▲</button>
+          <button class="reorder-btn" onclick="moveExercise(${idx},1)" ${idx === list.length - 1 ? 'disabled' : ''} aria-label="Sposta giù">▼</button>
+        </div>
+        <div class="plan-order-num">${idx + 1}</div>
+        <div class="plan-card-main">
+          <div class="plan-ex-name">${escapeHtml(e.name)}</div>
+          <div class="plan-badges">
+            <span class="plan-badge reps">${e.sets}×${e.reps}</span>
+            <span class="plan-badge">${e.weight} kg</span>
+            <span class="plan-badge rest">⏱ ${e.rest} sec</span>
+            ${e.superset ? '<span class="plan-badge superset-tag">⛓ Superset</span>' : ''}
+          </div>
+          ${e.note ? `<div class="plan-note">📝 ${escapeHtml(e.note)}</div>` : ''}
+        </div>
+        <div class="plan-card-actions">
+          <button class="plan-icon-btn" onclick="toggleSuperset(${idx})" title="Superset col precedente" aria-label="Superset">⛓</button>
+          <button class="plan-icon-btn" onclick="duplicateExercise(${idx})" title="Duplica" aria-label="Duplica">⧉</button>
+          <button class="plan-icon-btn" onclick="startEditExercise(${idx})" title="Modifica" aria-label="Modifica">✎</button>
+          <button class="plan-icon-btn danger" onclick="deletePianoExercise(${idx})" title="Elimina" aria-label="Elimina">✕</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* Riordino: frecce su/giù (più affidabili del drag su mobile sudato) */
+window.toggleReorderMode = function() {
+  const on = document.body.classList.toggle('reorder-mode');
+  document.getElementById('reorder-toggle-btn').classList.toggle('active', on);
+  document.getElementById('reorder-toggle-btn').innerText = on ? '✓ Fatto' : '⇅ Riordina';
+};
+
+window.moveExercise = function(idx, delta) {
+  const data = loadData();
+  const list = data[currentDay];
+  const target = idx + delta;
+  if (target < 0 || target >= list.length) return;
+  [list[idx], list[target]] = [list[target], list[idx]];
+  saveData(data);
+  armedSet = null;
+  renderPiano();
+  renderAllenamento();
+};
+
+window.duplicateExercise = function(idx) {
+  const data = loadData();
+  const list = data[currentDay];
+  const src = list[idx];
+  if (!src) return;
+  const copy = normalizeExerciseRecord({
+    name: src.name, sets: src.sets, reps: src.reps, weight: src.weight,
+    rest: src.rest, note: src.note, superset: false, completedSets: []
+  });
+  list.splice(idx + 1, 0, copy);
+  saveData(data);
+  armedSet = null;
+  renderPiano();
+  renderAllenamento();
+};
+
+/* Superset = eseguito di fila con l'esercizio precedente (il primo non può esserlo) */
+window.toggleSuperset = function(idx) {
+  if (idx === 0) {
+    alert('Il primo esercizio non può essere in superset: serve un esercizio precedente a cui agganciarlo.');
+    return;
+  }
+  const data = loadData();
+  const ex = data[currentDay][idx];
+  if (!ex) return;
+  ex.superset = !ex.superset;
+  saveData(data);
+  renderPiano();
+  renderAllenamento();
+};
+
+window.startWorkoutFromPlan = function() {
+  const data = loadData();
+  if ((data[currentDay] || []).length === 0) {
+    alert('Aggiungi almeno un esercizio al piano prima di iniziare.');
+    return;
+  }
+  if (document.body.classList.contains('reorder-mode')) toggleReorderMode();
+  switchTab('allenamento');
+};
+
+let editingExerciseIdx = null;
+
+document.getElementById('exercise-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const data = loadData();
+  const sets = Number(document.getElementById('sets').value) || 0;
+  const payload = {
+    name: document.getElementById('exercise-name').value,
+    sets,
+    reps: Number(document.getElementById('reps').value) || 0,
+    weight: Number(document.getElementById('weight').value) || 0,
+    rest: Number(document.getElementById('rest').value) || 0,
+    note: document.getElementById('note').value.trim()
+  };
+
+  if (editingExerciseIdx !== null && data[currentDay][editingExerciseIdx]) {
+    const existing = data[currentDay][editingExerciseIdx];
+    payload.completedSets = existing.completedSets; /* normalize adatta lunghezza/default ai nuovi sets */
+    payload.superset = existing.superset;
+    data[currentDay][editingExerciseIdx] = normalizeExerciseRecord(payload);
+  } else {
+    data[currentDay].push(normalizeExerciseRecord({ ...payload, completedSets: [], superset: false }));
+  }
+
+  saveData(data);
+  window.cancelEditExercise();
+  renderPiano();
+  renderAllenamento();
+});
+
+window.startEditExercise = function(idx) {
+  const data = loadData();
+  const e = data[currentDay][idx];
+  if (!e) return;
+  document.getElementById('exercise-name').value = e.name;
+  document.getElementById('sets').value = e.sets;
+  document.getElementById('reps').value = e.reps;
+  document.getElementById('weight').value = e.weight;
+  document.getElementById('rest').value = e.rest;
+  document.getElementById('note').value = e.note || '';
+  editingExerciseIdx = idx;
+  document.getElementById('form-submit-btn').innerText = '✎ Aggiorna Esercizio';
+  document.getElementById('cancel-edit-btn').style.display = 'block';
+};
+
+window.cancelEditExercise = function() {
+  editingExerciseIdx = null;
+  document.getElementById('exercise-form').reset();
+  document.getElementById('exercise-select').value = '';
+  document.getElementById('sets').value = 3;
+  document.getElementById('reps').value = 10;
+  document.getElementById('weight').value = 0;
+  document.getElementById('rest').value = 90;
+  document.getElementById('note').value = '';
+  document.getElementById('form-submit-btn').innerText = '+ Inserisci Esercizio';
+  document.getElementById('cancel-edit-btn').style.display = 'none';
+};
+
+window.deletePianoExercise = function(idx) {
+  const data = loadData();
+  data[currentDay].splice(idx, 1);
+  saveData(data);
+  armedSet = null;
+  if (editingExerciseIdx === idx) window.cancelEditExercise();
+  renderPiano();
+  renderAllenamento();
+};
+
+/* ============================================================
+   TAB ALLENAMENTO — lista set-by-set + arm Drop
+   ============================================================ */
+function renderAllenamento() {
+  const data = loadData();
+  const list = data[currentDay] || [];
+  const container = document.getElementById('allenamento-list');
+  if (list.length === 0) {
+    container.innerHTML = '<span class="muted">Nessun esercizio pianificato. Aggiungine uno dal tab Piano.</span>';
+  } else {
+    container.innerHTML = list.map((e, idx) => `
+      <div class="workout-item">
+        <div class="workout-item-head">
+          <div>
+            <div class="ex-name">${e.superset ? '<span class="ss-tag">⛓</span> ' : ''}${escapeHtml(e.name)}</div>
+            <div class="ex-data">${e.sets} serie × ${e.reps} reps • ${e.weight} kg • ⏱ ${e.rest}s</div>
+            ${e.note ? `<div class="plan-note">📝 ${escapeHtml(e.note)}</div>` : ''}
+          </div>
+        </div>
+        <div class="set-rows">
+          ${e.completedSets.map((s, si) => `
+            <div class="set-row ${s.done ? 'done' : ''} ${armedSet && armedSet.exIdx === idx && armedSet.setIdx === si ? 'armed' : ''}">
+              <span class="set-num">${si + 1}</span>
+              <input type="number" class="set-input" value="${s.reps}" ${s.done ? 'disabled' : ''} oninput="updateSetField(${idx},${si},'reps',this.value)">
+              <span class="set-x">×</span>
+              <input type="number" class="set-input" value="${s.weight}" step="0.5" ${s.done ? 'disabled' : ''} oninput="updateSetField(${idx},${si},'weight',this.value)">
+              <span class="set-kg-label">kg</span>
+              ${s.wasBerserk ? '<span class="flame-done-tag">🔥</span>' : `<button class="set-flame-btn ${armedSet && armedSet.exIdx === idx && armedSet.setIdx === si ? 'armed' : ''}" onclick="armDropTarget(${idx},${si})" aria-label="Porta la serie ${si + 1} a cedimento" title="Porta a cedimento">🔥</button>`}
+              <button class="set-check ${s.done ? 'checked' : ''}" onclick="toggleSetDone(${idx},${si})" aria-label="Segna serie ${si + 1} completata">✓</button>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+  refreshDropButtonState();
+}
+
+window.updateSetField = function(exIdx, setIdx, field, value) {
+  const data = loadData();
+  const set = data[currentDay][exIdx].completedSets[setIdx];
+  if (!set) return;
+  if (field === 'reps') set.reps = Number(value) || 0;
+  else set.weight = parseFloat(value) || 0;
+  saveData(data);
+  /* niente re-render: eviterebbe di far perdere il focus mentre si digita */
+};
+
+window.toggleSetDone = function(exIdx, setIdx) {
+  const data = loadData();
+  const ex = data[currentDay][exIdx];
+  const set = ex.completedSets[setIdx];
+  if (!set) return;
+  set.done = !set.done;
+  /* stile Strong/Hevy: se completo un set, precompilo il successivo (se ancora ai valori di default) con reps/kg appena usati */
+  if (set.done) {
+    const next = ex.completedSets[setIdx + 1];
+    if (next && !next.done && next.reps === ex.reps && next.weight === ex.weight) {
+      next.reps = set.reps;
+      next.weight = set.weight;
+    }
+  }
+  saveData(data);
+  renderAllenamento();
+  /* Mimica il meccanismo delle app commerciali: completare una serie avvia da solo il recupero.
+     Eccezione: se l'esercizio SUCCESSIVO è in superset, non si riposa — si passa subito a quello. */
+  if (set.done) {
+    const next = data[currentDay][exIdx + 1];
+    if (next && next.superset) {
+      closeRecoveryPanel();
+    } else {
+      openRecoveryPanel(ex.name, ex.rest);
+    }
+  }
+};
+
+/* Arma una SERIE specifica (non l'intero esercizio) per il modulo Cedimento */
+window.armDropTarget = function(exIdx, setIdx) {
+  if (armedSet && armedSet.exIdx === exIdx && armedSet.setIdx === setIdx) {
+    armedSet = null;
+  } else {
+    armedSet = { exIdx, setIdx };
+  }
+  stopDropSet();
+  renderAllenamento();
+};
+
+function refreshDropButtonState() {
+  const btn = document.getElementById('start-drop-btn');
+  const hint = document.getElementById('drop-hint');
+  if (!btn || !hint) return;
+  if (!armedSet) {
+    btn.disabled = true;
+    hint.innerText = 'Tocca l\'icona 🔥 accanto a una serie per portarla a cedimento.';
+  } else {
+    const data = loadData();
+    const ex = (data[currentDay] || [])[armedSet.exIdx];
+    if (!ex || !ex.completedSets[armedSet.setIdx]) {
+      btn.disabled = true;
+      hint.innerText = 'Tocca l\'icona 🔥 accanto a una serie per portarla a cedimento.';
+      return;
+    }
+    btn.disabled = false;
+    hint.innerText = `Pronto per: ${ex.name} — Serie ${armedSet.setIdx + 1}`;
+  }
+}
+
+/* ============================================================
+   TIMER DI RECUPERO — pannello flottante con anello (ispirato ad app commerciali)
+   ============================================================ */
+function updateRecoveryRing() {
+  const progress = document.getElementById('recovery-ring-progress');
+  const ratio = recoveryTotal > 0 ? Math.max(0, Math.min(1, recoveryRemaining / recoveryTotal)) : 0;
+  const offset = RECOVERY_RING_CIRCUMFERENCE * (1 - ratio);
+  progress.style.strokeDasharray = `${RECOVERY_RING_CIRCUMFERENCE}`;
+  progress.style.strokeDashoffset = `${offset}`;
+  document.getElementById('recovery-time-big').innerText = formatMMSS(recoveryRemaining);
+}
+
+window.openRecoveryPanel = function(label, seconds) {
+  clearInterval(recoveryInterval);
+  recoveryTotal = Math.max(1, Number(seconds) || 90);
+  recoveryRemaining = recoveryTotal;
+  document.getElementById('recovery-title').innerText = label ? `Recupero: ${label}` : 'Recupero';
+  document.getElementById('recovery-overlay').classList.add('visible');
+  updateRecoveryRing();
+  recoveryInterval = setInterval(() => {
+    recoveryRemaining--;
+    updateRecoveryRing();
+    if (recoveryRemaining <= 0) {
+      clearInterval(recoveryInterval);
+      recoveryInterval = null;
+      if (!recoveryMuted) playBeep();
+      if (navigator.vibrate) { try { navigator.vibrate(200); } catch (e) {} }
+    }
+  }, 1000);
+};
+
+window.closeRecoveryPanel = function() {
+  clearInterval(recoveryInterval);
+  recoveryInterval = null;
+  recoveryRemaining = 0;
+  updateRecoveryRing();
+  const panel = document.getElementById('recovery-overlay');
+  panel.classList.remove('visible', 'expanded');
+  document.getElementById('recovery-expand-btn').innerText = '⤢';
+};
+
+window.adjustRecoveryTimer = function(delta) {
+  const panel = document.getElementById('recovery-overlay');
+  if (recoveryInterval) {
+    recoveryRemaining = Math.max(0, recoveryRemaining + delta);
+    updateRecoveryRing();
+    if (recoveryRemaining <= 0) {
+      clearInterval(recoveryInterval);
+      recoveryInterval = null;
+      if (!recoveryMuted) playBeep();
+    }
+  } else if (delta > 0 && panel.classList.contains('visible')) {
+    /* timer fermo/esaurito ma pannello aperto: +10 avvia un mini conto da 10s, -10 resta un no-op */
+    recoveryTotal = Math.max(recoveryTotal, delta);
+    recoveryRemaining = delta;
+    updateRecoveryRing();
+    recoveryInterval = setInterval(() => {
+      recoveryRemaining--;
+      updateRecoveryRing();
+      if (recoveryRemaining <= 0) {
+        clearInterval(recoveryInterval);
+        recoveryInterval = null;
+        if (!recoveryMuted) playBeep();
+      }
+    }, 1000);
+  }
+};
+
+window.toggleRecoveryMute = function() {
+  recoveryMuted = !recoveryMuted;
+  localStorage.setItem('tz_recovery_muted', recoveryMuted ? '1' : '0');
+  document.getElementById('recovery-mute-btn').innerText = recoveryMuted ? '🔇' : '🔊';
+};
+
+window.toggleRecoveryExpand = function() {
+  const panel = document.getElementById('recovery-overlay');
+  const isExpanded = panel.classList.toggle('expanded');
+  document.getElementById('recovery-expand-btn').innerText = isExpanded ? '⤡' : '⤢';
+};
+
+window.startManualRecovery = function() {
+  openRecoveryPanel('manuale', 90);
+};
+
+/* ============================================================
+   MODULO CEDIMENTO 90s (Drop / Berserk)
+   ============================================================ */
+window.switchAudioSourceTab = function(tab) {
+  activeSourceTab = tab;
+  document.querySelectorAll('.source-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.source === tab));
+  document.getElementById('source-panel-mp3').classList.toggle('active', tab === 'mp3');
+  document.getElementById('source-panel-web').classList.toggle('active', tab === 'web');
+};
+
+function getResolvedAudioMode() {
+  if (activeSourceTab === 'mp3') return selectedTrackId ? 'mp3' : null;
+  if (activeSourceTab === 'web') return currentWebMode;
+  return null;
+}
+
+function startDropAudio() {
+  const mode = getResolvedAudioMode();
+  const vol = Number(document.getElementById('drop-volume').value);
+  if (mode === 'mp3') {
+    const audio = document.getElementById('failure-audio');
+    const start = Number(document.getElementById('segment-start-mp3').value) || 0;
+    try {
+      audio.currentTime = start;
+      audio.volume = vol / 100;
+      const p = audio.play();
+      if (p && typeof p.catch === 'function') p.catch(() => {});
+    } catch (e) {}
+  } else if (mode === 'youtube' && ytPlayerReady) {
+    const start = Number(document.getElementById('segment-start-web').value) || 0;
+    try {
+      ytPlayer.seekTo(start, true);
+      ytPlayer.setVolume(vol);
+      ytPlayer.playVideo();
+    } catch (e) {}
+  }
+  /* spotify: riproduzione avviata manualmente dall'utente */
+}
+function stopDropAudio() {
+  const mode = getResolvedAudioMode();
+  if (mode === 'mp3') {
+    const audio = document.getElementById('failure-audio');
+    if (audio) { try { audio.pause(); } catch (e) {} }
+  } else if (mode === 'youtube' && ytPlayerReady) {
+    try { ytPlayer.pauseVideo(); } catch (e) {}
+  }
+}
+
+function updateDropTimerDisplay() {
+  document.getElementById('drop-timer-display').innerText = formatMMSS(dropRemaining);
+}
+function updateFireModeState() {
+  const vol = Number(document.getElementById('drop-volume').value);
+  document.body.classList.toggle('fire-mode', dropActive && vol >= 100);
+}
+
+window.onDropVolumeInput = function() {
+  const vol = Number(document.getElementById('drop-volume').value);
+  document.getElementById('drop-volume-label').innerText = vol + '%';
+  const mode = getResolvedAudioMode();
+  if (mode === 'mp3') {
+    const audio = document.getElementById('failure-audio');
+    if (audio) audio.volume = vol / 100;
+  } else if (mode === 'youtube' && ytPlayerReady) {
+    try { ytPlayer.setVolume(vol); } catch (e) {}
+  }
+  updateFireModeState();
+};
+
+window.startDropSet = function() {
+  if (!armedSet) return;
+  clearInterval(dropInterval);
+  dropRemaining = FAILURE_SET_SECONDS;
+  dropActive = true;
+
+  const data = loadData();
+  const ex = data[currentDay][armedSet.exIdx];
+  const set = ex.completedSets[armedSet.setIdx];
+  set.wasBerserk = true;
+  saveData(data);
+
+  startDropAudio();
+  updateDropTimerDisplay();
+  updateFireModeState();
+  document.getElementById('drop-status').innerText = `Cedimento in corso: ${ex.name} — Serie ${armedSet.setIdx + 1} 🔥`;
+  renderAllenamento();
+
+  dropInterval = setInterval(() => {
+    dropRemaining--;
+    updateDropTimerDisplay();
+    if (dropRemaining <= 0) {
+      finishDropSet();
+    }
+  }, 1000);
+};
+
+function finishDropSet() {
+  clearInterval(dropInterval);
+  dropInterval = null;
+  dropActive = false;
+  stopDropAudio();
+  playBeep();
+  if (navigator.vibrate) { try { navigator.vibrate([200, 100, 200]); } catch (e) {} }
+  document.getElementById('drop-status').innerText = 'Cedimento raggiunto! 💥';
+  updateFireModeState();
+}
+
+window.stopDropSet = function() {
+  clearInterval(dropInterval);
+  dropInterval = null;
+  dropActive = false;
+  dropRemaining = FAILURE_SET_SECONDS;
+  stopDropAudio();
+  updateDropTimerDisplay();
+  const statusEl = document.getElementById('drop-status');
+  if (statusEl) statusEl.innerText = '';
+  updateFireModeState();
+};
+
+/* ---- MP3 locale: IndexedDB ---- */
+function openAudioDB() {
+  return new Promise((resolve, reject) => {
+    if (!('indexedDB' in window) || !window.indexedDB) {
+      reject(new Error('IndexedDB non disponibile'));
+      return;
+    }
+    const req = indexedDB.open(AUDIO_DB_NAME, AUDIO_DB_VERSION);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(AUDIO_STORE)) {
+        db.createObjectStore(AUDIO_STORE, { keyPath: 'id', autoIncrement: true });
+      }
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function dbAddTrack(record) {
+  const db = await openAudioDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(AUDIO_STORE, 'readwrite');
+    const req = tx.objectStore(AUDIO_STORE).add(record);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function dbGetAllTracks() {
+  const db = await openAudioDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(AUDIO_STORE, 'readonly');
+    const req = tx.objectStore(AUDIO_STORE).getAll();
+    req.onsuccess = () => resolve(req.result || []);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function dbDeleteTrack(id) {
+  const db = await openAudioDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(AUDIO_STORE, 'readwrite');
+    const req = tx.objectStore(AUDIO_STORE).delete(id);
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+  });
+}
+function readAudioDuration(file) {
+  return new Promise((resolve) => {
+    const el = document.createElement('audio');
+    const url = URL.createObjectURL(file);
+    let done = false;
+    const timeoutMs = window.__TZ_METADATA_TIMEOUT_MS || 6000;
+    const finish = (dur) => {
+      if (done) return;
+      done = true;
+      URL.revokeObjectURL(url);
+      resolve(dur);
+    };
+    const timer = setTimeout(() => finish(null), timeoutMs);
+    el.preload = 'metadata';
+    el.addEventListener('loadedmetadata', () => {
+      clearTimeout(timer);
+      const d = isFinite(el.duration) ? el.duration : null;
+      finish(d);
+    });
+    el.addEventListener('error', () => { clearTimeout(timer); finish(null); });
+    el.src = url;
+  });
+}
+
+window.handleAudioUpload = async function(fileList) {
+  const file = fileList && fileList[0];
+  if (!file) return;
+  if (!file.type || !file.type.startsWith('audio/')) {
+    alert('Seleziona un file audio valido (mp3, m4a, wav...).');
+    return;
+  }
+  const statusEl = document.getElementById('upload-status');
+  if (statusEl) statusEl.innerText = 'Caricamento in corso...';
+  try {
+    const duration = await readAudioDuration(file);
+    const id = await dbAddTrack({ name: file.name, type: file.type, blob: file, duration });
+    await refreshFailureTracks();
+    selectTrack(id);
+  } catch (err) {
+    alert('Errore nel caricamento del file audio. Il tuo browser potrebbe non supportare il salvataggio locale.');
+  } finally {
+    if (statusEl) statusEl.innerText = '';
+  }
+};
+
+async function refreshFailureTracks() {
+  failureTracks = await dbGetAllTracks();
+  renderFailureTracks();
+}
+function renderFailureTracks() {
+  const container = document.getElementById('track-list');
+  if (!container) return;
+  if (failureTracks.length === 0) {
+    container.innerHTML = '<span class="muted">Nessuna traccia caricata.</span>';
+    return;
+  }
+  container.innerHTML = failureTracks.slice().reverse().map(t => `
+    <div class="track-item">
+      <div>
+        <div class="track-name">${escapeHtml(t.name)}</div>
+        <div class="track-meta">${t.duration ? formatMMSS(t.duration) : 'durata sconosciuta'}</div>
+      </div>
+      <div style="display:flex; gap:6px; align-items:center;">
+        <button class="track-select-btn ${t.id === selectedTrackId ? 'selected' : ''}" onclick="selectTrack(${t.id})">${t.id === selectedTrackId ? 'Selezionata' : 'Seleziona'}</button>
+        <button class="del-btn" onclick="deleteTrack(${t.id})">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+window.selectTrack = function(id) {
+  const track = failureTracks.find(t => t.id === id);
+  if (!track) return;
+  selectedTrackId = id;
+  if (selectedTrackUrl) URL.revokeObjectURL(selectedTrackUrl);
+  selectedTrackUrl = URL.createObjectURL(track.blob);
+
+  const audio = document.getElementById('failure-audio');
+  audio.style.display = 'block';
+  audio.src = selectedTrackUrl;
+  if (typeof audio.load === 'function') { try { audio.load(); } catch (e) {} }
+
+  const rangeRow = document.getElementById('mp3-range-row');
+  rangeRow.style.display = 'flex';
+  const range = document.getElementById('segment-start-mp3');
+  const dur = track.duration;
+  if (dur && dur > FAILURE_SET_SECONDS) {
+    range.disabled = false;
+    range.max = Math.floor(dur - FAILURE_SET_SECONDS);
+    range.value = 0;
+  } else {
+    range.disabled = true;
+    range.max = 0;
+    range.value = 0;
+  }
+  updateMp3SegmentLabel(track);
+  stopDropSet();
+  renderFailureTracks();
+  refreshDropButtonState();
+};
+
+function updateMp3SegmentLabel(track) {
+  const range = document.getElementById('segment-start-mp3');
+  const start = Number(range.value) || 0;
+  const dur = track.duration;
+  const end = dur ? Math.min(start + FAILURE_SET_SECONDS, dur) : start + FAILURE_SET_SECONDS;
+  document.getElementById('segment-label-mp3').innerText = dur
+    ? `${formatMMSS(start)} → ${formatMMSS(end)}`
+    : `Durata non rilevata: primi ${FAILURE_SET_SECONDS}s`;
+  const audio = document.getElementById('failure-audio');
+  if (audio && !dropActive) { try { audio.currentTime = start; } catch (e) {} }
+}
+window.onMp3RangeInput = function() {
+  const t = failureTracks.find(x => x.id === selectedTrackId);
+  if (t) updateMp3SegmentLabel(t);
+};
+
+window.deleteTrack = async function(id) {
+  if (!confirm('Eliminare questa traccia?')) return;
+  await dbDeleteTrack(id);
+  if (selectedTrackId === id) {
+    selectedTrackId = null;
+    if (selectedTrackUrl) { URL.revokeObjectURL(selectedTrackUrl); selectedTrackUrl = null; }
+    document.getElementById('failure-audio').style.display = 'none';
+    document.getElementById('mp3-range-row').style.display = 'none';
+    stopDropSet();
+  }
+  await refreshFailureTracks();
+  refreshDropButtonState();
+};
+
+/* ---- Link Web: YouTube / Spotify ---- */
+function parseWebAudioUrl(url) {
+  const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([\w-]{6,})/);
+  if (yt) return { type: 'youtube', id: yt[1] };
+  const sp = url.match(/open\.spotify\.com\/(track|episode)\/([a-zA-Z0-9]+)/);
+  if (sp) return { type: 'spotify', id: sp[2], kind: sp[1] };
+  return null;
+}
+
+window.handleWebLinkSubmit = function() {
+  const url = document.getElementById('web-link-input').value.trim();
+  const parsed = parseWebAudioUrl(url);
+  if (!parsed) {
+    alert('Link non valido. Incolla un link YouTube o Spotify.');
+    return;
+  }
+  if (parsed.type === 'youtube') {
+    currentWebMode = 'youtube';
+    loadYouTubePlayer(parsed.id);
+  } else {
+    currentWebMode = 'spotify';
+    loadSpotifyEmbed(parsed.id, parsed.kind);
+  }
+  refreshDropButtonState();
+};
+
+function ensureYouTubeApi() {
+  return new Promise((resolve, reject) => {
+    if (window.YT && window.YT.Player) { resolve(); return; }
+    const timeoutMs = window.__TZ_YT_TIMEOUT_MS || 8000;
+    const timeout = setTimeout(() => reject(new Error('timeout')), timeoutMs);
+    const prevCb = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => {
+      clearTimeout(timeout);
+      if (typeof prevCb === 'function') prevCb();
+      resolve();
+    };
+    if (!document.getElementById('yt-iframe-api-script')) {
+      const tag = document.createElement('script');
+      tag.id = 'yt-iframe-api-script';
+      tag.src = 'https://www.youtube.com/iframe_api';
+      tag.onerror = () => { clearTimeout(timeout); reject(new Error('script load error')); };
+      document.head.appendChild(tag);
+    }
+  });
+}
+
+function loadYouTubePlayer(videoId) {
+  document.getElementById('spotify-embed-wrap').style.display = 'none';
+  document.getElementById('youtube-embed-wrap').style.display = 'block';
+  ytPlayerReady = false;
+  const range = document.getElementById('segment-start-web');
+  range.disabled = true;
+
+  /* YouTube rifiuta le richieste dell'IFrame API provenienti da pagine aperte come
+     file locale (protocollo file://): è la causa più comune dell'errore di
+     configurazione/riproduzione. Lo segnaliamo subito invece di far attendere
+     un timeout inutile: MP3 locale e Spotify non hanno questa limitazione. */
+  if (window.location.protocol === 'file:') {
+    document.getElementById('web-status').innerText = '⚠️ YouTube non funziona se apri questo file direttamente dal computer (protocollo file://). Carica l\'app su un hosting (es. GitHub Pages, Netlify) o avviala con un server locale per usare i link YouTube. MP3 locale e Spotify funzionano comunque senza limitazioni.';
+    return;
+  }
+
+  document.getElementById('web-status').innerText = 'Caricamento player YouTube...';
+
+  ensureYouTubeApi().then(() => {
+    if (ytPlayer && typeof ytPlayer.destroy === 'function') { try { ytPlayer.destroy(); } catch (e) {} }
+    ytPlayer = new window.YT.Player('youtube-player-el', {
+      videoId,
+      playerVars: { controls: 0, origin: window.location.origin },
+      events: {
+        onReady: () => {
+          ytPlayerReady = true;
+          const dur = ytPlayer.getDuration ? ytPlayer.getDuration() : 0;
+          if (dur > FAILURE_SET_SECONDS) {
+            range.disabled = false;
+            range.max = Math.floor(dur - FAILURE_SET_SECONDS);
+            range.value = 0;
+          }
+          document.getElementById('web-status').innerText = 'Video pronto ✔';
+        },
+        onError: () => { document.getElementById('web-status').innerText = 'Errore nel caricare il video.'; }
+      }
+    });
+  }).catch(() => {
+    document.getElementById('web-status').innerText = 'Impossibile caricare YouTube. Verifica la connessione internet.';
+  });
+}
+
+function loadSpotifyEmbed(id, kind) {
+  document.getElementById('youtube-embed-wrap').style.display = 'none';
+  const wrap = document.getElementById('spotify-embed-wrap');
+  wrap.style.display = 'block';
+  document.getElementById('spotify-iframe').src = `https://open.spotify.com/embed/${kind}/${id}`;
+  document.getElementById('web-status').innerText = 'Avvia manualmente la riproduzione nel player qui sotto, poi premi "Inizia Cedimento".';
+  const range = document.getElementById('segment-start-web');
+  range.disabled = true;
+}
+
+window.onWebRangeInput = function() {
+  if (!ytPlayerReady) return;
+  const range = document.getElementById('segment-start-web');
+  const start = Number(range.value) || 0;
+  const dur = ytPlayer && ytPlayer.getDuration ? ytPlayer.getDuration() : 0;
+  const end = dur ? Math.min(start + FAILURE_SET_SECONDS, dur) : start + FAILURE_SET_SECONDS;
+  document.getElementById('segment-label-web').innerText = `${formatMMSS(start)} → ${formatMMSS(end)}`;
+};
+
+/* ============================================================
+   TERMINA ALLENAMENTO → Storico
+   ============================================================ */
+window.endWorkout = function() {
+  const data = loadData();
+  const list = data[currentDay] || [];
+  if (list.length === 0) {
+    alert('Nessun esercizio pianificato per oggi.');
+    return;
+  }
+
+  const anySetChecked = list.some(e => e.completedSets.some(s => s.done));
+  if (!anySetChecked) {
+    const proceed = confirm('Non hai completato nessun set. Vuoi terminare comunque la sessione?');
+    if (!proceed) return;
+  }
+
+  const berserkFound = list.some(e => e.completedSets.some(s => s.wasBerserk));
+  const historyEntry = {
+    day: currentDay,
+    date: formatNow(),
+    berserk: berserkFound,
+    exercises: list.map(e => {
+      const doneSets = e.completedSets.filter(s => s.done);
+      const lastWeight = doneSets.length ? doneSets[doneSets.length - 1].weight : e.weight;
+      return {
+        name: e.name,
+        weight: lastWeight,
+        totalSets: e.sets,
+        doneSets: doneSets.length,
+        wasBerserk: e.completedSets.some(s => s.wasBerserk)
+      };
+    })
+  };
+
+  const history = loadHistory();
+  history.unshift(historyEntry);
+  saveHistory(history);
+
+  list.forEach(e => {
+    e.completedSets = e.completedSets.map(() => ({ done: false, reps: e.reps, weight: e.weight, wasBerserk: false }));
+  });
+  data[currentDay] = list;
+  saveData(data);
+
+  armedSet = null;
+  stopDropSet();
+  closeRecoveryPanel();
+
+  renderPiano();
+  renderAllenamento();
+  switchTab('storico');
+};
+
+/* ============================================================
+   TAB STORICO
+   ============================================================ */
+function renderStorico() {
+  const history = loadHistory();
+  const container = document.getElementById('history-list');
+  if (history.length === 0) {
+    container.innerHTML = '<span class="muted">Nessuna sessione registrata nello storico.</span>';
+    return;
+  }
+  container.innerHTML = history.map(session => `
+    <div class="history-card ${session.berserk ? 'berserk' : ''}">
+      ${session.berserk ? '<div class="berserk-score">🔥 BERSERK SCORE</div>' : ''}
+      <div class="history-date">${escapeHtml(session.day)} - ${escapeHtml(session.date)}</div>
+      <div class="history-body">
+        ${session.exercises.map(e => `<div>${e.doneSets}/${e.totalSets} Serie di ${escapeHtml(e.name)} @ ${e.weight} kg${e.wasBerserk ? ' 🔥' : ''}</div>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+window.clearHistory = function() {
+  if (confirm('Sei sicuro di voler eliminare tutto lo storico progressi?')) {
+    localStorage.removeItem(historyKey());
+    renderStorico();
+  }
+};
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+(function boot() {
+  document.getElementById('recovery-mute-btn').innerText = recoveryMuted ? '🔇' : '🔊';
+  const stored = getStoredMode();
+  if (stored && MODE_META[stored]) {
+    activateMode(stored);
+    document.getElementById('mode-overlay').classList.add('hidden');
+    document.getElementById('app-root').style.display = 'flex';
+    document.getElementById('bottom-nav').style.display = 'block';
+  } else {
+    document.getElementById('mode-overlay').classList.remove('hidden');
+    document.getElementById('app-root').style.display = 'none';
+    document.getElementById('bottom-nav').style.display = 'none';
+  }
+  refreshFailureTracks().catch(() => {
+    const c = document.getElementById('track-list');
+    if (c) c.innerHTML = '<span class="muted">Il tuo browser non supporta il salvataggio audio locale (IndexedDB).</span>';
+  });
+})();
+</script>
+</body>
+</html>

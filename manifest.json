@@ -1,0 +1,26 @@
+{
+  "name": "Toji / Maki Workout Tracker",
+  "short_name": "TojiWorkout",
+  "description": "Tracker allenamenti con piano, esecuzione set-by-set, cedimento 90s e storico.",
+  "start_url": "./toji.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#08080a",
+  "theme_color": "#08080a",
+  "lang": "it",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
