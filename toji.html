@@ -170,6 +170,38 @@ body.reorder-mode .plan-card { border-color: var(--primary); }
 }
 .btn-start-workout:active { transform: scale(0.98); }
 
+/* ======= Riepilogo settimana nel piano ======= */
+.wk-row {
+  display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+  background: #0d0d12; border: 1px solid var(--border); border-radius: 10px;
+  padding: 11px 12px; margin-bottom: 6px; cursor: pointer; color: var(--text);
+}
+.wk-row.open { border-color: var(--primary); background: rgba(249,115,22,0.07); }
+.wk-main { flex: 1; min-width: 0; }
+.wk-name { font-weight: 800; font-size: 0.88rem; }
+.wk-meta { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+.wk-count { flex-shrink: 0; font-size: 0.72rem; font-weight: 900; color: var(--primary); background: rgba(249,115,22,0.14); border-radius: 999px; padding: 3px 9px; }
+.wk-caret { flex-shrink: 0; color: var(--muted); font-weight: 900; transition: transform .15s ease; }
+.wk-row.open .wk-caret { transform: rotate(90deg); color: var(--primary); }
+.wk-empty { font-size: 0.8rem; color: var(--muted); padding: 4px 0 8px; }
+.wk-total { font-size: 0.7rem; color: var(--muted); font-weight: 800; text-align: right; margin-bottom: 8px; }
+
+/* ======= Segnalazione "gia scelto" ======= */
+.use-tag { display: inline-block; font-size: 0.6rem; font-weight: 900; text-transform: uppercase; border-radius: 999px; padding: 2px 7px; margin-left: 6px; white-space: nowrap; }
+.use-tag.today { background: rgba(34,197,94,0.18); color: #22c55e; border: 1px solid #22c55e; }
+.use-tag.week { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid #f59e0b; }
+.sugg-row.used-week, .lib-row.used-week { opacity: 0.72; }
+.sugg-row.used-today, .lib-row.used-today { opacity: 0.55; }
+.lib-add-btn.week { background: #f59e0b; color: #08080a; }
+
+/* schede pronte: colore diverso se gia caricate */
+.carousel-card.tpl-partial { border-color: #f59e0b; }
+.carousel-card.tpl-done { border-color: #22c55e; opacity: 0.8; }
+.tpl-state { display: inline-block; font-size: 0.62rem; font-weight: 900; text-transform: uppercase; border-radius: 999px; padding: 2px 8px; margin-top: 6px; }
+.tpl-state.partial { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid #f59e0b; }
+.tpl-state.done { background: rgba(34,197,94,0.18); color: #22c55e; border: 1px solid #22c55e; }
+.tpl-state.fresh { background: #1a1a24; color: var(--muted); border: 1px solid var(--border); }
+
 /* ======= Carico settimanale per gruppo: due tonalita' ======= */
 /* VERDE = gruppo gia in programma, volume dentro il range utile
    AMBRA = volume alto, fatica settimanale da tenere d occhio
@@ -256,14 +288,23 @@ body.select-mode .plan-card-actions, body.select-mode .reorder-arrows { display:
 
 /* ======= Snackbar con Annulla ======= */
 .snackbar {
-  position: fixed; left: 50%; transform: translate(-50%, 140%);
-  bottom: calc(76px + env(safe-area-inset-bottom)); z-index: 95;
+  position: fixed; left: 50%; bottom: calc(76px + env(safe-area-inset-bottom)); z-index: 95;
   width: calc(100% - 28px); max-width: 452px;
   background: #1a1a24; border: 1px solid var(--border); border-radius: 10px;
   padding: 12px 14px; display: flex; align-items: center; gap: 12px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.5); transition: transform .25s ease;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+  /* Nascosta davvero: la sola traslazione del 140% la lasciava spuntare
+     dal bordo inferiore. Servono anche opacita', visibility e pointer-events,
+     altrimenti resta visibile e continua a intercettare i tocchi. */
+  transform: translate(-50%, 24px);
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: transform .25s ease, opacity .25s ease, visibility 0s linear .25s;
 }
-.snackbar.show { transform: translate(-50%, 0); }
+.snackbar.show {
+  transform: translate(-50%, 0);
+  opacity: 1; visibility: visible; pointer-events: auto;
+  transition: transform .25s ease, opacity .25s ease, visibility 0s linear 0s;
+}
 .snackbar-text { flex: 1; font-size: 0.8rem; min-width: 0; }
 .snackbar-btn { flex-shrink: 0; background: transparent; border: none; color: var(--primary); font-weight: 900; font-size: 0.8rem; text-transform: uppercase; cursor: pointer; padding: 4px 6px; }
 
@@ -362,7 +403,6 @@ body.select-mode .plan-card-actions, body.select-mode .reorder-arrows { display:
 .group-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
 .group-card { background: #0d0d12; border: 1px solid var(--border); border-radius: 10px; padding: 12px 6px; text-align: center; cursor: pointer; transition: transform .1s ease; }
 .group-card:active { transform: scale(0.96); }
-.group-detail-btn { position: absolute; top: 4px; right: 6px; background: transparent; border: none; color: var(--muted); font-size: 1rem; font-weight: 900; cursor: pointer; padding: 2px 5px; line-height: 1; }
 .group-card { position: relative; }
 .group-card.selected { border-color: var(--primary); background: rgba(249,115,22,0.1); box-shadow: 0 0 0 1px var(--primary) inset; }
 .group-emoji { font-size: 1.6rem; }
@@ -708,6 +748,7 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
         <button class="bulk-btn danger" onclick="deleteSelected()" id="bulk-del-btn">Elimina (0)</button>
       </div>
 
+      <div id="week-overview"></div>
       <div id="piano-list"></div>
 
       <div class="plan-bulk-actions">
@@ -1222,6 +1263,8 @@ function suggestNextExercises(planList, startGroup, limit) {
     return m && m.type === 'compound';
   }).length;
 
+  const weekUsed = (typeof weekUsage === 'function' && currentMode) ? weekUsage() : {};
+
   return EXERCISE_LIBRARY
     .filter(ex => !present.has(ex.name))
     .map(ex => {
@@ -1265,6 +1308,11 @@ function suggestNextExercises(planList, startGroup, limit) {
       if (last && last.group === ex.group && last.type === ex.type && ex.type === 'compound') {
         score -= 8;
       }
+
+      /* 6. Gia scelto in un altro giorno della settimana: non e' sbagliato
+         riproporlo, ma non deve stare davanti a un esercizio mai considerato. */
+      const usati = (weekUsed[ex.name] || []).filter(d => d !== currentDay).length;
+      if (usati > 0) { score -= 20 * usati; reasons.push('gia previsto in un altro giorno'); }
 
       return Object.assign({}, ex, { score: score, reason: reasons[0] || 'complemento utile alla seduta' });
     })
@@ -1422,11 +1470,17 @@ function seedDefaultsIfNeeded(mode) {
 window.openTemplatePicker = function() {
   document.getElementById('template-target-day').innerText = `Verranno caricate su: ${getDayTitle(currentDay)}`;
   const container = document.getElementById('template-list');
+  const usage = weekUsage();
   container.innerHTML = WORKOUT_TEMPLATES.map(t => {
     const totalSets = t.exercises.reduce((s, e) => s + e.sets, 0);
     const estMin = Math.round(t.exercises.reduce((s, e) => s + e.sets * (30 + e.rest), 0) / 60);
+    const inOggi = t.exercises.filter(e => (usage[e.name] || []).indexOf(currentDay) !== -1).length;
+    const inSett = t.exercises.filter(e => (usage[e.name] || []).length > 0).length;
+    const stato = inOggi === t.exercises.length ? 'done' : (inSett > 0 ? 'partial' : 'fresh');
+    const etichetta = stato === 'done' ? '\u2713 gia caricata' : (stato === 'partial' ? '\u21BB ' + inSett + ' di ' + t.exercises.length + ' gia in settimana' : '\u2726 nuova');
     return `
-      <div class="template-card">
+      <div class="template-card tpl-${stato}">
+        <span class="tpl-state ${stato}">${etichetta}</span>
         <div class="template-card-head">
           <div class="template-name">${escapeHtml(t.title)}</div>
           <span class="template-tag">${escapeHtml(t.tag)}</span>
@@ -1476,6 +1530,8 @@ window.applyTemplate = function(templateId, replace) {
   renderDayBar();
   renderPiano();
   renderAllenamento();
+  renderGruppi(); /* il carosello deve rileggere lo stato: altrimenti la scheda
+                     appena applicata continuava a risultare "nuova" */
 };
 
 window.renameDayTitle = function() {
@@ -1548,6 +1604,7 @@ function renderDayBar() {
 
 window.selectDay = function(day) {
   currentDay = day;
+  planDayOpen = true;
   armedSet = null;
   stopDropSet();
   renderDayBar();
@@ -1558,6 +1615,7 @@ window.selectDay = function(day) {
 
 window.switchTab = function(tab) {
   currentTab = tab;
+  hideSnackbar();
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + tab));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   if (tab === 'storico') { renderStorico(); renderWeeks(); }
@@ -1611,12 +1669,60 @@ function syncBuildingLine(n) {
   if (el) el.innerText = 'Stai costruendo: ' + getDayTitle(currentDay) + ' (' + n + ' esercizi)';
 }
 
+/* Riepilogo della settimana: elenca SOLO i giorni che hanno qualcosa,
+   con il numero di esercizi. Gli esercizi veri si aprono toccando il giorno,
+   altrimenti la schermata diventa una lista infinita. */
+function renderWeekOverview() {
+  const box = document.getElementById('week-overview');
+  if (!box) return;
+  const data = loadData();
+
+  const attivi = DAYS.filter(d => (data[d] || []).length > 0 || isRestDay(d));
+  if (attivi.length === 0) {
+    box.innerHTML = '<div class="wk-empty">Nessun giorno ancora programmato. Scegli i muscoli qui sopra e aggiungi il primo esercizio.</div>';
+    return;
+  }
+
+  const totEs = DAYS.reduce((s, d) => s + (isRestDay(d) ? 0 : (data[d] || []).length), 0);
+  const totSerie = DAYS.reduce((s, d) => s + (isRestDay(d) ? 0 : (data[d] || []).reduce((s2, e) => s2 + e.sets, 0)), 0);
+  const giorniAllenamento = attivi.filter(d => !isRestDay(d)).length;
+
+  box.innerHTML =
+    '<div class="wk-total">' + giorniAllenamento + ' giorni \u2022 ' + totEs + ' esercizi \u2022 ' + totSerie + ' serie a settimana</div>' +
+    attivi.map(d => {
+      const list = data[d] || [];
+      const serie = list.reduce((s, e) => s + e.sets, 0);
+      const aperto = d === currentDay;
+      const riposo = isRestDay(d);
+      const meta = riposo ? '\u{1F634} Riposo' : serie + ' serie \u2022 ~' +
+        Math.round(list.reduce((s, e) => s + e.sets * (30 + e.rest), 0) / 60) + ' min';
+      return '<button class="wk-row ' + (aperto ? 'open' : '') + '" onclick="openPlanDay(\'' + d + '\')">' +
+        '<div class="wk-main">' +
+          '<div class="wk-name">' + escapeHtml(getDayTitle(d)) + (getDayTitle(d) !== d ? ' <span class="wk-meta">(' + d + ')</span>' : '') + '</div>' +
+          '<div class="wk-meta">' + meta + '</div>' +
+        '</div>' +
+        (riposo ? '' : '<span class="wk-count">' + list.length + '</span>') +
+        '<span class="wk-caret">\u203A</span>' +
+      '</button>';
+    }).join('');
+}
+
+/* Toccando un giorno del riepilogo lo si apre; ritoccandolo lo si richiude,
+   cosi si puo tenere la vista corta quando serve. */
+window.openPlanDay = function(day) {
+  planDayOpen = !(day === currentDay && planDayOpen);
+  if (day !== currentDay) { planDayOpen = true; selectDay(day); return; }
+  renderPiano();
+};
+
 function renderPiano() {
   const data = loadData();
   const list = data[currentDay] || [];
   const container = document.getElementById('piano-list');
   const summaryEl = document.getElementById('plan-summary');
   syncRestToggle();
+
+  renderWeekOverview();
 
   if (isRestDay(currentDay)) {
     summaryEl.innerText = 'Riposo';
@@ -1646,6 +1752,12 @@ function renderPiano() {
   const totalSets = list.reduce((sum, e) => sum + e.sets, 0);
   const estSeconds = list.reduce((sum, e) => sum + e.sets * (30 + e.rest), 0);
   summaryEl.innerText = `${list.length} esercizi • ${totalSets} serie • ~${Math.round(estSeconds / 60)} min`;
+
+  if (!planDayOpen) {
+    container.innerHTML = '<div class="wk-empty">Tocca ' + escapeHtml(getDayTitle(currentDay)) + ' qui sopra per vederne gli esercizi.</div>';
+    syncBulkBar();
+    return;
+  }
 
   container.innerHTML = list.map((e, idx) => `
     <div class="swipe-host" data-plan-idx="${idx}">
@@ -1855,6 +1967,7 @@ window.startWorkoutFromPlan = function() {
 };
 
 let editingExerciseIdx = null;
+let planDayOpen = true; /* se la lista esercizi del giorno corrente e aperta */
 
 document.getElementById('exercise-form').addEventListener('submit', (e) => {
   e.preventDefault();
@@ -2817,6 +2930,7 @@ let lastUndo = null;
 
 window.showUndo = function(message, undoFn, ms) {
   const bar = document.getElementById('snackbar');
+  clearTimeout(snackTimer); /* una nuova azione sostituisce la precedente */
   const btn = document.getElementById('snackbar-btn');
   document.getElementById('snackbar-text').innerText = message;
   lastUndo = undoFn || null;
@@ -2973,19 +3087,18 @@ window.toggleGroup = function(groupId) {
 };
 
 let sheetGroup = null;
+let sheetOrder = null; /* ordine congelato mentre la schermata e aperta */
 
-/* Accendere un gruppo NON aggiunge niente al piano: mostra le sue proposte.
-   La scelta resta sempre dell'utente, un esercizio alla volta. */
+/* Toccare un gruppo apre direttamente le sue opzioni. Nulla viene aggiunto
+   da solo: la scelta resta dell'utente, un esercizio alla volta. */
 window.toggleGroupInPlan = function(groupId) {
-  const i = selectedGroups.indexOf(groupId);
-  if (i === -1) selectedGroups.push(groupId);
-  else selectedGroups.splice(i, 1);
-  renderGruppi();
-  renderSuggested();
+  openGroupSheet(groupId);
 };
 
 /* Quante proposte mostrare per gruppo prima di "vedi tutti" */
 let suggestedExpanded = false;
+let suggestedOrder = [];
+let suggestedOrderKey = null;
 const SUGGESTED_PER_GROUP = 4;
 
 window.toggleSuggestedExpanded = function() {
@@ -3023,7 +3136,20 @@ function renderSuggested() {
       items = items.concat(comp.slice(0, SUGGESTED_PER_GROUP - nIso)).concat(iso.slice(0, nIso));
     }
   });
-  items.sort((a, b) => (present.has(a.name) ? 1 : 0) - (present.has(b.name) ? 1 : 0));
+  /* Ordine: mai scelti prima, poi quelli usati in altri giorni, infine
+     quelli gia in scheda oggi. Cosi la prima proposta e' sempre nuova.
+     Come sopra, l'ordine resta fermo finche non cambi giorno o gruppi. */
+  const usage = weekUsage();
+  const chiave = currentDay + '|' + selectedGroups.join(',') + '|' + suggestedExpanded;
+  if (suggestedOrderKey !== chiave) {
+    suggestedOrderKey = chiave;
+    suggestedOrder = items.slice()
+      .sort((a, b) => usageRank(usageState(a.name, usage)) - usageRank(usageState(b.name, usage)))
+      .map(e => e.name);
+  }
+  const posizione = {};
+  suggestedOrder.forEach((n, i) => { posizione[n] = i; });
+  items.sort((a, b) => (posizione[a.name] === undefined ? 999 : posizione[a.name]) - (posizione[b.name] === undefined ? 999 : posizione[b.name]));
 
   const nomi = selectedGroups.map(g => MUSCLE_GROUPS[g].label).join(', ');
   document.getElementById('suggested-hint').innerText =
@@ -3031,14 +3157,18 @@ function renderSuggested() {
 
   listEl.innerHTML = items.map(e => {
     const already = present.has(e.name);
+    const st = usageState(e.name, usage);
     const safe = e.name.replace(/'/g, "\\'");
-    return '<div class="sugg-row">' +
+    const rowCls = st.level === 'today' ? ' used-today' : (st.level === 'week' ? ' used-week' : '');
+    const btnCls = already ? 'added' : (st.level === 'week' ? 'week' : '');
+    return '<div class="sugg-row' + rowCls + '">' +
       '<div class="sugg-main">' +
         '<div class="sugg-name">' + escapeHtml(e.name) +
-          '<span class="lib-type ' + e.type + '">' + (e.type === 'compound' ? 'Multiart.' : 'Isolam.') + '</span></div>' +
+          '<span class="lib-type ' + e.type + '">' + (e.type === 'compound' ? 'Multiart.' : 'Isolam.') + '</span>' +
+          usageBadge(st) + '</div>' +
         '<div class="sugg-meta">consigliato ' + e.sets + '\u00D7' + e.reps + ' \u2022 ' + e.weight + ' kg \u2022 \u23F1 ' + e.rest + 's</div>' +
       '</div>' +
-      '<button class="lib-add-btn ' + (already ? 'added' : '') + '" onclick="' +
+      '<button class="lib-add-btn ' + btnCls + '" onclick="' +
         (already ? 'removeExerciseByName(\'' + safe + '\')' : 'addLibraryExercise(\'' + safe + '\')') +
         '" aria-label="' + (already ? 'Togli' : 'Aggiungi') + '">' + (already ? '\u2713' : '+') + '</button>' +
     '</div>';
@@ -3050,6 +3180,8 @@ function renderSuggested() {
 
 window.openGroupSheet = function(groupId) {
   sheetGroup = groupId;
+  sheetOrder = null; /* si ricalcola a ogni apertura, non a ogni tocco */
+  if (selectedGroups.indexOf(groupId) === -1) selectedGroups.push(groupId);
   const g = MUSCLE_GROUPS[groupId];
   document.getElementById('sheet-title').innerText = g.emoji + ' ' + g.label;
   document.getElementById('sheet-map').innerHTML = renderBodyMap([groupId]);
@@ -3060,6 +3192,7 @@ window.openGroupSheet = function(groupId) {
 window.closeGroupSheet = function() {
   document.getElementById('group-sheet').classList.add('hidden');
   sheetGroup = null;
+  sheetOrder = null;
   renderPiano();
   renderGruppi();
 };
@@ -3069,9 +3202,21 @@ function renderSheetExercises() {
   const data = loadData();
   const dayList = data[currentDay] || [];
   const present = new Set(dayList.map(e => e.name));
-  const list = EXERCISE_LIBRARY
-    .filter(e => e.group === sheetGroup)
-    .sort((a, b) => (a.type === b.type ? 0 : (a.type === 'compound' ? -1 : 1)));
+  const usage = weekUsage();
+  /* L'ordine si calcola UNA VOLTA all'apertura e resta fermo finche la
+     schermata e aperta: se si riordinasse a ogni aggiunta, le righe
+     scapperebbero da sotto il dito mentre si tocca. */
+  if (!sheetOrder) {
+    sheetOrder = EXERCISE_LIBRARY
+      .filter(e => e.group === sheetGroup)
+      .sort((a, b) => {
+        const r = usageRank(usageState(a.name, usage)) - usageRank(usageState(b.name, usage));
+        if (r !== 0) return r;
+        return (a.type === b.type ? 0 : (a.type === 'compound' ? -1 : 1));
+      })
+      .map(e => e.name);
+  }
+  const list = sheetOrder.map(n => findExercise(n)).filter(Boolean);
 
   const added = list.filter(e => present.has(e.name)).length;
   document.getElementById('sheet-sub').innerText = getDayTitle(currentDay) + ' \u2022 ' + dayList.length + ' esercizi in scheda';
@@ -3087,9 +3232,10 @@ function renderSheetExercises() {
     const safe = e.name.replace(/'/g, "\\'");
     return '<div class="swipe-host" data-sheet-idx="' + i + '" data-sheet-name="' + escapeHtml(e.name) + '">' +
       '<div class="swipe-bg"><span class="sw-add">+ Aggiungi</span><span class="sw-del">Rimuovi \u2715</span></div>' +
-      '<div class="swipe-fg lib-row">' +
+      '<div class="swipe-fg lib-row' + (usageState(e.name, usage).level === 'today' ? ' used-today' : (usageState(e.name, usage).level === 'week' ? ' used-week' : '')) + '">' +
       '<div class="lib-row-top"><div class="lib-name">' + escapeHtml(e.name) +
-        '<span class="lib-type ' + e.type + '">' + (e.type === 'compound' ? 'Multiart.' : 'Isolam.') + '</span></div></div>' +
+        '<span class="lib-type ' + e.type + '">' + (e.type === 'compound' ? 'Multiart.' : 'Isolam.') + '</span>' +
+        usageBadge(usageState(e.name, usage)) + '</div></div>' +
       '<div class="lib-row-params">' +
         '<label class="mini-field"><span>Serie</span><input type="number" id="lp-sets-' + i + '" value="' + e.sets + '" min="1"></label>' +
         '<label class="mini-field"><span>Reps</span><input type="number" id="lp-reps-' + i + '" value="' + e.reps + '" min="1"></label>' +
@@ -3134,6 +3280,7 @@ window.removeExerciseByName = function(name) {
 window.clearGroupSelection = function() {
   selectedGroups = [];
   renderGruppi();
+  renderSuggested(); /* senza questo le proposte restavano appese a schermo */
 };
 
 /* Figura anatomica disegnata in SVG: niente immagini esterne, cosi
@@ -3200,6 +3347,48 @@ function renderBodyMap(active, loads) {
 const VOL_MIN_UTILE = 10;
 const VOL_MAX_UTILE = 22;
 
+/* Mappa esercizio -> giorni in cui e' gia stato messo in programma.
+   Serve a non riproporre per primi esercizi che hai gia scelto altrove:
+   la proposta utile e' quella che NON hai ancora considerato. */
+window.weekUsage = function() {
+  const data = loadData();
+  const map = {};
+  DAYS.forEach(d => {
+    if (isRestDay(d)) return;
+    (data[d] || []).forEach(e => {
+      if (!map[e.name]) map[e.name] = [];
+      if (map[e.name].indexOf(d) === -1) map[e.name].push(d);
+    });
+  });
+  return map;
+};
+
+/* Stato di un esercizio rispetto alla settimana:
+   'today'  = gia in scheda nel giorno che stai costruendo (verde)
+   'week'   = gia scelto in un altro giorno (ambra, va in fondo)
+   null     = mai scelto (neutro, ha la precedenza) */
+window.usageState = function(name, usage) {
+  const u = usage || weekUsage();
+  const giorni = u[name] || [];
+  if (giorni.indexOf(currentDay) !== -1) return { level: 'today', days: giorni };
+  if (giorni.length) return { level: 'week', days: giorni };
+  return { level: null, days: [] };
+};
+
+function usageBadge(st) {
+  if (!st.level) return '';
+  if (st.level === 'today') return '<span class="use-tag today">\u2713 in scheda oggi</span>';
+  const altri = st.days.filter(d => d !== currentDay);
+  const txt = altri.length === 1 ? 'gia ' + altri[0] : 'gia in ' + altri.length + ' giorni';
+  return '<span class="use-tag week">\u21BB ' + txt + '</span>';
+}
+
+function usageRank(st) {
+  if (!st.level) return 0;          /* mai scelto: primo */
+  if (st.level === 'week') return 1; /* scelto altrove: dopo */
+  return 2;                          /* gia oggi: ultimo */
+}
+
 window.weeklyVolumeByGroup = function() {
   const data = loadData();
   const vol = {};
@@ -3245,9 +3434,8 @@ function renderGruppi() {
     const v = vol[id];
     const lvl = volLevel(v.sets);
     const check = lvl === 'high' ? '!' : '\u2713';
-    return '<div class="group-card ' + (acceso ? 'selected ' : '') + (lvl ? 'vol-' + lvl : '') + '" onclick="toggleGroupInPlan(\'' + id + '\')">' +
+    return '<div class="group-card ' + (acceso ? 'selected ' : '') + (lvl ? 'vol-' + lvl : '') + '" onclick="openGroupSheet(\'' + id + '\')">' +
       (lvl ? '<span class="vol-check ' + lvl + '">' + check + '</span>' : '') +
-      '<button class="group-detail-btn" onclick="event.stopPropagation(); openGroupSheet(\'' + id + '\')" aria-label="Apri ' + g.label + '" title="Scegli nel dettaglio">\u203A</button>' +
       '<div class="group-emoji">' + g.emoji + '</div>' +
       '<div class="group-label">' + g.label + '</div>' +
       (lvl
@@ -3271,17 +3459,39 @@ function renderGruppi() {
   const tplCard = document.getElementById('group-templates-card');
   if (base.length) {
     tplCard.style.display = 'block';
-    document.getElementById('group-templates').innerHTML = base.map(x => {
+    const usage = weekUsage();
+    /* Ogni scheda dice quanto dei suoi esercizi hai gia in programma:
+       nuova (neutro), parziale (ambra), gia caricata (verde). Le schede
+       ancora da usare restano davanti nel carosello. */
+    const conStato = base.map(x => {
+      const t = x.tpl;
+      const inOggi = t.exercises.filter(e => (usage[e.name] || []).indexOf(currentDay) !== -1).length;
+      const inSett = t.exercises.filter(e => (usage[e.name] || []).length > 0).length;
+      let stato = 'fresh';
+      if (inOggi === t.exercises.length) stato = 'done';
+      else if (inSett > 0) stato = 'partial';
+      return Object.assign({}, x, { inOggi: inOggi, inSett: inSett, stato: stato });
+    });
+    const ordine = { fresh: 0, partial: 1, done: 2 };
+    conStato.sort((a, b) => ordine[a.stato] - ordine[b.stato]);
+
+    document.getElementById('group-templates').innerHTML = conStato.map(x => {
       const t = x.tpl;
       const totalSets = t.exercises.reduce((s2, e) => s2 + e.sets, 0);
       const estMin = Math.round(t.exercises.reduce((s2, e) => s2 + e.sets * (30 + e.rest), 0) / 60);
-      return '<div class="carousel-card">' +
+      const etichetta = x.stato === 'done'
+        ? '\u2713 gia caricata su ' + getDayTitle(currentDay)
+        : (x.stato === 'partial'
+            ? '\u21BB ' + x.inSett + ' di ' + t.exercises.length + ' gia in settimana'
+            : '\u2726 nuova');
+      return '<div class="carousel-card tpl-' + x.stato + '">' +
         '<div class="template-card-head"><div class="template-name">' + escapeHtml(t.title) + '</div>' +
         '<span class="template-tag">' + escapeHtml(t.tag) + '</span></div>' +
         '<div class="template-desc">' + escapeHtml(t.desc) + '</div>' +
         '<div class="template-meta">' + t.exercises.length + ' esercizi \u2022 ' + totalSets + ' serie \u2022 ~' + estMin + ' min' +
         (x.ratio !== null ? ' \u2022 ' + Math.round(x.ratio * 100) + '% in linea' : '') + '</div>' +
-        '<div class="template-actions">' +
+        '<span class="tpl-state ' + x.stato + '">' + etichetta + '</span>' +
+        '<div class="template-actions" style="margin-top:8px;">' +
           '<button class="template-btn replace" onclick="applyTemplate(\'' + t.id + '\', true)">Sostituisci</button>' +
           '<button class="template-btn append" onclick="applyTemplateFromGroups(\'' + t.id + '\')">Aggiungi</button>' +
         '</div>' +
