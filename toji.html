@@ -170,6 +170,121 @@ body.reorder-mode .plan-card { border-color: var(--primary); }
 }
 .btn-start-workout:active { transform: scale(0.98); }
 
+/* ======= Carico settimanale per gruppo: due tonalita' ======= */
+/* VERDE = gruppo gia in programma, volume dentro il range utile
+   AMBRA = volume alto, fatica settimanale da tenere d occhio
+   Soglie dalla letteratura: ~10-20 serie a settimana per gruppo. */
+@keyframes vol-pulse-ok {
+  0%, 100% { box-shadow: 0 0 0 1px #22c55e inset, 0 0 6px rgba(34,197,94,0.25); }
+  50%      { box-shadow: 0 0 0 1px #22c55e inset, 0 0 16px rgba(34,197,94,0.6); }
+}
+@keyframes vol-pulse-high {
+  0%, 100% { box-shadow: 0 0 0 1px #f59e0b inset, 0 0 8px rgba(245,158,11,0.35); }
+  50%      { box-shadow: 0 0 0 1px #f59e0b inset, 0 0 20px rgba(245,158,11,0.75); }
+}
+@keyframes vol-emoji-breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.12); }
+}
+
+.group-card.vol-start { border-color: rgba(34,197,94,0.45); }
+.group-card.vol-start .group-emoji { filter: drop-shadow(0 0 5px rgba(34,197,94,0.5)); }
+
+.group-card.vol-ok { border-color: #22c55e; animation: vol-pulse-ok 2.4s ease-in-out infinite; }
+.group-card.vol-ok .group-emoji { filter: drop-shadow(0 0 7px rgba(34,197,94,0.85)); animation: vol-emoji-breathe 2.4s ease-in-out infinite; }
+
+.group-card.vol-high { border-color: #f59e0b; animation: vol-pulse-high 1.3s ease-in-out infinite; }
+.group-card.vol-high .group-emoji { filter: drop-shadow(0 0 8px rgba(245,158,11,0.9)); animation: vol-emoji-breathe 1.3s ease-in-out infinite; }
+
+.vol-check {
+  position: absolute; top: 4px; left: 5px;
+  width: 17px; height: 17px; border-radius: 50%;
+  font-size: 0.62rem; font-weight: 900; line-height: 17px; text-align: center;
+}
+.vol-check.ok { background: #22c55e; color: #08080a; }
+.vol-check.start { background: rgba(34,197,94,0.3); color: #22c55e; }
+.vol-check.high { background: #f59e0b; color: #08080a; }
+.group-vol { font-size: 0.62rem; font-weight: 800; margin-top: 2px; }
+.group-vol.ok { color: #22c55e; }
+.group-vol.start { color: rgba(34,197,94,0.75); }
+.group-vol.high { color: #f59e0b; }
+
+.vol-legend { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; font-size: 0.64rem; color: var(--muted); margin-top: 10px; }
+.vol-legend span { display: flex; align-items: center; gap: 4px; }
+.vol-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.vol-dot.start { background: rgba(34,197,94,0.45); }
+.vol-dot.ok { background: #22c55e; }
+.vol-dot.high { background: #f59e0b; }
+
+/* la stessa lettura sulla figura anatomica */
+.bm-muscle.load-start { fill: rgba(34,197,94,0.35); stroke: rgba(34,197,94,0.5); }
+.bm-muscle.load-ok { fill: #22c55e; stroke: #22c55e; }
+.bm-muscle.load-high { fill: #f59e0b; stroke: #f59e0b; }
+
+/* ======= Selezione multipla e azioni di massa ======= */
+.plan-head-tools { display: flex; gap: 6px; flex-shrink: 0; }
+.bulk-bar { display: flex; gap: 6px; margin-bottom: 10px; }
+.bulk-btn { flex: 1; background: #1a1a24; border: 1px solid var(--border); color: var(--text); padding: 9px 6px; border-radius: 8px; font-size: 0.74rem; font-weight: 800; cursor: pointer; }
+.bulk-btn.danger { background: var(--primary-glow); border-color: #ef4444; color: #fff; }
+.bulk-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.plan-bulk-actions { display: flex; gap: 6px; margin-top: 10px; }
+.plan-bulk-actions .plan-tool-btn { flex: 1; }
+.plan-tool-btn.danger { color: var(--accent); border-color: var(--accent); }
+.plan-check { flex-shrink: 0; width: 26px; height: 26px; border-radius: 6px; background: #1a1a24; border: 1px solid var(--border); color: transparent; font-weight: 900; font-size: 0.85rem; cursor: pointer; margin-top: 2px; display: none; }
+body.select-mode .plan-check { display: block; }
+.plan-check.on { background: var(--primary); border-color: var(--primary); color: #fff; }
+body.select-mode .plan-card-actions, body.select-mode .reorder-arrows { display: none; }
+.plan-card.picked { border-color: var(--primary); }
+
+/* ======= Suggerimenti ======= */
+.sugg-row { display: flex; align-items: center; gap: 8px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+.sugg-row:last-child { border-bottom: none; }
+.sugg-main { flex: 1; min-width: 0; }
+.sugg-name { font-weight: 700; font-size: 0.86rem; }
+.sugg-meta { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+.sugg-more { width: 100%; margin-top: 10px; background: transparent; border: 1px dashed var(--border); color: var(--muted); padding: 9px; border-radius: 8px; font-size: 0.74rem; font-weight: 800; cursor: pointer; }
+
+/* ======= Swipe: sfondo che si rivela sotto la riga ======= */
+.swipe-host { position: relative; overflow: hidden; border-radius: 10px; }
+.swipe-bg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; font-weight: 900; font-size: 0.8rem; border-radius: 10px; }
+.swipe-bg .sw-add { color: var(--success); }
+.swipe-bg .sw-del { color: #fff; }
+.swipe-host.to-left .swipe-bg { background: rgba(239,68,68,0.9); }
+.swipe-host.to-right .swipe-bg { background: rgba(34,197,94,0.18); }
+.swipe-fg { position: relative; background: #0d0d12; transition: transform .18s ease; will-change: transform; touch-action: pan-y; }
+.swipe-hint { font-size: 0.66rem; color: var(--muted); text-align: center; margin: 6px 0 2px; }
+
+/* ======= Snackbar con Annulla ======= */
+.snackbar {
+  position: fixed; left: 50%; transform: translate(-50%, 140%);
+  bottom: calc(76px + env(safe-area-inset-bottom)); z-index: 95;
+  width: calc(100% - 28px); max-width: 452px;
+  background: #1a1a24; border: 1px solid var(--border); border-radius: 10px;
+  padding: 12px 14px; display: flex; align-items: center; gap: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5); transition: transform .25s ease;
+}
+.snackbar.show { transform: translate(-50%, 0); }
+.snackbar-text { flex: 1; font-size: 0.8rem; min-width: 0; }
+.snackbar-btn { flex-shrink: 0; background: transparent; border: none; color: var(--primary); font-weight: 900; font-size: 0.8rem; text-transform: uppercase; cursor: pointer; padding: 4px 6px; }
+
+/* ======= Giorno di riposo / esercizio saltato ======= */
+.rest-toggle { width: 100%; margin-top: 10px; background: #1a1a24; border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: 8px; font-weight: 800; font-size: 0.78rem; cursor: pointer; }
+.rest-toggle.on { background: rgba(34,211,238,0.12); border-color: #22d3ee; color: #22d3ee; }
+.rest-banner { text-align: center; padding: 22px 12px; }
+.rest-banner .rest-emoji { font-size: 2.2rem; }
+.rest-banner .rest-text { font-weight: 800; margin-top: 6px; }
+.rest-banner .rest-sub { font-size: 0.76rem; color: var(--muted); margin-top: 4px; }
+.workout-item.skipped { opacity: 0.45; }
+.workout-item.skipped .ex-name { text-decoration: line-through; }
+.skip-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); font-size: 0.68rem; font-weight: 800; padding: 5px 9px; border-radius: 6px; cursor: pointer; white-space: nowrap; }
+.skip-btn.on { border-color: var(--accent); color: var(--accent); }
+
+/* ======= Settimane salvate ======= */
+.week-card { display: flex; align-items: center; gap: 10px; background: #16161f; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+.week-main { flex: 1; min-width: 0; }
+.week-name { font-weight: 800; font-size: 0.85rem; }
+.week-meta { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+
 /* ======= Carosello orizzontale (meno scroll verticale) ======= */
 .carousel { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 6px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .carousel::-webkit-scrollbar { display: none; }
@@ -247,6 +362,8 @@ body.reorder-mode .plan-card { border-color: var(--primary); }
 .group-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
 .group-card { background: #0d0d12; border: 1px solid var(--border); border-radius: 10px; padding: 12px 6px; text-align: center; cursor: pointer; transition: transform .1s ease; }
 .group-card:active { transform: scale(0.96); }
+.group-detail-btn { position: absolute; top: 4px; right: 6px; background: transparent; border: none; color: var(--muted); font-size: 1rem; font-weight: 900; cursor: pointer; padding: 2px 5px; line-height: 1; }
+.group-card { position: relative; }
 .group-card.selected { border-color: var(--primary); background: rgba(249,115,22,0.1); box-shadow: 0 0 0 1px var(--primary) inset; }
 .group-emoji { font-size: 1.6rem; }
 .group-label { font-size: 0.76rem; font-weight: 800; margin-top: 4px; text-transform: uppercase; }
@@ -488,6 +605,7 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
         <button class="plan-icon-btn" onclick="renameDayTitle()" title="Rinomina scheda" aria-label="Rinomina">✎</button>
       </div>
       <div class="group-day-current" id="group-day-current"></div>
+      <button class="rest-toggle" id="rest-toggle-btn" onclick="toggleRestDay()">😴 Segna come giorno di riposo</button>
     </div>
 
     <!-- PASSO 2: gruppi muscolari -->
@@ -496,6 +614,11 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
       <div class="section-hint">Tocca uno o piu gruppi: la figura mostra i muscoli coinvolti.</div>
       <div class="body-map-wrap" id="body-map"></div>
       <div class="group-grid" id="group-grid"></div>
+      <div class="vol-legend">
+        <span><i class="vol-dot start"></i> avviato</span>
+        <span><i class="vol-dot ok"></i> volume giusto</span>
+        <span><i class="vol-dot high"></i> carico alto</span>
+      </div>
       <button class="plan-tool-btn" style="width:100%;margin-top:10px;" onclick="clearGroupSelection()">Azzera selezione</button>
     </div>
 
@@ -503,6 +626,13 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
       <div class="step-head"><span class="step-num">3</span><span class="step-label">Schede pronte per questa scelta</span></div>
       <div class="carousel" id="group-templates"></div>
       <div class="carousel-hint">scorri di lato per vederle tutte →</div>
+    </div>
+
+    <!-- PASSO 3: esercizi SUGGERITI dai gruppi accesi (proposte, non scelte) -->
+    <div class="card" id="suggested-card" style="display:none;">
+      <div class="step-head"><span class="step-num">3</span><span class="step-label">Esercizi suggeriti</span></div>
+      <div class="section-hint" id="suggested-hint"></div>
+      <div id="suggested-list"></div>
     </div>
 
     <!-- PASSO 3b: aggiunta manuale (nascosta finche non serve) -->
@@ -567,19 +697,34 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
           <div class="step-head"><span class="step-num">4</span><span class="step-label">Il tuo piano</span></div>
           <div class="plan-summary" id="plan-summary"></div>
         </div>
-        <button class="plan-tool-btn" id="reorder-toggle-btn" onclick="toggleReorderMode()">⇅ Riordina</button>
+        <div class="plan-head-tools">
+          <button class="plan-tool-btn" id="select-toggle-btn" onclick="toggleSelectMode()">☑ Seleziona</button>
+          <button class="plan-tool-btn" id="reorder-toggle-btn" onclick="toggleReorderMode()">⇅ Riordina</button>
+        </div>
       </div>
+
+      <div class="bulk-bar" id="bulk-bar" style="display:none;">
+        <button class="bulk-btn" onclick="selectAllPlan()" id="bulk-all-btn">Seleziona tutti</button>
+        <button class="bulk-btn danger" onclick="deleteSelected()" id="bulk-del-btn">Elimina (0)</button>
+      </div>
+
       <div id="piano-list"></div>
+
+      <div class="plan-bulk-actions">
+        <button class="plan-tool-btn" onclick="copyDayTo()">⧉ Copia in un altro giorno</button>
+        <button class="plan-tool-btn danger" onclick="clearDay()">🗑 Svuota giorno</button>
+      </div>
 
       <div class="coach-box" id="coach-box">
         <div class="coach-head">
-          <span class="coach-badge">🧠 COACH</span>
-          <span class="coach-title" id="coach-title">Prossimo esercizio consigliato</span>
+          <span class="coach-badge">💡 SUGGERITI</span>
+          <span class="coach-title" id="coach-title">Proposte per proseguire</span>
         </div>
         <div id="coach-suggestions"></div>
       </div>
 
       <button class="btn-archive" onclick="openTemplatePicker()">📋 Tutte le Schede Pronte</button>
+      <button class="btn-archive" onclick="saveWeekSnapshot()">💾 Salva questa settimana</button>
       <button class="btn-start-workout" onclick="startWorkoutFromPlan()">▶ INIZIA ALLENAMENTO</button>
     </div>
   </section>
@@ -692,6 +837,13 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
       </div>
       <div id="history-list"></div>
     </div>
+
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div style="font-weight:800; font-size:0.9rem; text-transform:uppercase;">Settimane Salvate</div>
+      </div>
+      <div id="weeks-list"></div>
+    </div>
   </section>
 </div>
 
@@ -701,6 +853,11 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
     <button class="nav-btn" data-tab="allenamento" onclick="switchTab('allenamento')"><span class="nav-icon">🏋️</span><span>Allenamento</span></button>
     <button class="nav-btn" data-tab="storico" onclick="switchTab('storico')"><span class="nav-icon">📖</span><span>Storico</span></button>
   </nav>
+</div>
+
+<div class="snackbar" id="snackbar">
+  <div class="snackbar-text" id="snackbar-text"></div>
+  <button class="snackbar-btn" id="snackbar-btn">Annulla</button>
 </div>
 
 <div class="group-sheet hidden" id="group-sheet">
@@ -1195,6 +1352,8 @@ function normalizeExerciseRecord(e) {
   e.rest = rest;
   e.note = typeof e.note === 'string' ? e.note : '';
   e.superset = !!e.superset;
+  e.skipped = !!e.skipped;
+  e.addedBy = e.addedBy === 'group' ? 'group' : 'manual';
   delete e.wasBerserk; /* ora tracciato per singola serie in completedSets[i].wasBerserk */
   delete e.done;
   return e;
@@ -1215,6 +1374,7 @@ function normalizeHistoryEntry(session) {
     day: session.day,
     date: session.date,
     berserk: !!session.berserk,
+    skipped: Number(session.skipped) || 0,
     exercises: (session.exercises || []).map(e => ({
       name: e.name,
       weight: e.weight,
@@ -1400,7 +1560,7 @@ window.switchTab = function(tab) {
   currentTab = tab;
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + tab));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
-  if (tab === 'storico') renderStorico();
+  if (tab === 'storico') { renderStorico(); renderWeeks(); }
   if (tab === 'piano') renderGruppi(); /* il Piano nasce dai gruppi: si ridisegna entrando */
   if (tab === 'allenamento') backToDayPicker(); /* prima scegli il giorno, poi la sessione */
 };
@@ -1456,6 +1616,18 @@ function renderPiano() {
   const list = data[currentDay] || [];
   const container = document.getElementById('piano-list');
   const summaryEl = document.getElementById('plan-summary');
+  syncRestToggle();
+
+  if (isRestDay(currentDay)) {
+    summaryEl.innerText = 'Riposo';
+    container.innerHTML = '<div class="rest-banner"><div class="rest-emoji">\u{1F634}</div>' +
+      '<div class="rest-text">Giorno di riposo</div>' +
+      '<div class="rest-sub">Il recupero fa parte del programma. Gli esercizi restano salvati: riattiva il giorno quando vuoi.</div></div>';
+    document.getElementById('coach-box').style.display = 'none';
+    renderSuggested();
+    syncBuildingLine(list.length);
+    return;
+  }
 
   /* Riepilogo in testa: esercizi, serie totali e durata stimata
      (tempo di lavoro approssimato + recuperi pianificati) */
@@ -1463,43 +1635,163 @@ function renderPiano() {
     summaryEl.innerText = 'Nessun esercizio';
     container.innerHTML = '<span class="muted">Nessun esercizio ancora. Scegli i gruppi al passo 2 e aggiungi dal passo 3.</span>';
     renderCoach();
+    renderSuggested();
+    syncBulkBar();
     syncBuildingLine(0);
     return;
   }
   renderCoach();
+  renderSuggested();
   syncBuildingLine(list.length);
   const totalSets = list.reduce((sum, e) => sum + e.sets, 0);
   const estSeconds = list.reduce((sum, e) => sum + e.sets * (30 + e.rest), 0);
   summaryEl.innerText = `${list.length} esercizi • ${totalSets} serie • ~${Math.round(estSeconds / 60)} min`;
 
   container.innerHTML = list.map((e, idx) => `
-    <div class="plan-card ${e.superset ? 'superset' : ''}">
-      <div class="plan-card-top">
-        <div class="reorder-arrows">
-          <button class="reorder-btn" onclick="moveExercise(${idx},-1)" ${idx === 0 ? 'disabled' : ''} aria-label="Sposta su">▲</button>
-          <button class="reorder-btn" onclick="moveExercise(${idx},1)" ${idx === list.length - 1 ? 'disabled' : ''} aria-label="Sposta giù">▼</button>
-        </div>
-        <div class="plan-order-num">${idx + 1}</div>
-        <div class="plan-card-main">
-          <div class="plan-ex-name">${escapeHtml(e.name)}</div>
-          <div class="plan-badges">
-            <span class="plan-badge reps">${e.sets}×${e.reps}</span>
-            <span class="plan-badge">${e.weight} kg</span>
-            <span class="plan-badge rest">⏱ ${e.rest} sec</span>
-            ${e.superset ? '<span class="plan-badge superset-tag">⛓ Superset</span>' : ''}
+    <div class="swipe-host" data-plan-idx="${idx}">
+      <div class="swipe-bg"><span class="sw-add"></span><span class="sw-del">Elimina \u2715</span></div>
+      <div class="swipe-fg plan-card ${e.superset ? 'superset' : ''} ${selectedIdx.indexOf(idx) !== -1 ? 'picked' : ''}">
+        <div class="plan-card-top">
+          <button class="plan-check ${selectedIdx.indexOf(idx) !== -1 ? 'on' : ''}" onclick="togglePick(${idx})" aria-label="Seleziona">✓</button>
+          <div class="reorder-arrows">
+            <button class="reorder-btn" onclick="moveExercise(${idx},-1)" ${idx === 0 ? 'disabled' : ''} aria-label="Sposta su">\u25B2</button>
+            <button class="reorder-btn" onclick="moveExercise(${idx},1)" ${idx === list.length - 1 ? 'disabled' : ''} aria-label="Sposta giu">\u25BC</button>
           </div>
-          ${e.note ? `<div class="plan-note">📝 ${escapeHtml(e.note)}</div>` : ''}
-        </div>
-        <div class="plan-card-actions">
-          <button class="plan-icon-btn" onclick="toggleSuperset(${idx})" title="Superset col precedente" aria-label="Superset">⛓</button>
-          <button class="plan-icon-btn" onclick="duplicateExercise(${idx})" title="Duplica" aria-label="Duplica">⧉</button>
-          <button class="plan-icon-btn" onclick="startEditExercise(${idx})" title="Modifica" aria-label="Modifica">✎</button>
-          <button class="plan-icon-btn danger" onclick="deletePianoExercise(${idx})" title="Elimina" aria-label="Elimina">✕</button>
+          <div class="plan-order-num">${idx + 1}</div>
+          <div class="plan-card-main">
+            <div class="plan-ex-name">${escapeHtml(e.name)}</div>
+            <div class="plan-badges">
+              <span class="plan-badge reps">${e.sets}\u00D7${e.reps}</span>
+              <span class="plan-badge">${e.weight} kg</span>
+              <span class="plan-badge rest">\u23F1 ${e.rest} sec</span>
+              ${e.superset ? '<span class="plan-badge superset-tag">\u26D3 Superset</span>' : ''}
+            </div>
+            ${e.note ? `<div class="plan-note">\u{1F4DD} ${escapeHtml(e.note)}</div>` : ''}
+          </div>
+          <div class="plan-card-actions">
+            <button class="plan-icon-btn" onclick="toggleSuperset(${idx})" title="Superset col precedente" aria-label="Superset">\u26D3</button>
+            <button class="plan-icon-btn" onclick="duplicateExercise(${idx})" title="Duplica" aria-label="Duplica">\u29C9</button>
+            <button class="plan-icon-btn" onclick="startEditExercise(${idx})" title="Modifica" aria-label="Modifica">\u270E</button>
+            <button class="plan-icon-btn danger" onclick="deletePianoExercise(${idx})" title="Elimina" aria-label="Elimina">\u2715</button>
+          </div>
         </div>
       </div>
     </div>
-  `).join('');
+  `).join('') + '<div class="swipe-hint">\u2190 scorri una riga a sinistra per eliminarla</div>';
+
+  if (!selectMode) {
+    container.querySelectorAll('.swipe-host[data-plan-idx]').forEach(host => {
+      const i = Number(host.dataset.planIdx);
+      attachSwipe(host, { onLeft: () => deletePianoExercise(i) });
+    });
+  }
+  syncBulkBar();
 }
+
+/* ============================================================
+   SELEZIONE MULTIPLA E AZIONI DI MASSA
+   Cancellare venti esercizi uno swipe alla volta e' sfiancante:
+   qui si spuntano e si eliminano in un colpo solo, con Annulla.
+   ============================================================ */
+let selectMode = false;
+let selectedIdx = [];
+
+window.toggleSelectMode = function() {
+  selectMode = !selectMode;
+  selectedIdx = [];
+  document.body.classList.toggle('select-mode', selectMode);
+  document.getElementById('bulk-bar').style.display = selectMode ? 'flex' : 'none';
+  document.getElementById('select-toggle-btn').classList.toggle('active', selectMode);
+  document.getElementById('select-toggle-btn').innerText = selectMode ? '\u2715 Fine' : '\u2611 Seleziona';
+  if (selectMode && document.body.classList.contains('reorder-mode')) toggleReorderMode();
+  renderPiano();
+};
+
+window.togglePick = function(idx) {
+  const i = selectedIdx.indexOf(idx);
+  if (i === -1) selectedIdx.push(idx);
+  else selectedIdx.splice(i, 1);
+  renderPiano();
+};
+
+window.selectAllPlan = function() {
+  const n = (loadData()[currentDay] || []).length;
+  selectedIdx = selectedIdx.length === n ? [] : Array.from({ length: n }, (_, i) => i);
+  renderPiano();
+};
+
+function syncBulkBar() {
+  const delBtn = document.getElementById('bulk-del-btn');
+  const allBtn = document.getElementById('bulk-all-btn');
+  if (!delBtn) return;
+  const n = (loadData()[currentDay] || []).length;
+  delBtn.innerText = 'Elimina (' + selectedIdx.length + ')';
+  delBtn.disabled = selectedIdx.length === 0;
+  allBtn.innerText = (selectedIdx.length === n && n > 0) ? 'Deseleziona tutti' : 'Seleziona tutti';
+}
+
+window.deleteSelected = function() {
+  if (selectedIdx.length === 0) return;
+  const data = loadData();
+  const backup = JSON.parse(JSON.stringify(data[currentDay]));
+  const n = selectedIdx.length;
+  data[currentDay] = data[currentDay].filter((_, i) => selectedIdx.indexOf(i) === -1);
+  saveData(data);
+  selectedIdx = [];
+  armedSet = null;
+  renderPiano(); renderAllenamento(); renderGruppi(); renderSuggested();
+  showUndo(n + ' esercizi eliminati', () => {
+    const d2 = loadData();
+    d2[currentDay] = backup;
+    saveData(d2);
+    renderPiano(); renderAllenamento(); renderGruppi(); renderSuggested();
+  });
+};
+
+window.clearDay = function() {
+  const data = loadData();
+  const backup = JSON.parse(JSON.stringify(data[currentDay] || []));
+  if (backup.length === 0) { alert('Questo giorno e gia vuoto.'); return; }
+  data[currentDay] = [];
+  saveData(data);
+  armedSet = null;
+  renderPiano(); renderAllenamento(); renderGruppi(); renderSuggested();
+  showUndo(getDayTitle(currentDay) + ' svuotato (' + backup.length + ' esercizi)', () => {
+    const d2 = loadData();
+    d2[currentDay] = backup;
+    saveData(d2);
+    renderPiano(); renderAllenamento(); renderGruppi(); renderSuggested();
+  }, 8000);
+};
+
+/* Copiare un giorno evita di ricostruire la stessa scheda sette volte */
+window.copyDayTo = function() {
+  const data = loadData();
+  const src = data[currentDay] || [];
+  if (src.length === 0) { alert('Non c e niente da copiare in questo giorno.'); return; }
+  const scelta = prompt('In quale giorno copio ' + getDayTitle(currentDay) + '?\n' +
+    DAYS.map((d, i) => (i + 1) + ') ' + d).join('\n'), '');
+  if (scelta === null) return;
+  const idx = parseInt(scelta, 10) - 1;
+  const target = DAYS[idx];
+  if (!target) { alert('Scrivi un numero da 1 a 7.'); return; }
+  if (target === currentDay) { alert('E il giorno da cui stai copiando.'); return; }
+
+  const backup = JSON.parse(JSON.stringify(data[target] || []));
+  if (backup.length > 0 && !confirm(getDayTitle(target) + ' ha gia ' + backup.length + ' esercizi. Li sostituisco?')) return;
+
+  data[target] = JSON.parse(JSON.stringify(src)).map(e => normalizeExerciseRecord(
+    Object.assign({}, e, { completedSets: [], skipped: false })
+  ));
+  saveData(data);
+  renderPiano(); renderAllenamento();
+  showUndo('Copiato in ' + getDayTitle(target), () => {
+    const d2 = loadData();
+    d2[target] = backup;
+    saveData(d2);
+    renderPiano(); renderAllenamento();
+  });
+};
 
 /* Riordino: frecce su/giù (più affidabili del drag su mobile sudato) */
 window.toggleReorderMode = function() {
@@ -1632,12 +1924,21 @@ window.cancelEditExercise = function() {
 
 window.deletePianoExercise = function(idx) {
   const data = loadData();
+  const removed = data[currentDay][idx];
+  if (!removed) return;
   data[currentDay].splice(idx, 1);
   saveData(data);
   armedSet = null;
   if (editingExerciseIdx === idx) window.cancelEditExercise();
   renderPiano();
   renderAllenamento();
+  renderGruppi();
+  showUndo(removed.name.replace(/^[^\s]+\s/, '') + ' eliminato', () => {
+    const d2 = loadData();
+    d2[currentDay].splice(idx, 0, removed);
+    saveData(d2);
+    renderPiano(); renderAllenamento(); renderGruppi();
+  });
 };
 
 /* ============================================================
@@ -1651,13 +1952,14 @@ function renderAllenamento() {
     container.innerHTML = '<span class="muted">Nessun esercizio pianificato. Aggiungine uno dal tab Piano.</span>';
   } else {
     container.innerHTML = list.map((e, idx) => `
-      <div class="workout-item">
+      <div class="workout-item ${e.skipped ? 'skipped' : ''}">
         <div class="workout-item-head">
           <div>
             <div class="ex-name">${e.superset ? '<span class="ss-tag">⛓</span> ' : ''}${escapeHtml(e.name)}</div>
             <div class="ex-data">${e.sets} serie × ${e.reps} reps • ${e.weight} kg • ⏱ ${e.rest}s</div>
             ${e.note ? `<div class="plan-note">📝 ${escapeHtml(e.note)}</div>` : ''}
           </div>
+          <button class="skip-btn ${e.skipped ? 'on' : ''}" onclick="toggleSkipExercise(${idx})">${e.skipped ? '↺ Riprendi' : '⏭ Salta'}</button>
         </div>
         <div class="set-rows">
           ${e.completedSets.map((s, si) => `
@@ -1675,13 +1977,34 @@ function renderAllenamento() {
       </div>
     `).join('');
   }
-  const totalSets = list.reduce((s, e) => s + e.sets, 0);
-  const doneSets = list.reduce((s, e) => s + e.completedSets.filter(x => x.done).length, 0);
+  const active = list.filter(e => !e.skipped);
+  const totalSets = active.reduce((s, e) => s + e.sets, 0);
+  const doneSets = active.reduce((s, e) => s + e.completedSets.filter(x => x.done).length, 0);
+  const skipped = list.length - active.length;
   const prog = document.getElementById('session-progress');
-  if (prog) prog.innerText = totalSets ? doneSets + ' / ' + totalSets + ' serie completate' : '';
+  if (prog) prog.innerText = (totalSets ? doneSets + ' / ' + totalSets + ' serie completate' : '') + (skipped ? ' \u2022 ' + skipped + ' saltati' : '');
 
   refreshDropButtonState();
 }
+
+/* Saltare un esercizio non lo cancella: resta in scheda per le volte
+   successive, ma esce dal conteggio della sessione di oggi. */
+window.toggleSkipExercise = function(idx) {
+  const data = loadData();
+  const ex = data[currentDay][idx];
+  if (!ex) return;
+  ex.skipped = !ex.skipped;
+  saveData(data);
+  renderAllenamento();
+  if (ex.skipped) {
+    showUndo(ex.name.replace(/^[^\s]+\s/, '') + ' saltato per oggi', () => {
+      const d2 = loadData();
+      d2[currentDay][idx].skipped = false;
+      saveData(d2);
+      renderAllenamento();
+    });
+  }
+};
 
 window.updateSetField = function(exIdx, setIdx, field, value) {
   const data = loadData();
@@ -1775,17 +2098,20 @@ function renderWorkoutDayPicker() {
     const totalSets = list.reduce((s, e) => s + e.sets, 0);
     const doneSets = list.reduce((s, e) => s + e.completedSets.filter(x => x.done).length, 0);
     const pct = totalSets ? Math.round((doneSets / totalSets) * 100) : 0;
-    const empty = list.length === 0;
-    const meta = empty
-      ? 'Nessun esercizio \u2014 costruiscilo nel Piano'
-      : list.length + ' esercizi \u2022 ' + totalSets + ' serie' + (doneSets ? ' \u2022 ' + doneSets + ' gia fatte' : '');
+    const rest = isRestDay(d);
+    const empty = rest || list.length === 0;
+    const meta = rest
+      ? '\u{1F634} Riposo'
+      : (list.length === 0
+          ? 'Nessun esercizio \u2014 costruiscilo nel Piano'
+          : list.length + ' esercizi \u2022 ' + totalSets + ' serie' + (doneSets ? ' \u2022 ' + doneSets + ' gia fatte' : ''));
 
     return '<button class="wday-card ' + (empty ? 'empty' : '') + (i === todayIdx ? ' today' : '') + '" ' +
       'onclick="openWorkoutDay(\'' + d + '\')">' +
       '<div class="wday-main">' +
         '<div class="wday-name">' + escapeHtml(getDayTitle(d)) + (getDayTitle(d) !== d ? ' <span class="wday-meta">(' + d + ')</span>' : '') + '</div>' +
         '<div class="wday-meta">' + meta + '</div>' +
-        (totalSets ? '<div class="wday-progress"><span style="width:' + pct + '%"></span></div>' : '') +
+        (!rest && totalSets ? '<div class="wday-progress"><span style="width:' + pct + '%"></span></div>' : '') +
       '</div>' +
       (i === todayIdx ? '<span class="wday-badge">OGGI</span>' : '') +
       '<span class="wday-go">\u203A</span>' +
@@ -1795,6 +2121,9 @@ function renderWorkoutDayPicker() {
 
 window.openWorkoutDay = function(day) {
   const data = loadData();
+  if (isRestDay(day)) {
+    if (!confirm(getDayTitle(day) + ' e segnato come riposo. Vuoi allenarti lo stesso?')) return;
+  }
   if ((data[day] || []).length === 0) {
     alert('Per ' + getDayTitle(day) + ' non hai ancora esercizi. Costruisci la scheda nel tab Piano.');
     return;
@@ -2427,6 +2756,210 @@ function loadSpotifyPlayer(id, kind) {
 }
 
 /* ============================================================
+   SWIPE, ANNULLA, RIPOSO, SETTIMANE
+   ============================================================ */
+
+/* Swipe con pointer events: funziona con dito e mouse, e non entra in
+   conflitto con lo scroll verticale (touch-action: pan-y sull'elemento).
+   NOTA UX: la ricerca (NN/g) avverte che gli utenti si aspettano lo swipe
+   per azioni DISTRUTTIVE; lo swipe-per-aggiungere e' meno convenzionale.
+   Per questo i pulsanti visibili + e x restano sempre al loro posto. */
+function attachSwipe(host, opts) {
+  const fg = host.querySelector('.swipe-fg');
+  if (!fg) return;
+  let startX = 0, startY = 0, dx = 0, dragging = false, decided = false;
+  const THRESHOLD = 70;
+
+  const down = (e) => {
+    dragging = true; decided = false; dx = 0;
+    startX = e.clientX; startY = e.clientY;
+    fg.style.transition = 'none';
+  };
+  const move = (e) => {
+    if (!dragging) return;
+    const mx = e.clientX - startX;
+    const my = e.clientY - startY;
+    if (!decided) {
+      if (Math.abs(my) > Math.abs(mx)) { dragging = false; return; } /* sta scorrendo la pagina */
+      if (Math.abs(mx) < 6) return;
+      decided = true;
+    }
+    dx = mx;
+    if (dx < 0 && !opts.onLeft) dx = 0;
+    if (dx > 0 && !opts.onRight) dx = 0;
+    host.classList.toggle('to-left', dx < 0);
+    host.classList.toggle('to-right', dx > 0);
+    fg.style.transform = 'translateX(' + dx + 'px)';
+  };
+  const up = () => {
+    if (!dragging) return;
+    dragging = false;
+    fg.style.transition = '';
+    const fired = dx;
+    fg.style.transform = '';
+    host.classList.remove('to-left', 'to-right');
+    if (fired <= -THRESHOLD && opts.onLeft) opts.onLeft();
+    else if (fired >= THRESHOLD && opts.onRight) opts.onRight();
+    dx = 0;
+  };
+
+  fg.addEventListener('pointerdown', down);
+  fg.addEventListener('pointermove', move);
+  fg.addEventListener('pointerup', up);
+  fg.addEventListener('pointercancel', up);
+  fg.addEventListener('pointerleave', up);
+}
+
+/* Snackbar con Annulla: per le cancellazioni frequenti la ricerca preferisce
+   l'annulla alla finestra di conferma, che rallenta ogni singola operazione. */
+let snackTimer = null;
+let lastUndo = null;
+
+window.showUndo = function(message, undoFn, ms) {
+  const bar = document.getElementById('snackbar');
+  const btn = document.getElementById('snackbar-btn');
+  document.getElementById('snackbar-text').innerText = message;
+  lastUndo = undoFn || null;
+  btn.style.display = undoFn ? 'block' : 'none';
+  bar.classList.add('show');
+  clearTimeout(snackTimer);
+  snackTimer = setTimeout(() => { bar.classList.remove('show'); lastUndo = null; }, ms || 5000);
+};
+
+window.hideSnackbar = function() {
+  clearTimeout(snackTimer);
+  document.getElementById('snackbar').classList.remove('show');
+  lastUndo = null;
+};
+
+document.getElementById('snackbar-btn').addEventListener('click', () => {
+  if (lastUndo) { const f = lastUndo; lastUndo = null; f(); }
+  hideSnackbar();
+});
+
+/* ---- Giorni di riposo ---- */
+const restKey = () => 'coach_plus_rest_' + currentMode;
+const loadRestDays = () => JSON.parse(localStorage.getItem(restKey()) || '[]');
+const saveRestDays = (d) => localStorage.setItem(restKey(), JSON.stringify(d));
+window.isRestDay = function(day) { return loadRestDays().indexOf(day) !== -1; };
+
+window.toggleRestDay = function() {
+  const days = loadRestDays();
+  const i = days.indexOf(currentDay);
+  if (i === -1) {
+    const n = (loadData()[currentDay] || []).length;
+    if (n > 0 && !confirm('Su ' + getDayTitle(currentDay) + ' hai ' + n + ' esercizi. Segnarlo come riposo li lascia salvati ma nascosti. Continuare?')) return;
+    days.push(currentDay);
+  } else {
+    days.splice(i, 1);
+  }
+  saveRestDays(days);
+  renderPiano();
+  renderGruppi();
+  renderAllenamento();
+};
+
+function syncRestToggle() {
+  const btn = document.getElementById('rest-toggle-btn');
+  if (!btn) return;
+  const on = isRestDay(currentDay);
+  btn.classList.toggle('on', on);
+  btn.innerText = on ? '\u{1F634} Giorno di riposo \u2014 tocca per riattivarlo' : '\u{1F634} Segna come giorno di riposo';
+}
+
+/* ---- Settimane salvate: il piano si archivia con la sua data ---- */
+const weeksKey = () => 'coach_plus_weeks_' + currentMode;
+const loadWeeks = () => JSON.parse(localStorage.getItem(weeksKey()) || '[]');
+const saveWeeks = (w) => localStorage.setItem(weeksKey(), JSON.stringify(w));
+
+function isoWeekLabel(d) {
+  const date = new Date(d.getTime());
+  date.setHours(0, 0, 0, 0);
+  date.setDate(date.getDate() + 3 - ((date.getDay() + 6) % 7));
+  const week1 = new Date(date.getFullYear(), 0, 4);
+  const n = 1 + Math.round(((date - week1) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7);
+  return date.getFullYear() + '-S' + String(n).padStart(2, '0');
+}
+
+window.saveWeekSnapshot = function() {
+  const data = loadData();
+  const total = DAYS.reduce((s, d) => s + (data[d] || []).length, 0);
+  if (total === 0) { alert('Il programma e vuoto: aggiungi almeno un esercizio prima di salvarlo.'); return; }
+
+  const now = new Date();
+  const weeks = loadWeeks();
+  const label = isoWeekLabel(now);
+  const entry = {
+    id: String(now.getTime()),
+    week: label,
+    date: formatNow(),
+    titles: loadTitles(),
+    rest: loadRestDays(),
+    days: JSON.parse(JSON.stringify(data)),
+    totalExercises: total
+  };
+  const existing = weeks.findIndex(w => w.week === label);
+  if (existing !== -1) {
+    if (!confirm('Hai gia salvato la settimana ' + label + '. Sovrascriverla?')) return;
+    weeks[existing] = entry;
+  } else {
+    weeks.unshift(entry);
+  }
+  saveWeeks(weeks);
+  showUndo('Programma della settimana ' + label + ' salvato.');
+  renderWeeks();
+};
+
+window.restoreWeek = function(id) {
+  const w = loadWeeks().find(x => x.id === id);
+  if (!w) return;
+  if (!confirm('Ripristinare il programma del ' + w.date + '? Il piano attuale verra sostituito.')) return;
+  saveData(w.days);
+  if (w.titles) saveTitles(w.titles);
+  if (w.rest) saveRestDays(w.rest);
+  armedSet = null;
+  renderDayBar(); renderPiano(); renderGruppi(); renderAllenamento();
+  switchTab('piano');
+  showUndo('Programma del ' + w.date + ' ripristinato.');
+};
+
+window.deleteWeek = function(id) {
+  const weeks = loadWeeks();
+  const i = weeks.findIndex(x => x.id === id);
+  if (i === -1) return;
+  const removed = weeks.splice(i, 1)[0];
+  saveWeeks(weeks);
+  renderWeeks();
+  showUndo('Settimana eliminata.', () => {
+    const cur = loadWeeks();
+    cur.splice(i, 0, removed);
+    saveWeeks(cur);
+    renderWeeks();
+  });
+};
+
+function renderWeeks() {
+  const c = document.getElementById('weeks-list');
+  if (!c) return;
+  const weeks = loadWeeks();
+  if (!weeks.length) {
+    c.innerHTML = '<span class="muted">Nessun programma salvato. Usa "Salva questa settimana" nel Piano.</span>';
+    return;
+  }
+  c.innerHTML = weeks.map(w => {
+    const giorni = DAYS.filter(d => (w.days[d] || []).length > 0).length;
+    return '<div class="week-card">' +
+      '<div class="week-main">' +
+        '<div class="week-name">Settimana ' + escapeHtml(w.week) + '</div>' +
+        '<div class="week-meta">' + escapeHtml(w.date) + ' \u2022 ' + giorni + ' giorni \u2022 ' + w.totalExercises + ' esercizi</div>' +
+      '</div>' +
+      '<button class="track-select-btn" onclick="restoreWeek(\'' + w.id + '\')">Ripristina</button>' +
+      '<button class="del-btn" onclick="deleteWeek(\'' + w.id + '\')">\u2715</button>' +
+    '</div>';
+  }).join('');
+}
+
+/* ============================================================
    SCHERMATA GRUPPI MUSCOLARI
    ============================================================ */
 let selectedGroups = [];
@@ -2440,6 +2973,80 @@ window.toggleGroup = function(groupId) {
 };
 
 let sheetGroup = null;
+
+/* Accendere un gruppo NON aggiunge niente al piano: mostra le sue proposte.
+   La scelta resta sempre dell'utente, un esercizio alla volta. */
+window.toggleGroupInPlan = function(groupId) {
+  const i = selectedGroups.indexOf(groupId);
+  if (i === -1) selectedGroups.push(groupId);
+  else selectedGroups.splice(i, 1);
+  renderGruppi();
+  renderSuggested();
+};
+
+/* Quante proposte mostrare per gruppo prima di "vedi tutti" */
+let suggestedExpanded = false;
+const SUGGESTED_PER_GROUP = 4;
+
+window.toggleSuggestedExpanded = function() {
+  suggestedExpanded = !suggestedExpanded;
+  renderSuggested();
+};
+
+function renderSuggested() {
+  const card = document.getElementById('suggested-card');
+  const listEl = document.getElementById('suggested-list');
+  if (!card) return;
+
+  if (selectedGroups.length === 0 || isRestDay(currentDay)) {
+    card.style.display = 'none';
+    return;
+  }
+  card.style.display = 'block';
+
+  const data = loadData();
+  const present = new Set((data[currentDay] || []).map(e => e.name));
+
+  /* multiarticolari prima, e chi e' gia in scheda va in fondo */
+  let items = [];
+  selectedGroups.forEach(gid => {
+    const ofGroup = EXERCISE_LIBRARY.filter(e => e.group === gid);
+    if (suggestedExpanded) {
+      items = items.concat(ofGroup.slice().sort((a, b) => (a.type === b.type ? 0 : (a.type === 'compound' ? -1 : 1))));
+    } else {
+      /* Mix bilanciato: i multiarticolari aprono, ma ci scappa sempre almeno
+         un isolamento, altrimenti per gruppi ricchi di fondamentali (glutei,
+         schiena) le proposte sarebbero tutte pesanti. */
+      const comp = ofGroup.filter(e => e.type === 'compound');
+      const iso = ofGroup.filter(e => e.type === 'isolation');
+      const nIso = Math.min(iso.length, Math.max(1, Math.floor(SUGGESTED_PER_GROUP / 4)));
+      items = items.concat(comp.slice(0, SUGGESTED_PER_GROUP - nIso)).concat(iso.slice(0, nIso));
+    }
+  });
+  items.sort((a, b) => (present.has(a.name) ? 1 : 0) - (present.has(b.name) ? 1 : 0));
+
+  const nomi = selectedGroups.map(g => MUSCLE_GROUPS[g].label).join(', ');
+  document.getElementById('suggested-hint').innerText =
+    'Proposte per ' + nomi + '. Tocca + per metterle in scheda: nulla viene aggiunto da solo.';
+
+  listEl.innerHTML = items.map(e => {
+    const already = present.has(e.name);
+    const safe = e.name.replace(/'/g, "\\'");
+    return '<div class="sugg-row">' +
+      '<div class="sugg-main">' +
+        '<div class="sugg-name">' + escapeHtml(e.name) +
+          '<span class="lib-type ' + e.type + '">' + (e.type === 'compound' ? 'Multiart.' : 'Isolam.') + '</span></div>' +
+        '<div class="sugg-meta">consigliato ' + e.sets + '\u00D7' + e.reps + ' \u2022 ' + e.weight + ' kg \u2022 \u23F1 ' + e.rest + 's</div>' +
+      '</div>' +
+      '<button class="lib-add-btn ' + (already ? 'added' : '') + '" onclick="' +
+        (already ? 'removeExerciseByName(\'' + safe + '\')' : 'addLibraryExercise(\'' + safe + '\')') +
+        '" aria-label="' + (already ? 'Togli' : 'Aggiungi') + '">' + (already ? '\u2713' : '+') + '</button>' +
+    '</div>';
+  }).join('') +
+  '<button class="sugg-more" onclick="toggleSuggestedExpanded()">' +
+    (suggestedExpanded ? '\u2212 Mostra solo i principali' : '+ Vedi tutti gli esercizi di questi gruppi') +
+  '</button>';
+}
 
 window.openGroupSheet = function(groupId) {
   sheetGroup = groupId;
@@ -2478,7 +3085,9 @@ function renderSheetExercises() {
   document.getElementById('sheet-exercises').innerHTML = list.map((e, i) => {
     const already = present.has(e.name);
     const safe = e.name.replace(/'/g, "\\'");
-    return '<div class="lib-row">' +
+    return '<div class="swipe-host" data-sheet-idx="' + i + '" data-sheet-name="' + escapeHtml(e.name) + '">' +
+      '<div class="swipe-bg"><span class="sw-add">+ Aggiungi</span><span class="sw-del">Rimuovi \u2715</span></div>' +
+      '<div class="swipe-fg lib-row">' +
       '<div class="lib-row-top"><div class="lib-name">' + escapeHtml(e.name) +
         '<span class="lib-type ' + e.type + '">' + (e.type === 'compound' ? 'Multiart.' : 'Isolam.') + '</span></div></div>' +
       '<div class="lib-row-params">' +
@@ -2488,8 +3097,38 @@ function renderSheetExercises() {
         '<label class="mini-field"><span>Rec. s</span><input type="number" id="lp-rest-' + i + '" value="' + e.rest + '" step="15"></label>' +
         '<button class="lib-add-btn ' + (already ? 'added' : '') + '" onclick="addLibraryExercise(\'' + safe + '\', ' + i + ')" aria-label="Aggiungi">' + (already ? '\u2713' : '+') + '</button>' +
       '</div>' +
+      '</div>' +
     '</div>';
-  }).join('');
+  }).join('') + '<div class="swipe-hint">scorri a destra per aggiungere \u2192 \u2022 \u2190 a sinistra per rimuovere</div>';
+
+  document.querySelectorAll('#sheet-exercises .swipe-host').forEach(host => {
+    const i = Number(host.dataset.sheetIdx);
+    const name = host.dataset.sheetName;
+    attachSwipe(host, {
+      onRight: () => addLibraryExercise(name, i),
+      onLeft: () => removeExerciseByName(name)
+    });
+  });
+}
+
+/* Rimuove dal giorno corrente un esercizio individuato per nome */
+window.removeExerciseByName = function(name) {
+  const data = loadData();
+  const idx = (data[currentDay] || []).findIndex(e => e.name === name);
+  if (idx === -1) return;
+  const removed = data[currentDay][idx];
+  data[currentDay].splice(idx, 1);
+  saveData(data);
+  renderPiano();
+  renderAllenamento();
+  if (sheetGroup) renderSheetExercises(); else renderGruppi();
+  showUndo(name.replace(/^[^\s]+\s/, '') + ' rimosso', () => {
+    const d2 = loadData();
+    d2[currentDay].splice(idx, 0, removed);
+    saveData(d2);
+    renderPiano(); renderAllenamento();
+    if (sheetGroup) renderSheetExercises(); else renderGruppi();
+  });
 }
 
 window.clearGroupSelection = function() {
@@ -2500,8 +3139,16 @@ window.clearGroupSelection = function() {
 /* Figura anatomica disegnata in SVG: niente immagini esterne, cosi
    funziona anche offline in palestra e segue i colori del tema.
    Vista frontale a sinistra, posteriore a destra. */
-function renderBodyMap(active) {
-  const on = (g) => active.indexOf(g) !== -1 ? ' active' : '';
+function renderBodyMap(active, loads) {
+  /* Se passo i carichi settimanali, i muscoli si colorano per carico
+     (verde/ambra); altrimenti si usa la semplice evidenziazione. */
+  const on = (g) => {
+    if (loads) {
+      const lvl = volLevel((loads[g] || {}).sets || 0);
+      if (lvl) return ' active load-' + lvl;
+    }
+    return active.indexOf(g) !== -1 ? ' active' : '';
+  };
   return '<svg viewBox="0 0 240 215" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Muscoli coinvolti">' +
     /* ---------- FRONTE ---------- */
     '<ellipse class="bm-base" cx="60" cy="18" rx="11" ry="13"/>' +
@@ -2542,27 +3189,70 @@ function renderBodyMap(active) {
   '</svg>';
 }
 
+/* ============================================================
+   CARICO SETTIMANALE PER GRUPPO
+   Conta le serie programmate su tutti i giorni della settimana
+   (esclusi quelli di riposo). Soglie prese dalla letteratura:
+   sotto le 10 serie sei sotto il volume minimo utile, tra 10 e 20
+   sei nel range consigliato, oltre le 22 la fatica cresce piu' del
+   beneficio. Una serie conta 1 sul gruppo bersaglio dell'esercizio.
+   ============================================================ */
+const VOL_MIN_UTILE = 10;
+const VOL_MAX_UTILE = 22;
+
+window.weeklyVolumeByGroup = function() {
+  const data = loadData();
+  const vol = {};
+  Object.keys(MUSCLE_GROUPS).forEach(g => { vol[g] = { sets: 0, days: 0 }; });
+  DAYS.forEach(d => {
+    if (isRestDay(d)) return;
+    const visti = {};
+    (data[d] || []).forEach(e => {
+      const m = findExercise(e.name);
+      if (!m) return;
+      vol[m.group].sets += Number(e.sets) || 0;
+      if (!visti[m.group]) { vol[m.group].days += 1; visti[m.group] = true; }
+    });
+  });
+  return vol;
+};
+
+function volLevel(sets) {
+  if (sets <= 0) return null;
+  if (sets < VOL_MIN_UTILE) return 'start';
+  if (sets <= VOL_MAX_UTILE) return 'ok';
+  return 'high';
+}
+
+function volLabel(v) {
+  const lvl = volLevel(v.sets);
+  if (!lvl) return '';
+  const gg = v.days === 1 ? '1 giorno' : v.days + ' giorni';
+  if (lvl === 'high') return v.sets + ' serie \u2022 ' + gg + ' \u2014 carico alto';
+  return v.sets + ' serie \u2022 ' + gg;
+}
+
 function renderGruppi() {
   const data0 = loadData();
   syncBuildingLine((data0[currentDay] || []).length);
-  document.getElementById('body-map').innerHTML = renderBodyMap(selectedGroups);
 
-  /* Ogni card mostra quanti esercizi di quel gruppo sono gia in scheda:
-     l'informazione utile e' li, senza dover scorrere il piano. */
-  const inPlan = {};
-  (data0[currentDay] || []).forEach(e => {
-    const m = findExercise(e.name);
-    if (m) inPlan[m.group] = (inPlan[m.group] || 0) + 1;
-  });
-
+  const vol = weeklyVolumeByGroup();
+  document.getElementById('body-map').innerHTML = renderBodyMap(selectedGroups, vol);
   document.getElementById('group-grid').innerHTML = Object.keys(MUSCLE_GROUPS).map(id => {
     const g = MUSCLE_GROUPS[id];
     const n = EXERCISE_LIBRARY.filter(e => e.group === id).length;
-    const used = inPlan[id] || 0;
-    return '<div class="group-card ' + (used > 0 ? 'selected' : '') + '" onclick="openGroupSheet(\'' + id + '\')">' +
+    const acceso = selectedGroups.indexOf(id) !== -1;
+    const v = vol[id];
+    const lvl = volLevel(v.sets);
+    const check = lvl === 'high' ? '!' : '\u2713';
+    return '<div class="group-card ' + (acceso ? 'selected ' : '') + (lvl ? 'vol-' + lvl : '') + '" onclick="toggleGroupInPlan(\'' + id + '\')">' +
+      (lvl ? '<span class="vol-check ' + lvl + '">' + check + '</span>' : '') +
+      '<button class="group-detail-btn" onclick="event.stopPropagation(); openGroupSheet(\'' + id + '\')" aria-label="Apri ' + g.label + '" title="Scegli nel dettaglio">\u203A</button>' +
       '<div class="group-emoji">' + g.emoji + '</div>' +
       '<div class="group-label">' + g.label + '</div>' +
-      '<div class="group-count">' + (used > 0 ? used + ' in scheda' : n + ' esercizi') + '</div>' +
+      (lvl
+        ? '<div class="group-vol ' + lvl + '">' + volLabel(v) + '</div>'
+        : '<div class="group-count">' + n + ' esercizi</div>') +
     '</div>';
   }).join('');
 
@@ -2639,6 +3329,7 @@ window.applyTemplateFromGroups = function(templateId) {
    ============================================================ */
 function renderCoach() {
   const box = document.getElementById('coach-box');
+  box.style.display = 'block';
   const container = document.getElementById('coach-suggestions');
   const titleEl = document.getElementById('coach-title');
   const data = loadData();
@@ -2682,18 +3373,21 @@ window.endWorkout = function() {
     return;
   }
 
-  const anySetChecked = list.some(e => e.completedSets.some(s => s.done));
+  const activeList = list.filter(e => !e.skipped);
+  const anySetChecked = activeList.some(e => e.completedSets.some(s => s.done));
   if (!anySetChecked) {
     const proceed = confirm('Non hai completato nessun set. Vuoi terminare comunque la sessione?');
     if (!proceed) return;
   }
 
-  const berserkFound = list.some(e => e.completedSets.some(s => s.wasBerserk));
+  const berserkFound = activeList.some(e => e.completedSets.some(s => s.wasBerserk));
+  const skippedCount = list.length - activeList.length;
   const historyEntry = {
     day: currentDay,
     date: formatNow(),
     berserk: berserkFound,
-    exercises: list.map(e => {
+    skipped: skippedCount,
+    exercises: activeList.map(e => {
       const doneSets = e.completedSets.filter(s => s.done);
       const lastWeight = doneSets.length ? doneSets[doneSets.length - 1].weight : e.weight;
       return {
@@ -2712,6 +3406,7 @@ window.endWorkout = function() {
 
   list.forEach(e => {
     e.completedSets = e.completedSets.map(() => ({ done: false, reps: e.reps, weight: e.weight, wasBerserk: false }));
+    e.skipped = false; /* il salto vale per la sessione di oggi, non per sempre */
   });
   data[currentDay] = list;
   saveData(data);
@@ -2742,6 +3437,7 @@ function renderStorico() {
       <div class="history-date">${escapeHtml(session.day)} - ${escapeHtml(session.date)}</div>
       <div class="history-body">
         ${session.exercises.map(e => `<div>${e.doneSets}/${e.totalSets} Serie di ${escapeHtml(e.name)} @ ${e.weight} kg${e.wasBerserk ? ' 🔥' : ''}</div>`).join('')}
+        ${session.skipped ? `<div class="muted" style="margin-top:4px;">⏭ ${session.skipped} esercizi saltati</div>` : ''}
       </div>
     </div>
   `).join('');
