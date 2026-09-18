@@ -170,6 +170,16 @@ body.reorder-mode .plan-card { border-color: var(--primary); }
 }
 .btn-start-workout:active { transform: scale(0.98); }
 
+/* ======= Intestazioni a passi ======= */
+.step-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.step-num {
+  flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--primary); color: #fff; font-size: 0.72rem; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+}
+.step-label { font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; }
+.plan-tool-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
 /* ======= Figura anatomica ======= */
 .body-map-wrap { display: flex; justify-content: center; margin-bottom: 12px; }
 .body-map-wrap svg { width: 100%; max-width: 300px; height: auto; }
@@ -410,13 +420,46 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
     <div class="banner-switch-hint">tocca il nome per cambiare protocollo</div>
   </div>
 
-  <div class="day-bar-wrap" id="day-bar-wrap">
-    <div class="days-bar" id="days-container"></div>
-  </div>
+
 
   <!-- TAB: PIANO -->
   <section id="tab-piano" class="tab-panel active">
+
+    <!-- PASSO 1: giorno -->
     <div class="card">
+      <div class="step-head"><span class="step-num">1</span><span class="step-label">Giorno</span></div>
+      <div class="days-bar" id="days-container"></div>
+      <div class="day-title-row" style="margin-top:10px;">
+        <span class="day-title" id="day-title">Piano del giorno</span>
+        <button class="plan-icon-btn" onclick="renameDayTitle()" title="Rinomina scheda" aria-label="Rinomina">✎</button>
+      </div>
+      <div class="group-day-current" id="group-day-current"></div>
+    </div>
+
+    <!-- PASSO 2: gruppi muscolari -->
+    <div class="card">
+      <div class="step-head"><span class="step-num">2</span><span class="step-label">Che cosa alleni?</span></div>
+      <div class="section-hint">Tocca uno o piu gruppi: la figura mostra i muscoli coinvolti.</div>
+      <div class="body-map-wrap" id="body-map"></div>
+      <div class="group-grid" id="group-grid"></div>
+      <button class="plan-tool-btn" style="width:100%;margin-top:10px;" onclick="clearGroupSelection()">Azzera selezione</button>
+    </div>
+
+    <div class="card" id="group-templates-card" style="display:none;">
+      <div class="step-head"><span class="step-num">3</span><span class="step-label">Schede pronte per questa scelta</span></div>
+      <div id="group-templates"></div>
+    </div>
+
+    <div class="card" id="group-exercises-card" style="display:none;">
+      <div class="step-head"><span class="step-num">3</span><span class="step-label" id="group-exercises-title">Esercizi</span></div>
+      <div class="section-hint" id="group-exercises-hint"></div>
+      <div id="group-exercises"></div>
+    </div>
+  
+    <!-- PASSO 3b: aggiunta manuale (nascosta finche non serve) -->
+    <div class="card">
+      <button class="plan-tool-btn" style="width:100%;" id="manual-toggle-btn" onclick="toggleManualForm()">✏️ Aggiungi un esercizio a mano</button>
+      <div id="manual-form-wrap" style="display:none; margin-top:12px;">
       <form id="exercise-form" class="grid-form">
         <select id="exercise-select" onchange="handleSelectExercise(this.value)">
           <option value="">-- Seleziona un esercizio --</option>
@@ -465,15 +508,14 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
         <button type="submit" class="btn-main" id="form-submit-btn">+ Inserisci Esercizio</button>
         <button type="button" id="cancel-edit-btn" onclick="cancelEditExercise()">Annulla modifica</button>
       </form>
+      </div>
     </div>
 
+    <!-- PASSO 4: il piano risultante -->
     <div class="card">
       <div class="plan-head">
         <div style="min-width:0;">
-          <div class="day-title-row">
-            <span class="day-title" id="day-title">Piano del giorno</span>
-            <button class="plan-icon-btn" onclick="renameDayTitle()" title="Rinomina scheda" aria-label="Rinomina">✎</button>
-          </div>
+          <div class="step-head"><span class="step-num">4</span><span class="step-label">Il tuo piano</span></div>
           <div class="plan-summary" id="plan-summary"></div>
         </div>
         <button class="plan-tool-btn" id="reorder-toggle-btn" onclick="toggleReorderMode()">⇅ Riordina</button>
@@ -488,7 +530,7 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
         <div id="coach-suggestions"></div>
       </div>
 
-      <button class="btn-archive" onclick="openTemplatePicker()">📋 Schede Pronte</button>
+      <button class="btn-archive" onclick="openTemplatePicker()">📋 Tutte le Schede Pronte</button>
       <button class="btn-start-workout" onclick="startWorkoutFromPlan()">▶ INIZIA ALLENAMENTO</button>
     </div>
   </section>
@@ -572,34 +614,6 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
     <button class="btn-main" style="background:var(--success); color:#08080a;" onclick="endWorkout()">✅ Termina Allenamento</button>
   </section>
 
-  <!-- TAB: GRUPPI MUSCOLARI -->
-  <section id="tab-gruppi" class="tab-panel">
-    <div class="card">
-      <div class="section-title">1. Per quale giorno stai costruendo?</div>
-      <div class="days-bar" id="group-days-bar"></div>
-      <div class="group-day-current" id="group-day-current"></div>
-    </div>
-
-    <div class="card">
-      <div class="section-title">2. Che cosa alleni?</div>
-      <div class="section-hint">Tocca uno o piu gruppi: la figura mostra i muscoli coinvolti.</div>
-      <div class="body-map-wrap" id="body-map"></div>
-      <div class="group-grid" id="group-grid"></div>
-      <button class="plan-tool-btn" style="width:100%;margin-top:10px;" onclick="clearGroupSelection()">Azzera selezione</button>
-    </div>
-
-    <div class="card" id="group-templates-card" style="display:none;">
-      <div class="section-title">Schede consigliate</div>
-      <div id="group-templates"></div>
-    </div>
-
-    <div class="card" id="group-exercises-card" style="display:none;">
-      <div class="section-title" id="group-exercises-title">Esercizi</div>
-      <div class="section-hint" id="group-exercises-hint"></div>
-      <div id="group-exercises"></div>
-    </div>
-  </section>
-
   <!-- TAB: STORICO -->
   <section id="tab-storico" class="tab-panel">
     <div class="card">
@@ -615,8 +629,7 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
 <div class="bottom-nav-fixed" id="bottom-nav" style="display:none;">
   <nav class="bottom-nav">
     <button class="nav-btn active" data-tab="piano" onclick="switchTab('piano')"><span class="nav-icon">📝</span><span>Piano</span></button>
-    <button class="nav-btn" data-tab="gruppi" onclick="switchTab('gruppi')"><span class="nav-icon">🦾</span><span>Gruppi</span></button>
-    <button class="nav-btn" data-tab="allenamento" onclick="switchTab('allenamento')"><span class="nav-icon">🏋️</span><span>Allena</span></button>
+    <button class="nav-btn" data-tab="allenamento" onclick="switchTab('allenamento')"><span class="nav-icon">🏋️</span><span>Allenamento</span></button>
     <button class="nav-btn" data-tab="storico" onclick="switchTab('storico')"><span class="nav-icon">📖</span><span>Storico</span></button>
   </nav>
 </div>
@@ -1293,17 +1306,15 @@ window.selectDay = function(day) {
   renderDayBar();
   renderPiano();
   renderAllenamento();
-  if (currentTab === 'gruppi') renderGruppi();
+  if (currentTab === 'piano') renderGruppi();
 };
 
 window.switchTab = function(tab) {
   currentTab = tab;
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + tab));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
-  /* Il giorno si sceglie in Piano e Gruppi: nel tab Allenamento e nello Storico la barra sparisce */
-  document.getElementById('day-bar-wrap').style.display = (tab === 'piano') ? 'flex' : 'none';
   if (tab === 'storico') renderStorico();
-  if (tab === 'gruppi') renderGruppi();
+  if (tab === 'piano') renderGruppi(); /* il Piano nasce dai gruppi: si ridisegna entrando */
 };
 
 /* ============================================================
@@ -1347,6 +1358,11 @@ window.stepValue = function(id, delta, min) {
 /* ============================================================
    TAB PIANO
    ============================================================ */
+function syncBuildingLine(n) {
+  const el = document.getElementById('group-day-current');
+  if (el) el.innerText = 'Stai costruendo: ' + getDayTitle(currentDay) + ' (' + n + ' esercizi)';
+}
+
 function renderPiano() {
   const data = loadData();
   const list = data[currentDay] || [];
@@ -1357,11 +1373,13 @@ function renderPiano() {
      (tempo di lavoro approssimato + recuperi pianificati) */
   if (list.length === 0) {
     summaryEl.innerText = 'Nessun esercizio';
-    container.innerHTML = '<span class="muted">Nessun esercizio impostato. Aggiungine uno col form qui sopra.</span>';
+    container.innerHTML = '<span class="muted">Nessun esercizio ancora. Scegli i gruppi al passo 2 e aggiungi dal passo 3.</span>';
     renderCoach();
+    syncBuildingLine(0);
     return;
   }
   renderCoach();
+  syncBuildingLine(list.length);
   const totalSets = list.reduce((sum, e) => sum + e.sets, 0);
   const estSeconds = list.reduce((sum, e) => sum + e.sets * (30 + e.rest), 0);
   summaryEl.innerText = `${list.length} esercizi • ${totalSets} serie • ~${Math.round(estSeconds / 60)} min`;
@@ -1485,6 +1503,15 @@ document.getElementById('exercise-form').addEventListener('submit', (e) => {
   renderAllenamento();
 });
 
+window.toggleManualForm = function(forceOpen) {
+  const wrap = document.getElementById('manual-form-wrap');
+  const btn = document.getElementById('manual-toggle-btn');
+  const open = forceOpen === true ? true : wrap.style.display === 'none';
+  wrap.style.display = open ? 'block' : 'none';
+  btn.innerText = open ? '\u2715 Chiudi inserimento manuale' : '\u270F\uFE0F Aggiungi un esercizio a mano';
+  btn.classList.toggle('active', open);
+};
+
 window.startEditExercise = function(idx) {
   const data = loadData();
   const e = data[currentDay][idx];
@@ -1498,6 +1525,7 @@ window.startEditExercise = function(idx) {
   editingExerciseIdx = idx;
   document.getElementById('form-submit-btn').innerText = '✎ Aggiorna Esercizio';
   document.getElementById('cancel-edit-btn').style.display = 'block';
+  toggleManualForm(true); /* il form e' collassato: va aperto per far vedere i campi */
 };
 
 window.cancelEditExercise = function() {
@@ -2311,14 +2339,8 @@ function renderBodyMap(active) {
 }
 
 function renderGruppi() {
-  /* Selettore giorno: il piano si costruisce DA QUI, non dal tab Allenamento */
-  document.getElementById('group-days-bar').innerHTML = DAYS.map(d =>
-    '<div class="day-chip ' + (d === currentDay ? 'active' : '') + '" onclick="selectDay(\'' + d + '\')">' + d + '</div>'
-  ).join('');
   const data0 = loadData();
-  const n0 = (data0[currentDay] || []).length;
-  document.getElementById('group-day-current').innerText =
-    'Stai costruendo: ' + getDayTitle(currentDay) + ' (' + n0 + ' esercizi finora)';
+  syncBuildingLine((data0[currentDay] || []).length);
 
   document.getElementById('body-map').innerHTML = renderBodyMap(selectedGroups);
 
@@ -2425,10 +2447,8 @@ window.addLibraryExercise = function(name, rowIdx) {
 };
 
 window.applyTemplateFromGroups = function(templateId) {
-  window.confirm = window.confirm || (() => true);
   applyTemplate(templateId, false);
   renderGruppi();
-  switchTab('piano');
 };
 
 /* ============================================================
