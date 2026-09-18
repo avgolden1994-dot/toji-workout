@@ -186,6 +186,55 @@ body.reorder-mode .plan-card { border-color: var(--primary); }
 .wk-empty { font-size: 0.8rem; color: var(--muted); padding: 4px 0 8px; }
 .wk-total { font-size: 0.7rem; color: var(--muted); font-weight: 800; text-align: right; margin-bottom: 8px; }
 
+/* ======= Schermata iniziale: creazione del programma ======= */
+.onb { position: fixed; inset: 0; z-index: 120; background: var(--bg); display: flex; flex-direction: column; }
+.onb.hidden { display: none; }
+.onb-bar { display: flex; align-items: center; gap: 10px; padding: calc(12px + env(safe-area-inset-top)) 14px 12px; border-bottom: 1px solid var(--border); background: #0d0d12; }
+.onb-skip { margin-left: auto; background: transparent; border: none; color: var(--muted); font-size: 0.74rem; text-decoration: underline; cursor: pointer; flex-shrink: 0; }
+.onb-progress { height: 3px; background: #1a1a24; }
+.onb-progress span { display: block; height: 100%; background: var(--primary); width: 0; transition: width .3s ease; }
+.onb-body { flex: 1; overflow-y: auto; padding: 18px 14px; max-width: 480px; width: 100%; margin: 0 auto; }
+.onb-footer { padding: 12px 14px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); background: #0d0d12; }
+.onb-footer .btn-start-workout { max-width: 480px; margin: 0 auto; display: block; }
+.onb-q { font-size: 1.15rem; font-weight: 900; margin-bottom: 6px; }
+.onb-why { font-size: 0.76rem; color: var(--muted); margin-bottom: 16px; line-height: 1.4; }
+.onb-opt {
+  display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
+  background: #0d0d12; border: 1px solid var(--border); border-radius: 12px;
+  padding: 14px 12px; margin-bottom: 8px; cursor: pointer; color: var(--text);
+}
+.onb-opt.on { border-color: var(--primary); background: rgba(249,115,22,0.1); box-shadow: 0 0 0 1px var(--primary) inset; }
+.onb-opt-emoji { font-size: 1.5rem; flex-shrink: 0; }
+.onb-opt-main { flex: 1; min-width: 0; }
+.onb-opt-name { font-weight: 800; font-size: 0.92rem; }
+.onb-opt-desc { font-size: 0.74rem; color: var(--muted); margin-top: 2px; }
+.onb-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.onb-field span { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; font-weight: 800; display: block; margin-bottom: 3px; }
+.onb-note { font-size: 0.72rem; color: var(--muted); background: #0d0d12; border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 10px; margin-top: 14px; line-height: 1.45; }
+
+/* lettore BIA */
+.bia-drop { display: block; background: #1a1a24; border: 1.5px dashed var(--border); color: var(--muted); text-align: center; padding: 22px 14px; border-radius: 12px; font-size: 0.82rem; font-weight: 700; cursor: pointer; }
+.bia-drop:hover { border-color: var(--primary); color: var(--text); }
+.bia-status { font-size: 0.76rem; margin-top: 10px; min-height: 1.2em; }
+.bia-status.ok { color: var(--success); }
+.bia-status.warn { color: var(--accent); }
+.bia-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+.bia-val { background: #0d0d12; border: 1px solid var(--border); border-radius: 10px; padding: 10px; }
+.bia-val span { font-size: 0.64rem; color: var(--muted); text-transform: uppercase; font-weight: 800; display: block; margin-bottom: 4px; }
+.bia-val input { padding: 8px 4px; text-align: center; font-size: 0.9rem; font-weight: 800; }
+
+/* esito */
+.res-card { background: #0d0d12; border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 10px; }
+.res-title { font-size: 0.72rem; font-weight: 900; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.res-big { font-size: 1.05rem; font-weight: 900; }
+.res-line { display: flex; justify-content: space-between; font-size: 0.8rem; padding: 5px 0; border-bottom: 1px solid var(--border); }
+.res-line:last-child { border-bottom: none; }
+.res-line b { font-weight: 800; }
+.res-tag { display: inline-block; font-size: 0.64rem; font-weight: 900; text-transform: uppercase; border-radius: 999px; padding: 2px 9px; margin-top: 6px; }
+.res-tag.good { background: rgba(34,197,94,0.18); color: #22c55e; border: 1px solid #22c55e; }
+.res-tag.mid { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid #f59e0b; }
+.res-tag.att { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid #ef4444; }
+
 /* ======= Righe proposta: si tocca tutta la riga, l icona si illumina ======= */
 .pick-row {
   display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
@@ -820,6 +869,7 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
 
       <button class="btn-archive" onclick="openTemplatePicker()">📋 Tutte le Schede Pronte</button>
       <button class="btn-archive" onclick="saveWeekSnapshot()">💾 Salva questa settimana</button>
+      <button class="btn-archive" onclick="restartOnboarding()">🧭 Rifai il programma personalizzato</button>
       <button class="btn-start-workout" onclick="startWorkoutFromPlan()">▶ INIZIA ALLENAMENTO</button>
     </div>
   </section>
@@ -970,6 +1020,22 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
   </div>
   <div class="sheet-footer">
     <button class="btn-start-workout" style="margin:0;" onclick="closeGroupSheet()" id="sheet-done-btn">✓ Fatto — torna al piano</button>
+  </div>
+</div>
+
+<div class="onb hidden" id="onb">
+  <div class="onb-bar">
+    <button class="sheet-back" id="onb-back" onclick="onbPrev()" aria-label="Indietro">←</button>
+    <div class="sheet-titles">
+      <div class="sheet-title" id="onb-title">Creiamo il tuo programma</div>
+      <div class="sheet-sub" id="onb-step">Passo 1 di 6</div>
+    </div>
+    <button class="onb-skip" onclick="onbSkipAll()">Salta</button>
+  </div>
+  <div class="onb-progress"><span id="onb-progress-fill"></span></div>
+  <div class="onb-body" id="onb-body"></div>
+  <div class="onb-footer">
+    <button class="btn-start-workout" id="onb-next" onclick="onbNext()">Avanti</button>
   </div>
 </div>
 
@@ -1611,6 +1677,7 @@ window.chooseMode = function(mode) {
   document.getElementById('mode-overlay').classList.add('hidden');
   document.getElementById('app-root').style.display = 'flex';
   document.getElementById('bottom-nav').style.display = 'block';
+  startOnboarding(false); /* solo al primo utilizzo */
 };
 
 window.openModeOverlay = function() {
@@ -3839,6 +3906,465 @@ window.clearHistory = function() {
     localStorage.removeItem(historyKey());
     renderStorico();
   }
+};
+
+/* ============================================================
+   SCHERMATA INIZIALE: creazione del programma personalizzato
+   Regole prese dalla letteratura e dalla pratica dei preparatori:
+   - principianti 2-3 sedute full body, intermedi 3-4 upper/lower,
+     avanzati 4-6 push/pull/legs
+   - ogni gruppo muscolare 2 volte a settimana e' il punto di equilibrio
+   - forza: 2-6 ripetizioni, recuperi lunghi; ipertrofia: 8-12
+   - dimagrimento: 3-4 sedute di forza + cardio
+   - oltre i 90 minuti di seduta il recupero peggiora
+   - la periodizzazione lineare e' la piu adatta a chi inizia
+   ============================================================ */
+const ONB_KEY = 'tz_onboarded';
+const PROFILE_KEY = () => 'coach_plus_profile_' + currentMode;
+
+let onbStep = 0;
+let onbData = { goal: null, level: null, days: null, minutes: null, sex: null, age: null, height: null, weight: null, bia: null };
+
+const ONB_GOALS = [
+  { id: 'massa',   emoji: '\u{1F4AA}', name: 'Massa muscolare', desc: '8-12 ripetizioni, carichi progressivi' },
+  { id: 'dimagrimento', emoji: '\u{1F525}', name: 'Dimagrimento', desc: 'forza + cardio, ripetizioni medio-alte' },
+  { id: 'forza',   emoji: '\u{1F3CB}\uFE0F', name: 'Forza', desc: '2-6 ripetizioni, recuperi lunghi' },
+  { id: 'ricomposizione', emoji: '\u2696\uFE0F', name: 'Ricomposizione', desc: 'meno grasso, piu muscolo insieme' },
+  { id: 'salute',  emoji: '\u2764\uFE0F', name: 'Salute e forma', desc: 'movimento costante, senza estremi' }
+];
+
+const ONB_LEVELS = [
+  { id: 'principiante', emoji: '\u{1F331}', name: 'Principiante', desc: 'meno di 6 mesi, o riparto da zero' },
+  { id: 'intermedio',   emoji: '\u{1F33F}', name: 'Intermedio', desc: 'da 6 mesi a 2 anni, con costanza' },
+  { id: 'avanzato',     emoji: '\u{1F333}', name: 'Avanzato', desc: 'oltre 2 anni, tecnica solida' }
+];
+
+/* Schema settimanale per livello e giorni disponibili */
+function splitFor(level, days) {
+  if (days <= 2) return { nome: 'Full Body', giorni: ['fullbody', 'fullbody'] };
+  if (level === 'principiante') {
+    if (days === 3) return { nome: 'Full Body 3x', giorni: ['fullbody', 'fullbody', 'fullbody'] };
+    return { nome: 'Upper / Lower', giorni: ['upper', 'lower', 'upper', 'lower'] };
+  }
+  if (level === 'intermedio') {
+    if (days === 3) return { nome: 'Push / Pull / Legs', giorni: ['push', 'pull', 'legs'] };
+    if (days === 4) return { nome: 'Upper / Lower x2', giorni: ['upper', 'lower', 'upper', 'lower'] };
+    return { nome: 'Push / Pull / Legs + Upper / Lower', giorni: ['push', 'pull', 'legs', 'upper', 'lower'] };
+  }
+  if (days === 3) return { nome: 'Push / Pull / Legs', giorni: ['push', 'pull', 'legs'] };
+  if (days === 4) return { nome: 'Upper / Lower x2', giorni: ['upper', 'lower', 'upper', 'lower'] };
+  if (days === 5) return { nome: 'Push / Pull / Legs + Upper / Lower', giorni: ['push', 'pull', 'legs', 'upper', 'lower'] };
+  return { nome: 'Push / Pull / Legs x2', giorni: ['push', 'pull', 'legs', 'push', 'pull', 'legs'] };
+}
+
+/* Serie, ripetizioni e recuperi per obiettivo */
+function schemeFor(goal) {
+  if (goal === 'forza')         return { sets: 5, reps: 5,  restCompound: 180, restIso: 90,  settimane: 8,  nota: 'Carichi alti e poche ripetizioni: il recupero lungo serve a esprimere forza, non e tempo perso.' };
+  if (goal === 'massa')         return { sets: 4, reps: 10, restCompound: 120, restIso: 75,  settimane: 10, nota: 'Il classico 8-12 ripetizioni, con aumento graduale del carico settimana dopo settimana.' };
+  if (goal === 'dimagrimento')  return { sets: 3, reps: 15, restCompound: 60,  restIso: 45,  settimane: 8,  nota: 'Recuperi brevi per tenere alta la frequenza cardiaca, piu cardio nei giorni liberi.' };
+  if (goal === 'ricomposizione')return { sets: 4, reps: 12, restCompound: 90,  restIso: 60,  settimane: 12, nota: 'Via di mezzo: abbastanza carico per il muscolo, abbastanza densita per il dispendio.' };
+  return { sets: 3, reps: 12, restCompound: 90, restIso: 60, settimane: 8, nota: 'Volumi moderati e costanti: l obiettivo e la continuita, non il massimale.' };
+}
+
+/* Quanti esercizi per seduta, senza sforare i minuti dichiarati */
+function exerciseCountFor(minutes, scheme) {
+  const perEsercizio = scheme.sets * (35 + scheme.restCompound) / 60;
+  const n = Math.floor((minutes - 10) / perEsercizio);
+  return Math.max(3, Math.min(7, n));
+}
+
+window.startOnboarding = function(force) {
+  if (!force && localStorage.getItem(ONB_KEY) === '1') return false;
+  onbStep = 0;
+  onbData = { goal: null, level: null, days: null, minutes: null, sex: null, age: null, height: null, weight: null, bia: null };
+  document.getElementById('onb').classList.remove('hidden');
+  renderOnb();
+  return true;
+};
+
+window.onbSkipAll = function() {
+  localStorage.setItem(ONB_KEY, '1');
+  document.getElementById('onb').classList.add('hidden');
+};
+
+window.onbPrev = function() {
+  if (onbStep === 0) { onbSkipAll(); return; }
+  onbStep--;
+  renderOnb();
+};
+
+window.onbNext = function() {
+  if (onbStep === 5) { applyGeneratedProgram(); return; }
+  if (!onbStepValid()) return;
+  onbStep++;
+  renderOnb();
+};
+
+function onbStepValid() {
+  if (onbStep === 0) return !!onbData.goal;
+  if (onbStep === 1) return !!onbData.level;
+  if (onbStep === 2) return !!onbData.days;
+  if (onbStep === 3) return !!onbData.minutes;
+  return true;
+}
+
+window.onbPick = function(campo, valore) {
+  onbData[campo] = valore;
+  renderOnb();
+};
+
+function renderOnb() {
+  const body = document.getElementById('onb-body');
+  const next = document.getElementById('onb-next');
+  const TOT = 6;
+  document.getElementById('onb-step').innerText = 'Passo ' + (onbStep + 1) + ' di ' + TOT;
+  document.getElementById('onb-progress-fill').style.width = Math.round(((onbStep + 1) / TOT) * 100) + '%';
+  next.innerText = onbStep === 5 ? '\u2713 Crea il programma' : 'Avanti';
+  next.disabled = !onbStepValid();
+
+  if (onbStep === 0) {
+    body.innerHTML = '<div class="onb-q">Qual e il tuo obiettivo?</div>' +
+      '<div class="onb-why">Serie, ripetizioni e recuperi cambiano parecchio a seconda della risposta: non esiste un programma buono per tutto.</div>' +
+      ONB_GOALS.map(g => optHtml('goal', g)).join('');
+  } else if (onbStep === 1) {
+    body.innerHTML = '<div class="onb-q">Da quanto ti alleni?</div>' +
+      '<div class="onb-why">Ai principianti conviene il full body, perche ogni muscolo viene stimolato piu volte. Chi ha piu esperienza regge una divisione piu spinta.</div>' +
+      ONB_LEVELS.map(g => optHtml('level', g)).join('');
+  } else if (onbStep === 2) {
+    body.innerHTML = '<div class="onb-q">Quanti giorni a settimana?</div>' +
+      '<div class="onb-why">Due o quattro sedute fatte con costanza valgono piu di sei settimane intense e poi il vuoto. Il riposo fa parte del programma.</div>' +
+      [2, 3, 4, 5, 6].map(n => optHtml('days', {
+        id: n, emoji: '\u{1F4C5}', name: n + ' giorni',
+        desc: n <= 2 ? 'il minimo per avere risultati' : (n <= 4 ? 'la fascia piu sostenibile' : 'richiede buon recupero')
+      })).join('');
+  } else if (onbStep === 3) {
+    body.innerHTML = '<div class="onb-q">Quanto dura una seduta?</div>' +
+      '<div class="onb-why">Sotto la mezz ora lo stimolo rischia di essere scarso, oltre i novanta minuti il recupero peggiora. Decido quanti esercizi metterti in base a questo.</div>' +
+      [30, 45, 60, 75, 90].map(n => optHtml('minutes', {
+        id: n, emoji: '\u23F1\uFE0F', name: n + ' minuti',
+        desc: n <= 30 ? 'seduta breve e densa' : (n >= 90 ? 'il massimo consigliabile' : 'durata equilibrata')
+      })).join('');
+  } else if (onbStep === 4) {
+    body.innerHTML = renderBiaStep();
+    setTimeout(bindBiaInputs, 0);
+  } else {
+    body.innerHTML = renderOnbResult();
+  }
+
+  document.getElementById('onb-back').innerText = onbStep === 0 ? '\u2715' : '\u2190';
+}
+
+function optHtml(campo, o) {
+  const sel = String(onbData[campo]) === String(o.id);
+  return '<button class="onb-opt ' + (sel ? 'on' : '') + '" onclick="onbPick(\'' + campo + '\', ' +
+    (typeof o.id === 'number' ? o.id : "'" + o.id + "'") + ')">' +
+    '<span class="onb-opt-emoji">' + o.emoji + '</span>' +
+    '<span class="onb-opt-main"><span class="onb-opt-name">' + o.name + '</span>' +
+    '<span class="onb-opt-desc">' + o.desc + '</span></span>' +
+    '<span class="pick-check">' + (sel ? '\u2713' : '') + '</span></button>';
+}
+
+/* ---------- Lettore BIA ----------
+   I referti BIA cambiano da strumento a strumento (Tanita, InBody, Akern...),
+   quindi il riconoscimento automatico e' un aiuto, non un oracolo: i valori
+   letti restano sempre modificabili a mano prima di essere usati. */
+function renderBiaStep() {
+  const b = onbData.bia || {};
+  return '<div class="onb-q">Hai un referto BIA?</div>' +
+    '<div class="onb-why">La bioimpedenziometria misura massa grassa, massa magra e acqua corporea: dice se stai perdendo grasso o muscolo, cosa che la bilancia da sola non sa fare. Se non ce l\'hai, puoi saltare o scrivere i dati a mano.</div>' +
+    '<label class="bia-drop" for="bia-file">\u{1F4C4} Carica il PDF della tua BIA' +
+    '<span style="display:block;font-weight:400;font-size:0.7rem;margin-top:4px;">oppure compila i campi qui sotto</span></label>' +
+    '<input type="file" id="bia-file" accept="application/pdf" style="display:none;">' +
+    '<div class="bia-status" id="bia-status"></div>' +
+    '<div class="bia-grid">' +
+      biaField('peso', 'Peso (kg)', b.peso) +
+      biaField('altezza', 'Altezza (cm)', b.altezza) +
+      biaField('fmPerc', 'Massa grassa (%)', b.fmPerc) +
+      biaField('ffm', 'Massa magra (kg)', b.ffm) +
+      biaField('tbw', 'Acqua totale (L)', b.tbw) +
+      biaField('bmr', 'Metabolismo basale (kcal)', b.bmr) +
+    '</div>' +
+    '<div class="onb-grid onb-fields" style="margin-top:10px;">' +
+      '<label class="onb-field"><span>Sesso</span><select id="onb-sex">' +
+        '<option value="">--</option>' +
+        '<option value="uomo"' + (onbData.sex === 'uomo' ? ' selected' : '') + '>Uomo</option>' +
+        '<option value="donna"' + (onbData.sex === 'donna' ? ' selected' : '') + '>Donna</option>' +
+      '</select></label>' +
+      '<label class="onb-field"><span>Eta</span><input type="number" id="onb-age" value="' + (onbData.age || '') + '"></label>' +
+    '</div>' +
+    '<div class="onb-note">I valori letti dal PDF sono una proposta: controllali sempre. Un referto va interpretato da un professionista, e differenze di un chilo possono essere normali oscillazioni.</div>';
+}
+
+function biaField(k, label, val) {
+  return '<label class="bia-val"><span>' + label + '</span>' +
+    '<input type="number" step="0.1" data-bia="' + k + '" value="' + (val !== undefined && val !== null ? val : '') + '"></label>';
+}
+
+function bindBiaInputs() {
+  const file = document.getElementById('bia-file');
+  if (file) file.addEventListener('change', (e) => handleBiaPdf(e.target.files));
+  document.querySelectorAll('[data-bia]').forEach(inp => {
+    inp.addEventListener('change', () => {
+      onbData.bia = onbData.bia || {};
+      const v = parseFloat(inp.value);
+      onbData.bia[inp.dataset.bia] = isNaN(v) ? null : v;
+    });
+  });
+  const sex = document.getElementById('onb-sex');
+  if (sex) sex.addEventListener('change', () => { onbData.sex = sex.value || null; });
+  const age = document.getElementById('onb-age');
+  if (age) age.addEventListener('change', () => { onbData.age = parseInt(age.value, 10) || null; });
+}
+
+function ensurePdfJs() {
+  return new Promise((resolve, reject) => {
+    if (window.pdfjsLib) { resolve(window.pdfjsLib); return; }
+    const timeoutMs = window.__TZ_PDF_TIMEOUT_MS || 9000;
+    const t = setTimeout(() => reject(new Error('timeout')), timeoutMs);
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    s.onload = () => {
+      clearTimeout(t);
+      if (window.pdfjsLib) {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        resolve(window.pdfjsLib);
+      } else reject(new Error('lib assente'));
+    };
+    s.onerror = () => { clearTimeout(t); reject(new Error('rete')); };
+    document.head.appendChild(s);
+  });
+}
+
+/* Cerca i valori con le diciture piu comuni nei referti italiani e inglesi */
+window.parseBiaText = function(testo) {
+  const t = testo.replace(/\s+/g, ' ');
+  const num = '([0-9]{1,3}(?:[.,][0-9]{1,2})?)';
+  const cerca = (patterns) => {
+    for (let i = 0; i < patterns.length; i++) {
+      const m = t.match(new RegExp(patterns[i], 'i'));
+      if (m) {
+        const v = parseFloat(m[1].replace(',', '.'));
+        if (!isNaN(v)) return v;
+      }
+    }
+    return null;
+  };
+  return {
+    peso:    cerca(['peso(?:\\s+corporeo)?[^0-9]{0,20}' + num + '\\s*kg', 'weight[^0-9]{0,20}' + num + '\\s*kg']),
+    altezza: cerca(['altezza[^0-9]{0,20}' + num + '\\s*cm', 'height[^0-9]{0,20}' + num + '\\s*cm']),
+    fmPerc:  cerca(['massa\\s+grassa[^0-9]{0,30}' + num + '\\s*%', 'fat\\s*mass[^0-9]{0,30}' + num + '\\s*%', '\\bfm\\b[^0-9]{0,20}' + num + '\\s*%', 'body\\s*fat[^0-9]{0,20}' + num + '\\s*%']),
+    fm:      cerca(['massa\\s+grassa[^0-9]{0,30}' + num + '\\s*kg', 'fat\\s*mass[^0-9]{0,30}' + num + '\\s*kg']),
+    ffm:     cerca(['massa\\s+magra[^0-9]{0,30}' + num + '\\s*kg', 'free\\s*fat\\s*mass[^0-9]{0,30}' + num + '\\s*kg', '\\bffm\\b[^0-9]{0,20}' + num + '\\s*kg', 'lean\\s*mass[^0-9]{0,20}' + num + '\\s*kg']),
+    tbw:     cerca(['acqua\\s+total[ei][^0-9]{0,30}' + num + '\\s*l', '\\btbw\\b[^0-9]{0,20}' + num + '\\s*l', 'total\\s*body\\s*water[^0-9]{0,30}' + num]),
+    bmr:     cerca(['metabolismo\\s+basale[^0-9]{0,30}([0-9]{3,5})', '\\bbmr\\b[^0-9]{0,20}([0-9]{3,5})', '\\bmb\\b[^0-9]{0,20}([0-9]{3,5})\\s*kcal'])
+  };
+};
+
+window.handleBiaPdf = async function(files) {
+  const file = files && files[0];
+  if (!file) return;
+  const st = document.getElementById('bia-status');
+  if (file.type !== 'application/pdf') { st.className = 'bia-status warn'; st.innerText = 'Serve un file PDF.'; return; }
+  st.className = 'bia-status'; st.innerText = 'Leggo il referto...';
+
+  try {
+    const pdfjsLib = await ensurePdfJs();
+    const buf = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+    let testo = '';
+    for (let i = 1; i <= Math.min(pdf.numPages, 6); i++) {
+      const page = await pdf.getPage(i);
+      const tc = await page.getTextContent();
+      testo += ' ' + tc.items.map(x => x.str).join(' ');
+    }
+    applyBiaValues(parseBiaText(testo), true);
+  } catch (err) {
+    st.className = 'bia-status warn';
+    st.innerText = 'Non riesco a leggere il PDF (serve la connessione la prima volta). Scrivi i valori a mano qui sotto: funziona uguale.';
+  }
+};
+
+window.applyBiaValues = function(vals, fromPdf) {
+  onbData.bia = Object.assign({}, onbData.bia || {}, vals);
+  /* se ho i kg di grasso ma non la percentuale, la calcolo */
+  const b = onbData.bia;
+  if (!b.fmPerc && b.fm && b.peso) b.fmPerc = Math.round((b.fm / b.peso) * 1000) / 10;
+  if (!b.ffm && b.fm && b.peso) b.ffm = Math.round((b.peso - b.fm) * 10) / 10;
+
+  document.querySelectorAll('[data-bia]').forEach(inp => {
+    const v = b[inp.dataset.bia];
+    if (v !== undefined && v !== null) inp.value = v;
+  });
+
+  const trovati = Object.keys(b).filter(k => b[k] !== null && b[k] !== undefined).length;
+  const st = document.getElementById('bia-status');
+  if (!st) return;
+  if (fromPdf && trovati === 0) {
+    st.className = 'bia-status warn';
+    st.innerText = 'Non ho riconosciuto valori in questo referto: ogni strumento scrive in modo diverso. Inseriscili a mano qui sotto.';
+  } else if (fromPdf) {
+    st.className = 'bia-status ok';
+    st.innerText = '\u2713 Letti ' + trovati + ' valori. Controllali prima di proseguire.';
+  }
+};
+
+/* ---------- Analisi ---------- */
+window.analyzeBia = function(bia, sex) {
+  if (!bia) return null;
+  const out = { note: [] };
+  const peso = bia.peso, h = bia.altezza, fmPerc = bia.fmPerc, ffm = bia.ffm;
+
+  if (peso && h) {
+    out.bmi = Math.round((peso / Math.pow(h / 100, 2)) * 10) / 10;
+  }
+  if (ffm && h) {
+    /* FFMI: quanta massa magra porti rispetto alla tua statura */
+    out.ffmi = Math.round((ffm / Math.pow(h / 100, 2)) * 10) / 10;
+  }
+  if (fmPerc) {
+    out.fmPerc = fmPerc;
+    /* Riferimenti: ~15% negli atleti, ~20% nei sedentari, oltre 30% obesita.
+       Nelle donne la soglia fisiologica e piu alta. */
+    const soglie = sex === 'donna' ? { atleta: 22, normale: 30, alto: 35 } : { atleta: 15, normale: 20, alto: 25 };
+    if (fmPerc <= soglie.atleta) { out.fmLivello = 'good'; out.fmTesto = 'Livello da atleta'; }
+    else if (fmPerc <= soglie.normale) { out.fmLivello = 'good'; out.fmTesto = 'Nella norma'; }
+    else if (fmPerc <= soglie.alto) { out.fmLivello = 'mid'; out.fmTesto = 'Sopra la media'; }
+    else { out.fmLivello = 'att'; out.fmTesto = 'Elevata: meglio parlarne con un professionista'; }
+
+    if (sex === 'donna' && fmPerc < 17) {
+      out.note.push('Sotto il 17% di massa grassa la funzione mestruale puo risentirne: e un valore da monitorare con un medico.');
+    }
+  }
+  if (bia.tbw && peso) {
+    out.tbwPerc = Math.round((bia.tbw / peso) * 1000) / 10;
+    out.note.push('L acqua corporea e circa il 60% del peso in un uomo adulto, meno nelle donne e in chi ha piu massa grassa.');
+  }
+  if (bia.bmr) out.bmr = bia.bmr;
+  return out;
+};
+
+/* ---------- Generatore del programma ---------- */
+window.buildProgram = function(d) {
+  const scheme = schemeFor(d.goal);
+  const split = splitFor(d.level, d.days);
+  const nEs = exerciseCountFor(d.minutes, scheme);
+
+  /* i giorni di allenamento vengono distribuiti lasciando riposo in mezzo */
+  const mappaGiorni = {
+    2: [0, 3], 3: [0, 2, 4], 4: [0, 1, 3, 4],
+    5: [0, 1, 3, 4, 5], 6: [0, 1, 2, 3, 4, 5]
+  };
+  const indiciGiorni = mappaGiorni[d.days] || [0, 2, 4];
+
+  const sedute = split.giorni.slice(0, d.days).map((tplId, i) => {
+    const tpl = WORKOUT_TEMPLATES.find(t => t.id === tplId);
+    const base = tpl ? tpl.exercises.slice(0, nEs) : [];
+    return {
+      giorno: DAYS[indiciGiorni[i]],
+      titolo: tpl ? tpl.title.split(' \u2014 ')[0] : 'Seduta ' + (i + 1),
+      esercizi: base.map(e => {
+        const meta = findExercise(e.name);
+        const isComp = meta && meta.type === 'compound';
+        return {
+          name: e.name,
+          sets: scheme.sets,
+          reps: isTimeBased(e.name) ? (meta ? meta.reps : 30) : scheme.reps,
+          weight: e.weight,
+          rest: isComp ? scheme.restCompound : scheme.restIso
+        };
+      })
+    };
+  });
+
+  return {
+    scheme: scheme,
+    split: split,
+    sedute: sedute,
+    riposo: DAYS.filter(g => !sedute.some(s => s.giorno === g)),
+    settimane: scheme.settimane,
+    eserciziPerSeduta: nEs
+  };
+};
+
+function renderOnbResult() {
+  const prog = buildProgram(onbData);
+  const an = analyzeBia(onbData.bia, onbData.sex);
+  const g = ONB_GOALS.find(x => x.id === onbData.goal);
+
+  let html = '<div class="onb-q">Il tuo programma</div>' +
+    '<div class="onb-why">Costruito su quello che mi hai detto. Puoi cambiare ogni cosa dopo: questo e un punto di partenza, non una gabbia.</div>';
+
+  html += '<div class="res-card">' +
+    '<div class="res-title">Struttura</div>' +
+    '<div class="res-big">' + prog.split.nome + '</div>' +
+    '<div class="res-line"><span>Obiettivo</span><b>' + (g ? g.name : '-') + '</b></div>' +
+    '<div class="res-line"><span>Durata consigliata</span><b>' + prog.settimane + ' settimane</b></div>' +
+    '<div class="res-line"><span>Sedute</span><b>' + onbData.days + ' a settimana</b></div>' +
+    '<div class="res-line"><span>Schema serie</span><b>' + prog.scheme.sets + ' \u00D7 ' + prog.scheme.reps + '</b></div>' +
+    '<div class="res-line"><span>Recupero</span><b>' + prog.scheme.restCompound + 's / ' + prog.scheme.restIso + 's</b></div>' +
+    '<div class="res-line"><span>Esercizi per seduta</span><b>' + prog.eserciziPerSeduta + '</b></div>' +
+    '</div>';
+
+  html += '<div class="res-card"><div class="res-title">La settimana</div>' +
+    prog.sedute.map(s => '<div class="res-line"><span>' + s.giorno + '</span><b>' + escapeHtml(s.titolo) + '</b></div>').join('') +
+    prog.riposo.map(r => '<div class="res-line"><span>' + r + '</span><b style="color:var(--muted)">\u{1F634} riposo</b></div>').join('') +
+    '</div>';
+
+  if (an && (an.bmi || an.fmPerc || an.ffmi || an.bmr)) {
+    html += '<div class="res-card"><div class="res-title">La tua composizione</div>' +
+      (an.bmi ? '<div class="res-line"><span>BMI</span><b>' + an.bmi + '</b></div>' : '') +
+      (an.fmPerc ? '<div class="res-line"><span>Massa grassa</span><b>' + an.fmPerc + '%</b></div>' : '') +
+      (an.ffmi ? '<div class="res-line"><span>Indice di massa magra</span><b>' + an.ffmi + '</b></div>' : '') +
+      (an.tbwPerc ? '<div class="res-line"><span>Acqua corporea</span><b>' + an.tbwPerc + '%</b></div>' : '') +
+      (an.bmr ? '<div class="res-line"><span>Metabolismo basale</span><b>' + an.bmr + ' kcal</b></div>' : '') +
+      (an.fmTesto ? '<span class="res-tag ' + an.fmLivello + '">' + an.fmTesto + '</span>' : '') +
+      (an.note.length ? '<div class="onb-note" style="margin-top:10px;">' + an.note.map(escapeHtml).join('<br>') + '</div>' : '') +
+      '</div>';
+  }
+
+  html += '<div class="onb-note">' + escapeHtml(prog.scheme.nota) +
+    '<br><br>Questo programma e una traccia generata da regole, non la valutazione di un professionista. Se hai patologie, dolori o un referto che non torna, parlane con un medico o un preparatore prima di iniziare.</div>';
+
+  return html;
+}
+
+window.applyGeneratedProgram = function() {
+  const prog = buildProgram(onbData);
+  const data = loadData();
+  const titles = loadTitles();
+
+  DAYS.forEach(g => { data[g] = []; });
+  prog.sedute.forEach(s => {
+    data[s.giorno] = s.esercizi.map(e => normalizeExerciseRecord(Object.assign({}, e, { completedSets: [] })));
+    titles[s.giorno] = s.titolo;
+  });
+
+  saveData(data);
+  saveTitles(titles);
+  saveRestDays(prog.riposo.slice());
+  localStorage.setItem(PROFILE_KEY(), JSON.stringify({
+    goal: onbData.goal, level: onbData.level, days: onbData.days, minutes: onbData.minutes,
+    sex: onbData.sex, age: onbData.age, bia: onbData.bia,
+    settimane: prog.settimane, split: prog.split.nome, creato: formatNow()
+  }));
+  localStorage.setItem(ONB_KEY, '1');
+
+  currentDay = prog.sedute.length ? prog.sedute[0].giorno : DAYS[0];
+  armedSet = null;
+  selectedGroups = [];
+  document.getElementById('onb').classList.add('hidden');
+  renderDayBar(); renderPiano(); renderGruppi(); renderAllenamento();
+  switchTab('piano');
+  showUndo('Programma creato: ' + prog.split.nome + ', ' + prog.settimane + ' settimane', null, 6000);
+};
+
+window.restartOnboarding = function() {
+  if (!confirm('Rifacendo il questionario il programma attuale verra sostituito. Continuare?')) return;
+  startOnboarding(true);
+};
+
+window.getProfile = function() {
+  try { return JSON.parse(localStorage.getItem(PROFILE_KEY()) || 'null'); } catch (e) { return null; }
 };
 
 /* ============================================================
