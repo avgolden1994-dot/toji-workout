@@ -75,7 +75,23 @@ body {
   font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
 }
 .banner-quote { font-size: 0.72rem; color: var(--accent); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
-.banner-title { font-size: 1.35rem; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+.banner-title {
+  font-size: 1.35rem; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 0.5px;
+  margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+  background: transparent; border: none; padding: 0; text-align: left; cursor: pointer;
+  border-bottom: 2px dashed rgba(255,255,255,0.35); align-self: flex-start;
+}
+.banner-title:active { opacity: 0.7; }
+.banner-switch-hint { font-size: 0.6rem; color: rgba(255,255,255,0.55); margin-top: 3px; letter-spacing: 0.3px; }
+
+/* campi parametri nella lista Gruppi */
+.lib-row { padding: 10px 0; border-bottom: 1px solid var(--border); }
+.lib-row:last-child { border-bottom: none; }
+.lib-row-top { margin-bottom: 6px; }
+.lib-row-params { display: flex; align-items: flex-end; gap: 5px; }
+.mini-field { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.mini-field span { font-size: 0.6rem; color: var(--muted); text-transform: uppercase; font-weight: 800; }
+.mini-field input { padding: 6px 2px; text-align: center; font-size: 0.82rem; }
 
 /* ======= Barra giorni ======= */
 .day-bar-wrap { display: flex; }
@@ -153,6 +169,15 @@ body.reorder-mode .plan-card { border-color: var(--primary); }
   box-shadow: 0 4px 14px var(--primary-shadow);
 }
 .btn-start-workout:active { transform: scale(0.98); }
+
+/* ======= Figura anatomica ======= */
+.body-map-wrap { display: flex; justify-content: center; margin-bottom: 12px; }
+.body-map-wrap svg { width: 100%; max-width: 300px; height: auto; }
+.bm-base { fill: #1e1e28; stroke: #2f2f3a; stroke-width: 0.8; }
+.bm-muscle { fill: #262633; stroke: #33333f; stroke-width: 0.8; transition: fill .2s ease; }
+.bm-muscle.active { fill: var(--primary); stroke: var(--primary); filter: drop-shadow(0 0 4px var(--primary-shadow)); }
+.bm-label { fill: var(--muted); font-size: 7px; font-weight: 700; text-anchor: middle; }
+.group-day-current { font-size: 0.74rem; color: var(--accent); font-weight: 800; margin-top: 8px; }
 
 /* ======= Gruppi muscolari ======= */
 .group-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
@@ -380,9 +405,9 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
 
 <div class="app-shell" id="app-root" style="display:none;">
   <div class="banner">
-    <button class="gear-btn" onclick="openModeOverlay()" aria-label="Cambia protocollo" title="Cambia protocollo">⚙️</button>
     <div class="banner-quote" id="banner-quote">Nessuna Energia Maledetta • Solo Forza Pura</div>
-    <div class="banner-title" id="banner-title">Toji Protocol</div>
+    <button class="banner-title" id="banner-title" onclick="openModeOverlay()" title="Tocca per cambiare protocollo">Toji Protocol</button>
+    <div class="banner-switch-hint">tocca il nome per cambiare protocollo</div>
   </div>
 
   <div class="day-bar-wrap" id="day-bar-wrap">
@@ -395,51 +420,6 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
       <form id="exercise-form" class="grid-form">
         <select id="exercise-select" onchange="handleSelectExercise(this.value)">
           <option value="">-- Seleziona un esercizio --</option>
-          <optgroup label="💪 Petto">
-            <option value="💪 Panca Piana Bilanciere">💪 Panca Piana Bilanciere</option>
-            <option value="💪 Panca Inclinata Manubri">💪 Panca Inclinata Manubri</option>
-            <option value="💪 Croci ai Cavi">💪 Croci ai Cavi</option>
-            <option value="💪 Dip alle Parallele">💪 Dip alle Parallele</option>
-          </optgroup>
-          <optgroup label="🏹 Schiena">
-            <option value="🏹 Stacco da Terra (Deadlift)">🏹 Stacco da Terra (Deadlift)</option>
-            <option value="🏹 Trazioni alla Sbarra (Pull-ups)">🏹 Trazioni alla Sbarra (Pull-ups)</option>
-            <option value="🏹 Lat Machine">🏹 Lat Machine</option>
-            <option value="🏹 Rematore con Bilanciere">🏹 Rematore con Bilanciere</option>
-            <option value="🏹 Pulley Basso">🏹 Pulley Basso</option>
-          </optgroup>
-          <optgroup label="🦵 Gambe">
-            <option value="🦵 Squat con Bilanciere">🦵 Squat con Bilanciere</option>
-            <option value="🦵 Leg Press">🦵 Leg Press</option>
-            <option value="🦵 Affondi Manubri">🦵 Affondi Manubri</option>
-            <option value="🦵 Leg Extension">🦵 Leg Extension</option>
-            <option value="🦵 Leg Curl">🦵 Leg Curl</option>
-            <option value="🦵 Calf Raise">🦵 Calf Raise</option>
-          </optgroup>
-          <optgroup label="🍑 Glutei">
-            <option value="🍑 Hip Thrust">🍑 Hip Thrust</option>
-            <option value="🍑 Stacco Rumeno">🍑 Stacco Rumeno</option>
-            <option value="🍑 Affondi Bulgari">🍑 Affondi Bulgari</option>
-            <option value="🍑 Abductor Machine">🍑 Abductor Machine</option>
-            <option value="🍑 Ponte Glutei">🍑 Ponte Glutei</option>
-          </optgroup>
-          <optgroup label="🛡️ Spalle">
-            <option value="🛡️ Military Press">🛡️ Military Press</option>
-            <option value="🛡️ Alzate Laterali">🛡️ Alzate Laterali</option>
-            <option value="🛡️ Arnold Press">🛡️ Arnold Press</option>
-            <option value="🛡️ Face Pull">🛡️ Face Pull</option>
-          </optgroup>
-          <optgroup label="🦾 Braccia">
-            <option value="🦾 Curl Bilanciere Bicipiti">🦾 Curl Bilanciere Bicipiti</option>
-            <option value="🦾 Hammer Curl">🦾 Hammer Curl</option>
-            <option value="🦾 Pushdown Tricipiti ai Cavi">🦾 Pushdown Tricipiti ai Cavi</option>
-            <option value="🦾 French Press">🦾 French Press</option>
-          </optgroup>
-          <optgroup label="🎯 Core & Addome">
-            <option value="🎯 Plank">🎯 Plank</option>
-            <option value="🎯 Crunch al Cavo">🎯 Crunch al Cavo</option>
-            <option value="🎯 Leg Raise alla Sbarra">🎯 Leg Raise alla Sbarra</option>
-          </optgroup>
         </select>
 
         <input type="text" id="exercise-name" placeholder="Oppure scrivi esercizio libero" required>
@@ -595,8 +575,15 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
   <!-- TAB: GRUPPI MUSCOLARI -->
   <section id="tab-gruppi" class="tab-panel">
     <div class="card">
-      <div class="section-title">Che cosa alleni oggi?</div>
-      <div class="section-hint">Seleziona uno o piu gruppi muscolari: sotto compaiono gli esercizi e le schede adatte.</div>
+      <div class="section-title">1. Per quale giorno stai costruendo?</div>
+      <div class="days-bar" id="group-days-bar"></div>
+      <div class="group-day-current" id="group-day-current"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">2. Che cosa alleni?</div>
+      <div class="section-hint">Tocca uno o piu gruppi: la figura mostra i muscoli coinvolti.</div>
+      <div class="body-map-wrap" id="body-map"></div>
       <div class="group-grid" id="group-grid"></div>
       <button class="plan-tool-btn" style="width:100%;margin-top:10px;" onclick="clearGroupSelection()">Azzera selezione</button>
     </div>
@@ -749,8 +736,8 @@ const WORKOUT_TEMPLATES = [
       { name: '🍑 Stacco Rumeno', sets: 3, reps: 10, weight: 40, rest: 90 },
       { name: '🦵 Leg Press', sets: 3, reps: 12, weight: 80, rest: 90 },
       { name: '🦵 Affondi Manubri', sets: 3, reps: 12, weight: 12, rest: 75 },
-      { name: '🦵 Leg Curl', sets: 3, reps: 12, weight: 25, rest: 60 },
-      { name: '🦵 Calf Raise', sets: 4, reps: 15, weight: 30, rest: 45 }
+      { name: '🦵 Leg Curl Sdraiato', sets: 3, reps: 12, weight: 25, rest: 60 },
+      { name: '🦵 Calf Raise in Piedi', sets: 4, reps: 15, weight: 30, rest: 45 }
     ]
   },
   {
@@ -773,8 +760,8 @@ const WORKOUT_TEMPLATES = [
       { name: '🍑 Hip Thrust', sets: 4, reps: 12, weight: 50, rest: 90 },
       { name: '🍑 Stacco Rumeno', sets: 3, reps: 10, weight: 40, rest: 90 },
       { name: '🦵 Leg Extension', sets: 3, reps: 12, weight: 30, rest: 60 },
-      { name: '🦵 Leg Curl', sets: 3, reps: 12, weight: 25, rest: 60 },
-      { name: '🦵 Calf Raise', sets: 4, reps: 15, weight: 30, rest: 45 }
+      { name: '🦵 Leg Curl Sdraiato', sets: 3, reps: 12, weight: 25, rest: 60 },
+      { name: '🦵 Calf Raise in Piedi', sets: 4, reps: 15, weight: 30, rest: 45 }
     ]
   },
   {
@@ -841,44 +828,108 @@ const MUSCLE_GROUPS = {
 };
 
 const EXERCISE_LIBRARY = [
-  { name: '\u{1F4AA} Panca Piana Bilanciere', group: 'petto', type: 'compound', sets: 4, reps: 8, weight: 40, rest: 120 },
-  { name: '\u{1F4AA} Panca Inclinata Manubri', group: 'petto', type: 'compound', sets: 3, reps: 10, weight: 14, rest: 90 },
-  { name: '\u{1F4AA} Croci ai Cavi', group: 'petto', type: 'isolation', sets: 3, reps: 12, weight: 12, rest: 60 },
-  { name: '\u{1F4AA} Dip alle Parallele', group: 'petto', type: 'compound', sets: 3, reps: 10, weight: 0, rest: 90 },
+  { name: '💪 Panca Piana Bilanciere', group: 'petto', type: 'compound', sets: 4, reps: 8, weight: 40, rest: 120 },
+  { name: '💪 Panca Inclinata Bilanciere', group: 'petto', type: 'compound', sets: 4, reps: 8, weight: 35, rest: 120 },
+  { name: '💪 Panca Inclinata Manubri', group: 'petto', type: 'compound', sets: 3, reps: 10, weight: 14, rest: 90 },
+  { name: '💪 Panca Declinata', group: 'petto', type: 'compound', sets: 3, reps: 10, weight: 35, rest: 90 },
+  { name: '💪 Chest Press Machine', group: 'petto', type: 'compound', sets: 3, reps: 12, weight: 40, rest: 75 },
+  { name: '💪 Dip alle Parallele', group: 'petto', type: 'compound', sets: 3, reps: 10, weight: 0, rest: 90 },
+  { name: '💪 Piegamenti a Terra (Push-up)', group: 'petto', type: 'compound', sets: 3, reps: 15, weight: 0, rest: 60 },
+  { name: '💪 Croci ai Cavi', group: 'petto', type: 'isolation', sets: 3, reps: 12, weight: 12, rest: 60 },
+  { name: '💪 Croci su Panca Manubri', group: 'petto', type: 'isolation', sets: 3, reps: 12, weight: 10, rest: 60 },
+  { name: '💪 Pectoral Machine (Butterfly)', group: 'petto', type: 'isolation', sets: 3, reps: 12, weight: 30, rest: 60 },
+  { name: '💪 Pullover con Manubrio', group: 'petto', type: 'isolation', sets: 3, reps: 12, weight: 14, rest: 60 },
 
-  { name: '\u{1F3F9} Stacco da Terra (Deadlift)', group: 'schiena', type: 'compound', sets: 4, reps: 6, weight: 60, rest: 150 },
-  { name: '\u{1F3F9} Trazioni alla Sbarra (Pull-ups)', group: 'schiena', type: 'compound', sets: 4, reps: 8, weight: 0, rest: 120 },
-  { name: '\u{1F3F9} Lat Machine', group: 'schiena', type: 'compound', sets: 4, reps: 10, weight: 40, rest: 90 },
-  { name: '\u{1F3F9} Rematore con Bilanciere', group: 'schiena', type: 'compound', sets: 4, reps: 8, weight: 35, rest: 90 },
-  { name: '\u{1F3F9} Pulley Basso', group: 'schiena', type: 'compound', sets: 3, reps: 12, weight: 35, rest: 75 },
+  { name: '🏹 Stacco da Terra (Deadlift)', group: 'schiena', type: 'compound', sets: 4, reps: 6, weight: 60, rest: 150 },
+  { name: '🏹 Trazioni alla Sbarra (Pull-ups)', group: 'schiena', type: 'compound', sets: 4, reps: 8, weight: 0, rest: 120 },
+  { name: '🏹 Trazioni Presa Inversa (Chin-up)', group: 'schiena', type: 'compound', sets: 3, reps: 8, weight: 0, rest: 105 },
+  { name: '🏹 Lat Machine', group: 'schiena', type: 'compound', sets: 4, reps: 10, weight: 40, rest: 90 },
+  { name: '🏹 Lat Machine Presa Inversa', group: 'schiena', type: 'compound', sets: 3, reps: 12, weight: 35, rest: 75 },
+  { name: '🏹 Rematore con Bilanciere', group: 'schiena', type: 'compound', sets: 4, reps: 8, weight: 35, rest: 90 },
+  { name: '🏹 Rematore con Manubrio', group: 'schiena', type: 'compound', sets: 3, reps: 10, weight: 16, rest: 75 },
+  { name: '🏹 T-Bar Row', group: 'schiena', type: 'compound', sets: 3, reps: 10, weight: 30, rest: 90 },
+  { name: '🏹 Pulley Basso', group: 'schiena', type: 'compound', sets: 3, reps: 12, weight: 35, rest: 75 },
+  { name: '🏹 Pullover ai Cavi', group: 'schiena', type: 'isolation', sets: 3, reps: 12, weight: 20, rest: 60 },
+  { name: '🏹 Hyperextension (Lombari)', group: 'schiena', type: 'isolation', sets: 3, reps: 15, weight: 0, rest: 60 },
 
-  { name: '\u{1F9B5} Squat con Bilanciere', group: 'gambe', type: 'compound', sets: 4, reps: 8, weight: 50, rest: 150 },
-  { name: '\u{1F9B5} Leg Press', group: 'gambe', type: 'compound', sets: 3, reps: 12, weight: 80, rest: 90 },
-  { name: '\u{1F9B5} Affondi Manubri', group: 'gambe', type: 'compound', sets: 3, reps: 12, weight: 12, rest: 75 },
-  { name: '\u{1F9B5} Leg Extension', group: 'gambe', type: 'isolation', sets: 3, reps: 12, weight: 30, rest: 60 },
-  { name: '\u{1F9B5} Leg Curl', group: 'gambe', type: 'isolation', sets: 3, reps: 12, weight: 25, rest: 60 },
-  { name: '\u{1F9B5} Calf Raise', group: 'gambe', type: 'isolation', sets: 4, reps: 15, weight: 30, rest: 45 },
+  { name: '🦵 Squat con Bilanciere', group: 'gambe', type: 'compound', sets: 4, reps: 8, weight: 50, rest: 150 },
+  { name: '🦵 Front Squat', group: 'gambe', type: 'compound', sets: 4, reps: 8, weight: 35, rest: 135 },
+  { name: '🦵 Goblet Squat', group: 'gambe', type: 'compound', sets: 3, reps: 12, weight: 16, rest: 75 },
+  { name: '🦵 Hack Squat', group: 'gambe', type: 'compound', sets: 3, reps: 10, weight: 60, rest: 105 },
+  { name: '🦵 Leg Press', group: 'gambe', type: 'compound', sets: 3, reps: 12, weight: 80, rest: 90 },
+  { name: '🦵 Affondi Manubri', group: 'gambe', type: 'compound', sets: 3, reps: 12, weight: 12, rest: 75 },
+  { name: '🦵 Affondi in Camminata', group: 'gambe', type: 'compound', sets: 3, reps: 14, weight: 10, rest: 75 },
+  { name: '🦵 Step-up su Panca', group: 'gambe', type: 'compound', sets: 3, reps: 12, weight: 10, rest: 60 },
+  { name: '🦵 Leg Extension', group: 'gambe', type: 'isolation', sets: 3, reps: 12, weight: 30, rest: 60 },
+  { name: '🦵 Leg Curl Sdraiato', group: 'gambe', type: 'isolation', sets: 3, reps: 12, weight: 25, rest: 60 },
+  { name: '🦵 Leg Curl Seduto', group: 'gambe', type: 'isolation', sets: 3, reps: 12, weight: 28, rest: 60 },
+  { name: '🦵 Calf Raise in Piedi', group: 'gambe', type: 'isolation', sets: 4, reps: 15, weight: 30, rest: 45 },
+  { name: '🦵 Calf Raise Seduto', group: 'gambe', type: 'isolation', sets: 4, reps: 18, weight: 25, rest: 45 },
 
-  { name: '\u{1F351} Hip Thrust', group: 'glutei', type: 'compound', sets: 4, reps: 12, weight: 45, rest: 90 },
-  { name: '\u{1F351} Stacco Rumeno', group: 'glutei', type: 'compound', sets: 3, reps: 10, weight: 40, rest: 90 },
-  { name: '\u{1F351} Affondi Bulgari', group: 'glutei', type: 'compound', sets: 3, reps: 12, weight: 12, rest: 75 },
-  { name: '\u{1F351} Abductor Machine', group: 'glutei', type: 'isolation', sets: 3, reps: 15, weight: 25, rest: 45 },
-  { name: '\u{1F351} Ponte Glutei', group: 'glutei', type: 'isolation', sets: 3, reps: 20, weight: 0, rest: 45 },
+  { name: '🍑 Hip Thrust', group: 'glutei', type: 'compound', sets: 4, reps: 12, weight: 45, rest: 90 },
+  { name: '🍑 Stacco Rumeno', group: 'glutei', type: 'compound', sets: 3, reps: 10, weight: 40, rest: 90 },
+  { name: '🍑 Stacco Sumo', group: 'glutei', type: 'compound', sets: 3, reps: 8, weight: 45, rest: 120 },
+  { name: '🍑 Affondi Bulgari', group: 'glutei', type: 'compound', sets: 3, reps: 12, weight: 12, rest: 75 },
+  { name: '🍑 Good Morning', group: 'glutei', type: 'compound', sets: 3, reps: 12, weight: 25, rest: 75 },
+  { name: '🍑 Ponte Glutei', group: 'glutei', type: 'isolation', sets: 3, reps: 20, weight: 0, rest: 45 },
+  { name: '🍑 Abductor Machine', group: 'glutei', type: 'isolation', sets: 3, reps: 15, weight: 25, rest: 45 },
+  { name: '🍑 Kickback ai Cavi', group: 'glutei', type: 'isolation', sets: 3, reps: 15, weight: 10, rest: 45 },
+  { name: '🍑 Slanci Laterali a Terra', group: 'glutei', type: 'isolation', sets: 3, reps: 20, weight: 0, rest: 40 },
 
-  { name: '\u{1F6E1}\uFE0F Military Press', group: 'spalle', type: 'compound', sets: 4, reps: 8, weight: 25, rest: 120 },
-  { name: '\u{1F6E1}\uFE0F Alzate Laterali', group: 'spalle', type: 'isolation', sets: 3, reps: 12, weight: 6, rest: 60 },
-  { name: '\u{1F6E1}\uFE0F Arnold Press', group: 'spalle', type: 'compound', sets: 3, reps: 10, weight: 12, rest: 90 },
-  { name: '\u{1F6E1}\uFE0F Face Pull', group: 'spalle', type: 'isolation', sets: 3, reps: 15, weight: 12, rest: 60 },
+  { name: '🛡️ Military Press', group: 'spalle', type: 'compound', sets: 4, reps: 8, weight: 25, rest: 120 },
+  { name: '🛡️ Lento Avanti Manubri', group: 'spalle', type: 'compound', sets: 3, reps: 10, weight: 12, rest: 90 },
+  { name: '🛡️ Arnold Press', group: 'spalle', type: 'compound', sets: 3, reps: 10, weight: 12, rest: 90 },
+  { name: '🛡️ Shoulder Press Machine', group: 'spalle', type: 'compound', sets: 3, reps: 12, weight: 25, rest: 75 },
+  { name: '🛡️ Tirate al Mento (Upright Row)', group: 'spalle', type: 'compound', sets: 3, reps: 12, weight: 20, rest: 60 },
+  { name: '🛡️ Alzate Laterali', group: 'spalle', type: 'isolation', sets: 3, reps: 12, weight: 6, rest: 60 },
+  { name: '🛡️ Alzate Frontali', group: 'spalle', type: 'isolation', sets: 3, reps: 12, weight: 6, rest: 60 },
+  { name: '🛡️ Alzate Posteriori (Reverse Fly)', group: 'spalle', type: 'isolation', sets: 3, reps: 15, weight: 5, rest: 45 },
+  { name: '🛡️ Face Pull', group: 'spalle', type: 'isolation', sets: 3, reps: 15, weight: 12, rest: 60 },
+  { name: '🛡️ Scrollate (Shrug)', group: 'spalle', type: 'isolation', sets: 3, reps: 15, weight: 30, rest: 60 },
 
-  { name: '\u{1F9BE} Curl Bilanciere Bicipiti', group: 'braccia', type: 'isolation', sets: 3, reps: 10, weight: 20, rest: 60 },
-  { name: '\u{1F9BE} Hammer Curl', group: 'braccia', type: 'isolation', sets: 3, reps: 12, weight: 10, rest: 45 },
-  { name: '\u{1F9BE} Pushdown Tricipiti ai Cavi', group: 'braccia', type: 'isolation', sets: 3, reps: 12, weight: 20, rest: 60 },
-  { name: '\u{1F9BE} French Press', group: 'braccia', type: 'isolation', sets: 3, reps: 12, weight: 15, rest: 60 },
+  { name: '🦾 Curl Bilanciere Bicipiti', group: 'braccia', type: 'isolation', sets: 3, reps: 10, weight: 20, rest: 60 },
+  { name: '🦾 Curl Manubri Alternato', group: 'braccia', type: 'isolation', sets: 3, reps: 12, weight: 10, rest: 60 },
+  { name: '🦾 Hammer Curl', group: 'braccia', type: 'isolation', sets: 3, reps: 12, weight: 10, rest: 45 },
+  { name: '🦾 Curl su Panca Scott', group: 'braccia', type: 'isolation', sets: 3, reps: 12, weight: 15, rest: 60 },
+  { name: '🦾 Curl ai Cavi', group: 'braccia', type: 'isolation', sets: 3, reps: 12, weight: 15, rest: 45 },
+  { name: '🦾 Curl di Concentrazione', group: 'braccia', type: 'isolation', sets: 3, reps: 12, weight: 8, rest: 45 },
+  { name: '🦾 Pushdown Tricipiti ai Cavi', group: 'braccia', type: 'isolation', sets: 3, reps: 12, weight: 20, rest: 60 },
+  { name: '🦾 French Press', group: 'braccia', type: 'isolation', sets: 3, reps: 12, weight: 15, rest: 60 },
+  { name: '🦾 Panca Presa Stretta', group: 'braccia', type: 'compound', sets: 3, reps: 10, weight: 30, rest: 90 },
+  { name: '🦾 Dip su Panca', group: 'braccia', type: 'compound', sets: 3, reps: 12, weight: 0, rest: 60 },
+  { name: '🦾 Kickback Tricipiti', group: 'braccia', type: 'isolation', sets: 3, reps: 15, weight: 6, rest: 45 },
 
-  { name: '\u{1F3AF} Plank', group: 'core', type: 'isolation', sets: 3, reps: 45, weight: 0, rest: 45 },
-  { name: '\u{1F3AF} Crunch al Cavo', group: 'core', type: 'isolation', sets: 3, reps: 15, weight: 20, rest: 45 },
-  { name: '\u{1F3AF} Leg Raise alla Sbarra', group: 'core', type: 'isolation', sets: 3, reps: 12, weight: 0, rest: 45 }
+  { name: '🎯 Plank', group: 'core', type: 'isolation', sets: 3, reps: 45, weight: 0, rest: 45 },
+  { name: '🎯 Plank Laterale', group: 'core', type: 'isolation', sets: 3, reps: 30, weight: 0, rest: 45 },
+  { name: '🎯 Crunch a Terra', group: 'core', type: 'isolation', sets: 3, reps: 20, weight: 0, rest: 45 },
+  { name: '🎯 Crunch al Cavo', group: 'core', type: 'isolation', sets: 3, reps: 15, weight: 20, rest: 45 },
+  { name: '🎯 Leg Raise alla Sbarra', group: 'core', type: 'isolation', sets: 3, reps: 12, weight: 0, rest: 45 },
+  { name: '🎯 Leg Raise a Terra', group: 'core', type: 'isolation', sets: 3, reps: 15, weight: 0, rest: 45 },
+  { name: '🎯 Russian Twist', group: 'core', type: 'isolation', sets: 3, reps: 20, weight: 5, rest: 45 },
+  { name: '🎯 Mountain Climber', group: 'core', type: 'isolation', sets: 3, reps: 30, weight: 0, rest: 40 },
+  { name: '🎯 Hollow Hold', group: 'core', type: 'isolation', sets: 3, reps: 30, weight: 0, rest: 45 },
+  { name: '🎯 Ab Wheel', group: 'core', type: 'isolation', sets: 3, reps: 12, weight: 0, rest: 60 }
 ];
+
+/* Il menu a tendina si genera dalla libreria: una sola fonte di verita',
+   cosi non puo' mai succedere che un esercizio esista in una scheda ma
+   non sia selezionabile a mano. */
+function buildExerciseSelect() {
+  const sel = document.getElementById('exercise-select');
+  if (!sel) return;
+  let html = '<option value="">-- Seleziona un esercizio --</option>';
+  Object.keys(MUSCLE_GROUPS).forEach(gid => {
+    const g = MUSCLE_GROUPS[gid];
+    const items = EXERCISE_LIBRARY.filter(e => e.group === gid);
+    if (!items.length) return;
+    html += '<optgroup label="' + g.emoji + ' ' + g.label + '">';
+    items.forEach(e => {
+      html += '<option value="' + escapeHtml(e.name) + '">' + escapeHtml(e.name) + '</option>';
+    });
+    html += '</optgroup>';
+  });
+  sel.innerHTML = html;
+}
 
 function findExercise(name) {
   return EXERCISE_LIBRARY.find(e => e.name === name) || null;
@@ -961,6 +1012,13 @@ function suggestNextExercises(planList, startGroup, limit) {
       return Object.assign({}, ex, { score: score, reason: reasons[0] || 'complemento utile alla seduta' });
     })
     .sort((a, b) => b.score - a.score)
+    /* Diversita': al massimo 2 proposte per gruppo, altrimenti con una libreria
+       ampia il Coach restituirebbe 5 varianti dello stesso muscolo. */
+    .reduce((acc, ex) => {
+      const perGroup = acc.filter(x => x.group === ex.group).length;
+      if (perGroup < 2) acc.push(ex);
+      return acc;
+    }, [])
     .slice(0, max);
 }
 
@@ -1235,13 +1293,15 @@ window.selectDay = function(day) {
   renderDayBar();
   renderPiano();
   renderAllenamento();
+  if (currentTab === 'gruppi') renderGruppi();
 };
 
 window.switchTab = function(tab) {
   currentTab = tab;
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + tab));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
-  document.getElementById('day-bar-wrap').style.display = tab === 'storico' ? 'none' : 'flex';
+  /* Il giorno si sceglie in Piano e Gruppi: nel tab Allenamento e nello Storico la barra sparisce */
+  document.getElementById('day-bar-wrap').style.display = (tab === 'piano') ? 'flex' : 'none';
   if (tab === 'storico') renderStorico();
   if (tab === 'gruppi') renderGruppi();
 };
@@ -2205,7 +2265,63 @@ window.clearGroupSelection = function() {
   renderGruppi();
 };
 
+/* Figura anatomica disegnata in SVG: niente immagini esterne, cosi
+   funziona anche offline in palestra e segue i colori del tema.
+   Vista frontale a sinistra, posteriore a destra. */
+function renderBodyMap(active) {
+  const on = (g) => active.indexOf(g) !== -1 ? ' active' : '';
+  return '<svg viewBox="0 0 240 215" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Muscoli coinvolti">' +
+    /* ---------- FRONTE ---------- */
+    '<ellipse class="bm-base" cx="60" cy="18" rx="11" ry="13"/>' +
+    '<rect class="bm-base" x="55" y="29" width="10" height="8"/>' +
+    '<path class="bm-muscle' + on('spalle') + '" d="M36 42 q6 -9 16 -6 l0 13 q-10 3 -16 -7z"/>' +
+    '<path class="bm-muscle' + on('spalle') + '" d="M84 42 q-6 -9 -16 -6 l0 13 q10 3 16 -7z"/>' +
+    '<path class="bm-muscle' + on('petto') + '" d="M46 40 q13 -4 13 2 l0 14 q-9 3 -14 -3z"/>' +
+    '<path class="bm-muscle' + on('petto') + '" d="M74 40 q-13 -4 -13 2 l0 14 q9 3 14 -3z"/>' +
+    '<rect class="bm-muscle' + on('core') + '" x="49" y="59" width="22" height="34" rx="5"/>' +
+    '<ellipse class="bm-muscle' + on('braccia') + '" cx="34" cy="64" rx="6" ry="15"/>' +
+    '<ellipse class="bm-muscle' + on('braccia') + '" cx="86" cy="64" rx="6" ry="15"/>' +
+    '<ellipse class="bm-base" cx="31" cy="91" rx="5" ry="14"/>' +
+    '<ellipse class="bm-base" cx="89" cy="91" rx="5" ry="14"/>' +
+    '<rect class="bm-base" x="48" y="93" width="24" height="12" rx="4"/>' +
+    '<ellipse class="bm-muscle' + on('gambe') + '" cx="52" cy="128" rx="9" ry="24"/>' +
+    '<ellipse class="bm-muscle' + on('gambe') + '" cx="68" cy="128" rx="9" ry="24"/>' +
+    '<ellipse class="bm-muscle' + on('gambe') + '" cx="52" cy="172" rx="7" ry="19"/>' +
+    '<ellipse class="bm-muscle' + on('gambe') + '" cx="68" cy="172" rx="7" ry="19"/>' +
+    '<text class="bm-label" x="60" y="209">FRONTE</text>' +
+    /* ---------- RETRO ---------- */
+    '<ellipse class="bm-base" cx="180" cy="18" rx="11" ry="13"/>' +
+    '<rect class="bm-base" x="175" y="29" width="10" height="8"/>' +
+    '<path class="bm-muscle' + on('spalle') + '" d="M156 42 q6 -9 16 -6 l0 13 q-10 3 -16 -7z"/>' +
+    '<path class="bm-muscle' + on('spalle') + '" d="M204 42 q-6 -9 -16 -6 l0 13 q10 3 16 -7z"/>' +
+    '<path class="bm-muscle' + on('schiena') + '" d="M166 40 q14 -5 28 0 l-4 30 q-10 4 -20 0z"/>' +
+    '<rect class="bm-muscle' + on('schiena') + '" x="172" y="71" width="16" height="20" rx="4"/>' +
+    '<ellipse class="bm-muscle' + on('braccia') + '" cx="154" cy="64" rx="6" ry="15"/>' +
+    '<ellipse class="bm-muscle' + on('braccia') + '" cx="206" cy="64" rx="6" ry="15"/>' +
+    '<ellipse class="bm-base" cx="151" cy="91" rx="5" ry="14"/>' +
+    '<ellipse class="bm-base" cx="209" cy="91" rx="5" ry="14"/>' +
+    '<ellipse class="bm-muscle' + on('glutei') + '" cx="172" cy="100" rx="10" ry="9"/>' +
+    '<ellipse class="bm-muscle' + on('glutei') + '" cx="188" cy="100" rx="10" ry="9"/>' +
+    '<ellipse class="bm-muscle' + on('gambe') + '" cx="172" cy="131" rx="9" ry="23"/>' +
+    '<ellipse class="bm-muscle' + on('gambe') + '" cx="188" cy="131" rx="9" ry="23"/>' +
+    '<ellipse class="bm-muscle' + on('gambe') + '" cx="172" cy="173" rx="7" ry="19"/>' +
+    '<ellipse class="bm-muscle' + on('gambe') + '" cx="188" cy="173" rx="7" ry="19"/>' +
+    '<text class="bm-label" x="180" y="209">RETRO</text>' +
+  '</svg>';
+}
+
 function renderGruppi() {
+  /* Selettore giorno: il piano si costruisce DA QUI, non dal tab Allenamento */
+  document.getElementById('group-days-bar').innerHTML = DAYS.map(d =>
+    '<div class="day-chip ' + (d === currentDay ? 'active' : '') + '" onclick="selectDay(\'' + d + '\')">' + d + '</div>'
+  ).join('');
+  const data0 = loadData();
+  const n0 = (data0[currentDay] || []).length;
+  document.getElementById('group-day-current').innerText =
+    'Stai costruendo: ' + getDayTitle(currentDay) + ' (' + n0 + ' esercizi finora)';
+
+  document.getElementById('body-map').innerHTML = renderBodyMap(selectedGroups);
+
   const grid = document.getElementById('group-grid');
   grid.innerHTML = Object.keys(MUSCLE_GROUPS).map(id => {
     const g = MUSCLE_GROUPS[id];
@@ -2226,7 +2342,6 @@ function renderGruppi() {
     return;
   }
 
-  /* Schede che toccano almeno uno dei gruppi selezionati, ordinate per pertinenza */
   const scoredTemplates = WORKOUT_TEMPLATES.map(t => {
     const hits = t.exercises.filter(e => {
       const m = findExercise(e.name);
@@ -2250,7 +2365,8 @@ function renderGruppi() {
     tplCard.style.display = 'none';
   }
 
-  /* Esercizi dei gruppi scelti: multiarticolari prima, come vuole la programmazione */
+  /* Esercizi: multiarticolari prima. Serie/reps/recupero sono PRECOMPILATI
+     coi valori consigliati ma restano modificabili prima di aggiungerli. */
   const data = loadData();
   const present = new Set((data[currentDay] || []).map(e => e.name));
   const list = EXERCISE_LIBRARY
@@ -2258,26 +2374,49 @@ function renderGruppi() {
     .sort((a, b) => (a.type === b.type ? 0 : (a.type === 'compound' ? -1 : 1)));
 
   exCard.style.display = 'block';
-  document.getElementById('group-exercises-title').innerText = 'Esercizi (' + list.length + ')';
-  document.getElementById('group-exercises-hint').innerText = 'Vengono aggiunti a: ' + getDayTitle(currentDay);
-  document.getElementById('group-exercises').innerHTML = list.map(e => {
+  document.getElementById('group-exercises-title').innerText = '3. Scegli gli esercizi (' + list.length + ')';
+  document.getElementById('group-exercises-hint').innerText =
+    'Valori consigliati gia impostati: modificali qui prima di aggiungerli a ' + getDayTitle(currentDay) + '.';
+
+  document.getElementById('group-exercises').innerHTML = list.map((e, i) => {
     const already = present.has(e.name);
-    return '<div class="lib-item">' +
-      '<div><div class="lib-name">' + escapeHtml(e.name) +
-      '<span class="lib-type ' + e.type + '">' + (e.type === 'compound' ? 'Multiart.' : 'Isolam.') + '</span></div>' +
-      '<div class="lib-meta">' + e.sets + '\u00D7' + e.reps + ' \u2022 ' + e.weight + ' kg \u2022 \u23F1 ' + e.rest + 's</div></div>' +
-      '<button class="lib-add-btn ' + (already ? 'added' : '') + '" onclick="addLibraryExercise(\'' + e.name.replace(/'/g, "\\'") + '\')" aria-label="Aggiungi">' + (already ? '\u2713' : '+') + '</button>' +
+    const safe = e.name.replace(/'/g, "\\'");
+    return '<div class="lib-row">' +
+      '<div class="lib-row-top">' +
+        '<div class="lib-name">' + escapeHtml(e.name) +
+          '<span class="lib-type ' + e.type + '">' + (e.type === 'compound' ? 'Multiart.' : 'Isolam.') + '</span></div>' +
+      '</div>' +
+      '<div class="lib-row-params">' +
+        '<label class="mini-field"><span>Serie</span><input type="number" id="lp-sets-' + i + '" value="' + e.sets + '" min="1"></label>' +
+        '<label class="mini-field"><span>Reps</span><input type="number" id="lp-reps-' + i + '" value="' + e.reps + '" min="1"></label>' +
+        '<label class="mini-field"><span>Kg</span><input type="number" id="lp-weight-' + i + '" value="' + e.weight + '" step="0.5"></label>' +
+        '<label class="mini-field"><span>Rec. s</span><input type="number" id="lp-rest-' + i + '" value="' + e.rest + '" step="15"></label>' +
+        '<button class="lib-add-btn ' + (already ? 'added' : '') + '" onclick="addLibraryExercise(\'' + safe + '\', ' + i + ')" aria-label="Aggiungi">' + (already ? '\u2713' : '+') + '</button>' +
+      '</div>' +
     '</div>';
   }).join('');
 }
 
-window.addLibraryExercise = function(name) {
+window.addLibraryExercise = function(name, rowIdx) {
   const meta = findExercise(name);
   if (!meta) return;
+  /* Se l'esercizio arriva dalla lista Gruppi, prende i valori che l'utente
+     ha eventualmente modificato nei campi; altrimenti quelli consigliati. */
+  const readField = (k, fallback) => {
+    if (rowIdx === undefined || rowIdx === null) return fallback;
+    const el = document.getElementById('lp-' + k + '-' + rowIdx);
+    if (!el) return fallback;
+    const v = parseFloat(el.value);
+    return isNaN(v) ? fallback : v;
+  };
   const data = loadData();
   data[currentDay].push(normalizeExerciseRecord({
-    name: meta.name, sets: meta.sets, reps: meta.reps,
-    weight: meta.weight, rest: meta.rest, completedSets: []
+    name: meta.name,
+    sets: readField('sets', meta.sets),
+    reps: readField('reps', meta.reps),
+    weight: readField('weight', meta.weight),
+    rest: readField('rest', meta.rest),
+    completedSets: []
   }));
   saveData(data);
   renderPiano();
@@ -2414,6 +2553,7 @@ window.clearHistory = function() {
    BOOT
    ============================================================ */
 (function boot() {
+  buildExerciseSelect();
   document.getElementById('recovery-mute-btn').innerText = recoveryMuted ? '🔇' : '🔊';
   const stored = getStoredMode();
   if (stored && MODE_META[stored]) {
