@@ -186,6 +186,60 @@ body.reorder-mode .plan-card { border-color: var(--primary); }
 .wk-empty { font-size: 0.8rem; color: var(--muted); padding: 4px 0 8px; }
 .wk-total { font-size: 0.7rem; color: var(--muted); font-weight: 800; text-align: right; margin-bottom: 8px; }
 
+/* ======= Righe proposta: si tocca tutta la riga, l icona si illumina ======= */
+.pick-row {
+  display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+  background: #0d0d12; border: 1px solid var(--border); border-radius: 10px;
+  padding: 11px 12px; margin-bottom: 6px; cursor: pointer; color: var(--text);
+  transition: border-color .15s ease, background .15s ease;
+}
+.pick-row:active { transform: scale(0.995); }
+.pick-row.on { border-color: var(--success); background: rgba(34,197,94,0.09); }
+.pick-icon {
+  flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%;
+  background: #1a1a24; border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center; font-size: 1.05rem;
+  filter: grayscale(100%) opacity(0.5);
+  transition: filter .18s ease, box-shadow .18s ease, background .18s ease;
+}
+.pick-row.on .pick-icon {
+  filter: none;
+  background: rgba(34,197,94,0.18);
+  border-color: var(--success);
+  box-shadow: 0 0 10px rgba(34,197,94,0.55);
+}
+.pick-main { flex: 1; min-width: 0; }
+.pick-name { font-weight: 700; font-size: 0.87rem; }
+.pick-meta { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+.pick-check { flex-shrink: 0; font-size: 1.1rem; font-weight: 900; color: var(--border); }
+.pick-row.on .pick-check { color: var(--success); }
+
+/* tenda scorrevole per il resto degli esercizi */
+.drawer-btn {
+  width: 100%; margin-top: 8px; background: #1a1a24; border: 1px solid var(--border);
+  color: var(--text); padding: 10px; border-radius: 8px; font-size: 0.76rem; font-weight: 800; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.drawer-btn .caret { transition: transform .18s ease; }
+.drawer-btn.open .caret { transform: rotate(180deg); }
+.drawer-body { max-height: 0; overflow: hidden; transition: max-height .28s ease; }
+.drawer-body.open { max-height: 1400px; overflow-y: auto; }
+
+/* ======= Numero regolabile scorrendo ======= */
+.num-drag {
+  position: relative; touch-action: none; cursor: ns-resize;
+  background: #08080a; border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text); text-align: center; padding: 7px 2px; font-size: 0.85rem; width: 56px;
+}
+.num-drag:focus { border-color: var(--primary); outline: none; }
+.num-drag.dragging { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-shadow); }
+.num-hint { font-size: 0.58rem; color: var(--muted); text-align: center; margin-top: 1px; }
+
+/* ======= + / - serie nella sessione ======= */
+.set-tools { display: flex; gap: 6px; margin-top: 8px; }
+.set-tool-btn { flex: 1; background: #1a1a24; border: 1px solid var(--border); color: var(--text); padding: 7px; border-radius: 7px; font-size: 0.72rem; font-weight: 800; cursor: pointer; }
+.set-tool-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
 /* ======= Segnalazione "gia scelto" ======= */
 .use-tag { display: inline-block; font-size: 0.6rem; font-weight: 900; text-transform: uppercase; border-radius: 999px; padding: 2px 7px; margin-left: 6px; white-space: nowrap; }
 .use-tag.today { background: rgba(34,197,94,0.18); color: #22c55e; border: 1px solid #22c55e; }
@@ -2078,7 +2132,7 @@ function renderAllenamento() {
           ${e.completedSets.map((s, si) => `
             <div class="set-row ${s.done ? 'done' : ''} ${armedSet && armedSet.exIdx === idx && armedSet.setIdx === si ? 'armed' : ''}">
               <span class="set-num">${si + 1}</span>
-              <input type="number" class="set-input" value="${s.reps}" ${s.done ? 'disabled' : ''} oninput="updateSetField(${idx},${si},'reps',this.value)">
+              <input type="number" class="num-drag" data-reps-ex="${idx}" data-reps-set="${si}" value="${s.reps}" ${s.done ? 'disabled' : ''}>
               <span class="set-x">×</span>
               <input type="number" class="set-input" value="${s.weight}" step="0.5" ${s.done ? 'disabled' : ''} oninput="updateSetField(${idx},${si},'weight',this.value)">
               <span class="set-kg-label">kg</span>
@@ -2087,8 +2141,22 @@ function renderAllenamento() {
             </div>
           `).join('')}
         </div>
+        <div class="set-tools">
+          <button class="set-tool-btn" onclick="removeSetFrom(${idx})" ${e.sets <= 1 ? 'disabled' : ''}>− Serie</button>
+          <button class="set-tool-btn" onclick="addSetTo(${idx})">+ Serie</button>
+        </div>
       </div>
     `).join('');
+
+    /* Le ripetizioni si regolano trascinando il numero in alto o in basso,
+       oppure digitandolo. Limiti diversi per gli isometrici, che vanno a secondi. */
+    container.querySelectorAll('.num-drag[data-reps-ex]').forEach(inp => {
+      const exIdx = Number(inp.dataset.repsEx);
+      const setIdx = Number(inp.dataset.repsSet);
+      const nome = (list[exIdx] || {}).name || '';
+      const r = repsRange(nome);
+      attachNumberDrag(inp, r.min, r.max, (val) => updateSetField(exIdx, setIdx, 'reps', val));
+    });
   }
   const active = list.filter(e => !e.skipped);
   const totalSets = active.reduce((s, e) => s + e.sets, 0);
@@ -2099,6 +2167,44 @@ function renderAllenamento() {
 
   refreshDropButtonState();
 }
+
+/* Aggiungere o togliere una serie si fa QUI, il giorno dell'allenamento:
+   e' il momento in cui sai davvero come stai andando. */
+window.addSetTo = function(idx) {
+  const data = loadData();
+  const ex = data[currentDay][idx];
+  if (!ex) return;
+  const ultima = ex.completedSets[ex.completedSets.length - 1];
+  ex.completedSets.push({
+    done: false,
+    reps: ultima ? ultima.reps : ex.reps,
+    weight: ultima ? ultima.weight : ex.weight,
+    wasBerserk: false
+  });
+  ex.sets = ex.completedSets.length;
+  saveData(data);
+  renderAllenamento();
+  renderPiano();
+};
+
+window.removeSetFrom = function(idx) {
+  const data = loadData();
+  const ex = data[currentDay][idx];
+  if (!ex || ex.completedSets.length <= 1) return;
+  const tolta = ex.completedSets.pop();
+  ex.sets = ex.completedSets.length;
+  saveData(data);
+  if (armedSet && armedSet.exIdx === idx && armedSet.setIdx >= ex.completedSets.length) armedSet = null;
+  renderAllenamento();
+  renderPiano();
+  showUndo('Una serie in meno su ' + ex.name.replace(/^\S+\s/, ''), () => {
+    const d2 = loadData();
+    d2[currentDay][idx].completedSets.push(tolta);
+    d2[currentDay][idx].sets = d2[currentDay][idx].completedSets.length;
+    saveData(d2);
+    renderAllenamento(); renderPiano();
+  });
+};
 
 /* Saltare un esercizio non lo cancella: resta in scheda per le volte
    successive, ma esce dal conteggio della sessione di oggi. */
@@ -2923,6 +3029,50 @@ function attachSwipe(host, opts) {
   fg.addEventListener('pointerleave', up);
 }
 
+/* Numero regolabile scorrendo: si tiene premuto e si trascina in alto o in
+   basso. Resta anche scrivibile da tastiera, per chi preferisce digitare. */
+function attachNumberDrag(input, min, max, onChange) {
+  let startY = 0, startVal = 0, dragging = false, moved = false;
+  const STEP_PX = 9; /* pixel per unita */
+
+  input.addEventListener('pointerdown', (e) => {
+    dragging = true; moved = false;
+    startY = e.clientY;
+    startVal = parseInt(input.value, 10) || min;
+    input.classList.add('dragging');
+    try { input.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+
+  input.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const dy = startY - e.clientY;          /* su = +, giu = - */
+    if (Math.abs(dy) > 3) moved = true;
+    const val = Math.max(min, Math.min(max, startVal + Math.round(dy / STEP_PX)));
+    if (String(val) !== input.value) {
+      input.value = val;
+      if (onChange) onChange(val);
+    }
+    e.preventDefault();
+  });
+
+  const end = (e) => {
+    if (!dragging) return;
+    dragging = false;
+    input.classList.remove('dragging');
+    try { input.releasePointerCapture(e.pointerId); } catch (err) {}
+    if (!moved) input.focus();               /* tocco secco: si digita */
+  };
+  input.addEventListener('pointerup', end);
+  input.addEventListener('pointercancel', end);
+
+  /* la digitazione resta valida, ma dentro i limiti */
+  input.addEventListener('change', () => {
+    const val = Math.max(min, Math.min(max, parseInt(input.value, 10) || min));
+    input.value = val;
+    if (onChange) onChange(val);
+  });
+}
+
 /* Snackbar con Annulla: per le cancellazioni frequenti la ricerca preferisce
    l'annulla alla finestra di conferma, che rallenta ogni singola operazione. */
 let snackTimer = null;
@@ -3087,7 +3237,11 @@ window.toggleGroup = function(groupId) {
 };
 
 let sheetGroup = null;
-let sheetOrder = null; /* ordine congelato mentre la schermata e aperta */
+let sheetOrder = null;      /* ordine congelato mentre la schermata e aperta */
+let sheetExpanded = false;  /* tenda della schermata gruppo */
+let suggestedExpanded = false;
+let suggestedOrder = [];
+let suggestedOrderKey = null;
 
 /* Toccare un gruppo apre direttamente le sue opzioni. Nulla viene aggiunto
    da solo: la scelta resta dell'utente, un esercizio alla volta. */
@@ -3095,15 +3249,35 @@ window.toggleGroupInPlan = function(groupId) {
   openGroupSheet(groupId);
 };
 
-/* Quante proposte mostrare per gruppo prima di "vedi tutti" */
-let suggestedExpanded = false;
-let suggestedOrder = [];
-let suggestedOrderKey = null;
-const SUGGESTED_PER_GROUP = 4;
-
 window.toggleSuggestedExpanded = function() {
   suggestedExpanded = !suggestedExpanded;
   renderSuggested();
+};
+
+/* Riga selezionabile: si tocca tutta la riga, l'icona si illumina.
+   Nessun campo da compilare qui: parametri fissi 3 x 10. */
+function pickRow(ex, selected, onclick) {
+  const emoji = (ex.name.match(/^\S+/) || ['\u{1F3CB}\uFE0F'])[0];
+  const nome = ex.name.replace(/^\S+\s/, '');
+  const reps = defaultRepsFor(ex.name);
+  const unita = isTimeBased(ex.name) ? 's' : '';
+  return '<button class="pick-row ' + (selected ? 'on' : '') + '" onclick="' + onclick + '">' +
+    '<span class="pick-icon">' + emoji + '</span>' +
+    '<span class="pick-main">' +
+      '<span class="pick-name">' + escapeHtml(nome) + '</span>' +
+      '<span class="pick-meta">' + DEFAULT_SETS + ' \u00D7 ' + reps + unita +
+        ' \u2022 ' + (ex.type === 'compound' ? 'multiarticolare' : 'isolamento') + '</span>' +
+    '</span>' +
+    '<span class="pick-check">' + (selected ? '\u2713' : '+') + '</span>' +
+  '</button>';
+}
+
+/* Toccando la riga si aggiunge o si toglie: un solo gesto per entrambi */
+window.togglePickExercise = function(name) {
+  const data = loadData();
+  const gia = (data[currentDay] || []).some(e => e.name === name);
+  if (gia) removeExerciseByName(name);
+  else addLibraryExercise(name);
 };
 
 function renderSuggested() {
@@ -3119,68 +3293,58 @@ function renderSuggested() {
 
   const data = loadData();
   const present = new Set((data[currentDay] || []).map(e => e.name));
+  const usage = weekUsage();
 
-  /* multiarticolari prima, e chi e' gia in scheda va in fondo */
   let items = [];
   selectedGroups.forEach(gid => {
-    const ofGroup = EXERCISE_LIBRARY.filter(e => e.group === gid);
-    if (suggestedExpanded) {
-      items = items.concat(ofGroup.slice().sort((a, b) => (a.type === b.type ? 0 : (a.type === 'compound' ? -1 : 1))));
-    } else {
-      /* Mix bilanciato: i multiarticolari aprono, ma ci scappa sempre almeno
-         un isolamento, altrimenti per gruppi ricchi di fondamentali (glutei,
-         schiena) le proposte sarebbero tutte pesanti. */
-      const comp = ofGroup.filter(e => e.type === 'compound');
-      const iso = ofGroup.filter(e => e.type === 'isolation');
-      const nIso = Math.min(iso.length, Math.max(1, Math.floor(SUGGESTED_PER_GROUP / 4)));
-      items = items.concat(comp.slice(0, SUGGESTED_PER_GROUP - nIso)).concat(iso.slice(0, nIso));
-    }
+    items = items.concat(EXERCISE_LIBRARY.filter(e => e.group === gid));
   });
-  /* Ordine: mai scelti prima, poi quelli usati in altri giorni, infine
-     quelli gia in scheda oggi. Cosi la prima proposta e' sempre nuova.
-     Come sopra, l'ordine resta fermo finche non cambi giorno o gruppi. */
-  const usage = weekUsage();
-  const chiave = currentDay + '|' + selectedGroups.join(',') + '|' + suggestedExpanded;
+
+  /* Ordine congelato: mai scelti prima, poi usati altrove, poi gia in scheda. */
+  const chiave = currentDay + '|' + selectedGroups.join(',');
   if (suggestedOrderKey !== chiave) {
     suggestedOrderKey = chiave;
-    suggestedOrder = items.slice()
-      .sort((a, b) => usageRank(usageState(a.name, usage)) - usageRank(usageState(b.name, usage)))
-      .map(e => e.name);
+    suggestedOrder = items.slice().sort((a, b) => {
+      const r = usageRank(usageState(a.name, usage)) - usageRank(usageState(b.name, usage));
+      if (r !== 0) return r;
+      return (a.type === b.type ? 0 : (a.type === 'compound' ? -1 : 1));
+    }).map(e => e.name);
   }
-  const posizione = {};
-  suggestedOrder.forEach((n, i) => { posizione[n] = i; });
-  items.sort((a, b) => (posizione[a.name] === undefined ? 999 : posizione[a.name]) - (posizione[b.name] === undefined ? 999 : posizione[b.name]));
+  const pos = {};
+  suggestedOrder.forEach((n, i) => { pos[n] = i; });
+  items.sort((a, b) => (pos[a.name] === undefined ? 999 : pos[a.name]) - (pos[b.name] === undefined ? 999 : pos[b.name]));
 
   const nomi = selectedGroups.map(g => MUSCLE_GROUPS[g].label).join(', ');
   document.getElementById('suggested-hint').innerText =
-    'Proposte per ' + nomi + '. Tocca + per metterle in scheda: nulla viene aggiunto da solo.';
+    'Proposte per ' + nomi + ': tocca l\'esercizio per metterlo in scheda. Parte sempre da ' + DEFAULT_SETS + ' serie da ' + DEFAULT_REPS + ', poi lo regoli il giorno dell\'allenamento.';
 
-  listEl.innerHTML = items.map(e => {
-    const already = present.has(e.name);
-    const st = usageState(e.name, usage);
-    const safe = e.name.replace(/'/g, "\\'");
-    const rowCls = st.level === 'today' ? ' used-today' : (st.level === 'week' ? ' used-week' : '');
-    const btnCls = already ? 'added' : (st.level === 'week' ? 'week' : '');
-    return '<div class="sugg-row' + rowCls + '">' +
-      '<div class="sugg-main">' +
-        '<div class="sugg-name">' + escapeHtml(e.name) +
-          '<span class="lib-type ' + e.type + '">' + (e.type === 'compound' ? 'Multiart.' : 'Isolam.') + '</span>' +
-          usageBadge(st) + '</div>' +
-        '<div class="sugg-meta">consigliato ' + e.sets + '\u00D7' + e.reps + ' \u2022 ' + e.weight + ' kg \u2022 \u23F1 ' + e.rest + 's</div>' +
-      '</div>' +
-      '<button class="lib-add-btn ' + btnCls + '" onclick="' +
-        (already ? 'removeExerciseByName(\'' + safe + '\')' : 'addLibraryExercise(\'' + safe + '\')') +
-        '" aria-label="' + (already ? 'Togli' : 'Aggiungi') + '">' + (already ? '\u2713' : '+') + '</button>' +
-    '</div>';
-  }).join('') +
-  '<button class="sugg-more" onclick="toggleSuggestedExpanded()">' +
-    (suggestedExpanded ? '\u2212 Mostra solo i principali' : '+ Vedi tutti gli esercizi di questi gruppi') +
-  '</button>';
+  /* Prime 4 in chiaro, il resto dietro una tenda: cosi la schermata resta corta */
+  const VISIBILI = 4;
+  const sopra = items.slice(0, VISIBILI);
+  const sotto = items.slice(VISIBILI);
+
+  let html = sopra.map(ex => pickRow(ex, present.has(ex.name),
+    'togglePickExercise(\'' + ex.name.replace(/'/g, "\\'") + '\')')).join('');
+
+  if (sotto.length) {
+    const quantiScelti = sotto.filter(e => present.has(e.name)).length;
+    html += '<button class="drawer-btn ' + (suggestedExpanded ? 'open' : '') + '" onclick="toggleSuggestedExpanded()">' +
+      '<span>' + (suggestedExpanded ? 'Chiudi' : 'Altri ' + sotto.length + ' esercizi') +
+      (quantiScelti ? ' \u2022 ' + quantiScelti + ' gia scelti' : '') + '</span>' +
+      '<span class="caret">\u25BE</span></button>' +
+      '<div class="drawer-body ' + (suggestedExpanded ? 'open' : '') + '">' +
+        sotto.map(ex => pickRow(ex, present.has(ex.name),
+          'togglePickExercise(\'' + ex.name.replace(/'/g, "\\'") + '\')')).join('') +
+      '</div>';
+  }
+
+  listEl.innerHTML = html;
 }
 
 window.openGroupSheet = function(groupId) {
   sheetGroup = groupId;
   sheetOrder = null; /* si ricalcola a ogni apertura, non a ogni tocco */
+  sheetExpanded = false;
   if (selectedGroups.indexOf(groupId) === -1) selectedGroups.push(groupId);
   const g = MUSCLE_GROUPS[groupId];
   document.getElementById('sheet-title').innerText = g.emoji + ' ' + g.label;
@@ -3203,9 +3367,7 @@ function renderSheetExercises() {
   const dayList = data[currentDay] || [];
   const present = new Set(dayList.map(e => e.name));
   const usage = weekUsage();
-  /* L'ordine si calcola UNA VOLTA all'apertura e resta fermo finche la
-     schermata e aperta: se si riordinasse a ogni aggiunta, le righe
-     scapperebbero da sotto il dito mentre si tocca. */
+
   if (!sheetOrder) {
     sheetOrder = EXERCISE_LIBRARY
       .filter(e => e.group === sheetGroup)
@@ -3222,40 +3384,37 @@ function renderSheetExercises() {
   document.getElementById('sheet-sub').innerText = getDayTitle(currentDay) + ' \u2022 ' + dayList.length + ' esercizi in scheda';
   document.getElementById('sheet-hint').innerText = added > 0
     ? added + ' di questo gruppo gia in scheda'
-    : 'Valori consigliati gia pronti: modificali e tocca +';
+    : 'Tocca un esercizio per sceglierlo';
   document.getElementById('sheet-done-btn').innerText = added > 0
     ? '\u2713 Fatto \u2014 torna al piano'
     : '\u2190 Torna al piano';
 
-  document.getElementById('sheet-exercises').innerHTML = list.map((e, i) => {
-    const already = present.has(e.name);
-    const safe = e.name.replace(/'/g, "\\'");
-    return '<div class="swipe-host" data-sheet-idx="' + i + '" data-sheet-name="' + escapeHtml(e.name) + '">' +
-      '<div class="swipe-bg"><span class="sw-add">+ Aggiungi</span><span class="sw-del">Rimuovi \u2715</span></div>' +
-      '<div class="swipe-fg lib-row' + (usageState(e.name, usage).level === 'today' ? ' used-today' : (usageState(e.name, usage).level === 'week' ? ' used-week' : '')) + '">' +
-      '<div class="lib-row-top"><div class="lib-name">' + escapeHtml(e.name) +
-        '<span class="lib-type ' + e.type + '">' + (e.type === 'compound' ? 'Multiart.' : 'Isolam.') + '</span>' +
-        usageBadge(usageState(e.name, usage)) + '</div></div>' +
-      '<div class="lib-row-params">' +
-        '<label class="mini-field"><span>Serie</span><input type="number" id="lp-sets-' + i + '" value="' + e.sets + '" min="1"></label>' +
-        '<label class="mini-field"><span>Reps</span><input type="number" id="lp-reps-' + i + '" value="' + e.reps + '" min="1"></label>' +
-        '<label class="mini-field"><span>Kg</span><input type="number" id="lp-weight-' + i + '" value="' + e.weight + '" step="0.5"></label>' +
-        '<label class="mini-field"><span>Rec. s</span><input type="number" id="lp-rest-' + i + '" value="' + e.rest + '" step="15"></label>' +
-        '<button class="lib-add-btn ' + (already ? 'added' : '') + '" onclick="addLibraryExercise(\'' + safe + '\', ' + i + ')" aria-label="Aggiungi">' + (already ? '\u2713' : '+') + '</button>' +
-      '</div>' +
-      '</div>' +
-    '</div>';
-  }).join('') + '<div class="swipe-hint">scorri a destra per aggiungere \u2192 \u2022 \u2190 a sinistra per rimuovere</div>';
+  const VISIBILI = 4;
+  const sopra = list.slice(0, VISIBILI);
+  const sotto = list.slice(VISIBILI);
 
-  document.querySelectorAll('#sheet-exercises .swipe-host').forEach(host => {
-    const i = Number(host.dataset.sheetIdx);
-    const name = host.dataset.sheetName;
-    attachSwipe(host, {
-      onRight: () => addLibraryExercise(name, i),
-      onLeft: () => removeExerciseByName(name)
-    });
-  });
+  let html = sopra.map(ex => pickRow(ex, present.has(ex.name),
+    'togglePickExercise(\'' + ex.name.replace(/'/g, "\\'") + '\')')).join('');
+
+  if (sotto.length) {
+    const quantiScelti = sotto.filter(e => present.has(e.name)).length;
+    html += '<button class="drawer-btn ' + (sheetExpanded ? 'open' : '') + '" onclick="toggleSheetExpanded()">' +
+      '<span>' + (sheetExpanded ? 'Chiudi' : 'Altri ' + sotto.length + ' esercizi') +
+      (quantiScelti ? ' \u2022 ' + quantiScelti + ' gia scelti' : '') + '</span>' +
+      '<span class="caret">\u25BE</span></button>' +
+      '<div class="drawer-body ' + (sheetExpanded ? 'open' : '') + '">' +
+        sotto.map(ex => pickRow(ex, present.has(ex.name),
+          'togglePickExercise(\'' + ex.name.replace(/'/g, "\\'") + '\')')).join('') +
+      '</div>';
+  }
+
+  document.getElementById('sheet-exercises').innerHTML = html;
 }
+
+window.toggleSheetExpanded = function() {
+  sheetExpanded = !sheetExpanded;
+  renderSheetExercises();
+};
 
 /* Rimuove dal giorno corrente un esercizio individuato per nome */
 window.removeExerciseByName = function(name) {
@@ -3350,6 +3509,29 @@ const VOL_MAX_UTILE = 22;
 /* Mappa esercizio -> giorni in cui e' gia stato messo in programma.
    Serve a non riproporre per primi esercizi che hai gia scelto altrove:
    la proposta utile e' quella che NON hai ancora considerato. */
+/* Parametri di partenza uguali per tutti: si sceglie l'esercizio, non i numeri.
+   Le regolazioni si fanno il giorno dell'allenamento. */
+const DEFAULT_SETS = 3;
+const DEFAULT_REPS = 10;
+const REPS_MIN = 6;
+const REPS_MAX = 20;
+
+/* Eccezione onesta: gli isometrici si misurano in secondi, non in ripetizioni
+   (un plank da 10 "reps" non vuol dire niente). Per loro la scala e' piu ampia. */
+const TIME_MIN = 10;
+const TIME_MAX = 120;
+window.isTimeBased = function(name) {
+  const m = findExercise(name);
+  return !!m && m.group === 'core' && m.reps >= 25;
+};
+window.repsRange = function(name) {
+  return isTimeBased(name) ? { min: TIME_MIN, max: TIME_MAX } : { min: REPS_MIN, max: REPS_MAX };
+};
+window.defaultRepsFor = function(name) {
+  const m = findExercise(name);
+  return isTimeBased(name) ? (m ? m.reps : 30) : DEFAULT_REPS;
+};
+
 window.weekUsage = function() {
   const data = loadData();
   const map = {};
@@ -3517,8 +3699,8 @@ window.addLibraryExercise = function(name, rowIdx) {
   const data = loadData();
   data[currentDay].push(normalizeExerciseRecord({
     name: meta.name,
-    sets: readField('sets', meta.sets),
-    reps: readField('reps', meta.reps),
+    sets: readField('sets', DEFAULT_SETS),
+    reps: readField('reps', defaultRepsFor(meta.name)),
     weight: readField('weight', meta.weight),
     rest: readField('rest', meta.rest),
     completedSets: []
