@@ -110,9 +110,7 @@ input:focus, select:focus { border-color: var(--primary); }
 
 .btn-main { background: var(--primary); color: #fff; border: none; padding: 11px; border-radius: 8px; font-weight: 800; font-size: 0.9rem; cursor: pointer; width: 100%; text-transform: uppercase; letter-spacing: 0.5px; }
 .btn-main:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(50%); }
-.btn-archive { background: #1a1a24; color: var(--accent); border: 1px solid var(--accent); padding: 10px; border-radius: 8px; font-weight: 800; font-size: 0.85rem; cursor: pointer; width: 100%; text-transform: uppercase; }
-#load-default-btn { display: none; }
-body[data-mode] #load-default-btn { display: block; }
+.btn-archive { background: #1a1a24; color: var(--accent); border: 1px solid var(--accent); padding: 10px; border-radius: 8px; font-weight: 800; font-size: 0.85rem; cursor: pointer; width: 100%; text-transform: uppercase; margin-top: 10px; }
 
 .exercise-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
 .exercise-item:last-child { border-bottom: none; }
@@ -155,6 +153,61 @@ body.reorder-mode .plan-card { border-color: var(--primary); }
   box-shadow: 0 4px 14px var(--primary-shadow);
 }
 .btn-start-workout:active { transform: scale(0.98); }
+
+/* ======= Gruppi muscolari ======= */
+.group-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
+.group-card { background: #0d0d12; border: 1px solid var(--border); border-radius: 10px; padding: 12px 6px; text-align: center; cursor: pointer; transition: transform .1s ease; }
+.group-card:active { transform: scale(0.96); }
+.group-card.selected { border-color: var(--primary); background: rgba(249,115,22,0.1); box-shadow: 0 0 0 1px var(--primary) inset; }
+.group-emoji { font-size: 1.6rem; }
+.group-label { font-size: 0.76rem; font-weight: 800; margin-top: 4px; text-transform: uppercase; }
+.group-count { font-size: 0.66rem; color: var(--muted); margin-top: 2px; }
+
+.lib-item { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+.lib-item:last-child { border-bottom: none; }
+.lib-name { font-weight: 700; font-size: 0.88rem; }
+.lib-meta { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+.lib-type { display: inline-block; font-size: 0.62rem; font-weight: 900; text-transform: uppercase; border-radius: 999px; padding: 1px 7px; margin-left: 6px; }
+.lib-type.compound { color: var(--primary); border: 1px solid var(--primary); }
+.lib-type.isolation { color: var(--muted); border: 1px solid var(--border); }
+.lib-add-btn { flex-shrink: 0; background: var(--primary); border: none; color: #fff; width: 32px; height: 32px; border-radius: 8px; font-size: 1.05rem; font-weight: 900; cursor: pointer; }
+.lib-add-btn.added { background: var(--success); color: #08080a; }
+
+/* ======= Pannello Coach ======= */
+.coach-box { margin-top: 12px; border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 10px; padding: 10px; background: #0d0d12; }
+.coach-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.coach-badge { font-size: 0.62rem; font-weight: 900; letter-spacing: 0.5px; color: var(--accent); border: 1px solid var(--accent); border-radius: 999px; padding: 2px 8px; }
+.coach-title { font-size: 0.76rem; font-weight: 800; color: var(--muted); }
+.coach-item { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.coach-item:last-child { border-bottom: none; }
+.coach-name { font-weight: 700; font-size: 0.85rem; }
+.coach-reason { font-size: 0.72rem; color: var(--muted); font-style: italic; margin-top: 2px; }
+
+/* ======= Titolo scheda del giorno ======= */
+.day-title-row { display: flex; align-items: center; gap: 4px; min-width: 0; }
+.day-title { font-size: 0.95rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ======= Selettore schede pronte ======= */
+.template-overlay { position: fixed; inset: 0; z-index: 80; background: rgba(0,0,0,0.72); display: flex; align-items: flex-end; justify-content: center; }
+.template-overlay.hidden { display: none; }
+.template-sheet {
+  background: var(--card); border-top: 2px solid var(--primary); border-radius: 16px 16px 0 0;
+  width: 100%; max-width: 480px; max-height: 82vh; overflow-y: auto;
+  padding: 16px 14px calc(16px + env(safe-area-inset-bottom));
+}
+.template-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 12px; }
+.template-title { font-size: 1.05rem; font-weight: 900; text-transform: uppercase; }
+.template-sub { font-size: 0.74rem; color: var(--muted); margin-top: 2px; }
+.template-card { background: #0d0d12; border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 8px; }
+.template-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.template-name { font-weight: 800; font-size: 0.9rem; }
+.template-tag { flex-shrink: 0; font-size: 0.64rem; font-weight: 900; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); border-radius: 999px; padding: 2px 8px; }
+.template-desc { font-size: 0.76rem; color: var(--muted); margin: 6px 0 8px; }
+.template-meta { font-size: 0.72rem; color: var(--primary); font-weight: 800; margin-bottom: 10px; }
+.template-actions { display: flex; gap: 6px; }
+.template-btn { flex: 1; border: none; border-radius: 8px; padding: 9px 6px; font-size: 0.74rem; font-weight: 800; cursor: pointer; }
+.template-btn.replace { background: var(--primary); color: #fff; }
+.template-btn.append { background: #1a1a24; color: var(--text); border: 1px solid var(--border); }
 
 /* ======= Allenamento: lista set-by-set ======= */
 .workout-item { padding: 10px 0; border-bottom: 1px solid var(--border); }
@@ -207,8 +260,17 @@ body.reorder-mode .plan-card { border-color: var(--primary); }
 #web-status { font-size: 0.75rem; color: var(--muted); margin-top: 8px; min-height: 1.1em; }
 .youtube-wrap, .spotify-wrap { display: none; margin-top: 10px; border-radius: 8px; overflow: hidden; }
 .youtube-wrap iframe, .spotify-wrap iframe { width: 100%; border: none; display: block; }
-.youtube-wrap iframe { height: 90px; }
-.spotify-wrap iframe { height: 80px; }
+.youtube-wrap iframe { height: 200px; }
+.spotify-wrap iframe { height: 152px; }
+.segment-readout { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.segment-from { font-size: 1.05rem; font-weight: 900; color: var(--primary); font-variant-numeric: tabular-nums; }
+.segment-dur { font-size: 0.72rem; font-weight: 800; color: var(--muted); }
+.segment-nudges { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-top: 8px; }
+.nudge-btn { background: #1a1a24; border: 1px solid var(--border); color: var(--text); padding: 7px 2px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; cursor: pointer; }
+.nudge-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.preview-btn { width: 100%; margin-top: 8px; background: #1a1a24; border: 1px solid var(--accent); color: var(--accent); padding: 9px; border-radius: 8px; font-size: 0.76rem; font-weight: 800; cursor: pointer; }
+.preview-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.web-warning { font-size: 0.72rem; color: var(--accent); background: rgba(239,68,68,0.08); border: 1px solid var(--border); border-radius: 8px; padding: 8px; margin-top: 8px; line-height: 1.35; }
 
 .range-row { display: flex; flex-direction: column; gap: 4px; margin-top: 12px; }
 input[type="range"] { width: 100%; accent-color: var(--primary); }
@@ -427,14 +489,26 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
 
     <div class="card">
       <div class="plan-head">
-        <div>
-          <div class="section-title" id="piano-day-label" style="margin-bottom:2px;">Piano del giorno</div>
+        <div style="min-width:0;">
+          <div class="day-title-row">
+            <span class="day-title" id="day-title">Piano del giorno</span>
+            <button class="plan-icon-btn" onclick="renameDayTitle()" title="Rinomina scheda" aria-label="Rinomina">✎</button>
+          </div>
           <div class="plan-summary" id="plan-summary"></div>
         </div>
         <button class="plan-tool-btn" id="reorder-toggle-btn" onclick="toggleReorderMode()">⇅ Riordina</button>
       </div>
       <div id="piano-list"></div>
-      <button class="btn-archive" id="load-default-btn" style="margin-top:10px;" onclick="loadDefaultProgram()">↻ Carica Esercizi Base (Lunedì)</button>
+
+      <div class="coach-box" id="coach-box">
+        <div class="coach-head">
+          <span class="coach-badge">🧠 COACH</span>
+          <span class="coach-title" id="coach-title">Prossimo esercizio consigliato</span>
+        </div>
+        <div id="coach-suggestions"></div>
+      </div>
+
+      <button class="btn-archive" onclick="openTemplatePicker()">📋 Schede Pronte</button>
       <button class="btn-start-workout" onclick="startWorkoutFromPlan()">▶ INIZIA ALLENAMENTO</button>
     </div>
   </section>
@@ -474,17 +548,24 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
         </div>
         <div id="web-status"></div>
         <div class="youtube-wrap" id="youtube-embed-wrap">
-          <div id="youtube-player-el"></div>
+          <div id="youtube-player-host"></div>
         </div>
         <div class="spotify-wrap" id="spotify-embed-wrap">
-          <iframe id="spotify-iframe" src="" allow="encrypted-media"></iframe>
+          <div id="spotify-player-host"></div>
         </div>
         <div class="range-row" id="web-range-row">
-          <input type="range" id="segment-start-web" min="0" max="0" value="0" step="1" disabled oninput="onWebRangeInput()">
-          <div class="range-labels">
-            <span>Inizio brano</span>
-            <span id="segment-label-web">--:-- → --:--</span>
+          <div class="segment-readout">
+            <span class="segment-from" id="segment-label-web">--:-- → --:--</span>
+            <span class="segment-dur">90 s</span>
           </div>
+          <input type="range" id="segment-start-web" min="0" max="0" value="0" step="1" disabled oninput="onWebRangeInput()">
+          <div class="segment-nudges">
+            <button type="button" class="nudge-btn" onclick="nudgeWebSegment(-30)">− 30s</button>
+            <button type="button" class="nudge-btn" onclick="nudgeWebSegment(-5)">− 5s</button>
+            <button type="button" class="nudge-btn" onclick="nudgeWebSegment(5)">+ 5s</button>
+            <button type="button" class="nudge-btn" onclick="nudgeWebSegment(30)">+ 30s</button>
+          </div>
+          <button type="button" class="preview-btn" id="web-preview-btn" onclick="previewWebSegment()">▶ Ascolta l\'inizio del pezzo</button>
         </div>
       </div>
 
@@ -511,6 +592,27 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
     <button class="btn-main" style="background:var(--success); color:#08080a;" onclick="endWorkout()">✅ Termina Allenamento</button>
   </section>
 
+  <!-- TAB: GRUPPI MUSCOLARI -->
+  <section id="tab-gruppi" class="tab-panel">
+    <div class="card">
+      <div class="section-title">Che cosa alleni oggi?</div>
+      <div class="section-hint">Seleziona uno o piu gruppi muscolari: sotto compaiono gli esercizi e le schede adatte.</div>
+      <div class="group-grid" id="group-grid"></div>
+      <button class="plan-tool-btn" style="width:100%;margin-top:10px;" onclick="clearGroupSelection()">Azzera selezione</button>
+    </div>
+
+    <div class="card" id="group-templates-card" style="display:none;">
+      <div class="section-title">Schede consigliate</div>
+      <div id="group-templates"></div>
+    </div>
+
+    <div class="card" id="group-exercises-card" style="display:none;">
+      <div class="section-title" id="group-exercises-title">Esercizi</div>
+      <div class="section-hint" id="group-exercises-hint"></div>
+      <div id="group-exercises"></div>
+    </div>
+  </section>
+
   <!-- TAB: STORICO -->
   <section id="tab-storico" class="tab-panel">
     <div class="card">
@@ -526,9 +628,23 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
 <div class="bottom-nav-fixed" id="bottom-nav" style="display:none;">
   <nav class="bottom-nav">
     <button class="nav-btn active" data-tab="piano" onclick="switchTab('piano')"><span class="nav-icon">📝</span><span>Piano</span></button>
-    <button class="nav-btn" data-tab="allenamento" onclick="switchTab('allenamento')"><span class="nav-icon">🏋️</span><span>Allenamento</span></button>
+    <button class="nav-btn" data-tab="gruppi" onclick="switchTab('gruppi')"><span class="nav-icon">🦾</span><span>Gruppi</span></button>
+    <button class="nav-btn" data-tab="allenamento" onclick="switchTab('allenamento')"><span class="nav-icon">🏋️</span><span>Allena</span></button>
     <button class="nav-btn" data-tab="storico" onclick="switchTab('storico')"><span class="nav-icon">📖</span><span>Storico</span></button>
   </nav>
+</div>
+
+<div class="template-overlay hidden" id="template-overlay">
+  <div class="template-sheet">
+    <div class="template-head">
+      <div>
+        <div class="template-title">Schede Pronte</div>
+        <div class="template-sub" id="template-target-day"></div>
+      </div>
+      <button class="recovery-icon-btn" onclick="closeTemplatePicker()" aria-label="Chiudi">✕</button>
+    </div>
+    <div id="template-list"></div>
+  </div>
 </div>
 
 <div class="recovery-overlay" id="recovery-overlay">
@@ -593,6 +709,261 @@ const DEFAULT_MONDAY_PROGRAM = {
 
 const FAILURE_SET_SECONDS = 90;
 
+/* ============================================================
+   LIBRERIA SCHEDE PRONTE
+   Costruite su protocolli classici (push/pull/legs, upper/lower,
+   full body per principianti, focus glutei/gambe). Volumi e recuperi:
+   multiarticolari pesanti = recuperi lunghi (90-120s), complementari
+   e isolamento = recuperi corti (45-75s).
+   ============================================================ */
+const WORKOUT_TEMPLATES = [
+  {
+    id: 'push', title: 'Push — Petto, Spalle, Tricipiti', tag: 'Forza',
+    desc: 'Fondamentali pesanti + complementari. 3 giorni/sett con Pull e Legs.',
+    exercises: [
+      { name: '💪 Panca Piana Bilanciere', sets: 4, reps: 8, weight: 40, rest: 120 },
+      { name: '🛡️ Military Press', sets: 4, reps: 8, weight: 25, rest: 120 },
+      { name: '💪 Panca Inclinata Manubri', sets: 3, reps: 10, weight: 14, rest: 75 },
+      { name: '🛡️ Alzate Laterali', sets: 3, reps: 12, weight: 6, rest: 60 },
+      { name: '💪 Dip alle Parallele', sets: 3, reps: 10, weight: 0, rest: 75 },
+      { name: '🦾 French Press', sets: 3, reps: 12, weight: 15, rest: 60 }
+    ]
+  },
+  {
+    id: 'pull', title: 'Pull — Schiena e Bicipiti', tag: 'Forza',
+    desc: 'Stacco e trazioni come base, poi spessore dorsale e braccia.',
+    exercises: [
+      { name: '🏹 Stacco da Terra (Deadlift)', sets: 4, reps: 6, weight: 60, rest: 150 },
+      { name: '🏹 Trazioni alla Sbarra (Pull-ups)', sets: 4, reps: 8, weight: 0, rest: 120 },
+      { name: '🏹 Rematore con Bilanciere', sets: 4, reps: 8, weight: 35, rest: 90 },
+      { name: '🏹 Pulley Basso', sets: 3, reps: 12, weight: 35, rest: 75 },
+      { name: '🛡️ Face Pull', sets: 3, reps: 15, weight: 12, rest: 60 },
+      { name: '🦾 Curl Bilanciere Bicipiti', sets: 3, reps: 10, weight: 20, rest: 60 }
+    ]
+  },
+  {
+    id: 'legs', title: 'Legs — Gambe complete', tag: 'Forza',
+    desc: 'Squat dominante ginocchio + catena posteriore, chiusura polpacci.',
+    exercises: [
+      { name: '🦵 Squat con Bilanciere', sets: 4, reps: 8, weight: 50, rest: 150 },
+      { name: '🍑 Stacco Rumeno', sets: 3, reps: 10, weight: 40, rest: 90 },
+      { name: '🦵 Leg Press', sets: 3, reps: 12, weight: 80, rest: 90 },
+      { name: '🦵 Affondi Manubri', sets: 3, reps: 12, weight: 12, rest: 75 },
+      { name: '🦵 Leg Curl', sets: 3, reps: 12, weight: 25, rest: 60 },
+      { name: '🦵 Calf Raise', sets: 4, reps: 15, weight: 30, rest: 45 }
+    ]
+  },
+  {
+    id: 'upper', title: 'Upper — Parte alta', tag: 'Upper/Lower',
+    desc: 'Spinta e trazione insieme. Si alterna con Lower, 4 giorni/sett.',
+    exercises: [
+      { name: '💪 Panca Piana Bilanciere', sets: 4, reps: 8, weight: 40, rest: 120 },
+      { name: '🏹 Lat Machine', sets: 4, reps: 10, weight: 40, rest: 90 },
+      { name: '🛡️ Military Press', sets: 3, reps: 10, weight: 22, rest: 90 },
+      { name: '🏹 Rematore con Bilanciere', sets: 3, reps: 10, weight: 35, rest: 90 },
+      { name: '🦾 Curl Bilanciere Bicipiti', sets: 3, reps: 12, weight: 18, rest: 60 },
+      { name: '🦾 Pushdown Tricipiti ai Cavi', sets: 3, reps: 12, weight: 20, rest: 60 }
+    ]
+  },
+  {
+    id: 'lower', title: 'Lower — Parte bassa', tag: 'Upper/Lower',
+    desc: 'Quadricipiti e catena posteriore bilanciati, come vuole la regola.',
+    exercises: [
+      { name: '🦵 Squat con Bilanciere', sets: 4, reps: 8, weight: 50, rest: 150 },
+      { name: '🍑 Hip Thrust', sets: 4, reps: 12, weight: 50, rest: 90 },
+      { name: '🍑 Stacco Rumeno', sets: 3, reps: 10, weight: 40, rest: 90 },
+      { name: '🦵 Leg Extension', sets: 3, reps: 12, weight: 30, rest: 60 },
+      { name: '🦵 Leg Curl', sets: 3, reps: 12, weight: 25, rest: 60 },
+      { name: '🦵 Calf Raise', sets: 4, reps: 15, weight: 30, rest: 45 }
+    ]
+  },
+  {
+    id: 'fullbody', title: 'Full Body — Principianti', tag: 'Principianti',
+    desc: '3 volte a settimana: ogni muscolo 3 volte. La scelta migliore per iniziare.',
+    exercises: [
+      { name: '🦵 Squat con Bilanciere', sets: 3, reps: 10, weight: 30, rest: 120 },
+      { name: '💪 Panca Piana Bilanciere', sets: 3, reps: 10, weight: 30, rest: 90 },
+      { name: '🏹 Lat Machine', sets: 3, reps: 10, weight: 30, rest: 90 },
+      { name: '🛡️ Military Press', sets: 3, reps: 10, weight: 18, rest: 90 },
+      { name: '🎯 Plank', sets: 3, reps: 30, weight: 0, rest: 45 }
+    ]
+  },
+  {
+    id: 'glutei', title: 'Glutei & Gambe', tag: 'Glutei',
+    desc: 'Hip thrust e squat come motori, poi monopodalico e isolamento.',
+    exercises: [
+      { name: '🍑 Hip Thrust', sets: 4, reps: 12, weight: 45, rest: 90 },
+      { name: '🦵 Squat con Bilanciere', sets: 4, reps: 12, weight: 30, rest: 90 },
+      { name: '🍑 Affondi Bulgari', sets: 3, reps: 12, weight: 12, rest: 75 },
+      { name: '🍑 Stacco Rumeno', sets: 3, reps: 12, weight: 30, rest: 75 },
+      { name: '🍑 Abductor Machine', sets: 3, reps: 15, weight: 25, rest: 45 },
+      { name: '🍑 Ponte Glutei', sets: 3, reps: 20, weight: 0, rest: 45 }
+    ]
+  },
+  {
+    id: 'upper-tono', title: 'Upper — Tonificazione', tag: 'Glutei',
+    desc: 'Parte alta a ripetizioni medio-alte, da alternare ai giorni gambe.',
+    exercises: [
+      { name: '🏹 Lat Machine', sets: 3, reps: 12, weight: 30, rest: 75 },
+      { name: '💪 Panca Inclinata Manubri', sets: 3, reps: 12, weight: 10, rest: 75 },
+      { name: '🛡️ Alzate Laterali', sets: 3, reps: 15, weight: 4, rest: 45 },
+      { name: '🏹 Pulley Basso', sets: 3, reps: 12, weight: 30, rest: 60 },
+      { name: '🦾 Hammer Curl', sets: 3, reps: 12, weight: 8, rest: 45 },
+      { name: '🎯 Plank', sets: 3, reps: 40, weight: 0, rest: 45 }
+    ]
+  },
+  {
+    id: 'core', title: 'Core & Addome', tag: 'Extra',
+    desc: 'Sessione breve da aggiungere a fine allenamento o nei giorni scarichi.',
+    exercises: [
+      { name: '🎯 Plank', sets: 3, reps: 45, weight: 0, rest: 45 },
+      { name: '🎯 Crunch al Cavo', sets: 3, reps: 15, weight: 20, rest: 45 },
+      { name: '🎯 Leg Raise alla Sbarra', sets: 3, reps: 12, weight: 0, rest: 45 },
+      { name: '🍑 Ponte Glutei', sets: 3, reps: 20, weight: 0, rest: 30 }
+    ]
+  }
+];
+
+/* ============================================================
+   LIBRERIA ESERCIZI CON METADATI
+   Serve al motore Coach e alla schermata Gruppi: ogni esercizio sa
+   a che gruppo appartiene, se e' multiarticolare o di isolamento, e
+   quali sono i suoi parametri di partenza sensati.
+   ============================================================ */
+const MUSCLE_GROUPS = {
+  petto:   { label: 'Petto',   emoji: '\u{1F4AA}', antagonist: 'schiena', synergists: ['spalle', 'braccia'] },
+  schiena: { label: 'Schiena', emoji: '\u{1F3F9}', antagonist: 'petto',   synergists: ['braccia', 'spalle'] },
+  gambe:   { label: 'Gambe',   emoji: '\u{1F9B5}', antagonist: null,      synergists: ['glutei'] },
+  glutei:  { label: 'Glutei',  emoji: '\u{1F351}', antagonist: null,      synergists: ['gambe'] },
+  spalle:  { label: 'Spalle',  emoji: '\u{1F6E1}\uFE0F', antagonist: 'schiena', synergists: ['petto', 'braccia'] },
+  braccia: { label: 'Braccia', emoji: '\u{1F9BE}', antagonist: null,      synergists: ['petto', 'schiena'] },
+  core:    { label: 'Core',    emoji: '\u{1F3AF}', antagonist: null,      synergists: [] }
+};
+
+const EXERCISE_LIBRARY = [
+  { name: '\u{1F4AA} Panca Piana Bilanciere', group: 'petto', type: 'compound', sets: 4, reps: 8, weight: 40, rest: 120 },
+  { name: '\u{1F4AA} Panca Inclinata Manubri', group: 'petto', type: 'compound', sets: 3, reps: 10, weight: 14, rest: 90 },
+  { name: '\u{1F4AA} Croci ai Cavi', group: 'petto', type: 'isolation', sets: 3, reps: 12, weight: 12, rest: 60 },
+  { name: '\u{1F4AA} Dip alle Parallele', group: 'petto', type: 'compound', sets: 3, reps: 10, weight: 0, rest: 90 },
+
+  { name: '\u{1F3F9} Stacco da Terra (Deadlift)', group: 'schiena', type: 'compound', sets: 4, reps: 6, weight: 60, rest: 150 },
+  { name: '\u{1F3F9} Trazioni alla Sbarra (Pull-ups)', group: 'schiena', type: 'compound', sets: 4, reps: 8, weight: 0, rest: 120 },
+  { name: '\u{1F3F9} Lat Machine', group: 'schiena', type: 'compound', sets: 4, reps: 10, weight: 40, rest: 90 },
+  { name: '\u{1F3F9} Rematore con Bilanciere', group: 'schiena', type: 'compound', sets: 4, reps: 8, weight: 35, rest: 90 },
+  { name: '\u{1F3F9} Pulley Basso', group: 'schiena', type: 'compound', sets: 3, reps: 12, weight: 35, rest: 75 },
+
+  { name: '\u{1F9B5} Squat con Bilanciere', group: 'gambe', type: 'compound', sets: 4, reps: 8, weight: 50, rest: 150 },
+  { name: '\u{1F9B5} Leg Press', group: 'gambe', type: 'compound', sets: 3, reps: 12, weight: 80, rest: 90 },
+  { name: '\u{1F9B5} Affondi Manubri', group: 'gambe', type: 'compound', sets: 3, reps: 12, weight: 12, rest: 75 },
+  { name: '\u{1F9B5} Leg Extension', group: 'gambe', type: 'isolation', sets: 3, reps: 12, weight: 30, rest: 60 },
+  { name: '\u{1F9B5} Leg Curl', group: 'gambe', type: 'isolation', sets: 3, reps: 12, weight: 25, rest: 60 },
+  { name: '\u{1F9B5} Calf Raise', group: 'gambe', type: 'isolation', sets: 4, reps: 15, weight: 30, rest: 45 },
+
+  { name: '\u{1F351} Hip Thrust', group: 'glutei', type: 'compound', sets: 4, reps: 12, weight: 45, rest: 90 },
+  { name: '\u{1F351} Stacco Rumeno', group: 'glutei', type: 'compound', sets: 3, reps: 10, weight: 40, rest: 90 },
+  { name: '\u{1F351} Affondi Bulgari', group: 'glutei', type: 'compound', sets: 3, reps: 12, weight: 12, rest: 75 },
+  { name: '\u{1F351} Abductor Machine', group: 'glutei', type: 'isolation', sets: 3, reps: 15, weight: 25, rest: 45 },
+  { name: '\u{1F351} Ponte Glutei', group: 'glutei', type: 'isolation', sets: 3, reps: 20, weight: 0, rest: 45 },
+
+  { name: '\u{1F6E1}\uFE0F Military Press', group: 'spalle', type: 'compound', sets: 4, reps: 8, weight: 25, rest: 120 },
+  { name: '\u{1F6E1}\uFE0F Alzate Laterali', group: 'spalle', type: 'isolation', sets: 3, reps: 12, weight: 6, rest: 60 },
+  { name: '\u{1F6E1}\uFE0F Arnold Press', group: 'spalle', type: 'compound', sets: 3, reps: 10, weight: 12, rest: 90 },
+  { name: '\u{1F6E1}\uFE0F Face Pull', group: 'spalle', type: 'isolation', sets: 3, reps: 15, weight: 12, rest: 60 },
+
+  { name: '\u{1F9BE} Curl Bilanciere Bicipiti', group: 'braccia', type: 'isolation', sets: 3, reps: 10, weight: 20, rest: 60 },
+  { name: '\u{1F9BE} Hammer Curl', group: 'braccia', type: 'isolation', sets: 3, reps: 12, weight: 10, rest: 45 },
+  { name: '\u{1F9BE} Pushdown Tricipiti ai Cavi', group: 'braccia', type: 'isolation', sets: 3, reps: 12, weight: 20, rest: 60 },
+  { name: '\u{1F9BE} French Press', group: 'braccia', type: 'isolation', sets: 3, reps: 12, weight: 15, rest: 60 },
+
+  { name: '\u{1F3AF} Plank', group: 'core', type: 'isolation', sets: 3, reps: 45, weight: 0, rest: 45 },
+  { name: '\u{1F3AF} Crunch al Cavo', group: 'core', type: 'isolation', sets: 3, reps: 15, weight: 20, rest: 45 },
+  { name: '\u{1F3AF} Leg Raise alla Sbarra', group: 'core', type: 'isolation', sets: 3, reps: 12, weight: 0, rest: 45 }
+];
+
+function findExercise(name) {
+  return EXERCISE_LIBRARY.find(e => e.name === name) || null;
+}
+
+/* ============================================================
+   MOTORE COACH - suggerimento del prossimo esercizio
+   NOTA ONESTA: non e' una rete neurale, e' un sistema di regole che
+   codifica i principi di programmazione usati dai preparatori.
+   Funziona offline, e' istantaneo e ogni suggerimento e' spiegabile
+   (campo "reason"), cosa che un modello generativo non garantirebbe.
+   Regole, in ordine di peso:
+     1. Multiarticolari prima, isolamento dopo
+     2. Non superare ~3 esercizi sullo stesso gruppo in una seduta
+     3. Dopo il gruppo principale, passa ad antagonista o sinergico
+     4. Chiudi la seduta con il core
+     5. Mai ripetere un esercizio gia' presente nel piano
+   ============================================================ */
+function suggestNextExercises(planList, startGroup, limit) {
+  const max = limit || 3;
+  const present = new Set((planList || []).map(e => e.name));
+  const counts = {};
+  (planList || []).forEach(e => {
+    const meta = findExercise(e.name);
+    if (meta) counts[meta.group] = (counts[meta.group] || 0) + 1;
+  });
+
+  const last = (planList || []).length ? findExercise(planList[planList.length - 1].name) : null;
+  const anchorGroup = startGroup || (last ? last.group : null);
+  const totalSoFar = (planList || []).length;
+  const compoundsSoFar = (planList || []).filter(e => {
+    const m = findExercise(e.name);
+    return m && m.type === 'compound';
+  }).length;
+
+  return EXERCISE_LIBRARY
+    .filter(ex => !present.has(ex.name))
+    .map(ex => {
+      let score = 0;
+      const reasons = [];
+      const groupCount = counts[ex.group] || 0;
+
+      /* 1. I multiarticolari vanno all'inizio, quando sei fresco */
+      if (ex.type === 'compound') {
+        if (totalSoFar < 2) { score += 40; reasons.push('multiarticolare da fare a inizio seduta'); }
+        else if (compoundsSoFar < 2) { score += 25; reasons.push('serve ancora un multiarticolare'); }
+        else score += 8;
+      } else {
+        if (totalSoFar >= 3) { score += 30; reasons.push('isolamento adatto alla seconda parte'); }
+        else score -= 15;
+      }
+
+      /* 2. Saturazione del gruppo: oltre 3 esercizi il rendimento cala */
+      if (groupCount >= 3) { score -= 45; reasons.push('gruppo gia molto allenato oggi'); }
+      else if (groupCount === 2) score -= 12;
+
+      /* 3. Continuita col gruppo di partenza, poi antagonista/sinergico */
+      if (anchorGroup && MUSCLE_GROUPS[anchorGroup]) {
+        const anchorMeta = MUSCLE_GROUPS[anchorGroup];
+        if (ex.group === anchorGroup && groupCount < 3) {
+          score += 28; reasons.push('stesso gruppo di partenza (' + anchorMeta.label + ')');
+        } else if (anchorMeta.antagonist === ex.group) {
+          score += 22; reasons.push('antagonista di ' + anchorMeta.label + ': bilancia la seduta');
+        } else if (anchorMeta.synergists.indexOf(ex.group) !== -1) {
+          score += 16; reasons.push('sinergico di ' + anchorMeta.label);
+        }
+      }
+
+      /* 4. Il core chiude, non apre */
+      if (ex.group === 'core') {
+        if (totalSoFar >= 4) { score += 26; reasons.push('ottimo per chiudere la seduta'); }
+        else score -= 30;
+      }
+
+      /* 5. Evita due multiarticolari identici di fila sullo stesso gruppo */
+      if (last && last.group === ex.group && last.type === ex.type && ex.type === 'compound') {
+        score -= 8;
+      }
+
+      return Object.assign({}, ex, { score: score, reason: reasons[0] || 'complemento utile alla seduta' });
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, max);
+}
+
 /* Timer di recupero (pannello flottante) */
 let recoveryInterval = null;
 let recoveryRemaining = 0;
@@ -616,15 +987,26 @@ let failureTracks = [];
 let selectedTrackId = null;
 let selectedTrackUrl = null;
 
-/* YouTube */
+/* Player web (YouTube / Spotify) */
 let ytPlayer = null;
 let ytPlayerReady = false;
+let spotifyController = null;
+let spotifyReady = false;
+let webDuration = 0;
 
 /* ============================================================
    STORAGE (namespaced per modalità) + NORMALIZZAZIONE DATI
    ============================================================ */
 const dataKey = () => `coach_plus_data_${currentMode}`;
 const historyKey = () => `coach_plus_history_${currentMode}`;
+const titlesKey = () => `coach_plus_titles_${currentMode}`;
+
+const loadTitles = () => JSON.parse(localStorage.getItem(titlesKey()) || '{}');
+const saveTitles = (t) => localStorage.setItem(titlesKey(), JSON.stringify(t));
+function getDayTitle(day) {
+  const t = loadTitles();
+  return (t[day] && String(t[day]).trim()) ? t[day] : day;
+}
 
 function normalizeExerciseRecord(e) {
   const sets = Number(e.sets) || 0;
@@ -716,16 +1098,78 @@ function seedDefaultsIfNeeded(mode) {
   localStorage.setItem(seededKey, '1');
 }
 
-window.loadDefaultProgram = function() {
-  if (!currentMode) return;
-  if (!confirm('Questo sovrascriverà il piano del Lunedì con gli esercizi base. Continuare?')) return;
+/* ============================================================
+   SCHEDE PRONTE (libreria) + titolo della giornata
+   ============================================================ */
+window.openTemplatePicker = function() {
+  document.getElementById('template-target-day').innerText = `Verranno caricate su: ${getDayTitle(currentDay)}`;
+  const container = document.getElementById('template-list');
+  container.innerHTML = WORKOUT_TEMPLATES.map(t => {
+    const totalSets = t.exercises.reduce((s, e) => s + e.sets, 0);
+    const estMin = Math.round(t.exercises.reduce((s, e) => s + e.sets * (30 + e.rest), 0) / 60);
+    return `
+      <div class="template-card">
+        <div class="template-card-head">
+          <div class="template-name">${escapeHtml(t.title)}</div>
+          <span class="template-tag">${escapeHtml(t.tag)}</span>
+        </div>
+        <div class="template-desc">${escapeHtml(t.desc)}</div>
+        <div class="template-meta">${t.exercises.length} esercizi • ${totalSets} serie • ~${estMin} min</div>
+        <div class="template-actions">
+          <button class="template-btn replace" onclick="applyTemplate('${t.id}', true)">Sostituisci</button>
+          <button class="template-btn append" onclick="applyTemplate('${t.id}', false)">Aggiungi in coda</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+  document.getElementById('template-overlay').classList.remove('hidden');
+};
+
+window.closeTemplatePicker = function() {
+  document.getElementById('template-overlay').classList.add('hidden');
+};
+
+window.applyTemplate = function(templateId, replace) {
+  const tpl = WORKOUT_TEMPLATES.find(t => t.id === templateId);
+  if (!tpl) return;
   const data = loadData();
-  const preset = DEFAULT_MONDAY_PROGRAM[currentMode] || [];
-  data['Lunedì'] = preset.map(e => normalizeExerciseRecord({ ...e, completedSets: [] }));
+  const existing = data[currentDay] || [];
+
+  if (replace && existing.length > 0) {
+    if (!confirm(`Sostituire i ${existing.length} esercizi di ${getDayTitle(currentDay)} con la scheda "${tpl.title}"?`)) return;
+  }
+
+  const fresh = tpl.exercises.map(e => normalizeExerciseRecord({ ...e, completedSets: [] }));
+  data[currentDay] = replace ? fresh : existing.concat(fresh);
   saveData(data);
+
+  /* Se il giorno non è ancora stato rinominato, prende il nome della scheda:
+     così la giornata si legge "Push — Petto, Spalle, Tricipiti" e non "Lunedì". */
+  if (replace) {
+    const titles = loadTitles();
+    if (!titles[currentDay]) {
+      titles[currentDay] = tpl.title;
+      saveTitles(titles);
+    }
+  }
+
   armedSet = null;
+  closeTemplatePicker();
+  renderDayBar();
   renderPiano();
   renderAllenamento();
+};
+
+window.renameDayTitle = function() {
+  const current = getDayTitle(currentDay);
+  const next = prompt(`Nome della scheda per ${currentDay}:`, current);
+  if (next === null) return;
+  const titles = loadTitles();
+  const trimmed = next.trim();
+  if (trimmed === '' || trimmed === currentDay) delete titles[currentDay];
+  else titles[currentDay] = trimmed;
+  saveTitles(titles);
+  renderDayBar();
 };
 
 /* ============================================================
@@ -780,8 +1224,8 @@ function renderDayBar() {
   daysContainer.innerHTML = DAYS.map(d => `
     <div class="day-chip ${d === currentDay ? 'active' : ''}" onclick="selectDay('${d}')">${d}</div>
   `).join('');
-  document.getElementById('piano-day-label').innerText = `Piano: ${currentDay}`;
-  document.getElementById('allenamento-day-label').innerText = `Sessione: ${currentDay}`;
+  document.getElementById('day-title').innerText = getDayTitle(currentDay);
+  document.getElementById('allenamento-day-label').innerText = getDayTitle(currentDay);
 }
 
 window.selectDay = function(day) {
@@ -799,6 +1243,7 @@ window.switchTab = function(tab) {
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   document.getElementById('day-bar-wrap').style.display = tab === 'storico' ? 'none' : 'flex';
   if (tab === 'storico') renderStorico();
+  if (tab === 'gruppi') renderGruppi();
 };
 
 /* ============================================================
@@ -853,8 +1298,10 @@ function renderPiano() {
   if (list.length === 0) {
     summaryEl.innerText = 'Nessun esercizio';
     container.innerHTML = '<span class="muted">Nessun esercizio impostato. Aggiungine uno col form qui sopra.</span>';
+    renderCoach();
     return;
   }
+  renderCoach();
   const totalSets = list.reduce((sum, e) => sum + e.sets, 0);
   const estSeconds = list.reduce((sum, e) => sum + e.sets * (30 + e.rest), 0);
   summaryEl.innerText = `${list.length} esercizi • ${totalSets} serie • ~${Math.round(estSeconds / 60)} min`;
@@ -1242,8 +1689,13 @@ function startDropAudio() {
       ytPlayer.setVolume(vol);
       ytPlayer.playVideo();
     } catch (e) {}
+  } else if (mode === 'spotify' && spotifyController) {
+    const start = Number(document.getElementById('segment-start-web').value) || 0;
+    try {
+      spotifyController.seek(start);
+      spotifyController.resume();
+    } catch (e) {}
   }
-  /* spotify: riproduzione avviata manualmente dall'utente */
 }
 function stopDropAudio() {
   const mode = getResolvedAudioMode();
@@ -1252,6 +1704,8 @@ function stopDropAudio() {
     if (audio) { try { audio.pause(); } catch (e) {} }
   } else if (mode === 'youtube' && ytPlayerReady) {
     try { ytPlayer.pauseVideo(); } catch (e) {}
+  } else if (mode === 'spotify' && spotifyController) {
+    try { spotifyController.pause(); } catch (e) {}
   }
 }
 
@@ -1504,18 +1958,73 @@ window.deleteTrack = async function(id) {
 
 /* ---- Link Web: YouTube / Spotify ---- */
 function parseWebAudioUrl(url) {
-  const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([\w-]{6,})/);
+  const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|live\/)|youtu\.be\/)([\w-]{6,})/);
   if (yt) return { type: 'youtube', id: yt[1] };
-  const sp = url.match(/open\.spotify\.com\/(track|episode)\/([a-zA-Z0-9]+)/);
+  const sp = url.match(/open\.spotify\.com\/(?:intl-[a-z]+\/)?(track|episode)\/([a-zA-Z0-9]+)/);
   if (sp) return { type: 'spotify', id: sp[2], kind: sp[1] };
   return null;
 }
+
+function setWebStatus(text, warning) {
+  const el = document.getElementById('web-status');
+  el.innerText = text;
+  el.className = warning ? 'web-warning' : '';
+}
+
+/* Abilita/disabilita i controlli del segmento in base alla durata nota.
+   Il punto chiave: il massimo dello slider e' durata-90, cosi il pezzo
+   scelto ci sta SEMPRE per intero, qualunque sia la lunghezza del brano. */
+function configureWebSegment(durationSec) {
+  const range = document.getElementById('segment-start-web');
+  webDuration = Number(durationSec) || 0;
+  const usable = webDuration > FAILURE_SET_SECONDS;
+  range.disabled = !usable;
+  range.max = usable ? Math.floor(webDuration - FAILURE_SET_SECONDS) : 0;
+  range.value = 0;
+  document.querySelectorAll('.nudge-btn').forEach(b => { b.disabled = !usable; });
+  document.getElementById('web-preview-btn').disabled = !currentWebMode;
+  updateWebSegmentLabel();
+}
+
+function updateWebSegmentLabel() {
+  const start = Number(document.getElementById('segment-start-web').value) || 0;
+  const label = document.getElementById('segment-label-web');
+  if (!webDuration) {
+    label.innerText = 'primi ' + FAILURE_SET_SECONDS + ' s';
+    return;
+  }
+  const end = Math.min(start + FAILURE_SET_SECONDS, webDuration);
+  label.innerText = formatMMSS(start) + ' \u2192 ' + formatMMSS(end);
+}
+
+window.onWebRangeInput = function() { updateWebSegmentLabel(); };
+
+window.nudgeWebSegment = function(delta) {
+  const range = document.getElementById('segment-start-web');
+  if (range.disabled) return;
+  const next = Math.max(0, Math.min(Number(range.max), (Number(range.value) || 0) + delta));
+  range.value = next;
+  updateWebSegmentLabel();
+};
+
+/* Anteprima: fa sentire da dove partira' il pezzo, senza avviare la serie */
+window.previewWebSegment = function() {
+  const start = Number(document.getElementById('segment-start-web').value) || 0;
+  if (currentWebMode === 'youtube' && ytPlayerReady) {
+    try { ytPlayer.seekTo(start, true); ytPlayer.playVideo(); } catch (e) {}
+    setTimeout(() => { try { ytPlayer.pauseVideo(); } catch (e) {} }, 6000);
+  } else if (currentWebMode === 'spotify' && spotifyController) {
+    try { spotifyController.seek(start); spotifyController.resume(); } catch (e) {}
+  } else {
+    alert('Carica prima un link e attendi che il player sia pronto.');
+  }
+};
 
 window.handleWebLinkSubmit = function() {
   const url = document.getElementById('web-link-input').value.trim();
   const parsed = parseWebAudioUrl(url);
   if (!parsed) {
-    alert('Link non valido. Incolla un link YouTube o Spotify.');
+    alert('Link non valido. Incolla un link YouTube (youtube.com o youtu.be) oppure Spotify (open.spotify.com/track/...).');
     return;
   }
   if (parsed.type === 'youtube') {
@@ -1523,11 +2032,12 @@ window.handleWebLinkSubmit = function() {
     loadYouTubePlayer(parsed.id);
   } else {
     currentWebMode = 'spotify';
-    loadSpotifyEmbed(parsed.id, parsed.kind);
+    loadSpotifyPlayer(parsed.id, parsed.kind);
   }
   refreshDropButtonState();
 };
 
+/* ---- YouTube ---- */
 function ensureYouTubeApi() {
   return new Promise((resolve, reject) => {
     if (window.YT && window.YT.Player) { resolve(); return; }
@@ -1549,66 +2059,275 @@ function ensureYouTubeApi() {
   });
 }
 
+const YT_ERRORS = {
+  2: 'ID video non valido.',
+  5: 'Il video non e riproducibile in questo player.',
+  100: 'Video non trovato o rimosso.',
+  101: 'Il proprietario ha vietato la riproduzione esterna di questo video.',
+  150: 'Il proprietario ha vietato la riproduzione esterna di questo video.'
+};
+
 function loadYouTubePlayer(videoId) {
   document.getElementById('spotify-embed-wrap').style.display = 'none';
   document.getElementById('youtube-embed-wrap').style.display = 'block';
   ytPlayerReady = false;
-  const range = document.getElementById('segment-start-web');
-  range.disabled = true;
+  configureWebSegment(0);
 
-  /* YouTube rifiuta le richieste dell'IFrame API provenienti da pagine aperte come
-     file locale (protocollo file://): è la causa più comune dell'errore di
-     configurazione/riproduzione. Lo segnaliamo subito invece di far attendere
-     un timeout inutile: MP3 locale e Spotify non hanno questa limitazione. */
+  /* YouTube rifiuta l'IFrame API da pagine aperte come file locale (file://). */
   if (window.location.protocol === 'file:') {
-    document.getElementById('web-status').innerText = '⚠️ YouTube non funziona se apri questo file direttamente dal computer (protocollo file://). Carica l\'app su un hosting (es. GitHub Pages, Netlify) o avviala con un server locale per usare i link YouTube. MP3 locale e Spotify funzionano comunque senza limitazioni.';
+    setWebStatus('\u26A0\uFE0F YouTube non funziona aprendo il file direttamente dal computer (file://). Serve un hosting, es. GitHub Pages. MP3 locale funziona comunque.', true);
     return;
   }
 
-  document.getElementById('web-status').innerText = 'Caricamento player YouTube...';
+  setWebStatus('Caricamento player YouTube...', false);
 
   ensureYouTubeApi().then(() => {
     if (ytPlayer && typeof ytPlayer.destroy === 'function') { try { ytPlayer.destroy(); } catch (e) {} }
+    /* BUG FIX IMPORTANTE: YT.Player SOSTITUISCE il div con un iframe, e destroy()
+       lo rimuove del tutto. Senza ricrearlo, dal secondo video in poi il
+       caricamento fallisce in silenzio. Quindi ricreiamo sempre l'elemento. */
+    const host = document.getElementById('youtube-player-host');
+    host.innerHTML = '<div id="youtube-player-el"></div>';
+
     ytPlayer = new window.YT.Player('youtube-player-el', {
-      videoId,
-      playerVars: { controls: 0, origin: window.location.origin },
+      width: '100%',
+      videoId: videoId,
+      playerVars: {
+        controls: 1,
+        playsinline: 1,        /* su iPhone evita il passaggio forzato a schermo intero */
+        rel: 0,
+        origin: window.location.origin
+      },
       events: {
         onReady: () => {
           ytPlayerReady = true;
-          const dur = ytPlayer.getDuration ? ytPlayer.getDuration() : 0;
-          if (dur > FAILURE_SET_SECONDS) {
-            range.disabled = false;
-            range.max = Math.floor(dur - FAILURE_SET_SECONDS);
-            range.value = 0;
-          }
-          document.getElementById('web-status').innerText = 'Video pronto ✔';
+          readYouTubeDuration(0);
         },
-        onError: () => { document.getElementById('web-status').innerText = 'Errore nel caricare il video.'; }
+        onError: (e) => {
+          const code = e && e.data;
+          setWebStatus('\u274C ' + (YT_ERRORS[code] || 'Errore nel caricare il video.') + ' Prova un altro video.', true);
+        }
       }
     });
   }).catch(() => {
-    document.getElementById('web-status').innerText = 'Impossibile caricare YouTube. Verifica la connessione internet.';
+    setWebStatus('Impossibile caricare YouTube. Verifica la connessione internet.', true);
   });
 }
 
-function loadSpotifyEmbed(id, kind) {
-  document.getElementById('youtube-embed-wrap').style.display = 'none';
-  const wrap = document.getElementById('spotify-embed-wrap');
-  wrap.style.display = 'block';
-  document.getElementById('spotify-iframe').src = `https://open.spotify.com/embed/${kind}/${id}`;
-  document.getElementById('web-status').innerText = 'Avvia manualmente la riproduzione nel player qui sotto, poi premi "Inizia Cedimento".';
-  const range = document.getElementById('segment-start-web');
-  range.disabled = true;
+/* Subito dopo onReady la durata a volte e' ancora 0: riproviamo qualche volta. */
+function readYouTubeDuration(attempt) {
+  let dur = 0;
+  try { dur = ytPlayer.getDuration ? ytPlayer.getDuration() : 0; } catch (e) {}
+  if (dur > 0) {
+    configureWebSegment(dur);
+    if (dur > FAILURE_SET_SECONDS) {
+      setWebStatus('\u2714 Video pronto (' + formatMMSS(dur) + '). Scegli il punto di partenza: verranno riprodotti 90 secondi esatti.', false);
+    } else {
+      setWebStatus('\u2714 Video pronto, ma dura meno di 90 secondi: verra riprodotto per intero.', false);
+    }
+    return;
+  }
+  if (attempt < 8) {
+    setTimeout(() => readYouTubeDuration(attempt + 1), 250);
+  } else {
+    configureWebSegment(0);
+    setWebStatus('Video caricato, ma non riesco a leggerne la durata: verranno riprodotti i primi 90 secondi.', true);
+  }
 }
 
-window.onWebRangeInput = function() {
-  if (!ytPlayerReady) return;
-  const range = document.getElementById('segment-start-web');
-  const start = Number(range.value) || 0;
-  const dur = ytPlayer && ytPlayer.getDuration ? ytPlayer.getDuration() : 0;
-  const end = dur ? Math.min(start + FAILURE_SET_SECONDS, dur) : start + FAILURE_SET_SECONDS;
-  document.getElementById('segment-label-web').innerText = `${formatMMSS(start)} → ${formatMMSS(end)}`;
+/* ---- Spotify (iFrame API) ---- */
+function ensureSpotifyApi() {
+  return new Promise((resolve, reject) => {
+    if (window.__spotifyIFrameApi) { resolve(window.__spotifyIFrameApi); return; }
+    const timeoutMs = window.__TZ_SPOTIFY_TIMEOUT_MS || 8000;
+    const timeout = setTimeout(() => reject(new Error('timeout')), timeoutMs);
+    window.onSpotifyIframeApiReady = (IFrameAPI) => {
+      clearTimeout(timeout);
+      window.__spotifyIFrameApi = IFrameAPI;
+      resolve(IFrameAPI);
+    };
+    if (!document.getElementById('spotify-iframe-api-script')) {
+      const tag = document.createElement('script');
+      tag.id = 'spotify-iframe-api-script';
+      tag.src = 'https://open.spotify.com/embed/iframe-api/v1';
+      tag.async = true;
+      tag.onerror = () => { clearTimeout(timeout); reject(new Error('script load error')); };
+      document.head.appendChild(tag);
+    }
+  });
+}
+
+function loadSpotifyPlayer(id, kind) {
+  document.getElementById('youtube-embed-wrap').style.display = 'none';
+  document.getElementById('spotify-embed-wrap').style.display = 'block';
+  spotifyReady = false;
+  configureWebSegment(0);
+  setWebStatus('Caricamento player Spotify...', false);
+
+  ensureSpotifyApi().then((IFrameAPI) => {
+    const host = document.getElementById('spotify-player-host');
+    host.innerHTML = '<div id="spotify-embed-el"></div>';
+    const element = document.getElementById('spotify-embed-el');
+
+    IFrameAPI.createController(element, { uri: 'spotify:' + kind + ':' + id, width: '100%', height: 152 }, (EmbedController) => {
+      spotifyController = EmbedController;
+      EmbedController.addListener('ready', () => {
+        spotifyReady = true;
+        /* LIMITE DI SPOTIFY, non dell'app: quando la riproduzione viene avviata
+           via codice, Spotify serve un'anteprima di ~30 secondi anche agli utenti
+           Premium. I 90 secondi pieni si ottengono solo con MP3 o YouTube. */
+        setWebStatus('\u26A0\uFE0F Spotify limita a ~30 secondi la riproduzione avviata da un\'app esterna, anche con Premium. Per i 90 secondi pieni usa un MP3 locale o YouTube. Puoi comunque scegliere il punto di partenza.', true);
+      });
+      EmbedController.addListener('playback_update', (e) => {
+        const ms = e && e.data && e.data.duration;
+        if (ms && !webDuration) configureWebSegment(Math.floor(ms / 1000));
+      });
+    });
+  }).catch(() => {
+    setWebStatus('Impossibile caricare Spotify. Verifica la connessione internet.', true);
+  });
+}
+
+/* ============================================================
+   SCHERMATA GRUPPI MUSCOLARI
+   ============================================================ */
+let selectedGroups = [];
+
+window.toggleGroup = function(groupId) {
+  const i = selectedGroups.indexOf(groupId);
+  if (i === -1) selectedGroups.push(groupId);
+  else selectedGroups.splice(i, 1);
+  renderGruppi();
 };
+
+window.clearGroupSelection = function() {
+  selectedGroups = [];
+  renderGruppi();
+};
+
+function renderGruppi() {
+  const grid = document.getElementById('group-grid');
+  grid.innerHTML = Object.keys(MUSCLE_GROUPS).map(id => {
+    const g = MUSCLE_GROUPS[id];
+    const n = EXERCISE_LIBRARY.filter(e => e.group === id).length;
+    return '<div class="group-card ' + (selectedGroups.indexOf(id) !== -1 ? 'selected' : '') + '" onclick="toggleGroup(\'' + id + '\')">' +
+      '<div class="group-emoji">' + g.emoji + '</div>' +
+      '<div class="group-label">' + g.label + '</div>' +
+      '<div class="group-count">' + n + ' esercizi</div>' +
+    '</div>';
+  }).join('');
+
+  const exCard = document.getElementById('group-exercises-card');
+  const tplCard = document.getElementById('group-templates-card');
+
+  if (selectedGroups.length === 0) {
+    exCard.style.display = 'none';
+    tplCard.style.display = 'none';
+    return;
+  }
+
+  /* Schede che toccano almeno uno dei gruppi selezionati, ordinate per pertinenza */
+  const scoredTemplates = WORKOUT_TEMPLATES.map(t => {
+    const hits = t.exercises.filter(e => {
+      const m = findExercise(e.name);
+      return m && selectedGroups.indexOf(m.group) !== -1;
+    }).length;
+    return { tpl: t, hits: hits, ratio: hits / t.exercises.length };
+  }).filter(x => x.ratio >= 0.4).sort((a, b) => b.ratio - a.ratio);
+
+  if (scoredTemplates.length) {
+    tplCard.style.display = 'block';
+    document.getElementById('group-templates').innerHTML = scoredTemplates.map(x => {
+      const t = x.tpl;
+      const pct = Math.round(x.ratio * 100);
+      return '<div class="lib-item">' +
+        '<div><div class="lib-name">' + escapeHtml(t.title) + '</div>' +
+        '<div class="lib-meta">' + pct + '% in linea con la selezione \u2022 ' + t.exercises.length + ' esercizi</div></div>' +
+        '<button class="lib-add-btn" onclick="applyTemplateFromGroups(\'' + t.id + '\')" aria-label="Carica scheda">+</button>' +
+      '</div>';
+    }).join('');
+  } else {
+    tplCard.style.display = 'none';
+  }
+
+  /* Esercizi dei gruppi scelti: multiarticolari prima, come vuole la programmazione */
+  const data = loadData();
+  const present = new Set((data[currentDay] || []).map(e => e.name));
+  const list = EXERCISE_LIBRARY
+    .filter(e => selectedGroups.indexOf(e.group) !== -1)
+    .sort((a, b) => (a.type === b.type ? 0 : (a.type === 'compound' ? -1 : 1)));
+
+  exCard.style.display = 'block';
+  document.getElementById('group-exercises-title').innerText = 'Esercizi (' + list.length + ')';
+  document.getElementById('group-exercises-hint').innerText = 'Vengono aggiunti a: ' + getDayTitle(currentDay);
+  document.getElementById('group-exercises').innerHTML = list.map(e => {
+    const already = present.has(e.name);
+    return '<div class="lib-item">' +
+      '<div><div class="lib-name">' + escapeHtml(e.name) +
+      '<span class="lib-type ' + e.type + '">' + (e.type === 'compound' ? 'Multiart.' : 'Isolam.') + '</span></div>' +
+      '<div class="lib-meta">' + e.sets + '\u00D7' + e.reps + ' \u2022 ' + e.weight + ' kg \u2022 \u23F1 ' + e.rest + 's</div></div>' +
+      '<button class="lib-add-btn ' + (already ? 'added' : '') + '" onclick="addLibraryExercise(\'' + e.name.replace(/'/g, "\\'") + '\')" aria-label="Aggiungi">' + (already ? '\u2713' : '+') + '</button>' +
+    '</div>';
+  }).join('');
+}
+
+window.addLibraryExercise = function(name) {
+  const meta = findExercise(name);
+  if (!meta) return;
+  const data = loadData();
+  data[currentDay].push(normalizeExerciseRecord({
+    name: meta.name, sets: meta.sets, reps: meta.reps,
+    weight: meta.weight, rest: meta.rest, completedSets: []
+  }));
+  saveData(data);
+  renderPiano();
+  renderAllenamento();
+  renderGruppi();
+};
+
+window.applyTemplateFromGroups = function(templateId) {
+  window.confirm = window.confirm || (() => true);
+  applyTemplate(templateId, false);
+  renderGruppi();
+  switchTab('piano');
+};
+
+/* ============================================================
+   PANNELLO COACH (nel tab Piano)
+   ============================================================ */
+function renderCoach() {
+  const box = document.getElementById('coach-box');
+  const container = document.getElementById('coach-suggestions');
+  const titleEl = document.getElementById('coach-title');
+  const data = loadData();
+  const list = data[currentDay] || [];
+
+  const startGroup = selectedGroups.length === 1 ? selectedGroups[0] : null;
+  const suggestions = suggestNextExercises(list, startGroup, 3);
+
+  if (suggestions.length === 0) {
+    box.style.display = 'none';
+    return;
+  }
+  box.style.display = 'block';
+
+  if (list.length === 0) {
+    titleEl.innerText = startGroup
+      ? 'Da dove partire per ' + MUSCLE_GROUPS[startGroup].label
+      : 'Da dove partire';
+  } else {
+    const last = list[list.length - 1];
+    titleEl.innerText = 'Dopo ' + last.name.replace(/^[^\s]+\s/, '');
+  }
+
+  container.innerHTML = suggestions.map(s =>
+    '<div class="coach-item">' +
+      '<div><div class="coach-name">' + escapeHtml(s.name) + '</div>' +
+      '<div class="coach-reason">' + escapeHtml(s.reason) + '</div></div>' +
+      '<button class="lib-add-btn" onclick="addLibraryExercise(\'' + s.name.replace(/'/g, "\\'") + '\')" aria-label="Aggiungi">+</button>' +
+    '</div>'
+  ).join('');
+}
 
 /* ============================================================
    TERMINA ALLENAMENTO → Storico
