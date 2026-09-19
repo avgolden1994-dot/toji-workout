@@ -128,6 +128,24 @@ body[data-mode="maki"] {
   --success: #eab308;
   --banner-img: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20400%20140%22%20preserveAspectRatio%3D%22xMidYMid%20slice%22%3E%20%3Cdefs%3E%20%3ClinearGradient%20id%3D%22mg%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%20%3Cstop%20offset%3D%220%22%20stop-color%3D%22%2307170f%22%2F%3E%3Cstop%20offset%3D%220.55%22%20stop-color%3D%22%230d2a1a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23140b1f%22%2F%3E%20%3C%2FlinearGradient%3E%20%3ClinearGradient%20id%3D%22ms%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%220%22%3E%20%3Cstop%20offset%3D%220%22%20stop-color%3D%22%2322c55e%22%20stop-opacity%3D%220%22%2F%3E%20%3Cstop%20offset%3D%220.45%22%20stop-color%3D%22%234ade80%22%20stop-opacity%3D%220.95%22%2F%3E%20%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23a855f7%22%20stop-opacity%3D%220%22%2F%3E%20%3C%2FlinearGradient%3E%20%3ClinearGradient%20id%3D%22mp%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%20%3Cstop%20offset%3D%220%22%20stop-color%3D%22%234b3a2a%22%2F%3E%3Cstop%20offset%3D%220.5%22%20stop-color%3D%22%238b6f4e%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%233a2d20%22%2F%3E%20%3C%2FlinearGradient%3E%20%3C%2Fdefs%3E%20%3Crect%20width%3D%22400%22%20height%3D%22140%22%20fill%3D%22url%28%23mg%29%22%2F%3E%20%3Cg%20opacity%3D%220.5%22%3E%20%3Ccircle%20cx%3D%2260%22%20cy%3D%22100%22%20r%3D%221.4%22%20fill%3D%22%234ade80%22%2F%3E%3Ccircle%20cx%3D%22140%22%20cy%3D%2232%22%20r%3D%221.1%22%20fill%3D%22%23a855f7%22%2F%3E%20%3Ccircle%20cx%3D%22260%22%20cy%3D%22110%22%20r%3D%221.5%22%20fill%3D%22%2322c55e%22%2F%3E%3Ccircle%20cx%3D%22345%22%20cy%3D%2246%22%20r%3D%221.2%22%20fill%3D%22%234ade80%22%2F%3E%20%3Ccircle%20cx%3D%22205%22%20cy%3D%2226%22%20r%3D%221%22%20fill%3D%22%23a855f7%22%2F%3E%3Ccircle%20cx%3D%2295%22%20cy%3D%2266%22%20r%3D%221.3%22%20fill%3D%22%2322c55e%22%2F%3E%20%3C%2Fg%3E%20%3Cpath%20d%3D%22M-20%2018%20L%20300%20148%22%20stroke%3D%22url%28%23ms%29%22%20stroke-width%3D%2213%22%20fill%3D%22none%22%20opacity%3D%220.7%22%2F%3E%20%3Cpath%20d%3D%22M-10%20128%20L%20320%20-8%22%20stroke%3D%22url%28%23ms%29%22%20stroke-width%3D%226%22%20fill%3D%22none%22%20opacity%3D%220.6%22%2F%3E%20%3Cpath%20d%3D%22M120%20152%20L%20420%2040%22%20stroke%3D%22url%28%23ms%29%22%20stroke-width%3D%223%22%20fill%3D%22none%22%20opacity%3D%220.45%22%2F%3E%20%3Cg%20transform%3D%22translate%28290%2070%29%20rotate%28-34%29%22%3E%20%3Crect%20x%3D%22-120%22%20y%3D%22-3%22%20width%3D%22196%22%20height%3D%226%22%20rx%3D%222.5%22%20fill%3D%22url%28%23mp%29%22%2F%3E%20%3Cpath%20d%3D%22M76%20-8%20L%20112%200%20L%2076%208%20L%2084%200%20Z%22%20fill%3D%22%23dff5e6%22%2F%3E%20%3Crect%20x%3D%22-26%22%20y%3D%22-5%22%20width%3D%2226%22%20height%3D%2210%22%20rx%3D%222%22%20fill%3D%22%2314532d%22%2F%3E%20%3Crect%20x%3D%2260%22%20y%3D%22-5%22%20width%3D%2210%22%20height%3D%2210%22%20rx%3D%222%22%20fill%3D%22%2314532d%22%2F%3E%20%3C%2Fg%3E%20%3C%2Fsvg%3E");
 }
+:root {
+  /* Scala a 8 punti: tutte le distanze sono multipli di 8 (con mezzo passo
+     da 4 per i dettagli fini). Le altezze di riga sono multipli di 4, cosi
+     il testo resta agganciato allo stesso ritmo verticale.
+     Regola "interno <= esterno": lo spazio DENTRO un gruppo e sempre minore
+     di quello TRA i gruppi, altrimenti l occhio non capisce cosa sta con cosa
+     ed e esattamente il motivo per cui le descrizioni sembravano attaccate. */
+  --sp-1: 4px;    /* mezzo passo: icona-testo, dettagli */
+  --sp-2: 8px;    /* titolo -> sua descrizione */
+  --sp-3: 12px;   /* elementi vicini dentro lo stesso blocco */
+  --sp-4: 16px;   /* padding interno delle card */
+  --sp-5: 24px;   /* blocco -> blocco */
+  --sp-6: 32px;   /* sezione -> sezione */
+  --lh-tight: 20px;
+  --lh-base: 24px;
+  --lh-loose: 28px;
+}
+
 * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 /* niente zoom accidentale: il doppio tocco non ingrandisce piu la pagina */
 html { touch-action: manipulation; -webkit-text-size-adjust: 100%; }
@@ -161,7 +179,7 @@ body {
 .mode-cancel { background: transparent; border: none; color: var(--muted); font-size: 0.75rem; text-decoration: underline; cursor: pointer; padding: 4px; }
 
 /* ======= Shell app ======= */
-.app-shell { max-width: 480px; margin: 0 auto; padding: 14px 14px calc(90px + env(safe-area-inset-bottom)) 14px; display: flex; flex-direction: column; gap: 14px; }
+.app-shell { max-width: 480px; margin: 0 auto; padding: var(--sp-4) var(--sp-4) calc(96px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: var(--sp-5); }
 
 .banner {
   position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--border);
@@ -200,12 +218,12 @@ body {
 .day-chip.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 0 10px var(--primary-shadow); }
 
 /* ======= Tab panels ======= */
-.tab-panel { display: none; flex-direction: column; gap: 14px; }
-.tab-panel.active { display: flex; }
+.tab-panel { display: none; flex-direction: column; gap: var(--sp-5); }
+.tab-panel.active { display: flex; gap: var(--sp-5); }
 
-.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
-.section-title { font-size: 0.85rem; font-weight: 800; margin-bottom: 8px; text-transform: uppercase; }
-.section-hint { font-size: 0.78rem; color: var(--muted); margin-bottom: 12px; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: var(--sp-4); }
+.section-title { font-size: 0.85rem; font-weight: 800; line-height: var(--lh-tight); margin: 0 0 var(--sp-2) 0; text-transform: uppercase; letter-spacing: 0.4px; }
+.section-hint { font-size: 0.78rem; line-height: var(--lh-base); color: var(--muted); margin: 0 0 var(--sp-5) 0; }
 .muted { color: var(--muted); font-size: 0.85rem; }
 
 /* ======= Form Piano ======= */
@@ -230,12 +248,12 @@ input:focus, select:focus { border-color: var(--primary); }
 .exercise-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
 .exercise-item:last-child { border-bottom: none; }
 .ex-name { font-weight: 700; font-size: 0.95rem; }
-.ex-data { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+.ex-data { font-size: 0.8rem; line-height: var(--lh-tight); color: var(--muted); margin-top: var(--sp-1); }
 .del-btn { background: transparent; border: none; color: var(--primary); font-size: 1rem; cursor: pointer; }
 
 /* ======= Piano: card esercizio in stile scheda ======= */
 .plan-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
-.plan-summary { font-size: 0.72rem; color: var(--muted); font-weight: 600; }
+.plan-summary { font-size: 0.72rem; line-height: var(--lh-tight); color: var(--muted); font-weight: 600; margin-top: var(--sp-1); }
 .plan-tool-btn { background: #1a1a24; border: 1px solid var(--border); color: var(--text); padding: 7px 10px; border-radius: 8px; font-size: 0.72rem; font-weight: 800; cursor: pointer; white-space: nowrap; }
 .plan-tool-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
 
@@ -278,7 +296,7 @@ body.reorder-mode .plan-card { border-color: var(--primary); }
 .wk-row.open { border-color: var(--primary); background: rgba(249,115,22,0.07); }
 .wk-main { flex: 1; min-width: 0; }
 .wk-name { font-weight: 800; font-size: 0.88rem; }
-.wk-meta { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+.wk-meta { font-size: 0.74rem; line-height: var(--lh-tight); color: var(--muted); margin-top: var(--sp-1); }
 .wk-count { flex-shrink: 0; font-size: 0.72rem; font-weight: 900; color: var(--primary); background: rgba(249,115,22,0.14); border-radius: 999px; padding: 3px 9px; }
 .wk-caret { flex-shrink: 0; color: var(--muted); font-weight: 900; transition: transform .15s ease; }
 .wk-row.open .wk-caret { transform: rotate(90deg); color: var(--primary); }
@@ -325,41 +343,51 @@ body.reorder-mode .plan-card { border-color: var(--primary); }
 /* ======= Scheda esercizio: disegno e spiegazione ======= */
 .ex-draw-wrap {
   background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-  padding: 10px; margin-bottom: 12px;
-  --fig: var(--text); --bar: var(--muted); --plate: var(--primary);
-  --arrow: var(--accent); --ground: var(--border);
+  padding: var(--sp-4); margin-bottom: var(--sp-5);
+  aspect-ratio: 300 / 165;      /* spazio riservato: niente stiramenti */
+  display: flex; align-items: center; justify-content: center;
 }
-.ex-draw { width: 100%; height: auto; display: block; }
-.ex-pattern { font-size: 0.68rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent); margin-bottom: 12px; }
-.ex-block { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 10px; }
-.ex-block-title { font-size: 0.72rem; font-weight: 900; text-transform: uppercase; color: var(--primary); margin-bottom: 8px; }
+.ex-draw { width: 100%; height: 100%; display: block; }
+/* la figura ha corpo pieno con un contorno piu marcato, cosi si legge
+   come una persona anche a schermo piccolo */
+.ex-draw .bd { fill: var(--text); fill-opacity: 0.88; stroke: var(--bg); stroke-width: 1.2; stroke-linejoin: round; }
+.ex-draw .bar { fill: #b8bcc4; }
+.ex-draw .plate { fill: var(--primary); }
+.ex-draw .bench { fill: var(--muted); fill-opacity: 0.45; }
+.ex-draw .ground { stroke: var(--border); }
+.ex-draw .arrow { stroke: var(--accent); }
+.ex-draw .lbl { fill: var(--accent); }
+.ex-draw .lbl2 { fill: var(--muted); }
+.ex-pattern { font-size: 0.68rem; font-weight: 900; line-height: var(--lh-tight); text-transform: uppercase; letter-spacing: 0.6px; color: var(--accent); margin: 0 0 var(--sp-5) 0; }
+.ex-block { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: var(--sp-4); margin-bottom: var(--sp-3); }
+.ex-block-title { font-size: 0.72rem; font-weight: 900; line-height: var(--lh-tight); text-transform: uppercase; letter-spacing: 0.5px; color: var(--primary); margin: 0 0 var(--sp-3) 0; }
 .ex-block-title.warn { color: var(--accent); }
-.ex-steps { margin: 0; padding-left: 20px; font-size: 0.84rem; line-height: 1.5; }
-.ex-steps li { margin-bottom: 6px; }
+.ex-steps { margin: 0; padding-left: 20px; font-size: 0.86rem; line-height: var(--lh-loose); }
+.ex-steps li { margin-bottom: var(--sp-2); }
 .ex-video { display: block; text-align: center; text-decoration: none; background: var(--primary); color: #fff; font-weight: 900; font-size: 0.86rem; padding: 13px; border-radius: 10px; margin-top: 4px; }
-.ex-note { font-size: 0.74rem; color: var(--muted); line-height: 1.45; margin-top: 10px; }
+.ex-note { font-size: 0.76rem; color: var(--muted); line-height: var(--lh-base); margin-top: var(--sp-4); }
 .ex-note a { color: var(--accent); }
 .info-btn { background: transparent; border: none; color: var(--muted); font-size: 0.95rem; cursor: pointer; padding: 3px 5px; border-radius: 6px; flex-shrink: 0; }
 
 /* ======= Impostazioni ======= */
 .settings { position: fixed; inset: 0; z-index: 110; background: var(--bg); display: flex; flex-direction: column; }
 .settings.hidden { display: none; }
-.set-group { margin-bottom: 20px; }
-.set-group-title { font-size: 0.68rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 8px; }
+.set-group { margin-bottom: var(--sp-6); }
+.set-group-title { font-size: 0.68rem; font-weight: 900; line-height: var(--lh-tight); text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); margin: 0 0 var(--sp-3) 0; }
 .set-seg { display: flex; gap: 6px; background: var(--card); border: 1px solid var(--border); padding: 4px; border-radius: 10px; }
 .set-seg button { flex: 1; background: transparent; border: none; color: var(--muted); padding: 10px 4px; border-radius: 7px; font-weight: 800; font-size: 0.76rem; cursor: pointer; }
 .set-seg button.on { background: var(--primary); color: #fff; }
 .set-toggle { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 8px; cursor: pointer; color: var(--text); }
 .set-toggle-main { flex: 1; min-width: 0; }
 .set-toggle-name { font-weight: 800; font-size: 0.86rem; }
-.set-toggle-desc { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+.set-toggle-desc { font-size: 0.74rem; line-height: var(--lh-tight); color: var(--muted); margin-top: var(--sp-1); }
 .switch { flex-shrink: 0; width: 44px; height: 25px; border-radius: 999px; background: var(--border); position: relative; transition: background .18s ease; }
 .switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 19px; height: 19px; border-radius: 50%; background: #fff; transition: transform .18s ease; }
 .switch.on { background: var(--success); }
 .switch.on::after { transform: translateX(19px); }
 .set-row-btn { width: 100%; background: var(--card); border: 1px solid var(--border); color: var(--text); border-radius: 10px; padding: 12px; margin-bottom: 8px; font-weight: 800; font-size: 0.84rem; cursor: pointer; text-align: left; }
 .set-row-btn.danger { color: var(--accent); border-color: var(--accent); }
-.set-about { font-size: 0.72rem; color: var(--muted); line-height: 1.45; margin-top: 4px; }
+.set-about { font-size: 0.76rem; color: var(--muted); line-height: var(--lh-base); margin-top: var(--sp-3); }
 
 /* ======= Schermata iniziale: creazione del programma ======= */
 .onb { position: fixed; inset: 0; z-index: 120; background: var(--bg); display: flex; flex-direction: column; }
@@ -368,11 +396,11 @@ body.reorder-mode .plan-card { border-color: var(--primary); }
 .onb-skip { margin-left: auto; background: transparent; border: none; color: var(--muted); font-size: 0.74rem; text-decoration: underline; cursor: pointer; flex-shrink: 0; }
 .onb-progress { height: 3px; background: #1a1a24; }
 .onb-progress span { display: block; height: 100%; background: var(--primary); width: 0; transition: width .3s ease; }
-.onb-body { flex: 1; overflow-y: auto; padding: 18px 14px; max-width: 480px; width: 100%; margin: 0 auto; }
+.onb-body { flex: 1; overflow-y: auto; padding: var(--sp-5) var(--sp-4) var(--sp-6); max-width: 480px; width: 100%; margin: 0 auto; }
 .onb-footer { padding: 12px 14px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); background: #0d0d12; }
 .onb-footer .btn-start-workout { max-width: 480px; margin: 0 auto; display: block; }
-.onb-q { font-size: 1.15rem; font-weight: 900; margin-bottom: 6px; }
-.onb-why { font-size: 0.76rem; color: var(--muted); margin-bottom: 16px; line-height: 1.4; }
+.onb-q { font-size: 1.2rem; font-weight: 900; line-height: var(--lh-loose); margin: 0 0 var(--sp-2) 0; }
+.onb-why { font-size: 0.8rem; color: var(--muted); line-height: var(--lh-base); margin: 0 0 var(--sp-5) 0; }
 .onb-opt {
   display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
   background: #0d0d12; border: 1px solid var(--border); border-radius: 12px;
@@ -382,7 +410,7 @@ body.reorder-mode .plan-card { border-color: var(--primary); }
 .onb-opt-emoji { font-size: 1.5rem; flex-shrink: 0; }
 .onb-opt-main { flex: 1; min-width: 0; }
 .onb-opt-name { font-weight: 800; font-size: 0.92rem; }
-.onb-opt-desc { font-size: 0.74rem; color: var(--muted); margin-top: 2px; }
+.onb-opt-desc { font-size: 0.75rem; line-height: var(--lh-tight); color: var(--muted); margin-top: var(--sp-1); }
 .onb-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .onb-field span { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; font-weight: 800; display: block; margin-bottom: 3px; }
 .onb-note { font-size: 0.72rem; color: var(--muted); background: #0d0d12; border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 10px; margin-top: 14px; line-height: 1.45; }
@@ -399,10 +427,10 @@ body.reorder-mode .plan-card { border-color: var(--primary); }
 .bia-val input { padding: 8px 4px; text-align: center; font-size: 0.9rem; font-weight: 800; }
 
 /* esito */
-.res-card { background: #0d0d12; border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 10px; }
-.res-title { font-size: 0.72rem; font-weight: 900; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.res-card { background: #0d0d12; border: 1px solid var(--border); border-radius: 12px; padding: var(--sp-4); margin-bottom: var(--sp-3); }
+.res-title { font-size: 0.72rem; font-weight: 900; line-height: var(--lh-tight); text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent); margin: 0 0 var(--sp-3) 0; }
 .res-big { font-size: 1.05rem; font-weight: 900; }
-.res-line { display: flex; justify-content: space-between; font-size: 0.8rem; padding: 5px 0; border-bottom: 1px solid var(--border); }
+.res-line { display: flex; justify-content: space-between; gap: var(--sp-3); font-size: 0.82rem; line-height: var(--lh-tight); padding: var(--sp-2) 0; border-bottom: 1px solid var(--border); }
 .res-line:last-child { border-bottom: none; }
 .res-line b { font-weight: 800; }
 .res-tag { display: inline-block; font-size: 0.64rem; font-weight: 900; text-transform: uppercase; border-radius: 999px; padding: 2px 9px; margin-top: 6px; }
@@ -434,7 +462,7 @@ body.reorder-mode .plan-card { border-color: var(--primary); }
 }
 .pick-main { flex: 1; min-width: 0; }
 .pick-name { font-weight: 700; font-size: 0.87rem; }
-.pick-meta { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+.pick-meta { font-size: 0.74rem; line-height: var(--lh-tight); color: var(--muted); margin-top: var(--sp-1); }
 .pick-check { flex-shrink: 0; font-size: 1.1rem; font-weight: 900; color: var(--border); }
 .pick-row.on .pick-check { color: var(--success); }
 
@@ -624,9 +652,9 @@ body.select-mode .plan-card-actions, body.select-mode .reorder-arrows { display:
   font-size: 1.2rem; font-weight: 800; cursor: pointer;
 }
 .sheet-titles { min-width: 0; }
-.sheet-title { font-size: 1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.3px; }
-.sheet-sub { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
-.sheet-body { flex: 1; overflow-y: auto; padding: 14px; max-width: 480px; width: 100%; margin: 0 auto; }
+.sheet-title { font-size: 1.05rem; font-weight: 900; line-height: var(--lh-base); text-transform: uppercase; letter-spacing: 0.4px; }
+.sheet-sub { font-size: 0.74rem; line-height: var(--lh-tight); color: var(--muted); margin-top: var(--sp-1); }
+.sheet-body { flex: 1; overflow-y: auto; padding: var(--sp-5) var(--sp-4) var(--sp-6); max-width: 480px; width: 100%; margin: 0 auto; }
 .sheet-map { display: flex; justify-content: center; margin-bottom: 10px; }
 .sheet-map svg { width: 100%; max-width: 210px; height: auto; }
 .sheet-hint { font-size: 0.74rem; color: var(--accent); font-weight: 700; margin-bottom: 10px; text-align: center; }
@@ -647,20 +675,20 @@ body.select-mode .plan-card-actions, body.select-mode .reorder-arrows { display:
 .wday-card.today { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary) inset; }
 .wday-main { flex: 1; min-width: 0; }
 .wday-name { font-weight: 800; font-size: 0.95rem; }
-.wday-meta { font-size: 0.74rem; color: var(--muted); margin-top: 3px; }
+.wday-meta { font-size: 0.75rem; line-height: var(--lh-tight); color: var(--muted); margin-top: var(--sp-1); }
 .wday-badge { flex-shrink: 0; font-size: 0.6rem; font-weight: 900; color: var(--primary); border: 1px solid var(--primary); border-radius: 999px; padding: 2px 7px; }
 .wday-go { flex-shrink: 0; font-size: 1.2rem; color: var(--primary); font-weight: 900; }
 .wday-progress { height: 4px; border-radius: 999px; background: #1a1a24; margin-top: 7px; overflow: hidden; }
 .wday-progress span { display: block; height: 100%; background: var(--success); border-radius: 999px; }
 
 /* ======= Intestazioni a passi ======= */
-.step-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.step-head { display: flex; align-items: center; gap: var(--sp-2); margin: 0 0 var(--sp-2) 0; }
 .step-num {
   flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
   background: var(--primary); color: #fff; font-size: 0.72rem; font-weight: 900;
   display: flex; align-items: center; justify-content: center;
 }
-.step-label { font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; }
+.step-label { font-size: 0.85rem; font-weight: 800; line-height: var(--lh-tight); text-transform: uppercase; letter-spacing: 0.4px; }
 .plan-tool-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 
 /* ======= Figura anatomica ======= */
@@ -688,7 +716,7 @@ body.select-mode .plan-card-actions, body.select-mode .reorder-arrows { display:
 .bm-muscle { fill: #262633; stroke: #33333f; stroke-width: 0.8; transition: fill .2s ease; }
 .bm-muscle.active { fill: var(--primary); stroke: var(--primary); filter: drop-shadow(0 0 4px var(--primary-shadow)); }
 .bm-label { fill: var(--muted); font-size: 7px; font-weight: 700; text-anchor: middle; }
-.group-day-current { font-size: 0.74rem; color: var(--accent); font-weight: 800; margin-top: 8px; }
+.group-day-current { font-size: 0.74rem; line-height: var(--lh-tight); color: var(--accent); font-weight: 800; margin-top: var(--sp-1); }
 
 .bm-line { fill: none; stroke: rgba(0,0,0,0.25); stroke-width: 0.7; }
 body[data-theme="light"] .bm-line { stroke: rgba(0,0,0,0.12); }
@@ -5033,169 +5061,253 @@ window.switchProtocol = function(mode) {
    si spiegano con le stesse tre regole.
    ============================================================ */
 
-/* --- disegni: due pose affiancate, partenza e arrivo --- */
-function figura(pose, x) {
-  const P = {
-    /* [testa_y, spalla_y, anca_y, ginocchio_x_off, ginocchio_y, piede_y, braccio] */
-    inPiedi:  { hy: 26, sy: 40, ay: 68, kx: 0,  ky: 92, fy: 118, lean: 0 },
-    accosciato:{ hy: 48, sy: 60, ay: 84, kx: 10, ky: 92, fy: 118, lean: 8 },
-    piegato:  { hy: 52, sy: 56, ay: 70, kx: 4,  ky: 94, fy: 118, lean: 26 },
-    sdraiato: null
-  }[pose];
-  if (!P) return '';
-  const cx = x;
-  const lean = P.lean;
-  return '<g stroke="var(--fig)" stroke-width="3.2" stroke-linecap="round" fill="none">' +
-    '<circle cx="' + (cx + lean) + '" cy="' + P.hy + '" r="7" fill="var(--fig)" stroke="none"/>' +
-    '<line x1="' + (cx + lean) + '" y1="' + (P.hy + 7) + '" x2="' + cx + '" y2="' + P.ay + '"/>' +
-    '<line x1="' + cx + '" y1="' + P.ay + '" x2="' + (cx - P.kx - 7) + '" y2="' + P.ky + '"/>' +
-    '<line x1="' + (cx - P.kx - 7) + '" y1="' + P.ky + '" x2="' + (cx - 7) + '" y2="' + P.fy + '"/>' +
-    '<line x1="' + cx + '" y1="' + P.ay + '" x2="' + (cx + P.kx + 7) + '" y2="' + P.ky + '"/>' +
-    '<line x1="' + (cx + P.kx + 7) + '" y1="' + P.ky + '" x2="' + (cx + 7) + '" y2="' + P.fy + '"/>' +
-    '</g>';
+/* --- Disegni anatomici: sagome piene con volumi, non omini a bastoncino ---
+   Ogni arto e' una capsula con spessore variabile (coscia piu' larga del
+   polpaccio, braccio piu' largo dell avambraccio), il tronco e' una sagoma
+   che si stringe in vita: cosi la figura si legge come un corpo e non come
+   uno schema. Tutto disegnato a mano in SVG, senza immagini di terzi. */
+
+/* capsula tra due punti, con spessore che rastrema */
+function arto(x1, y1, x2, y2, w1, w2, cls) {
+  const dx = x2 - x1, dy = y2 - y1;
+  const len = Math.sqrt(dx * dx + dy * dy) || 1;
+  const nx = -dy / len, ny = dx / len;
+  const a1 = w1 / 2, a2 = w2 / 2;
+  const p = [
+    [x1 + nx * a1, y1 + ny * a1],
+    [x2 + nx * a2, y2 + ny * a2],
+    [x2 - nx * a2, y2 - ny * a2],
+    [x1 - nx * a1, y1 - ny * a1]
+  ].map(c => c[0].toFixed(1) + ' ' + c[1].toFixed(1));
+  return '<path class="' + (cls || 'bd') + '" d="M' + p[0] + ' L' + p[1] +
+    ' A' + a2 + ' ' + a2 + ' 0 0 1 ' + p[2] + ' L' + p[3] +
+    ' A' + a1 + ' ' + a1 + ' 0 0 1 ' + p[0] + ' Z"/>';
 }
 
-function bilanciere(x, y, w) {
-  const half = (w || 34) / 2;
-  return '<g>' +
-    '<line x1="' + (x - half) + '" y1="' + y + '" x2="' + (x + half) + '" y2="' + y + '" stroke="var(--bar)" stroke-width="3.4" stroke-linecap="round"/>' +
-    '<rect x="' + (x - half - 5) + '" y="' + (y - 9) + '" width="5" height="18" rx="2" fill="var(--plate)"/>' +
-    '<rect x="' + (x + half) + '" y="' + (y - 9) + '" width="5" height="18" rx="2" fill="var(--plate)"/>' +
-    '</g>';
+/* tronco: spalle larghe, vita stretta, bacino */
+function tronco(sx, sy, hx, hy, ws, wv, wh) {
+  const dx = hx - sx, dy = hy - sy;
+  const len = Math.sqrt(dx * dx + dy * dy) || 1;
+  const nx = -dy / len, ny = dx / len;
+  const mx = sx + dx * 0.55, my = sy + dy * 0.55;
+  const P = (x, y, n, w) => (x + nx * n * w).toFixed(1) + ' ' + (y + ny * n * w).toFixed(1);
+  return '<path class="bd" d="M' + P(sx, sy, 1, ws / 2) +
+    ' Q' + P(mx, my, 1, wv / 2) + ' ' + P(hx, hy, 1, wh / 2) +
+    ' L' + P(hx, hy, -1, wh / 2) +
+    ' Q' + P(mx, my, -1, wv / 2) + ' ' + P(sx, sy, -1, ws / 2) + ' Z"/>';
 }
 
-function braccia(x, sy, tx, ty) {
-  return '<g stroke="var(--fig)" stroke-width="3" stroke-linecap="round" fill="none">' +
-    '<line x1="' + x + '" y1="' + sy + '" x2="' + tx + '" y2="' + ty + '"/></g>';
+function testa(x, y, r, rot) {
+  return '<ellipse class="bd" cx="' + x + '" cy="' + y + '" rx="' + (r * 0.82) + '" ry="' + r +
+    '" transform="rotate(' + (rot || 0) + ' ' + x + ' ' + y + ')"/>';
+}
+
+function bilanciere(x, y, w, ang) {
+  const half = (w || 40) / 2;
+  const g = '<g transform="rotate(' + (ang || 0) + ' ' + x + ' ' + y + ')">' +
+    '<rect class="bar" x="' + (x - half) + '" y="' + (y - 1.8) + '" width="' + (half * 2) + '" height="3.6" rx="1.8"/>' +
+    '<rect class="plate" x="' + (x - half - 4) + '" y="' + (y - 11) + '" width="7" height="22" rx="2.5"/>' +
+    '<rect class="plate" x="' + (x + half - 3) + '" y="' + (y - 11) + '" width="7" height="22" rx="2.5"/>' +
+    '</g>';
+  return g;
+}
+
+function manubrio(x, y) {
+  return '<g><rect class="bar" x="' + (x - 7) + '" y="' + (y - 1.6) + '" width="14" height="3.2" rx="1.6"/>' +
+    '<rect class="plate" x="' + (x - 11) + '" y="' + (y - 6) + '" width="5" height="12" rx="2"/>' +
+    '<rect class="plate" x="' + (x + 6) + '" y="' + (y - 6) + '" width="5" height="12" rx="2"/></g>';
 }
 
 function freccia(x1, x2, y) {
-  return '<g stroke="var(--arrow)" stroke-width="2.4" fill="none" stroke-linecap="round">' +
-    '<line x1="' + x1 + '" y1="' + y + '" x2="' + (x2 - 7) + '" y2="' + y + '"/>' +
-    '<path d="M' + (x2 - 9) + ' ' + (y - 5) + ' L ' + x2 + ' ' + y + ' L ' + (x2 - 9) + ' ' + (y + 5) + '" fill="none"/></g>';
+  return '<g class="arrow" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">' +
+    '<line x1="' + x1 + '" y1="' + y + '" x2="' + (x2 - 8) + '" y2="' + y + '"/>' +
+    '<path d="M' + (x2 - 10) + ' ' + (y - 6) + ' L ' + x2 + ' ' + y + ' L ' + (x2 - 10) + ' ' + (y + 6) + '"/></g>';
 }
 
-function suolo() {
-  return '<line x1="8" y1="124" x2="232" y2="124" stroke="var(--ground)" stroke-width="2" stroke-dasharray="5 5"/>';
+function suolo(y) {
+  return '<line class="ground" x1="10" y1="' + (y || 150) + '" x2="290" y2="' + (y || 150) + '" stroke-width="2.5" stroke-linecap="round"/>';
 }
 
-function wrapSvg(inner) {
-  return '<svg viewBox="0 0 240 140" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" class="ex-draw" role="img" aria-label="Disegno del movimento">' +
-    suolo() + inner + '</svg>';
+function wrapSvg(inner, pedana) {
+  return '<svg viewBox="0 0 300 165" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" class="ex-draw" role="img" aria-label="Disegno del movimento">' +
+    (pedana === false ? '' : suolo(150)) + inner + '</svg>';
+}
+
+/* --- pose --- */
+/* figura in piedi, vista di lato: x = centro, alza/abbassa via offset */
+function inPiedi(x, opts) {
+  const o = opts || {};
+  const sy = 56, hy = 96;          /* spalle, anca */
+  return testa(x + 1, 34, 11) +
+    arto(x, 44, x, sy, 9, 13) +                       /* collo */
+    tronco(x, sy, x, hy, 30, 22, 25) +
+    arto(x - 11, hy + 2, x - 13, 122, 15, 11) +       /* coscia */
+    arto(x - 13, 122, x - 12, 148, 11, 8) +           /* polpaccio */
+    arto(x + 11, hy + 2, x + 13, 122, 15, 11) +
+    arto(x + 13, 122, x + 12, 148, 11, 8) +
+    (o.noArms ? '' :
+      arto(x - 13, sy + 4, x - 15, 84, 11, 8) +
+      arto(x - 15, 84, x - 14, 106, 8, 6) +
+      arto(x + 13, sy + 4, x + 15, 84, 11, 8) +
+      arto(x + 15, 84, x + 14, 106, 8, 6));
+}
+
+function accosciato(x) {
+  const sy = 74, hy = 108;
+  return testa(x + 9, 52, 11) +
+    arto(x + 7, 62, x + 3, sy, 9, 13) +
+    tronco(x + 3, sy, x - 6, hy, 30, 23, 25) +
+    arto(x - 6, hy, x + 16, 124, 16, 12) +            /* coscia avanti */
+    arto(x + 16, 124, x + 12, 148, 12, 8) +
+    arto(x - 6, hy, x - 20, 126, 16, 12) +
+    arto(x - 20, 126, x - 14, 148, 12, 8) +
+    arto(x - 6, sy + 6, x - 14, 88, 11, 8) +
+    arto(x + 8, sy + 4, x + 16, 86, 11, 8);
+}
+
+function piegato(x) {
+  const sy = 72, hy = 92;
+  return testa(x + 26, 66, 11) +
+    arto(x + 20, 72, x + 12, sy, 9, 13) +
+    tronco(x + 12, sy, x - 10, hy, 30, 24, 26) +
+    arto(x - 10, hy, x - 12, 122, 16, 12) +
+    arto(x - 12, 122, x - 9, 148, 12, 8) +
+    arto(x + 6, hy - 2, x + 6, 122, 16, 12) +
+    arto(x + 6, 122, x + 8, 148, 12, 8) +
+    arto(x + 14, sy + 4, x + 16, 100, 11, 8) +
+    arto(x + 16, 100, x + 15, 122, 8, 6);
+}
+
+function sdraiato(x, y, alt) {
+  /* di lato su panca: tronco orizzontale, braccia verso l alto */
+  const ty = y;
+  return '<rect class="bench" x="' + (x - 44) + '" y="' + (ty + 12) + '" width="88" height="9" rx="4"/>' +
+    '<rect class="bench" x="' + (x - 34) + '" y="' + (ty + 21) + '" width="7" height="26" rx="3"/>' +
+    '<rect class="bench" x="' + (x + 28) + '" y="' + (ty + 21) + '" width="7" height="26" rx="3"/>' +
+    testa(x - 36, ty + 2, 10) +
+    tronco(x - 24, ty + 8, x + 22, ty + 10, 28, 24, 26) +
+    arto(x + 22, ty + 10, x + 40, ty + 34, 15, 11) +
+    arto(x + 40, ty + 34, x + 36, ty + 48, 11, 8) +
+    arto(x - 18, ty + 4, x - 12, alt, 11, 8) +
+    arto(x - 12, alt, x - 4, alt - 6, 8, 6);
 }
 
 const PATTERN_DRAW = {
   squat: () => wrapSvg(
-    figura('inPiedi', 60) + bilanciere(60, 44, 38) + braccia(60, 44, 44, 48) + braccia(60, 44, 76, 48) +
-    figura('accosciato', 175) + bilanciere(175, 64, 38) + braccia(175, 64, 159, 68) + braccia(175, 64, 191, 68) +
-    freccia(105, 140, 70)),
+    inPiedi(76, { noArms: true }) +
+    arto(63, 60, 58, 74, 11, 8) + arto(89, 60, 94, 74, 11, 8) +
+    bilanciere(76, 58, 46) +
+    accosciato(216) +
+    bilanciere(219, 76, 46) +
+    freccia(126, 166, 92)),
   hinge: () => wrapSvg(
-    figura('inPiedi', 60) + bilanciere(60, 74, 34) + braccia(60, 44, 60, 74) +
-    figura('piegato', 175) + bilanciere(171, 104, 34) + braccia(179, 58, 171, 104) +
-    freccia(105, 140, 70)),
+    inPiedi(76) + bilanciere(76, 108, 44) +
+    piegato(216) + bilanciere(231, 132, 44) +
+    freccia(126, 166, 92)),
   pushH: () => wrapSvg(
-    '<line x1="30" y1="96" x2="100" y2="96" stroke="var(--fig)" stroke-width="4" stroke-linecap="round"/>' +
-    '<circle cx="34" cy="86" r="7" fill="var(--fig)"/>' + bilanciere(70, 62, 36) +
-    '<line x1="60" y1="94" x2="64" y2="66" stroke="var(--fig)" stroke-width="3" stroke-linecap="round"/>' +
-    '<line x1="82" y1="94" x2="78" y2="66" stroke="var(--fig)" stroke-width="3" stroke-linecap="round"/>' +
-    '<line x1="150" y1="96" x2="220" y2="96" stroke="var(--fig)" stroke-width="4" stroke-linecap="round"/>' +
-    '<circle cx="154" cy="86" r="7" fill="var(--fig)"/>' + bilanciere(190, 88, 36) +
-    '<line x1="180" y1="94" x2="186" y2="90" stroke="var(--fig)" stroke-width="3" stroke-linecap="round"/>' +
-    '<line x1="202" y1="94" x2="196" y2="90" stroke="var(--fig)" stroke-width="3" stroke-linecap="round"/>' +
-    freccia(110, 140, 76)),
+    sdraiato(76, 70, 44) + bilanciere(72, 44, 40) +
+    sdraiato(216, 70, 74) + bilanciere(212, 74, 40) +
+    freccia(126, 166, 60), false),
   pushV: () => wrapSvg(
-    figura('inPiedi', 60) + bilanciere(60, 46, 34) + braccia(60, 44, 52, 46) + braccia(60, 44, 68, 46) +
-    figura('inPiedi', 175) + bilanciere(175, 14, 34) + braccia(175, 42, 169, 16) + braccia(175, 42, 181, 16) +
-    freccia(105, 140, 40)),
+    inPiedi(76, { noArms: true }) +
+    arto(63, 60, 60, 74, 11, 8) + arto(89, 60, 92, 74, 11, 8) +
+    bilanciere(76, 74, 42) +
+    inPiedi(216, { noArms: true }) +
+    arto(203, 60, 210, 26, 11, 8) + arto(229, 60, 222, 26, 11, 8) +
+    bilanciere(216, 22, 42) +
+    freccia(126, 166, 52)),
   pullV: () => wrapSvg(
-    '<line x1="20" y1="16" x2="220" y2="16" stroke="var(--bar)" stroke-width="4" stroke-linecap="round"/>' +
-    '<circle cx="60" cy="52" r="7" fill="var(--fig)"/>' +
-    '<line x1="54" y1="18" x2="58" y2="46" stroke="var(--fig)" stroke-width="3" stroke-linecap="round"/>' +
-    '<line x1="70" y1="18" x2="64" y2="46" stroke="var(--fig)" stroke-width="3" stroke-linecap="round"/>' +
-    '<line x1="60" y1="59" x2="60" y2="104" stroke="var(--fig)" stroke-width="3.2" stroke-linecap="round"/>' +
-    '<circle cx="175" cy="28" r="7" fill="var(--fig)"/>' +
-    '<line x1="168" y1="18" x2="172" y2="26" stroke="var(--fig)" stroke-width="3" stroke-linecap="round"/>' +
-    '<line x1="186" y1="18" x2="180" y2="26" stroke="var(--fig)" stroke-width="3" stroke-linecap="round"/>' +
-    '<line x1="175" y1="35" x2="175" y2="82" stroke="var(--fig)" stroke-width="3.2" stroke-linecap="round"/>' +
-    freccia(105, 140, 56)),
+    '<line class="bar" x1="30" y1="18" x2="270" y2="18" stroke-width="5" stroke-linecap="round"/>' +
+    testa(76, 62, 11) + arto(76, 72, 76, 84, 9, 13) + tronco(76, 84, 76, 120, 28, 21, 24) +
+    arto(64, 88, 66, 22, 11, 8) + arto(88, 88, 86, 22, 11, 8) +
+    arto(70, 122, 68, 146, 14, 10) + arto(82, 122, 84, 146, 14, 10) +
+    testa(216, 34, 11) + arto(216, 44, 216, 56, 9, 13) + tronco(216, 56, 216, 92, 28, 21, 24) +
+    arto(204, 60, 206, 22, 11, 8) + arto(228, 60, 226, 22, 11, 8) +
+    arto(210, 94, 206, 122, 14, 10) + arto(222, 94, 226, 122, 14, 10) +
+    freccia(126, 166, 60), false),
   pullH: () => wrapSvg(
-    figura('piegato', 60) + bilanciere(56, 108, 32) + braccia(64, 58, 56, 108) +
-    figura('piegato', 175) + bilanciere(171, 78, 32) + braccia(179, 58, 171, 78) +
-    freccia(105, 140, 70)),
+    piegato(76) + bilanciere(91, 134, 40) +
+    piegato(216) + bilanciere(231, 108, 40) +
+    freccia(126, 166, 92)),
   lunge: () => wrapSvg(
-    figura('inPiedi', 60) +
-    '<circle cx="175" cy="34" r="7" fill="var(--fig)"/>' +
-    '<line x1="175" y1="41" x2="175" y2="74" stroke="var(--fig)" stroke-width="3.2" stroke-linecap="round"/>' +
-    '<line x1="175" y1="74" x2="200" y2="96" stroke="var(--fig)" stroke-width="3.2" stroke-linecap="round"/>' +
-    '<line x1="200" y1="96" x2="200" y2="120" stroke="var(--fig)" stroke-width="3.2" stroke-linecap="round"/>' +
-    '<line x1="175" y1="74" x2="152" y2="104" stroke="var(--fig)" stroke-width="3.2" stroke-linecap="round"/>' +
-    '<line x1="152" y1="104" x2="160" y2="120" stroke="var(--fig)" stroke-width="3.2" stroke-linecap="round"/>' +
-    freccia(105, 140, 70)),
+    inPiedi(76) +
+    testa(216, 40, 11) + arto(216, 50, 214, 62, 9, 13) + tronco(214, 62, 210, 98, 29, 22, 25) +
+    arto(210, 98, 240, 118, 16, 12) + arto(240, 118, 240, 148, 12, 8) +
+    arto(210, 98, 186, 126, 16, 12) + arto(186, 126, 196, 148, 12, 9) +
+    arto(202, 66, 198, 96, 11, 8) + arto(226, 66, 230, 96, 11, 8) +
+    freccia(126, 166, 92)),
   hip: () => wrapSvg(
-    '<line x1="28" y1="78" x2="58" y2="78" stroke="var(--ground)" stroke-width="5" stroke-linecap="round"/>' +
-    '<circle cx="36" cy="70" r="7" fill="var(--fig)"/>' +
-    '<line x1="44" y1="80" x2="74" y2="104" stroke="var(--fig)" stroke-width="3.4" stroke-linecap="round"/>' +
-    '<line x1="74" y1="104" x2="92" y2="120" stroke="var(--fig)" stroke-width="3.4" stroke-linecap="round"/>' +
-    bilanciere(74, 100, 26) +
-    '<line x1="146" y1="78" x2="176" y2="78" stroke="var(--ground)" stroke-width="5" stroke-linecap="round"/>' +
-    '<circle cx="154" cy="70" r="7" fill="var(--fig)"/>' +
-    '<line x1="162" y1="78" x2="196" y2="80" stroke="var(--fig)" stroke-width="3.4" stroke-linecap="round"/>' +
-    '<line x1="196" y1="80" x2="206" y2="120" stroke="var(--fig)" stroke-width="3.4" stroke-linecap="round"/>' +
-    bilanciere(194, 74, 26) +
-    freccia(105, 140, 86)),
+    '<rect class="bench" x="34" y="86" width="46" height="9" rx="4"/>' +
+    testa(48, 74, 10) + tronco(58, 84, 88, 124, 26, 23, 25) +
+    arto(88, 124, 110, 148, 15, 11) + bilanciere(90, 118, 34) +
+    '<rect class="bench" x="174" y="86" width="46" height="9" rx="4"/>' +
+    testa(188, 74, 10) + tronco(198, 84, 236, 92, 26, 23, 25) +
+    arto(236, 92, 244, 124, 15, 12) + arto(244, 124, 244, 148, 12, 8) +
+    bilanciere(234, 84, 34) +
+    freccia(126, 166, 110)),
   curl: () => wrapSvg(
-    figura('inPiedi', 60) + braccia(60, 44, 60, 78) + bilanciere(60, 80, 26) +
-    figura('inPiedi', 175) + braccia(175, 44, 172, 52) + bilanciere(172, 52, 26) +
-    freccia(105, 140, 66)),
+    inPiedi(76, { noArms: true }) +
+    arto(63, 60, 62, 88, 12, 9) + arto(62, 88, 64, 112, 9, 7) +
+    arto(89, 60, 90, 88, 12, 9) + arto(90, 88, 88, 112, 9, 7) +
+    manubrio(64, 114) + manubrio(88, 114) +
+    inPiedi(216, { noArms: true }) +
+    arto(203, 60, 202, 88, 12, 9) + arto(202, 88, 208, 66, 9, 7) +
+    arto(229, 60, 230, 88, 12, 9) + arto(230, 88, 224, 66, 9, 7) +
+    manubrio(208, 62) + manubrio(224, 62) +
+    freccia(126, 166, 86)),
   ext: () => wrapSvg(
-    figura('inPiedi', 60) + braccia(60, 44, 58, 60) + bilanciere(58, 60, 24) +
-    figura('inPiedi', 175) + braccia(175, 44, 175, 84) + bilanciere(175, 84, 24) +
-    freccia(105, 140, 70)),
+    inPiedi(76, { noArms: true }) +
+    arto(63, 60, 66, 40, 12, 9) + arto(66, 40, 58, 58, 9, 7) +
+    arto(89, 60, 86, 40, 12, 9) + arto(86, 40, 94, 58, 9, 7) +
+    bilanciere(76, 58, 26) +
+    inPiedi(216, { noArms: true }) +
+    arto(203, 60, 206, 40, 12, 9) + arto(206, 40, 208, 20, 9, 7) +
+    arto(229, 60, 226, 40, 12, 9) + arto(226, 40, 224, 20, 9, 7) +
+    bilanciere(216, 18, 26) +
+    freccia(126, 166, 46)),
   raise: () => wrapSvg(
-    figura('inPiedi', 60) + braccia(60, 44, 48, 74) + braccia(60, 44, 72, 74) +
-    '<circle cx="46" cy="76" r="4" fill="var(--plate)"/><circle cx="74" cy="76" r="4" fill="var(--plate)"/>' +
-    figura('inPiedi', 175) + braccia(175, 44, 148, 44) + braccia(175, 44, 202, 44) +
-    '<circle cx="146" cy="44" r="4" fill="var(--plate)"/><circle cx="204" cy="44" r="4" fill="var(--plate)"/>' +
-    freccia(105, 140, 60)),
+    inPiedi(76, { noArms: true }) +
+    arto(63, 60, 60, 92, 11, 8) + arto(60, 92, 60, 112, 8, 6) +
+    arto(89, 60, 92, 92, 11, 8) + arto(92, 92, 92, 112, 8, 6) +
+    manubrio(60, 114) + manubrio(92, 114) +
+    inPiedi(216, { noArms: true }) +
+    arto(203, 60, 176, 58, 11, 8) + arto(176, 58, 156, 58, 8, 6) +
+    arto(229, 60, 256, 58, 11, 8) + arto(256, 58, 276, 58, 8, 6) +
+    manubrio(154, 58) + manubrio(278, 58) +
+    freccia(126, 166, 100)),
   coreStatic: () => wrapSvg(
-    '<line x1="40" y1="100" x2="130" y2="76" stroke="var(--fig)" stroke-width="4.5" stroke-linecap="round"/>' +
-    '<circle cx="136" cy="74" r="7" fill="var(--fig)"/>' +
-    '<line x1="120" y1="80" x2="118" y2="116" stroke="var(--fig)" stroke-width="3.2" stroke-linecap="round"/>' +
-    '<line x1="44" y1="99" x2="40" y2="118" stroke="var(--fig)" stroke-width="3.2" stroke-linecap="round"/>' +
-    '<text x="175" y="70" font-size="13" font-weight="800" fill="var(--arrow)">FERMO</text>' +
-    '<text x="169" y="88" font-size="10" fill="var(--ground)">corpo dritto</text>'),
+    testa(64, 82, 11) + arto(58, 90, 74, 96, 9, 13) +
+    tronco(74, 96, 150, 116, 28, 24, 26) +
+    arto(150, 116, 178, 140, 15, 11) + arto(178, 140, 186, 148, 11, 9) +
+    arto(74, 100, 70, 148, 12, 9) +
+    '<text class="lbl" x="225" y="86" font-size="15" font-weight="900">FERMO</text>' +
+    '<text class="lbl2" x="212" y="106" font-size="11">corpo dritto</text>'),
   coreFlex: () => wrapSvg(
-    '<line x1="30" y1="112" x2="96" y2="112" stroke="var(--ground)" stroke-width="4"/>' +
-    '<circle cx="34" cy="100" r="7" fill="var(--fig)"/>' +
-    '<line x1="42" y1="106" x2="78" y2="106" stroke="var(--fig)" stroke-width="3.4" stroke-linecap="round"/>' +
-    '<line x1="78" y1="106" x2="90" y2="80" stroke="var(--fig)" stroke-width="3.4" stroke-linecap="round"/>' +
-    '<line x1="150" y1="112" x2="216" y2="112" stroke="var(--ground)" stroke-width="4"/>' +
-    '<circle cx="166" cy="84" r="7" fill="var(--fig)"/>' +
-    '<line x1="170" y1="90" x2="196" y2="106" stroke="var(--fig)" stroke-width="3.4" stroke-linecap="round"/>' +
-    '<line x1="196" y1="106" x2="206" y2="82" stroke="var(--fig)" stroke-width="3.4" stroke-linecap="round"/>' +
-    freccia(105, 140, 92)),
+    testa(40, 118, 10) + tronco(52, 124, 96, 130, 26, 22, 24) +
+    arto(96, 130, 84, 100, 15, 12) + arto(84, 100, 92, 132, 12, 9) +
+    testa(196, 92, 10) + tronco(206, 100, 236, 128, 26, 22, 24) +
+    arto(236, 128, 224, 100, 15, 12) + arto(224, 100, 232, 128, 12, 9) +
+    freccia(126, 166, 112)),
   calf: () => wrapSvg(
-    figura('inPiedi', 60) +
-    '<circle cx="175" cy="18" r="7" fill="var(--fig)"/>' +
-    '<line x1="175" y1="25" x2="175" y2="60" stroke="var(--fig)" stroke-width="3.2" stroke-linecap="round"/>' +
-    '<line x1="175" y1="60" x2="168" y2="88" stroke="var(--fig)" stroke-width="3.2" stroke-linecap="round"/>' +
-    '<line x1="168" y1="88" x2="172" y2="112" stroke="var(--fig)" stroke-width="3.2" stroke-linecap="round"/>' +
-    '<line x1="175" y1="60" x2="182" y2="88" stroke="var(--fig)" stroke-width="3.2" stroke-linecap="round"/>' +
-    '<line x1="182" y1="88" x2="178" y2="112" stroke="var(--fig)" stroke-width="3.2" stroke-linecap="round"/>' +
-    freccia(105, 140, 70)),
+    inPiedi(76) +
+    testa(217, 22, 11) + arto(216, 32, 216, 44, 9, 13) + tronco(216, 44, 216, 84, 30, 22, 25) +
+    arto(205, 86, 203, 112, 15, 11) + arto(203, 112, 206, 138, 11, 8) +
+    arto(227, 86, 229, 112, 15, 11) + arto(229, 112, 226, 138, 11, 8) +
+    '<path class="bd" d="M200 138 q8 -6 16 0 l0 8 q-8 4 -16 0z"/>' +
+    arto(203, 48, 201, 80, 11, 8) + arto(229, 48, 231, 80, 11, 8) +
+    freccia(126, 166, 92)),
   machine: () => wrapSvg(
-    '<rect x="26" y="70" width="52" height="34" rx="5" fill="none" stroke="var(--ground)" stroke-width="2.5"/>' +
-    '<circle cx="52" cy="60" r="7" fill="var(--fig)"/>' +
-    '<line x1="52" y1="67" x2="52" y2="86" stroke="var(--fig)" stroke-width="3.2" stroke-linecap="round"/>' +
-    '<line x1="52" y1="86" x2="78" y2="98" stroke="var(--fig)" stroke-width="3.2" stroke-linecap="round"/>' +
-    '<rect x="146" y="70" width="52" height="34" rx="5" fill="none" stroke="var(--ground)" stroke-width="2.5"/>' +
-    '<circle cx="172" cy="60" r="7" fill="var(--fig)"/>' +
-    '<line x1="172" y1="67" x2="172" y2="86" stroke="var(--fig)" stroke-width="3.2" stroke-linecap="round"/>' +
-    '<line x1="172" y1="86" x2="212" y2="76" stroke="var(--fig)" stroke-width="3.2" stroke-linecap="round"/>' +
-    freccia(105, 140, 84))
+    '<rect class="bench" x="34" y="96" width="62" height="10" rx="4"/>' +
+    '<rect class="bench" x="34" y="60" width="9" height="40" rx="4"/>' +
+    testa(56, 50, 10) + tronco(52, 60, 56, 94, 26, 22, 24) +
+    arto(56, 94, 92, 104, 15, 11) + arto(92, 104, 92, 130, 11, 8) +
+    '<rect class="bench" x="176" y="96" width="62" height="10" rx="4"/>' +
+    '<rect class="bench" x="176" y="60" width="9" height="40" rx="4"/>' +
+    testa(198, 50, 10) + tronco(194, 60, 198, 94, 26, 22, 24) +
+    arto(198, 94, 236, 92, 15, 11) + arto(236, 92, 268, 88, 11, 8) +
+    freccia(126, 166, 120))
 };
 
-/* --- Spiegazioni per schema di movimento, scritte semplici --- */
 const PATTERN_INFO = {
   squat: { nome: 'Accosciata', complesso: true,
     come: ['Piedi larghi come le spalle, punte leggermente in fuori.',
