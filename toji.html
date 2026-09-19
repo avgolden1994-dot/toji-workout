@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Toji / Maki Zenin Tracker</title>
 
 <link rel="manifest" href="manifest.json">
@@ -127,6 +127,11 @@ body[data-mode="maki"] {
   --banner-img: url('https://superherojacked.b-cdn.net/wp-content/uploads/2021/02/Maki-Zenin-Workout-Routine.jpg');
 }
 * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+/* niente zoom accidentale: il doppio tocco non ingrandisce piu la pagina */
+html { touch-action: manipulation; -webkit-text-size-adjust: 100%; }
+button, .group-card, .pick-row, .wk-row, .wday-card, .onb-opt { touch-action: manipulation; }
+/* su iPhone un campo sotto i 16px fa zoomare la pagina al tocco */
+input, select, textarea { font-size: 16px; }
 html, body { background: var(--bg); }
 body {
   color: var(--text); margin: 0; min-height: 100vh; user-select: none;
@@ -183,7 +188,7 @@ body {
 .lib-row-params { display: flex; align-items: flex-end; gap: 5px; }
 .mini-field { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
 .mini-field span { font-size: 0.6rem; color: var(--muted); text-transform: uppercase; font-weight: 800; }
-.mini-field input { padding: 6px 2px; text-align: center; font-size: 0.82rem; }
+.mini-field input { padding: 6px 2px; text-align: center; font-size: 16px; }
 
 /* ======= Barra giorni ======= */
 .day-bar-wrap { display: flex; }
@@ -285,6 +290,35 @@ body.reorder-mode .plan-card { border-color: var(--primary); }
 }
 .recovery-overlay.ending .recovery-ring-progress { animation: rec-ending .5s ease-in-out infinite; }
 .recovery-overlay.ending .recovery-time-big { animation: rec-ending .5s ease-in-out infinite; }
+
+/* ======= Rotella dei numeri =======
+   Sugli intervalli piccoli (qui 6-20) la rotella e un pattern adatto:
+   si vede subito il minimo e il massimo e si sceglie con un tocco.
+   Resta valido anche lo stepper, perche c e un valore usato quasi
+   sempre (10) e gli altri se ne discostano di poco. */
+.wheel-overlay { position: fixed; inset: 0; z-index: 130; background: rgba(0,0,0,0.6); display: flex; align-items: flex-end; justify-content: center; }
+.wheel-overlay.hidden { display: none; }
+.wheel-sheet {
+  position: relative; width: 100%; max-width: 480px;
+  background: var(--card); border-top: 2px solid var(--primary);
+  border-radius: 16px 16px 0 0; padding: 14px 0 calc(14px + env(safe-area-inset-bottom));
+  animation: wheel-in .22s ease;
+}
+@keyframes wheel-in { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.wheel-overlay.closing .wheel-sheet { animation: wheel-out .18s ease forwards; }
+@keyframes wheel-out { to { transform: translateY(100%); } }
+.wheel-head { display: flex; justify-content: space-between; align-items: center; padding: 0 16px 10px; }
+.wheel-title { font-weight: 900; font-size: 0.95rem; text-transform: uppercase; }
+.wheel-track { display: flex; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 50% 10px; scrollbar-width: none; }
+.wheel-track::-webkit-scrollbar { display: none; }
+.wheel-num {
+  flex: 0 0 56px; height: 62px; scroll-snap-align: center;
+  background: transparent; border: 1px solid var(--border); border-radius: 12px;
+  color: var(--muted); font-size: 1.25rem; font-weight: 900; cursor: pointer;
+  transition: transform .15s ease, color .15s ease, background .15s ease;
+}
+.wheel-num.on { background: var(--primary); border-color: var(--primary); color: #fff; transform: scale(1.14); }
+.wheel-mask { text-align: center; font-size: 0.7rem; color: var(--muted); padding-top: 2px; }
 
 /* ======= Impostazioni ======= */
 .settings { position: fixed; inset: 0; z-index: 110; background: var(--bg); display: flex; flex-direction: column; }
@@ -429,27 +463,22 @@ body.reorder-mode .plan-card { border-color: var(--primary); }
 /* VERDE = gruppo gia in programma, volume dentro il range utile
    AMBRA = volume alto, fatica settimanale da tenere d occhio
    Soglie dalla letteratura: ~10-20 serie a settimana per gruppo. */
-@keyframes vol-pulse-ok {
-  0%, 100% { box-shadow: 0 0 0 1px #22c55e inset, 0 0 6px rgba(34,197,94,0.25); }
-  50%      { box-shadow: 0 0 0 1px #22c55e inset, 0 0 16px rgba(34,197,94,0.6); }
-}
-@keyframes vol-pulse-high {
-  0%, 100% { box-shadow: 0 0 0 1px #f59e0b inset, 0 0 8px rgba(245,158,11,0.35); }
-  50%      { box-shadow: 0 0 0 1px #f59e0b inset, 0 0 20px rgba(245,158,11,0.75); }
-}
 @keyframes vol-emoji-breathe {
   0%, 100% { transform: scale(1); }
   50%      { transform: scale(1.12); }
 }
 
-.group-card.vol-start { border-color: rgba(34,197,94,0.45); }
+/* Il CARICO si legge dall icona e dal badge, non dal bordo:
+   il bordo resta riservato alla SELEZIONE, altrimenti i due segnali
+   si confondono e azzerando la selezione sembra non cambiare nulla. */
 .group-card.vol-start .group-emoji { filter: drop-shadow(0 0 5px rgba(34,197,94,0.5)); }
-
-.group-card.vol-ok { border-color: #22c55e; animation: vol-pulse-ok 2.4s ease-in-out infinite; }
 .group-card.vol-ok .group-emoji { filter: drop-shadow(0 0 7px rgba(34,197,94,0.85)); animation: vol-emoji-breathe 2.4s ease-in-out infinite; }
-
-.group-card.vol-high { border-color: #f59e0b; animation: vol-pulse-high 1.3s ease-in-out infinite; }
 .group-card.vol-high .group-emoji { filter: drop-shadow(0 0 8px rgba(245,158,11,0.9)); animation: vol-emoji-breathe 1.3s ease-in-out infinite; }
+
+/* SELEZIONE: bordo spesso nel colore del protocollo + puntino in alto a destra */
+.group-card.selected { border: 2px solid var(--primary); background: rgba(249,115,22,0.12); box-shadow: 0 0 10px var(--primary-shadow); }
+.group-card.selected::after { content: ''; position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: var(--primary); }
+.clear-sel-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .vol-check {
   position: absolute; top: 4px; left: 5px;
@@ -622,6 +651,15 @@ body.select-mode .plan-card-actions, body.select-mode .reorder-arrows { display:
 .bm-label { fill: var(--muted); font-size: 7px; font-weight: 700; text-anchor: middle; }
 .group-day-current { font-size: 0.74rem; color: var(--accent); font-weight: 800; margin-top: 8px; }
 
+.bm-line { fill: none; stroke: rgba(0,0,0,0.25); stroke-width: 0.7; }
+body[data-theme="light"] .bm-line { stroke: rgba(0,0,0,0.12); }
+.bm-muscle.sel { stroke-width: 1.6; }
+.bm-explain { background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--primary); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+.bm-explain-title { font-weight: 900; font-size: 0.86rem; margin-bottom: 5px; }
+.bm-explain-line { font-size: 0.78rem; color: var(--text); margin-top: 3px; line-height: 1.35; }
+.bm-explain-line b { color: var(--muted); font-weight: 800; }
+.bm-explain.muted-note { border-left-color: var(--border); color: var(--muted); font-size: 0.78rem; }
+
 /* ======= Gruppi muscolari ======= */
 .group-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
 .group-card { background: #0d0d12; border: 1px solid var(--border); border-radius: 10px; padding: 12px 6px; text-align: center; cursor: pointer; transition: transform .1s ease; }
@@ -691,7 +729,7 @@ body.select-mode .plan-card-actions, body.select-mode .reorder-arrows { display:
 .set-row.done { border-color: var(--success); background: rgba(34,197,94,0.08); }
 .set-row.armed { border-color: #ef4444; box-shadow: 0 0 0 1px #ef4444 inset; }
 .set-num { width: 20px; flex-shrink: 0; font-weight: 800; font-size: 0.78rem; color: var(--muted); text-align: center; }
-.set-input { width: 52px; flex-shrink: 0; text-align: center; padding: 7px 2px; font-size: 0.85rem; }
+.set-input { width: 52px; flex-shrink: 0; text-align: center; padding: 7px 2px; font-size: 16px; }
 .set-input:disabled { opacity: 0.75; border-color: transparent; background: transparent; color: var(--text); }
 .set-x { color: var(--muted); font-size: 0.75rem; flex-shrink: 0; }
 .set-kg-label { color: var(--muted); font-size: 0.7rem; flex-shrink: 0; }
@@ -850,7 +888,6 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
 <div class="app-shell" id="app-root" style="display:none;">
   <div class="banner">
     <div class="banner-quote" id="banner-quote">Nessuna Energia Maledetta • Solo Forza Pura</div>
-    <button class="gear-btn" onclick="openSettings()" aria-label="Impostazioni" title="Impostazioni">⚙️</button>
     <div class="banner-title" id="banner-title">Toji Protocol</div>
   </div>
 
@@ -859,30 +896,47 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
   <!-- TAB: PIANO -->
   <section id="tab-piano" class="tab-panel active">
 
-    <!-- PASSO 1: giorno -->
-    <div class="card">
-      <div class="step-head"><span class="step-num">1</span><span class="step-label">Giorno</span></div>
-      <div class="days-bar" id="days-container"></div>
-      <div class="day-title-row" style="margin-top:10px;">
-        <span class="day-title" id="day-title">Piano del giorno</span>
-        <button class="plan-icon-btn" onclick="renameDayTitle()" title="Rinomina scheda" aria-label="Rinomina">✎</button>
+    <!-- VISTA A: scelta del giorno -->
+    <div id="plan-day-picker">
+      <div class="card">
+        <div class="step-head"><span class="step-num">1</span><span class="step-label">Quale giorno vuoi costruire?</span></div>
+        <div class="section-hint">Tocca un giorno: si apre la sua schermata, con muscoli, proposte e scheda.</div>
+        <div id="plan-days-list"></div>
       </div>
-      <div class="group-day-current" id="group-day-current"></div>
-      <button class="rest-toggle" id="rest-toggle-btn" onclick="toggleRestDay()">😴 Segna come giorno di riposo</button>
+      <div class="card">
+        <div class="section-title">La settimana</div>
+        <div id="week-overview"></div>
+        <button class="btn-archive" onclick="saveWeekSnapshot()">💾 Salva questa settimana</button>
+        <button class="btn-archive" onclick="restartOnboarding()">🧭 Rifai il programma personalizzato</button>
+      </div>
     </div>
+
+    <!-- VISTA B: la schermata del giorno scelto -->
+    <div id="plan-day-screen" style="display:none;">
+      <div class="session-bar">
+        <button class="sheet-back" onclick="backToPlanDays()" aria-label="Torna ai giorni">←</button>
+        <div class="sheet-titles">
+          <div class="sheet-title" id="day-title">Giorno</div>
+          <div class="sheet-sub" id="group-day-current"></div>
+        </div>
+        <button class="plan-icon-btn" onclick="renameDayTitle()" title="Rinomina" aria-label="Rinomina">✎</button>
+      </div>
+      <div class="days-bar" id="days-container" style="display:none;"></div>
+      <button class="rest-toggle" id="rest-toggle-btn" onclick="toggleRestDay()" style="margin-bottom:14px;">😴 Segna come giorno di riposo</button>
 
     <!-- PASSO 2: gruppi muscolari -->
     <div class="card">
       <div class="step-head"><span class="step-num">2</span><span class="step-label">Che cosa alleni?</span></div>
       <div class="section-hint">Tocca uno o piu gruppi: la figura mostra i muscoli coinvolti.</div>
       <div class="body-map-wrap" id="body-map"></div>
+      <div id="body-explain"></div>
       <div class="group-grid" id="group-grid"></div>
       <div class="vol-legend">
         <span><i class="vol-dot start"></i> avviato</span>
         <span><i class="vol-dot ok"></i> volume giusto</span>
         <span><i class="vol-dot high"></i> carico alto</span>
       </div>
-      <button class="plan-tool-btn" style="width:100%;margin-top:10px;" onclick="clearGroupSelection()">Azzera selezione</button>
+      <button class="plan-tool-btn clear-sel-btn" id="clear-sel-btn" style="width:100%;margin-top:10px;display:none;" onclick="clearGroupSelection()">✕ Nascondi le proposte</button>
     </div>
 
     <div class="card" id="group-templates-card" style="display:none;">
@@ -971,7 +1025,6 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
         <button class="bulk-btn danger" onclick="deleteSelected()" id="bulk-del-btn">Elimina (0)</button>
       </div>
 
-      <div id="week-overview"></div>
       <div id="piano-list"></div>
 
       <div class="plan-bulk-actions">
@@ -988,10 +1041,10 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
       </div>
 
       <button class="btn-archive" onclick="openTemplatePicker()">📋 Tutte le Schede Pronte</button>
-      <button class="btn-archive" onclick="saveWeekSnapshot()">💾 Salva questa settimana</button>
-      <button class="btn-archive" onclick="restartOnboarding()">🧭 Rifai il programma personalizzato</button>
       <button class="btn-start-workout" onclick="startWorkoutFromPlan()">▶ INIZIA ALLENAMENTO</button>
     </div>
+    </div>
+
   </section>
 
   <!-- TAB: ALLENAMENTO -->
@@ -1093,6 +1146,15 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
       </div>
   </section>
 
+  <!-- TAB: IMPOSTAZIONI -->
+  <section id="tab-impostazioni" class="tab-panel">
+    <div class="card">
+      <div class="section-title">Impostazioni</div>
+      <div class="section-hint" id="settings-sub"></div>
+      <div id="settings-body"></div>
+    </div>
+  </section>
+
   <!-- TAB: STORICO -->
   <section id="tab-storico" class="tab-panel">
     <div class="card">
@@ -1117,6 +1179,7 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
     <button class="nav-btn active" data-tab="piano" onclick="switchTab('piano')"><span class="nav-icon">📝</span><span>Piano</span></button>
     <button class="nav-btn" data-tab="allenamento" onclick="switchTab('allenamento')"><span class="nav-icon">🏋️</span><span>Allenamento</span></button>
     <button class="nav-btn" data-tab="storico" onclick="switchTab('storico')"><span class="nav-icon">📖</span><span>Storico</span></button>
+    <button class="nav-btn" data-tab="impostazioni" onclick="switchTab('impostazioni')"><span class="nav-icon">⚙️</span><span>Opzioni</span></button>
   </nav>
 </div>
 
@@ -1143,15 +1206,15 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
   </div>
 </div>
 
-<div class="settings hidden" id="settings">
-  <div class="sheet-bar">
-    <button class="sheet-back" onclick="closeSettings()" aria-label="Chiudi">←</button>
-    <div class="sheet-titles">
-      <div class="sheet-title">Impostazioni</div>
-      <div class="sheet-sub" id="settings-sub"></div>
+<div class="wheel-overlay hidden" id="wheel-overlay" onclick="if(event.target===this) closeWheel()">
+  <div class="wheel-sheet">
+    <div class="wheel-head">
+      <div class="wheel-title" id="wheel-title">Ripetizioni</div>
+      <button class="recovery-icon-btn" onclick="closeWheel()" aria-label="Chiudi">✕</button>
     </div>
+    <div class="wheel-track" id="wheel-track"></div>
+    <div class="wheel-mask" id="wheel-mask"></div>
   </div>
-  <div class="sheet-body" id="settings-body"></div>
 </div>
 
 <div class="onb hidden" id="onb">
@@ -1870,7 +1933,8 @@ window.switchTab = function(tab) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + tab));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   if (tab === 'storico') { renderStorico(); renderWeeks(); }
-  if (tab === 'piano') renderGruppi(); /* il Piano nasce dai gruppi: si ridisegna entrando */
+  if (tab === 'impostazioni') renderSettings();
+  if (tab === 'piano') backToPlanDays(); /* prima il giorno, poi la sua schermata */
   if (tab === 'allenamento') backToDayPicker(); /* prima scegli il giorno, poi la sessione */
 };
 
@@ -1893,15 +1957,45 @@ function formatNow() {
 function handleSelectExercise(val) {
   if (val) document.getElementById('exercise-name').value = val;
 }
+/* Un SOLO contesto audio per tutta l'app.
+   Prima se ne creava uno nuovo a ogni bip: i browser ne consentono pochi
+   contemporaneamente (Chrome circa sei) e dopo qualche timer il suono
+   spariva del tutto. In piu sul telefono il contesto nasce "sospeso" e va
+   risvegliato da un gesto dell'utente, altrimenti resta muto per sempre. */
+let audioCtx = null;
+
+function getAudioCtx() {
+  try {
+    if (!audioCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      audioCtx = new AC();
+    }
+    if (audioCtx.state === 'suspended' && audioCtx.resume) audioCtx.resume();
+    return audioCtx;
+  } catch (e) { return null; }
+}
+
+function unlockAudio() {
+  const ctx = getAudioCtx();
+  if (ctx && ctx.state === 'running') {
+    document.removeEventListener('pointerdown', unlockAudio);
+    document.removeEventListener('touchstart', unlockAudio);
+  }
+}
+document.addEventListener('pointerdown', unlockAudio);
+document.addEventListener('touchstart', unlockAudio);
+
 function playTone(freq, dur, tipo) {
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = getAudioCtx();
+    if (!ctx) return;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.type = tipo || 'sine';
     osc.frequency.setValueAtTime(freq, ctx.currentTime);
     /* piccola dissolvenza: il taglio netto fa "clic" e da fastidio */
-    gain.gain.setValueAtTime(0.25, ctx.currentTime);
+    gain.gain.setValueAtTime(0.45, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
     osc.connect(gain); gain.connect(ctx.destination);
     osc.start();
@@ -1910,6 +2004,13 @@ function playTone(freq, dur, tipo) {
 }
 
 function playBeep() { playTone(880, 0.25, 'sawtooth'); }
+
+/* Prova dalle impostazioni: serve anche a sbloccare l audio al primo uso */
+window.testSound = function() {
+  playTick();
+  setTimeout(() => playTick(), 230);
+  setTimeout(() => playEnd(), 540);
+};
 
 /* Conto alla rovescia: tre bip brevi e acuti, poi uno lungo e piu grave
    a tempo scaduto, cosi si distingue "sto per finire" da "e finito". */
@@ -1929,6 +2030,62 @@ window.stepValue = function(id, delta, min) {
 function syncBuildingLine(n) {
   const el = document.getElementById('group-day-current');
   if (el) el.innerText = 'Stai costruendo: ' + getDayTitle(currentDay) + ' (' + n + ' esercizi)';
+}
+
+/* ============================================================
+   PIANO: prima la scelta del giorno, poi la sua schermata
+   Una schermata = una domanda: qui si sceglie il giorno, e solo dopo
+   si vedono muscoli, proposte e scheda di quel giorno.
+   ============================================================ */
+window.backToPlanDays = function() {
+  document.getElementById('plan-day-picker').style.display = 'block';
+  document.getElementById('plan-day-screen').style.display = 'none';
+  if (document.body.classList.contains('select-mode')) toggleSelectMode();
+  if (document.body.classList.contains('reorder-mode')) toggleReorderMode();
+  renderPlanDayPicker();
+};
+
+window.openPlanDayScreen = function(day) {
+  currentDay = day;
+  planDayOpen = true;
+  armedSet = null;
+  selectedGroups = [];
+  suggestedOrderKey = null;
+  document.getElementById('plan-day-picker').style.display = 'none';
+  document.getElementById('plan-day-screen').style.display = 'block';
+  renderDayBar();
+  renderPiano();
+  renderGruppi();
+  renderSuggested();
+};
+
+function renderPlanDayPicker() {
+  const data = loadData();
+  const oggi = (new Date().getDay() + 6) % 7;
+  const cont = document.getElementById('plan-days-list');
+  if (!cont) return;
+
+  cont.innerHTML = DAYS.map((d, i) => {
+    const list = data[d] || [];
+    const riposo = isRestDay(d);
+    const serie = list.reduce((s, e) => s + e.sets, 0);
+    const meta = riposo
+      ? '\u{1F634} Riposo'
+      : (list.length === 0
+          ? 'Vuoto \u2014 tocca per costruirlo'
+          : list.length + ' esercizi \u2022 ' + serie + ' serie \u2022 ~' +
+            Math.round(list.reduce((s, e) => s + e.sets * (30 + e.rest), 0) / 60) + ' min');
+    return '<button class="wday-card ' + (riposo || list.length === 0 ? 'empty' : '') + (i === oggi ? ' today' : '') + '" ' +
+      'onclick="openPlanDayScreen(\'' + d + '\')">' +
+      '<div class="wday-main">' +
+        '<div class="wday-name">' + escapeHtml(getDayTitle(d)) + (getDayTitle(d) !== d ? ' <span class="wday-meta">(' + d + ')</span>' : '') + '</div>' +
+        '<div class="wday-meta">' + meta + '</div>' +
+      '</div>' +
+      (!riposo && list.length ? '<span class="wk-count">' + list.length + '</span>' : '') +
+      (i === oggi ? '<span class="wday-badge">OGGI</span>' : '') +
+      '<span class="wday-go">\u203A</span>' +
+    '</button>';
+  }).join('');
 }
 
 /* Riepilogo della settimana: elenca SOLO i giorni che hanno qualcosa,
@@ -1958,7 +2115,7 @@ function renderWeekOverview() {
       const riposo = isRestDay(d);
       const meta = riposo ? '\u{1F634} Riposo' : serie + ' serie \u2022 ~' +
         Math.round(list.reduce((s, e) => s + e.sets * (30 + e.rest), 0) / 60) + ' min';
-      return '<button class="wk-row ' + (aperto ? 'open' : '') + '" onclick="openPlanDay(\'' + d + '\')">' +
+      return '<button class="wk-row ' + (aperto ? 'open' : '') + '" onclick="openPlanDayScreen(\'' + d + '\')">' +
         '<div class="wk-main">' +
           '<div class="wk-name">' + escapeHtml(getDayTitle(d)) + (getDayTitle(d) !== d ? ' <span class="wk-meta">(' + d + ')</span>' : '') + '</div>' +
           '<div class="wk-meta">' + meta + '</div>' +
@@ -1972,9 +2129,7 @@ function renderWeekOverview() {
 /* Toccando un giorno del riepilogo lo si apre; ritoccandolo lo si richiude,
    cosi si puo tenere la vista corta quando serve. */
 window.openPlanDay = function(day) {
-  planDayOpen = !(day === currentDay && planDayOpen);
-  if (day !== currentDay) { planDayOpen = true; selectDay(day); return; }
-  renderPiano();
+  openPlanDayScreen(day);
 };
 
 function renderPiano() {
@@ -1985,6 +2140,7 @@ function renderPiano() {
   syncRestToggle();
 
   renderWeekOverview();
+  renderPlanDayPicker();
 
   if (isRestDay(currentDay)) {
     summaryEl.innerText = 'Riposo';
@@ -2224,8 +2380,9 @@ window.startWorkoutFromPlan = function() {
     return;
   }
   if (document.body.classList.contains('reorder-mode')) toggleReorderMode();
+  const giorno = currentDay;
   switchTab('allenamento');
-  openWorkoutDay(currentDay); /* arrivi dal piano: salta la scelta del giorno */
+  openWorkoutDay(giorno); /* arrivi dal piano: salta la scelta del giorno */
 };
 
 let editingExerciseIdx = null;
@@ -2340,7 +2497,7 @@ function renderAllenamento() {
           ${e.completedSets.map((s, si) => `
             <div class="set-row ${s.done ? 'done' : ''} ${armedSet && armedSet.exIdx === idx && armedSet.setIdx === si ? 'armed' : ''}">
               <span class="set-num">${si + 1}</span>
-              <input type="number" class="num-drag" data-reps-ex="${idx}" data-reps-set="${si}" value="${s.reps}" ${s.done ? 'disabled' : ''}>
+              <input type="number" class="num-drag" readonly data-reps-ex="${idx}" data-reps-set="${si}" value="${s.reps}" ${s.done ? 'disabled' : ''}>
               <span class="set-x">×</span>
               <input type="number" class="set-input" value="${s.weight}" step="0.5" ${s.done ? 'disabled' : ''} oninput="updateSetField(${idx},${si},'weight',this.value)">
               <span class="set-kg-label">kg</span>
@@ -3250,6 +3407,44 @@ function attachSwipe(host, opts) {
   fg.addEventListener('pointerleave', up);
 }
 
+/* ---------- Rotella dei numeri ---------- */
+let wheelTarget = null;
+
+window.openWheel = function(inputEl, min, max, titolo, onChange) {
+  wheelTarget = { input: inputEl, onChange: onChange };
+  const cur = parseInt(inputEl.value, 10) || min;
+  document.getElementById('wheel-title').innerText = titolo || 'Scegli il numero';
+  document.getElementById('wheel-mask').innerText = 'da ' + min + ' a ' + max + ' \u2022 scorri di lato o tocca';
+
+  const track = document.getElementById('wheel-track');
+  let html = '';
+  for (let v = min; v <= max; v++) {
+    html += '<button class="wheel-num ' + (v === cur ? 'on' : '') + '" data-v="' + v + '" onclick="pickWheel(' + v + ')">' + v + '</button>';
+  }
+  track.innerHTML = html;
+  document.getElementById('wheel-overlay').classList.remove('hidden');
+
+  /* porta il valore attuale al centro senza animazione, cosi si parte da li */
+  setTimeout(() => {
+    const el = track.querySelector('.wheel-num.on');
+    if (el && el.scrollIntoView) { try { el.scrollIntoView({ inline: 'center', block: 'nearest' }); } catch (e) {} }
+  }, 0);
+};
+
+window.pickWheel = function(v) {
+  if (!wheelTarget) return;
+  wheelTarget.input.value = v;
+  if (wheelTarget.onChange) wheelTarget.onChange(v);
+  document.querySelectorAll('.wheel-num').forEach(b => b.classList.toggle('on', Number(b.dataset.v) === v));
+  closeWheel();
+};
+
+window.closeWheel = function() {
+  const ov = document.getElementById('wheel-overlay');
+  ov.classList.add('closing');
+  setTimeout(() => { ov.classList.remove('closing', 'hidden'); ov.classList.add('hidden'); wheelTarget = null; }, 160);
+};
+
 /* Numero regolabile scorrendo: si tiene premuto e si trascina in alto o in
    basso. Resta anche scrivibile da tastiera, per chi preferisce digitare. */
 function attachNumberDrag(input, min, max, onChange) {
@@ -3281,7 +3476,9 @@ function attachNumberDrag(input, min, max, onChange) {
     dragging = false;
     input.classList.remove('dragging');
     try { input.releasePointerCapture(e.pointerId); } catch (err) {}
-    if (!moved) input.focus();               /* tocco secco: si digita */
+    /* tocco secco: apre la rotella. Trascinando invece si regola al volo:
+       due modi per lo stesso campo, uno preciso e uno veloce. */
+    if (!moved) openWheel(input, min, max, input.dataset.wheelTitle || 'Ripetizioni', onChange);
   };
   input.addEventListener('pointerup', end);
   input.addEventListener('pointercancel', end);
@@ -3658,17 +3855,28 @@ window.removeExerciseByName = function(name) {
 }
 
 window.clearGroupSelection = function() {
+  if (selectedGroups.length === 0) return;
+  const quanti = selectedGroups.length;
   selectedGroups = [];
+  suggestedExpanded = false;
+  suggestedOrderKey = null;   /* senza questo l ordine vecchio restava in memoria */
+  suggestedOrder = [];
   renderGruppi();
-  renderSuggested(); /* senza questo le proposte restavano appese a schermo */
+  renderSuggested();
+  showUndo('Proposte nascoste. Il piano non e stato toccato.');
 };
 
 /* Figura anatomica disegnata in SVG: niente immagini esterne, cosi
    funziona anche offline in palestra e segue i colori del tema.
    Vista frontale a sinistra, posteriore a destra. */
+/* ============================================================
+   FIGURA ANATOMICA
+   Disegnata a mano in SVG: niente immagini esterne, cosi funziona
+   offline e segue i colori del tema. Proporzioni piu realistiche:
+   spalle piu larghe dei fianchi, torace a trapezio, dorsali a V,
+   addome diviso in fasce, cosce affusolate verso il ginocchio.
+   ============================================================ */
 function renderBodyMap(active, loads) {
-  /* Se passo i carichi settimanali, i muscoli si colorano per carico
-     (verde/ambra); altrimenti si usa la semplice evidenziazione. */
   const on = (g) => {
     if (loads) {
       const lvl = volLevel((loads[g] || {}).sets || 0);
@@ -3676,60 +3884,92 @@ function renderBodyMap(active, loads) {
     }
     return active.indexOf(g) !== -1 ? ' active' : '';
   };
-  return '<svg viewBox="0 0 240 215" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Muscoli coinvolti">' +
-    /* ---------- FRONTE ---------- */
-    '<ellipse class="bm-base" cx="60" cy="18" rx="11" ry="13"/>' +
-    '<rect class="bm-base" x="55" y="29" width="10" height="8"/>' +
-    '<path class="bm-muscle' + on('spalle') + '" d="M36 42 q6 -9 16 -6 l0 13 q-10 3 -16 -7z"/>' +
-    '<path class="bm-muscle' + on('spalle') + '" d="M84 42 q-6 -9 -16 -6 l0 13 q10 3 16 -7z"/>' +
-    '<path class="bm-muscle' + on('petto') + '" d="M46 40 q13 -4 13 2 l0 14 q-9 3 -14 -3z"/>' +
-    '<path class="bm-muscle' + on('petto') + '" d="M74 40 q-13 -4 -13 2 l0 14 q9 3 14 -3z"/>' +
-    '<rect class="bm-muscle' + on('core') + '" x="49" y="59" width="22" height="34" rx="5"/>' +
-    '<ellipse class="bm-muscle' + on('braccia') + '" cx="34" cy="64" rx="6" ry="15"/>' +
-    '<ellipse class="bm-muscle' + on('braccia') + '" cx="86" cy="64" rx="6" ry="15"/>' +
-    '<ellipse class="bm-base" cx="31" cy="91" rx="5" ry="14"/>' +
-    '<ellipse class="bm-base" cx="89" cy="91" rx="5" ry="14"/>' +
-    '<rect class="bm-base" x="48" y="93" width="24" height="12" rx="4"/>' +
-    '<ellipse class="bm-muscle' + on('gambe') + '" cx="52" cy="128" rx="9" ry="24"/>' +
-    '<ellipse class="bm-muscle' + on('gambe') + '" cx="68" cy="128" rx="9" ry="24"/>' +
-    '<ellipse class="bm-muscle' + on('gambe') + '" cx="52" cy="172" rx="7" ry="19"/>' +
-    '<ellipse class="bm-muscle' + on('gambe') + '" cx="68" cy="172" rx="7" ry="19"/>' +
-    '<text class="bm-label" x="60" y="209">FRONTE</text>' +
-    /* ---------- RETRO ---------- */
-    '<ellipse class="bm-base" cx="180" cy="18" rx="11" ry="13"/>' +
-    '<rect class="bm-base" x="175" y="29" width="10" height="8"/>' +
-    '<path class="bm-muscle' + on('spalle') + '" d="M156 42 q6 -9 16 -6 l0 13 q-10 3 -16 -7z"/>' +
-    '<path class="bm-muscle' + on('spalle') + '" d="M204 42 q-6 -9 -16 -6 l0 13 q10 3 16 -7z"/>' +
-    '<path class="bm-muscle' + on('schiena') + '" d="M166 40 q14 -5 28 0 l-4 30 q-10 4 -20 0z"/>' +
-    '<rect class="bm-muscle' + on('schiena') + '" x="172" y="71" width="16" height="20" rx="4"/>' +
-    '<ellipse class="bm-muscle' + on('braccia') + '" cx="154" cy="64" rx="6" ry="15"/>' +
-    '<ellipse class="bm-muscle' + on('braccia') + '" cx="206" cy="64" rx="6" ry="15"/>' +
-    '<ellipse class="bm-base" cx="151" cy="91" rx="5" ry="14"/>' +
-    '<ellipse class="bm-base" cx="209" cy="91" rx="5" ry="14"/>' +
-    '<ellipse class="bm-muscle' + on('glutei') + '" cx="172" cy="100" rx="10" ry="9"/>' +
-    '<ellipse class="bm-muscle' + on('glutei') + '" cx="188" cy="100" rx="10" ry="9"/>' +
-    '<ellipse class="bm-muscle' + on('gambe') + '" cx="172" cy="131" rx="9" ry="23"/>' +
-    '<ellipse class="bm-muscle' + on('gambe') + '" cx="188" cy="131" rx="9" ry="23"/>' +
-    '<ellipse class="bm-muscle' + on('gambe') + '" cx="172" cy="173" rx="7" ry="19"/>' +
-    '<ellipse class="bm-muscle' + on('gambe') + '" cx="188" cy="173" rx="7" ry="19"/>' +
-    '<text class="bm-label" x="180" y="209">RETRO</text>' +
+  const sel = (g) => active.indexOf(g) !== -1 ? ' sel' : '';
+  const cls = (g) => 'bm-muscle' + on(g) + sel(g);
+
+  return '<svg viewBox="0 0 250 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Muscoli coinvolti">' +
+
+    /* ---------------- VISTA FRONTALE (centro x = 62) ---------------- */
+    /* sagoma: testa, collo, tronco che si stringe in vita, gambe */
+    '<path class="bm-base" d="M62 6 q10 0 10 12 q0 9 -4 13 l0 5 q14 3 22 12 q6 7 7 20 l2 26 q0 6 -4 7 l-3 -22 l-2 30 q0 10 2 20 l3 26 q1 8 -1 16 l-4 34 q-1 8 -6 8 q-5 0 -6 -8 l-4 -34 l-4 -26 l-4 26 l-4 34 q-1 8 -6 8 q-5 0 -6 -8 l-4 -34 q-2 -8 -1 -16 l3 -26 q2 -10 2 -20 l-2 -30 l-3 22 q-4 -1 -4 -7 l2 -26 q1 -13 7 -20 q8 -9 22 -12 l0 -5 q-4 -4 -4 -13 q0 -12 10 -12z"/>' +
+
+    /* trapezio e deltoidi */
+    '<path class="' + cls('spalle') + '" d="M40 40 q-9 3 -12 12 q-2 7 0 13 q9 3 14 -4 q3 -9 5 -18z"/>' +
+    '<path class="' + cls('spalle') + '" d="M84 40 q9 3 12 12 q2 7 0 13 q-9 3 -14 -4 q-3 -9 -5 -18z"/>' +
+    /* pettorali: trapezio con angolo verso lo sterno */
+    '<path class="' + cls('petto') + '" d="M45 41 q14 -3 16 4 l0 17 q-11 4 -18 -4 q-2 -9 2 -17z"/>' +
+    '<path class="' + cls('petto') + '" d="M79 41 q-14 -3 -16 4 l0 17 q11 4 18 -4 q2 -9 -2 -17z"/>' +
+    /* addome: sei fasce + obliqui */
+    '<path class="' + cls('core') + '" d="M52 63 l20 0 q2 16 0 33 q-10 6 -20 0 q-2 -17 0 -33z"/>' +
+    '<path class="bm-line" d="M62 64 l0 31 M53 74 l18 0 M53 84 l18 0"/>' +
+    /* bicipiti e avambracci */
+    '<path class="' + cls('braccia') + '" d="M31 58 q7 1 8 9 l-1 17 q-6 3 -10 -2 q-2 -13 3 -24z"/>' +
+    '<path class="' + cls('braccia') + '" d="M93 58 q-7 1 -8 9 l1 17 q6 3 10 -2 q2 -13 -3 -24z"/>' +
+    '<path class="bm-base" d="M28 86 q7 -2 10 2 l-2 20 q-6 3 -9 -2 z"/>' +
+    '<path class="bm-base" d="M96 86 q-7 -2 -10 2 l2 20 q6 3 9 -2 z"/>' +
+    /* quadricipiti: larghi in alto, affusolati al ginocchio */
+    '<path class="' + cls('gambe') + '" d="M51 106 q9 -3 10 6 l-2 38 q-6 4 -11 -1 q-2 -22 3 -43z"/>' +
+    '<path class="' + cls('gambe') + '" d="M73 106 q-9 -3 -10 6 l2 38 q6 4 11 -1 q2 -22 -3 -43z"/>' +
+    /* polpacci */
+    '<path class="' + cls('gambe') + '" d="M52 156 q7 -2 9 4 l-2 26 q-5 3 -8 -2 q-2 -15 1 -28z"/>' +
+    '<path class="' + cls('gambe') + '" d="M72 156 q-7 -2 -9 4 l2 26 q5 3 8 -2 q2 -15 -1 -28z"/>' +
+    '<text class="bm-label" x="62" y="222">FRONTE</text>' +
+
+    /* ---------------- VISTA POSTERIORE (centro x = 188) ---------------- */
+    '<path class="bm-base" d="M188 6 q10 0 10 12 q0 9 -4 13 l0 5 q14 3 22 12 q6 7 7 20 l2 26 q0 6 -4 7 l-3 -22 l-2 30 q0 10 2 20 l3 26 q1 8 -1 16 l-4 34 q-1 8 -6 8 q-5 0 -6 -8 l-4 -34 l-4 -26 l-4 26 l-4 34 q-1 8 -6 8 q-5 0 -6 -8 l-4 -34 q-2 -8 -1 -16 l3 -26 q2 -10 2 -20 l-2 -30 l-3 22 q-4 -1 -4 -7 l2 -26 q1 -13 7 -20 q8 -9 22 -12 l0 -5 q-4 -4 -4 -13 q0 -12 10 -12z"/>' +
+    /* trapezio superiore e deltoidi posteriori */
+    '<path class="' + cls('spalle') + '" d="M166 40 q-9 3 -12 12 q-2 7 0 13 q9 3 14 -4 q3 -9 5 -18z"/>' +
+    '<path class="' + cls('spalle') + '" d="M210 40 q9 3 12 12 q2 7 0 13 q-9 3 -14 -4 q-3 -9 -5 -18z"/>' +
+    '<path class="' + cls('schiena') + '" d="M172 38 q16 -4 32 0 l-2 10 q-14 4 -28 0z"/>' +
+    /* gran dorsale a V + lombari */
+    '<path class="' + cls('schiena') + '" d="M171 50 q17 -3 34 0 l-6 30 q-11 5 -22 0z"/>' +
+    '<path class="' + cls('schiena') + '" d="M180 82 l16 0 l-2 14 q-6 3 -12 0z"/>' +
+    /* glutei */
+    '<path class="' + cls('glutei') + '" d="M177 98 q10 -4 10 6 l0 12 q-9 4 -13 -3 q-1 -9 3 -15z"/>' +
+    '<path class="' + cls('glutei') + '" d="M199 98 q-10 -4 -10 6 l0 12 q9 4 13 -3 q1 -9 -3 -15z"/>' +
+    /* tricipiti */
+    '<path class="' + cls('braccia') + '" d="M157 58 q7 1 8 9 l-1 17 q-6 3 -10 -2 q-2 -13 3 -24z"/>' +
+    '<path class="' + cls('braccia') + '" d="M219 58 q-7 1 -8 9 l1 17 q6 3 10 -2 q2 -13 -3 -24z"/>' +
+    '<path class="bm-base" d="M154 86 q7 -2 10 2 l-2 20 q-6 3 -9 -2 z"/>' +
+    '<path class="bm-base" d="M222 86 q-7 -2 -10 2 l2 20 q6 3 9 -2 z"/>' +
+    /* femorali e polpacci */
+    '<path class="' + cls('gambe') + '" d="M177 118 q9 -3 10 6 l-2 28 q-6 4 -11 -1 q-2 -17 3 -33z"/>' +
+    '<path class="' + cls('gambe') + '" d="M199 118 q-9 -3 -10 6 l2 28 q6 4 11 -1 q2 -17 -3 -33z"/>' +
+    '<path class="' + cls('gambe') + '" d="M178 156 q7 -2 9 4 l-2 26 q-5 3 -8 -2 q-2 -15 1 -28z"/>' +
+    '<path class="' + cls('gambe') + '" d="M198 156 q-7 -2 -9 4 l2 26 q5 3 8 -2 q2 -15 -1 -28z"/>' +
+    '<text class="bm-label" x="188" y="222">RETRO</text>' +
   '</svg>';
 }
 
-/* ============================================================
-   CARICO SETTIMANALE PER GRUPPO
-   Conta le serie programmate su tutti i giorni della settimana
-   (esclusi quelli di riposo). Soglie prese dalla letteratura:
-   sotto le 10 serie sei sotto il volume minimo utile, tra 10 e 20
-   sei nel range consigliato, oltre le 22 la fatica cresce piu' del
-   beneficio. Una serie conta 1 sul gruppo bersaglio dell'esercizio.
-   ============================================================ */
-const VOL_MIN_UTILE = 10;
-const VOL_MAX_UTILE = 22;
+/* Spiegazioni scritte in parole semplici: quello che vedi acceso nel
+   disegno deve corrispondere a quello che leggi. */
+const GROUP_EXPLAIN = {
+  petto:   { dove: 'davanti, sotto le spalle', quando: 'quando SPINGI qualcosa lontano da te', esempio: 'come spingere una porta pesante' },
+  schiena: { dove: 'dietro, dalle spalle fino ai fianchi', quando: 'quando TIRI qualcosa verso di te', esempio: 'come tirare la corda o aprire un cassetto' },
+  spalle:  { dove: 'le due palle tonde sopra le braccia', quando: 'quando ALZI le braccia in alto o di lato', esempio: 'come mettere una valigia sopra l armadio' },
+  braccia: { dove: 'davanti il bicipite, dietro il tricipite', quando: 'quando PIEGHI o DISTENDI il gomito', esempio: 'come portarti un bicchiere alla bocca' },
+  gambe:   { dove: 'cosce davanti e dietro, piu i polpacci', quando: 'quando ti PIEGHI e ti RIALZI', esempio: 'come alzarti dalla sedia o salire le scale' },
+  glutei:  { dove: 'i muscoli del sedere', quando: 'quando SPINGI il bacino in avanti', esempio: 'come quando ti alzi da molto in basso' },
+  core:    { dove: 'la pancia e i fianchi', quando: 'quando TIENI FERMO il busto', esempio: 'come restare dritto portando la spesa' }
+};
 
-/* Mappa esercizio -> giorni in cui e' gia stato messo in programma.
-   Serve a non riproporre per primi esercizi che hai gia scelto altrove:
-   la proposta utile e' quella che NON hai ancora considerato. */
+function renderBodyExplain(gruppi) {
+  if (!gruppi.length) {
+    return '<div class="bm-explain muted-note">Tocca un muscolo qui sotto: il disegno ti mostra dove si trova e ti spiega a cosa serve.</div>';
+  }
+  return gruppi.map(g => {
+    const e = GROUP_EXPLAIN[g];
+    const m = MUSCLE_GROUPS[g];
+    if (!e) return '';
+    return '<div class="bm-explain">' +
+      '<div class="bm-explain-title">' + m.emoji + ' ' + m.label + '</div>' +
+      '<div class="bm-explain-line"><b>Dove sta:</b> ' + e.dove + '</div>' +
+      '<div class="bm-explain-line"><b>Quando lavora:</b> ' + e.quando + '</div>' +
+      '<div class="bm-explain-line"><b>Nella vita:</b> ' + e.esempio + '</div>' +
+    '</div>';
+  }).join('');
+}
+
 /* Parametri di partenza uguali per tutti: si sceglie l'esercizio, non i numeri.
    Le regolazioni si fanno il giorno dell'allenamento. */
 const DEFAULT_SETS = 3;
@@ -3792,6 +4032,12 @@ function usageRank(st) {
   return 2;                          /* gia oggi: ultimo */
 }
 
+/* Soglie di volume settimanale per gruppo, dalla letteratura:
+   sotto le 10 serie sei sotto il minimo utile, tra 10 e 22 sei nel
+   range consigliato, oltre la fatica cresce piu del beneficio. */
+const VOL_MIN_UTILE = 10;
+const VOL_MAX_UTILE = 22;
+
 window.weeklyVolumeByGroup = function() {
   const data = loadData();
   const vol = {};
@@ -3824,12 +4070,22 @@ function volLabel(v) {
   return v.sets + ' serie \u2022 ' + gg;
 }
 
+
 function renderGruppi() {
   const data0 = loadData();
   syncBuildingLine((data0[currentDay] || []).length);
 
   const vol = weeklyVolumeByGroup();
   document.getElementById('body-map').innerHTML = renderBodyMap(selectedGroups, vol);
+  document.getElementById('body-explain').innerHTML = renderBodyExplain(selectedGroups);
+
+  /* Il pulsante appare solo quando c e davvero qualcosa da nascondere.
+     Prima restava sempre in pagina, solo disattivato: sembrava rotto. */
+  const clearBtn = document.getElementById('clear-sel-btn');
+  if (clearBtn) {
+    clearBtn.style.display = selectedGroups.length ? 'block' : 'none';
+    clearBtn.innerText = '\u2715 Nascondi le proposte (' + selectedGroups.length + ')';
+  }
   document.getElementById('group-grid').innerHTML = Object.keys(MUSCLE_GROUPS).map(id => {
     const g = MUSCLE_GROUPS[id];
     const n = EXERCISE_LIBRARY.filter(e => e.group === id).length;
@@ -4637,13 +4893,8 @@ window.setTheme = function(v) {
   renderSettings();
 };
 
-window.openSettings = function() {
-  document.getElementById('settings').classList.remove('hidden');
-  renderSettings();
-};
-window.closeSettings = function() {
-  document.getElementById('settings').classList.add('hidden');
-};
+window.openSettings = function() { switchTab('impostazioni'); };
+window.closeSettings = function() { switchTab('piano'); };
 
 window.toggleSetting = function(k, def) {
   setSetting(k, isOn(k, def) ? '0' : '1');
@@ -4693,6 +4944,8 @@ function renderSettings() {
       toggleHtml(SOUND_KEY, true, 'Suono a fine recupero', 'Un segnale quando il tempo scade') +
       toggleHtml(COUNTDOWN_KEY, true, 'Conto alla rovescia sonoro', 'Un bip a ogni secondo negli ultimi cinque') +
       toggleHtml(AUTOCLOSE_KEY, true, 'Chiudi da solo a fine recupero', 'Il pannello sparisce senza doverlo toccare') +
+      '<button class="set-row-btn" onclick="testSound()">\u{1F50A} Prova il suono</button>' +
+      '<div class="set-about">Se non senti nulla: controlla che il telefono non sia in silenzioso e tocca una volta lo schermo, perche i browser attivano l audio solo dopo un gesto.</div>' +
     '</div>' +
 
     '<div class="set-group">' +
@@ -4700,7 +4953,7 @@ function renderSettings() {
       (prof
         ? '<div class="set-about" style="margin-bottom:8px;">Programma attuale: <b>' + escapeHtml(prof.split || '-') + '</b>, obiettivo <b>' + escapeHtml(prof.goal || '-') + '</b>, ' + (prof.settimane || '-') + ' settimane. Creato il ' + escapeHtml(prof.creato || '-') + '.</div>'
         : '<div class="set-about" style="margin-bottom:8px;">Non hai ancora creato un programma personalizzato.</div>') +
-      '<button class="set-row-btn" onclick="closeSettings(); restartOnboarding();">\u{1F9ED} Rifai il programma personalizzato</button>' +
+      '<button class="set-row-btn" onclick="restartOnboarding();">\u{1F9ED} Rifai il programma personalizzato</button>' +
     '</div>' +
 
     '<div class="set-group">' +
