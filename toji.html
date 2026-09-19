@@ -340,12 +340,58 @@ body.reorder-mode .plan-card { border-color: var(--primary); }
 .wheel-num.on { background: var(--primary); border-color: var(--primary); color: #fff; transform: scale(1.14); }
 .wheel-mask { text-align: center; font-size: 0.7rem; color: var(--muted); padding-top: 2px; }
 
+/* ============================================================
+   BLOCCHI DI TESTO SCRITTI COME ELEMENTI IN LINEA
+   Nome e descrizione erano elementi in linea, che per natura restano sulla stessa
+   riga: si leggeva "Suono a fine recuperoUn segnale quando...".
+   Qui tutti i contenitori e le righe di testo diventano blocchi veri,
+   con lo spazio corretto tra titolo e descrizione.
+   ============================================================ */
+.set-toggle-main, .pick-main, .onb-opt-main,
+.wday-main, .wk-main, .week-main, .plan-card-main, .sugg-main { display: block; min-width: 0; }
+
+.set-toggle-name, .set-toggle-desc,
+.pick-name, .pick-meta,
+.onb-opt-name, .onb-opt-desc,
+.wday-name, .wday-meta,
+.wk-name, .wk-meta,
+.week-name, .week-meta,
+.track-name, .track-meta,
+.template-name, .template-desc, .template-meta,
+.coach-name, .coach-reason,
+.sugg-name, .sugg-meta,
+.ex-name, .ex-data, .plan-ex-name,
+.lib-name, .lib-meta,
+.mode-name, .mode-sub {
+  display: block;
+}
+
+/* lo spazio tra titolo e sua descrizione, ovunque e sempre uguale */
+.set-toggle-desc, .pick-meta, .onb-opt-desc, .wday-meta, .wk-meta,
+.week-meta, .track-meta, .coach-reason, .sugg-meta, .ex-data,
+.lib-meta, .mode-sub {
+  margin-top: var(--sp-1);
+}
+.template-desc { margin-top: var(--sp-2); }
+.template-meta { margin-top: var(--sp-2); }
+
 /* ======= Scheda esercizio: disegno e spiegazione ======= */
 .ex-draw-wrap {
   background: var(--card); border: 1px solid var(--border); border-radius: 12px;
   padding: var(--sp-4); margin-bottom: var(--sp-5);
   aspect-ratio: 300 / 165;      /* spazio riservato: niente stiramenti */
   display: flex; align-items: center; justify-content: center;
+}
+/* Segnaposto dell immagine: lo spazio e' gia quello definitivo, cosi
+   quando arriveranno foto o video il resto della scheda non si spostera. */
+.ex-img-slot {
+  width: 100%; height: 100%;
+  border: 1.5px dashed var(--border); border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+}
+.ex-img-hint {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.4px;
+  color: var(--muted); opacity: 0.7; text-transform: uppercase;
 }
 .ex-draw { width: 100%; height: 100%; display: block; }
 /* la figura ha corpo pieno con un contorno piu marcato, cosi si legge
@@ -5421,7 +5467,12 @@ window.openExerciseInfo = function(name) {
   const meta = findExercise(name);
   const pid = patternFor(name);
   const info = PATTERN_INFO[pid] || PATTERN_INFO.machine;
-  const disegno = (PATTERN_DRAW[pid] || PATTERN_DRAW.machine)();
+  /* Lo spazio dell immagine resta riservato: qui andranno le foto o i video
+     dell esercizio quando saranno pronti. Il disegno provvisorio e' stato
+     tolto, ma il riquadro c e gia con le sue proporzioni, cosi il giorno
+     che carichiamo le immagini nulla si sposta. */
+  const disegno = '<div class="ex-img-slot" data-exercise="' + escapeHtml(name) + '">' +
+    '<span class="ex-img-hint">Immagine in arrivo</span></div>';
   const gruppo = meta ? MUSCLE_GROUPS[meta.group] : null;
   const verificato = !!VIDEO_VERIFICATI[name];
 
