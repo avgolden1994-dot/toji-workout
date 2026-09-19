@@ -26,6 +26,98 @@
   --muted: #71717a;
   --banner-img: url('https://superherojacked.com/wp-content/uploads/2021/07/Toji-Fushiguro-Workout.jpg');
 }
+/* ======= Modalita chiara =======
+   Scelte guidate dalle linee guida di accessibilita:
+   - niente bianco puro (#fff) di sfondo: fa bagliore e affatica
+   - niente nero puro sul testo: crea l effetto alone
+   - contrasto minimo 4.5:1 per il testo, 3:1 per i comandi
+   - alla luce forte i bordi sottili spariscono: i pulsanti usano
+     riempimenti pieni con testo bianco, non contorni
+   - i colori vivi su fondo chiaro perdono contrasto: si scuriscono */
+body[data-theme="light"] {
+  --bg: #f5f4f1;        /* bianco sporco caldo, non bianco puro */
+  --card: #ffffff;
+  --border: #dedbd5;
+  --text: #1b1a18;      /* quasi nero, non nero pieno */
+  --muted: #61605c;     /* 5.6:1 sul fondo: leggibile anche al sole */
+  --primary: #c2410c;   /* arancione scurito: 5.1:1 col bianco sopra */
+  --primary-glow: #9a3412;
+  --primary-shadow: rgba(194,65,12,0.28);
+  --accent: #b91c1c;
+  --success: #15803d;
+}
+body[data-theme="light"][data-mode="maki"] {
+  --primary: #15803d;
+  --primary-glow: #14532d;
+  --primary-shadow: rgba(21,128,61,0.28);
+  --accent: #7e22ce;
+  --success: #a16207;
+}
+/* superfici che nel tema scuro erano codificate a mano */
+body[data-theme="light"] .banner { border-color: var(--border); }
+body[data-theme="light"] .bottom-nav-fixed,
+body[data-theme="light"] .sheet-bar,
+body[data-theme="light"] .sheet-footer,
+body[data-theme="light"] .onb-bar,
+body[data-theme="light"] .onb-footer { background: #ffffff; }
+body[data-theme="light"] .plan-card,
+body[data-theme="light"] .swipe-fg,
+body[data-theme="light"] .pick-row,
+body[data-theme="light"] .onb-opt,
+body[data-theme="light"] .wk-row,
+body[data-theme="light"] .wday-card,
+body[data-theme="light"] .carousel-card,
+body[data-theme="light"] .template-card,
+body[data-theme="light"] .set-row,
+body[data-theme="light"] .group-card,
+body[data-theme="light"] .coach-box,
+body[data-theme="light"] .res-card,
+body[data-theme="light"] .bia-val,
+body[data-theme="light"] .lib-row,
+body[data-theme="light"] .history-card,
+body[data-theme="light"] .week-card { background: #ffffff; }
+body[data-theme="light"] .timer-btn,
+body[data-theme="light"] .plan-tool-btn,
+body[data-theme="light"] .stepper-btn,
+body[data-theme="light"] .drop-btn,
+body[data-theme="light"] .set-check,
+body[data-theme="light"] .set-flame-btn,
+body[data-theme="light"] .bulk-btn,
+body[data-theme="light"] .drawer-btn,
+body[data-theme="light"] .sheet-back,
+body[data-theme="light"] .reorder-btn,
+body[data-theme="light"] .track-select-btn,
+body[data-theme="light"] .template-btn.append,
+body[data-theme="light"] .snackbar,
+body[data-theme="light"] .source-tabs,
+body[data-theme="light"] .seg-nav,
+body[data-theme="light"] .num-drag,
+body[data-theme="light"] .set-tool-btn,
+body[data-theme="light"] .plan-check,
+body[data-theme="light"] .recovery-icon-btn,
+body[data-theme="light"] input,
+body[data-theme="light"] select { background: #f0eeea; color: var(--text); }
+body[data-theme="light"] .bia-drop,
+body[data-theme="light"] .upload-label { background: #f0eeea; }
+body[data-theme="light"] .btn-archive { background: #f0eeea; }
+body[data-theme="light"] .mode-card,
+body[data-theme="light"] .set-square { background: #ffffff; }
+body[data-theme="light"] .bm-base { fill: #e6e3dd; stroke: #d3cfc7; }
+body[data-theme="light"] .bm-muscle { fill: #d8d4cc; stroke: #c9c4ba; }
+body[data-theme="light"] .recovery-icon-btn,
+body[data-theme="light"] .recovery-pill { background: rgba(255,255,255,0.22); color: #fff; }
+body[data-theme="light"] .snackbar-text { color: var(--text); }
+/* in modalita chiara il testo bianco su pulsante pieno resta bianco */
+body[data-theme="light"] .btn-main,
+body[data-theme="light"] .btn-start-workout,
+body[data-theme="light"] .template-btn.replace,
+body[data-theme="light"] .day-chip.active,
+body[data-theme="light"] .seg-btn.active,
+body[data-theme="light"] .source-tab-btn.active,
+body[data-theme="light"] .nav-btn.active { color: #fff; }
+body[data-theme="light"] .nav-btn.active { color: var(--primary); }
+body[data-theme="light"] .lib-add-btn { color: #fff; }
+
 body[data-mode="maki"] {
   --primary: #22c55e;
   --primary-glow: #15803d;
@@ -185,6 +277,34 @@ body.reorder-mode .plan-card { border-color: var(--primary); }
 .wk-row.open .wk-caret { transform: rotate(90deg); color: var(--primary); }
 .wk-empty { font-size: 0.8rem; color: var(--muted); padding: 4px 0 8px; }
 .wk-total { font-size: 0.7rem; color: var(--muted); font-weight: 800; text-align: right; margin-bottom: 8px; }
+
+/* ultimi secondi del recupero: l anello pulsa per avvisare a colpo d occhio */
+@keyframes rec-ending {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+.recovery-overlay.ending .recovery-ring-progress { animation: rec-ending .5s ease-in-out infinite; }
+.recovery-overlay.ending .recovery-time-big { animation: rec-ending .5s ease-in-out infinite; }
+
+/* ======= Impostazioni ======= */
+.settings { position: fixed; inset: 0; z-index: 110; background: var(--bg); display: flex; flex-direction: column; }
+.settings.hidden { display: none; }
+.set-group { margin-bottom: 20px; }
+.set-group-title { font-size: 0.68rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 8px; }
+.set-seg { display: flex; gap: 6px; background: var(--card); border: 1px solid var(--border); padding: 4px; border-radius: 10px; }
+.set-seg button { flex: 1; background: transparent; border: none; color: var(--muted); padding: 10px 4px; border-radius: 7px; font-weight: 800; font-size: 0.76rem; cursor: pointer; }
+.set-seg button.on { background: var(--primary); color: #fff; }
+.set-toggle { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 8px; cursor: pointer; color: var(--text); }
+.set-toggle-main { flex: 1; min-width: 0; }
+.set-toggle-name { font-weight: 800; font-size: 0.86rem; }
+.set-toggle-desc { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+.switch { flex-shrink: 0; width: 44px; height: 25px; border-radius: 999px; background: var(--border); position: relative; transition: background .18s ease; }
+.switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 19px; height: 19px; border-radius: 50%; background: #fff; transition: transform .18s ease; }
+.switch.on { background: var(--success); }
+.switch.on::after { transform: translateX(19px); }
+.set-row-btn { width: 100%; background: var(--card); border: 1px solid var(--border); color: var(--text); border-radius: 10px; padding: 12px; margin-bottom: 8px; font-weight: 800; font-size: 0.84rem; cursor: pointer; text-align: left; }
+.set-row-btn.danger { color: var(--accent); border-color: var(--accent); }
+.set-about { font-size: 0.72rem; color: var(--muted); line-height: 1.45; margin-top: 4px; }
 
 /* ======= Schermata iniziale: creazione del programma ======= */
 .onb { position: fixed; inset: 0; z-index: 120; background: var(--bg); display: flex; flex-direction: column; }
@@ -730,8 +850,8 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
 <div class="app-shell" id="app-root" style="display:none;">
   <div class="banner">
     <div class="banner-quote" id="banner-quote">Nessuna Energia Maledetta • Solo Forza Pura</div>
-    <button class="banner-title" id="banner-title" onclick="openModeOverlay()" title="Tocca per cambiare protocollo">Toji Protocol</button>
-    <div class="banner-switch-hint">tocca il nome per cambiare protocollo</div>
+    <button class="gear-btn" onclick="openSettings()" aria-label="Impostazioni" title="Impostazioni">⚙️</button>
+    <div class="banner-title" id="banner-title">Toji Protocol</div>
   </div>
 
 
@@ -1021,6 +1141,17 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
   <div class="sheet-footer">
     <button class="btn-start-workout" style="margin:0;" onclick="closeGroupSheet()" id="sheet-done-btn">✓ Fatto — torna al piano</button>
   </div>
+</div>
+
+<div class="settings hidden" id="settings">
+  <div class="sheet-bar">
+    <button class="sheet-back" onclick="closeSettings()" aria-label="Chiudi">←</button>
+    <div class="sheet-titles">
+      <div class="sheet-title">Impostazioni</div>
+      <div class="sheet-sub" id="settings-sub"></div>
+    </div>
+  </div>
+  <div class="sheet-body" id="settings-body"></div>
 </div>
 
 <div class="onb hidden" id="onb">
@@ -1694,8 +1825,7 @@ function activateMode(mode) {
   const meta = MODE_META[mode];
   document.getElementById('banner-quote').innerText = meta.quote;
   document.getElementById('banner-title').innerText = meta.title;
-  const themeMeta = document.getElementById('theme-color-meta');
-  if (themeMeta) themeMeta.setAttribute('content', meta.themeColor);
+  if (typeof applyTheme === 'function') applyTheme();
 
   migrateLegacyDataIfNeeded(mode);
   seedDefaultsIfNeeded(mode);
@@ -1763,17 +1893,28 @@ function formatNow() {
 function handleSelectExercise(val) {
   if (val) document.getElementById('exercise-name').value = val;
 }
-function playBeep() {
+function playTone(freq, dur, tipo) {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     const osc = ctx.createOscillator();
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(880, ctx.currentTime);
-    osc.connect(ctx.destination);
+    const gain = ctx.createGain();
+    osc.type = tipo || 'sine';
+    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+    /* piccola dissolvenza: il taglio netto fa "clic" e da fastidio */
+    gain.gain.setValueAtTime(0.25, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+    osc.connect(gain); gain.connect(ctx.destination);
     osc.start();
-    osc.stop(ctx.currentTime + 0.25);
+    osc.stop(ctx.currentTime + dur);
   } catch (e) {}
 }
+
+function playBeep() { playTone(880, 0.25, 'sawtooth'); }
+
+/* Conto alla rovescia: tre bip brevi e acuti, poi uno lungo e piu grave
+   a tempo scaduto, cosi si distingue "sto per finire" da "e finito". */
+function playTick() { playTone(1320, 0.07, 'square'); }
+function playEnd() { playTone(660, 0.45, 'sawtooth'); }
 window.stepValue = function(id, delta, min) {
   const input = document.getElementById(id);
   let val = parseFloat(input.value) || 0;
@@ -2445,11 +2586,23 @@ window.openRecoveryPanel = function(label, seconds) {
   recoveryInterval = setInterval(() => {
     recoveryRemaining--;
     updateRecoveryRing();
+
+    /* ultimi 5 secondi: un bip a ogni secondo, cosi ti prepari senza guardare */
+    if (recoveryRemaining > 0 && recoveryRemaining <= 5) {
+      document.getElementById('recovery-overlay').classList.add('ending');
+      if (!recoveryMuted && isOn(COUNTDOWN_KEY, true)) playTick();
+      if (navigator.vibrate) { try { navigator.vibrate(40); } catch (e) {} }
+    }
+
     if (recoveryRemaining <= 0) {
       clearInterval(recoveryInterval);
       recoveryInterval = null;
-      if (!recoveryMuted) playBeep();
-      if (navigator.vibrate) { try { navigator.vibrate(200); } catch (e) {} }
+      document.getElementById('recovery-overlay').classList.remove('ending');
+      if (!recoveryMuted && isOn(SOUND_KEY, true)) playEnd();
+      if (navigator.vibrate) { try { navigator.vibrate([200, 90, 200]); } catch (e) {} }
+      if (isOn(AUTOCLOSE_KEY, true)) {
+        setTimeout(() => { if (!recoveryInterval) closeRecoveryPanel(); }, 1200);
+      }
     }
   }, 1000);
 };
@@ -2460,7 +2613,7 @@ window.closeRecoveryPanel = function() {
   recoveryRemaining = 0;
   updateRecoveryRing();
   const panel = document.getElementById('recovery-overlay');
-  panel.classList.remove('visible', 'expanded');
+  panel.classList.remove('visible', 'expanded', 'ending');
   document.getElementById('recovery-expand-btn').innerText = '⤢';
 };
 
@@ -2472,7 +2625,7 @@ window.adjustRecoveryTimer = function(delta) {
     if (recoveryRemaining <= 0) {
       clearInterval(recoveryInterval);
       recoveryInterval = null;
-      if (!recoveryMuted) playBeep();
+      if (!recoveryMuted && isOn(SOUND_KEY, true)) playEnd();
     }
   } else if (delta > 0 && panel.classList.contains('visible')) {
     /* timer fermo/esaurito ma pannello aperto: +10 avvia un mini conto da 10s, -10 resta un no-op */
@@ -2485,7 +2638,8 @@ window.adjustRecoveryTimer = function(delta) {
       if (recoveryRemaining <= 0) {
         clearInterval(recoveryInterval);
         recoveryInterval = null;
-        if (!recoveryMuted) playBeep();
+        if (!recoveryMuted && isOn(SOUND_KEY, true)) playEnd();
+        if (isOn(AUTOCLOSE_KEY, true)) setTimeout(() => { if (!recoveryInterval) closeRecoveryPanel(); }, 1200);
       }
     }, 1000);
   }
@@ -4083,6 +4237,8 @@ function renderBiaStep() {
       biaField('ffm', 'Massa magra (kg)', b.ffm) +
       biaField('tbw', 'Acqua totale (L)', b.tbw) +
       biaField('bmr', 'Metabolismo basale (kcal)', b.bmr) +
+      biaField('smm', 'Massa muscolare (kg)', b.smm) +
+      biaField('phase', 'Angolo di fase (\u00B0)', b.phase) +
     '</div>' +
     '<div class="onb-grid onb-fields" style="margin-top:10px;">' +
       '<label class="onb-field"><span>Sesso</span><select id="onb-sex">' +
@@ -4137,27 +4293,108 @@ function ensurePdfJs() {
 
 /* Cerca i valori con le diciture piu comuni nei referti italiani e inglesi */
 window.parseBiaText = function(testo) {
+  /* Ogni strumento scrive a modo suo: InBody usa SMM e PBF, Tanita "Fat %"
+     e "FFM", Akern BodyGram "MASSA GRASSA"/"MASSA MAGRA", Seca "fat mass",
+     Omron "grasso corporeo". Qui si coprono le diciture piu diffuse, in
+     italiano e in inglese, con virgola o punto decimale. */
   const t = testo.replace(/\s+/g, ' ');
   const num = '([0-9]{1,3}(?:[.,][0-9]{1,2})?)';
+  const intero = '([0-9]{3,5})';
+
   const cerca = (patterns) => {
     for (let i = 0; i < patterns.length; i++) {
       const m = t.match(new RegExp(patterns[i], 'i'));
       if (m) {
-        const v = parseFloat(m[1].replace(',', '.'));
+        const v = parseFloat(String(m[1]).replace(',', '.'));
         if (!isNaN(v)) return v;
       }
     }
     return null;
   };
-  return {
-    peso:    cerca(['peso(?:\\s+corporeo)?[^0-9]{0,20}' + num + '\\s*kg', 'weight[^0-9]{0,20}' + num + '\\s*kg']),
-    altezza: cerca(['altezza[^0-9]{0,20}' + num + '\\s*cm', 'height[^0-9]{0,20}' + num + '\\s*cm']),
-    fmPerc:  cerca(['massa\\s+grassa[^0-9]{0,30}' + num + '\\s*%', 'fat\\s*mass[^0-9]{0,30}' + num + '\\s*%', '\\bfm\\b[^0-9]{0,20}' + num + '\\s*%', 'body\\s*fat[^0-9]{0,20}' + num + '\\s*%']),
-    fm:      cerca(['massa\\s+grassa[^0-9]{0,30}' + num + '\\s*kg', 'fat\\s*mass[^0-9]{0,30}' + num + '\\s*kg']),
-    ffm:     cerca(['massa\\s+magra[^0-9]{0,30}' + num + '\\s*kg', 'free\\s*fat\\s*mass[^0-9]{0,30}' + num + '\\s*kg', '\\bffm\\b[^0-9]{0,20}' + num + '\\s*kg', 'lean\\s*mass[^0-9]{0,20}' + num + '\\s*kg']),
-    tbw:     cerca(['acqua\\s+total[ei][^0-9]{0,30}' + num + '\\s*l', '\\btbw\\b[^0-9]{0,20}' + num + '\\s*l', 'total\\s*body\\s*water[^0-9]{0,30}' + num]),
-    bmr:     cerca(['metabolismo\\s+basale[^0-9]{0,30}([0-9]{3,5})', '\\bbmr\\b[^0-9]{0,20}([0-9]{3,5})', '\\bmb\\b[^0-9]{0,20}([0-9]{3,5})\\s*kcal'])
+
+  const out = {
+    peso: cerca([
+      'peso(?:\\s+corporeo)?[^0-9]{0,25}' + num + '\\s*kg',
+      '\\bweight\\b[^0-9]{0,25}' + num + '\\s*kg',
+      'body\\s*weight[^0-9]{0,25}' + num
+    ]),
+    altezza: cerca([
+      'altezza[^0-9]{0,25}' + num + '\\s*cm',
+      '\\bheight\\b[^0-9]{0,25}' + num + '\\s*cm',
+      'statura[^0-9]{0,25}' + num
+    ]),
+    fmPerc: cerca([
+      'massa\\s+grassa[^0-9%]{0,30}' + num + '\\s*%',
+      'grasso\\s+corporeo[^0-9%]{0,30}' + num + '\\s*%',
+      'percentuale\\s+di\\s+grasso[^0-9%]{0,30}' + num,
+      '\\bpbf\\b[^0-9]{0,25}' + num,
+      'percent\\s*body\\s*fat[^0-9]{0,25}' + num,
+      'body\\s*fat(?:\\s*mass)?[^0-9%]{0,25}' + num + '\\s*%',
+      'fat\\s*mass[^0-9%]{0,30}' + num + '\\s*%',
+      '\\bfat\\b\\s*%[^0-9]{0,15}' + num,
+      '\\bfm\\b[^0-9%]{0,20}' + num + '\\s*%'
+    ]),
+    fm: cerca([
+      'massa\\s+grassa[^0-9]{0,30}' + num + '\\s*kg',
+      'fat\\s*mass[^0-9]{0,30}' + num + '\\s*kg',
+      'body\\s*fat\\s*mass[^0-9]{0,25}' + num + '\\s*kg',
+      '\\bfm\\b[^0-9]{0,20}' + num + '\\s*kg'
+    ]),
+    ffm: cerca([
+      'massa\\s+magra[^0-9]{0,30}' + num + '\\s*kg',
+      'massa\\s+libera\\s+da\\s+grasso[^0-9]{0,30}' + num,
+      'free\\s*fat\\s*mass[^0-9]{0,30}' + num + '\\s*kg',
+      'fat[\\s-]*free\\s*mass[^0-9]{0,30}' + num + '\\s*kg',
+      '\\bffm\\b[^0-9]{0,20}' + num,
+      'lean\\s*(?:body\\s*)?mass[^0-9]{0,25}' + num + '\\s*kg'
+    ]),
+    smm: cerca([
+      'massa\\s+muscolare(?:\\s+scheletrica)?[^0-9]{0,30}' + num + '\\s*kg',
+      'skeletal\\s*muscle\\s*mass[^0-9]{0,30}' + num,
+      '\\bsmm\\b[^0-9]{0,20}' + num,
+      'muscle\\s*mass[^0-9]{0,25}' + num + '\\s*kg'
+    ]),
+    tbw: cerca([
+      'acqua\\s+total[ei][^0-9]{0,30}' + num,
+      'acqua\\s+corporea\\s+totale[^0-9]{0,30}' + num,
+      '\\btbw\\b[^0-9]{0,20}' + num,
+      'total\\s*body\\s*water[^0-9]{0,30}' + num
+    ]),
+    bmr: cerca([
+      'metabolismo\\s+basale[^0-9]{0,30}' + intero,
+      'dispendio\\s+energetico\\s+basale[^0-9]{0,30}' + intero,
+      '\\bbmr\\b[^0-9]{0,20}' + intero,
+      'basal\\s*metabolic\\s*rate[^0-9]{0,25}' + intero,
+      '\\bbmi?r\\b[^0-9]{0,15}' + intero + '\\s*kcal',
+      '\\bmb\\b[^0-9]{0,20}' + intero + '\\s*kcal'
+    ]),
+    bmi: cerca([
+      '\\bbmi\\b[^0-9]{0,20}' + num,
+      'indice\\s+di\\s+massa\\s+corporea[^0-9]{0,30}' + num
+    ]),
+    ecw: cerca([
+      'acqua\\s+extracellulare[^0-9]{0,30}' + num,
+      '\\becw\\b[^0-9]{0,20}' + num
+    ]),
+    phase: cerca([
+      'angolo\\s+di\\s+fase[^0-9]{0,30}' + num,
+      'phase\\s*angle[^0-9]{0,25}' + num
+    ])
   };
+
+  /* incroci: se manca un dato ma si puo ricavare, lo ricavo */
+  if (!out.fmPerc && out.fm && out.peso) out.fmPerc = Math.round((out.fm / out.peso) * 1000) / 10;
+  if (!out.fm && out.fmPerc && out.peso) out.fm = Math.round(out.peso * out.fmPerc) / 100;
+  if (!out.ffm && out.fm && out.peso) out.ffm = Math.round((out.peso - out.fm) * 10) / 10;
+  if (!out.ffm && out.smm) out.ffm = out.smm;
+
+  /* scarta valori assurdi: meglio un campo vuoto che un dato sbagliato */
+  if (out.fmPerc !== null && (out.fmPerc < 2 || out.fmPerc > 70)) out.fmPerc = null;
+  if (out.peso !== null && (out.peso < 25 || out.peso > 300)) out.peso = null;
+  if (out.altezza !== null && (out.altezza < 100 || out.altezza > 230)) out.altezza = null;
+  if (out.bmr !== null && (out.bmr < 700 || out.bmr > 4500)) out.bmr = null;
+
+  return out;
 };
 
 window.handleBiaPdf = async function(files) {
@@ -4368,10 +4605,125 @@ window.getProfile = function() {
 };
 
 /* ============================================================
+   IMPOSTAZIONI
+   ============================================================ */
+const THEME_KEY = 'tz_theme';               /* 'dark' | 'light' | 'auto' */
+const SOUND_KEY = 'tz_sound';               /* suoni del timer */
+const COUNTDOWN_KEY = 'tz_countdown';       /* bip negli ultimi 5 secondi */
+const AUTOCLOSE_KEY = 'tz_autoclose';       /* chiusura automatica del timer */
+
+window.getSetting = function(k, def) {
+  const v = localStorage.getItem(k);
+  return v === null ? def : v;
+};
+window.setSetting = function(k, v) { localStorage.setItem(k, String(v)); };
+window.isOn = function(k, def) { return getSetting(k, def ? '1' : '0') === '1'; };
+
+window.applyTheme = function() {
+  const pref = getSetting(THEME_KEY, 'dark');
+  let tema = pref;
+  if (pref === 'auto') {
+    const mq = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)');
+    tema = (mq && mq.matches) ? 'light' : 'dark';
+  }
+  document.body.dataset.theme = tema;
+  const meta = document.getElementById('theme-color-meta');
+  if (meta) meta.setAttribute('content', tema === 'light' ? '#f5f4f1' : (MODE_META[currentMode] ? MODE_META[currentMode].themeColor : '#08080a'));
+};
+
+window.setTheme = function(v) {
+  setSetting(THEME_KEY, v);
+  applyTheme();
+  renderSettings();
+};
+
+window.openSettings = function() {
+  document.getElementById('settings').classList.remove('hidden');
+  renderSettings();
+};
+window.closeSettings = function() {
+  document.getElementById('settings').classList.add('hidden');
+};
+
+window.toggleSetting = function(k, def) {
+  setSetting(k, isOn(k, def) ? '0' : '1');
+  renderSettings();
+};
+
+function segHtml(valori, attuale, fn) {
+  return '<div class="set-seg">' + valori.map(v =>
+    '<button class="' + (attuale === v.id ? 'on' : '') + '" onclick="' + fn + '(\'' + v.id + '\')">' + v.label + '</button>'
+  ).join('') + '</div>';
+}
+
+function toggleHtml(k, def, nome, desc) {
+  const on = isOn(k, def);
+  return '<button class="set-toggle" onclick="toggleSetting(\'' + k + '\', ' + (def ? 'true' : 'false') + ')">' +
+    '<span class="set-toggle-main"><span class="set-toggle-name">' + nome + '</span>' +
+    '<span class="set-toggle-desc">' + desc + '</span></span>' +
+    '<span class="switch ' + (on ? 'on' : '') + '"></span></button>';
+}
+
+function renderSettings() {
+  const prof = getProfile();
+  document.getElementById('settings-sub').innerText = currentMode === 'maki' ? 'Protocollo Maki' : 'Protocollo Toji';
+
+  document.getElementById('settings-body').innerHTML =
+    '<div class="set-group">' +
+      '<div class="set-group-title">Aspetto</div>' +
+      segHtml([
+        { id: 'dark',  label: '\u{1F319} Scuro' },
+        { id: 'light', label: '\u2600\uFE0F Chiaro' },
+        { id: 'auto',  label: '\u{1F504} Auto' }
+      ], getSetting(THEME_KEY, 'dark'), 'setTheme') +
+      '<div class="set-about" style="margin-top:8px;">In palestra con molta luce la modalita chiara si legge meglio: usa riempimenti pieni e contrasti alti, perche i bordi sottili spariscono al sole. "Auto" segue l\'impostazione del telefono.</div>' +
+    '</div>' +
+
+    '<div class="set-group">' +
+      '<div class="set-group-title">Protocollo</div>' +
+      segHtml([
+        { id: 'toji', label: '\u{1F94B} Toji' },
+        { id: 'maki', label: '\u2694\uFE0F Maki' }
+      ], currentMode, 'switchProtocol') +
+      '<div class="set-about" style="margin-top:8px;">Ogni protocollo tiene schede, storico e impostazioni separati: cambiando non perdi nulla.</div>' +
+    '</div>' +
+
+    '<div class="set-group">' +
+      '<div class="set-group-title">Timer di recupero</div>' +
+      toggleHtml(SOUND_KEY, true, 'Suono a fine recupero', 'Un segnale quando il tempo scade') +
+      toggleHtml(COUNTDOWN_KEY, true, 'Conto alla rovescia sonoro', 'Un bip a ogni secondo negli ultimi cinque') +
+      toggleHtml(AUTOCLOSE_KEY, true, 'Chiudi da solo a fine recupero', 'Il pannello sparisce senza doverlo toccare') +
+    '</div>' +
+
+    '<div class="set-group">' +
+      '<div class="set-group-title">Programma</div>' +
+      (prof
+        ? '<div class="set-about" style="margin-bottom:8px;">Programma attuale: <b>' + escapeHtml(prof.split || '-') + '</b>, obiettivo <b>' + escapeHtml(prof.goal || '-') + '</b>, ' + (prof.settimane || '-') + ' settimane. Creato il ' + escapeHtml(prof.creato || '-') + '.</div>'
+        : '<div class="set-about" style="margin-bottom:8px;">Non hai ancora creato un programma personalizzato.</div>') +
+      '<button class="set-row-btn" onclick="closeSettings(); restartOnboarding();">\u{1F9ED} Rifai il programma personalizzato</button>' +
+    '</div>' +
+
+    '<div class="set-group">' +
+      '<div class="set-group-title">Informazioni</div>' +
+      '<div class="set-about">Tracker allenamenti che funziona anche offline: i dati restano solo sul tuo telefono, non vengono inviati da nessuna parte.<br><br>I suggerimenti dell\'app seguono regole di programmazione, non sostituiscono un preparatore o un medico.</div>' +
+    '</div>';
+}
+
+window.switchProtocol = function(mode) {
+  if (mode === currentMode) return;
+  localStorage.setItem(MODE_KEY, mode);
+  activateMode(mode);
+  applyTheme();
+  renderSettings();
+  showUndo('Passato al protocollo ' + (mode === 'maki' ? 'Maki' : 'Toji'));
+};
+
+/* ============================================================
    BOOT
    ============================================================ */
 (function boot() {
   buildExerciseSelect();
+  applyTheme();
   document.getElementById('recovery-mute-btn').innerText = recoveryMuted ? '🔇' : '🔊';
   const stored = getStoredMode();
   if (stored && MODE_META[stored]) {
