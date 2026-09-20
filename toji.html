@@ -408,6 +408,14 @@ body.reorder-mode .plan-card { border-color: var(--primary); }
 .ex-note a { color: var(--accent); }
 .info-btn { background: transparent; border: none; color: var(--muted); font-size: 0.95rem; cursor: pointer; padding: 3px 5px; border-radius: 6px; flex-shrink: 0; }
 
+/* lampeggio di fine recupero: si vede sempre, anche a telefono zittito */
+.screen-flash {
+  position: fixed; inset: 0; z-index: 200; pointer-events: none;
+  background: var(--primary); opacity: 0;
+  transition: opacity .12s linear;
+}
+.screen-flash.on { opacity: 0.55; }
+
 /* ======= Impostazioni ======= */
 .settings { position: fixed; inset: 0; z-index: 110; background: var(--bg); display: flex; flex-direction: column; }
 .settings.hidden { display: none; }
@@ -1302,6 +1310,8 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
   <div class="sheet-body" id="ex-info-body"></div>
 </div>
 
+<div class="screen-flash" id="screen-flash" aria-hidden="true"></div>
+
 <div class="snackbar" id="snackbar">
   <div class="snackbar-text" id="snackbar-text"></div>
   <button class="snackbar-btn" id="snackbar-btn">Annulla</button>
@@ -2096,8 +2106,61 @@ function getAudioCtx() {
   } catch (e) { return null; }
 }
 
+/* ============================================================
+   SUONO CON IL TELEFONO IN SILENZIOSO
+   Su iPhone l interruttore fisico zittisce l audio delle pagine web.
+   La tecnica documentata per aggirarlo: tenere in riproduzione una
+   traccia SILENZIOSA con un elemento audio normale. Cosi il sistema
+   considera l app un lettore multimediale e manda i suoni sul canale
+   della musica, non su quello della suoneria, che e quello zittito.
+   Funziona su molti dispositivi, ma Apple ha cambiato comportamento
+   piu volte: per questo resta un opzione, e c e anche un segnale
+   visivo che funziona comunque, silenzioso o no.
+   ============================================================ */
+const SILENZIO_WAV = 'data:audio/wav;base64,UklGRsQPAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YaAPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+let mediaKeeper = null;
+
+function avviaCanaleMultimediale() {
+  if (!isOn(BYPASS_KEY, true)) return;
+  try {
+    if (!mediaKeeper) {
+      mediaKeeper = document.createElement('audio');
+      mediaKeeper.src = SILENZIO_WAV;
+      mediaKeeper.loop = true;
+      mediaKeeper.preload = 'auto';
+      mediaKeeper.setAttribute('playsinline', '');
+      mediaKeeper.setAttribute('x-webkit-airplay', 'deny');
+      mediaKeeper.volume = 0.02;   /* non zero: a zero alcuni browser lo ignorano */
+      document.body.appendChild(mediaKeeper);
+    }
+    const p = mediaKeeper.play();
+    if (p && p.catch) p.catch(() => {});
+  } catch (e) {}
+}
+
+function fermaCanaleMultimediale() {
+  if (mediaKeeper) { try { mediaKeeper.pause(); } catch (e) {} }
+}
+
+/* Segnale visivo: lampeggia lo schermo. Questo funziona sempre,
+   anche col telefono zittito e anche se l audio viene bloccato. */
+window.lampeggia = function(volte) {
+  if (!isOn(FLASH_KEY, true)) return;
+  const n = volte || 2;
+  let i = 0;
+  const flash = document.getElementById('screen-flash');
+  if (!flash) return;
+  const giro = () => {
+    if (i >= n) { flash.classList.remove('on'); return; }
+    flash.classList.add('on');
+    setTimeout(() => { flash.classList.remove('on'); i++; setTimeout(giro, 140); }, 160);
+  };
+  giro();
+};
+
 function unlockAudio() {
   const ctx = getAudioCtx();
+  avviaCanaleMultimediale();
   if (ctx && ctx.state === 'running') {
     document.removeEventListener('pointerdown', unlockAudio);
     document.removeEventListener('touchstart', unlockAudio);
@@ -2127,6 +2190,8 @@ function playBeep() { playTone(880, 0.25, 'sawtooth'); }
 
 /* Prova dalle impostazioni: serve anche a sbloccare l audio al primo uso */
 window.testSound = function() {
+  avviaCanaleMultimediale();
+  lampeggia(1);
   playTick();
   setTimeout(() => playTick(), 230);
   setTimeout(() => playEnd(), 540);
@@ -2879,6 +2944,7 @@ window.openRecoveryPanel = function(label, seconds) {
       document.getElementById('recovery-overlay').classList.remove('ending');
       if (!recoveryMuted && isOn(SOUND_KEY, true)) playEnd();
       if (navigator.vibrate) { try { navigator.vibrate([200, 90, 200]); } catch (e) {} }
+      lampeggia(3);
       if (isOn(AUTOCLOSE_KEY, true)) {
         setTimeout(() => { if (!recoveryInterval) closeRecoveryPanel(); }, 1200);
       }
@@ -5007,6 +5073,8 @@ const THEME_KEY = 'tz_theme';               /* 'dark' | 'light' | 'auto' */
 const SOUND_KEY = 'tz_sound';               /* suoni del timer */
 const COUNTDOWN_KEY = 'tz_countdown';       /* bip negli ultimi 5 secondi */
 const AUTOCLOSE_KEY = 'tz_autoclose';       /* chiusura automatica del timer */
+const BYPASS_KEY = 'tz_bypass_silent';      /* suona anche col telefono zittito */
+const FLASH_KEY = 'tz_flash';               /* lampeggio dello schermo */
 
 window.getSetting = function(k, def) {
   const v = localStorage.getItem(k);
@@ -5042,6 +5110,10 @@ window.closeSettings = function() { switchTab('piano'); };
 
 window.toggleSetting = function(k, def) {
   setSetting(k, isOn(k, def) ? '0' : '1');
+  if (k === BYPASS_KEY) {
+    if (isOn(BYPASS_KEY, true)) avviaCanaleMultimediale();
+    else fermaCanaleMultimediale();
+  }
   renderSettings();
 };
 
@@ -5088,8 +5160,10 @@ function renderSettings() {
       toggleHtml(SOUND_KEY, true, 'Suono a fine recupero', 'Un segnale quando il tempo scade') +
       toggleHtml(COUNTDOWN_KEY, true, 'Conto alla rovescia sonoro', 'Un bip a ogni secondo negli ultimi cinque') +
       toggleHtml(AUTOCLOSE_KEY, true, 'Chiudi da solo a fine recupero', 'Il pannello sparisce senza doverlo toccare') +
+      toggleHtml(BYPASS_KEY, true, 'Suona anche in silenzioso', 'Manda i suoni sul canale della musica invece che su quello della suoneria') +
+      toggleHtml(FLASH_KEY, true, 'Lampeggia lo schermo', 'Segnale visivo a fine recupero: si vede anche senza audio') +
       '<button class="set-row-btn" onclick="testSound()">\u{1F50A} Prova il suono</button>' +
-      '<div class="set-about">Se non senti nulla: controlla che il telefono non sia in silenzioso e tocca una volta lo schermo, perche i browser attivano l audio solo dopo un gesto.</div>' +
+      '<div class="set-about">Su iPhone l interruttore fisico del silenzioso zittisce l audio delle pagine web. "Suona anche in silenzioso" usa un accorgimento noto (l app si presenta come lettore musicale) che funziona su molti dispositivi, ma Apple ha cambiato comportamento piu volte e non e garantito. Il lampeggio dello schermo invece funziona sempre. Ricorda comunque di toccare una volta lo schermo: i browser attivano l audio solo dopo un gesto.</div>' +
     '</div>' +
 
     '<div class="set-group">' +
