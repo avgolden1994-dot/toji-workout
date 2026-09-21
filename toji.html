@@ -257,6 +257,34 @@ body {
 .mc-done-t { font-weight: 900; color: var(--success); }
 .mc-gcal { display: block; text-align: center; text-decoration: none; margin-top: var(--sp-3); }
 
+/* ======= Copia della settimana come blocco ======= */
+.mc-week.sorgente { background: color-mix(in srgb, var(--primary) 16%, transparent); box-shadow: 0 0 0 2px var(--primary) inset; }
+.mc-week.sorgente .mc-grip { color: var(--primary); }
+.mc-week.bersaglio { background: color-mix(in srgb, var(--success) 16%, transparent); box-shadow: 0 0 0 2px var(--success) inset; }
+.mc-week.drop { background: color-mix(in srgb, var(--success) 22%, transparent); box-shadow: 0 0 0 2px var(--success) inset; }
+#mc-grid.copiando .mc-cell { cursor: copy; }
+.mc-grip { font-size: 1.25rem; min-height: 40px; }
+.mc-copybar {
+  margin-top: var(--sp-4); padding: var(--sp-4);
+  border: 1px solid var(--primary); border-radius: 12px;
+  background: color-mix(in srgb, var(--primary) 8%, var(--surface-1));
+}
+.mc-cb-text { font-size: 0.8rem; line-height: var(--lh-base); }
+.mc-cb-label { font-size: 0.64rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin: var(--sp-3) 0 var(--sp-2); }
+.mc-cb-row { display: flex; gap: var(--sp-2); margin-top: var(--sp-2); }
+.mc-cb-rep { flex: 1; background: var(--surface-2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 9px 0; font-weight: 900; cursor: pointer; }
+.mc-cb-cancel { flex: 1; background: var(--surface-2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 11px; font-weight: 800; cursor: pointer; }
+.mc-cb-paste { flex: 2; background: var(--primary); border: none; color: var(--on-primary); border-radius: 8px; padding: 11px; font-weight: 900; cursor: pointer; }
+.mc-cb-paste:disabled { opacity: 0.4; cursor: not-allowed; }
+/* etichetta che segue il dito durante il trascinamento */
+.mc-ghost {
+  position: fixed; z-index: 210; display: none; pointer-events: none;
+  transform: translate(-50%, -140%);
+  background: var(--primary); color: var(--on-primary);
+  font-size: 0.74rem; font-weight: 900; padding: 6px 12px; border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35); white-space: nowrap;
+}
+
 /* ======= Aggiungi allenamento alla settimana ======= */
 .aw-path {
   display: flex; align-items: center; gap: var(--sp-4); width: 100%; text-align: left;
@@ -1487,7 +1515,21 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
         <span><i class="mc-l done"></i> fatto</span>
         <span><i class="mc-l rest"></i> riposo</span>
       </div>
-      <div class="mc-hint" id="mc-hint">Trascina la maniglia ≡ di una settimana verso il basso per ricopiarla sulle successive.</div>
+      <div class="mc-copybar" id="mc-copybar" style="display:none;">
+        <div class="mc-cb-text" id="mc-cb-text"></div>
+        <div class="mc-cb-label">Ripeti per le prossime settimane</div>
+        <div class="mc-cb-row">
+          <button class="mc-cb-rep" onclick="mcRepeat(1)">1</button>
+          <button class="mc-cb-rep" onclick="mcRepeat(2)">2</button>
+          <button class="mc-cb-rep" onclick="mcRepeat(4)">4</button>
+          <button class="mc-cb-rep" onclick="mcRepeat(8)">8</button>
+        </div>
+        <div class="mc-cb-row">
+          <button class="mc-cb-cancel" onclick="mcCancelCopy()">Annulla</button>
+          <button class="mc-cb-paste" id="mc-cb-paste" onclick="mcPaste()">Incolla</button>
+        </div>
+      </div>
+      <div class="mc-hint" id="mc-hint">Tocca la maniglia ≡ per selezionare una settimana intera, poi scegli dove incollarla. Oppure trascinala sopra un altra settimana.</div>
     </div>
 
     <div class="card" id="mc-actions">
@@ -1590,6 +1632,8 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
   </div>
   <div class="sheet-body"><div id="week-overview"></div></div>
 </div>
+
+<div class="mc-ghost" id="mc-ghost" aria-hidden="true"></div>
 
 <div class="screen-flash" id="screen-flash" aria-hidden="true"></div>
 
@@ -6314,8 +6358,10 @@ function mettiSettimana(lunedi, cal) {
   for (let i = 0; i < 7; i++) {
     const d = piuGiorni(lunedi, i), k = ymd(d);
     if (cal[k] && cal[k].done) continue;
-    const v = voceDaPiano(d);
-    if (v) { cal[k] = v; messi++; } else delete cal[k];
+    /* i giorni senza allenamento diventano riposo: il blocco e' la
+       settimana intera, sette giorni su sette, non solo i giorni pieni */
+    cal[k] = voceDaPiano(d) || { rest: true, title: 'Riposo' };
+    messi++;
   }
   return messi;
 }
@@ -6327,11 +6373,14 @@ function copiaSettimana(da, a, cal) {
     const s = cal[ymd(piuGiorni(da, i))];
     const k = ymd(piuGiorni(a, i));
     if (cal[k] && cal[k].done) continue;           /* lo storico non si tocca */
-    if (s) {
-      cal[k] = s.rest ? { rest: true, title: 'Riposo' }
-                      : { title: s.title, items: JSON.parse(JSON.stringify(s.items || [])), done: false };
-      copiati++;
-    } else delete cal[k];
+    /* un giorno fatto nella settimana d origine si copia come allenamento
+       da fare: la spunta appartiene alla data, non al programma */
+    if (s && !s.rest) {
+      cal[k] = { title: s.title, items: JSON.parse(JSON.stringify(s.items || [])), done: false };
+    } else {
+      cal[k] = { rest: true, title: 'Riposo' };
+    }
+    copiati++;
   }
   return copiati;
 }
@@ -6364,15 +6413,21 @@ function renderMonthCal() {
       if (v && v.done) { cls += ' done'; mark = '\u2713'; }
       else if (v && v.rest) { cls += ' rest'; mark = '\u{1F634}'; }
       else if (v) { cls += ' plan'; mark = '\u25CF'; }
-      return '<button class="' + cls + '" data-data="' + k + '" onclick="mcOpenDay(\'' + k + '\')">' +
+      /* in modalita copia, toccare un giorno sceglie la sua settimana */
+      const azione = mcCopySrc ? 'mcToggleTarget(\'' + lk + '\')' : 'mcOpenDay(\'' + k + '\')';
+      return '<button class="' + cls + '" data-data="' + k + '" onclick="' + azione + '">' +
         '<span class="mc-n">' + d.getDate() + '</span><span class="mc-mark">' + mark + '</span></button>';
     }).join('');
-    return '<div class="mc-week" data-lunedi="' + lk + '">' +
-      '<span class="mc-grip' + (piena ? '' : ' vuota') + '" data-grip="' + lk + '" aria-label="Trascina per ricopiare la settimana">\u2261</span>' +
+    const stato = lk === mcCopySrc ? ' sorgente' : (mcCopyTargets.indexOf(lk) !== -1 ? ' bersaglio' : '');
+    return '<div class="mc-week' + stato + '" data-lunedi="' + lk + '">' +
+      '<span class="mc-grip' + (piena ? '' : ' vuota') + '" data-grip="' + lk + '" ' +
+        'aria-label="Tocca per selezionare la settimana, trascina per copiarla">\u2261</span>' +
       celle + '</div>';
   }).join('');
 
   document.querySelectorAll('#mc-grid .mc-grip:not(.vuota)').forEach(attachWeekDrag);
+  document.getElementById('mc-grid').classList.toggle('copiando', !!mcCopySrc);
+  renderCopyBar();
   aggiornaAiutoIcs();
 }
 
@@ -6383,51 +6438,154 @@ window.mcMove = function(delta) {
   renderMonthCal();
 };
 
-/* ---- Trascinare una settimana verso il basso la ricopia ----
-   Si prende la maniglia, si scende sopra le settimane successive: si
-   illuminano, e al rilascio vengono riempite con la copia. */
+/* ============================================================
+   COPIARE UNA SETTIMANA COME BLOCCO UNICO
+   La settimana si seleziona intera, da lunedi a domenica, con i suoi
+   allenamenti E i suoi riposi. Poi la si incolla su altre settimane,
+   anche in altri mesi: cosi si costruisce un programma piu lungo.
+   Due modi per farlo, che portano allo stesso risultato:
+   - TOCCARE: si tocca la maniglia per selezionare il blocco, poi si
+     toccano le settimane dove incollarlo (si puo cambiare mese), poi
+     Incolla. Oppure "Ripeti" per le prossime 1, 2, 4 o 8 settimane.
+   - TRASCINARE: si prende la maniglia e si porta il blocco sopra
+     un altra settimana, in su o in giu; passando su piu settimane si
+     riempiono tutte quelle attraversate.
+   ============================================================ */
+let mcCopySrc = null;        /* lunedi della settimana selezionata */
+let mcCopyTargets = [];      /* lunedi delle settimane dove incollare */
+
+function etichettaSettimana(lk) {
+  const l = daYmd(lk), d = piuGiorni(l, 6);
+  const f = (x) => x.getDate() + ' ' + x.toLocaleDateString('it-IT', { month: 'short' });
+  return f(l) + ' \u2013 ' + f(d);
+}
+
+function settimanaPiena(lk, cal) {
+  for (let i = 0; i < 7; i++) if (cal[ymd(piuGiorni(daYmd(lk), i))]) return true;
+  return false;
+}
+
+window.mcSelectWeek = function(lk) {
+  if (mcCopySrc === lk) { mcCancelCopy(); return; }
+  if (!settimanaPiena(lk, loadCal())) {
+    alert('Questa settimana e vuota: seleziona una settimana gia programmata.');
+    return;
+  }
+  mcCopySrc = lk;
+  mcCopyTargets = [];
+  renderMonthCal();
+};
+
+window.mcToggleTarget = function(lk) {
+  if (!mcCopySrc || lk === mcCopySrc) return;
+  const i = mcCopyTargets.indexOf(lk);
+  if (i === -1) mcCopyTargets.push(lk); else mcCopyTargets.splice(i, 1);
+  mcCopyTargets.sort();
+  renderMonthCal();
+};
+
+/* Ripete il blocco sulle N settimane che seguono: il modo piu rapido
+   per trasformare una settimana in un programma di un mese o due. */
+window.mcRepeat = function(n) {
+  if (!mcCopySrc) return;
+  const l = daYmd(mcCopySrc);
+  mcCopyTargets = [];
+  for (let i = 1; i <= n; i++) mcCopyTargets.push(ymd(piuGiorni(l, 7 * i)));
+  renderMonthCal();
+};
+
+window.mcCancelCopy = function() {
+  mcCopySrc = null;
+  mcCopyTargets = [];
+  renderMonthCal();
+};
+
+window.mcPaste = function() {
+  if (!mcCopySrc || !mcCopyTargets.length) return;
+  const origine = mcCopySrc, dest = mcCopyTargets.slice();
+  mcCopySrc = null; mcCopyTargets = [];
+  mcCopyWeeks(origine, dest);
+};
+
+function renderCopyBar() {
+  const bar = document.getElementById('mc-copybar');
+  if (!bar) return;
+  if (!mcCopySrc) { bar.style.display = 'none'; return; }
+  bar.style.display = 'block';
+  const n = mcCopyTargets.length;
+  const ultima = n ? mcCopyTargets[n - 1] : null;
+  document.getElementById('mc-cb-text').innerHTML =
+    '<b>\u{1F4CB} Blocco selezionato:</b> ' + etichettaSettimana(mcCopySrc) + '<br>' +
+    (n ? n + (n === 1 ? ' settimana scelta' : ' settimane scelte') + ', fino al ' +
+         piuGiorni(daYmd(ultima), 6).toLocaleDateString('it-IT', { day: 'numeric', month: 'long' })
+       : 'Tocca le settimane dove incollarlo, anche in altri mesi.');
+  const inc = document.getElementById('mc-cb-paste');
+  inc.disabled = n === 0;
+  inc.innerText = n ? 'Incolla su ' + n + (n === 1 ? ' settimana' : ' settimane') : 'Incolla';
+}
+
+/* ---- Trascinamento del blocco ---- */
 function attachWeekDrag(grip) {
-  let attivo = false, bersagli = [];
+  let premuto = false, trascina = false, x0 = 0, y0 = 0, anteprima = [];
   const origine = grip.dataset.grip;
+  const ghost = document.getElementById('mc-ghost');
 
   const settimanaSotto = (x, y) => {
+    if (ghost) ghost.style.display = 'none';          /* il fantasma non deve coprire */
     const el = document.elementFromPoint ? document.elementFromPoint(x, y) : null;
+    if (ghost && trascina) ghost.style.display = 'block';
     const riga = el && el.closest ? el.closest('.mc-week') : null;
     return riga ? riga.dataset.lunedi : null;
   };
   const evidenzia = () => {
     document.querySelectorAll('#mc-grid .mc-week').forEach(r => {
-      r.classList.toggle('origine', attivo && r.dataset.lunedi === origine);
-      r.classList.toggle('bersaglio', bersagli.indexOf(r.dataset.lunedi) !== -1);
+      r.classList.toggle('drop', anteprima.indexOf(r.dataset.lunedi) !== -1);
     });
   };
 
   grip.addEventListener('pointerdown', (e) => {
-    attivo = true; bersagli = [];
+    premuto = true; trascina = false; anteprima = [];
+    x0 = e.clientX; y0 = e.clientY;
     try { grip.setPointerCapture(e.pointerId); } catch (err) {}
-    evidenzia();
     e.preventDefault();
   });
+
   grip.addEventListener('pointermove', (e) => {
-    if (!attivo) return;
+    if (!premuto) return;
+    if (!trascina) {
+      if (Math.abs(e.clientY - y0) + Math.abs(e.clientX - x0) < 8) return;   /* era un tocco */
+      trascina = true;
+      mcCopySrc = origine;
+      document.querySelectorAll('#mc-grid .mc-week').forEach(r => r.classList.toggle('sorgente', r.dataset.lunedi === origine));
+      if (ghost) { ghost.innerText = '\u{1F4CB} ' + etichettaSettimana(origine); ghost.style.display = 'block'; }
+    }
+    if (ghost) { ghost.style.left = e.clientX + 'px'; ghost.style.top = e.clientY + 'px'; }
     const sotto = settimanaSotto(e.clientX, e.clientY);
-    if (!sotto) return;
-    /* tutte le settimane tra l origine e quella sotto il dito */
+    if (!sotto) { anteprima = []; evidenzia(); return; }
+    /* tutte le settimane attraversate, in su o in giu, esclusa l origine */
     const tutte = Array.from(document.querySelectorAll('#mc-grid .mc-week')).map(r => r.dataset.lunedi);
     const a = tutte.indexOf(origine), b = tutte.indexOf(sotto);
-    bersagli = b > a ? tutte.slice(a + 1, b + 1) : [];
+    anteprima = (b > a ? tutte.slice(a + 1, b + 1) : tutte.slice(b, a)).filter(k => k !== origine);
     evidenzia();
   });
+
   const fine = () => {
-    if (!attivo) return;
-    attivo = false;
-    const lista = bersagli.slice();
-    bersagli = [];
-    evidenzia();
+    if (!premuto) return;
+    premuto = false;
+    if (ghost) ghost.style.display = 'none';
+    if (!trascina) { mcSelectWeek(origine); return; }   /* tocco semplice: seleziona il blocco */
+    const lista = anteprima.slice();
+    anteprima = []; trascina = false;
+    mcCopySrc = null; mcCopyTargets = [];
     if (lista.length) mcCopyWeeks(origine, lista);
+    else renderMonthCal();
   };
   grip.addEventListener('pointerup', fine);
-  grip.addEventListener('pointercancel', fine);
+  grip.addEventListener('pointercancel', () => {
+    premuto = false; trascina = false; anteprima = [];
+    if (ghost) ghost.style.display = 'none';
+    renderMonthCal();
+  });
 }
 
 window.mcCopyWeeks = function(origine, destinazioni) {
