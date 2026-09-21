@@ -172,6 +172,80 @@ body {
 /* ======= Shell app ======= */
 .app-shell { max-width: 480px; margin: 0 auto; padding: var(--sp-4) var(--sp-4) calc(96px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: var(--sp-5); }
 
+/* ======= Giorno: vista in sola lettura / modifica =======
+   Toccando un giorno gia costruito si VEDE l allenamento, non si entra
+   nell editor. La modifica e' un azione esplicita, col suo pulsante:
+   cosi non si rischia di cambiare qualcosa solo per guardarla. */
+#plan-day-screen.viewing .edit-only { display: none !important; }
+#plan-day-screen:not(.viewing) .view-only { display: none !important; }
+
+.dv-head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--sp-3); margin-bottom: var(--sp-4); }
+.dv-summary { font-size: 0.76rem; line-height: var(--lh-tight); color: var(--muted); font-weight: 700; margin-top: var(--sp-1); }
+.dv-row {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: var(--sp-3) 0; border-bottom: 1px solid var(--border);
+}
+.dv-row:last-child { border-bottom: none; }
+.dv-num {
+  flex-shrink: 0; width: 26px; height: 26px; border-radius: 8px;
+  background: var(--surface-2); color: var(--muted);
+  font-size: 0.74rem; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+}
+.dv-main { flex: 1; min-width: 0; }
+.dv-name { display: block; font-weight: 800; font-size: 0.9rem; line-height: var(--lh-tight); }
+.dv-meta { display: block; font-size: 0.74rem; line-height: var(--lh-tight); color: var(--muted); margin-top: var(--sp-1); }
+.dv-meta b { color: var(--text); font-weight: 800; }
+.dv-note { display: block; font-size: 0.72rem; color: var(--muted); font-style: italic; margin-top: var(--sp-1); }
+.dv-info { flex-shrink: 0; background: transparent; border: none; color: var(--muted); font-size: 1rem; cursor: pointer; padding: 4px 6px; }
+.dv-empty { text-align: center; padding: var(--sp-5) var(--sp-2); color: var(--muted); font-size: 0.84rem; line-height: var(--lh-base); }
+.dv-actions { display: flex; flex-direction: column; gap: var(--sp-3); }
+.dv-actions .btn-archive, .dv-actions .btn-start-workout { margin-top: 0; }
+.dv-edit-btn { font-size: 0.9rem; padding: 13px; }
+
+/* barra che ricorda che si sta modificando, fissa in alto */
+.edit-bar {
+  position: sticky; top: 0; z-index: 30;
+  display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3);
+  background: color-mix(in srgb, var(--primary) 14%, var(--surface-1));
+  border: 1px solid var(--primary); border-radius: 12px;
+  padding: var(--sp-2) var(--sp-3); margin-bottom: var(--sp-5);
+}
+.edit-bar-label { font-size: 0.78rem; font-weight: 900; color: var(--primary); text-transform: uppercase; letter-spacing: 0.4px; }
+.edit-bar-done { background: var(--primary); color: var(--on-primary); border: none; border-radius: 8px; padding: 8px 16px; font-weight: 900; font-size: 0.82rem; cursor: pointer; }
+
+/* ======= Aggiungi allenamento alla settimana ======= */
+.aw-open-btn { margin-top: var(--sp-4); }
+.aw-sec { font-size: 0.68rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); margin: var(--sp-5) 0 var(--sp-3); }
+.aw-sec:first-child { margin-top: 0; }
+.aw-pick {
+  display: flex; align-items: center; gap: var(--sp-3); width: 100%; text-align: left;
+  background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px;
+  padding: var(--sp-3) var(--sp-4); margin-bottom: var(--sp-2); cursor: pointer; color: var(--text);
+}
+.aw-pick.on { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 10%, var(--surface-1)); box-shadow: 0 0 0 1px var(--primary) inset; }
+.aw-radio { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border-strong); }
+.aw-pick.on .aw-radio { border-color: var(--primary); background: radial-gradient(circle, var(--primary) 45%, transparent 50%); }
+.aw-main { flex: 1; min-width: 0; }
+.aw-name { display: block; font-weight: 800; font-size: 0.88rem; line-height: var(--lh-tight); }
+.aw-meta { display: block; font-size: 0.72rem; line-height: var(--lh-tight); color: var(--muted); margin-top: var(--sp-1); }
+.aw-chosen { background: var(--surface-2); border-radius: 10px; padding: var(--sp-3) var(--sp-4); margin-bottom: var(--sp-5); }
+.aw-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: var(--sp-1); }
+.aw-day {
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
+  padding: var(--sp-2) 2px; cursor: pointer; color: var(--text);
+  display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 64px;
+}
+.aw-day.on { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 16%, var(--surface-1)); box-shadow: 0 0 0 1px var(--primary) inset; }
+.aw-day .cal-dow { font-size: 0.58rem; }
+.aw-day-state { font-size: 0.55rem; font-weight: 700; color: var(--muted); text-align: center; line-height: 1.15; }
+.aw-day.on .aw-day-state { color: var(--primary); }
+.aw-check { font-size: 0.95rem; font-weight: 900; line-height: 1; color: var(--border-strong); }
+.aw-day.on .aw-check { color: var(--primary); }
+.aw-quick { display: flex; gap: var(--sp-2); margin-top: var(--sp-3); }
+.aw-quick button { flex: 1; background: var(--surface-2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 8px 4px; font-size: 0.72rem; font-weight: 800; cursor: pointer; }
+.aw-warn { font-size: 0.76rem; line-height: var(--lh-base); color: var(--muted); margin-top: var(--sp-5); }
+
 /* ======= Calendario della settimana =======
    Sette celle su una riga: la settimana si legge tutta in un colpo
    d occhio invece di scorrere sette schede una sotto l altra. */
@@ -428,10 +502,17 @@ body.reorder-mode .plan-card { border-color: var(--primary); }
   border: 1.5px dashed var(--border); border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
 }
+.ex-img-slot { position: relative; }
+.ex-img { width: 100%; height: 100%; object-fit: contain; display: block; }
+/* il segnaposto compare solo quando il disegno manca davvero */
 .ex-img-hint {
+  position: absolute; inset: 0; display: none;
+  align-items: center; justify-content: center;
   font-size: 0.72rem; font-weight: 700; letter-spacing: 0.4px;
   color: var(--muted); opacity: 0.7; text-transform: uppercase;
 }
+.ex-img-slot.vuoto .ex-img-hint { display: flex; }
+.ex-img-slot:not(.vuoto) { border-style: solid; border-color: var(--border); }
 .ex-draw { width: 100%; height: 100%; display: block; }
 /* la figura ha corpo pieno con un contorno piu marcato, cosi si legge
    come una persona anche a schermo piccolo */
@@ -1065,6 +1146,7 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
           <span><i class="cal-dot empty"></i> vuoto</span>
         </div>
         <div class="cal-summary" id="cal-summary"></div>
+        <button class="btn-start-workout aw-open-btn" onclick="openAddWeek()">+ Aggiungi allenamento alla settimana</button>
       </div>
 
       <div class="card">
@@ -1085,10 +1167,34 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
         <button class="plan-icon-btn" onclick="renameDayTitle()" title="Rinomina" aria-label="Rinomina">✎</button>
       </div>
       <div class="days-bar" id="days-container" style="display:none;"></div>
-      <button class="rest-toggle" id="rest-toggle-btn" onclick="toggleRestDay()" style="margin-bottom:14px;">😴 Segna come giorno di riposo</button>
+      <!-- VISTA IN SOLA LETTURA: e' quello che si vede toccando un giorno gia costruito -->
+      <div class="view-only">
+        <div class="card">
+          <div class="dv-head">
+            <div>
+              <div class="section-title" style="margin:0;">Allenamento del giorno</div>
+              <div class="dv-summary" id="day-view-summary"></div>
+            </div>
+          </div>
+          <div id="day-view-list"></div>
+        </div>
+        <div class="dv-actions">
+          <button class="btn-archive dv-edit-btn" onclick="enterPlanEdit()">✎ Modifica allenamento</button>
+          <button class="btn-start-workout" id="day-view-start" onclick="startWorkoutFromPlan()">▶ INIZIA ALLENAMENTO</button>
+        </div>
+      </div>
+
+      <!-- barra della modalita modifica: resta in vista mentre si scorre -->
+      <div class="edit-bar edit-only" id="edit-bar">
+        <span class="edit-bar-label">✎ Stai modificando</span>
+        <button class="edit-bar-done" onclick="exitPlanEdit()">✓ Fine</button>
+      </div>
+
+
+      <button class="rest-toggle edit-only" id="rest-toggle-btn" onclick="toggleRestDay()" style="margin-bottom:14px;">😴 Segna come giorno di riposo</button>
 
     <!-- PASSO 2: gruppi muscolari -->
-    <div class="card">
+    <div class="card edit-only">
       <div class="step-head"><span class="step-num">2</span><span class="step-label">Che cosa alleni?</span></div>
       <div class="section-hint">Tocca uno o piu gruppi: la figura mostra i muscoli coinvolti.</div>
       <div class="body-map-wrap" id="body-map"></div>
@@ -1101,21 +1207,21 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
       <button class="plan-tool-btn clear-sel-btn" id="clear-sel-btn" style="width:100%;margin-top:10px;display:none;" onclick="clearGroupSelection()">✕ Nascondi le proposte</button>
     </div>
 
-    <div class="card" id="group-templates-card" style="display:none;">
+    <div class="card edit-only" id="group-templates-card" style="display:none;">
       <div class="step-head"><span class="step-num">3</span><span class="step-label">Schede pronte per questa scelta</span></div>
       <div class="carousel" id="group-templates"></div>
       <div class="carousel-hint">scorri di lato per vederle tutte →</div>
     </div>
 
     <!-- PASSO 3: esercizi SUGGERITI dai gruppi accesi (proposte, non scelte) -->
-    <div class="card" id="suggested-card" style="display:none;">
+    <div class="card edit-only" id="suggested-card" style="display:none;">
       <div class="step-head"><span class="step-num">3</span><span class="step-label">Esercizi suggeriti</span></div>
       <div class="section-hint" id="suggested-hint"></div>
       <div id="suggested-list"></div>
     </div>
 
     <!-- PASSO 3b: aggiunta manuale (nascosta finche non serve) -->
-    <div class="card">
+    <div class="card edit-only">
       <button class="plan-tool-btn" style="width:100%;" id="manual-toggle-btn" onclick="toggleManualForm()">✏️ Aggiungi un esercizio a mano</button>
       <div id="manual-form-wrap" style="display:none; margin-top:12px;">
       <form id="exercise-form" class="grid-form">
@@ -1170,7 +1276,7 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
     </div>
 
     <!-- PASSO 4: il piano risultante -->
-    <div class="card">
+    <div class="card edit-only">
       <div class="plan-head">
         <div style="min-width:0;">
           <div class="step-head"><span class="step-num">4</span><span class="step-label">Il tuo piano</span></div>
@@ -1354,6 +1460,20 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
     </div>
   </div>
   <div class="sheet-body" id="ex-info-body"></div>
+</div>
+
+<div class="group-sheet hidden" id="add-week-sheet">
+  <div class="sheet-bar">
+    <button class="sheet-back" onclick="awBack()" aria-label="Indietro">←</button>
+    <div class="sheet-titles">
+      <div class="sheet-title">Aggiungi allenamento</div>
+      <div class="sheet-sub" id="aw-sub"></div>
+    </div>
+  </div>
+  <div class="sheet-body" id="aw-body"></div>
+  <div class="sheet-footer">
+    <button class="btn-start-workout" style="margin:0;" id="aw-next" onclick="awNext()">Avanti</button>
+  </div>
 </div>
 
 <div class="group-sheet hidden" id="week-sheet">
@@ -2280,6 +2400,9 @@ function syncBuildingLine(n) {
    si vedono muscoli, proposte e scheda di quel giorno.
    ============================================================ */
 window.backToPlanDays = function() {
+  planEditMode = false;
+  const scr = document.getElementById('plan-day-screen');
+  if (scr) scr.classList.remove('viewing');
   document.getElementById('plan-day-picker').style.display = 'block';
   document.getElementById('plan-day-screen').style.display = 'none';
   if (document.body.classList.contains('select-mode')) toggleSelectMode();
@@ -2287,20 +2410,94 @@ window.backToPlanDays = function() {
   renderPlanDayPicker();
 };
 
-window.openPlanDayScreen = function(day) {
+window.openPlanDayScreen = function(day, forzaModifica) {
   closeWeekSheet();
   currentDay = day;
+  /* Giorno gia costruito: lo si guarda. Giorno vuoto: non c e niente da
+     guardare, quindi si entra direttamente a costruirlo. */
+  const pieno = (loadData()[day] || []).length > 0 || isRestDay(day);
+  planEditMode = forzaModifica === true ? true : !pieno;
   planDayOpen = true;
   armedSet = null;
   selectedGroups = [];
   suggestedOrderKey = null;
   document.getElementById('plan-day-picker').style.display = 'none';
   document.getElementById('plan-day-screen').style.display = 'block';
+  applicaModalitaGiorno();
   renderDayBar();
   renderPiano();
   renderGruppi();
   renderSuggested();
 };
+
+let planEditMode = false;
+
+function applicaModalitaGiorno() {
+  const scr = document.getElementById('plan-day-screen');
+  if (!scr) return;
+  scr.classList.toggle('viewing', !planEditMode);
+  if (!planEditMode) renderDayView();
+}
+
+window.enterPlanEdit = function() {
+  planEditMode = true;
+  applicaModalitaGiorno();
+  renderPiano(); renderGruppi(); renderSuggested();
+  const scr = document.getElementById('plan-day-screen');
+  if (scr && scr.scrollIntoView) scr.scrollIntoView({ block: 'start' });
+};
+
+window.exitPlanEdit = function() {
+  /* uscendo dalla modifica si chiudono anche gli strumenti aperti */
+  if (document.body.classList.contains('select-mode')) toggleSelectMode();
+  if (document.body.classList.contains('reorder-mode')) toggleReorderMode();
+  const wrap = document.getElementById('manual-form-wrap');
+  if (wrap && wrap.style.display !== 'none') toggleManualForm();
+  selectedGroups = [];
+  const pieno = (loadData()[currentDay] || []).length > 0 || isRestDay(currentDay);
+  planEditMode = !pieno;   /* se hai svuotato il giorno, resti a costruirlo */
+  applicaModalitaGiorno();
+  renderPlanDayPicker();
+  if (pieno) showUndo('Allenamento di ' + getDayTitle(currentDay) + ' salvato');
+};
+
+/* Vista in sola lettura: nome, serie x ripetizioni, carico, recupero.
+   Niente pulsanti di modifica: per cambiare si passa dal tasto apposito. */
+function renderDayView() {
+  const list = (loadData()[currentDay] || []);
+  const cont = document.getElementById('day-view-list');
+  const sum = document.getElementById('day-view-summary');
+  const start = document.getElementById('day-view-start');
+  if (!cont) return;
+
+  if (isRestDay(currentDay)) {
+    sum.innerText = 'Giorno di riposo';
+    cont.innerHTML = '<div class="dv-empty">\u{1F634}<br>Oggi si recupera. Il riposo fa parte del programma.</div>';
+    if (start) start.style.display = 'none';
+    return;
+  }
+  if (start) start.style.display = list.length ? 'block' : 'none';
+
+  const serie = list.reduce((s2, e) => s2 + e.sets, 0);
+  const minuti = Math.round(list.reduce((s2, e) => s2 + e.sets * (30 + e.rest), 0) / 60);
+  sum.innerText = list.length + ' esercizi \u2022 ' + serie + ' serie \u2022 circa ' + minuti + ' minuti';
+
+  cont.innerHTML = list.map((e, i) => {
+    const unita = isTimeBased(e.name) ? 's' : '';
+    return '<div class="dv-row">' +
+      '<span class="dv-num">' + (i + 1) + '</span>' +
+      '<span class="dv-main">' +
+        '<span class="dv-name">' + escapeHtml(e.name.replace(/^\S+\s/, '')) + '</span>' +
+        '<span class="dv-meta"><b>' + e.sets + ' \u00D7 ' + e.reps + unita + '</b>' +
+          (e.weight ? ' \u2022 ' + e.weight + ' kg' : '') +
+          ' \u2022 recupero ' + e.rest + 's' +
+          (e.superset ? ' \u2022 superset' : '') + '</span>' +
+        (e.note ? '<span class="dv-note">' + escapeHtml(e.note) + '</span>' : '') +
+      '</span>' +
+      '<button class="dv-info" onclick="openExerciseInfo(\'' + e.name.replace(/'/g, "\\'") + '\')" aria-label="Come si fa">\u2139</button>' +
+    '</div>';
+  }).join('');
+}
 
 function renderPlanDayPicker() {
   const data = loadData();
@@ -2339,6 +2536,215 @@ function renderPlanDayPicker() {
       ? 'Nessun allenamento ancora programmato'
       : giorni + ' allenamenti \u2022 ' + serie + ' serie' + (riposi ? ' \u2022 ' + riposi + ' giorni di riposo' : '');
   }
+}
+
+/* ============================================================
+   AGGIUNGI ALLENAMENTO ALLA SETTIMANA
+   Due passi: 1) quale allenamento (una scheda pronta o un giorno che
+   hai gia costruito), 2) su quali giorni. Evita di entrare giorno per
+   giorno a ricostruire la stessa cosa.
+   ============================================================ */
+let awStep = 1;
+let awSource = null;      /* { tipo: 'scheda'|'giorno', id } */
+let awDays = [];
+let awMode = 'sostituisci';
+
+function awEsercizi(src) {
+  if (!src) return [];
+  if (src.tipo === 'scheda') {
+    const t = WORKOUT_TEMPLATES.find(x => x.id === src.id);
+    return t ? t.exercises : [];
+  }
+  return (loadData()[src.id] || []);
+}
+
+function awNome(src) {
+  if (!src) return '';
+  if (src.tipo === 'scheda') {
+    const t = WORKOUT_TEMPLATES.find(x => x.id === src.id);
+    return t ? t.title : '';
+  }
+  return 'Copia di ' + getDayTitle(src.id);
+}
+
+window.openAddWeek = function() {
+  awStep = 1; awSource = null; awDays = []; awMode = 'sostituisci';
+  document.getElementById('add-week-sheet').classList.remove('hidden');
+  renderAddWeek();
+};
+
+window.closeAddWeek = function() {
+  document.getElementById('add-week-sheet').classList.add('hidden');
+};
+
+window.awBack = function() {
+  if (awStep === 2) { awStep = 1; renderAddWeek(); }
+  else closeAddWeek();
+};
+
+window.awPickSource = function(tipo, id) {
+  awSource = { tipo: tipo, id: id };
+  renderAddWeek();
+};
+
+window.awToggleDay = function(d) {
+  const i = awDays.indexOf(d);
+  if (i === -1) awDays.push(d); else awDays.splice(i, 1);
+  renderAddWeek();
+};
+
+window.awQuick = function(quali) {
+  const data = loadData();
+  if (quali === 'vuoti') awDays = DAYS.filter(d => (data[d] || []).length === 0 && !isRestDay(d));
+  else if (quali === 'nessuno') awDays = [];
+  renderAddWeek();
+};
+
+window.awSetMode = function(m) { awMode = m; renderAddWeek(); };
+
+window.awNext = function() {
+  if (awStep === 1) {
+    if (!awSource) return;
+    awStep = 2;
+    /* se copi un giorno, quel giorno non ha senso come destinazione */
+    if (awSource.tipo === 'giorno') awDays = awDays.filter(d => d !== awSource.id);
+    renderAddWeek();
+    return;
+  }
+  if (!awDays.length) return;
+  applicaAllaSettimana();
+};
+
+function renderAddWeek() {
+  const body = document.getElementById('aw-body');
+  const next = document.getElementById('aw-next');
+  const data = loadData();
+
+  if (awStep === 1) {
+    document.getElementById('aw-sub').innerText = 'Passo 1 di 2 \u2022 quale allenamento';
+    const giorniPieni = DAYS.filter(d => (data[d] || []).length > 0);
+
+    let html = '<div class="aw-sec">Schede pronte</div>' +
+      WORKOUT_TEMPLATES.map(t => {
+        const on = awSource && awSource.tipo === 'scheda' && awSource.id === t.id;
+        const serie = t.exercises.reduce((s, e) => s + e.sets, 0);
+        return '<button class="aw-pick ' + (on ? 'on' : '') + '" onclick="awPickSource(\'scheda\', \'' + t.id + '\')">' +
+          '<span class="aw-radio"></span>' +
+          '<span class="aw-main"><span class="aw-name">' + escapeHtml(t.title) + '</span>' +
+          '<span class="aw-meta">' + t.exercises.length + ' esercizi \u2022 ' + serie + ' serie</span></span>' +
+        '</button>';
+      }).join('');
+
+    if (giorniPieni.length) {
+      html += '<div class="aw-sec">Copia un giorno che hai gia costruito</div>' +
+        giorniPieni.map(d => {
+          const on = awSource && awSource.tipo === 'giorno' && awSource.id === d;
+          const n = (data[d] || []).length;
+          return '<button class="aw-pick ' + (on ? 'on' : '') + '" onclick="awPickSource(\'giorno\', \'' + d + '\')">' +
+            '<span class="aw-radio"></span>' +
+            '<span class="aw-main"><span class="aw-name">' + escapeHtml(getDayTitle(d)) + '</span>' +
+            '<span class="aw-meta">' + d + ' \u2022 ' + n + ' esercizi</span></span>' +
+          '</button>';
+        }).join('');
+    }
+
+    body.innerHTML = html;
+    next.innerText = 'Avanti';
+    next.disabled = !awSource;
+    return;
+  }
+
+  /* ---- passo 2: i giorni ---- */
+  document.getElementById('aw-sub').innerText = 'Passo 2 di 2 \u2022 su quali giorni';
+  const es = awEsercizi(awSource);
+  const SIGLE = ['LUN', 'MAR', 'MER', 'GIO', 'VEN', 'SAB', 'DOM'];
+
+  const occupati = awDays.filter(d => (data[d] || []).length > 0);
+
+  body.innerHTML =
+    '<div class="aw-chosen"><span class="aw-name">' + escapeHtml(awNome(awSource)) + '</span>' +
+      '<span class="aw-meta">' + es.length + ' esercizi</span></div>' +
+    '<div class="aw-sec">Tocca i giorni</div>' +
+    '<div class="aw-days">' + DAYS.map((d, i) => {
+      const on = awDays.indexOf(d) !== -1;
+      const n = (data[d] || []).length;
+      const stato = isRestDay(d) ? 'riposo' : (n ? n + ' eserc.' : 'vuoto');
+      const escluso = awSource.tipo === 'giorno' && awSource.id === d;
+      if (escluso) {
+        return '<div class="aw-day" style="opacity:0.35;cursor:default;">' +
+          '<span class="cal-dow">' + SIGLE[i] + '</span><span class="aw-check">\u2022</span>' +
+          '<span class="aw-day-state">origine</span></div>';
+      }
+      return '<button class="aw-day ' + (on ? 'on' : '') + '" onclick="awToggleDay(\'' + d + '\')">' +
+        '<span class="cal-dow">' + SIGLE[i] + '</span>' +
+        '<span class="aw-check">' + (on ? '\u2713' : '+') + '</span>' +
+        '<span class="aw-day-state">' + stato + '</span></button>';
+    }).join('') + '</div>' +
+    '<div class="aw-quick">' +
+      '<button onclick="awQuick(\'vuoti\')">Tutti i giorni vuoti</button>' +
+      '<button onclick="awQuick(\'nessuno\')">Nessuno</button>' +
+    '</div>' +
+    (occupati.length
+      ? '<div class="aw-sec">' + occupati.length + (occupati.length === 1 ? ' giorno ha' : ' giorni hanno') + ' gia esercizi</div>' +
+        '<div class="set-seg">' +
+          '<button class="' + (awMode === 'sostituisci' ? 'on' : '') + '" onclick="awSetMode(\'sostituisci\')">Sostituisci</button>' +
+          '<button class="' + (awMode === 'aggiungi' ? 'on' : '') + '" onclick="awSetMode(\'aggiungi\')">Aggiungi in coda</button>' +
+        '</div>'
+      : '') +
+    (awDays.some(d => isRestDay(d))
+      ? '<div class="aw-warn">I giorni di riposo selezionati diventeranno giorni di allenamento.</div>'
+      : '');
+
+  next.innerText = awDays.length
+    ? 'Aggiungi a ' + awDays.length + (awDays.length === 1 ? ' giorno' : ' giorni')
+    : 'Scegli almeno un giorno';
+  next.disabled = awDays.length === 0;
+}
+
+function applicaAllaSettimana() {
+  const data = loadData();
+  const titles = loadTitles();
+  const riposi = loadRestDays();
+  const backup = {
+    data: JSON.parse(JSON.stringify(data)),
+    titles: JSON.parse(JSON.stringify(titles)),
+    riposi: riposi.slice()
+  };
+
+  const es = awEsercizi(awSource);
+  const nomeScheda = awSource.tipo === 'scheda' ? awNome(awSource) : getDayTitle(awSource.id);
+
+  awDays.forEach(d => {
+    const copia = es.map(e => normalizeExerciseRecord({
+      name: e.name, sets: e.sets, reps: e.reps, weight: e.weight, rest: e.rest,
+      note: e.note || '', superset: !!e.superset, completedSets: []
+    }));
+    const vecchi = data[d] || [];
+    const sostituisci = awMode === 'sostituisci' || vecchi.length === 0;
+    data[d] = sostituisci ? copia : vecchi.concat(copia);
+    if (sostituisci && nomeScheda && nomeScheda !== DAYS[DAYS.indexOf(awSource.id)]) titles[d] = nomeScheda;
+    const r = riposi.indexOf(d);
+    if (r !== -1) riposi.splice(r, 1);
+  });
+
+  saveData(data);
+  saveTitles(titles);
+  saveRestDays(riposi);
+
+  const quanti = awDays.length;
+  closeAddWeek();
+  renderPlanDayPicker();
+  renderWeekOverview();
+  renderAllenamento();
+
+  showUndo(nomeScheda + ' aggiunto a ' + quanti + (quanti === 1 ? ' giorno' : ' giorni'), () => {
+    saveData(backup.data);
+    saveTitles(backup.titles);
+    saveRestDays(backup.riposi);
+    renderPlanDayPicker();
+    renderWeekOverview();
+    renderAllenamento();
+  }, 8000);
 }
 
 /* Il dettaglio degli allenamenti salvati vive in una schermata sua:
@@ -2410,6 +2816,7 @@ function renderPiano() {
 
   renderWeekOverview();
   renderPlanDayPicker();
+  if (!planEditMode) renderDayView();
 
   if (isRestDay(currentDay)) {
     summaryEl.innerText = 'Riposo';
@@ -5611,6 +6018,33 @@ window.videoLinkFor = function(name) {
   return 'https://www.youtube.com/results?search_query=' + q;
 };
 
+/* ============================================================
+   DISEGNI DEGLI ESERCIZI
+   Il file si chiama come l esercizio, ripulito: "Panca Piana Bilanciere"
+   diventa img/panca-piana-bilanciere.png. Se il file c e, compare; se
+   non c e, resta il riquadro vuoto e nulla si rompe. Cosi i disegni si
+   possono aggiungere uno alla volta, senza toccare il codice.
+   ============================================================ */
+window.slugEsercizio = function(nome) {
+  let n = String(nome).replace(/^\S+\s/, '');          /* via l emoji */
+  n = n.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); /* via gli accenti */
+  n = n.toLowerCase().replace(/\([^)]*\)/g, '');          /* via le parentesi */
+  return n.replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+};
+
+window.immagineEsercizio = function(nome) {
+  return 'img/' + slugEsercizio(nome) + '.png';
+};
+
+/* Il riquadro prova a caricare il disegno; se non esiste torna al segnaposto */
+function slotImmagine(nome) {
+  const src = immagineEsercizio(nome);
+  return '<div class="ex-img-slot" data-exercise="' + escapeHtml(nome) + '">' +
+    '<img class="ex-img" src="' + src + '" alt="Esecuzione: ' + escapeHtml(nome.replace(/^\S+\s/, '')) + '" ' +
+    'loading="lazy" onerror="this.closest(\'.ex-img-slot\').classList.add(\'vuoto\'); this.remove();">' +
+    '<span class="ex-img-hint">Immagine in arrivo</span></div>';
+}
+
 /* --- La scheda --- */
 window.openExerciseInfo = function(name) {
   const meta = findExercise(name);
@@ -5620,8 +6054,7 @@ window.openExerciseInfo = function(name) {
      dell esercizio quando saranno pronti. Il disegno provvisorio e' stato
      tolto, ma il riquadro c e gia con le sue proporzioni, cosi il giorno
      che carichiamo le immagini nulla si sposta. */
-  const disegno = '<div class="ex-img-slot" data-exercise="' + escapeHtml(name) + '">' +
-    '<span class="ex-img-hint">Immagine in arrivo</span></div>';
+  const disegno = slotImmagine(name);
   const gruppo = meta ? MUSCLE_GROUPS[meta.group] : null;
   const verificato = !!VIDEO_VERIFICATI[name];
 
