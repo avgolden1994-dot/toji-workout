@@ -214,7 +214,63 @@ body {
 .edit-bar-label { font-size: 0.78rem; font-weight: 900; color: var(--primary); text-transform: uppercase; letter-spacing: 0.4px; }
 .edit-bar-done { background: var(--primary); color: var(--on-primary); border: none; border-radius: 8px; padding: 8px 16px; font-weight: 900; font-size: 0.82rem; cursor: pointer; }
 
+/* ======= Calendario del mese ======= */
+.mc-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--sp-4); }
+.mc-title { font-size: 1.05rem; font-weight: 900; text-transform: capitalize; }
+.mc-nav { width: 38px; height: 38px; border-radius: 50%; background: var(--surface-2); border: 1px solid var(--border); color: var(--text); font-size: 1.3rem; font-weight: 900; cursor: pointer; line-height: 1; }
+.mc-dow, .mc-week { display: grid; grid-template-columns: 22px repeat(7, 1fr); gap: 3px; }
+.mc-dow { margin-bottom: var(--sp-1); }
+.mc-dow span { font-size: 0.6rem; font-weight: 900; color: var(--muted); text-align: center; }
+.mc-week { margin-bottom: 3px; border-radius: 10px; transition: background .15s ease, box-shadow .15s ease; }
+.mc-week.origine { background: color-mix(in srgb, var(--primary) 12%, transparent); box-shadow: 0 0 0 1px var(--primary) inset; }
+.mc-week.bersaglio { background: color-mix(in srgb, var(--success) 14%, transparent); box-shadow: 0 0 0 1px var(--success) inset; }
+.mc-grip {
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-dim); font-size: 1rem; cursor: grab; touch-action: none;
+  border-radius: 6px; user-select: none;
+}
+.mc-grip:active { cursor: grabbing; color: var(--primary); }
+.mc-grip.vuota { visibility: hidden; }
+.mc-cell {
+  position: relative; aspect-ratio: 1 / 1.1;
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  padding-top: 3px; cursor: pointer; color: var(--text); font: inherit;
+}
+.mc-cell.fuori { opacity: 0.3; }
+.mc-cell.oggi { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary) inset; }
+.mc-cell.plan { background: color-mix(in srgb, var(--primary) 16%, var(--surface-1)); }
+.mc-cell.done { background: color-mix(in srgb, var(--success) 20%, var(--surface-1)); border-color: var(--success); }
+.mc-cell.rest { background: var(--surface-1); }
+.mc-n { font-size: 0.72rem; font-weight: 800; line-height: 1.2; }
+.mc-mark { font-size: 0.75rem; line-height: 1; margin-top: 2px; }
+.mc-cell.done .mc-mark { color: var(--success); font-weight: 900; }
+.mc-cell.plan .mc-mark { color: var(--primary); }
+.mc-legend { display: flex; gap: var(--sp-3); justify-content: center; flex-wrap: wrap; font-size: 0.62rem; color: var(--muted); margin-top: var(--sp-3); }
+.mc-legend span { display: flex; align-items: center; gap: 4px; }
+.mc-l { width: 9px; height: 9px; border-radius: 3px; display: inline-block; }
+.mc-l.plan { background: var(--primary); }
+.mc-l.done { background: var(--success); }
+.mc-l.rest { background: var(--surface-1); border: 1px solid var(--border-strong); }
+.mc-hint { font-size: 0.72rem; line-height: var(--lh-tight); color: var(--muted); text-align: center; margin-top: var(--sp-3); }
+.mc-done-box { background: color-mix(in srgb, var(--success) 12%, var(--surface-1)); border: 1px solid var(--success); border-radius: 12px; padding: var(--sp-4); margin-bottom: var(--sp-4); }
+.mc-done-t { font-weight: 900; color: var(--success); }
+.mc-gcal { display: block; text-align: center; text-decoration: none; margin-top: var(--sp-3); }
+
 /* ======= Aggiungi allenamento alla settimana ======= */
+.aw-path {
+  display: flex; align-items: center; gap: var(--sp-4); width: 100%; text-align: left;
+  background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px;
+  padding: var(--sp-5) var(--sp-4); margin-bottom: var(--sp-3); cursor: pointer; color: var(--text);
+}
+.aw-path:active { transform: scale(0.99); }
+.aw-path-ico { font-size: 1.9rem; flex-shrink: 0; }
+.aw-path-name { display: block; font-weight: 900; font-size: 1rem; line-height: var(--lh-base); }
+.aw-path-go { font-size: 1.4rem; color: var(--primary); font-weight: 900; flex-shrink: 0; }
+.aw-groups { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+.aw-group { background: var(--surface-2); border: 1px solid var(--border); color: var(--text); border-radius: 999px; padding: 8px 14px; font-weight: 800; font-size: 0.8rem; cursor: pointer; }
+.aw-group.on { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
+
 .aw-open-btn { margin-top: var(--sp-4); }
 .aw-sec { font-size: 0.68rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); margin: var(--sp-5) 0 var(--sp-3); }
 .aw-sec:first-child { margin-top: 0; }
@@ -1414,6 +1470,42 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
       </div>
   </section>
 
+  <!-- TAB: CALENDARIO DEL MESE -->
+  <section id="tab-calendario" class="tab-panel">
+    <div class="card">
+      <div class="mc-head">
+        <button class="mc-nav" onclick="mcMove(-1)" aria-label="Mese precedente">‹</button>
+        <div class="mc-title" id="mc-title">Mese</div>
+        <button class="mc-nav" onclick="mcMove(1)" aria-label="Mese successivo">›</button>
+      </div>
+      <div class="mc-dow">
+        <span></span><span>L</span><span>M</span><span>M</span><span>G</span><span>V</span><span>S</span><span>D</span>
+      </div>
+      <div id="mc-grid"></div>
+      <div class="mc-legend">
+        <span><i class="mc-l plan"></i> in programma</span>
+        <span><i class="mc-l done"></i> fatto</span>
+        <span><i class="mc-l rest"></i> riposo</span>
+      </div>
+      <div class="mc-hint" id="mc-hint">Trascina la maniglia ≡ di una settimana verso il basso per ricopiarla sulle successive.</div>
+    </div>
+
+    <div class="card" id="mc-actions">
+      <div class="section-title">La settimana tipo</div>
+      <div class="section-hint">La settimana costruita nel Piano, da lunedi a domenica.</div>
+      <button class="btn-archive" onclick="mcPlaceTemplate()">📌 Metti la settimana tipo sulla settimana corrente</button>
+      <button class="btn-archive" onclick="mcFillMonth()">⬇ Riempi tutto il mese</button>
+      <button class="btn-archive" onclick="mcClearMonth()">🗑 Svuota il mese (i giorni fatti restano)</button>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Calendario personale</div>
+      <div class="section-hint">Porta allenamenti fatti e in programma su Apple, Google o Outlook.</div>
+      <button class="btn-start-workout" style="margin-top:0;" onclick="exportIcs()">📤 Esporta nel calendario (.ics)</button>
+      <div class="set-about" id="ics-help"></div>
+    </div>
+  </section>
+
   <!-- TAB: IMPOSTAZIONI -->
   <section id="tab-impostazioni" class="tab-panel">
     <div class="card">
@@ -1445,6 +1537,7 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
 <div class="bottom-nav-fixed" id="bottom-nav" style="display:none;">
   <nav class="bottom-nav">
     <button class="nav-btn active" data-tab="piano" onclick="switchTab('piano')"><span class="nav-icon">📝</span><span>Piano</span></button>
+    <button class="nav-btn" data-tab="calendario" onclick="switchTab('calendario')"><span class="nav-icon">📅</span><span>Calendario</span></button>
     <button class="nav-btn" data-tab="allenamento" onclick="switchTab('allenamento')"><span class="nav-icon">🏋️</span><span>Allenamento</span></button>
     <button class="nav-btn" data-tab="storico" onclick="switchTab('storico')"><span class="nav-icon">📖</span><span>Storico</span></button>
     <button class="nav-btn" data-tab="impostazioni" onclick="switchTab('impostazioni')"><span class="nav-icon">⚙️</span><span>Opzioni</span></button>
@@ -1474,6 +1567,17 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
   <div class="sheet-footer">
     <button class="btn-start-workout" style="margin:0;" id="aw-next" onclick="awNext()">Avanti</button>
   </div>
+</div>
+
+<div class="group-sheet hidden" id="mc-day-sheet">
+  <div class="sheet-bar">
+    <button class="sheet-back" onclick="mcCloseDay()" aria-label="Chiudi">←</button>
+    <div class="sheet-titles">
+      <div class="sheet-title" id="mc-day-title">Giorno</div>
+      <div class="sheet-sub" id="mc-day-sub"></div>
+    </div>
+  </div>
+  <div class="sheet-body" id="mc-day-body"></div>
 </div>
 
 <div class="group-sheet hidden" id="week-sheet">
@@ -2241,6 +2345,7 @@ window.switchTab = function(tab) {
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   if (tab === 'storico') { renderStorico(); renderWeeks(); }
   if (tab === 'impostazioni') renderSettings();
+  if (tab === 'calendario') renderMonthCal();
   if (tab === 'piano') backToPlanDays(); /* prima il giorno, poi la sua schermata */
   if (tab === 'allenamento') backToDayPicker(); /* prima scegli il giorno, poi la sessione */
 };
@@ -2551,6 +2656,12 @@ let awMode = 'sostituisci';
 
 function awEsercizi(src) {
   if (!src) return [];
+  if (src.tipo === 'custom') {
+    return awCustom.map(n => {
+      const m = findExercise(n);
+      return m ? { name: m.name, sets: DEFAULT_SETS, reps: defaultRepsFor(m.name), weight: m.weight, rest: m.rest } : null;
+    }).filter(Boolean);
+  }
   if (src.tipo === 'scheda') {
     const t = WORKOUT_TEMPLATES.find(x => x.id === src.id);
     return t ? t.exercises : [];
@@ -2560,6 +2671,9 @@ function awEsercizi(src) {
 
 function awNome(src) {
   if (!src) return '';
+  if (src.tipo === 'custom') {
+    return awGroups.map(g => MUSCLE_GROUPS[g].label).join(' e ') || 'Allenamento personalizzato';
+  }
   if (src.tipo === 'scheda') {
     const t = WORKOUT_TEMPLATES.find(x => x.id === src.id);
     return t ? t.title : '';
@@ -2567,8 +2681,13 @@ function awNome(src) {
   return 'Copia di ' + getDayTitle(src.id);
 }
 
+let awPath = null;          /* 'schede' | 'gruppi' */
+let awGroups = [];          /* gruppi scelti nella strada "gruppi" */
+let awCustom = [];          /* esercizi scelti nella strada "gruppi" */
+
 window.openAddWeek = function() {
-  awStep = 1; awSource = null; awDays = []; awMode = 'sostituisci';
+  awStep = 0; awPath = null; awSource = null; awDays = []; awMode = 'sostituisci';
+  awGroups = []; awCustom = [];
   document.getElementById('add-week-sheet').classList.remove('hidden');
   renderAddWeek();
 };
@@ -2579,7 +2698,29 @@ window.closeAddWeek = function() {
 
 window.awBack = function() {
   if (awStep === 2) { awStep = 1; renderAddWeek(); }
+  else if (awStep === 1) { awStep = 0; awSource = null; renderAddWeek(); }
   else closeAddWeek();
+};
+
+/* le due strade iniziali, le stesse di quando la settimana e ancora vuota */
+window.awChoosePath = function(path) {
+  awPath = path;
+  awStep = 1;
+  awSource = null;
+  renderAddWeek();
+};
+
+window.awToggleGroup = function(g) {
+  const i = awGroups.indexOf(g);
+  if (i === -1) awGroups.push(g); else awGroups.splice(i, 1);
+  renderAddWeek();
+};
+
+window.awToggleCustom = function(name) {
+  const i = awCustom.indexOf(name);
+  if (i === -1) awCustom.push(name); else awCustom.splice(i, 1);
+  awSource = awCustom.length ? { tipo: 'custom', id: 'custom' } : null;
+  renderAddWeek();
 };
 
 window.awPickSource = function(tipo, id) {
@@ -2603,6 +2744,7 @@ window.awQuick = function(quali) {
 window.awSetMode = function(m) { awMode = m; renderAddWeek(); };
 
 window.awNext = function() {
+  if (awStep === 0) return;   /* al passo 0 si sceglie toccando una delle due strade */
   if (awStep === 1) {
     if (!awSource) return;
     awStep = 2;
@@ -2619,6 +2761,52 @@ function renderAddWeek() {
   const body = document.getElementById('aw-body');
   const next = document.getElementById('aw-next');
   const data = loadData();
+
+  /* ---- passo 0: le due strade ---- */
+  if (awStep === 0) {
+    document.getElementById('aw-sub').innerText = 'Come vuoi costruirlo?';
+    body.innerHTML =
+      '<button class="aw-path" onclick="awChoosePath(\'schede\')">' +
+        '<span class="aw-path-ico">\u{1F4CB}</span>' +
+        '<span class="aw-main"><span class="aw-path-name">Schede pronte</span>' +
+        '<span class="aw-meta">Push, Pull, Legs, Full Body e le altre, gia bilanciate. Oppure copia un giorno che hai gia costruito.</span></span>' +
+        '<span class="aw-path-go">\u203A</span></button>' +
+      '<button class="aw-path" onclick="awChoosePath(\'gruppi\')">' +
+        '<span class="aw-path-ico">\u{1F4AA}</span>' +
+        '<span class="aw-main"><span class="aw-path-name">Gruppi muscolari</span>' +
+        '<span class="aw-meta">Scegli i muscoli da allenare e poi gli esercizi, uno per uno.</span></span>' +
+        '<span class="aw-path-go">\u203A</span></button>';
+    next.style.display = 'none';
+    return;
+  }
+  next.style.display = 'block';
+
+  /* ---- passo 1, strada gruppi: muscoli e poi esercizi ---- */
+  if (awStep === 1 && awPath === 'gruppi') {
+    document.getElementById('aw-sub').innerText = 'Passo 1 di 2 \u2022 muscoli ed esercizi';
+    let html = '<div class="aw-sec">Quali muscoli</div><div class="aw-groups">' +
+      Object.keys(MUSCLE_GROUPS).map(g => {
+        const on = awGroups.indexOf(g) !== -1;
+        return '<button class="aw-group ' + (on ? 'on' : '') + '" onclick="awToggleGroup(\'' + g + '\')">' +
+          MUSCLE_GROUPS[g].emoji + ' ' + MUSCLE_GROUPS[g].label + '</button>';
+      }).join('') + '</div>';
+
+    if (awGroups.length) {
+      html += '<div class="aw-sec">Quali esercizi \u2022 ' + awCustom.length + ' scelti</div>';
+      awGroups.forEach(g => {
+        const lista = EXERCISE_LIBRARY.filter(e => e.group === g)
+          .sort((a, b) => (a.type === b.type ? 0 : (a.type === 'compound' ? -1 : 1)));
+        html += lista.map(ex => pickRow(ex, awCustom.indexOf(ex.name) !== -1,
+          'awToggleCustom(\'' + ex.name.replace(/'/g, "\\'") + '\')')).join('');
+      });
+    } else {
+      html += '<div class="aw-warn">Tocca uno o piu gruppi per vedere i loro esercizi.</div>';
+    }
+    body.innerHTML = html;
+    next.innerText = awCustom.length ? 'Avanti con ' + awCustom.length + ' esercizi' : 'Scegli almeno un esercizio';
+    next.disabled = awCustom.length === 0;
+    return;
+  }
 
   if (awStep === 1) {
     document.getElementById('aw-sub').innerText = 'Passo 1 di 2 \u2022 quale allenamento';
@@ -2712,7 +2900,7 @@ function applicaAllaSettimana() {
   };
 
   const es = awEsercizi(awSource);
-  const nomeScheda = awSource.tipo === 'scheda' ? awNome(awSource) : getDayTitle(awSource.id);
+  const nomeScheda = awSource.tipo === 'giorno' ? getDayTitle(awSource.id) : awNome(awSource);
 
   awDays.forEach(d => {
     const copia = es.map(e => normalizeExerciseRecord({
@@ -4942,6 +5130,7 @@ window.endWorkout = function() {
   const history = loadHistory();
   history.unshift(historyEntry);
   saveHistory(history);
+  segnaFattoNelCalendario(historyEntry);   /* la spunta sul giorno di oggi */
 
   list.forEach(e => {
     e.completedSets = e.completedSets.map(() => ({ done: false, reps: e.reps, weight: e.weight, wasBerserk: false }));
@@ -6083,6 +6272,391 @@ window.openExerciseInfo = function(name) {
 window.closeExerciseInfo = function() {
   document.getElementById('ex-info').classList.add('hidden');
 };
+
+/* ============================================================
+   CALENDARIO DEL MESE
+   La settimana tipo del Piano e' un modello da lunedi a domenica.
+   Il calendario invece e' fatto di DATE vere: ci si mette sopra la
+   settimana tipo, la si ricopia sulle altre settimane, e i giorni
+   finiti restano segnati con la spunta come storico.
+   Regola ferma: un giorno gia FATTO non viene mai sovrascritto.
+   ============================================================ */
+const calKey = () => 'coach_plus_cal_' + currentMode;
+const loadCal = () => { try { return JSON.parse(localStorage.getItem(calKey()) || '{}'); } catch (e) { return {}; } };
+const saveCal = (c) => localStorage.setItem(calKey(), JSON.stringify(c));
+
+let mcAnno = null, mcMese = null;   /* mese visualizzato */
+
+function ymd(d) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function daYmd(s) { const p = s.split('-').map(Number); return new Date(p[0], p[1] - 1, p[2]); }
+function lunediDi(d) { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x; }
+function piuGiorni(d, n) { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() + n); return x; }
+function giornoSettimana(d) { return DAYS[(d.getDay() + 6) % 7]; }
+
+/* La voce del calendario per una data, costruita dalla settimana tipo */
+function voceDaPiano(d) {
+  const nome = giornoSettimana(d);
+  if (isRestDay(nome)) return { rest: true, title: 'Riposo' };
+  const list = loadData()[nome] || [];
+  if (!list.length) return null;
+  return {
+    title: getDayTitle(nome),
+    items: list.map(e => ({ name: e.name, sets: e.sets, reps: e.reps })),
+    done: false
+  };
+}
+
+/* Mette la settimana tipo a partire dal lunedi indicato. I giorni fatti restano. */
+function mettiSettimana(lunedi, cal) {
+  let messi = 0;
+  for (let i = 0; i < 7; i++) {
+    const d = piuGiorni(lunedi, i), k = ymd(d);
+    if (cal[k] && cal[k].done) continue;
+    const v = voceDaPiano(d);
+    if (v) { cal[k] = v; messi++; } else delete cal[k];
+  }
+  return messi;
+}
+
+/* Copia la settimana che inizia in "da" su quella che inizia in "a". */
+function copiaSettimana(da, a, cal) {
+  let copiati = 0;
+  for (let i = 0; i < 7; i++) {
+    const s = cal[ymd(piuGiorni(da, i))];
+    const k = ymd(piuGiorni(a, i));
+    if (cal[k] && cal[k].done) continue;           /* lo storico non si tocca */
+    if (s) {
+      cal[k] = s.rest ? { rest: true, title: 'Riposo' }
+                      : { title: s.title, items: JSON.parse(JSON.stringify(s.items || [])), done: false };
+      copiati++;
+    } else delete cal[k];
+  }
+  return copiati;
+}
+
+function settimaneDelMese() {
+  const primo = new Date(mcAnno, mcMese, 1);
+  const ultimo = new Date(mcAnno, mcMese + 1, 0);
+  const out = [];
+  for (let l = lunediDi(primo); l <= ultimo; l = piuGiorni(l, 7)) out.push(l);
+  return out;
+}
+
+function renderMonthCal() {
+  if (mcAnno === null) { const o = new Date(); mcAnno = o.getFullYear(); mcMese = o.getMonth(); }
+  const cal = loadCal();
+  const oggi = ymd(new Date());
+  document.getElementById('mc-title').innerText =
+    new Date(mcAnno, mcMese, 1).toLocaleDateString('it-IT', { month: 'long', year: 'numeric' });
+
+  document.getElementById('mc-grid').innerHTML = settimaneDelMese().map(l => {
+    const lk = ymd(l);
+    let piena = false;
+    const celle = [0, 1, 2, 3, 4, 5, 6].map(i => {
+      const d = piuGiorni(l, i), k = ymd(d), v = cal[k];
+      if (v) piena = true;
+      let cls = 'mc-cell';
+      if (d.getMonth() !== mcMese) cls += ' fuori';
+      if (k === oggi) cls += ' oggi';
+      let mark = '';
+      if (v && v.done) { cls += ' done'; mark = '\u2713'; }
+      else if (v && v.rest) { cls += ' rest'; mark = '\u{1F634}'; }
+      else if (v) { cls += ' plan'; mark = '\u25CF'; }
+      return '<button class="' + cls + '" data-data="' + k + '" onclick="mcOpenDay(\'' + k + '\')">' +
+        '<span class="mc-n">' + d.getDate() + '</span><span class="mc-mark">' + mark + '</span></button>';
+    }).join('');
+    return '<div class="mc-week" data-lunedi="' + lk + '">' +
+      '<span class="mc-grip' + (piena ? '' : ' vuota') + '" data-grip="' + lk + '" aria-label="Trascina per ricopiare la settimana">\u2261</span>' +
+      celle + '</div>';
+  }).join('');
+
+  document.querySelectorAll('#mc-grid .mc-grip:not(.vuota)').forEach(attachWeekDrag);
+  aggiornaAiutoIcs();
+}
+
+window.mcMove = function(delta) {
+  mcMese += delta;
+  if (mcMese < 0) { mcMese = 11; mcAnno--; }
+  if (mcMese > 11) { mcMese = 0; mcAnno++; }
+  renderMonthCal();
+};
+
+/* ---- Trascinare una settimana verso il basso la ricopia ----
+   Si prende la maniglia, si scende sopra le settimane successive: si
+   illuminano, e al rilascio vengono riempite con la copia. */
+function attachWeekDrag(grip) {
+  let attivo = false, bersagli = [];
+  const origine = grip.dataset.grip;
+
+  const settimanaSotto = (x, y) => {
+    const el = document.elementFromPoint ? document.elementFromPoint(x, y) : null;
+    const riga = el && el.closest ? el.closest('.mc-week') : null;
+    return riga ? riga.dataset.lunedi : null;
+  };
+  const evidenzia = () => {
+    document.querySelectorAll('#mc-grid .mc-week').forEach(r => {
+      r.classList.toggle('origine', attivo && r.dataset.lunedi === origine);
+      r.classList.toggle('bersaglio', bersagli.indexOf(r.dataset.lunedi) !== -1);
+    });
+  };
+
+  grip.addEventListener('pointerdown', (e) => {
+    attivo = true; bersagli = [];
+    try { grip.setPointerCapture(e.pointerId); } catch (err) {}
+    evidenzia();
+    e.preventDefault();
+  });
+  grip.addEventListener('pointermove', (e) => {
+    if (!attivo) return;
+    const sotto = settimanaSotto(e.clientX, e.clientY);
+    if (!sotto) return;
+    /* tutte le settimane tra l origine e quella sotto il dito */
+    const tutte = Array.from(document.querySelectorAll('#mc-grid .mc-week')).map(r => r.dataset.lunedi);
+    const a = tutte.indexOf(origine), b = tutte.indexOf(sotto);
+    bersagli = b > a ? tutte.slice(a + 1, b + 1) : [];
+    evidenzia();
+  });
+  const fine = () => {
+    if (!attivo) return;
+    attivo = false;
+    const lista = bersagli.slice();
+    bersagli = [];
+    evidenzia();
+    if (lista.length) mcCopyWeeks(origine, lista);
+  };
+  grip.addEventListener('pointerup', fine);
+  grip.addEventListener('pointercancel', fine);
+}
+
+window.mcCopyWeeks = function(origine, destinazioni) {
+  const cal = loadCal();
+  const backup = JSON.stringify(cal);
+  const da = daYmd(origine);
+  let n = 0;
+  destinazioni.forEach(k => { n += copiaSettimana(da, daYmd(k), cal); });
+  saveCal(cal);
+  renderMonthCal();
+  showUndo('Settimana ricopiata su ' + destinazioni.length + (destinazioni.length === 1 ? ' settimana' : ' settimane'), () => {
+    localStorage.setItem(calKey(), backup); renderMonthCal();
+  }, 8000);
+};
+
+window.mcPlaceTemplate = function() {
+  const tot = DAYS.reduce((s, d) => s + (loadData()[d] || []).length, 0);
+  if (!tot) { alert('La settimana tipo e vuota: costruiscila prima nel Piano.'); return; }
+  const cal = loadCal();
+  const backup = JSON.stringify(cal);
+  const l = lunediDi(new Date());
+  mettiSettimana(l, cal);
+  saveCal(cal);
+  mcAnno = l.getFullYear(); mcMese = new Date().getMonth();
+  renderMonthCal();
+  showUndo('Settimana tipo messa sul calendario', () => { localStorage.setItem(calKey(), backup); renderMonthCal(); }, 8000);
+};
+
+window.mcFillMonth = function() {
+  const tot = DAYS.reduce((s, d) => s + (loadData()[d] || []).length, 0);
+  if (!tot) { alert('La settimana tipo e vuota: costruiscila prima nel Piano.'); return; }
+  const cal = loadCal();
+  const backup = JSON.stringify(cal);
+  const oggiL = lunediDi(new Date());
+  let settimane = 0;
+  settimaneDelMese().forEach(l => {
+    if (l < oggiL) return;          /* le settimane passate restano com erano */
+    mettiSettimana(l, cal); settimane++;
+  });
+  saveCal(cal);
+  renderMonthCal();
+  showUndo('Mese riempito: ' + settimane + ' settimane', () => { localStorage.setItem(calKey(), backup); renderMonthCal(); }, 8000);
+};
+
+window.mcClearMonth = function() {
+  const cal = loadCal();
+  const backup = JSON.stringify(cal);
+  const mese = mcAnno + '-' + String(mcMese + 1).padStart(2, '0');
+  let tolti = 0;
+  Object.keys(cal).forEach(k => {
+    if (k.slice(0, 7) === mese && !cal[k].done) { delete cal[k]; tolti++; }
+  });
+  saveCal(cal);
+  renderMonthCal();
+  showUndo(tolti + ' giorni tolti dal mese', () => { localStorage.setItem(calKey(), backup); renderMonthCal(); }, 8000);
+};
+
+/* ---- Dettaglio di un giorno ---- */
+window.mcOpenDay = function(k) {
+  const v = loadCal()[k];
+  const d = daYmd(k);
+  document.getElementById('mc-day-title').innerText = d.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
+  document.getElementById('mc-day-sub').innerText = v ? (v.done ? 'Allenamento fatto' : (v.rest ? 'Riposo' : 'In programma')) : 'Niente in programma';
+
+  let html = '';
+  if (!v) {
+    html = '<div class="dv-empty">Nessun allenamento in questo giorno.</div>' +
+      '<button class="btn-archive" onclick="mcPlanDay(\'' + k + '\')">\u{1F4CC} Metti qui il ' + giornoSettimana(d) + ' della settimana tipo</button>';
+  } else if (v.rest) {
+    html = '<div class="dv-empty">\u{1F634}<br>Giorno di riposo.</div>' +
+      '<button class="btn-archive" onclick="mcRemoveDay(\'' + k + '\')">Togli dal calendario</button>';
+  } else {
+    if (v.done) {
+      html += '<div class="mc-done-box"><div class="mc-done-t">\u2713 Fatto</div>' +
+        (v.summary ? '<div class="dv-meta">' + escapeHtml(v.summary) + '</div>' : '') +
+        (v.doneAt ? '<div class="dv-meta">' + escapeHtml(v.doneAt) + '</div>' : '') + '</div>';
+    }
+    html += '<div class="card"><div class="section-title">' + escapeHtml(v.title || '') + '</div>' +
+      (v.items || []).map((e, i) => '<div class="dv-row"><span class="dv-num">' + (i + 1) + '</span>' +
+        '<span class="dv-main"><span class="dv-name">' + escapeHtml(e.name.replace(/^\S+\s/, '')) + '</span>' +
+        '<span class="dv-meta"><b>' + e.sets + ' \u00D7 ' + e.reps + '</b></span></span></div>').join('') +
+      '</div>';
+    html += '<a class="btn-archive mc-gcal" href="' + linkGoogle(k, v) + '" target="_blank" rel="noopener noreferrer">\u{1F4C6} Aggiungi solo questo a Google Calendar</a>';
+    if (!v.done) html += '<button class="btn-archive" onclick="mcRemoveDay(\'' + k + '\')">Togli dal calendario</button>';
+  }
+  document.getElementById('mc-day-body').innerHTML = html;
+  document.getElementById('mc-day-sheet').classList.remove('hidden');
+};
+
+window.mcCloseDay = function() { document.getElementById('mc-day-sheet').classList.add('hidden'); };
+
+window.mcPlanDay = function(k) {
+  const cal = loadCal();
+  const v = voceDaPiano(daYmd(k));
+  if (!v) { alert('Nella settimana tipo quel giorno e vuoto.'); return; }
+  cal[k] = v; saveCal(cal);
+  mcCloseDay(); renderMonthCal();
+};
+
+window.mcRemoveDay = function(k) {
+  const cal = loadCal();
+  const tolto = cal[k];
+  delete cal[k]; saveCal(cal);
+  mcCloseDay(); renderMonthCal();
+  showUndo('Giorno tolto', () => { const c2 = loadCal(); c2[k] = tolto; saveCal(c2); renderMonthCal(); });
+};
+
+/* Chiamata a fine allenamento: il giorno di OGGI riceve la spunta */
+window.segnaFattoNelCalendario = function(entry) {
+  const cal = loadCal();
+  const k = ymd(new Date());
+  const fatte = entry.exercises.reduce((s, e) => s + e.doneSets, 0);
+  const totali = entry.exercises.reduce((s, e) => s + e.totalSets, 0);
+  cal[k] = {
+    title: getDayTitle(entry.day),
+    items: entry.exercises.map(e => ({ name: e.name, sets: e.totalSets, reps: '' })),
+    done: true,
+    doneAt: entry.date,
+    summary: fatte + ' di ' + totali + ' serie' + (entry.berserk ? ' \u2022 con cedimento' : '')
+  };
+  saveCal(cal);
+};
+
+/* ============================================================
+   ESPORTAZIONE VERSO APPLE, GOOGLE, OUTLOOK (.ics)
+   Il formato .ics e' lo standard che leggono tutti i calendari.
+   ONESTA' TECNICA: importare un file crea una COPIA, non un legame
+   vivo. Un aggiornamento automatico richiederebbe un server che
+   pubblica un indirizzo a cui il calendario si abbona; un app ospitata
+   su GitHub Pages non ne ha uno. Per aggiornare si riesporta.
+   Ogni giorno ha un identificativo fisso: cosi Apple, reimportando,
+   aggiorna l evento invece di duplicarlo.
+   ============================================================ */
+function icsEscape(t) {
+  return String(t || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
+}
+
+/* le righe oltre i 75 caratteri vanno spezzate, come vuole lo standard */
+function icsFold(riga) {
+  if (riga.length <= 74) return riga;
+  const parti = [];
+  let r = riga;
+  parti.push(r.slice(0, 74)); r = r.slice(74);
+  while (r.length) { parti.push(' ' + r.slice(0, 73)); r = r.slice(73); }
+  return parti.join('\r\n');
+}
+
+function icsData(k) { return k.replace(/-/g, ''); }
+
+window.buildIcs = function() {
+  const cal = loadCal();
+  const ora = new Date();
+  const stamp = ora.getUTCFullYear() + String(ora.getUTCMonth() + 1).padStart(2, '0') + String(ora.getUTCDate()).padStart(2, '0') +
+    'T' + String(ora.getUTCHours()).padStart(2, '0') + String(ora.getUTCMinutes()).padStart(2, '0') + '00Z';
+
+  const righe = [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Toji Maki Workout//IT',
+    'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+    'X-WR-CALNAME:' + icsEscape('Allenamenti ' + (currentMode === 'maki' ? 'Maki' : 'Toji'))
+  ];
+
+  Object.keys(cal).sort().forEach(k => {
+    const v = cal[k];
+    if (v.rest) return;                       /* il riposo non intasa il calendario */
+    const fine = ymd(piuGiorni(daYmd(k), 1));
+    const titolo = (v.done ? '\u2705 ' : '\u{1F3CB}\uFE0F ') + (v.title || 'Allenamento') + (v.done ? ' \u2014 fatto' : '');
+    const dettagli = (v.done && v.summary ? v.summary + '\n\n' : '') +
+      (v.items || []).map(e => '\u2022 ' + e.name.replace(/^\S+\s/, '') + (e.sets ? ' ' + e.sets + (e.reps ? '\u00D7' + e.reps : ' serie') : '')).join('\n');
+    righe.push('BEGIN:VEVENT');
+    righe.push('UID:tz-' + currentMode + '-' + icsData(k) + '@tojiworkout');
+    righe.push('DTSTAMP:' + stamp);
+    righe.push('DTSTART;VALUE=DATE:' + icsData(k));
+    righe.push('DTEND;VALUE=DATE:' + icsData(fine));
+    righe.push('SUMMARY:' + icsEscape(titolo));
+    righe.push('DESCRIPTION:' + icsEscape(dettagli));
+    righe.push('TRANSP:TRANSPARENT');         /* non risulta "occupato" nel calendario */
+    righe.push('END:VEVENT');
+  });
+  righe.push('END:VCALENDAR');
+  return righe.map(icsFold).join('\r\n') + '\r\n';
+};
+
+window.exportIcs = async function() {
+  const cal = loadCal();
+  const n = Object.keys(cal).filter(k => !cal[k].rest).length;
+  if (!n) { alert('Il calendario e vuoto: metti prima la settimana tipo sul mese.'); return; }
+
+  const testo = buildIcs();
+  const nome = 'allenamenti-' + currentMode + '.ics';
+
+  /* Su iPhone la via migliore e' il menu Condividi: da li si sceglie
+     direttamente Calendario. Dove non c e, si scarica il file. */
+  try {
+    const file = new File([testo], nome, { type: 'text/calendar' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: 'Allenamenti' });
+      return;
+    }
+  } catch (e) { if (e && e.name === 'AbortError') return; }
+
+  const blob = new Blob([testo], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = nome;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+  showUndo(n + ' allenamenti esportati');
+};
+
+/* Un singolo evento verso Google: funziona anche dal telefono */
+function linkGoogle(k, v) {
+  const fine = ymd(piuGiorni(daYmd(k), 1));
+  const titolo = (v.done ? '\u2705 ' : '') + (v.title || 'Allenamento');
+  const dettagli = (v.done && v.summary ? v.summary + '\n\n' : '') +
+    (v.items || []).map(e => '- ' + e.name.replace(/^\S+\s/, '')).join('\n');
+  return 'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+    '&text=' + encodeURIComponent(titolo) +
+    '&dates=' + icsData(k) + '/' + icsData(fine) +
+    '&details=' + encodeURIComponent(dettagli);
+}
+
+function aggiornaAiutoIcs() {
+  const el = document.getElementById('ics-help');
+  if (!el) return;
+  el.innerHTML =
+    '<b>iPhone:</b> tocca Esporta, poi scegli Calendario e "Aggiungi tutti".<br>' +
+    '<b>Google:</b> dal computer, su calendar.google.com \u2192 Impostazioni \u2192 Importa. Dall app Google non si importano file; per un giorno solo usa il pulsante dentro al giorno.<br>' +
+    '<b>Da sapere:</b> e una copia, non un collegamento vivo. Dopo nuovi allenamenti, riesporta: su Apple gli eventi gia presenti si aggiornano, su Google potrebbero duplicarsi.';
+}
 
 /* ============================================================
    BOOT
