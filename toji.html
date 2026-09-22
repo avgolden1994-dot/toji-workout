@@ -358,6 +358,16 @@ body {
 .coach-badge-set.scarico { color: var(--primary); }
 #agent-sheet { z-index: 94; }
 
+/* ======= Menu della settimana ======= */
+.wm-body { padding: 0 var(--sp-4) var(--sp-5); max-height: 70vh; overflow-y: auto; }
+.wm-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.wm-day { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: var(--sp-2) 1px; color: var(--text); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 66px; }
+.wm-day.bloccato { opacity: 0.45; cursor: not-allowed; }
+.wm-day-st { font-size: 0.55rem; color: var(--muted); text-align: center; line-height: 1.1; }
+.wm-x { font-size: 0.9rem; font-weight: 900; color: var(--accent); }
+.wm-day.bloccato .wm-x { color: var(--muted); }
+.wm-body .set-row-btn { margin-top: var(--sp-2); }
+
 /* ======= Scambio dei giorni trascinandoli ======= */
 .cal-day, .mc-cell { touch-action: none; }
 .swap-from { opacity: 0.45; outline: 2px dashed var(--primary); outline-offset: -2px; }
@@ -1527,7 +1537,7 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
           <button class="mc-cb-paste" id="mc-cb-paste" onclick="mcPaste()">Incolla</button>
         </div>
       </div>
-      <div class="mc-hint" id="mc-hint">Trascina un giorno sopra un altro della stessa settimana per scambiarli. Tocca la maniglia ≡ per selezionare una settimana intera e incollarla altrove.</div>
+      <div class="mc-hint" id="mc-hint">Trascina un giorno sopra un altro della stessa settimana per scambiarli. Tocca la maniglia ≡ per cancellare, svuotare o copiare la settimana.</div>
     </div>
 
     <div class="card" id="mc-actions">
@@ -1593,6 +1603,16 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
     </div>
   </div>
   <div class="sheet-body" id="ex-info-body"></div>
+</div>
+
+<div class="wheel-overlay hidden" id="week-menu" onclick="if(event.target===this) closeWeekMenu()">
+  <div class="wheel-sheet">
+    <div class="wheel-head">
+      <div class="wheel-title" id="wm-title">Settimana</div>
+      <button class="recovery-icon-btn" onclick="closeWeekMenu()" aria-label="Chiudi">✕</button>
+    </div>
+    <div class="wm-body" id="wm-body"></div>
+  </div>
 </div>
 
 <div class="group-sheet hidden" id="agent-sheet">
@@ -5819,7 +5839,7 @@ window.startOnboarding = function(force) {
 };
 
 function nuovoOnbData() {
-  return { goals: [], goal: null, level: null, days: null, minutes: null,
+  return { inizio: undefined, goals: [], goal: null, level: null, days: null, minutes: null,
            luogo: null, fastidi: [], sonno: null, attrezzi: null,
            sex: null, age: null, height: null, weight: null, bia: null };
 }
@@ -5984,23 +6004,30 @@ function optHtml(campo, o) {
    letti restano sempre modificabili a mano prima di essere usati. */
 function renderBiaStep() {
   const b = onbData.bia || {};
+  const letti = ['peso', 'fmPerc', 'ffm', 'tbw', 'bmr', 'smm', 'phase', 'altezza']
+    .filter(k => b[k] !== undefined && b[k] !== null);
+  const etichette = { peso: 'Peso', altezza: 'Altezza', fmPerc: 'Massa grassa', ffm: 'Massa magra',
+                      tbw: 'Acqua totale', bmr: 'Metabolismo basale', smm: 'Massa muscolare', phase: 'Angolo di fase' };
+  const unita = { peso: ' kg', altezza: ' cm', fmPerc: '%', ffm: ' kg', tbw: ' L', bmr: ' kcal', smm: ' kg', phase: '\u00B0' };
+
   return '<div class="onb-q">Hai un referto BIA?</div>' +
-    '<div class="onb-why">La bioimpedenziometria misura massa grassa, massa magra e acqua corporea: dice se stai perdendo grasso o muscolo, cosa che la bilancia da sola non sa fare. Se non ce l\'hai, puoi saltare o scrivere i dati a mano.</div>' +
+    '<div class="onb-why">La bioimpedenziometria misura massa grassa, massa magra e acqua corporea: dice se stai perdendo grasso o muscolo, cosa che la bilancia da sola non sa fare. Carica il PDF e leggo io tutti i valori: peso compreso, non serve riscriverli.</div>' +
+
     '<label class="bia-drop" for="bia-file">\u{1F4C4} Carica il PDF della tua BIA' +
-    '<span style="display:block;font-weight:400;font-size:0.7rem;margin-top:4px;">oppure compila i campi qui sotto</span></label>' +
+    '<span style="display:block;font-weight:400;font-size:0.7rem;margin-top:4px;">leggo peso, massa grassa, massa magra e il resto</span></label>' +
     '<input type="file" id="bia-file" accept="application/pdf" style="display:none;">' +
     '<div class="bia-status" id="bia-status"></div>' +
-    '<div class="bia-grid">' +
-      biaField('peso', 'Peso (kg)', b.peso) +
-      biaField('altezza', 'Altezza (cm)', b.altezza) +
-      biaField('fmPerc', 'Massa grassa (%)', b.fmPerc) +
-      biaField('ffm', 'Massa magra (kg)', b.ffm) +
-      biaField('tbw', 'Acqua totale (L)', b.tbw) +
-      biaField('bmr', 'Metabolismo basale (kcal)', b.bmr) +
-      biaField('smm', 'Massa muscolare (kg)', b.smm) +
-      biaField('phase', 'Angolo di fase (\u00B0)', b.phase) +
-    '</div>' +
-    '<div class="onb-grid onb-fields" style="margin-top:10px;">' +
+
+    (letti.length
+      ? '<div class="res-card" style="margin-top:var(--sp-4);"><div class="res-title">Letti dal referto</div>' +
+        letti.map(k => '<div class="res-line"><span>' + etichette[k] + '</span><b>' + b[k] + unita[k] + '</b></div>').join('') +
+        '</div>'
+      : '') +
+
+    /* Solo cio che la BIA non dice: servono per leggere i valori nel modo giusto */
+    '<div class="aw-sec">Quello che il referto non dice</div>' +
+    '<div class="pref-note">Servono per interpretare i valori: le soglie della massa grassa sono diverse per uomini e donne.</div>' +
+    '<div class="onb-fields">' +
       '<label class="onb-field"><span>Sesso</span><select id="onb-sex">' +
         '<option value="">--</option>' +
         '<option value="uomo"' + (onbData.sex === 'uomo' ? ' selected' : '') + '>Uomo</option>' +
@@ -6008,8 +6035,32 @@ function renderBiaStep() {
       '</select></label>' +
       '<label class="onb-field"><span>Eta</span><input type="number" id="onb-age" value="' + (onbData.age || '') + '"></label>' +
     '</div>' +
-    '<div class="onb-note">I valori letti dal PDF sono una proposta: controllali sempre. Un referto va interpretato da un professionista, e differenze di un chilo possono essere normali oscillazioni.</div>';
+    (b.altezza ? '' :
+      '<div class="onb-fields" style="margin-top:var(--sp-3);">' +
+        '<label class="onb-field"><span>Altezza (cm)</span><input type="number" data-bia="altezza" value=""></label>' +
+        '<span></span></div>') +
+
+    '<button class="set-row-btn" style="margin-top:var(--sp-4);" onclick="onbToggleManuale()">' +
+      (onbManuale ? '\u2715 Nascondi i campi a mano' : '\u270E Non ho il referto: inserisco i valori a mano') + '</button>' +
+    (onbManuale
+      ? '<div class="bia-grid" style="margin-top:var(--sp-3);">' +
+          biaField('peso', 'Peso (kg)', b.peso) +
+          biaField('altezza', 'Altezza (cm)', b.altezza) +
+          biaField('fmPerc', 'Massa grassa (%)', b.fmPerc) +
+          biaField('ffm', 'Massa magra (kg)', b.ffm) +
+          biaField('tbw', 'Acqua totale (L)', b.tbw) +
+          biaField('bmr', 'Metabolismo basale (kcal)', b.bmr) +
+        '</div>'
+      : '') +
+
+    '<div class="onb-note">Anche senza BIA il programma si crea lo stesso: i valori servono solo a seguire i progressi. I dati letti dal PDF sono una proposta: un referto va interpretato da un professionista.</div>';
 }
+
+let onbManuale = false;
+window.onbToggleManuale = function() {
+  onbManuale = !onbManuale;
+  renderOnb();
+};
 
 function biaField(k, label, val) {
   return '<label class="bia-val"><span>' + label + '</span>' +
@@ -6194,6 +6245,9 @@ window.applyBiaValues = function(vals, fromPdf) {
   });
 
   const trovati = Object.keys(b).filter(k => b[k] !== null && b[k] !== undefined).length;
+  if (fromPdf && trovati > 0 && typeof onbStep !== 'undefined' && onbStep === 5) {
+    renderOnb();   /* i valori letti compaiono nel riepilogo, senza riscriverli */
+  }
   const st = document.getElementById('bia-status');
   if (!st) return;
   if (fromPdf && trovati === 0) {
@@ -6428,6 +6482,32 @@ function renderOnbResult() {
       '</div>';
   }
 
+  /* Quando parte, e cosa fare se un programma e gia in corso */
+  const attivo = getProgramma();
+  const s = attivo ? settimanaProgramma() : null;
+  const lunQuesta = lunediDi(new Date());
+  const lunProssima = piuGiorni(lunQuesta, 7);
+  const dataIt = (d) => d.toLocaleDateString('it-IT', { day: 'numeric', month: 'long' });
+  if (onbData.inizio === undefined) onbData.inizio = attivo && s && !s.finito ? 'prossima' : 'questa';
+
+  html += '<div class="res-card"><div class="res-title">Quando parte</div>';
+  if (attivo && s && !s.finito) {
+    html += '<div class="consent-li" style="margin-bottom:var(--sp-3);">\u26A0\uFE0F Hai gia un programma in corso: <b>' + escapeHtml(attivo.split) +
+      '</b>, settimana ' + s.numero + ' di ' + s.totale + '.</div>';
+  }
+  html += '<button class="onb-opt ' + (onbData.inizio === 'questa' ? 'on' : '') + '" onclick="onbPick(\'inizio\', \'questa\')">' +
+      '<span class="onb-opt-emoji">\u25B6</span><span class="onb-opt-main">' +
+      '<span class="onb-opt-name">' + (attivo ? 'Sostituisci da subito' : 'Questa settimana') + '</span>' +
+      '<span class="onb-opt-desc">Parte da luned\u00EC ' + dataIt(lunQuesta) + (attivo ? '. Il programma attuale viene sostituito da oggi in avanti' : '') + '</span></span>' +
+      '<span class="pick-check">' + (onbData.inizio === 'questa' ? '\u2713' : '') + '</span></button>' +
+    '<button class="onb-opt ' + (onbData.inizio === 'prossima' ? 'on' : '') + '" onclick="onbPick(\'inizio\', \'prossima\')">' +
+      '<span class="onb-opt-emoji">\u23ED</span><span class="onb-opt-main">' +
+      '<span class="onb-opt-name">Dalla prossima settimana</span>' +
+      '<span class="onb-opt-desc">Parte da luned\u00EC ' + dataIt(lunProssima) + (attivo ? '. Finisci questa settimana com e programmata' : '') + '</span></span>' +
+      '<span class="pick-check">' + (onbData.inizio === 'prossima' ? '\u2713' : '') + '</span></button>' +
+    '<div class="set-about">I giorni gi\u00E0 completati non vengono mai toccati.</div>' +
+    '</div>';
+
   html += '<div class="onb-note">Il programma viene messo nel calendario per tutte le ' + prog.settimane + ' settimane. ' +
     'Il carico progressivo aumentera i pesi quando completi tutte le serie, e li alleggerira nelle settimane di scarico.' +
     '<br><br>E una traccia generata da regole, non la valutazione di un professionista. Con patologie o dolori, parlane prima con un medico.</div>';
@@ -6460,9 +6540,13 @@ window.applyGeneratedProgram = function() {
   saveTitles(titles);
   saveRestDays(prog.riposo.slice());
 
-  /* il programma dura settimane: si mette nel calendario tutto intero */
-  const inizio = lunediDi(new Date());
+  /* Il programma parte dalla data scelta e si registra con quella data.
+     Da li in avanti il vecchio programma viene ripulito, ma i giorni gia
+     completati restano: sono storico. */
+  const inizio = onbData.inizio === 'prossima' ? piuGiorni(lunediDi(new Date()), 7) : lunediDi(new Date());
   const cal = loadCal();
+  const daQui = ymd(inizio);
+  Object.keys(cal).forEach(k => { if (k >= daQui && !cal[k].done) delete cal[k]; });
   for (let w = 0; w < prog.settimane; w++) {
     const l = piuGiorni(inizio, w * 7);
     mettiSettimana(l, cal);
@@ -6494,7 +6578,8 @@ window.applyGeneratedProgram = function() {
   document.getElementById('onb').classList.add('hidden');
   renderDayBar(); renderPiano(); renderGruppi(); renderAllenamento();
   switchTab('piano');
-  showUndo('Programma creato: ' + prog.split.nome + ', ' + prog.settimane + ' settimane nel calendario', null, 6000);
+  const quando = onbData.inizio === 'prossima' ? 'da luned\u00EC prossimo' : 'da questa settimana';
+  showUndo('Programma creato: ' + prog.split.nome + ', ' + prog.settimane + ' settimane ' + quando, null, 6000);
 };
 
 /* ============================================================
@@ -7846,7 +7931,7 @@ function attachWeekDrag(grip) {
     if (!premuto) return;
     premuto = false;
     if (ghost) ghost.style.display = 'none';
-    if (!trascina) { mcSelectWeek(origine); return; }   /* tocco semplice: seleziona il blocco */
+    if (!trascina) { openWeekMenu(origine); return; }   /* tocco semplice: apre il menu della settimana */
     const lista = anteprima.slice();
     anteprima = []; trascina = false;
     mcCopySrc = null; mcCopyTargets = [];
@@ -7901,6 +7986,95 @@ window.mcFillMonth = function() {
   saveCal(cal);
   renderMonthCal();
   showUndo('Mese riempito: ' + settimane + ' settimane', () => { localStorage.setItem(calKey(), backup); renderMonthCal(); }, 8000);
+};
+
+/* ============================================================
+   MENU DELLA SETTIMANA (la maniglia \u2261)
+   Da qui si fa tutto senza dover svuotare il mese: cancellare un
+   singolo giorno, svuotare la settimana, copiarla su quella dopo o
+   su altre settimane. Trascinando la maniglia si copia come prima.
+   ============================================================ */
+let wmLunedi = null;
+
+window.openWeekMenu = function(lk) {
+  wmLunedi = lk;
+  renderWeekMenu();
+  document.getElementById('week-menu').classList.remove('hidden');
+};
+window.closeWeekMenu = function() {
+  document.getElementById('week-menu').classList.add('hidden');
+  wmLunedi = null;
+};
+
+function renderWeekMenu() {
+  const cal = loadCal();
+  const l = daYmd(wmLunedi);
+  const SIGLE = ['LUN', 'MAR', 'MER', 'GIO', 'VEN', 'SAB', 'DOM'];
+  document.getElementById('wm-title').innerText = etichettaSettimana(wmLunedi);
+
+  const giorni = [0, 1, 2, 3, 4, 5, 6].map(i => {
+    const k = ymd(piuGiorni(l, i)), v = cal[k];
+    const stato = !v ? 'vuoto' : (v.done ? 'fatto' : (v.rest ? 'riposo' : (v.items || []).length + ' eserc.'));
+    const bloccato = !v || v.done;
+    return '<button class="wm-day ' + (bloccato ? 'bloccato' : '') + '" ' +
+      (bloccato ? 'disabled' : 'onclick="wmCancellaGiorno(\'' + k + '\')"') + '>' +
+      '<span class="cal-dow">' + SIGLE[i] + '</span>' +
+      '<span class="wm-day-st">' + stato + '</span>' +
+      '<span class="wm-x">' + (bloccato ? (v && v.done ? '\u2713' : '\u2013') : '\u2715') + '</span></button>';
+  }).join('');
+
+  document.getElementById('wm-body').innerHTML =
+    '<div class="aw-sec">Cancella un giorno</div>' +
+    '<div class="pref-note">I giorni gia fatti restano: sono il tuo storico.</div>' +
+    '<div class="wm-days">' + giorni + '</div>' +
+    '<div class="aw-sec">Tutta la settimana</div>' +
+    '<button class="set-row-btn" onclick="wmCopiaProssima()">\u2B07 Copia sulla settimana successiva</button>' +
+    '<button class="set-row-btn" onclick="wmSelezionaPerCopiare()">\u{1F4CB} Copia su altre settimane...</button>' +
+    '<button class="set-row-btn danger" onclick="wmSvuotaSettimana()">\u{1F5D1} Svuota questa settimana</button>';
+}
+
+window.wmCancellaGiorno = function(k) {
+  const cal = loadCal();
+  const tolto = cal[k];
+  if (!tolto || tolto.done) return;
+  delete cal[k];
+  saveCal(cal);
+  renderMonthCal();
+  renderWeekMenu();
+  showUndo(daYmd(k).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric' }) + ' cancellato', () => {
+    const c = loadCal(); c[k] = tolto; saveCal(c); renderMonthCal(); if (wmLunedi) renderWeekMenu();
+  });
+};
+
+window.wmSvuotaSettimana = function() {
+  const cal = loadCal();
+  const backup = JSON.stringify(cal);
+  let n = 0, fatti = 0;
+  for (let i = 0; i < 7; i++) {
+    const k = ymd(piuGiorni(daYmd(wmLunedi), i));
+    if (!cal[k]) continue;
+    if (cal[k].done) { fatti++; continue; }   /* lo storico non si cancella */
+    delete cal[k]; n++;
+  }
+  saveCal(cal);
+  renderMonthCal();
+  renderWeekMenu();
+  showUndo(n + ' giorni cancellati' + (fatti ? ', ' + fatti + ' gia fatti conservati' : ''), () => {
+    localStorage.setItem(calKey(), backup); renderMonthCal(); if (wmLunedi) renderWeekMenu();
+  }, 8000);
+};
+
+window.wmCopiaProssima = function() {
+  const dest = ymd(piuGiorni(daYmd(wmLunedi), 7));
+  const origine = wmLunedi;
+  closeWeekMenu();
+  mcCopyWeeks(origine, [dest]);
+};
+
+window.wmSelezionaPerCopiare = function() {
+  const l = wmLunedi;
+  closeWeekMenu();
+  mcSelectWeek(l);
 };
 
 window.mcClearMonth = function() {
