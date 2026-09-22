@@ -292,9 +292,30 @@ body {
 #reco-sheet .carousel-card { width: 100%; flex: none; }
 #reco-sheet .carousel-hint { display: none; }
 
+/* ======= Sessione completata in sola lettura ======= */
+.wday-done { border-color: var(--success) !important; background: color-mix(in srgb, var(--success) 9%, var(--surface-1)) !important; }
+.wday-done .wday-progress span { background: var(--success); }
+.wday-badge.fatto { background: var(--success); color: var(--on-status); }
+.dv2-ex { margin-bottom: var(--sp-3); }
+.dv2-head { display: flex; align-items: center; gap: var(--sp-3); margin-bottom: var(--sp-3); }
+.dv2-set { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-2) var(--sp-3); border-radius: 8px; background: var(--surface-2); margin-bottom: var(--sp-1); font-size: 0.86rem; }
+.dv2-set.no { opacity: 0.5; }
+.dv2-n { width: 18px; color: var(--muted); font-weight: 800; }
+.dv2-val { flex: 1; }
+.dv2-chk { font-weight: 900; color: var(--success); }
+.dv2-set.no .dv2-chk { color: var(--muted); }
+
+/* ======= Canzone del cedimento (riassunto nella card) ======= */
+.drop-song { display: flex; align-items: center; gap: var(--sp-3); background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: var(--sp-3); margin: var(--sp-3) 0; }
+.drop-song-ico { font-size: 1.3rem; flex-shrink: 0; }
+.drop-song-btn { flex-shrink: 0; background: transparent; border: 1px solid var(--primary); color: var(--primary); border-radius: 8px; padding: 7px 12px; font-weight: 800; font-size: 0.76rem; cursor: pointer; }
+#music-sheet { z-index: 97; }
+
 /* ======= Scambio dei giorni trascinandoli ======= */
 .cal-day, .mc-cell { touch-action: none; }
 .swap-from { opacity: 0.45; outline: 2px dashed var(--primary); outline-offset: -2px; }
+.swap-no { outline: 2px dashed var(--danger); outline-offset: -2px; }
+.swap-fuori { opacity: 0.3; }
 .swap-to { outline: 2px solid var(--primary); outline-offset: -2px; transform: scale(1.06); background: color-mix(in srgb, var(--primary) 22%, var(--surface-1)) !important; }
 
 /* ======= Copia della settimana come blocco ======= */
@@ -1395,59 +1416,12 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
       <div class="section-title fire-text">🔥 Cedimento 90s — Modalità Berserk</div>
       <div class="drop-hint" id="drop-hint">Tocca l'icona 🔥 accanto a una serie per portarla a cedimento.</div>
 
-      <div class="source-tabs">
-        <button type="button" class="source-tab-btn active" data-source="mp3" onclick="switchAudioSourceTab('mp3')">🎵 MP3 Locale</button>
-        <button type="button" class="source-tab-btn" data-source="web" onclick="switchAudioSourceTab('web')">🌐 Link Web</button>
-      </div>
-
-      <div id="source-panel-mp3" class="source-panel active">
-        <label class="upload-label" for="audio-upload">
-          📀 Tocca per caricare un MP3
-          <span id="upload-status"></span>
-        </label>
-        <input type="file" id="audio-upload" accept="audio/*" style="display:none;" onchange="handleAudioUpload(this.files)">
-        <div style="margin-top:10px;" id="track-list"></div>
-        <audio id="failure-audio" controls style="width:100%; margin-top:10px; display:none;"></audio>
-        <div class="range-row" id="mp3-range-row" style="display:none;">
-          <input type="range" id="segment-start-mp3" min="0" max="0" value="0" step="1" oninput="onMp3RangeInput()">
-          <div class="range-labels">
-            <span>Inizio brano</span>
-            <span id="segment-label-mp3">--:-- → --:--</span>
-          </div>
-        </div>
-      </div>
-
-      <div id="source-panel-web" class="source-panel">
-        <div class="web-link-row">
-          <input type="text" id="web-link-input" placeholder="Incolla link YouTube o Spotify">
-          <button type="button" onclick="handleWebLinkSubmit()">Carica</button>
-        </div>
-        <div id="web-status"></div>
-        <div class="youtube-wrap" id="youtube-embed-wrap">
-          <div id="youtube-player-host"></div>
-        </div>
-        <div class="spotify-wrap" id="spotify-embed-wrap">
-          <div id="spotify-player-host"></div>
-        </div>
-        <div class="range-row" id="web-range-row">
-          <div class="segment-readout">
-            <span class="segment-from" id="segment-label-web">--:-- → --:--</span>
-            <span class="segment-dur">90 s</span>
-          </div>
-          <input type="range" id="segment-start-web" min="0" max="0" value="0" step="1" disabled oninput="onWebRangeInput()">
-          <div class="segment-nudges">
-            <button type="button" class="nudge-btn" onclick="nudgeWebSegment(-30)">− 30s</button>
-            <button type="button" class="nudge-btn" onclick="nudgeWebSegment(-5)">− 5s</button>
-            <button type="button" class="nudge-btn" onclick="nudgeWebSegment(5)">+ 5s</button>
-            <button type="button" class="nudge-btn" onclick="nudgeWebSegment(30)">+ 30s</button>
-          </div>
-          <button type="button" class="preview-btn" id="web-preview-btn" onclick="previewWebSegment()">▶ Ascolta l\'inizio del pezzo</button>
-        </div>
-      </div>
-
-      <div class="volume-row">
-        <div class="volume-row-head"><span>Volume</span><span id="drop-volume-label">80%</span></div>
-        <input type="range" id="drop-volume" min="0" max="100" value="80" oninput="onDropVolumeInput()">
+      <!-- la canzone si sceglie UNA volta, nelle Opzioni: qui si vede solo quale e -->
+      <div class="drop-song" id="drop-song">
+        <span class="drop-song-ico">🎵</span>
+        <span class="aw-main"><span class="entry-name" id="drop-song-name">Nessuna canzone</span>
+        <span class="aw-meta">Vale per tutti gli allenamenti</span></span>
+        <button class="drop-song-btn" onclick="openMusicSheet()">Cambia</button>
       </div>
 
       <div class="drop-timer-display fire-text" id="drop-timer-display">01:30</div>
@@ -1500,7 +1474,7 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
           <button class="mc-cb-paste" id="mc-cb-paste" onclick="mcPaste()">Incolla</button>
         </div>
       </div>
-      <div class="mc-hint" id="mc-hint">Trascina un giorno sopra un altro per scambiarli. Tocca la maniglia ≡ per selezionare una settimana intera e incollarla altrove.</div>
+      <div class="mc-hint" id="mc-hint">Trascina un giorno sopra un altro della stessa settimana per scambiarli. Tocca la maniglia ≡ per selezionare una settimana intera e incollarla altrove.</div>
     </div>
 
     <div class="card" id="mc-actions">
@@ -1566,6 +1540,82 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
     </div>
   </div>
   <div class="sheet-body" id="ex-info-body"></div>
+</div>
+
+<div class="group-sheet hidden" id="music-sheet">
+  <div class="sheet-bar">
+    <button class="sheet-back" onclick="closeMusicSheet()" aria-label="Indietro">←</button>
+    <div class="sheet-titles"><div class="sheet-title">Canzone del Cedimento</div><div class="sheet-sub">Si sceglie una volta, vale per tutti gli allenamenti</div></div>
+  </div>
+  <div class="sheet-body">
+    <div class="card">
+      <div class="source-tabs">
+        <button type="button" class="source-tab-btn active" data-source="mp3" onclick="switchAudioSourceTab('mp3')">🎵 MP3 Locale</button>
+        <button type="button" class="source-tab-btn" data-source="web" onclick="switchAudioSourceTab('web')">🌐 Link Web</button>
+      </div>
+
+      <div id="source-panel-mp3" class="source-panel active">
+        <label class="upload-label" for="audio-upload">
+          📀 Tocca per caricare un MP3
+          <span id="upload-status"></span>
+        </label>
+        <input type="file" id="audio-upload" accept="audio/*" style="display:none;" onchange="handleAudioUpload(this.files)">
+        <div style="margin-top:10px;" id="track-list"></div>
+        <audio id="failure-audio" controls style="width:100%; margin-top:10px; display:none;"></audio>
+        <div class="range-row" id="mp3-range-row" style="display:none;">
+          <input type="range" id="segment-start-mp3" min="0" max="0" value="0" step="1" oninput="onMp3RangeInput()">
+          <div class="range-labels">
+            <span>Inizio brano</span>
+            <span id="segment-label-mp3">--:-- → --:--</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="source-panel-web" class="source-panel">
+        <div class="web-link-row">
+          <input type="text" id="web-link-input" placeholder="Incolla link YouTube o Spotify">
+          <button type="button" onclick="handleWebLinkSubmit()">Carica</button>
+        </div>
+        <div id="web-status"></div>
+        <div class="youtube-wrap" id="youtube-embed-wrap">
+          <div id="youtube-player-host"></div>
+        </div>
+        <div class="spotify-wrap" id="spotify-embed-wrap">
+          <div id="spotify-player-host"></div>
+        </div>
+        <div class="range-row" id="web-range-row">
+          <div class="segment-readout">
+            <span class="segment-from" id="segment-label-web">--:-- → --:--</span>
+            <span class="segment-dur">90 s</span>
+          </div>
+          <input type="range" id="segment-start-web" min="0" max="0" value="0" step="1" disabled oninput="onWebRangeInput()">
+          <div class="segment-nudges">
+            <button type="button" class="nudge-btn" onclick="nudgeWebSegment(-30)">− 30s</button>
+            <button type="button" class="nudge-btn" onclick="nudgeWebSegment(-5)">− 5s</button>
+            <button type="button" class="nudge-btn" onclick="nudgeWebSegment(5)">+ 5s</button>
+            <button type="button" class="nudge-btn" onclick="nudgeWebSegment(30)">+ 30s</button>
+          </div>
+          <button type="button" class="preview-btn" id="web-preview-btn" onclick="previewWebSegment()">▶ Ascolta l\'inizio del pezzo</button>
+        </div>
+      </div>
+
+      <div class="volume-row">
+        <div class="volume-row-head"><span>Volume</span><span id="drop-volume-label">80%</span></div>
+        <input type="range" id="drop-volume" min="0" max="100" value="80" oninput="onDropVolumeInput()">
+      </div>
+
+    </div>
+    <div class="set-about">Se non scegli nessuna canzone, durante il cedimento continua la musica che stai gia ascoltando (Spotify, Apple Music...).</div>
+    <button class="btn-archive" onclick="clearCedimentoAudio()">Nessuna canzone: usa la mia musica</button>
+  </div>
+</div>
+
+<div class="group-sheet hidden" id="done-view-sheet">
+  <div class="sheet-bar">
+    <button class="sheet-back" onclick="closeDoneView()" aria-label="Indietro">←</button>
+    <div class="sheet-titles"><div class="sheet-title" id="dv2-title">Completato</div><div class="sheet-sub" id="dv2-sub"></div></div>
+  </div>
+  <div class="sheet-body" id="dv2-body"></div>
 </div>
 
 <div class="group-sheet hidden" id="add-ex-sheet">
@@ -3713,12 +3763,33 @@ window.backToDayPicker = function() {
   renderWorkoutDayPicker();
 };
 
+/* Il giorno di QUESTA settimana che corrisponde al giorno tipo, e se e
+   gia stato completato: la spunta sta sulla data, nel calendario. */
+function fattoQuestaSettimana(i) {
+  const k = ymd(piuGiorni(lunediDi(new Date()), i));
+  const v = loadCal()[k];
+  return v && v.done ? Object.assign({ data: k }, v) : null;
+}
+
 function renderWorkoutDayPicker() {
   const data = loadData();
   const todayIdx = (new Date().getDay() + 6) % 7; /* lunedi = 0 */
   const container = document.getElementById('workout-days-list');
 
   container.innerHTML = DAYS.map((d, i) => {
+    const fatto = fattoQuestaSettimana(i);
+    if (fatto) {
+      /* gia completato: si mostra come storico, e si riapre in sola lettura */
+      return '<button class="wday-card wday-done' + (i === todayIdx ? ' today' : '') + '" onclick="openDoneView(\'' + fatto.data + '\')">' +
+        '<div class="wday-main">' +
+          '<div class="wday-name">' + escapeHtml(fatto.title || getDayTitle(d)) + ' <span class="wday-meta">(' + d + ')</span></div>' +
+          '<div class="wday-meta">\u2713 Completato \u2022 ' + escapeHtml(fatto.summary || '') + '</div>' +
+          '<div class="wday-progress"><span style="width:100%"></span></div>' +
+        '</div>' +
+        '<span class="wday-badge fatto">FATTO</span>' +
+        '<span class="wday-go">\u203A</span>' +
+      '</button>';
+    }
     const list = data[d] || [];
     const totalSets = list.reduce((s, e) => s + e.sets, 0);
     const doneSets = list.reduce((s, e) => s + e.completedSets.filter(x => x.done).length, 0);
@@ -3755,6 +3826,7 @@ window.openWorkoutDay = function(day) {
   }
   currentDay = day;
   armedSet = null;
+  ripristinaMusica(true);   /* la canzone scelta nelle Opzioni e gia pronta */
   document.getElementById('workout-day-picker').style.display = 'none';
   document.getElementById('workout-session').style.display = 'block';
   renderDayBar();
@@ -3897,11 +3969,105 @@ window.startManualRecovery = function() {
 /* ============================================================
    MODULO CEDIMENTO 90s (Drop / Berserk)
    ============================================================ */
-window.switchAudioSourceTab = function(tab) {
+/* ============================================================
+   CANZONE DEL CEDIMENTO: SI SCEGLIE UNA VOLTA
+   Prima la scelta viveva solo in memoria: a ogni riavvio si perdeva e
+   andava rifatta. Ora si salva (traccia o link, punto di partenza,
+   volume) e vale per tutti gli allenamenti finche non la cambi.
+   ============================================================ */
+const MUSIC_KEY = 'tz_cedimento_audio';
+let musicaRipristinata = false;
+
+function leggiMusica() {
+  try { return JSON.parse(localStorage.getItem(MUSIC_KEY) || 'null'); } catch (e) { return null; }
+}
+
+window.salvaMusica = function() {
+  const input = document.getElementById('web-link-input');
+  const m = {
+    tab: activeSourceTab,
+    trackId: selectedTrackId,
+    mp3Start: Number((document.getElementById('segment-start-mp3') || {}).value) || 0,
+    url: input ? input.value.trim() : '',
+    webOk: !!currentWebMode,
+    webStart: Number((document.getElementById('segment-start-web') || {}).value) || 0,
+    volume: Number((document.getElementById('drop-volume') || {}).value) || 80
+  };
+  /* aperta come file locale la pagina puo non avere memoria: non si blocca */
+  try { localStorage.setItem(MUSIC_KEY, JSON.stringify(m)); } catch (e) {}
+  aggiornaRiassuntoMusica();
+};
+
+function nomeMusica() {
+  const m = leggiMusica();
+  if (!m) return null;
+  if (m.tab === 'mp3' && m.trackId) {
+    const t = failureTracks.find(x => x.id === m.trackId);
+    return t ? t.name : null;
+  }
+  if (m.tab === 'web' && m.url && m.webOk) {
+    return (/spotify/i.test(m.url) ? 'Spotify' : 'YouTube') + ' \u2022 link salvato';
+  }
+  return null;
+}
+
+function aggiornaRiassuntoMusica() {
+  const n = nomeMusica();
+  const el = document.getElementById('drop-song-name');
+  if (el) el.innerText = n || 'Nessuna canzone: suona la tua musica';
+  const s = document.getElementById('set-music-name');
+  if (s) s.innerText = n || 'Nessuna canzone scelta';
+}
+
+/* Ripristino: la traccia locale subito; il link web solo quando serve,
+   per non scaricare il lettore YouTube a ogni apertura dell app. */
+window.ripristinaMusica = function(conWeb) {
+  const m = leggiMusica();
+  if (!m) { aggiornaRiassuntoMusica(); return; }
+  const vol = document.getElementById('drop-volume');
+  if (vol) { vol.value = m.volume; const l = document.getElementById('drop-volume-label'); if (l) l.innerText = m.volume + '%'; }
+  if (m.tab) switchAudioSourceTab(m.tab, true);
+  if (m.tab === 'mp3' && m.trackId && selectedTrackId !== m.trackId && failureTracks.some(t => t.id === m.trackId)) {
+    selectTrack(m.trackId, true);
+    const r = document.getElementById('segment-start-mp3');
+    if (r && !r.disabled) { r.value = m.mp3Start; onMp3RangeInput(true); }
+  }
+  const input = document.getElementById('web-link-input');
+  if (input && m.url && !input.value) input.value = m.url;
+  if (conWeb && m.tab === 'web' && m.url && m.webOk && !currentWebMode) {
+    handleWebLinkSubmit(true);
+  }
+  musicaRipristinata = true;
+  aggiornaRiassuntoMusica();
+};
+
+window.clearCedimentoAudio = function() {
+  selectedTrackId = null;
+  currentWebMode = null;
+  const input = document.getElementById('web-link-input');
+  if (input) input.value = '';
+  try { localStorage.removeItem(MUSIC_KEY); } catch (e) {}
+  renderFailureTracks();
+  refreshDropButtonState();
+  aggiornaRiassuntoMusica();
+  showUndo('Nessuna canzone: durante il cedimento continua la tua musica');
+};
+
+window.openMusicSheet = function() {
+  document.getElementById('music-sheet').classList.remove('hidden');
+  ripristinaMusica(true);
+};
+window.closeMusicSheet = function() {
+  document.getElementById('music-sheet').classList.add('hidden');
+  salvaMusica();
+};
+
+window.switchAudioSourceTab = function(tab, silenzioso) {
   activeSourceTab = tab;
   document.querySelectorAll('.source-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.source === tab));
   document.getElementById('source-panel-mp3').classList.toggle('active', tab === 'mp3');
   document.getElementById('source-panel-web').classList.toggle('active', tab === 'web');
+  if (!silenzioso) salvaMusica();
 };
 
 function getResolvedAudioMode() {
@@ -3965,6 +4131,7 @@ function updateFireModeState() {
 
 window.onDropVolumeInput = function() {
   const vol = Number(document.getElementById('drop-volume').value);
+  salvaMusica();
   document.getElementById('drop-volume-label').innerText = vol + '%';
   const mode = getResolvedAudioMode();
   if (mode === 'mp3') {
@@ -4126,6 +4293,8 @@ window.handleAudioUpload = async function(fileList) {
 async function refreshFailureTracks() {
   failureTracks = await dbGetAllTracks();
   renderFailureTracks();
+  if (!musicaRipristinata) ripristinaMusica(false);
+  else aggiornaRiassuntoMusica();
 }
 function renderFailureTracks() {
   const container = document.getElementById('track-list');
@@ -4148,7 +4317,7 @@ function renderFailureTracks() {
   `).join('');
 }
 
-window.selectTrack = function(id) {
+window.selectTrack = function(id, silenzioso) {
   const track = failureTracks.find(t => t.id === id);
   if (!track) return;
   selectedTrackId = id;
@@ -4177,6 +4346,7 @@ window.selectTrack = function(id) {
   stopDropSet();
   renderFailureTracks();
   refreshDropButtonState();
+  if (!silenzioso) salvaMusica();
 };
 
 function updateMp3SegmentLabel(track) {
@@ -4190,12 +4360,15 @@ function updateMp3SegmentLabel(track) {
   const audio = document.getElementById('failure-audio');
   if (audio && !dropActive) { try { audio.currentTime = start; } catch (e) {} }
 }
-window.onMp3RangeInput = function() {
+window.onMp3RangeInput = function(silenzioso) {
   const t = failureTracks.find(x => x.id === selectedTrackId);
   if (t) updateMp3SegmentLabel(t);
+  if (silenzioso !== true) salvaMusica();
 };
 
 window.deleteTrack = async function(id) {
+  const m = leggiMusica();
+  if (m && m.trackId === id) { m.trackId = null; try { localStorage.setItem(MUSIC_KEY, JSON.stringify(m)); } catch (e) {} }
   if (!confirm('Eliminare questa traccia?')) return;
   await dbDeleteTrack(id);
   if (selectedTrackId === id) {
@@ -4250,7 +4423,7 @@ function updateWebSegmentLabel() {
   label.innerText = formatMMSS(start) + ' \u2192 ' + formatMMSS(end);
 }
 
-window.onWebRangeInput = function() { updateWebSegmentLabel(); };
+window.onWebRangeInput = function() { updateWebSegmentLabel(); salvaMusica(); };
 
 window.nudgeWebSegment = function(delta) {
   const range = document.getElementById('segment-start-web');
@@ -4273,10 +4446,11 @@ window.previewWebSegment = function() {
   }
 };
 
-window.handleWebLinkSubmit = function() {
+window.handleWebLinkSubmit = function(silenzioso) {
   const url = document.getElementById('web-link-input').value.trim();
   const parsed = parseWebAudioUrl(url);
   if (!parsed) {
+    if (silenzioso === true) return;
     alert('Link non valido. Incolla un link YouTube (youtube.com o youtu.be) oppure Spotify (open.spotify.com/track/...).');
     return;
   }
@@ -4288,6 +4462,7 @@ window.handleWebLinkSubmit = function() {
     loadSpotifyPlayer(parsed.id, parsed.kind);
   }
   refreshDropButtonState();
+  if (silenzioso !== true) salvaMusica();
 };
 
 /* ---- YouTube ---- */
@@ -5345,8 +5520,16 @@ window.endWorkout = function() {
   const berserkFound = activeList.some(e => e.completedSets.some(s => s.wasBerserk));
   const skippedCount = list.length - activeList.length;
   const historyEntry = {
+    id: Date.now(),
     day: currentDay,
     date: formatNow(),
+    /* fotografia completa, serie per serie: e cio che si rivede aprendo
+       un giorno gia completato */
+    sessione: activeList.map(e => ({
+      name: e.name,
+      rest: e.rest,
+      sets: e.completedSets.map(s => ({ reps: s.reps, weight: s.weight, done: !!s.done, wasBerserk: !!s.wasBerserk }))
+    })),
     berserk: berserkFound,
     skipped: skippedCount,
     exercises: activeList.map(e => {
@@ -6044,6 +6227,15 @@ function renderSettings() {
     '</div>' +
 
     '<div class="set-group">' +
+      '<div class="set-group-title">Canzone del Cedimento</div>' +
+      '<button class="entry-btn" style="margin-top:0;" onclick="openMusicSheet()">' +
+        '<span class="entry-ico">\u{1F3B5}</span>' +
+        '<span class="aw-main"><span class="entry-name" id="set-music-name">' + escapeHtml(nomeMusica() || 'Nessuna canzone scelta') + '</span>' +
+        '<span class="aw-meta">MP3 o link YouTube/Spotify: la scegli una volta, vale per tutti gli allenamenti</span></span>' +
+        '<span class="aw-path-go">\u203A</span></button>' +
+    '</div>' +
+
+    '<div class="set-group">' +
       '<div class="set-group-title">Timer di recupero</div>' +
       toggleHtml(SOUND_KEY, true, 'Suono a fine recupero', 'Un segnale quando il tempo scade') +
       toggleHtml(COUNTDOWN_KEY, true, 'Conto alla rovescia sonoro', 'Un bip a ogni secondo negli ultimi cinque') +
@@ -6625,6 +6817,7 @@ function renderMonthCal() {
       if (v && !v.done) attachSwapDrag(c, {
         selector: '#mc-grid .mc-cell', attr: 'data-data',
         label: (k) => daYmd(k).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric' }),
+        consenti: (a, b) => !!b && ymd(lunediDi(daYmd(a))) === ymd(lunediDi(daYmd(b))),
         onSwap: mcSwapDays
       });
     });
@@ -6666,10 +6859,15 @@ function attachSwapDrag(el, opts) {
     const t = hit && hit.closest ? hit.closest(opts.selector) : null;
     return t ? t.getAttribute(opts.attr) : null;
   };
+  const valido = (k) => !opts.consenti || opts.consenti(origine, k);
   const evidenzia = (k) => {
     document.querySelectorAll(opts.selector).forEach(c => {
-      c.classList.toggle('swap-from', trascina && c.getAttribute(opts.attr) === origine);
-      c.classList.toggle('swap-to', !!k && c.getAttribute(opts.attr) === k && k !== origine);
+      const id = c.getAttribute(opts.attr);
+      c.classList.toggle('swap-from', trascina && id === origine);
+      c.classList.toggle('swap-to', !!k && id === k && k !== origine && valido(k));
+      c.classList.toggle('swap-no', !!k && id === k && k !== origine && !valido(k));
+      /* le celle fuori dalla settimana si spengono: si vede subito dove si puo */
+      c.classList.toggle('swap-fuori', trascina && !!opts.consenti && !valido(id) && id !== origine);
     });
   };
 
@@ -6711,6 +6909,12 @@ function attachSwapDrag(el, opts) {
 
 /* ---- calendario del mese: si scambiano due date ---- */
 window.mcSwapDays = function(a, b) {
+  /* la settimana e un blocco: i giorni si scambiano solo al suo interno.
+     Per spostare una settimana intera c e la maniglia \u2261 */
+  if (ymd(lunediDi(daYmd(a))) !== ymd(lunediDi(daYmd(b)))) {
+    alert('Lo scambio si fa dentro la stessa settimana, cosi la settimana resta un blocco. Per spostare o copiare una settimana intera usa la maniglia \u2261.');
+    return false;
+  }
   const cal = loadCal();
   if ((cal[a] && cal[a].done) || (cal[b] && cal[b].done)) {
     alert('Un giorno gia fatto non si sposta: fa parte del tuo storico.');
@@ -6967,6 +7171,7 @@ window.mcClearMonth = function() {
 /* ---- Dettaglio di un giorno ---- */
 window.mcOpenDay = function(k) {
   const v = loadCal()[k];
+  if (v && v.done && v.sessione) { openDoneView(k); return; }
   const d = daYmd(k);
   document.getElementById('mc-day-title').innerText = d.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
   document.getElementById('mc-day-sub').innerText = v ? (v.done ? 'Allenamento fatto' : (v.rest ? 'Riposo' : 'In programma')) : 'Niente in programma';
@@ -7022,12 +7227,65 @@ window.segnaFattoNelCalendario = function(entry) {
   const totali = entry.exercises.reduce((s, e) => s + e.totalSets, 0);
   cal[k] = {
     title: getDayTitle(entry.day),
+    day: entry.day,
     items: entry.exercises.map(e => ({ name: e.name, sets: e.totalSets, reps: '' })),
     done: true,
     doneAt: entry.date,
+    historyId: entry.id,
+    sessione: entry.sessione || null,
     summary: fatte + ' di ' + totali + ' serie' + (entry.berserk ? ' \u2022 con cedimento' : '')
   };
   saveCal(cal);
+};
+
+/* ============================================================
+   SESSIONE GIA COMPLETATA, IN SOLA LETTURA
+   Un giorno fatto e storico: riaprendolo si vedono i valori esatti di
+   quando l hai finito, serie per serie. Non si modifica per sbaglio;
+   se vuoi allenarti di nuovo c e un pulsante apposta.
+   ============================================================ */
+window.openDoneView = function(k) {
+  const v = loadCal()[k];
+  if (!v || !v.done) return;
+  const d = daYmd(k);
+  document.getElementById('dv2-title').innerText = v.title || 'Allenamento';
+  document.getElementById('dv2-sub').innerText =
+    d.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' }) + ' \u2022 ' + (v.summary || '');
+
+  let html = '<div class="mc-done-box"><div class="mc-done-t">\u2713 Completato</div>' +
+    '<div class="dv-meta">' + escapeHtml(v.doneAt || '') + '</div></div>';
+
+  if (v.sessione && v.sessione.length) {
+    html += v.sessione.map((e, i) => {
+      const fatte = e.sets.filter(s => s.done).length;
+      return '<div class="card dv2-ex">' +
+        '<div class="dv2-head"><span class="dv-num">' + (i + 1) + '</span>' +
+          '<span class="dv-main"><span class="dv-name">' + escapeHtml(e.name.replace(/^\S+\s/, '')) + '</span>' +
+          '<span class="dv-meta">' + fatte + ' di ' + e.sets.length + ' serie</span></span></div>' +
+        e.sets.map((s, si) => '<div class="dv2-set ' + (s.done ? 'ok' : 'no') + '">' +
+          '<span class="dv2-n">' + (si + 1) + '</span>' +
+          '<span class="dv2-val"><b>' + s.reps + '</b> \u00D7 <b>' + s.weight + '</b> kg</span>' +
+          (s.wasBerserk ? '<span class="dv2-fire">\u{1F525}</span>' : '') +
+          '<span class="dv2-chk">' + (s.done ? '\u2713' : '\u2013') + '</span></div>').join('') +
+      '</div>';
+    }).join('');
+  } else {
+    /* sessioni registrate prima di questa versione: c e solo il riepilogo */
+    html += '<div class="card">' + (v.items || []).map((e, i) =>
+      '<div class="dv-row"><span class="dv-num">' + (i + 1) + '</span><span class="dv-main"><span class="dv-name">' +
+      escapeHtml(e.name.replace(/^\S+\s/, '')) + '</span><span class="dv-meta">' + e.sets + ' serie</span></span></div>').join('') +
+      '<div class="aw-warn">Il dettaglio serie per serie e disponibile per gli allenamenti completati da ora in poi.</div></div>';
+  }
+
+  if (v.day && (loadData()[v.day] || []).length) {
+    html += '<button class="btn-archive" onclick="closeDoneView(); openWorkoutDay(\'' + v.day + '\', true);">\u21BB Allenati di nuovo con questa scheda</button>';
+  }
+  document.getElementById('dv2-body').innerHTML = html;
+  document.getElementById('done-view-sheet').classList.remove('hidden');
+};
+
+window.closeDoneView = function() {
+  document.getElementById('done-view-sheet').classList.add('hidden');
 };
 
 /* ============================================================
