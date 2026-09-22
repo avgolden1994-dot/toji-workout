@@ -311,6 +311,15 @@ body {
 .drop-song-btn { flex-shrink: 0; background: transparent; border: 1px solid var(--primary); color: var(--primary); border-radius: 8px; padding: 7px 12px; font-weight: 800; font-size: 0.76rem; cursor: pointer; }
 #music-sheet { z-index: 97; }
 
+/* ======= Dettaglio sessione ======= */
+.dv2-tot { margin-top: var(--sp-2); font-size: 0.84rem; }
+.dv2-cols { display: grid; grid-template-columns: 34px 1fr 1fr 44px; gap: var(--sp-2); padding: 0 var(--sp-3) var(--sp-1); font-size: 0.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.4px; color: var(--muted); }
+.dv2-set { display: grid !important; grid-template-columns: 34px 1fr 1fr 44px; gap: var(--sp-2); align-items: center; }
+.dv2-c { font-size: 0.9rem; }
+.dv2-chk { text-align: right; }
+.history-card { display: block; width: 100%; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+.history-open { margin-top: var(--sp-3); font-size: 0.74rem; font-weight: 800; color: var(--primary); }
+
 /* ======= Scambio dei giorni trascinandoli ======= */
 .cal-day, .mc-cell { touch-action: none; }
 .swap-from { opacity: 0.45; outline: 2px dashed var(--primary); outline-offset: -2px; }
@@ -1275,7 +1284,7 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
 <div class="app-shell" id="app-root" style="display:none;">
   <div class="banner">
     <div class="banner-quote" id="banner-quote">Nessuna Energia Maledetta • Solo Forza Pura</div>
-    <div class="banner-title" id="banner-title">Toji Protocol</div>
+    <div class="banner-title" id="banner-title">Toji's Protocol</div>
   </div>
 
 
@@ -1506,7 +1515,7 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
   <section id="tab-storico" class="tab-panel">
     <div class="card">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <div style="font-weight:800; font-size:0.9rem; text-transform:uppercase;">Cronologia Sessioni</div>
+        <div style="font-weight:800; font-size:0.9rem; text-transform:uppercase;">Allenamenti completati</div>
         <button class="del-btn" style="font-size:0.75rem;" onclick="clearHistory()">Svuota Storico</button>
       </div>
       <div id="history-list"></div>
@@ -1875,8 +1884,8 @@ let currentTab = 'piano';
 const MODE_KEY = 'tz_app_mode';
 
 const MODE_META = {
-  toji: { quote: 'Nessuna Energia Maledetta • Solo Forza Pura', title: 'Toji Protocol', themeColor: '#08080a' },
-  maki: { quote: 'Senza Energia Maledetta • Solo Lame e Disciplina', title: 'Maki Protocol', themeColor: '#052e13' }
+  toji: { quote: 'Nessuna Energia Maledetta • Solo Forza Pura', title: "Toji's Protocol", themeColor: '#08080a' },
+  maki: { quote: 'Senza Energia Maledetta • Solo Lame e Disciplina', title: "Maki's Protocol", themeColor: '#052e13' }
 };
 
 const DEFAULT_MONDAY_PROGRAM = {
@@ -2317,7 +2326,12 @@ function loadData() {
 const saveData = (data) => localStorage.setItem(dataKey(), JSON.stringify(data));
 
 function normalizeHistoryEntry(session) {
+  /* ATTENZIONE: qui si conservano TUTTI i campi utili. Prima venivano
+     scartati id e dettaglio serie per serie: rileggendo e risalvando lo
+     storico, il dettaglio andava perso per sempre. */
   return {
+    id: session.id,
+    sessione: Array.isArray(session.sessione) ? session.sessione : undefined,
     day: session.day,
     date: session.date,
     berserk: !!session.berserk,
@@ -5577,15 +5591,17 @@ function renderStorico() {
     container.innerHTML = '<span class="muted">Nessuna sessione registrata nello storico.</span>';
     return;
   }
-  container.innerHTML = history.map(session => `
-    <div class="history-card ${session.berserk ? 'berserk' : ''}">
+  /* ogni allenamento si tocca per vederlo serie per serie */
+  container.innerHTML = history.map((session, i) => `
+    <button class="history-card ${session.berserk ? 'berserk' : ''}" onclick="openHistoryDetail(${i})">
       ${session.berserk ? '<div class="berserk-score">🔥 BERSERK SCORE</div>' : ''}
-      <div class="history-date">${escapeHtml(session.day)} - ${escapeHtml(session.date)}</div>
+      <div class="history-date">${escapeHtml(getDayTitle(session.day))} \u2022 ${escapeHtml(session.date)}</div>
       <div class="history-body">
-        ${session.exercises.map(e => `<div>${e.doneSets}/${e.totalSets} Serie di ${escapeHtml(e.name)} @ ${e.weight} kg${e.wasBerserk ? ' 🔥' : ''}</div>`).join('')}
+        ${session.exercises.map(e => `<div>${e.doneSets}/${e.totalSets} serie \u2022 ${escapeHtml(e.name.replace(/^\S+\s/, ''))} \u2022 ${e.weight} kg${e.wasBerserk ? ' 🔥' : ''}</div>`).join('')}
         ${session.skipped ? `<div class="muted" style="margin-top:4px;">⏭ ${session.skipped} esercizi saltati</div>` : ''}
       </div>
-    </div>
+      <div class="history-open">Vedi ogni serie \u203A</div>
+    </button>
   `).join('');
 }
 window.clearHistory = function() {
@@ -7244,44 +7260,86 @@ window.segnaFattoNelCalendario = function(entry) {
    quando l hai finito, serie per serie. Non si modifica per sbaglio;
    se vuoi allenarti di nuovo c e un pulsante apposta.
    ============================================================ */
-window.openDoneView = function(k) {
-  const v = loadCal()[k];
-  if (!v || !v.done) return;
-  const d = daYmd(k);
-  document.getElementById('dv2-title').innerText = v.title || 'Allenamento';
-  document.getElementById('dv2-sub').innerText =
-    d.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' }) + ' \u2022 ' + (v.summary || '');
+/* Mostra una sessione completata. Accetta sia la voce del calendario sia
+   quella dello storico. Le sessioni nuove hanno ogni serie (ripetizioni e
+   carico); quelle registrate prima avevano solo carico finale e serie
+   fatte, e si mostra onestamente quello che c e. */
+function mostraSessione(s) {
+  document.getElementById('dv2-title').innerText = s.title || 'Allenamento';
+  document.getElementById('dv2-sub').innerText = (s.quando ? s.quando + ' \u2022 ' : '') + (s.summary || '');
+  const fmt = (n) => Math.round(n).toLocaleString('it-IT');
 
+  const conDettaglio = !!(s.sessione && s.sessione.length);
+  /* volume totale: somma di ripetizioni per carico sulle serie fatte */
+  const vol = conDettaglio ? s.sessione.reduce((t, e) => t + e.sets.filter(x => x.done).reduce((a, x) => a + (Number(x.reps) || 0) * (Number(x.weight) || 0), 0), 0) : 0;
   let html = '<div class="mc-done-box"><div class="mc-done-t">\u2713 Completato</div>' +
-    '<div class="dv-meta">' + escapeHtml(v.doneAt || '') + '</div></div>';
+    '<div class="dv-meta">' + escapeHtml(s.doneAt || '') + '</div>' +
+    (vol > 0 ? '<div class="dv2-tot">Volume totale <b>' + fmt(vol) + ' kg</b></div>' : '') + '</div>';
 
-  if (v.sessione && v.sessione.length) {
-    html += v.sessione.map((e, i) => {
-      const fatte = e.sets.filter(s => s.done).length;
+  if (conDettaglio) {
+
+    html += s.sessione.map((e, i) => {
+      const fatte = e.sets.filter(x => x.done);
+      const volEs = fatte.reduce((a, x) => a + (Number(x.reps) || 0) * (Number(x.weight) || 0), 0);
+      const max = fatte.reduce((m, x) => Math.max(m, Number(x.weight) || 0), 0);
       return '<div class="card dv2-ex">' +
         '<div class="dv2-head"><span class="dv-num">' + (i + 1) + '</span>' +
           '<span class="dv-main"><span class="dv-name">' + escapeHtml(e.name.replace(/^\S+\s/, '')) + '</span>' +
-          '<span class="dv-meta">' + fatte + ' di ' + e.sets.length + ' serie</span></span></div>' +
-        e.sets.map((s, si) => '<div class="dv2-set ' + (s.done ? 'ok' : 'no') + '">' +
+          '<span class="dv-meta">' + fatte.length + ' di ' + e.sets.length + ' serie' +
+            (max ? ' \u2022 carico max ' + max + ' kg' : '') + (volEs ? ' \u2022 volume ' + fmt(volEs) + ' kg' : '') +
+          '</span></span></div>' +
+        '<div class="dv2-cols"><span>Serie</span><span>Ripetizioni</span><span>Carico</span><span></span></div>' +
+        e.sets.map((x, si) => '<div class="dv2-set ' + (x.done ? 'ok' : 'no') + '">' +
           '<span class="dv2-n">' + (si + 1) + '</span>' +
-          '<span class="dv2-val"><b>' + s.reps + '</b> \u00D7 <b>' + s.weight + '</b> kg</span>' +
-          (s.wasBerserk ? '<span class="dv2-fire">\u{1F525}</span>' : '') +
-          '<span class="dv2-chk">' + (s.done ? '\u2713' : '\u2013') + '</span></div>').join('') +
+          '<span class="dv2-c"><b>' + x.reps + '</b></span>' +
+          '<span class="dv2-c"><b>' + x.weight + '</b> kg</span>' +
+          '<span class="dv2-chk">' + (x.wasBerserk ? '\u{1F525} ' : '') + (x.done ? '\u2713' : '\u2013') + '</span></div>').join('') +
       '</div>';
     }).join('');
   } else {
-    /* sessioni registrate prima di questa versione: c e solo il riepilogo */
-    html += '<div class="card">' + (v.items || []).map((e, i) =>
-      '<div class="dv-row"><span class="dv-num">' + (i + 1) + '</span><span class="dv-main"><span class="dv-name">' +
-      escapeHtml(e.name.replace(/^\S+\s/, '')) + '</span><span class="dv-meta">' + e.sets + ' serie</span></span></div>').join('') +
-      '<div class="aw-warn">Il dettaglio serie per serie e disponibile per gli allenamenti completati da ora in poi.</div></div>';
+    const es = s.esercizi || (s.items || []).map(x => ({ name: x.name, totalSets: x.sets }));
+    html += '<div class="card">' + es.map((e, i) =>
+      '<div class="dv-row"><span class="dv-num">' + (i + 1) + '</span><span class="dv-main">' +
+      '<span class="dv-name">' + escapeHtml(e.name.replace(/^\S+\s/, '')) + (e.wasBerserk ? ' \u{1F525}' : '') + '</span>' +
+      '<span class="dv-meta">' + (e.doneSets !== undefined ? e.doneSets + ' di ' : '') + e.totalSets + ' serie' +
+        (e.weight !== undefined ? ' \u2022 carico <b>' + e.weight + ' kg</b>' : '') + '</span></span></div>').join('') +
+      '<div class="aw-warn">Per questo allenamento erano stati salvati solo il carico finale e le serie fatte. ' +
+      'Da ora in poi, per ogni allenamento che completi, vedrai qui ogni serie con ripetizioni e carico.</div></div>';
   }
 
-  if (v.day && (loadData()[v.day] || []).length) {
-    html += '<button class="btn-archive" onclick="closeDoneView(); openWorkoutDay(\'' + v.day + '\', true);">\u21BB Allenati di nuovo con questa scheda</button>';
+  if (s.day && (loadData()[s.day] || []).length) {
+    html += '<button class="btn-archive" onclick="closeDoneView(); openWorkoutDay(\'' + s.day + '\', true);">\u21BB Allenati di nuovo con questa scheda</button>';
   }
   document.getElementById('dv2-body').innerHTML = html;
   document.getElementById('done-view-sheet').classList.remove('hidden');
+}
+
+/* dal calendario o dalla schermata Allenamento */
+window.openDoneView = function(k) {
+  const v = loadCal()[k];
+  if (!v || !v.done) return;
+  /* le sessioni vecchie non hanno il dettaglio nel calendario: si recupera
+     dallo storico quello che c e (carico finale, serie fatte, cedimento) */
+  const h0 = loadHistory().find(x => (v.historyId && x.id === v.historyId) || x.date === v.doneAt);
+  mostraSessione({
+    title: v.title, day: v.day || (h0 && h0.day), doneAt: v.doneAt, summary: v.summary,
+    quando: daYmd(k).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' }),
+    sessione: v.sessione || (h0 && h0.sessione) || null,
+    esercizi: h0 ? h0.exercises : null, items: v.items
+  });
+};
+
+/* dalla sezione Allenamenti completati */
+window.openHistoryDetail = function(i) {
+  const x = loadHistory()[i];
+  if (!x) return;
+  const fatte = x.exercises.reduce((a, e) => a + e.doneSets, 0);
+  const tot = x.exercises.reduce((a, e) => a + e.totalSets, 0);
+  mostraSessione({
+    title: getDayTitle(x.day), day: x.day, doneAt: x.date,
+    summary: fatte + ' di ' + tot + ' serie' + (x.berserk ? ' \u2022 con cedimento' : ''),
+    sessione: x.sessione || null, esercizi: x.exercises
+  });
 };
 
 window.closeDoneView = function() {
