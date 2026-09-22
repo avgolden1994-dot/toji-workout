@@ -357,6 +357,8 @@ body {
 .coach-badge-set.giu { color: var(--danger); }
 .coach-badge-set.scarico { color: var(--primary); }
 #agent-sheet { z-index: 94; }
+#bia-sheet { z-index: 95; }
+.bia-del { background: transparent; border: none; color: var(--muted); font-size: 0.8rem; cursor: pointer; margin-left: 6px; }
 
 /* ======= Menu della settimana ======= */
 .wm-body { padding: 0 var(--sp-4) var(--sp-5); max-height: 70vh; overflow-y: auto; }
@@ -367,6 +369,28 @@ body {
 .wm-x { font-size: 0.9rem; font-weight: 900; color: var(--accent); }
 .wm-day.bloccato .wm-x { color: var(--muted); }
 .wm-body .set-row-btn { margin-top: var(--sp-2); }
+
+/* ======= Statistiche ======= */
+#stats-sheet { z-index: 94; }
+.st-periodo { display: flex; gap: 6px; overflow-x: auto; margin-bottom: var(--sp-4); -webkit-overflow-scrolling: touch; }
+.st-periodo button { flex-shrink: 0; background: var(--surface-2); border: 1px solid var(--border); color: var(--text); border-radius: 999px; padding: 7px 12px; font-weight: 800; font-size: 0.74rem; cursor: pointer; }
+.st-periodo button.on { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
+.st-head { margin-bottom: var(--sp-4); }
+.st-title { font-size: 1.15rem; font-weight: 900; text-transform: uppercase; line-height: var(--lh-loose); }
+.st-sub { font-size: 0.74rem; color: var(--muted); margin-top: var(--sp-1); }
+.st-table { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: var(--sp-4); }
+.st-row { display: grid; grid-template-columns: 1fr 44px 50px 58px 42px; gap: 4px; align-items: center; padding: 9px var(--sp-3); border-top: 1px solid var(--border); font-size: 0.8rem; text-align: right; }
+.st-row > span:first-child { text-align: left; }
+.st-h { background: var(--surface-2); font-size: 0.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.3px; color: var(--muted); border-top: none; }
+.st-day { background: color-mix(in srgb, var(--primary) 14%, var(--surface-1)); color: var(--primary); font-size: 0.68rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.4px; padding: 6px var(--sp-3); border-top: 1px solid var(--border); }
+.st-name { font-weight: 700; line-height: 1.25; }
+.st-bar { display: block; height: 5px; border-radius: 3px; background: var(--surface-2); margin-top: 5px; overflow: hidden; }
+.st-bar i { display: block; height: 100%; background: var(--muted); border-radius: 3px; }
+.st-bar i.su { background: var(--success); }
+.st-bar i.giu { background: var(--danger); }
+.st-inc { font-weight: 900; }
+.st-inc.su { color: var(--success); }
+.st-inc.giu { color: var(--danger); }
 
 /* ======= Scambio dei giorni trascinandoli ======= */
 .cal-day, .mc-cell { touch-action: none; }
@@ -1570,6 +1594,11 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
     <div class="card">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
         <div style="font-weight:800; font-size:0.9rem; text-transform:uppercase;">Allenamenti completati</div>
+        <button class="entry-btn" style="margin:var(--sp-3) 0 0;" onclick="openStats()">
+          <span class="entry-ico">📊</span>
+          <span class="aw-main"><span class="entry-name">Statistiche</span><span class="aw-meta">Primo e ultimo carico, esercizio per esercizio</span></span>
+          <span class="aw-path-go">›</span>
+        </button>
         <button class="del-btn" style="font-size:0.75rem;" onclick="clearHistory()">Svuota Storico</button>
       </div>
       <div id="history-list"></div>
@@ -1613,6 +1642,22 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
     </div>
     <div class="wm-body" id="wm-body"></div>
   </div>
+</div>
+
+<div class="group-sheet hidden" id="stats-sheet">
+  <div class="sheet-bar">
+    <button class="sheet-back" onclick="closeStats()" aria-label="Indietro">←</button>
+    <div class="sheet-titles"><div class="sheet-title">Statistiche</div><div class="sheet-sub">Progresso dei carichi</div></div>
+  </div>
+  <div class="sheet-body" id="stats-body"></div>
+</div>
+
+<div class="group-sheet hidden" id="bia-sheet">
+  <div class="sheet-bar">
+    <button class="sheet-back" onclick="closeBiaSheet()" aria-label="Indietro">←</button>
+    <div class="sheet-titles"><div class="sheet-title">Composizione corporea</div><div class="sheet-sub">I tuoi referti BIA</div></div>
+  </div>
+  <div class="sheet-body" id="bia-body"></div>
 </div>
 
 <div class="group-sheet hidden" id="agent-sheet">
@@ -6103,6 +6148,102 @@ function ensurePdfJs() {
 }
 
 /* Cerca i valori con le diciture piu comuni nei referti italiani e inglesi */
+/* ============================================================
+   LETTORE BIA A STRUTTURA (InBody e simili)
+   Alcuni referti, come l InBody120, DISEGNANO le etichette come
+   grafica: nel testo del PDF restano solo i numeri, in un ordine
+   fisso. Il lettore per etichette li' non trova nulla; questo invece
+   riconosce la struttura del foglio e sa quale numero e quale.
+   Legge anche lo STORICO stampato sul referto (le misure precedenti),
+   cosi il coach ha subito un andamento, non una foto sola.
+   ============================================================ */
+function numIt(s) { return parseFloat(String(s).replace(',', '.')); }
+
+window.parseInBody = function(testo) {
+  const t = String(testo).replace(/\s+/g, ' ');
+  if (!/InBody/i.test(t)) return null;
+  const out = {};
+
+  /* data e ora del test, anno a quattro cifre */
+  const dt = t.match(/(\d{2})\.(\d{2})\.(\d{4})\.?\s+\d{2}:\d{2}/);
+  if (dt) out.data = dt[3] + '-' + dt[2] + '-' + dt[1];
+
+  /* intestazione: altezza ed eta stanno tra la sigla del modello e la data */
+  const alt = t.match(/\b(\d{3}(?:[.,]\d)?)\s*cm\b/i);
+  if (alt) out.altezza = numIt(alt[1]);
+  const fineMod = t.indexOf(']');
+  const inizioData = dt ? t.indexOf(dt[0]) : -1;
+  if (fineMod !== -1 && inizioData > fineMod) {
+    const testa = t.slice(fineMod + 1, inizioData).split(' ').filter(Boolean);
+    const eta = testa.find(x => /^\d{1,3}$/.test(x) && Number(x) >= 10 && Number(x) <= 99);
+    if (eta) out.eta = Number(eta);
+  }
+  if (/\b(Maschio|Uomo|Male)\b/i.test(t)) out.sesso = 'uomo';
+  else if (/\b(Femmina|Donna|Female)\b/i.test(t)) out.sesso = 'donna';
+
+  /* blocco composizione: (L) acqua, poi (kg) proteine, minerali, grasso, peso,
+     ognuno seguito dal suo intervallo di riferimento "( ) a~b" */
+  const comp = [];
+  const reComp = /\((L|kg)\)\s*(\d+(?:,\d+)?)\s*\(\s*\)\s*\d+(?:,\d+)?~\d+(?:,\d+)?/g;
+  let m;
+  while ((m = reComp.exec(t)) !== null) comp.push({ u: m[1], v: numIt(m[2]) });
+  if (comp.length >= 5 && comp[0].u === 'L') {
+    out.tbw = comp[0].v;
+    out.proteine = comp[1].v;
+    out.minerali = comp[2].v;
+    out.fm = comp[3].v;
+    out.peso = comp[4].v;
+  }
+
+  /* barre: ogni valore segue la sua scala stampata */
+  const dopoScala = (scala) => {
+    const i = t.indexOf(scala);
+    if (i === -1) return null;
+    const r = t.slice(i + scala.length).match(/^\s+(\d+(?:,\d+)?)/);
+    return r ? numIt(r[1]) : null;
+  };
+  const smm = dopoScala('70 80 90 100 110 120 130 140 150 160 170');
+  if (smm) out.smm = smm;
+  const bmi = dopoScala('40,0 45,0 50,0 55,0');
+  if (bmi) out.bmi = bmi;
+  const pbf = dopoScala('0,0 5,0 10,0 15,0 20,0 25,0 30,0 35,0 40,0 45,0 50,0');
+  if (pbf) out.fmPerc = pbf;
+
+  /* colonna destra: metabolismo (unita prima o dopo il numero), grasso viscerale */
+  const bmr = t.match(/kcal\s*(\d{3,4})\b/i) || t.match(/\b(\d{3,4})\s*kcal/i);
+  if (bmr) out.bmr = Number(bmr[1]);
+  const visc = t.match(/\s(\d{1,2})\s+1~9\b/);
+  if (visc) out.viscerale = Number(visc[1]);
+
+  if (out.peso && out.fm && !out.ffm) out.ffm = Math.round((out.peso - out.fm) * 10) / 10;
+  if (out.peso && out.fm && !out.fmPerc) out.fmPerc = Math.round(out.fm / out.peso * 1000) / 10;
+
+  /* storico stampato: date con anno a due cifre, e prima di loro tre righe
+     di valori (peso, muscolo scheletrico, percentuale di grasso) */
+  const reData = /(\d{2})\.(\d{2})\.(\d{2})\.\s+\d{2}:\d{2}/g;
+  const date = [];
+  let first = -1;
+  while ((m = reData.exec(t)) !== null) {
+    if (first === -1) first = m.index;
+    date.push('20' + m[3] + '-' + m[2] + '-' + m[1]);
+  }
+  if (date.length >= 2 && first > 0) {
+    const prima = t.slice(0, first).trim().split(' ');
+    const nums = [];
+    for (let i = prima.length - 1; i >= 0 && nums.length < date.length * 3; i--) {
+      if (/^\d+(,\d+)?$/.test(prima[i])) nums.unshift(numIt(prima[i])); else break;
+    }
+    if (nums.length === date.length * 3) {
+      const n = date.length;
+      out.storico = date.map((d, i) => {
+        const peso = nums[i], smmV = nums[n + i], pbfV = nums[2 * n + i];
+        return { data: d, valori: { peso: peso, smm: smmV, fmPerc: pbfV, ffm: Math.round(peso * (1 - pbfV / 100) * 10) / 10 } };
+      });
+    }
+  }
+  return out;
+};
+
 window.parseBiaText = function(testo) {
   /* Ogni strumento scrive a modo suo: InBody usa SMM e PBF, Tanita "Fat %"
      e "FFM", Akern BodyGram "MASSA GRASSA"/"MASSA MAGRA", Seca "fat mass",
@@ -6199,6 +6340,14 @@ window.parseBiaText = function(testo) {
   if (!out.ffm && out.fm && out.peso) out.ffm = Math.round((out.peso - out.fm) * 10) / 10;
   if (!out.ffm && out.smm) out.ffm = out.smm;
 
+  /* referti che disegnano le etichette: si legge la struttura del foglio */
+  const strutt = parseInBody(testo);
+  if (strutt) {
+    Object.keys(strutt).forEach(k => {
+      if (out[k] === null || out[k] === undefined) out[k] = strutt[k];
+    });
+  }
+
   /* scarta valori assurdi: meglio un campo vuoto che un dato sbagliato */
   if (out.fmPerc !== null && (out.fmPerc < 2 || out.fmPerc > 70)) out.fmPerc = null;
   if (out.peso !== null && (out.peso < 25 || out.peso > 300)) out.peso = null;
@@ -6234,6 +6383,8 @@ window.handleBiaPdf = async function(files) {
 
 window.applyBiaValues = function(vals, fromPdf) {
   onbData.bia = Object.assign({}, onbData.bia || {}, vals);
+  if (vals.eta && !onbData.age) onbData.age = vals.eta;
+  if (vals.sesso && !onbData.sex) onbData.sex = vals.sesso;
   /* se ho i kg di grasso ma non la percentuale, la calcolo */
   const b = onbData.bia;
   if (!b.fmPerc && b.fm && b.peso) b.fmPerc = Math.round((b.fm / b.peso) * 1000) / 10;
@@ -6520,8 +6671,13 @@ const biaKey = () => 'coach_plus_bia_' + currentMode;
 window.getProgramma = function() { try { return JSON.parse(localStorage.getItem(progKey()) || 'null'); } catch (e) { return null; } };
 window.getBiaStorico = function() { try { return JSON.parse(localStorage.getItem(biaKey()) || '[]'); } catch (e) { return []; } };
 window.aggiungiBia = function(valori, quando) {
-  const st = getBiaStorico();
-  st.push({ data: quando || ymd(new Date()), valori: valori });
+  const data = quando || valori.data || ymd(new Date());
+  const pulito = {};
+  ['peso', 'altezza', 'fmPerc', 'fm', 'ffm', 'smm', 'tbw', 'bmr', 'bmi', 'phase', 'ecw', 'proteine', 'minerali', 'viscerale']
+    .forEach(k => { if (valori[k] !== undefined && valori[k] !== null) pulito[k] = valori[k]; });
+  /* una misura per data: ricaricando lo stesso referto non si duplica */
+  const st = getBiaStorico().filter(x => x.data !== data);
+  st.push({ data: data, valori: pulito });
   st.sort((a, b) => a.data < b.data ? -1 : 1);
   localStorage.setItem(biaKey(), JSON.stringify(st));
 };
@@ -6569,7 +6725,10 @@ window.applyGeneratedProgram = function() {
     prefs: prog.prefs, sex: onbData.sex, age: onbData.age, bia: onbData.bia,
     settimane: prog.settimane, split: prog.split.nome, creato: formatNow()
   }));
-  if (onbData.bia && Object.keys(onbData.bia).some(k => onbData.bia[k])) aggiungiBia(onbData.bia);
+  if (onbData.bia && Object.keys(onbData.bia).some(k => onbData.bia[k])) {
+    (onbData.bia.storico || []).forEach(x => { if (x.data !== onbData.bia.data) aggiungiBia(x.valori, x.data); });
+    aggiungiBia(onbData.bia, onbData.bia.data);
+  }
   localStorage.setItem(ONB_KEY, '1');
 
   currentDay = prog.sedute.length ? prog.sedute[0].giorno : DAYS[0];
@@ -6580,6 +6739,172 @@ window.applyGeneratedProgram = function() {
   switchTab('piano');
   const quando = onbData.inizio === 'prossima' ? 'da luned\u00EC prossimo' : 'da questa settimana';
   showUndo('Programma creato: ' + prog.split.nome + ', ' + prog.settimane + ' settimane ' + quando, null, 6000);
+};
+
+/* ============================================================
+   STATISTICHE: progresso dei carichi nel tempo
+   Confronta il PRIMO carico usato con l ULTIMO, esercizio per
+   esercizio, nel periodo scelto. Serve almeno un paio di settimane:
+   sotto, i numeri raccontano il caso e non l andamento.
+   La colonna 80% e un riferimento pratico: circa l intensita a cui si
+   lavora lasciando due ripetizioni in riserva.
+   ============================================================ */
+const NOME_KEY = 'tz_nome';
+window.getNome = function() { try { return localStorage.getItem(NOME_KEY) || ''; } catch (e) { return ''; } };
+window.salvaNome = function(v) { try { localStorage.setItem(NOME_KEY, String(v).slice(0, 30)); } catch (e) {} };
+
+let statsPeriodo = '8';   /* settimane, oppure 'programma' | 'tutto' */
+
+function dataSessione(h0) {
+  if (h0.id) return new Date(h0.id);
+  const m = String(h0.date || '').match(/(\d{2})\/(\d{2})\/(\d{4})/);
+  return m ? new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1])) : null;
+}
+
+function pesoSessione(ex) {
+  if (ex.sets) {
+    const fatte = ex.sets.filter(s => s.done);
+    if (fatte.length) return Math.max.apply(null, fatte.map(s => Number(s.weight) || 0));
+    return null;
+  }
+  return Number(ex.weight) || null;
+}
+
+window.calcolaStatistiche = function(periodo) {
+  const tutte = loadHistory().slice().filter(h0 => dataSessione(h0));
+  tutte.sort((a, b) => dataSessione(a) - dataSessione(b));
+  let da = null;
+  const p = getProgramma();
+  if (periodo === 'programma' && p) da = daYmd(p.inizio);
+  else if (periodo !== 'tutto') da = piuGiorni(new Date(), -7 * Number(periodo));
+  const sess = da ? tutte.filter(h0 => dataSessione(h0) >= da) : tutte;
+  if (!sess.length) return { vuoto: true };
+
+  const primo = dataSessione(sess[0]), ultimo = dataSessione(sess[sess.length - 1]);
+  const giorniSpan = Math.round((ultimo - primo) / 86400000);
+
+  /* esercizio -> primo e ultimo carico, con il giorno in cui compare */
+  const mappa = {};
+  sess.forEach(h0 => {
+    const lista = h0.sessione || h0.exercises || [];
+    lista.forEach(ex => {
+      const w = pesoSessione(ex);
+      if (w === null) return;
+      const k = ex.name;
+      if (!mappa[k]) mappa[k] = { name: k, giorno: h0.day, primo: w, ultimo: w, volte: 0 };
+      mappa[k].ultimo = w;
+      mappa[k].giorno = h0.day;
+      mappa[k].volte++;
+    });
+  });
+
+  const esercizi = Object.keys(mappa).map(k => {
+    const e = mappa[k];
+    e.incremento = e.primo > 0 ? Math.round(((e.ultimo - e.primo) / e.primo) * 1000) / 10 : null;
+    e.rpe80 = Math.round(e.ultimo * 0.8 * 10) / 10;
+    return e;
+  }).filter(e => e.volte >= 2);
+
+  /* volume totale per sessione, per vedere se il lavoro complessivo cresce */
+  const volume = sess.map(h0 => {
+    if (!h0.sessione) return null;
+    return h0.sessione.reduce((t, e) => t + e.sets.filter(s => s.done)
+      .reduce((a, s) => a + (Number(s.reps) || 0) * (Number(s.weight) || 0), 0), 0);
+  }).filter(v => v !== null);
+
+  /* costanza: allenamenti fatti rispetto a quelli programmati nel periodo */
+  const cal = loadCal();
+  let programmati = 0;
+  Object.keys(cal).forEach(k => {
+    const d = daYmd(k);
+    if (da && d < da) return;
+    if (d > ultimo) return;
+    if (!cal[k].rest) programmati++;
+  });
+
+  return {
+    vuoto: false, sessioni: sess.length, primo: primo, ultimo: ultimo, giorniSpan: giorniSpan,
+    breve: giorniSpan < 14, esercizi: esercizi, volume: volume, programmati: programmati
+  };
+};
+
+window.setStatsPeriodo = function(v) { statsPeriodo = v; renderStats(); };
+window.openStats = function() { document.getElementById('stats-sheet').classList.remove('hidden'); renderStats(); };
+window.closeStats = function() { document.getElementById('stats-sheet').classList.add('hidden'); };
+
+window.renderStats = function() {
+  const s = calcolaStatistiche(statsPeriodo);
+  const nome = getNome();
+  const box = document.getElementById('stats-body');
+  const p = getProgramma();
+
+  const scelte = [['4', '4 settimane'], ['8', '8 settimane'], ['12', '12 settimane']]
+    .concat(p ? [['programma', 'Programma attuale']] : []).concat([['tutto', 'Tutto']]);
+  let html = '<div class="st-periodo">' + scelte.map(([v, l]) =>
+    '<button class="' + (statsPeriodo === v ? 'on' : '') + '" onclick="setStatsPeriodo(\'' + v + '\')">' + l + '</button>').join('') + '</div>';
+
+  if (s.vuoto) {
+    box.innerHTML = html + '<div class="dv-empty">Nessun allenamento in questo periodo.</div>';
+    return;
+  }
+
+  const d = (x) => x.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' });
+  html += '<div class="st-head">' +
+    '<div class="st-title">Progresso carichi' + (nome ? ' \u2014 ' + escapeHtml(nome) : '') + '</div>' +
+    '<div class="st-sub">Dal primo all ultimo carico \u2022 ' + d(s.primo) + ' \u2013 ' + d(s.ultimo) +
+    ' \u2022 ' + s.sessioni + (s.sessioni === 1 ? ' allenamento' : ' allenamenti') + '</div></div>';
+
+  if (s.breve) {
+    html += '<div class="onb-note">Il periodo copre ' + s.giorniSpan + ' giorni: sotto le due settimane i numeri raccontano il caso piu che l andamento. Scegli un periodo piu lungo per leggerli davvero.</div>';
+  }
+  if (!s.esercizi.length) {
+    box.innerHTML = html + '<div class="dv-empty">Servono almeno due sedute con lo stesso esercizio per confrontare i carichi.</div>';
+    return;
+  }
+
+  /* raggruppati per giorno, come una scheda */
+  const perGiorno = {};
+  s.esercizi.forEach(e => { (perGiorno[e.giorno] = perGiorno[e.giorno] || []).push(e); });
+  const maxInc = Math.max.apply(null, s.esercizi.map(e => Math.abs(e.incremento || 0)).concat([1]));
+
+  html += '<div class="st-table"><div class="st-row st-h"><span>Esercizio</span><span>Primo</span><span>Ultimo</span><span>Var.</span><span>80%</span></div>';
+  Object.keys(perGiorno).forEach(g => {
+    html += '<div class="st-day">' + escapeHtml(getDayTitle(g)) + '</div>';
+    perGiorno[g].sort((a, b) => (b.incremento || 0) - (a.incremento || 0)).forEach(e => {
+      const inc = e.incremento;
+      const cls = inc === null ? '' : (inc > 0 ? 'su' : (inc < 0 ? 'giu' : ''));
+      html += '<div class="st-row">' +
+        '<span class="st-name">' + escapeHtml(e.name.replace(/^\S+\s/, '')) +
+          '<span class="st-bar"><i class="' + cls + '" style="width:' + Math.min(100, Math.abs(inc || 0) / maxInc * 100) + '%"></i></span></span>' +
+        '<span>' + e.primo + '</span><span><b>' + e.ultimo + '</b></span>' +
+        '<span class="st-inc ' + cls + '">' + (inc === null ? '\u2013' : (inc > 0 ? '+' : '') + inc + '%') + '</span>' +
+        '<span>' + e.rpe80 + '</span></div>';
+    });
+  });
+  html += '</div>';
+
+  /* sintesi */
+  const saliti = s.esercizi.filter(e => e.incremento > 0);
+  const scesi = s.esercizi.filter(e => e.incremento < 0);
+  const migliore = saliti.slice().sort((a, b) => b.incremento - a.incremento)[0];
+  const media = saliti.length ? Math.round(saliti.reduce((a, e) => a + e.incremento, 0) / saliti.length * 10) / 10 : 0;
+  const sintesi = [];
+  sintesi.push(saliti.length + ' esercizi su ' + s.esercizi.length + ' sono migliorati' + (media ? ', in media +' + media + '%' : '') + '.');
+  if (migliore) sintesi.push('Il salto piu grande: ' + migliore.name.replace(/^\S+\s/, '') + ' +' + migliore.incremento + '%.');
+  if (scesi.length) sintesi.push(scesi.length + (scesi.length === 1 ? ' esercizio e calato' : ' esercizi sono calati') + ': spesso vuol dire che hai cambiato esecuzione, ripetizioni o attrezzo. Vale la pena guardarli.');
+  if (s.volume.length >= 2) {
+    const v0 = s.volume[0], v1 = s.volume[s.volume.length - 1];
+    if (v0 > 0) sintesi.push('Volume di una seduta: da ' + Math.round(v0).toLocaleString('it-IT') + ' a ' + Math.round(v1).toLocaleString('it-IT') + ' kg sollevati.');
+  }
+  if (s.programmati) sintesi.push('Costanza: ' + s.sessioni + ' allenamenti fatti su ' + s.programmati + ' programmati nel periodo.');
+
+  html += '<div class="card"><div class="section-title">Risultati in sintesi</div>' +
+    sintesi.map(x => '<div class="ag-tip">' + escapeHtml(x) + '</div>').join('') + '</div>';
+
+  html += '<div class="card"><div class="section-title">Come leggo l 80%</div>' +
+    '<div class="set-about" style="margin-top:0;">Prendo l ultimo carico che hai usato e ne calcolo l 80%. E un riferimento pratico per le serie in cui vuoi restare a circa due ripetizioni dal cedimento: utile nelle giornate storte o nelle settimane di scarico. Formula: ultimo carico \u00D7 0,80.</div></div>';
+
+  box.innerHTML = html;
 };
 
 /* ============================================================
@@ -6841,20 +7166,101 @@ window.renderAgent = function() {
   } else {
     html += '<div class="set-about" style="margin-top:0;">Nessuna BIA salvata.</div>';
   }
-  html += '<div class="aw-sec">Aggiungi una nuova BIA</div>' +
-    '<label class="bia-drop" for="agent-bia-file">\u{1F4C4} Carica il PDF del referto</label>' +
-    '<input type="file" id="agent-bia-file" accept="application/pdf" style="display:none;" onchange="agentBiaPdf(this.files)">' +
-    '<div class="bia-status" id="agent-bia-status"></div>' +
-    '<div class="bia-grid">' +
-      '<label class="bia-val"><span>Peso (kg)</span><input type="number" step="0.1" id="ag-peso"></label>' +
-      '<label class="bia-val"><span>Massa grassa (%)</span><input type="number" step="0.1" id="ag-fm"></label>' +
-      '<label class="bia-val"><span>Massa magra (kg)</span><input type="number" step="0.1" id="ag-ffm"></label>' +
-      '<label class="bia-val"><span>Metabolismo (kcal)</span><input type="number" step="1" id="ag-bmr"></label>' +
-    '</div>' +
-    '<button class="btn-start-workout" style="margin-top:var(--sp-4);" onclick="salvaBiaAgente()">Salva la BIA</button></div>';
+  html += '<button class="set-row-btn" onclick="closeAgent(); openBiaSheet();">\u{1F4C4} Carica o gestisci le BIA (in Opzioni)</button></div>';
 
   html += '<div class="onb-note">Il coach segue regole di programmazione dell allenamento, non fa diagnosi. Con dolori o patologie, parlane con un medico.</div>';
   body.innerHTML = html;
+};
+
+/* ============================================================
+   BIA NELLE OPZIONI
+   Carichi il PDF: tutti i valori vengono letti dal referto (anche lo
+   storico stampato), li vedi, li salvi. Si scrive a mano solo se
+   manca il referto. Il coach usa quello che trova qui.
+   ============================================================ */
+let biaLetta = null;   /* valori letti e non ancora salvati */
+
+window.openBiaSheet = function() {
+  switchTab('impostazioni');
+  document.getElementById('bia-sheet').classList.remove('hidden');
+  renderBiaSheet();
+};
+window.closeBiaSheet = function() {
+  document.getElementById('bia-sheet').classList.add('hidden');
+  biaLetta = null;
+  renderSettings();
+};
+
+function rigaBia(v) {
+  return [v.peso ? v.peso + ' kg' : '', v.fmPerc ? v.fmPerc + '% grasso' : '', v.ffm ? v.ffm + ' kg magra' : '']
+    .filter(Boolean).join(' \u2022 ');
+}
+
+function renderBiaSheet() {
+  const body = document.getElementById('bia-body');
+  if (!coachAttivo()) {
+    body.innerHTML = '<div class="dv-empty">\u{1F512}<br>I valori della BIA sono dati sulla salute: servono il tuo consenso.</div>' +
+      '<button class="btn-start-workout" onclick="closeBiaSheet();">Vai a Privacy e dati</button>';
+    return;
+  }
+  const et = { peso: 'Peso', fmPerc: 'Massa grassa', fm: 'Grasso', ffm: 'Massa magra', smm: 'Muscolo scheletrico',
+               tbw: 'Acqua totale', bmr: 'Metabolismo', bmi: 'BMI', viscerale: 'Grasso viscerale', altezza: 'Altezza', eta: 'Eta' };
+  const un = { peso: ' kg', fmPerc: '%', fm: ' kg', ffm: ' kg', smm: ' kg', tbw: ' L', bmr: ' kcal', bmi: '', viscerale: '', altezza: ' cm', eta: ' anni' };
+
+  let html = '<label class="bia-drop" for="agent-bia-file">\u{1F4C4} Carica il PDF del referto' +
+    '<span style="display:block;font-weight:400;font-size:0.7rem;margin-top:4px;">leggo io tutti i valori</span></label>' +
+    '<input type="file" id="agent-bia-file" accept="application/pdf" style="display:none;" onchange="agentBiaPdf(this.files)">' +
+    '<div class="bia-status" id="agent-bia-status"></div>';
+
+  if (biaLetta) {
+    const chiavi = Object.keys(et).filter(k => biaLetta[k] !== undefined && biaLetta[k] !== null);
+    html += '<div class="res-card"><div class="res-title">Letti dal referto' + (biaLetta.data ? ' del ' + daYmd(biaLetta.data).toLocaleDateString('it-IT') : '') + '</div>' +
+      chiavi.map(k => '<div class="res-line"><span>' + et[k] + '</span><b>' + biaLetta[k] + un[k] + '</b></div>').join('') +
+      (biaLetta.storico && biaLetta.storico.length ? '<div class="set-about">Trovate anche ' + biaLetta.storico.length + ' misure precedenti stampate sul referto: le salvo nello storico.</div>' : '') +
+      '<button class="btn-start-workout" style="margin-top:var(--sp-4);" onclick="salvaBiaLetta()">Salva la BIA</button></div>';
+  }
+
+  html += '<button class="set-row-btn" onclick="toggleBiaManuale()">\u270E Non ho il PDF: scrivo i valori a mano</button>' +
+    '<div id="bia-manuale" style="display:none;">' +
+      '<div class="bia-grid">' +
+        '<label class="bia-val"><span>Peso (kg)</span><input type="number" step="0.1" id="ag-peso"></label>' +
+        '<label class="bia-val"><span>Massa grassa (%)</span><input type="number" step="0.1" id="ag-fm"></label>' +
+        '<label class="bia-val"><span>Massa magra (kg)</span><input type="number" step="0.1" id="ag-ffm"></label>' +
+        '<label class="bia-val"><span>Metabolismo (kcal)</span><input type="number" step="1" id="ag-bmr"></label>' +
+      '</div>' +
+      '<button class="btn-start-workout" style="margin-top:var(--sp-4);" onclick="salvaBiaAgente()">Salva</button>' +
+    '</div>';
+
+  const st = getBiaStorico();
+  html += '<div class="aw-sec">Le tue BIA</div>';
+  html += st.length
+    ? st.slice().reverse().map(x => '<div class="res-line"><span>' + daYmd(x.data).toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: '2-digit' }) +
+        '</span><b>' + rigaBia(x.valori) + ' <button class="bia-del" onclick="eliminaBia(\'' + x.data + '\')" aria-label="Elimina">\u2715</button></b></div>').join('')
+    : '<div class="set-about" style="margin-top:0;">Ancora nessuna.</div>';
+  body.innerHTML = html;
+}
+
+window.toggleBiaManuale = function() {
+  const m = document.getElementById('bia-manuale');
+  m.style.display = m.style.display === 'none' ? 'block' : 'none';
+};
+
+window.salvaBiaLetta = function() {
+  if (!biaLetta) return;
+  (biaLetta.storico || []).forEach(x => { if (x.data !== biaLetta.data) aggiungiBia(x.valori, x.data); });
+  aggiungiBia(biaLetta, biaLetta.data);
+  const n = 1 + (biaLetta.storico || []).filter(x => x.data !== biaLetta.data).length;
+  biaLetta = null;
+  renderBiaSheet();
+  showUndo(n > 1 ? n + ' misure salvate: il coach vede tutto l andamento' : 'BIA salvata: il coach ne tiene conto');
+};
+
+window.eliminaBia = function(data) {
+  const st = getBiaStorico();
+  const tolta = st.find(x => x.data === data);
+  localStorage.setItem(biaKey(), JSON.stringify(st.filter(x => x.data !== data)));
+  renderBiaSheet();
+  showUndo('BIA eliminata', () => { if (tolta) aggiungiBia(tolta.valori, tolta.data); renderBiaSheet(); });
 };
 
 window.agentBiaPdf = async function(files) {
@@ -6870,8 +7276,11 @@ window.agentBiaPdf = async function(files) {
       const tc = await (await pdf.getPage(i)).getTextContent();
       testo += ' ' + tc.items.map(x => x.str).join(' ');
     }
-    compilaBiaAgente(parseBiaText(testo));
-    st.className = 'bia-status ok'; st.innerText = '\u2713 Valori letti: controllali prima di salvare.';
+    const v = parseBiaText(testo);
+    const letti = ['peso', 'fmPerc', 'ffm', 'bmr'].filter(k => v[k]).length;
+    if (!letti) { st.className = 'bia-status warn'; st.innerText = 'Non riconosco i valori di questo referto: scrivili a mano qui sotto.'; return; }
+    biaLetta = v;
+    renderBiaSheet();
   } catch (e) {
     st.className = 'bia-status warn'; st.innerText = 'Non riesco a leggere il PDF: scrivi i valori a mano.';
   }
@@ -6890,7 +7299,8 @@ window.salvaBiaAgente = function() {
   if (!v.peso && !v.fmPerc && !v.ffm) { alert('Inserisci almeno peso, massa grassa o massa magra.'); return; }
   if (!v.ffm && v.peso && v.fmPerc) v.ffm = Math.round(v.peso * (1 - v.fmPerc / 100) * 10) / 10;
   aggiungiBia(v);
-  renderAgent();
+  if (document.getElementById('bia-sheet') && !document.getElementById('bia-sheet').classList.contains('hidden')) renderBiaSheet();
+  else renderAgent();
   showUndo('BIA salvata: il coach ne tiene conto');
 };
 
@@ -7036,7 +7446,7 @@ function renderSettings() {
         { id: 'light', label: '\u2600\uFE0F Chiaro' },
         { id: 'auto',  label: '\u{1F504} Auto' }
       ], getSetting(THEME_KEY, 'dark'), 'setTheme') +
-      '<div class="set-about" style="margin-top:8px;">In palestra con molta luce la modalita chiara si legge meglio: usa riempimenti pieni e contrasti alti, perche i bordi sottili spariscono al sole. "Auto" segue l\'impostazione del telefono.</div>' +
+      '<div class="set-about" style="margin-top:8px;">Al sole si legge meglio il chiaro. Auto segue il telefono.</div>' +
     '</div>' +
 
     '<div class="set-group">' +
@@ -7045,7 +7455,30 @@ function renderSettings() {
         { id: 'toji', label: '\u{1F94B} Toji' },
         { id: 'maki', label: '\u2694\uFE0F Maki' }
       ], currentMode, 'switchProtocol') +
-      '<div class="set-about" style="margin-top:8px;">Ogni protocollo tiene schede, storico e impostazioni separati: cambiando non perdi nulla.</div>' +
+      '<div class="set-about" style="margin-top:8px;">Schede e storico separati: non perdi nulla.</div>' +
+    '</div>' +
+
+    '<div class="set-group">' +
+      '<div class="set-group-title">Profilo</div>' +
+      '<label class="bia-val" style="display:block;"><span>Il tuo nome</span>' +
+      '<input type="text" id="set-nome" value="' + escapeHtml(getNome()) + '" placeholder="Come ti chiami" ' +
+      'oninput="salvaNome(this.value)" style="text-align:left;font-weight:700;"></label>' +
+      '<div class="set-about">Compare nelle statistiche.</div>' +
+    '</div>' +
+
+    '<div class="set-group">' +
+      '<div class="set-group-title">Composizione corporea</div>' +
+      '<button class="entry-btn" style="margin-top:0;" onclick="openBiaSheet()">' +
+        '<span class="entry-ico">\u{1F4C4}</span>' +
+        '<span class="aw-main"><span class="entry-name">BIA</span>' +
+        '<span class="aw-meta">' + (function() {
+          if (!coachAttivo()) return 'Serve il consenso';
+          const st = getBiaStorico();
+          if (!st.length) return 'Carica il tuo referto';
+          const u = st[st.length - 1];
+          return daYmd(u.data).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' }) + ' \u2022 ' + rigaBia(u.valori);
+        })() + '</span></span>' +
+        '<span class="aw-path-go">\u203A</span></button>' +
     '</div>' +
 
     '<div class="set-group">' +
@@ -7054,7 +7487,7 @@ function renderSettings() {
         ? '<div class="set-about" style="margin:0 0 var(--sp-3);">\u2705 Hai acconsentito all uso dei tuoi dati per il coach' +
             (localStorage.getItem(CONSENT_KEY + '_data') ? ' (' + escapeHtml(localStorage.getItem(CONSENT_KEY + '_data')) + ')' : '') + '.</div>' +
           '<button class="set-row-btn danger" onclick="revocaConsenso()">Revoca il consenso</button>'
-        : '<div class="set-about" style="margin:0 0 var(--sp-3);">\u26D4 Nessun consenso: usi l app a mano. Programma personalizzato, BIA e carico progressivo automatico sono spenti.</div>' +
+        : '<div class="set-about" style="margin:0 0 var(--sp-3);">\u26D4 Nessun consenso: coach spento, usi l app a mano.</div>' +
           '<button class="set-row-btn" onclick="setConsenso(true, false); renderSettings();">Acconsento all uso dei miei dati</button>') +
       '<button class="set-row-btn" onclick="openConsentText()">\u{1F4C4} Leggi l informativa</button>' +
     '</div>' +
@@ -7064,32 +7497,32 @@ function renderSettings() {
       '<button class="entry-btn" style="margin-top:0;" onclick="openMusicSheet()">' +
         '<span class="entry-ico">\u{1F3B5}</span>' +
         '<span class="aw-main"><span class="entry-name" id="set-music-name">' + escapeHtml(nomeMusica() || 'Nessuna canzone scelta') + '</span>' +
-        '<span class="aw-meta">MP3 o link YouTube/Spotify: la scegli una volta, vale per tutti gli allenamenti</span></span>' +
+        '<span class="aw-meta">Una volta, per tutti gli allenamenti</span></span>' +
         '<span class="aw-path-go">\u203A</span></button>' +
     '</div>' +
 
     '<div class="set-group">' +
       '<div class="set-group-title">Timer di recupero</div>' +
-      toggleHtml(SOUND_KEY, true, 'Suono a fine recupero', 'Un segnale quando il tempo scade') +
-      toggleHtml(COUNTDOWN_KEY, true, 'Conto alla rovescia sonoro', 'Un bip a ogni secondo negli ultimi cinque') +
-      toggleHtml(AUTOCLOSE_KEY, true, 'Chiudi da solo a fine recupero', 'Il pannello sparisce senza doverlo toccare') +
-      toggleHtml(BYPASS_KEY, false, 'Suona anche in silenzioso', 'Attenzione: mentre e attiva, la musica di Spotify o Apple Music si ferma') +
-      toggleHtml(FLASH_KEY, true, 'Lampeggia lo schermo', 'Segnale visivo a fine recupero: si vede anche senza audio') +
+      toggleHtml(SOUND_KEY, true, 'Suono a fine recupero', 'Quando il tempo scade') +
+      toggleHtml(COUNTDOWN_KEY, true, 'Conto alla rovescia sonoro', 'Bip negli ultimi 5 secondi') +
+      toggleHtml(AUTOCLOSE_KEY, true, 'Chiudi da solo a fine recupero', 'Senza toccarlo') +
+      toggleHtml(BYPASS_KEY, false, 'Suona anche in silenzioso', 'Ferma la musica di Spotify o Apple Music') +
+      toggleHtml(FLASH_KEY, true, 'Lampeggia lo schermo', 'Funziona anche senza audio') +
       '<button class="set-row-btn" onclick="testSound()">\u{1F50A} Prova il suono</button>' +
-      '<div class="set-about">Su iPhone l interruttore fisico del silenzioso zittisce l audio delle pagine web. "Suona anche in silenzioso" usa un accorgimento noto (l app si presenta come lettore musicale) che funziona su molti dispositivi, ma Apple ha cambiato comportamento piu volte e non e garantito. Il lampeggio dello schermo invece funziona sempre. Ricorda comunque di toccare una volta lo schermo: i browser attivano l audio solo dopo un gesto.</div>' +
+      '<div class="set-about">Se col silenzioso non senti nulla, affidati al lampeggio.</div>' +
     '</div>' +
 
     '<div class="set-group">' +
       '<div class="set-group-title">Programma</div>' +
       (prof
-        ? '<div class="set-about" style="margin-bottom:8px;">Programma attuale: <b>' + escapeHtml(prof.split || '-') + '</b>, obiettivo <b>' + escapeHtml(prof.goal || '-') + '</b>, ' + (prof.settimane || '-') + ' settimane. Creato il ' + escapeHtml(prof.creato || '-') + '.</div>'
-        : '<div class="set-about" style="margin-bottom:8px;">Non hai ancora creato un programma personalizzato.</div>') +
+        ? '<div class="set-about" style="margin-bottom:8px;"><b>' + escapeHtml(prof.split || '-') + '</b> \\u2022 ' + escapeHtml((prof.goals || [prof.goal]).filter(Boolean).join(', ')) + ' \\u2022 ' + (prof.settimane || '-') + ' settimane</div>'
+        : '<div class="set-about" style="margin-bottom:8px;">Nessun programma.</div>') +
       '<button class="set-row-btn" onclick="restartOnboarding();">\u{1F9ED} Rifai il programma personalizzato</button>' +
     '</div>' +
 
     '<div class="set-group">' +
       '<div class="set-group-title">Informazioni</div>' +
-      '<div class="set-about">Tracker allenamenti che funziona anche offline: i dati restano solo sul tuo telefono, non vengono inviati da nessuna parte.<br><br>I suggerimenti dell\'app seguono regole di programmazione, non sostituiscono un preparatore o un medico.</div>' +
+      '<div class="set-about">I dati restano su questo telefono. I consigli non sostituiscono un medico.</div>' +
     '</div>';
 }
 
