@@ -320,6 +320,44 @@ body {
 .history-card { display: block; width: 100%; text-align: left; font: inherit; color: inherit; cursor: pointer; }
 .history-open { margin-top: var(--sp-3); font-size: 0.74rem; font-weight: 800; color: var(--primary); }
 
+/* ======= Ripetizioni: tastiera + ruota ======= */
+.num-drag { cursor: text; touch-action: manipulation; }
+.wheel-btn { flex-shrink: 0; width: 30px; height: 34px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-2); color: var(--primary); font-weight: 900; cursor: pointer; margin-left: -2px; }
+
+/* ======= Consenso ======= */
+.consent-ico { font-size: 2.4rem; margin-bottom: var(--sp-3); }
+.consent-li { font-size: 0.84rem; line-height: var(--lh-base); }
+.consent-text h3 { font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.4px; color: var(--primary); margin: var(--sp-5) 0 var(--sp-2); }
+.consent-text h3:first-child { margin-top: 0; }
+.consent-text p { font-size: 0.86rem; line-height: var(--lh-base); margin: 0 0 var(--sp-3); }
+.consent-foot { color: var(--muted); font-size: 0.72rem !important; }
+#consent { z-index: 125; }
+#consent-text-sheet { z-index: 128; }
+
+/* ======= Questionario ======= */
+.onb-opt.spento { opacity: 0.4; }
+.goal-rank { flex-shrink: 0; font-size: 0.66rem; font-weight: 900; color: var(--primary); text-transform: uppercase; }
+.pref-note { font-size: 0.72rem; color: var(--muted); line-height: var(--lh-tight); margin: -4px 0 var(--sp-3); }
+
+/* ======= Agente coach ======= */
+.agent-entry { margin-top: 0; border-color: var(--primary); }
+.ag-tip { font-size: 0.84rem; line-height: var(--lh-base); padding: var(--sp-2) 0; border-bottom: 1px solid var(--border); }
+.ag-tip:last-child { border-bottom: none; }
+.ag-row { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-3) 0; border-bottom: 1px solid var(--border); }
+.ag-ico { width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 900; background: var(--surface-2); color: var(--muted); }
+.ag-ico.su { background: color-mix(in srgb, var(--success) 18%, var(--surface-1)); color: var(--success); }
+.ag-ico.giu { background: color-mix(in srgb, var(--danger) 16%, var(--surface-1)); color: var(--danger); }
+.ag-kg { flex-shrink: 0; font-weight: 900; font-size: 0.9rem; }
+.ag-trend { margin-top: var(--sp-3); font-size: 0.8rem; line-height: var(--lh-base); }
+.ag-d { font-weight: 900; }
+.ag-d.su { color: var(--success); }
+.ag-d.giu { color: var(--danger); }
+.coach-badge-set { display: block; font-size: 0.72rem; font-weight: 700; line-height: var(--lh-tight); margin-top: var(--sp-1); color: var(--muted); }
+.coach-badge-set.su { color: var(--success); }
+.coach-badge-set.giu { color: var(--danger); }
+.coach-badge-set.scarico { color: var(--primary); }
+#agent-sheet { z-index: 94; }
+
 /* ======= Scambio dei giorni trascinandoli ======= */
 .cal-day, .mc-cell { touch-action: none; }
 .swap-from { opacity: 0.45; outline: 2px dashed var(--primary); outline-offset: -2px; }
@@ -1294,6 +1332,12 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
 
     <!-- VISTA A: scelta del giorno -->
     <div id="plan-day-picker">
+      <button class="entry-btn agent-entry" onclick="openAgent()">
+        <span class="entry-ico">🤖</span>
+        <span class="aw-main"><span class="entry-name">Il tuo coach</span>
+        <span class="aw-meta" id="agent-entry-meta">Programma, carichi e progressi</span></span>
+        <span class="aw-path-go">›</span>
+      </button>
       <div class="card">
         <div class="step-head"><span class="step-num">1</span><span class="step-label">La tua settimana</span></div>
         <div class="section-hint">Tocca un giorno per costruirlo. Trascinalo sopra un altro per scambiarli.</div>
@@ -1549,6 +1593,14 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
     </div>
   </div>
   <div class="sheet-body" id="ex-info-body"></div>
+</div>
+
+<div class="group-sheet hidden" id="agent-sheet">
+  <div class="sheet-bar">
+    <button class="sheet-back" onclick="closeAgent()" aria-label="Indietro">←</button>
+    <div class="sheet-titles"><div class="sheet-title">Il tuo coach</div><div class="sheet-sub">Programma, carichi e progressi</div></div>
+  </div>
+  <div class="sheet-body" id="agent-body"></div>
 </div>
 
 <div class="group-sheet hidden" id="music-sheet">
@@ -1808,6 +1860,57 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
     </div>
     <div class="wheel-track" id="wheel-track"></div>
     <div class="wheel-mask" id="wheel-mask"></div>
+  </div>
+</div>
+
+<div class="onb hidden" id="consent">
+  <div class="onb-body">
+    <div class="consent-ico">🔒</div>
+    <div class="onb-q">I tuoi dati, le tue regole</div>
+    <div class="onb-why">Il coach dell app puo usare alcuni tuoi dati per costruirti un programma su misura e aumentare i carichi al momento giusto.</div>
+    <div class="res-card">
+      <div class="res-title">Cosa usa, se acconsenti</div>
+      <div class="consent-li">• Obiettivi, esperienza e preferenze del questionario</div>
+      <div class="consent-li">• I valori della BIA (dati sulla salute)</div>
+      <div class="consent-li">• Lo storico dei tuoi allenamenti</div>
+    </div>
+    <div class="res-card">
+      <div class="res-title">Cosa non fa mai</div>
+      <div class="consent-li">• I dati restano solo su questo telefono: non vengono inviati a nessun server</div>
+      <div class="consent-li">• Nessuna pubblicita, nessuna vendita, nessuna condivisione</div>
+    </div>
+    <div class="onb-note">Se non acconsenti l app funziona lo stesso: costruisci e segui i tuoi allenamenti a mano. Puoi cambiare idea quando vuoi dalle Opzioni.</div>
+    <button class="set-row-btn" style="margin-top:var(--sp-4);" onclick="openConsentText()">📄 Leggi l informativa completa</button>
+  </div>
+  <div class="onb-footer">
+    <button class="btn-start-workout" style="margin:0 0 var(--sp-2);" onclick="setConsenso(true, true)">Acconsento</button>
+    <button class="btn-archive" style="margin:0;" onclick="setConsenso(false, true)">Non acconsento, uso l app a mano</button>
+  </div>
+</div>
+
+<div class="group-sheet hidden" id="consent-text-sheet">
+  <div class="sheet-bar">
+    <button class="sheet-back" onclick="closeConsentText()" aria-label="Indietro">←</button>
+    <div class="sheet-titles"><div class="sheet-title">Informativa sui dati</div><div class="sheet-sub">Come e perche vengono usati</div></div>
+  </div>
+  <div class="sheet-body consent-text">
+    <h3>1. Chi tratta i dati</h3>
+    <p>Tutti i dati vengono elaborati <b>sul tuo dispositivo</b>, dall app stessa. Non esiste un server che li riceve: nessuno oltre a te puo vederli.</p>
+    <h3>2. Quali dati</h3>
+    <p><b>Profilo di allenamento</b>: obiettivi (fino a tre), livello di esperienza, giorni e minuti disponibili, luogo di allenamento, fastidi fisici segnalati, qualita del sonno e stress, preferenze sugli attrezzi.</p>
+    <p><b>Composizione corporea (BIA)</b>: peso, altezza, massa grassa, massa magra, acqua corporea, metabolismo basale e gli altri valori del referto, inclusi i referti successivi che carichi nel tempo. Sono <b>dati relativi alla salute</b>: per il Regolamento europeo (GDPR, art. 9) il loro uso richiede il tuo consenso esplicito.</p>
+    <p><b>Storico degli allenamenti</b>: esercizi, serie, ripetizioni, carichi, cedimenti e date.</p>
+    <h3>3. Per cosa vengono usati</h3>
+    <p>Solo per: costruire il programma adatto a te; programmarlo nel calendario per la sua durata; proporre l aumento dei carichi settimana dopo settimana; valutare i tuoi progressi confrontando le BIA. Nessun altro scopo.</p>
+    <h3>4. Cosa succede se non acconsenti</h3>
+    <p>L app resta pienamente usabile in modo manuale: costruisci le schede, ti alleni, tieni lo storico. Restano spenti solo il programma personalizzato, la lettura della BIA e l aumento automatico dei carichi.</p>
+    <h3>5. Revoca</h3>
+    <p>Puoi revocare il consenso in ogni momento da Opzioni → Privacy e dati, con un tocco. Da quel momento il coach smette di usare i tuoi dati. Puoi anche cancellare profilo e referti BIA salvati.</p>
+    <h3>6. Conservazione e cancellazione</h3>
+    <p>I dati restano sul telefono finche non li cancelli tu, svuoti i dati del browser o disinstalli l app.</p>
+    <h3>7. Limiti</h3>
+    <p>I suggerimenti del coach sono calcolati da regole di programmazione dell allenamento: non sono una valutazione medica. In presenza di patologie, dolori o dubbi su un referto, rivolgiti a un medico o a un professionista.</p>
+    <p class="consent-foot">Versione dell informativa: 1.0</p>
   </div>
 </div>
 
@@ -2470,7 +2573,7 @@ window.chooseMode = function(mode) {
   document.getElementById('mode-overlay').classList.add('hidden');
   document.getElementById('app-root').style.display = 'flex';
   document.getElementById('bottom-nav').style.display = 'block';
-  startOnboarding(false); /* solo al primo utilizzo */
+  if (!chiediConsensoSeServe() && coachAttivo()) startOnboarding(false); /* solo al primo utilizzo */
 };
 
 window.openModeOverlay = function() {
@@ -2813,7 +2916,17 @@ function renderDayView() {
   }).join('');
 }
 
+function aggiornaIngressoAgente() {
+  const el = document.getElementById('agent-entry-meta');
+  if (!el) return;
+  if (!coachAttivo()) { el.innerText = 'Spento: serve il consenso ai dati'; return; }
+  const s = settimanaProgramma();
+  if (!s) { el.innerText = 'Crea un programma su misura'; return; }
+  el.innerText = s.finito ? 'Programma concluso: rifai la BIA' : 'Settimana ' + s.numero + ' di ' + s.totale + (s.fase === 'scarico' ? ' \u2022 scarico' : ' \u2022 carico');
+}
+
 function renderPlanDayPicker() {
+  aggiornaIngressoAgente();
   const data = loadData();
   const oggi = (new Date().getDay() + 6) % 7;   /* lunedi = 0 */
   const cont = document.getElementById('plan-week-cal');
@@ -3593,6 +3706,7 @@ function renderAllenamento() {
           <div>
             <div class="ex-name">${e.superset ? '<span class="ss-tag">⛓</span> ' : ''}${escapeHtml(e.name)}</div>
             <div class="ex-data">${e.sets} serie × ${e.reps} reps • ${e.weight} kg • ⏱ ${e.rest}s</div>
+            ${e.coachNote && coachAttivo() ? `<span class="coach-badge-set ${e.coachTipo || ''}">\u{1F916} ${escapeHtml(e.coachNote)}</span>` : ''}
             ${e.note ? `<div class="plan-note">📝 ${escapeHtml(e.note)}</div>` : ''}
           </div>
           <button class="info-btn" onclick="openExerciseInfo('${e.name.replace(/'/g, "\\'")}')" title="Come si fa" aria-label="Come si fa">ℹ</button>
@@ -3602,7 +3716,7 @@ function renderAllenamento() {
           ${e.completedSets.map((s, si) => `
             <div class="set-row ${s.done ? 'done' : ''} ${armedSet && armedSet.exIdx === idx && armedSet.setIdx === si ? 'armed' : ''}">
               <span class="set-num">${si + 1}</span>
-              <input type="number" class="num-drag" readonly data-reps-ex="${idx}" data-reps-set="${si}" value="${s.reps}">
+              <input type="number" inputmode="numeric" class="num-drag" data-reps-ex="${idx}" data-reps-set="${si}" value="${s.reps}"><button class="wheel-btn" type="button" data-wheel-ex="${idx}" data-wheel-set="${si}" aria-label="Scegli con la ruota">▾</button>
               <span class="set-x">×</span>
               <input type="number" class="set-input" value="${s.weight}" step="0.5" oninput="updateSetField(${idx},${si},'weight',this.value)">
               <span class="set-kg-label">kg</span>
@@ -3625,7 +3739,7 @@ function renderAllenamento() {
       const setIdx = Number(inp.dataset.repsSet);
       const nome = (list[exIdx] || {}).name || '';
       const r = repsRange(nome);
-      attachNumberDrag(inp, r.min, r.max, (val) => updateSetField(exIdx, setIdx, 'reps', val));
+      attachRepsField(inp, r.min, r.max, (val) => updateSetField(exIdx, setIdx, 'reps', val));
     });
   }
   const active = list.filter(e => !e.skipped);
@@ -3841,6 +3955,7 @@ window.openWorkoutDay = function(day) {
   currentDay = day;
   armedSet = null;
   ripristinaMusica(true);   /* la canzone scelta nelle Opzioni e gia pronta */
+  applicaCaricoProgressivo(day);   /* il coach imposta i carichi della seduta */
   document.getElementById('workout-day-picker').style.display = 'none';
   document.getElementById('workout-session').style.display = 'block';
   renderDayBar();
@@ -4725,6 +4840,23 @@ window.closeWheel = function() {
 
 /* Numero regolabile scorrendo: si tiene premuto e si trascina in alto o in
    basso. Resta anche scrivibile da tastiera, per chi preferisce digitare. */
+/* Ripetizioni: si scrivono con la tastiera oppure si scelgono con la ruota
+   (dal 6 al 20). Lo scorrimento verso l alto o il basso e stato tolto:
+   si attivava per sbaglio mentre si scorreva la pagina. */
+function attachRepsField(input, min, max, onChange) {
+  const clamp = () => {
+    const val = Math.max(min, Math.min(max, parseInt(input.value, 10) || min));
+    input.value = val;
+    if (onChange) onChange(val);
+  };
+  input.addEventListener('change', clamp);
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { clamp(); input.blur(); } });
+  const btn = input.nextElementSibling;
+  if (btn && btn.classList.contains('wheel-btn')) {
+    btn.addEventListener('click', () => openWheel(input, min, max, input.dataset.wheelTitle || 'Ripetizioni', onChange));
+  }
+}
+
 function attachNumberDrag(input, min, max, onChange) {
   let startY = 0, startVal = 0, dragging = false, moved = false;
   const STEP_PX = 9; /* pixel per unita */
@@ -5626,7 +5758,7 @@ const ONB_KEY = 'tz_onboarded';
 const PROFILE_KEY = () => 'coach_plus_profile_' + currentMode;
 
 let onbStep = 0;
-let onbData = { goal: null, level: null, days: null, minutes: null, sex: null, age: null, height: null, weight: null, bia: null };
+let onbData = { goals: [], goal: null, level: null, days: null, minutes: null, luogo: null, fastidi: [], sonno: null, attrezzi: null, sex: null, age: null, height: null, weight: null, bia: null };
 
 const ONB_GOALS = [
   { id: 'massa',   emoji: '\u{1F4AA}', name: 'Massa muscolare', desc: '8-12 ripetizioni, carichi progressivi' },
@@ -5677,13 +5809,20 @@ function exerciseCountFor(minutes, scheme) {
 }
 
 window.startOnboarding = function(force) {
+  if (!coachAttivo()) return false;   /* senza consenso il coach non usa i tuoi dati */
   if (!force && localStorage.getItem(ONB_KEY) === '1') return false;
   onbStep = 0;
-  onbData = { goal: null, level: null, days: null, minutes: null, sex: null, age: null, height: null, weight: null, bia: null };
+  onbData = nuovoOnbData();
   document.getElementById('onb').classList.remove('hidden');
   renderOnb();
   return true;
 };
+
+function nuovoOnbData() {
+  return { goals: [], goal: null, level: null, days: null, minutes: null,
+           luogo: null, fastidi: [], sonno: null, attrezzi: null,
+           sex: null, age: null, height: null, weight: null, bia: null };
+}
 
 window.onbSkipAll = function() {
   localStorage.setItem(ONB_KEY, '1');
@@ -5696,18 +5835,21 @@ window.onbPrev = function() {
   renderOnb();
 };
 
+const ONB_ULTIMO = 6;   /* 0 obiettivi, 1 livello, 2 giorni, 3 minuti, 4 preferenze, 5 BIA, 6 esito */
+
 window.onbNext = function() {
-  if (onbStep === 5) { applyGeneratedProgram(); return; }
+  if (onbStep === ONB_ULTIMO) { applyGeneratedProgram(); return; }
   if (!onbStepValid()) return;
   onbStep++;
   renderOnb();
 };
 
 function onbStepValid() {
-  if (onbStep === 0) return !!onbData.goal;
+  if (onbStep === 0) return onbData.goals.length > 0;
   if (onbStep === 1) return !!onbData.level;
   if (onbStep === 2) return !!onbData.days;
   if (onbStep === 3) return !!onbData.minutes;
+  if (onbStep === 4) return !!onbData.luogo && !!onbData.sonno && !!onbData.attrezzi;
   return true;
 }
 
@@ -5716,22 +5858,75 @@ window.onbPick = function(campo, valore) {
   renderOnb();
 };
 
+/* Fino a tre obiettivi: il primo scelto guida il programma, gli altri lo
+   correggono. Oltre tre si diluisce tutto e non si ottiene niente. */
+window.onbToggleGoal = function(id) {
+  const i = onbData.goals.indexOf(id);
+  if (i !== -1) onbData.goals.splice(i, 1);
+  else if (onbData.goals.length < 3) onbData.goals.push(id);
+  onbData.goal = onbData.goals[0] || null;
+  renderOnb();
+};
+
+window.onbToggleFastidio = function(id) {
+  if (id === 'nessuno') { onbData.fastidi = onbData.fastidi.indexOf('nessuno') !== -1 ? [] : ['nessuno']; renderOnb(); return; }
+  onbData.fastidi = onbData.fastidi.filter(x => x !== 'nessuno');
+  const i = onbData.fastidi.indexOf(id);
+  if (i === -1) onbData.fastidi.push(id); else onbData.fastidi.splice(i, 1);
+  renderOnb();
+};
+
+const ONB_LUOGHI = [
+  { id: 'palestra', emoji: '\u{1F3DF}\uFE0F', name: 'Palestra attrezzata', desc: 'bilancieri, macchine e cavi' },
+  { id: 'manubri', emoji: '\u{1F3E0}', name: 'A casa con manubri', desc: 'manubri e una panca' },
+  { id: 'corpo', emoji: '\u{1F938}', name: 'Corpo libero', desc: 'senza attrezzi, o quasi' }
+];
+const ONB_FASTIDI = [
+  { id: 'spalle', emoji: '\u{1F6E1}\uFE0F', name: 'Spalle' },
+  { id: 'ginocchia', emoji: '\u{1F9B5}', name: 'Ginocchia' },
+  { id: 'schiena', emoji: '\u{1F9CD}', name: 'Schiena bassa' },
+  { id: 'nessuno', emoji: '\u2705', name: 'Nessuno' }
+];
+const ONB_SONNO = [
+  { id: 'bene', emoji: '\u{1F60C}', name: 'Bene', desc: 'dormo 7 ore o piu, stress sotto controllo' },
+  { id: 'medio', emoji: '\u{1F610}', name: 'Cosi cosi', desc: 'a volte dormo poco o sono sotto pressione' },
+  { id: 'male', emoji: '\u{1F62B}', name: 'Male', desc: 'poco sonno o molto stress, di solito' }
+];
+const ONB_ATTREZZI = [
+  { id: 'liberi', emoji: '\u{1F3CB}\uFE0F', name: 'Pesi liberi', desc: 'bilanciere e manubri' },
+  { id: 'macchine', emoji: '\u2699\uFE0F', name: 'Macchine', desc: 'piu guidate e sicure' },
+  { id: 'indifferente', emoji: '\u{1F937}', name: 'Indifferente', desc: 'scegli tu' }
+];
+
+function chip(sel, onclick, testo) {
+  return '<button class="aw-group ' + (sel ? 'on' : '') + '" onclick="' + onclick + '">' + testo + '</button>';
+}
+
 function renderOnb() {
   const body = document.getElementById('onb-body');
   const next = document.getElementById('onb-next');
-  const TOT = 6;
+  const TOT = ONB_ULTIMO + 1;
   document.getElementById('onb-step').innerText = 'Passo ' + (onbStep + 1) + ' di ' + TOT;
   document.getElementById('onb-progress-fill').style.width = Math.round(((onbStep + 1) / TOT) * 100) + '%';
-  next.innerText = onbStep === 5 ? '\u2713 Crea il programma' : 'Avanti';
+  next.innerText = onbStep === ONB_ULTIMO ? '\u2713 Crea il programma' : 'Avanti';
   next.disabled = !onbStepValid();
 
   if (onbStep === 0) {
-    body.innerHTML = '<div class="onb-q">Qual e il tuo obiettivo?</div>' +
-      '<div class="onb-why">Serie, ripetizioni e recuperi cambiano parecchio a seconda della risposta: non esiste un programma buono per tutto.</div>' +
-      ONB_GOALS.map(g => optHtml('goal', g)).join('');
+    body.innerHTML = '<div class="onb-q">Quali sono i tuoi obiettivi?</div>' +
+      '<div class="onb-why">Puoi sceglierne fino a tre. Il primo che tocchi guida il programma, gli altri lo correggono. Oltre tre si diluisce tutto.</div>' +
+      ONB_GOALS.map(g => {
+        const pos = onbData.goals.indexOf(g.id);
+        const pieno = onbData.goals.length >= 3 && pos === -1;
+        return '<button class="onb-opt ' + (pos !== -1 ? 'on' : '') + (pieno ? ' spento' : '') + '" onclick="onbToggleGoal(\'' + g.id + '\')">' +
+          '<span class="onb-opt-emoji">' + g.emoji + '</span>' +
+          '<span class="onb-opt-main"><span class="onb-opt-name">' + g.name + '</span>' +
+          '<span class="onb-opt-desc">' + g.desc + '</span></span>' +
+          '<span class="goal-rank">' + (pos !== -1 ? (pos === 0 ? '1\u00B0 \u2022 guida' : (pos + 1) + '\u00B0') : '') + '</span></button>';
+      }).join('') +
+      '<div class="onb-note">' + onbData.goals.length + ' di 3 scelti</div>';
   } else if (onbStep === 1) {
     body.innerHTML = '<div class="onb-q">Da quanto ti alleni?</div>' +
-      '<div class="onb-why">Ai principianti conviene il full body, perche ogni muscolo viene stimolato piu volte. Chi ha piu esperienza regge una divisione piu spinta.</div>' +
+      '<div class="onb-why">Ai principianti conviene il full body, perche ogni muscolo viene stimolato piu volte. Chi ha piu esperienza regge una divisione piu spinta. Decide anche quanto dura il programma.</div>' +
       ONB_LEVELS.map(g => optHtml('level', g)).join('');
   } else if (onbStep === 2) {
     body.innerHTML = '<div class="onb-q">Quanti giorni a settimana?</div>' +
@@ -5748,6 +5943,22 @@ function renderOnb() {
         desc: n <= 30 ? 'seduta breve e densa' : (n >= 90 ? 'il massimo consigliabile' : 'durata equilibrata')
       })).join('');
   } else if (onbStep === 4) {
+    /* Solo domande che cambiano davvero il piano: ogni risposta ha un effetto */
+    body.innerHTML = '<div class="onb-q">Qualche preferenza</div>' +
+      '<div class="onb-why">Quattro domande, ognuna cambia qualcosa di preciso nel programma.</div>' +
+      '<div class="aw-sec">Dove ti alleni?</div>' +
+      '<div class="pref-note">Cosi non ti propongo esercizi che non puoi fare.</div>' +
+      ONB_LUOGHI.map(g => optHtml('luogo', g)).join('') +
+      '<div class="aw-sec">Hai fastidi in qualche zona?</div>' +
+      '<div class="pref-note">Evito gli esercizi che la caricano di piu. Non sostituisce il parere di un medico.</div>' +
+      '<div class="aw-groups">' + ONB_FASTIDI.map(f => chip(onbData.fastidi.indexOf(f.id) !== -1, 'onbToggleFastidio(\'' + f.id + '\')', f.emoji + ' ' + f.name)).join('') + '</div>' +
+      '<div class="aw-sec">Come dormi e quanto stress hai?</div>' +
+      '<div class="pref-note">Il recupero decide quanto volume reggi e quanto in fretta aumentare i carichi.</div>' +
+      ONB_SONNO.map(g => optHtml('sonno', g)).join('') +
+      '<div class="aw-sec">Cosa preferisci usare?</div>' +
+      '<div class="pref-note">Quando un esercizio va sostituito, scelgo nella direzione che preferisci.</div>' +
+      ONB_ATTREZZI.map(g => optHtml('attrezzi', g)).join('');
+  } else if (onbStep === 5) {
     body.innerHTML = renderBiaStep();
     setTimeout(bindBiaInputs, 0);
   } else {
@@ -6030,44 +6241,143 @@ window.analyzeBia = function(bia, sex) {
 };
 
 /* ---------- Generatore del programma ---------- */
+/* ============================================================
+   COACH ENGINE: costruzione del programma
+   Dalla ricerca:
+   - un blocco di lavoro dura 4-8 settimane, con uno SCARICO ogni 4-8;
+     ai principianti bastano blocchi corti (3 settimane + 1 di scarico)
+   - nello scarico si tagliano le serie del 30-50% e si alleggerisce il carico
+   - piu obiettivi insieme: uno guida, gli altri correggono. Massimizzare
+     tutto nello stesso blocco non funziona meglio che alternare.
+   ============================================================ */
+
+/* Durata e struttura in base all esperienza */
+function strutturaProgramma(level) {
+  if (level === 'principiante') return { settimane: 8, blocco: 4 };    /* 2 blocchi da 3+1 */
+  if (level === 'avanzato') return { settimane: 12, blocco: 6 };       /* 2 blocchi da 5+1 */
+  return { settimane: 12, blocco: 4 };                                 /* 3 blocchi da 3+1 */
+}
+
+function fasiProgramma(struttura) {
+  const fasi = [];
+  for (let w = 1; w <= struttura.settimane; w++) fasi.push(w % struttura.blocco === 0 ? 'scarico' : 'carico');
+  return fasi;
+}
+
+/* ---- Attrezzatura e fastidi: esercizi da evitare e con cosa sostituirli ---- */
+function attrezzoDi(nome) {
+  const n = nome.toLowerCase();
+  if (/macchin|leg press|leg extension|leg curl|hack|pectoral|chest press|shoulder press|lat machine|pulley|cavi|cavo|abductor|smith|t-bar/.test(n)) return 'macchine';
+  if (/bilanciere|stacco|good morning|squat con|rematore con b|military|lento avanti|french press|panca presa stretta/.test(n)) return 'bilanciere';
+  if (/manubri|goblet|arnold|hammer|croci|alzate|scrollate|kickback|pullover|concentrat/.test(n)) return 'manubri';
+  return 'corpo';
+}
+
+const RISCHIO = {
+  spalle: /military|lento avanti|arnold|tirate al mento|dip|panca piana bilanciere|pullover|shoulder press/i,
+  ginocchia: /squat|affondi|leg extension|step-up|hack|bulgar|jump|salti|pistol/i,
+  schiena: /stacco|good morning|rematore con bilanciere|squat con bilanciere|hyperextension|t-bar/i
+};
+
+function consentito(nome, prefs) {
+  const a = attrezzoDi(nome);
+  if (prefs.luogo === 'manubri' && (a === 'macchine' || a === 'bilanciere')) return false;
+  if (prefs.luogo === 'corpo' && a !== 'corpo') return false;
+  return !(prefs.fastidi || []).some(f => RISCHIO[f] && RISCHIO[f].test(nome));
+}
+
+/* Sostituto: stesso gruppo, stesso tipo se possibile, attrezzo consentito,
+   nella direzione preferita (pesi liberi o macchine) */
+function sostituto(nome, prefs, usati) {
+  const meta = findExercise(nome);
+  if (!meta) return null;
+  const candidati = EXERCISE_LIBRARY.filter(e => e.group === meta.group && e.name !== nome &&
+    usati.indexOf(e.name) === -1 && consentito(e.name, prefs));
+  const punteggio = (e) => (e.type === meta.type ? 10 : 0) +
+    (prefs.attrezzi === 'macchine' && attrezzoDi(e.name) === 'macchine' ? 3 : 0) +
+    (prefs.attrezzi === 'liberi' && (attrezzoDi(e.name) === 'bilanciere' || attrezzoDi(e.name) === 'manubri') ? 3 : 0);
+  candidati.sort((a, b) => punteggio(b) - punteggio(a));
+  return candidati[0] || null;
+}
+
+/* ---- Mescolare fino a tre obiettivi ----
+   Il primo decide lo schema. Gli altri correggono singoli aspetti:
+   forza -> il primo multiarticolare della seduta diventa pesante (5x5)
+   massa -> gli isolamenti passano a 3x12
+   dimagrimento -> recuperi piu brevi e una nota sul cardio
+   ricomposizione / salute -> tetto al volume */
+function schemaMisto(goals) {
+  const primo = schemeFor(goals[0]);
+  const altri = goals.slice(1);
+  const s = Object.assign({}, primo, {
+    forzaSulPrimo: altri.indexOf('forza') !== -1,
+    isoMassa: altri.indexOf('massa') !== -1,
+    tettoSerie: (altri.indexOf('ricomposizione') !== -1 || altri.indexOf('salute') !== -1) ? 4 : 99,
+    cardio: goals.indexOf('dimagrimento') !== -1
+  });
+  if (altri.indexOf('dimagrimento') !== -1) {
+    s.restCompound = Math.max(60, Math.round(s.restCompound * 0.75));
+    s.restIso = Math.max(45, Math.round(s.restIso * 0.75));
+  }
+  return s;
+}
+
 window.buildProgram = function(d) {
-  const scheme = schemeFor(d.goal);
+  const goals = (d.goals && d.goals.length) ? d.goals.slice(0, 3) : [d.goal || 'salute'];
+  const scheme = schemaMisto(goals);
   const split = splitFor(d.level, d.days);
   const nEs = exerciseCountFor(d.minutes, scheme);
+  const struttura = strutturaProgramma(d.level);
+  const prefs = { luogo: d.luogo || 'palestra', fastidi: (d.fastidi || []).filter(f => f !== 'nessuno'), sonno: d.sonno || 'bene', attrezzi: d.attrezzi || 'indifferente' };
+  const sostituzioni = [];
 
-  /* i giorni di allenamento vengono distribuiti lasciando riposo in mezzo */
-  const mappaGiorni = {
-    2: [0, 3], 3: [0, 2, 4], 4: [0, 1, 3, 4],
-    5: [0, 1, 3, 4, 5], 6: [0, 1, 2, 3, 4, 5]
-  };
+  const mappaGiorni = { 2: [0, 3], 3: [0, 2, 4], 4: [0, 1, 3, 4], 5: [0, 1, 3, 4, 5], 6: [0, 1, 2, 3, 4, 5] };
   const indiciGiorni = mappaGiorni[d.days] || [0, 2, 4];
 
   const sedute = split.giorni.slice(0, d.days).map((tplId, i) => {
     const tpl = WORKOUT_TEMPLATES.find(t => t.id === tplId);
-    const base = tpl ? tpl.exercises.slice(0, nEs) : [];
+    const usati = [];
+    const base = [];
+    (tpl ? tpl.exercises : []).forEach(e => {
+      if (base.length >= nEs) return;
+      let nome = e.name;
+      if (!consentito(nome, prefs)) {
+        const alt = sostituto(nome, prefs, usati.concat(base.map(x => x.name)));
+        if (!alt) return;
+        sostituzioni.push({ da: nome, a: alt.name });
+        nome = alt.name;
+      }
+      if (base.some(x => x.name === nome)) return;
+      usati.push(nome);
+      const meta = findExercise(nome);
+      base.push({ name: nome, weight: (meta && meta.weight) || e.weight || 0 });
+    });
+
+    let primoComp = true;
     return {
       giorno: DAYS[indiciGiorni[i]],
       titolo: tpl ? tpl.title.split(' \u2014 ')[0] : 'Seduta ' + (i + 1),
       esercizi: base.map(e => {
         const meta = findExercise(e.name);
         const isComp = meta && meta.type === 'compound';
-        return {
-          name: e.name,
-          sets: scheme.sets,
-          reps: isTimeBased(e.name) ? (meta ? meta.reps : 30) : scheme.reps,
-          weight: e.weight,
-          rest: isComp ? scheme.restCompound : scheme.restIso
-        };
+        let sets = scheme.sets, reps = scheme.reps, rest = isComp ? scheme.restCompound : scheme.restIso;
+        if (isComp && primoComp && scheme.forzaSulPrimo) { sets = 5; reps = 5; rest = 180; }
+        if (isComp) primoComp = false;
+        if (!isComp && scheme.isoMassa) { sets = 3; reps = 12; }
+        sets = Math.min(sets, scheme.tettoSerie);
+        /* poco sonno o molto stress: meno volume sugli accessori */
+        if (!isComp && prefs.sonno === 'male') sets = Math.max(2, sets - 1);
+        if (isTimeBased(e.name)) reps = meta ? meta.reps : 30;
+        return { name: e.name, sets: sets, reps: reps, weight: e.weight, rest: rest };
       })
     };
   });
 
   return {
-    scheme: scheme,
-    split: split,
-    sedute: sedute,
+    goals: goals, scheme: scheme, split: split, sedute: sedute, prefs: prefs,
+    sostituzioni: sostituzioni,
     riposo: DAYS.filter(g => !sedute.some(s => s.giorno === g)),
-    settimane: scheme.settimane,
+    settimane: struttura.settimane, blocco: struttura.blocco, fasi: fasiProgramma(struttura),
     eserciziPerSeduta: nEs
   };
 };
@@ -6075,23 +6385,35 @@ window.buildProgram = function(d) {
 function renderOnbResult() {
   const prog = buildProgram(onbData);
   const an = analyzeBia(onbData.bia, onbData.sex);
-  const g = ONB_GOALS.find(x => x.id === onbData.goal);
+  const nomiObiettivi = prog.goals.map((id, i) => { const g = ONB_GOALS.find(x => x.id === id); return (i === 0 ? '<b>' : '') + (g ? g.name : id) + (i === 0 ? '</b>' : ''); }).join(' + ');
+  const scarichi = prog.fasi.map((f, i) => f === 'scarico' ? i + 1 : null).filter(Boolean);
 
   let html = '<div class="onb-q">Il tuo programma</div>' +
-    '<div class="onb-why">Costruito su quello che mi hai detto. Puoi cambiare ogni cosa dopo: questo e un punto di partenza, non una gabbia.</div>';
+    '<div class="onb-why">Costruito su quello che mi hai detto. Puoi cambiare ogni cosa dopo: e un punto di partenza, non una gabbia.</div>';
 
-  html += '<div class="res-card">' +
-    '<div class="res-title">Struttura</div>' +
+  html += '<div class="res-card"><div class="res-title">Struttura</div>' +
     '<div class="res-big">' + prog.split.nome + '</div>' +
-    '<div class="res-line"><span>Obiettivo</span><b>' + (g ? g.name : '-') + '</b></div>' +
-    '<div class="res-line"><span>Durata consigliata</span><b>' + prog.settimane + ' settimane</b></div>' +
+    '<div class="res-line"><span>Obiettivi</span><b style="font-weight:600">' + nomiObiettivi + '</b></div>' +
+    '<div class="res-line"><span>Durata</span><b>' + prog.settimane + ' settimane</b></div>' +
+    '<div class="res-line"><span>Blocchi</span><b>' + (prog.blocco - 1) + ' di carico + 1 di scarico</b></div>' +
+    '<div class="res-line"><span>Settimane di scarico</span><b>' + scarichi.join(', ') + '</b></div>' +
     '<div class="res-line"><span>Sedute</span><b>' + onbData.days + ' a settimana</b></div>' +
-    '<div class="res-line"><span>Schema serie</span><b>' + prog.scheme.sets + ' \u00D7 ' + prog.scheme.reps + '</b></div>' +
-    '<div class="res-line"><span>Recupero</span><b>' + prog.scheme.restCompound + 's / ' + prog.scheme.restIso + 's</b></div>' +
+    '<div class="res-line"><span>Schema base</span><b>' + prog.scheme.sets + ' \u00D7 ' + prog.scheme.reps + '</b></div>' +
     '<div class="res-line"><span>Esercizi per seduta</span><b>' + prog.eserciziPerSeduta + '</b></div>' +
     '</div>';
 
-  html += '<div class="res-card"><div class="res-title">La settimana</div>' +
+  const adattamenti = [];
+  if (prog.scheme.forzaSulPrimo) adattamenti.push('Il primo esercizio di ogni seduta e pesante (5\u00D75) per la forza.');
+  if (prog.scheme.isoMassa) adattamenti.push('Gli esercizi di isolamento vanno a 3\u00D712 per la massa.');
+  if (prog.scheme.cardio) adattamenti.push('Aggiungi 15-20 minuti di cardio leggero dopo la seduta, per il dimagrimento.');
+  if (prog.prefs.sonno === 'male') adattamenti.push('Con poco recupero ho tolto una serie agli accessori e aumentero i carichi con piu prudenza.');
+  prog.sostituzioni.forEach(s => adattamenti.push(s.da.replace(/^\S+\s/, '') + ' \u2192 ' + s.a.replace(/^\S+\s/, '')));
+  if (adattamenti.length) {
+    html += '<div class="res-card"><div class="res-title">Adattato a te</div>' +
+      adattamenti.map(a => '<div class="consent-li">\u2022 ' + escapeHtml(a) + '</div>').join('') + '</div>';
+  }
+
+  html += '<div class="res-card"><div class="res-title">La settimana tipo</div>' +
     prog.sedute.map(s => '<div class="res-line"><span>' + s.giorno + '</span><b>' + escapeHtml(s.titolo) + '</b></div>').join('') +
     prog.riposo.map(r => '<div class="res-line"><span>' + r + '</span><b style="color:var(--muted)">\u{1F634} riposo</b></div>').join('') +
     '</div>';
@@ -6101,18 +6423,28 @@ function renderOnbResult() {
       (an.bmi ? '<div class="res-line"><span>BMI</span><b>' + an.bmi + '</b></div>' : '') +
       (an.fmPerc ? '<div class="res-line"><span>Massa grassa</span><b>' + an.fmPerc + '%</b></div>' : '') +
       (an.ffmi ? '<div class="res-line"><span>Indice di massa magra</span><b>' + an.ffmi + '</b></div>' : '') +
-      (an.tbwPerc ? '<div class="res-line"><span>Acqua corporea</span><b>' + an.tbwPerc + '%</b></div>' : '') +
       (an.bmr ? '<div class="res-line"><span>Metabolismo basale</span><b>' + an.bmr + ' kcal</b></div>' : '') +
       (an.fmTesto ? '<span class="res-tag ' + an.fmLivello + '">' + an.fmTesto + '</span>' : '') +
-      (an.note.length ? '<div class="onb-note" style="margin-top:10px;">' + an.note.map(escapeHtml).join('<br>') + '</div>' : '') +
       '</div>';
   }
 
-  html += '<div class="onb-note">' + escapeHtml(prog.scheme.nota) +
-    '<br><br>Questo programma e una traccia generata da regole, non la valutazione di un professionista. Se hai patologie, dolori o un referto che non torna, parlane con un medico o un preparatore prima di iniziare.</div>';
-
+  html += '<div class="onb-note">Il programma viene messo nel calendario per tutte le ' + prog.settimane + ' settimane. ' +
+    'Il carico progressivo aumentera i pesi quando completi tutte le serie, e li alleggerira nelle settimane di scarico.' +
+    '<br><br>E una traccia generata da regole, non la valutazione di un professionista. Con patologie o dolori, parlane prima con un medico.</div>';
   return html;
 }
+
+/* ---- Salvataggi del coach ---- */
+const progKey = () => 'coach_plus_programma_' + currentMode;
+const biaKey = () => 'coach_plus_bia_' + currentMode;
+window.getProgramma = function() { try { return JSON.parse(localStorage.getItem(progKey()) || 'null'); } catch (e) { return null; } };
+window.getBiaStorico = function() { try { return JSON.parse(localStorage.getItem(biaKey()) || '[]'); } catch (e) { return []; } };
+window.aggiungiBia = function(valori, quando) {
+  const st = getBiaStorico();
+  st.push({ data: quando || ymd(new Date()), valori: valori });
+  st.sort((a, b) => a.data < b.data ? -1 : 1);
+  localStorage.setItem(biaKey(), JSON.stringify(st));
+};
 
 window.applyGeneratedProgram = function() {
   const prog = buildProgram(onbData);
@@ -6124,15 +6456,36 @@ window.applyGeneratedProgram = function() {
     data[s.giorno] = s.esercizi.map(e => normalizeExerciseRecord(Object.assign({}, e, { completedSets: [] })));
     titles[s.giorno] = s.titolo;
   });
-
   saveData(data);
   saveTitles(titles);
   saveRestDays(prog.riposo.slice());
+
+  /* il programma dura settimane: si mette nel calendario tutto intero */
+  const inizio = lunediDi(new Date());
+  const cal = loadCal();
+  for (let w = 0; w < prog.settimane; w++) {
+    const l = piuGiorni(inizio, w * 7);
+    mettiSettimana(l, cal);
+    if (prog.fasi[w] === 'scarico') {
+      for (let i = 0; i < 7; i++) {
+        const k = ymd(piuGiorni(l, i));
+        if (cal[k] && !cal[k].rest && !cal[k].done) cal[k].title = cal[k].title + ' \u2022 scarico';
+      }
+    }
+  }
+  saveCal(cal);
+
+  localStorage.setItem(progKey(), JSON.stringify({
+    creato: formatNow(), inizio: ymd(inizio), settimane: prog.settimane, blocco: prog.blocco, fasi: prog.fasi,
+    goals: prog.goals, prefs: prog.prefs, split: prog.split.nome,
+    schema: { sets: prog.scheme.sets, reps: prog.scheme.reps }
+  }));
   localStorage.setItem(PROFILE_KEY(), JSON.stringify({
-    goal: onbData.goal, level: onbData.level, days: onbData.days, minutes: onbData.minutes,
-    sex: onbData.sex, age: onbData.age, bia: onbData.bia,
+    goal: prog.goals[0], goals: prog.goals, level: onbData.level, days: onbData.days, minutes: onbData.minutes,
+    prefs: prog.prefs, sex: onbData.sex, age: onbData.age, bia: onbData.bia,
     settimane: prog.settimane, split: prog.split.nome, creato: formatNow()
   }));
+  if (onbData.bia && Object.keys(onbData.bia).some(k => onbData.bia[k])) aggiungiBia(onbData.bia);
   localStorage.setItem(ONB_KEY, '1');
 
   currentDay = prog.sedute.length ? prog.sedute[0].giorno : DAYS[0];
@@ -6141,10 +6494,327 @@ window.applyGeneratedProgram = function() {
   document.getElementById('onb').classList.add('hidden');
   renderDayBar(); renderPiano(); renderGruppi(); renderAllenamento();
   switchTab('piano');
-  showUndo('Programma creato: ' + prog.split.nome + ', ' + prog.settimane + ' settimane', null, 6000);
+  showUndo('Programma creato: ' + prog.split.nome + ', ' + prog.settimane + ' settimane nel calendario', null, 6000);
+};
+
+/* ============================================================
+   CARICO PROGRESSIVO ENGINE
+   Doppia progressione, il metodo piu semplice e sostenuto dalle evidenze:
+   - stesso carico finche TUTTE le serie arrivano alle ripetizioni previste
+   - poi si aumenta: circa +2-5% nella parte alta, +5-10% sulle gambe
+     (in pratica +2,5 kg / +5 kg sui multiarticolari, meno sugli isolamenti)
+   - mancato una volta: stesso carico, si punta a piu ripetizioni
+   - mancato due volte di fila: -10% e si ricostruisce
+   - settimana di scarico: serie -40% e carico -10%
+   - la BIA puo frenare: se la massa magra cala, niente aumenti
+   Usa SOLO i dati dell utente, quindi funziona solo con il consenso.
+   ============================================================ */
+function arrotonda(x, passo) { return Math.round(x / (passo || 0.5)) * (passo || 0.5); }
+
+function incrementoPer(nome) {
+  const m = findExercise(nome);
+  const gambe = m && (m.group === 'gambe' || m.group === 'glutei');
+  const comp = m && m.type === 'compound';
+  if (gambe) return comp ? 5 : 2.5;
+  return comp ? 2.5 : 1;
+}
+
+/* Le ultime sessioni in cui compare l esercizio, dalla piu recente */
+function ultimeSessioni(nome, n) {
+  const out = [];
+  loadHistory().forEach(h => {
+    if (out.length >= n || !h.sessione) return;
+    const ex = h.sessione.find(e => e.name === nome);
+    if (ex) out.push(ex);
+  });
+  return out;
+}
+
+function esito(ex, repsTarget) {
+  const fatte = ex.sets.filter(s => s.done);
+  if (!fatte.length) return 'saltato';
+  const tutte = fatte.length === ex.sets.length;
+  const reps = fatte.every(s => (Number(s.reps) || 0) >= (Number(repsTarget) || 0));
+  return tutte && reps ? 'ok' : 'mancato';
+}
+
+/* Settimana corrente del programma (1..N) e la sua fase */
+window.settimanaProgramma = function() {
+  const p = getProgramma();
+  if (!p) return null;
+  const giorni = Math.floor((lunediDi(new Date()) - daYmd(p.inizio)) / 86400000);
+  const w = Math.floor(giorni / 7) + 1;
+  if (w < 1 || w > p.settimane) return { numero: w, fase: null, finito: w > p.settimane, totale: p.settimane };
+  return { numero: w, fase: p.fasi[w - 1], finito: false, totale: p.settimane };
+};
+
+/* La BIA frena gli aumenti se la massa magra e scesa di almeno 1 kg */
+function frenoBia() {
+  const st = getBiaStorico();
+  if (st.length < 2) return null;
+  const a = st[st.length - 2].valori, b = st[st.length - 1].valori;
+  if (a.ffm && b.ffm && b.ffm - a.ffm <= -1) return 'La massa magra e scesa di ' + Math.abs(Math.round((b.ffm - a.ffm) * 10) / 10) + ' kg nell ultima BIA: per ora tengo fermi i carichi e punto al recupero.';
+  return null;
+}
+
+window.caricoProssimo = function(nome, base, repsTarget, setsBase) {
+  const sett = settimanaProgramma();
+  const scarico = sett && sett.fase === 'scarico';
+  const prof = getProfile() || {};
+  const prudente = prof.prefs && prof.prefs.sonno === 'male';
+  const sess = ultimeSessioni(nome, 2);
+  const sets = scarico ? Math.max(2, Math.round((setsBase || 3) * 0.6)) : (setsBase || 3);
+
+  if (isTimeBased(nome)) {
+    if (sess.length && esito(sess[0], repsTarget) === 'ok') return { weight: base, reps: Number(repsTarget) + 5, sets: sets, tipo: 'su', motivo: 'Tenuta completata: +5 secondi' };
+    return { weight: base, reps: repsTarget, sets: sets, tipo: sess.length ? 'fermo' : 'nuovo', motivo: sess.length ? 'Stessa durata, punta a completarla' : 'Parti dalla durata del programma' };
+  }
+
+  if (!sess.length) {
+    return { weight: scarico ? arrotonda(base * 0.9) : base, reps: repsTarget, sets: sets, tipo: scarico ? 'scarico' : 'nuovo',
+             motivo: scarico ? 'Settimana di scarico: carico e serie ridotti' : 'Prima volta: parti dal carico del programma' };
+  }
+
+  const fatteUltima = sess[0].sets.filter(s => s.done);
+  const pesoUltimo = fatteUltima.length ? Math.max.apply(null, fatteUltima.map(s => Number(s.weight) || 0)) : base;
+  const e1 = esito(sess[0], repsTarget);
+  const e2 = sess[1] ? esito(sess[1], repsTarget) : null;
+  const freno = frenoBia();
+
+  if (scarico) return { weight: arrotonda(pesoUltimo * 0.9), reps: repsTarget, sets: sets, tipo: 'scarico', motivo: 'Settimana di scarico: -10% e meno serie, per recuperare e ripartire piu forte' };
+
+  /* esercizi a corpo libero: si progredisce con le ripetizioni */
+  if (pesoUltimo === 0) {
+    if (e1 === 'ok') return { weight: 0, reps: Number(repsTarget) + 1, sets: sets, tipo: 'su', motivo: 'Tutte le serie complete: +1 ripetizione' };
+    return { weight: 0, reps: repsTarget, sets: sets, tipo: 'fermo', motivo: 'Stesse ripetizioni, punta a completarle tutte' };
+  }
+
+  if (e1 === 'ok') {
+    if (freno) return { weight: pesoUltimo, reps: repsTarget, sets: sets, tipo: 'fermo', motivo: freno };
+    const inc = prudente ? Math.max(0.5, incrementoPer(nome) / 2) : incrementoPer(nome);
+    return { weight: arrotonda(pesoUltimo + inc), reps: repsTarget, sets: sets, tipo: 'su',
+             motivo: 'Tutte le serie complete la volta scorsa: +' + inc + ' kg' + (prudente ? ' (aumento prudente: recupero scarso)' : '') };
+  }
+  if (e1 === 'mancato' && e2 === 'mancato') {
+    return { weight: arrotonda(pesoUltimo * 0.9), reps: repsTarget, sets: sets, tipo: 'giu', motivo: 'Due volte di fila non completato: -10% e si ricostruisce' };
+  }
+  return { weight: pesoUltimo, reps: repsTarget, sets: sets, tipo: 'fermo', motivo: 'Non tutte le serie complete: stesso carico, punta a piu ripetizioni' };
+};
+
+/* Applicato quando si apre una seduta: solo se c e il consenso e solo se
+   la seduta non e ancora iniziata (non tocca serie gia fatte) */
+window.applicaCaricoProgressivo = function(day) {
+  if (!coachAttivo()) return 0;
+  if (!getProgramma() && !loadHistory().some(h => h.sessione)) return 0;
+  const data = loadData();
+  const list = data[day] || [];
+  let cambiati = 0;
+  list.forEach(e => {
+    if (e.completedSets.some(s => s.done)) return;
+    if (e.setsBase === undefined) e.setsBase = e.sets;
+    const t = caricoProssimo(e.name, e.weight, e.repsBase !== undefined ? e.repsBase : e.reps, e.setsBase);
+    if (e.repsBase === undefined) e.repsBase = e.reps;
+    e.weight = t.weight;
+    e.reps = t.reps;
+    e.sets = t.sets;
+    e.completedSets = Array.from({ length: t.sets }, () => ({ done: false, reps: t.reps, weight: t.weight, wasBerserk: false }));
+    e.coachNote = t.motivo;
+    e.coachTipo = t.tipo;
+    cambiati++;
+  });
+  saveData(data);
+  return cambiati;
+};
+
+/* ============================================================
+   AGENTE COACH
+   Segue il programma: in che settimana sei, cosa succede ai carichi e
+   perche, come cambia il corpo tra una BIA e l altra, e cosa conviene
+   fare adesso. Raccoglie i dati, li legge, propone. Non decide al
+   posto tuo: i carichi proposti restano modificabili in seduta.
+   ============================================================ */
+function deltaTesto(a, b, unita, meglioSu) {
+  if (a === undefined || a === null || b === undefined || b === null) return '';
+  const d = Math.round((b - a) * 10) / 10;
+  if (d === 0) return '<span class="ag-d">=</span>';
+  const buono = meglioSu === null ? null : (d > 0) === meglioSu;
+  return '<span class="ag-d ' + (buono === null ? '' : (buono ? 'su' : 'giu')) + '">' + (d > 0 ? '+' : '') + d + unita + '</span>';
+}
+
+function consigliAgente() {
+  const out = [];
+  const prof = getProfile() || {};
+  const goals = prof.goals || (prof.goal ? [prof.goal] : []);
+  const st = getBiaStorico();
+  const hist = loadHistory();
+  const sett = settimanaProgramma();
+
+  if (sett && sett.fase === 'scarico') out.push('\u{1F4A4} Settimana di scarico: meno serie e carichi piu leggeri. Non e tempo perso, serve a ripartire piu forte.');
+  if (sett && !sett.finito && sett.fase === 'carico' && sett.numero < sett.totale && getProgramma().fasi[sett.numero] === 'scarico') out.push('\u{1F4C5} La prossima settimana e di scarico.');
+  if (sett && sett.finito) out.push('\u{1F3C1} Il programma e concluso. Fai una nuova BIA e ricrea il programma: ripartiremo dai carichi raggiunti.');
+
+  const ultimo = hist[0];
+  if (hist.length && ultimo) {
+    const giorniFa = Math.floor((Date.now() - (ultimo.id || Date.now())) / 86400000);
+    if (ultimo.id && giorniFa >= 10) out.push('\u26A0\uFE0F Sono ' + giorniFa + ' giorni dall ultimo allenamento: dopo poche settimane di stop si inizia a perdere cio che si e costruito. Riparti con i carichi un po piu leggeri.');
+  }
+
+  if (st.length >= 2) {
+    const a = st[0].valori, b = st[st.length - 1].valori;
+    if (a.ffm && b.ffm) {
+      const d = b.ffm - a.ffm;
+      if (d >= 0.5) out.push('\u{1F4AA} Massa magra +' + (Math.round(d * 10) / 10) + ' kg dalla prima BIA: il programma sta funzionando.');
+      if (d <= -1) out.push('\u{1F6D1} Massa magra in calo: carichi fermi finche non si stabilizza. Controlla sonno e proteine; se stai dimagrendo, un deficit troppo forte costa muscolo.');
+    }
+    if (a.fmPerc && b.fmPerc && goals.indexOf('dimagrimento') !== -1) {
+      if (b.fmPerc >= a.fmPerc) out.push('\u{1F525} La massa grassa non scende: aggiungi cardio leggero e recuperi piu brevi. L alimentazione conta piu dell allenamento, qui.');
+      else out.push('\u2705 Massa grassa ' + (Math.round((b.fmPerc - a.fmPerc) * 10) / 10) + ' punti: nella direzione giusta.');
+    }
+  } else if (st.length === 1) {
+    out.push('\u{1F4CA} Hai una sola BIA: rifalla tra 4-6 settimane, nelle stesse condizioni (mattino, a digiuno), cosi posso confrontare.');
+  } else {
+    out.push('\u{1F4CA} Nessuna BIA salvata: caricarne una mi permette di capire se stai costruendo muscolo o perdendo grasso.');
+  }
+  return out;
+}
+
+window.openAgent = function() {
+  document.getElementById('agent-sheet').classList.remove('hidden');
+  renderAgent();
+};
+window.closeAgent = function() { document.getElementById('agent-sheet').classList.add('hidden'); };
+
+window.renderAgent = function() {
+  const body = document.getElementById('agent-body');
+  if (!coachAttivo()) {
+    body.innerHTML = '<div class="dv-empty">\u{1F512}<br>Il coach usa i tuoi dati (obiettivi, BIA, storico) e per questo serve il tuo consenso.<br><br>Senza consenso l app funziona a mano: costruisci e segui i tuoi allenamenti.</div>' +
+      '<button class="btn-start-workout" onclick="closeAgent(); switchTab(\'impostazioni\');">Vai a Privacy e dati</button>';
+    return;
+  }
+  const p = getProgramma();
+  const sett = settimanaProgramma();
+  let html = '';
+
+  /* ---- il programma ---- */
+  if (p && sett) {
+    const perc = Math.min(100, Math.max(0, Math.round(((Math.min(sett.numero, p.settimane) - (sett.finito ? 0 : 1)) / p.settimane) * 100)));
+    const fine = piuGiorni(daYmd(p.inizio), p.settimane * 7 - 1);
+    html += '<div class="card"><div class="section-title">Il programma</div>' +
+      '<div class="res-big">' + escapeHtml(p.split) + '</div>' +
+      '<div class="res-line"><span>Settimana</span><b>' + (sett.finito ? 'concluso' : sett.numero + ' di ' + p.settimane) + '</b></div>' +
+      (sett.fase ? '<div class="res-line"><span>Fase</span><b>' + (sett.fase === 'scarico' ? '\u{1F4A4} scarico' : '\u{1F4C8} carico') + '</b></div>' : '') +
+      '<div class="res-line"><span>Termina</span><b>' + fine.toLocaleDateString('it-IT', { day: 'numeric', month: 'long' }) + '</b></div>' +
+      '<div class="wday-progress" style="margin-top:var(--sp-3);"><span style="width:' + perc + '%"></span></div>' +
+      '</div>';
+  } else {
+    html += '<div class="card"><div class="section-title">Il programma</div>' +
+      '<div class="set-about" style="margin-top:0;">Non hai ancora un programma del coach.</div>' +
+      '<button class="btn-start-workout" onclick="closeAgent(); restartOnboarding();">Crea il programma</button></div>';
+  }
+
+  /* ---- i consigli ---- */
+  const c = consigliAgente();
+  if (c.length) html += '<div class="card"><div class="section-title">Cosa ti dico adesso</div>' +
+    c.map(x => '<div class="ag-tip">' + escapeHtml(x) + '</div>').join('') + '</div>';
+
+  /* ---- i carichi della prossima seduta ---- */
+  const data = loadData();
+  const visti = {};
+  const righe = [];
+  DAYS.forEach(d => (data[d] || []).forEach(e => {
+    if (visti[e.name]) return;
+    visti[e.name] = true;
+    const t = caricoProssimo(e.name, e.weight, e.repsBase !== undefined ? e.repsBase : e.reps, e.setsBase !== undefined ? e.setsBase : e.sets);
+    righe.push({ e: e, t: t });
+  }));
+  const ordine = { su: 0, giu: 1, scarico: 2, fermo: 3, nuovo: 4 };
+  righe.sort((a, b) => ordine[a.t.tipo] - ordine[b.t.tipo]);
+  if (righe.length) {
+    html += '<div class="card"><div class="section-title">Carichi della prossima seduta</div>' +
+      righe.slice(0, 10).map(r => '<div class="ag-row">' +
+        '<span class="ag-ico ' + r.t.tipo + '">' + ({ su: '\u2191', giu: '\u2193', scarico: '\u{1F4A4}', fermo: '\u2192', nuovo: '\u2022' })[r.t.tipo] + '</span>' +
+        '<span class="dv-main"><span class="dv-name">' + escapeHtml(r.e.name.replace(/^\S+\s/, '')) + '</span>' +
+        '<span class="dv-meta">' + escapeHtml(r.t.motivo) + '</span></span>' +
+        '<span class="ag-kg">' + (isTimeBased(r.e.name) ? r.t.reps + 's' : (r.t.weight ? r.t.weight + ' kg' : r.t.reps + ' rip')) + '</span></div>').join('') +
+      '<div class="set-about">Li trovi gia impostati quando apri la seduta. Restano modificabili: se un giorno sei meno in forma, abbassa pure.</div></div>';
+  }
+
+  /* ---- composizione corporea ---- */
+  const st = getBiaStorico();
+  html += '<div class="card"><div class="section-title">Composizione corporea</div>';
+  if (st.length) {
+    const a = st[0].valori, b = st[st.length - 1].valori;
+    html += st.slice().reverse().map(x => '<div class="res-line"><span>' +
+      daYmd(x.data).toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: '2-digit' }) + '</span><b>' +
+      (x.valori.peso ? x.valori.peso + ' kg' : '') + (x.valori.fmPerc ? ' \u2022 ' + x.valori.fmPerc + '% grasso' : '') +
+      (x.valori.ffm ? ' \u2022 ' + x.valori.ffm + ' kg magra' : '') + '</b></div>').join('');
+    if (st.length > 1) {
+      html += '<div class="ag-trend">Dalla prima BIA: peso ' + deltaTesto(a.peso, b.peso, ' kg', null) +
+        ' \u2022 grasso ' + deltaTesto(a.fmPerc, b.fmPerc, '%', false) +
+        ' \u2022 massa magra ' + deltaTesto(a.ffm, b.ffm, ' kg', true) + '</div>';
+    }
+  } else {
+    html += '<div class="set-about" style="margin-top:0;">Nessuna BIA salvata.</div>';
+  }
+  html += '<div class="aw-sec">Aggiungi una nuova BIA</div>' +
+    '<label class="bia-drop" for="agent-bia-file">\u{1F4C4} Carica il PDF del referto</label>' +
+    '<input type="file" id="agent-bia-file" accept="application/pdf" style="display:none;" onchange="agentBiaPdf(this.files)">' +
+    '<div class="bia-status" id="agent-bia-status"></div>' +
+    '<div class="bia-grid">' +
+      '<label class="bia-val"><span>Peso (kg)</span><input type="number" step="0.1" id="ag-peso"></label>' +
+      '<label class="bia-val"><span>Massa grassa (%)</span><input type="number" step="0.1" id="ag-fm"></label>' +
+      '<label class="bia-val"><span>Massa magra (kg)</span><input type="number" step="0.1" id="ag-ffm"></label>' +
+      '<label class="bia-val"><span>Metabolismo (kcal)</span><input type="number" step="1" id="ag-bmr"></label>' +
+    '</div>' +
+    '<button class="btn-start-workout" style="margin-top:var(--sp-4);" onclick="salvaBiaAgente()">Salva la BIA</button></div>';
+
+  html += '<div class="onb-note">Il coach segue regole di programmazione dell allenamento, non fa diagnosi. Con dolori o patologie, parlane con un medico.</div>';
+  body.innerHTML = html;
+};
+
+window.agentBiaPdf = async function(files) {
+  const file = files && files[0];
+  const st = document.getElementById('agent-bia-status');
+  if (!file) return;
+  st.className = 'bia-status'; st.innerText = 'Leggo il referto...';
+  try {
+    const pdfjsLib = await ensurePdfJs();
+    const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+    let testo = '';
+    for (let i = 1; i <= Math.min(pdf.numPages, 6); i++) {
+      const tc = await (await pdf.getPage(i)).getTextContent();
+      testo += ' ' + tc.items.map(x => x.str).join(' ');
+    }
+    compilaBiaAgente(parseBiaText(testo));
+    st.className = 'bia-status ok'; st.innerText = '\u2713 Valori letti: controllali prima di salvare.';
+  } catch (e) {
+    st.className = 'bia-status warn'; st.innerText = 'Non riesco a leggere il PDF: scrivi i valori a mano.';
+  }
+};
+
+window.compilaBiaAgente = function(v) {
+  if (v.peso) document.getElementById('ag-peso').value = v.peso;
+  if (v.fmPerc) document.getElementById('ag-fm').value = v.fmPerc;
+  if (v.ffm) document.getElementById('ag-ffm').value = v.ffm;
+  if (v.bmr) document.getElementById('ag-bmr').value = v.bmr;
+};
+
+window.salvaBiaAgente = function() {
+  const n = (id) => { const x = parseFloat(document.getElementById(id).value); return isNaN(x) ? null : x; };
+  const v = { peso: n('ag-peso'), fmPerc: n('ag-fm'), ffm: n('ag-ffm'), bmr: n('ag-bmr') };
+  if (!v.peso && !v.fmPerc && !v.ffm) { alert('Inserisci almeno peso, massa grassa o massa magra.'); return; }
+  if (!v.ffm && v.peso && v.fmPerc) v.ffm = Math.round(v.peso * (1 - v.fmPerc / 100) * 10) / 10;
+  aggiungiBia(v);
+  renderAgent();
+  showUndo('BIA salvata: il coach ne tiene conto');
 };
 
 window.restartOnboarding = function() {
+  if (!coachAttivo()) {
+    alert('Il programma personalizzato usa i tuoi dati, per questo serve il consenso. Puoi darlo da Opzioni \u2192 Privacy e dati.');
+    switchTab('impostazioni');
+    return;
+  }
   if (!confirm('Rifacendo il questionario il programma attuale verra sostituito. Continuare?')) return;
   startOnboarding(true);
 };
@@ -6152,6 +6822,57 @@ window.restartOnboarding = function() {
 window.getProfile = function() {
   try { return JSON.parse(localStorage.getItem(PROFILE_KEY()) || 'null'); } catch (e) { return null; }
 };
+
+/* ============================================================
+   CONSENSO AI DATI
+   Chiesto una volta al primo avvio, salvato, modificabile nelle Opzioni.
+   Senza consenso il "coach engine" non parte: niente questionario, niente
+   BIA, niente carico progressivo automatico. L app resta usabile a mano.
+   ============================================================ */
+const CONSENT_KEY = 'tz_consenso';
+const CONSENT_VERSION = '1.0';
+
+window.consenso = function() {
+  try { return localStorage.getItem(CONSENT_KEY); } catch (e) { return null; }
+};
+window.coachAttivo = function() { return consenso() === 'si'; };
+
+window.chiediConsensoSeServe = function() {
+  if (consenso() !== null) return false;
+  document.getElementById('consent').classList.remove('hidden');
+  return true;
+};
+
+window.setConsenso = function(si, primoAvvio) {
+  try {
+    localStorage.setItem(CONSENT_KEY, si ? 'si' : 'no');
+    localStorage.setItem(CONSENT_KEY + '_data', formatNow());
+    localStorage.setItem(CONSENT_KEY + '_versione', CONSENT_VERSION);
+  } catch (e) {}
+  document.getElementById('consent').classList.add('hidden');
+  if (primoAvvio) {
+    if (si) startOnboarding(false);
+    else { try { localStorage.setItem(ONB_KEY, '1'); } catch (e) {} }
+  }
+  if (typeof renderSettings === 'function' && document.getElementById('tab-impostazioni').classList.contains('active')) renderSettings();
+};
+
+window.revocaConsenso = function() {
+  const cancella = confirm('Consenso revocato: il coach smette di usare i tuoi dati.\n\nVuoi anche cancellare il profilo e i referti BIA salvati?');
+  setConsenso(false, false);
+  if (cancella) {
+    try {
+      localStorage.removeItem(PROFILE_KEY());
+      localStorage.removeItem(biaKey());
+      localStorage.removeItem(progKey());
+    } catch (e) {}
+  }
+  renderSettings();
+  showUndo(cancella ? 'Consenso revocato e dati cancellati' : 'Consenso revocato');
+};
+
+window.openConsentText = function() { document.getElementById('consent-text-sheet').classList.remove('hidden'); };
+window.closeConsentText = function() { document.getElementById('consent-text-sheet').classList.add('hidden'); };
 
 /* ============================================================
    IMPOSTAZIONI
@@ -6240,6 +6961,17 @@ function renderSettings() {
         { id: 'maki', label: '\u2694\uFE0F Maki' }
       ], currentMode, 'switchProtocol') +
       '<div class="set-about" style="margin-top:8px;">Ogni protocollo tiene schede, storico e impostazioni separati: cambiando non perdi nulla.</div>' +
+    '</div>' +
+
+    '<div class="set-group">' +
+      '<div class="set-group-title">Privacy e dati</div>' +
+      (coachAttivo()
+        ? '<div class="set-about" style="margin:0 0 var(--sp-3);">\u2705 Hai acconsentito all uso dei tuoi dati per il coach' +
+            (localStorage.getItem(CONSENT_KEY + '_data') ? ' (' + escapeHtml(localStorage.getItem(CONSENT_KEY + '_data')) + ')' : '') + '.</div>' +
+          '<button class="set-row-btn danger" onclick="revocaConsenso()">Revoca il consenso</button>'
+        : '<div class="set-about" style="margin:0 0 var(--sp-3);">\u26D4 Nessun consenso: usi l app a mano. Programma personalizzato, BIA e carico progressivo automatico sono spenti.</div>' +
+          '<button class="set-row-btn" onclick="setConsenso(true, false); renderSettings();">Acconsento all uso dei miei dati</button>') +
+      '<button class="set-row-btn" onclick="openConsentText()">\u{1F4C4} Leggi l informativa</button>' +
     '</div>' +
 
     '<div class="set-group">' +
