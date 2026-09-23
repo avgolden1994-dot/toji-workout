@@ -398,6 +398,34 @@ body {
 .storico-head .del-btn { flex-shrink: 0; white-space: nowrap; }
 .storico-stats { margin: var(--sp-3) 0 var(--sp-4); }
 
+/* ======= Lettore musicale fisso ======= */
+.music-dock {
+  position: fixed; z-index: 99; left: var(--sp-3); right: var(--sp-3);
+  bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+  max-width: 456px; margin: 0 auto;
+  background: var(--surface-1); border: 1px solid var(--border-strong);
+  border-radius: 14px; padding: 6px; box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  transition: transform .25s ease, opacity .25s ease;
+}
+/* nascosto ma non rimosso: il lettore non si ricarica e non perde lo sblocco */
+.music-dock.nascosto { transform: translateY(160%); opacity: 0; pointer-events: none; }
+.music-dock.anteprima { z-index: 131; bottom: calc(var(--sp-4) + env(safe-area-inset-bottom, 0px)); }
+.music-dock.chiama { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-shadow), 0 8px 24px rgba(0,0,0,0.35); }
+.music-dock.chiama .dock-bar { animation: bm-pulse 1.1s ease-in-out infinite; }
+.dock-bar { display: flex; align-items: center; gap: 8px; width: 100%; background: transparent; border: none; color: var(--text); font-weight: 800; font-size: 0.8rem; padding: 6px 6px; cursor: pointer; text-align: left; }
+.dock-title { flex: 1; }
+.dock-caret { color: var(--muted); }
+.music-dock.anteprima .dock-bar { display: none; }
+.dock-msg { font-size: 0.74rem; font-weight: 800; line-height: 1.3; color: var(--primary); padding: 0 6px 6px; }
+.dock-player .youtube-wrap, .dock-player .spotify-wrap { margin: 0; }
+/* il video resta sempre della sua misura piena, almeno 200 px */
+.dock-player iframe { width: 100% !important; min-height: 200px; border-radius: 10px; display: block; }
+/* barra sottile: il lettore c e ancora, a misura piena, solo fuori vista */
+.music-dock.compatto .dock-player { height: 0; overflow: hidden; }
+.music-dock.compatto .dock-msg { display: none !important; }
+body.con-dock .app-shell { padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px)); }
+body.con-dock-aperto .app-shell { padding-bottom: calc(330px + env(safe-area-inset-bottom, 0px)); }
+
 /* ======= Scambio dei giorni trascinandoli ======= */
 .cal-day, .mc-cell { touch-action: none; }
 .swap-from { opacity: 0.45; outline: 2px dashed var(--primary); outline-offset: -2px; }
@@ -1898,6 +1926,13 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
 </div>
 
 <div class="statusbar-guard" aria-hidden="true"></div>
+<div class="music-dock nascosto" id="music-dock">
+  <button class="dock-bar" type="button" onclick="toggleDock()">
+    <span>🎵</span><span class="dock-title" id="dock-title">Musica del cedimento</span><span class="dock-caret" id="dock-caret">▾</span>
+  </button>
+  <div class="dock-msg" id="dock-msg" style="display:none;"></div>
+  <div class="dock-player" id="dock-player"></div>
+</div>
 <div class="mc-ghost" id="mc-ghost" aria-hidden="true"></div>
 
 <div class="screen-flash" id="screen-flash" aria-hidden="true"></div>
@@ -2705,6 +2740,7 @@ window.selectDay = function(day) {
 
 window.switchTab = function(tab) {
   currentTab = tab;
+  if (tab !== 'allenamento' && dockStatoAttuale === 'sessione' && !dropInterval) dockStato('nascosto');
   hideSnackbar();
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + tab));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
@@ -3957,6 +3993,7 @@ function refreshDropButtonState() {
    la seconda mostra solo quello, senza altre scelte intorno.
    ============================================================ */
 window.backToDayPicker = function() {
+  dockStato('nascosto');
   document.getElementById('workout-day-picker').style.display = 'block';
   document.getElementById('workout-session').style.display = 'none';
   stopDropSet();
@@ -4028,6 +4065,7 @@ window.openWorkoutDay = function(day) {
   currentDay = day;
   armedSet = null;
   ripristinaMusica(true);   /* la canzone scelta nelle Opzioni e gia pronta */
+  setTimeout(() => dockStato('sessione'), 0);   /* il lettore resta raggiungibile in seduta */
   applicaCaricoProgressivo(day);   /* il coach imposta i carichi della seduta */
   document.getElementById('workout-day-picker').style.display = 'none';
   document.getElementById('workout-session').style.display = 'block';
@@ -4258,10 +4296,14 @@ window.clearCedimentoAudio = function() {
 window.openMusicSheet = function() {
   document.getElementById('music-sheet').classList.remove('hidden');
   ripristinaMusica(true);
+  dockStato('anteprima');
 };
 window.closeMusicSheet = function() {
   document.getElementById('music-sheet').classList.add('hidden');
   salvaMusica();
+  const inSeduta = document.getElementById('tab-allenamento').classList.contains('active') &&
+    document.getElementById('workout-session').style.display !== 'none';
+  dockStato(inSeduta ? 'sessione' : 'nascosto');
 };
 
 window.switchAudioSourceTab = function(tab, silenzioso) {
@@ -4276,6 +4318,121 @@ function getResolvedAudioMode() {
   if (activeSourceTab === 'mp3') return selectedTrackId ? 'mp3' : null;
   if (activeSourceTab === 'web') return currentWebMode;
   return null;
+}
+
+/* ============================================================
+   LETTORE MUSICALE SEMPRE RAGGIUNGIBILE (iPhone)
+   Due problemi insieme:
+   1. il lettore YouTube/Spotify stava nella schermata delle Opzioni,
+      che durante l allenamento e nascosta: non c era niente da toccare;
+   2. su iPhone Safari NON passa il tuo tocco dall app al riquadro di
+      YouTube: un video incorporato parte con l audio solo dopo un tocco
+      DENTRO il video. E una regola di Apple, non aggirabile.
+   Soluzione: il lettore vive in un riquadro fisso, piccolo, che resta
+   visibile durante la seduta. Su iPhone si tocca ▶ una volta sola:
+   l app lo ferma subito e lo porta all inizio dei tuoi 90 secondi.
+   Da quel momento il cedimento fa partire la musica da solo.
+   ============================================================ */
+let IS_IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) ||
+  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+let ytSbloccato = false;       /* l utente ha toccato il video almeno una volta */
+let dockStatoAttuale = 'nascosto';
+let attesaAvvio = null;
+
+function inizioSegmento() {
+  return Number((document.getElementById('segment-start-web') || {}).value) || 0;
+}
+
+/* Il riquadro esiste sempre (mai display:none, cosi il lettore non si
+   ricarica) e cambia solo posizione: fuori schermo, anteprima, seduta. */
+let dockApertoAMano = false;
+let dockChiama = false;
+
+/* In seduta il lettore si apre solo quando va toccato (su iPhone prima
+   dello sblocco, o se al cedimento la musica non parte). Il resto del
+   tempo e una barra sottile che non copre le serie. Il video resta
+   comunque della sua misura piena (almeno 200 px, come chiede YouTube):
+   viene solo nascosto alla vista, non rimpicciolito. */
+function dockDaAprire() {
+  return dockApertoAMano || dockChiama ||
+    (IS_IOS && currentWebMode === 'youtube' && !ytSbloccato);
+}
+
+window.dockStato = function(stato) {
+  const d = document.getElementById('music-dock');
+  if (!d) return;
+  if (stato === 'sessione' && !currentWebMode) stato = 'nascosto';
+  if (stato !== 'sessione') { dockApertoAMano = false; dockChiama = false; }
+  dockStatoAttuale = stato;
+  const compatto = stato === 'sessione' && !dockDaAprire();
+  d.className = 'music-dock ' + stato + (compatto ? ' compatto' : '') + (dockChiama ? ' chiama' : '');
+  const caret = document.getElementById('dock-caret');
+  if (caret) caret.innerText = compatto ? '\u25B4' : '\u25BE';
+  const tit = document.getElementById('dock-title');
+  if (tit) tit.innerText = (IS_IOS && currentWebMode === 'youtube' && !ytSbloccato) ? 'Musica: serve un tocco' :
+    (ytSbloccato || currentWebMode === 'spotify' || !IS_IOS ? 'Musica pronta' : 'Musica del cedimento');
+  /* spazio in fondo alla pagina: il riquadro non deve coprire le serie */
+  document.body.classList.toggle('con-dock', stato === 'sessione');
+  document.body.classList.toggle('con-dock-aperto', stato === 'sessione' && !compatto);
+  aggiornaAvvisoDock();
+};
+
+window.toggleDock = function() {
+  if (dockStatoAttuale !== 'sessione') return;
+  dockApertoAMano = !dockApertoAMano;
+  dockStato('sessione');
+};
+
+function aggiornaAvvisoDock(forte) {
+  const msg = document.getElementById('dock-msg');
+  const d = document.getElementById('music-dock');
+  if (!msg || !d) return;
+  if (forte && !dockChiama) { dockChiama = true; dockStato(dockStatoAttuale === 'nascosto' ? 'sessione' : dockStatoAttuale); return; }
+  let testo = '';
+  if (currentWebMode === 'youtube' && IS_IOS && !ytSbloccato) testo = 'Tocca \u25B6 una volta: su iPhone la musica parte solo dopo un tocco sul video';
+  if (currentWebMode === 'spotify') testo = 'Se non parte da sola, tocca \u25B6 sul lettore';
+  if (dockChiama) testo = 'Tocca \u25B6 sul video per far partire la musica';
+  if (currentWebMode === 'youtube' && ytSbloccato && !dockChiama) testo = '';
+  msg.innerText = testo;
+  msg.style.display = testo ? 'block' : 'none';
+}
+
+/* Eventi del lettore YouTube: riconoscono il tocco di sblocco */
+window.ytStatoCambiato = function(e) {
+  const st = e && e.data;
+  if (st !== 1) return;                                 /* 1 = in riproduzione */
+  const inCedimento = !!dropInterval;
+  if (!inCedimento && !ytSbloccato) {
+    /* era il tocco di sblocco: si ferma subito e si prepara al punto giusto */
+    ytSbloccato = true;
+    try { ytPlayer.pauseVideo(); ytPlayer.seekTo(inizioSegmento(), true); } catch (err) {}
+    dockApertoAMano = false;
+    dockStato(dockStatoAttuale);
+    showUndo('Musica pronta: partira da sola al cedimento');
+    return;
+  }
+  ytSbloccato = true;
+  clearTimeout(attesaAvvio);
+  dockChiama = false;
+  dockStato(dockStatoAttuale);
+  /* partito con un tocco manuale durante il cedimento: si porta al punto scelto */
+  try {
+    if (inCedimento && ytPlayer.getCurrentTime && ytPlayer.getCurrentTime() < inizioSegmento() - 1) ytPlayer.seekTo(inizioSegmento(), true);
+  } catch (err) {}
+};
+
+/* Al cedimento: si prova a partire; se dopo un attimo non suona, si
+   chiede il tocco, senza fermare il timer */
+function controllaAvvioMusica() {
+  clearTimeout(attesaAvvio);
+  if (currentWebMode !== 'youtube' && currentWebMode !== 'spotify') return;
+  dockStato('sessione');
+  attesaAvvio = setTimeout(() => {
+    if (!dropInterval) return;
+    let suona = false;
+    try { suona = currentWebMode === 'youtube' && ytPlayer && [1, 3].indexOf(ytPlayer.getPlayerState()) !== -1; } catch (e) {}
+    if (!suona) aggiornaAvvisoDock(true);
+  }, 1500);
 }
 
 function startDropAudio() {
@@ -4301,12 +4458,14 @@ function startDropAudio() {
       ytPlayer.setVolume(vol);
       ytPlayer.playVideo();
     } catch (e) {}
+    controllaAvvioMusica();
   } else if (mode === 'spotify' && spotifyController) {
     const start = Number(document.getElementById('segment-start-web').value) || 0;
     try {
       spotifyController.seek(start);
       spotifyController.resume();
     } catch (e) {}
+    controllaAvvioMusica();
   }
 }
 function stopDropAudio() {
@@ -4732,7 +4891,11 @@ function loadYouTubePlayer(videoId) {
         onReady: () => {
           ytPlayerReady = true;
           readYouTubeDuration(0);
+          /* pronto al punto giusto: un tocco parte gia dal segmento scelto */
+          try { ytPlayer.seekTo(inizioSegmento(), true); ytPlayer.pauseVideo(); } catch (err) {}
+          aggiornaAvvisoDock();
         },
+        onStateChange: (e) => ytStatoCambiato(e),
         onError: (e) => {
           const code = e && e.data;
           setWebStatus('\u274C ' + (YT_ERRORS[code] || 'Errore nel caricare il video.') + ' Prova un altro video.', true);
@@ -8804,6 +8967,11 @@ function aggiornaAiutoIcs() {
    BOOT
    ============================================================ */
 (function boot() {
+  const dockPlayer = document.getElementById('dock-player');
+  ['youtube-embed-wrap', 'spotify-embed-wrap'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && dockPlayer) dockPlayer.appendChild(el);
+  });
   buildExerciseSelect();
   applyTheme();
   document.getElementById('recovery-mute-btn').innerText = recoveryMuted ? '🔇' : '🔊';
