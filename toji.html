@@ -392,6 +392,12 @@ body {
 .st-inc.su { color: var(--success); }
 .st-inc.giu { color: var(--danger); }
 
+/* ======= Intestazione dello Storico ======= */
+.storico-head { display: flex; justify-content: space-between; align-items: center; gap: var(--sp-3); }
+.storico-title { font-weight: 800; font-size: 0.9rem; text-transform: uppercase; min-width: 0; }
+.storico-head .del-btn { flex-shrink: 0; white-space: nowrap; }
+.storico-stats { margin: var(--sp-3) 0 var(--sp-4); }
+
 /* ======= Scambio dei giorni trascinandoli ======= */
 .cal-day, .mc-cell { touch-action: none; }
 .swap-from { opacity: 0.45; outline: 2px dashed var(--primary); outline-offset: -2px; }
@@ -1592,15 +1598,17 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
   <!-- TAB: STORICO -->
   <section id="tab-storico" class="tab-panel">
     <div class="card">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <div style="font-weight:800; font-size:0.9rem; text-transform:uppercase;">Allenamenti completati</div>
-        <button class="entry-btn" style="margin:var(--sp-3) 0 0;" onclick="openStats()">
-          <span class="entry-ico">📊</span>
-          <span class="aw-main"><span class="entry-name">Statistiche</span><span class="aw-meta">Primo e ultimo carico, esercizio per esercizio</span></span>
-          <span class="aw-path-go">›</span>
-        </button>
+      <div class="storico-head">
+        <div class="storico-title">Allenamenti completati</div>
         <button class="del-btn" style="font-size:0.75rem;" onclick="clearHistory()">Svuota Storico</button>
       </div>
+      <!-- fuori dalla riga del titolo: e largo quanto la card e su schermi
+           stretti non deve contendersi lo spazio con titolo e pulsante -->
+      <button class="entry-btn storico-stats" onclick="openStats()">
+        <span class="entry-ico">📊</span>
+        <span class="aw-main"><span class="entry-name">Statistiche</span><span class="aw-meta">Primo e ultimo carico</span></span>
+        <span class="aw-path-go">›</span>
+      </button>
       <div id="history-list"></div>
     </div>
 
