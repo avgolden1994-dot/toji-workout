@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Toji / Maki Zenin Tracker</title>
+<title>Allenamento</title>
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#08080a" id="theme-color-meta">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="TojiWorkout">
+<meta name="apple-mobile-web-app-title" content="Allenamento">
 <link rel="apple-touch-icon" href="icon-192.png">
 
 <style>
@@ -425,6 +425,65 @@ body {
 .music-dock.compatto .dock-msg { display: none !important; }
 body.con-dock .app-shell { padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px)); }
 body.con-dock-aperto .app-shell { padding-bottom: calc(330px + env(safe-area-inset-bottom, 0px)); }
+
+/* ======= Oggi ======= */
+.og-head { display: flex; justify-content: space-between; align-items: flex-end; gap: var(--sp-3); }
+.og-left { min-width: 0; }
+.og-ciao { font-size: 1rem; font-weight: 800; }
+.og-data { font-size: 0.8rem; color: var(--muted); font-weight: 600; }
+.og-title { margin: 0; font-size: 2.4rem; font-weight: 900; text-transform: uppercase; line-height: 1; letter-spacing: 0.5px; }
+.og-fila { flex-shrink: 0; white-space: nowrap; margin-bottom: 6px; background: color-mix(in srgb, var(--primary) 14%, var(--surface-1)); color: var(--primary); border-radius: 999px; padding: 6px 12px; font-size: 0.74rem; font-weight: 900; }
+.og-prog-row { display: flex; justify-content: space-between; gap: var(--sp-2); font-size: 0.84rem; font-weight: 700; margin-bottom: var(--sp-2); }
+.og-muted { color: var(--muted); font-size: 0.84rem; }
+.og-label { font-size: 0.7rem; font-weight: 900; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: var(--sp-2); }
+.og-wname { font-size: 2rem; font-weight: 900; text-transform: uppercase; line-height: 1.05; margin-bottom: var(--sp-1); }
+.og-up { color: var(--success); font-weight: 800; font-size: 0.84rem; margin-top: var(--sp-2); }
+.og-ok { color: var(--success); font-weight: 800; font-size: 0.9rem; margin: var(--sp-1) 0 var(--sp-2); }
+.og-today .btn-start-workout, .og-today .btn-archive { margin-top: var(--sp-4); }
+.og-link { display: block; width: 100%; margin-top: var(--sp-3); background: transparent; border: none; color: var(--primary); font-weight: 800; font-size: 0.84rem; cursor: pointer; padding: 8px; }
+.og-week-row { display: flex; align-items: center; gap: var(--sp-4); }
+.og-perc { fill: var(--text); font-size: 28px; font-weight: 900; }
+.og-bars { flex: 1; display: flex; flex-direction: column; gap: var(--sp-3); }
+.og-bar-top { display: flex; justify-content: space-between; font-size: 0.82rem; font-weight: 800; margin-bottom: 4px; }
+.og-track { height: 6px; border-radius: 3px; background: var(--surface-3); overflow: hidden; }
+.og-track i { display: block; height: 100%; border-radius: 3px; }
+
+/* ======= Seduta: ultima volta, RPE, riscaldamento, dischi, record ======= */
+.last-time { display: block; font-size: 0.72rem; color: var(--muted); font-weight: 700; margin-top: var(--sp-1); }
+.pr-badge { display: inline-block; margin-top: var(--sp-1); background: color-mix(in srgb, var(--success) 16%, var(--surface-1)); color: var(--success); border-radius: 999px; padding: 3px 10px; font-size: 0.72rem; font-weight: 900; }
+.set-row.warmup { opacity: 0.85; }
+.set-num.warm { color: var(--warning); font-weight: 900; }
+.set-input.small { width: 44px; }
+.rpe-sel { width: 52px; height: 34px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); font-weight: 800; font-size: 0.74rem; text-align: center; padding: 0 2px; }
+.session-elapsed { font-size: 0.74rem; color: var(--muted); font-weight: 700; }
+.plate-bar-btn.on { background: var(--primary) !important; border-color: var(--primary) !important; color: var(--on-primary) !important; }
+.pl-vis { display: flex; align-items: center; gap: 3px; min-height: 90px; margin: var(--sp-3) 0; }
+.pl-bar { width: 44px; height: 8px; border-radius: 4px; background: color-mix(in srgb, var(--text) 38%, var(--surface-2)); }
+.pl-disc { width: 13px; border-radius: 3px; }
+.pl-end { flex: 1; height: 8px; border-radius: 4px; background: color-mix(in srgb, var(--text) 38%, var(--surface-2)); }
+
+/* ======= Scheda esercizio a sezioni ======= */
+.ex-tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 4px; margin-bottom: var(--sp-4); position: sticky; top: 0; z-index: 2; }
+.ex-tabs button { min-height: 40px; border: none; border-radius: 9px; background: transparent; color: var(--muted); font-weight: 800; font-size: 0.76rem; cursor: pointer; }
+.ex-tabs button.on { background: var(--primary); color: var(--on-primary); }
+.exh-row { display: flex; gap: var(--sp-3); padding: var(--sp-3) 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+.exh-date { width: 72px; flex-shrink: 0; font-size: 0.76rem; font-weight: 800; color: var(--muted); padding-top: 3px; }
+.exh-sets { display: flex; flex-wrap: wrap; gap: 6px; }
+.exh-sets span { background: var(--surface-2); border-radius: 8px; padding: 4px 9px; font-size: 0.82rem; font-weight: 700; }
+.exg-head { font-size: 0.7rem; font-weight: 900; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: var(--sp-2); }
+.exg { width: 100%; height: auto; display: block; }
+.exg-axis { stroke: var(--border); stroke-width: 1; }
+.exg-line { fill: none; stroke: var(--primary); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.exg-dot { fill: var(--primary); }
+.exg-lbl { fill: var(--muted); font-size: 11px; font-weight: 700; }
+.exg-diff { margin-top: var(--sp-2); font-weight: 900; font-size: 0.9rem; }
+.exg-diff.su { color: var(--success); }
+.exg-diff.giu { color: var(--danger); }
+.exr-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-2); }
+.exr-tile { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: var(--sp-3); display: flex; flex-direction: column; gap: 2px; }
+.exr-et { font-size: 0.68rem; font-weight: 800; color: var(--muted); }
+.exr-v { font-size: 1.3rem; font-weight: 900; }
+.exr-d { font-size: 0.68rem; color: var(--muted); }
 
 /* ======= Scambio dei giorni trascinandoli ======= */
 .cal-day, .mc-cell { touch-action: none; }
@@ -1364,39 +1423,17 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
 <body>
 
 <!-- Overlay scelta personaggio -->
-<div class="mode-overlay" id="mode-overlay">
-  <div>
-    <div class="mode-eyebrow">Prima di iniziare</div>
-    <div class="mode-heading">Scegli il tuo protocollo</div>
-  </div>
-  <div class="mode-row">
-    <div class="mode-card toji-card" tabindex="0" role="button" aria-label="Modalità Toji Fushiguro"
-         onclick="chooseMode('toji')" onkeydown="if(event.key==='Enter'){chooseMode('toji')}">
-      <div class="mode-emoji">🥋</div>
-      <div class="mode-name">Toji</div>
-      <div class="mode-sub">Modalità Toji Fushiguro</div>
-    </div>
-    <div class="mode-card maki-card" tabindex="0" role="button" aria-label="Modalità Maki Zenin"
-         onclick="chooseMode('maki')" onkeydown="if(event.key==='Enter'){chooseMode('maki')}">
-      <div class="mode-emoji">⚔️</div>
-      <div class="mode-name">Maki</div>
-      <div class="mode-sub">Modalità Maki Zenin</div>
-    </div>
-  </div>
-  <div class="mode-hint">Potrai cambiare protocollo in qualsiasi momento dall'icona ⚙️ sul banner, senza perdere i dati.</div>
-  <button class="mode-cancel" id="mode-cancel-btn" style="display:none;" onclick="closeModeOverlay()">Annulla</button>
-</div>
-
 <div class="app-shell" id="app-root" style="display:none;">
-  <div class="banner">
-    <div class="banner-quote" id="banner-quote">Nessuna Energia Maledetta • Solo Forza Pura</div>
-    <div class="banner-title" id="banner-title">Toji's Protocol</div>
-  </div>
 
 
+
+  <!-- TAB: OGGI -->
+  <section id="tab-oggi" class="tab-panel active">
+    <div id="oggi-body"></div>
+  </section>
 
   <!-- TAB: PIANO -->
-  <section id="tab-piano" class="tab-panel active">
+  <section id="tab-piano" class="tab-panel">
 
     <!-- VISTA A: scelta del giorno -->
     <div id="plan-day-picker">
@@ -1530,6 +1567,7 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
         <button class="sheet-back" onclick="backToDayPicker()" aria-label="Torna ai giorni">←</button>
         <div class="sheet-titles">
           <div class="sheet-title" id="allenamento-day-label">Sessione</div>
+          <div class="session-elapsed" id="session-elapsed"></div>
           <div class="sheet-sub" id="session-progress"></div>
         </div>
       </div>
@@ -1651,10 +1689,10 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
 
 <div class="bottom-nav-fixed" id="bottom-nav" style="display:none;">
   <nav class="bottom-nav">
-    <button class="nav-btn active" data-tab="piano" onclick="switchTab('piano')"><span class="nav-icon">📝</span><span>Piano</span></button>
+    <button class="nav-btn active" data-tab="oggi" onclick="switchTab('oggi')"><span class="nav-icon">🏠</span><span>Oggi</span></button>
+    <button class="nav-btn" data-tab="piano" onclick="switchTab('piano')"><span class="nav-icon">📝</span><span>Piano</span></button>
     <button class="nav-btn" data-tab="calendario" onclick="switchTab('calendario')"><span class="nav-icon">📅</span><span>Calendario</span></button>
-    <button class="nav-btn" data-tab="allenamento" onclick="switchTab('allenamento')"><span class="nav-icon">🏋️</span><span>Allenamento</span></button>
-    <button class="nav-btn" data-tab="storico" onclick="switchTab('storico')"><span class="nav-icon">📖</span><span>Storico</span></button>
+    <button class="nav-btn" data-tab="storico" onclick="switchTab('storico')"><span class="nav-icon">📈</span><span>Progressi</span></button>
     <button class="nav-btn" data-tab="impostazioni" onclick="switchTab('impostazioni')"><span class="nav-icon">⚙️</span><span>Opzioni</span></button>
   </nav>
 </div>
@@ -1677,6 +1715,26 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
       <button class="recovery-icon-btn" onclick="closeWeekMenu()" aria-label="Chiudi">✕</button>
     </div>
     <div class="wm-body" id="wm-body"></div>
+  </div>
+</div>
+
+<div class="wheel-overlay hidden" id="plate-sheet" onclick="if(event.target===this) closePlates()">
+  <div class="wheel-sheet">
+    <div class="wheel-head">
+      <div class="wheel-title">Dischi • <span id="plate-title"></span></div>
+      <button class="recovery-icon-btn" onclick="closePlates()" aria-label="Chiudi">✕</button>
+    </div>
+    <div class="wm-body">
+      <label class="bia-val" style="display:block;"><span>Carico totale (kg)</span><input type="number" step="0.5" id="plate-kg" oninput="renderPlates()"></label>
+      <div class="aw-sec">Bilanciere</div>
+      <div class="st-periodo">
+        <button class="plate-bar-btn" data-kg="20" onclick="setBilanciere(20)">20 kg</button>
+        <button class="plate-bar-btn" data-kg="15" onclick="setBilanciere(15)">15 kg</button>
+        <button class="plate-bar-btn" data-kg="10" onclick="setBilanciere(10)">10 kg</button>
+      </div>
+      <div class="pl-vis" id="plate-vis"></div>
+      <div class="set-about" id="plate-txt" style="font-size:0.9rem;font-weight:700;"></div>
+    </div>
   </div>
 </div>
 
@@ -2095,8 +2153,8 @@ let currentTab = 'piano';
 const MODE_KEY = 'tz_app_mode';
 
 const MODE_META = {
-  toji: { quote: 'Nessuna Energia Maledetta • Solo Forza Pura', title: "Toji's Protocol", themeColor: '#08080a' },
-  maki: { quote: 'Senza Energia Maledetta • Solo Lame e Disciplina', title: "Maki's Protocol", themeColor: '#052e13' }
+  toji: { quote: '', title: 'Allenamento', themeColor: '#08080a' },
+  maki: { quote: '', title: 'Allenamento', themeColor: '#052e13' }
 };
 
 const DEFAULT_MONDAY_PROGRAM = {
@@ -2503,7 +2561,8 @@ function normalizeExerciseRecord(e) {
         done: !!item.done,
         reps: Number(item.reps) || reps,
         weight: item.weight !== undefined && item.weight !== null && item.weight !== '' ? Number(item.weight) : weight,
-        wasBerserk: !!item.wasBerserk
+        wasBerserk: !!item.wasBerserk,
+        rpe: item.rpe !== undefined && item.rpe !== null && item.rpe !== '' ? Number(item.rpe) : null
       };
     }
     /* formato precedente: booleano semplice */
@@ -2678,27 +2737,20 @@ function getStoredMode() { return localStorage.getItem(MODE_KEY); }
 window.chooseMode = function(mode) {
   localStorage.setItem(MODE_KEY, mode);
   activateMode(mode);
-  document.getElementById('mode-overlay').classList.add('hidden');
   document.getElementById('app-root').style.display = 'flex';
   document.getElementById('bottom-nav').style.display = 'block';
   if (!chiediConsensoSeServe() && coachAttivo()) startOnboarding(false); /* solo al primo utilizzo */
 };
 
-window.openModeOverlay = function() {
-  document.getElementById('mode-cancel-btn').style.display = currentMode ? 'inline-block' : 'none';
-  document.getElementById('mode-overlay').classList.remove('hidden');
-};
-window.closeModeOverlay = function() {
-  document.getElementById('mode-overlay').classList.add('hidden');
-};
 
+/* Le modalita Toji e Maki sono state tolte (nomi di personaggi protetti,
+   rischiosi in un app a pagamento). Resta un solo aspetto. I dati
+   continuano a vivere nello spazio usato finora (currentMode), cosi
+   nessuno perde schede o storico con l aggiornamento. */
 function activateMode(mode) {
   currentMode = mode;
-  document.body.dataset.mode = mode;
-  document.documentElement.dataset.mode = mode;
-  const meta = MODE_META[mode];
-  document.getElementById('banner-quote').innerText = meta.quote;
-  document.getElementById('banner-title').innerText = meta.title;
+  document.body.dataset.mode = 'toji';
+  document.documentElement.dataset.mode = 'toji';
   if (typeof applyTheme === 'function') applyTheme();
 
   migrateLegacyDataIfNeeded(mode);
@@ -2711,7 +2763,7 @@ function activateMode(mode) {
   renderDayBar();
   renderPiano();
   renderAllenamento();
-  switchTab('piano');
+  switchTab('oggi');
 }
 
 /* ============================================================
@@ -2738,12 +2790,145 @@ window.selectDay = function(day) {
   if (currentTab === 'piano') renderGruppi();
 };
 
+/* ============================================================
+   OGGI: la schermata iniziale
+   Tutto quello che serve aprendo l app, senza cercarlo in tre schede:
+   l allenamento di oggi con il suo pulsante, a che punto e il
+   programma, e quante serie hai fatto questa settimana per spinta,
+   tirata e gambe rispetto a quelle previste.
+   ============================================================ */
+const CATEGORIE = {
+  spinta: { nome: 'Spinta', gruppi: ['petto', 'spalle'], colore: 'var(--primary)' },
+  tirata: { nome: 'Tirata', gruppi: ['schiena', 'braccia'], colore: '#6ea8ff' },
+  gambe:  { nome: 'Gambe', gruppi: ['gambe', 'glutei'], colore: 'var(--success)' }
+};
+
+function categoriaDi(nome) {
+  const m = findExercise(nome);
+  if (!m) return null;
+  return Object.keys(CATEGORIE).find(k => CATEGORIE[k].gruppi.indexOf(m.group) !== -1) || null;
+}
+
+/* Serie previste (settimana tipo) e fatte (storico dal lunedi a oggi) */
+window.obiettiviSettimana = function() {
+  const out = {};
+  Object.keys(CATEGORIE).forEach(k => { out[k] = { previste: 0, fatte: 0 }; });
+  const data = loadData();
+  DAYS.forEach(d => {
+    if (isRestDay(d)) return;
+    (data[d] || []).forEach(e => { const c = categoriaDi(e.name); if (c) out[c].previste += Number(e.setsBase || e.sets) || 0; });
+  });
+  const lun = lunediDi(new Date());
+  loadHistory().forEach(h0 => {
+    const quando = dataSessione(h0);
+    if (!quando || quando < lun) return;
+    (h0.sessione || []).forEach(e => {
+      const c = categoriaDi(e.name);
+      if (c) out[c].fatte += e.sets.filter(s => s.done && !s.riscaldamento).length;
+    });
+    if (!h0.sessione) (h0.exercises || []).forEach(e => { const c = categoriaDi(e.name); if (c) out[c].fatte += e.doneSets || 0; });
+  });
+  return out;
+};
+
+/* Settimane di fila con almeno un allenamento (la costanza, non i giorni:
+   nel lavoro coi pesi i giorni di riposo fanno parte del programma) */
+window.settimaneDiFila = function() {
+  const settimane = new Set(loadHistory().map(h0 => { const d = dataSessione(h0); return d ? ymd(lunediDi(d)) : null; }).filter(Boolean));
+  let n = 0;
+  let l = lunediDi(new Date());
+  if (!settimane.has(ymd(l))) l = piuGiorni(l, -7);   /* questa settimana puo non essere ancora iniziata */
+  while (settimane.has(ymd(l))) { n++; l = piuGiorni(l, -7); }
+  return n;
+};
+
+window.renderOggi = function() {
+  const box = document.getElementById('oggi-body');
+  if (!box) return;
+  const oggi = new Date();
+  const idx = (oggi.getDay() + 6) % 7;
+  const giorno = DAYS[idx];
+  const data = loadData();
+  const lista = data[giorno] || [];
+  const voce = loadCal()[ymd(oggi)];
+  const nome = getNome();
+  const fila = settimaneDiFila();
+
+  let html = '<div class="og-head"><div class="og-left">' +
+    '<div class="og-ciao">Ciao' + (nome ? ', ' + escapeHtml(nome) : '') + '!</div>' +
+    '<div class="og-data">' + oggi.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' }) + '</div>' +
+    '<h1 class="og-title">Oggi</h1></div>' +
+    (fila ? '<div class="og-fila">' + fila + (fila === 1 ? ' settimana' : ' settimane') + ' di fila</div>' : '') + '</div>';
+
+  const sett = coachAttivo() ? settimanaProgramma() : null;
+  if (sett && !sett.finito) {
+    html += '<div class="card og-prog"><div class="og-prog-row"><span>Programma: settimana ' + sett.numero + ' di ' + sett.totale + '</span>' +
+      '<span class="og-muted">' + (sett.fase === 'scarico' ? 'Scarico' : 'Fase di carico') + '</span></div>' +
+      '<div class="wday-progress"><span style="width:' + Math.round((sett.numero - 1) / sett.totale * 100) + '%"></span></div></div>';
+  }
+
+  /* l allenamento di oggi */
+  html += '<div class="card og-today"><div class="og-label">Allenamento di oggi</div>';
+  if (voce && voce.done) {
+    html += '<div class="og-wname">' + escapeHtml(voce.title || getDayTitle(giorno)) + '</div>' +
+      '<div class="og-ok">\u2713 Fatto \u2022 ' + escapeHtml(voce.summary || '') + '</div>' +
+      '<button class="btn-archive" onclick="openDoneView(\'' + ymd(oggi) + '\')">Vedi com e andata</button>';
+  } else if (isRestDay(giorno) || (voce && voce.rest)) {
+    html += '<div class="og-wname">Riposo</div><div class="og-muted">Oggi si recupera: il riposo fa parte del programma.</div>' +
+      '<button class="btn-archive" onclick="switchTab(\'allenamento\')">Allenati lo stesso</button>';
+  } else if (!lista.length) {
+    html += '<div class="og-wname">Niente in programma</div><div class="og-muted">Per oggi non c e una scheda.</div>' +
+      '<button class="btn-start-workout" onclick="switchTab(\'allenamento\')">Scegli un allenamento</button>';
+  } else {
+    const serie = lista.reduce((a, e) => a + e.sets, 0);
+    const minuti = Math.round(lista.reduce((a, e) => a + e.sets * (30 + e.rest), 0) / 60);
+    let alzati = 0;
+    if (coachAttivo()) lista.forEach(e => {
+      try { if (caricoProssimo(e.name, e.weight, e.repsBase !== undefined ? e.repsBase : e.reps, e.setsBase !== undefined ? e.setsBase : e.sets).tipo === 'su') alzati++; } catch (err) {}
+    });
+    html += '<div class="og-wname">' + escapeHtml(getDayTitle(giorno)) + '</div>' +
+      '<div class="og-muted">' + lista.length + ' esercizi \u2022 ' + serie + ' serie \u2022 circa ' + minuti + ' min</div>' +
+      (alzati ? '<div class="og-up">\u2191 Il coach ha alzato ' + alzati + (alzati === 1 ? ' carico' : ' carichi') + ' rispetto alla volta scorsa</div>' : '') +
+      '<button class="btn-start-workout" onclick="iniziaOggi()">\u25B6 Inizia allenamento</button>';
+  }
+  html += '<button class="og-link" onclick="switchTab(\'allenamento\')">Scegli un altro giorno \u203A</button></div>';
+
+  /* obiettivi della settimana */
+  const ob = obiettiviSettimana();
+  const prev = Object.keys(ob).reduce((a, k) => a + ob[k].previste, 0);
+  const fatte = Object.keys(ob).reduce((a, k) => a + Math.min(ob[k].fatte, ob[k].previste || ob[k].fatte), 0);
+  if (prev > 0) {
+    const perc = Math.min(100, Math.round(fatte / prev * 100));
+    const circ = 2 * Math.PI * 46;
+    html += '<div class="card og-week"><div class="og-label">Obiettivi della settimana</div><div class="og-week-row">' +
+      '<svg width="110" height="110" viewBox="0 0 110 110" role="img" aria-label="' + perc + ' per cento delle serie della settimana">' +
+      '<circle cx="55" cy="55" r="46" fill="none" stroke="var(--surface-3)" stroke-width="10"></circle>' +
+      '<circle cx="55" cy="55" r="46" fill="none" stroke="var(--primary)" stroke-width="10" stroke-linecap="round" stroke-dasharray="' +
+        (circ * perc / 100).toFixed(1) + ' ' + circ.toFixed(1) + '" transform="rotate(-90 55 55)"></circle>' +
+      '<text x="55" y="63" text-anchor="middle" class="og-perc">' + perc + '%</text></svg><div class="og-bars">' +
+      Object.keys(CATEGORIE).filter(k => ob[k].previste > 0).map(k => {
+        const c = CATEGORIE[k], o = ob[k];
+        return '<div class="og-bar"><div class="og-bar-top"><span>' + c.nome + '</span><span class="og-muted">' + o.fatte + ' / ' + o.previste + ' serie</span></div>' +
+          '<div class="og-track"><i style="width:' + Math.min(100, Math.round(o.fatte / o.previste * 100)) + '%;background:' + c.colore + '"></i></div></div>';
+      }).join('') + '</div></div></div>';
+  }
+  box.innerHTML = html;
+};
+
+window.iniziaOggi = function() {
+  const giorno = DAYS[(new Date().getDay() + 6) % 7];
+  switchTab('allenamento');
+  openWorkoutDay(giorno);
+};
+
 window.switchTab = function(tab) {
   currentTab = tab;
   if (tab !== 'allenamento' && dockStatoAttuale === 'sessione' && !dropInterval) dockStato('nascosto');
   hideSnackbar();
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + tab));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  const inNav = tab === 'allenamento' ? 'oggi' : tab;
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === inNav));
+  if (tab === 'oggi') renderOggi();
   if (tab === 'storico') { renderStorico(); renderWeeks(); }
   if (tab === 'impostazioni') renderSettings();
   if (tab === 'calendario') renderMonthCal();
@@ -3802,6 +3987,156 @@ window.deletePianoExercise = function(idx) {
 /* ============================================================
    TAB ALLENAMENTO — lista set-by-set + arm Drop
    ============================================================ */
+/* ============================================================
+   SEDUTA PIU RICCA (proposta 2)
+   - ultima volta: i valori della seduta precedente, per battere se stessi
+   - RPE: quanto era dura la serie (6 = facile, 10 = cedimento), dopo la spunta
+   - riscaldamento: serie leggere che non contano per carichi e statistiche
+   - calcolatore dischi: quali dischi mettere per lato sul bilanciere
+   - record: se una serie supera il tuo massimo stimato, te lo dice
+   - tempo trascorso della seduta
+   ============================================================ */
+const RPE_VALORI = ['6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10'];
+
+function ultimaVoltaTesto(nome) {
+  const s = ultimeSessioni(nome, 1)[0];
+  if (!s) return '';
+  const fatte = s.sets.filter(x => x.done);
+  if (!fatte.length) return '';
+  return 'Ultima volta: ' + fatte.map(x => x.weight + '\u00D7' + x.reps).join(' \u00B7 ');
+}
+
+/* 1RM stimato con la formula di Epley: affidabile fino a circa 12 ripetizioni */
+function unoRM(peso, reps) {
+  peso = Number(peso) || 0; reps = Number(reps) || 0;
+  if (peso <= 0 || reps <= 0) return 0;
+  if (reps === 1) return peso;
+  return Math.round(peso * (1 + Math.min(reps, 12) / 30) * 10) / 10;
+}
+
+function migliorUnoRM(nome) {
+  let best = 0;
+  loadHistory().forEach(h0 => (h0.sessione || []).forEach(e => {
+    if (e.name !== nome) return;
+    e.sets.forEach(s => { if (s.done) best = Math.max(best, unoRM(s.weight, s.reps)); });
+  }));
+  return best;
+}
+
+/* chiamato alla spunta di una serie */
+function controllaRecord(ex, set) {
+  if (!set.done || isTimeBased(ex.name)) return;
+  const prima = migliorUnoRM(ex.name);
+  const ora = unoRM(set.weight, set.reps);
+  if (prima > 0 && ora > prima && ora > (ex.recordSeduta || 0)) {
+    ex.recordSeduta = ora;
+    showUndo('\u{1F3C6} Nuovo record: ' + set.weight + ' kg \u00D7 ' + set.reps + ' (1RM stimato ' + ora + ' kg)');
+  }
+}
+
+window.updateSetRpe = function(exIdx, setIdx, v) {
+  const data = loadData();
+  const set = data[currentDay][exIdx].completedSets[setIdx];
+  if (!set) return;
+  set.rpe = v ? Number(v) : null;
+  saveData(data);
+};
+
+/* ---- riscaldamento ---- */
+window.addWarmup = function(idx) {
+  const data = loadData();
+  const e = data[currentDay][idx];
+  e.riscaldamento = e.riscaldamento || [];
+  if (e.riscaldamento.length >= 3) return;
+  const base = Number(e.weight) || 0;
+  const quota = [0.5, 0.7, 0.85][e.riscaldamento.length];
+  e.riscaldamento.push({ reps: [10, 6, 3][e.riscaldamento.length], weight: Math.round(base * quota / 2.5) * 2.5, done: false });
+  saveData(data);
+  renderAllenamento();
+};
+window.removeWarmup = function(idx, wi) {
+  const data = loadData();
+  const e = data[currentDay][idx];
+  (e.riscaldamento || []).splice(wi, 1);
+  saveData(data);
+  renderAllenamento();
+};
+window.updateWarmup = function(idx, wi, campo, v) {
+  const data = loadData();
+  const w = (data[currentDay][idx].riscaldamento || [])[wi];
+  if (!w) return;
+  w[campo] = Number(v) || 0;
+  saveData(data);
+};
+window.toggleWarmup = function(idx, wi) {
+  const data = loadData();
+  const w = (data[currentDay][idx].riscaldamento || [])[wi];
+  if (!w) return;
+  w.done = !w.done;
+  saveData(data);
+  renderAllenamento();
+};
+
+/* ---- calcolatore dischi ---- */
+const DISCHI = [25, 20, 15, 10, 5, 2.5, 1.25];
+const COLORE_DISCO = { 25: '#e5484d', 20: '#3b82f6', 15: '#eab308', 10: '#22c55e', 5: '#f3f3f6', 2.5: '#a8a8b6', 1.25: '#6b6b78' };
+
+window.dischiPerLato = function(totale, bilanciere) {
+  let lato = (Number(totale) - Number(bilanciere)) / 2;
+  if (lato < 0) return { dischi: [], resto: 0, impossibile: true };
+  const out = [];
+  DISCHI.forEach(d => { while (lato >= d - 1e-9) { out.push(d); lato = Math.round((lato - d) * 100) / 100; } });
+  return { dischi: out, resto: Math.round(lato * 100) / 100, impossibile: false };
+};
+
+let dischiBil = 20;
+window.openPlates = function(idx) {
+  const e = loadData()[currentDay][idx];
+  const prossima = e.completedSets.find(s => !s.done) || e.completedSets[0];
+  document.getElementById('plate-kg').value = prossima ? prossima.weight : e.weight;
+  document.getElementById('plate-title').innerText = e.name.replace(/^\S+\s/, '');
+  document.getElementById('plate-sheet').classList.remove('hidden');
+  renderPlates();
+};
+window.closePlates = function() { document.getElementById('plate-sheet').classList.add('hidden'); };
+window.setBilanciere = function(v) { dischiBil = v; renderPlates(); };
+window.renderPlates = function() {
+  const kg = Number(document.getElementById('plate-kg').value) || 0;
+  const r = dischiPerLato(kg, dischiBil);
+  document.querySelectorAll('.plate-bar-btn').forEach(b => b.classList.toggle('on', Number(b.dataset.kg) === dischiBil));
+  const vis = document.getElementById('plate-vis');
+  const txt = document.getElementById('plate-txt');
+  if (r.impossibile) { vis.innerHTML = ''; txt.innerText = 'Il carico e sotto il peso del bilanciere.'; return; }
+  vis.innerHTML = '<div class="pl-bar"></div>' + r.dischi.map(d =>
+    '<div class="pl-disc" style="height:' + (24 + d * 2.2) + 'px;background:' + COLORE_DISCO[d] + '" title="' + d + ' kg"></div>').join('') + '<div class="pl-end"></div>';
+  txt.innerText = r.dischi.length
+    ? 'Per lato: ' + r.dischi.map(d => String(d).replace('.', ',')).join(' + ') + ' kg' + (r.resto ? ' (restano ' + String(r.resto).replace('.', ',') + ' kg per lato)' : '')
+    : 'Solo il bilanciere.';
+};
+
+/* ---- tempo trascorso ---- */
+let sedutaTimer = null;
+function avviaTempoSeduta(day) {
+  let inizio = null;
+  try {
+    const salvato = JSON.parse(localStorage.getItem('tz_seduta_inizio') || 'null');
+    if (salvato && salvato.day === day && Date.now() - salvato.t < 6 * 3600 * 1000) inizio = salvato.t;
+  } catch (e) {}
+  if (!inizio) { inizio = Date.now(); try { localStorage.setItem('tz_seduta_inizio', JSON.stringify({ day: day, t: inizio })); } catch (e) {} }
+  clearInterval(sedutaTimer);
+  const tick = () => {
+    const el = document.getElementById('session-elapsed');
+    if (el) el.innerText = 'In corso da ' + formatMMSS((Date.now() - inizio) / 1000);
+  };
+  tick();
+  sedutaTimer = setInterval(tick, 1000);
+}
+function fermaTempoSeduta(azzera) {
+  clearInterval(sedutaTimer);
+  sedutaTimer = null;
+  if (azzera) { try { localStorage.removeItem('tz_seduta_inizio'); } catch (e) {} }
+}
+
 function renderAllenamento() {
   const data = loadData();
   const list = data[currentDay] || [];
@@ -3816,12 +4151,24 @@ function renderAllenamento() {
             <div class="ex-name">${e.superset ? '<span class="ss-tag">⛓</span> ' : ''}${escapeHtml(e.name)}</div>
             <div class="ex-data">${e.sets} serie × ${e.reps} reps • ${e.weight} kg • ⏱ ${e.rest}s</div>
             ${e.coachNote && coachAttivo() ? `<span class="coach-badge-set ${e.coachTipo || ''}">\u{1F916} ${escapeHtml(e.coachNote)}</span>` : ''}
+            ${e.recordSeduta ? `<span class="pr-badge">\u{1F3C6} Record! 1RM stimato ${e.recordSeduta} kg</span>` : ''}
+            ${ultimaVoltaTesto(e.name) ? `<span class="last-time">${escapeHtml(ultimaVoltaTesto(e.name))}</span>` : ''}
             ${e.note ? `<div class="plan-note">📝 ${escapeHtml(e.note)}</div>` : ''}
           </div>
           <button class="info-btn" onclick="openExerciseInfo('${e.name.replace(/'/g, "\\'")}')" title="Come si fa" aria-label="Come si fa">ℹ</button>
           <button class="skip-btn ${e.skipped ? 'on' : ''}" onclick="toggleSkipExercise(${idx})">${e.skipped ? '↺ Riprendi' : '⏭ Salta'}</button>
         </div>
         <div class="set-rows">
+          ${(e.riscaldamento || []).map((w, wi) => `
+            <div class="set-row warmup ${w.done ? 'done' : ''}">
+              <span class="set-num warm">R</span>
+              <input type="number" inputmode="numeric" class="set-input small" value="${w.reps}" onchange="updateWarmup(${idx},${wi},'reps',this.value)" aria-label="Ripetizioni del riscaldamento">
+              <span class="set-x">×</span>
+              <input type="number" class="set-input" value="${w.weight}" step="0.5" onchange="updateWarmup(${idx},${wi},'weight',this.value)" aria-label="Carico del riscaldamento">
+              <span class="set-kg-label">kg</span>
+              <button class="set-flame-btn" onclick="removeWarmup(${idx},${wi})" aria-label="Togli il riscaldamento">✕</button>
+              <button class="set-check ${w.done ? 'checked' : ''}" onclick="toggleWarmup(${idx},${wi})" aria-label="Riscaldamento fatto">✓</button>
+            </div>`).join('')}
           ${e.completedSets.map((s, si) => `
             <div class="set-row ${s.done ? 'done' : ''} ${armedSet && armedSet.exIdx === idx && armedSet.setIdx === si ? 'armed' : ''}">
               <span class="set-num">${si + 1}</span>
@@ -3829,7 +4176,7 @@ function renderAllenamento() {
               <span class="set-x">×</span>
               <input type="number" class="set-input" value="${s.weight}" step="0.5" oninput="updateSetField(${idx},${si},'weight',this.value)">
               <span class="set-kg-label">kg</span>
-              ${s.wasBerserk ? '<span class="flame-done-tag">🔥</span>' : `<button class="set-flame-btn ${armedSet && armedSet.exIdx === idx && armedSet.setIdx === si ? 'armed' : ''}" onclick="armDropTarget(${idx},${si})" aria-label="Porta la serie ${si + 1} a cedimento" title="Porta a cedimento">🔥</button>`}
+              ${s.done && !s.wasBerserk ? `<select class="rpe-sel" onchange="updateSetRpe(${idx},${si},this.value)" aria-label="Quanto era dura (RPE)"><option value="">RPE</option>${RPE_VALORI.map(v => `<option value="${v}" ${Number(s.rpe) === Number(v) ? 'selected' : ''}>${v.replace('.', ',')}</option>`).join('')}</select>` : s.wasBerserk ? '<span class="flame-done-tag">🔥</span>' : `<button class="set-flame-btn ${armedSet && armedSet.exIdx === idx && armedSet.setIdx === si ? 'armed' : ''}" onclick="armDropTarget(${idx},${si})" aria-label="Porta la serie ${si + 1} a cedimento" title="Porta a cedimento">🔥</button>`}
               <button class="set-check ${s.done ? 'checked' : ''}" onclick="toggleSetDone(${idx},${si})" aria-label="Segna serie ${si + 1} completata">✓</button>
             </div>
           `).join('')}
@@ -3837,6 +4184,8 @@ function renderAllenamento() {
         <div class="set-tools">
           <button class="set-tool-btn" onclick="removeSetFrom(${idx})" ${e.sets <= 1 ? 'disabled' : ''}>− Serie</button>
           <button class="set-tool-btn" onclick="addSetTo(${idx})">+ Serie</button>
+          <button class="set-tool-btn" onclick="addWarmup(${idx})" ${(e.riscaldamento || []).length >= 3 ? 'disabled' : ''}>+ Risc.</button>
+          ${attrezzoDi(e.name) === 'bilanciere' ? `<button class="set-tool-btn" onclick="openPlates(${idx})">Dischi</button>` : ''}
         </div>
       </div>
     `).join('');
@@ -3934,6 +4283,7 @@ window.toggleSetDone = function(exIdx, setIdx) {
   const set = ex.completedSets[setIdx];
   if (!set) return;
   set.done = !set.done;
+  controllaRecord(ex, set);
   /* stile Strong/Hevy: se completo un set, precompilo il successivo (se ancora ai valori di default) con reps/kg appena usati */
   if (set.done) {
     const next = ex.completedSets[setIdx + 1];
@@ -3994,6 +4344,7 @@ function refreshDropButtonState() {
    ============================================================ */
 window.backToDayPicker = function() {
   dockStato('nascosto');
+  fermaTempoSeduta(false);
   document.getElementById('workout-day-picker').style.display = 'block';
   document.getElementById('workout-session').style.display = 'none';
   stopDropSet();
@@ -4067,6 +4418,7 @@ window.openWorkoutDay = function(day) {
   ripristinaMusica(true);   /* la canzone scelta nelle Opzioni e gia pronta */
   setTimeout(() => dockStato('sessione'), 0);   /* il lettore resta raggiungibile in seduta */
   applicaCaricoProgressivo(day);   /* il coach imposta i carichi della seduta */
+  avviaTempoSeduta(day);
   document.getElementById('workout-day-picker').style.display = 'none';
   document.getElementById('workout-session').style.display = 'block';
   renderDayBar();
@@ -4138,6 +4490,75 @@ function avviaTickRecupero() {
   recoveryInterval = setInterval(tickRecupero, 250);
 }
 
+/* ============================================================
+   PONTE VERSO IL TELEFONO (preparazione per l App Store)
+   Quando l app gira dentro Capacitor su iPhone, qui passano le
+   funzioni che Safari non ha: notifica di fine recupero anche ad app
+   chiusa, vibrazione, timer sulla schermata di blocco, salvataggio in
+   Salute. Nel browser ogni funzione ha la sua alternativa web o non
+   fa nulla: lo stesso codice vale per entrambi, niente doppioni.
+   Il timer sulla schermata di blocco (Live Activity) richiede un
+   pezzo scritto in Swift: qui c e gia la chiamata, che si accende
+   quando quel pezzo esistera.
+   ============================================================ */
+const NOTIFICA_RECUPERO = 7001;
+
+window.Nativo = {
+  attivo() {
+    try { return !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()); }
+    catch (e) { return false; }
+  },
+  plugin(nome) {
+    return this.attivo() && window.Capacitor.Plugins ? window.Capacitor.Plugins[nome] || null : null;
+  },
+
+  /* notifica locale: suona anche con l app chiusa o il telefono in tasca */
+  async programmaFineRecupero(secondi, testo) {
+    const LN = this.plugin('LocalNotifications');
+    if (!LN) return false;
+    try {
+      await LN.cancel({ notifications: [{ id: NOTIFICA_RECUPERO }] });
+      await LN.schedule({ notifications: [{
+        id: NOTIFICA_RECUPERO, title: 'Recupero finito', body: testo || 'Tocca a te: prossima serie',
+        schedule: { at: new Date(Date.now() + secondi * 1000), allowWhileIdle: true }
+      }] });
+      return true;
+    } catch (e) { return false; }
+  },
+  async annullaFineRecupero() {
+    const LN = this.plugin('LocalNotifications');
+    if (!LN) return false;
+    try { await LN.cancel({ notifications: [{ id: NOTIFICA_RECUPERO }] }); return true; } catch (e) { return false; }
+  },
+
+  /* timer sulla schermata di blocco: plugin nativo da scrivere in Swift */
+  async attivitaRecupero(stato) {
+    const LA = this.plugin('RestTimerActivity');
+    if (!LA) return false;
+    try {
+      if (stato) await LA.start(stato); else await LA.end();
+      return true;
+    } catch (e) { return false; }
+  },
+
+  async vibra() {
+    const H = this.plugin('Haptics');
+    try {
+      if (H) { await H.impact({ style: 'HEAVY' }); return true; }
+      if (navigator.vibrate) { navigator.vibrate(200); return true; }
+    } catch (e) {}
+    return false;
+  }
+};
+
+function avvisaTelefonoRecupero() {
+  const secondi = Math.max(0, Math.round((recoveryEndAt - Date.now()) / 1000));
+  if (!secondi) return;
+  const titolo = (document.getElementById('recovery-title') || {}).innerText || 'Recupero';
+  Nativo.programmaFineRecupero(secondi, titolo.replace(/^Recupero:\s*/, '') + ': tocca a te');
+  Nativo.attivitaRecupero({ fineAlle: recoveryEndAt, titolo: titolo, totale: recoveryTotal });
+}
+
 window.openRecoveryPanel = function(label, seconds) {
   recoveryTotal = Math.max(1, Number(seconds) || 90);
   recoveryEndAt = Date.now() + recoveryTotal * 1000;
@@ -4148,9 +4569,12 @@ window.openRecoveryPanel = function(label, seconds) {
   document.getElementById('recovery-overlay').classList.remove('ending');
   updateRecoveryRing();
   avviaTickRecupero();
+  avvisaTelefonoRecupero();   /* su iPhone: notifica e schermata di blocco */
 };
 
 window.closeRecoveryPanel = function() {
+  Nativo.annullaFineRecupero();
+  Nativo.attivitaRecupero(null);
   clearInterval(recoveryInterval);
   recoveryInterval = null;
   recoveryRemaining = 0;
@@ -4169,6 +4593,7 @@ window.adjustRecoveryTimer = function(delta) {
     recoveryEndAt = Math.max(Date.now(), recoveryEndAt + delta * 1000);
     recoveryLastShown = null;
     tickRecupero();
+    avvisaTelefonoRecupero();   /* l orario di fine e cambiato: si riprogramma */
     if (secondiRimasti() > 5) panel.classList.remove('ending');
   } else if (delta > 0 && panel.classList.contains('visible')) {
     /* timer esaurito ma pannello aperto: +10 riparte da 10 secondi */
@@ -5910,7 +6335,8 @@ window.endWorkout = function() {
     sessione: activeList.map(e => ({
       name: e.name,
       rest: e.rest,
-      sets: e.completedSets.map(s => ({ reps: s.reps, weight: s.weight, done: !!s.done, wasBerserk: !!s.wasBerserk }))
+      sets: e.completedSets.map(s => ({ reps: s.reps, weight: s.weight, done: !!s.done, wasBerserk: !!s.wasBerserk, rpe: s.rpe || null })),
+      riscaldamento: (e.riscaldamento || []).filter(w => w.done).map(w => ({ reps: w.reps, weight: w.weight }))
     })),
     berserk: berserkFound,
     skipped: skippedCount,
@@ -5931,9 +6357,12 @@ window.endWorkout = function() {
   history.unshift(historyEntry);
   saveHistory(history);
   segnaFattoNelCalendario(historyEntry);   /* la spunta sul giorno di oggi */
+  fermaTempoSeduta(true);
 
   list.forEach(e => {
     e.completedSets = e.completedSets.map(() => ({ done: false, reps: e.reps, weight: e.weight, wasBerserk: false }));
+    if (e.riscaldamento) e.riscaldamento = e.riscaldamento.map(w => Object.assign({}, w, { done: false }));
+    delete e.recordSeduta;
     e.skipped = false; /* il salto vale per la sessione di oggi, non per sempre */
   });
   data[currentDay] = list;
@@ -7607,7 +8036,7 @@ function toggleHtml(k, def, nome, desc) {
 
 function renderSettings() {
   const prof = getProfile();
-  document.getElementById('settings-sub').innerText = currentMode === 'maki' ? 'Protocollo Maki' : 'Protocollo Toji';
+  document.getElementById('settings-sub').innerText = '';
 
   document.getElementById('settings-body').innerHTML =
     '<div class="set-group">' +
@@ -7618,15 +8047,6 @@ function renderSettings() {
         { id: 'auto',  label: '\u{1F504} Auto' }
       ], getSetting(THEME_KEY, 'dark'), 'setTheme') +
       '<div class="set-about" style="margin-top:8px;">Al sole si legge meglio il chiaro. Auto segue il telefono.</div>' +
-    '</div>' +
-
-    '<div class="set-group">' +
-      '<div class="set-group-title">Protocollo</div>' +
-      segHtml([
-        { id: 'toji', label: '\u{1F94B} Toji' },
-        { id: 'maki', label: '\u2694\uFE0F Maki' }
-      ], currentMode, 'switchProtocol') +
-      '<div class="set-about" style="margin-top:8px;">Schede e storico separati: non perdi nulla.</div>' +
     '</div>' +
 
     '<div class="set-group">' +
@@ -7705,7 +8125,7 @@ window.switchProtocol = function(mode) {
   /* activateMode riporta al Piano: qui restiamo dove siamo, cioe nelle
      impostazioni, altrimenti a ogni cambio si veniva sbalzati fuori. */
   switchTab('impostazioni');
-  showUndo('Passato al protocollo ' + (mode === 'maki' ? 'Maki' : 'Toji'));
+  
 };
 
 /* ============================================================
@@ -8099,7 +8519,106 @@ function slotImmagine(nome) {
 }
 
 /* --- La scheda --- */
-window.openExerciseInfo = function(name) {
+/* ============================================================
+   SCHEDA ESERCIZIO A QUATTRO SEZIONI
+   Come si fa · Storico · Grafico · Record, come nelle app di
+   riferimento. Storico, grafico e record leggono le sedute salvate:
+   ogni numero viene dai tuoi allenamenti, non e inventato.
+   Il massimale stimato (1RM) usa la formula di Epley, la piu diffusa,
+   affidabile fino a circa 12 ripetizioni.
+   ============================================================ */
+let exInfoNome = null;
+let exInfoTab = 'come';
+
+/* Le sedute con questo esercizio, dalla piu vecchia alla piu recente */
+function seduteEsercizio(nome) {
+  const out = [];
+  loadHistory().forEach(h0 => {
+    const d = dataSessione(h0);
+    if (!d || !h0.sessione) return;
+    const ex = h0.sessione.find(e => e.name === nome);
+    if (!ex) return;
+    const fatte = ex.sets.filter(s => s.done && !s.riscaldamento);
+    if (!fatte.length) return;
+    out.push({
+      data: d, sets: fatte,
+      max: Math.max.apply(null, fatte.map(s => Number(s.weight) || 0)),
+      rm: Math.max.apply(null, fatte.map(s => unoRM(s.weight, s.reps))),
+      volume: fatte.reduce((a, s) => a + (Number(s.reps) || 0) * (Number(s.weight) || 0), 0)
+    });
+  });
+  out.sort((a, b) => a.data - b.data);
+  return out;
+}
+
+window.setExInfoTab = function(t) {
+  exInfoTab = t;
+  document.querySelectorAll('#ex-tabs button').forEach(b => {
+    const on = b.dataset.t === t;
+    b.classList.toggle('on', on);
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
+  ['come', 'storico', 'grafico', 'record'].forEach(k => {
+    const el = document.getElementById('ex-pane-' + k);
+    if (el) el.style.display = k === t ? 'block' : 'none';
+  });
+};
+
+function exVuoto(testo) {
+  return '<div class="dv-empty" style="padding:var(--sp-5) var(--sp-3);">' + testo + '</div>';
+}
+
+function paneStorico(sed) {
+  if (!sed.length) return exVuoto('Ancora nessuna seduta con questo esercizio.<br>Dopo il primo allenamento lo trovi qui.');
+  return sed.slice().reverse().map(s =>
+    '<div class="exh-row"><div class="exh-date">' + s.data.toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: '2-digit' }) + '</div>' +
+    '<div class="exh-sets">' + s.sets.map(x => '<span>' + x.reps + ' \u00D7 ' + x.weight + '</span>').join('') + '</div></div>').join('');
+}
+
+function paneGrafico(sed) {
+  if (sed.length < 2) return exVuoto('Servono almeno due sedute per disegnare l andamento.');
+  const ultimi = sed.slice(-12);
+  const vals = ultimi.map(s => s.rm);
+  const min = Math.min.apply(null, vals), max = Math.max.apply(null, vals);
+  const W = 320, H = 150, pad = 18;
+  const span = Math.max(1, max - min);
+  const x = (i) => pad + i * (W - 2 * pad) / (ultimi.length - 1);
+  const y = (v) => H - pad - (v - min) / span * (H - 2 * pad);
+  const punti = ultimi.map((s, i) => x(i).toFixed(1) + ',' + y(s.rm).toFixed(1)).join(' ');
+  const d0 = ultimi[0].data, d1 = ultimi[ultimi.length - 1].data;
+  const diff = Math.round((vals[vals.length - 1] - vals[0]) * 10) / 10;
+  return '<div class="exg-head">1RM stimato \u2022 ultime ' + ultimi.length + ' sedute</div>' +
+    '<svg class="exg" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Massimale stimato da ' + vals[0] + ' a ' + vals[vals.length - 1] + ' chili">' +
+    '<line x1="' + pad + '" y1="' + (H - pad) + '" x2="' + (W - pad) + '" y2="' + (H - pad) + '" class="exg-axis"></line>' +
+    '<polyline points="' + punti + '" class="exg-line"></polyline>' +
+    ultimi.map((s, i) => '<circle cx="' + x(i).toFixed(1) + '" cy="' + y(s.rm).toFixed(1) + '" r="3.5" class="exg-dot"></circle>').join('') +
+    '<text x="' + pad + '" y="12" class="exg-lbl">' + max + ' kg</text>' +
+    '<text x="' + pad + '" y="' + (H - 3) + '" class="exg-lbl">' + d0.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' }) + '</text>' +
+    '<text x="' + (W - pad) + '" y="' + (H - 3) + '" text-anchor="end" class="exg-lbl">' + d1.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' }) + '</text>' +
+    '</svg>' +
+    '<div class="exg-diff ' + (diff > 0 ? 'su' : (diff < 0 ? 'giu' : '')) + '">' + (diff > 0 ? '+' : '') + diff + ' kg dalla prima seduta del grafico</div>';
+}
+
+function paneRecord(sed) {
+  if (!sed.length) return exVuoto('I record compaiono dopo la prima seduta.');
+  const best = (f) => sed.reduce((a, s) => f(s) > f(a) ? s : a, sed[0]);
+  const bRm = best(s => s.rm), bMax = best(s => s.max), bVol = best(s => s.volume);
+  let bSet = null;
+  sed.forEach(s => s.sets.forEach(x => {
+    const r = unoRM(x.weight, x.reps);
+    if (!bSet || r > bSet.r) bSet = { r: r, x: x, data: s.data };
+  }));
+  const quando = (d) => d.toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: '2-digit' });
+  const tile = (et, v, d) => '<div class="exr-tile"><span class="exr-et">' + et + '</span><span class="exr-v">' + v + '</span><span class="exr-d">' + quando(d) + '</span></div>';
+  return '<div class="exr-grid">' +
+    tile('1RM stimato', bRm.rm + ' kg', bRm.data) +
+    tile('Carico massimo', bMax.max + ' kg', bMax.data) +
+    tile('Volume in una seduta', Math.round(bVol.volume).toLocaleString('it-IT') + ' kg', bVol.data) +
+    tile('Serie migliore', bSet.x.reps + ' \u00D7 ' + bSet.x.weight + ' kg', bSet.data) +
+    '</div><div class="set-about">Il massimale stimato e calcolato con la formula di Epley: una stima, non un test da fare.</div>';
+}
+
+window.openExerciseInfo = function(name, tab) {
   const meta = findExercise(name);
   const pid = patternFor(name);
   const info = PATTERN_INFO[pid] || PATTERN_INFO.machine;
@@ -8115,7 +8634,17 @@ window.openExerciseInfo = function(name) {
   document.getElementById('ex-info-sub').innerText = (gruppo ? gruppo.emoji + ' ' + gruppo.label : '') +
     (meta ? ' \u2022 ' + (meta.type === 'compound' ? 'multiarticolare' : 'isolamento') : '');
 
+  exInfoNome = name;
+  const sed = seduteEsercizio(name);
   document.getElementById('ex-info-body').innerHTML =
+    '<div class="ex-tabs" id="ex-tabs" role="tablist">' +
+      [['come', 'Come si fa'], ['storico', 'Storico'], ['grafico', 'Grafico'], ['record', 'Record']].map(([k, l]) =>
+        '<button type="button" role="tab" data-t="' + k + '" onclick="setExInfoTab(\'' + k + '\')">' + l + '</button>').join('') +
+    '</div>' +
+    '<div id="ex-pane-storico" class="ex-pane">' + paneStorico(sed) + '</div>' +
+    '<div id="ex-pane-grafico" class="ex-pane">' + paneGrafico(sed) + '</div>' +
+    '<div id="ex-pane-record" class="ex-pane">' + paneRecord(sed) + '</div>' +
+    '<div id="ex-pane-come" class="ex-pane">' +
     '<div class="ex-draw-wrap">' + disegno + '</div>' +
     '<div class="ex-pattern">Schema: ' + escapeHtml(info.nome) + '</div>' +
     '<div class="ex-block"><div class="ex-block-title">Come si fa</div><ol class="ex-steps">' +
@@ -8128,8 +8657,10 @@ window.openExerciseInfo = function(name) {
         '<div class="ex-note">Questo e un movimento tecnico: vale la pena vederlo eseguire prima di caricarlo. ' +
         (verificato ? 'Il video e una fonte italiana che ho verificato.' : 'Il pulsante apre una ricerca su YouTube: non posso guardare i video, quindi preferisco non indicarti uno specifico senza averlo visto.') +
         ' Una raccolta di tutorial in italiano che ho verificato: <a href="' + VIDEO_PLAYLIST + '" target="_blank" rel="noopener noreferrer">playlist Project inVictus</a>.</div>'
-      : '<div class="ex-note">Movimento semplice: bastano le indicazioni qui sopra. Se qualcosa tira o fa male, fermati e chiedi a un professionista.</div>');
+      : '<div class="ex-note">Movimento semplice: bastano le indicazioni qui sopra. Se qualcosa tira o fa male, fermati e chiedi a un professionista.</div>') +
+    '</div>';
 
+  setExInfoTab(tab || 'come');
   document.getElementById('ex-info').classList.remove('hidden');
 };
 
@@ -8889,9 +9420,9 @@ window.buildIcs = function() {
     'T' + String(ora.getUTCHours()).padStart(2, '0') + String(ora.getUTCMinutes()).padStart(2, '0') + '00Z';
 
   const righe = [
-    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Toji Maki Workout//IT',
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Allenamento//IT',
     'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
-    'X-WR-CALNAME:' + icsEscape('Allenamenti ' + (currentMode === 'maki' ? 'Maki' : 'Toji'))
+    'X-WR-CALNAME:' + icsEscape('Allenamenti')
   ];
 
   Object.keys(cal).sort().forEach(k => {
@@ -8975,17 +9506,9 @@ function aggiornaAiutoIcs() {
   buildExerciseSelect();
   applyTheme();
   document.getElementById('recovery-mute-btn').innerText = recoveryMuted ? '🔇' : '🔊';
-  const stored = getStoredMode();
-  if (stored && MODE_META[stored]) {
-    activateMode(stored);
-    document.getElementById('mode-overlay').classList.add('hidden');
-    document.getElementById('app-root').style.display = 'flex';
-    document.getElementById('bottom-nav').style.display = 'block';
-  } else {
-    document.getElementById('mode-overlay').classList.remove('hidden');
-    document.getElementById('app-root').style.display = 'none';
-    document.getElementById('bottom-nav').style.display = 'none';
-  }
+  /* un solo aspetto: si entra direttamente. Chi aveva gia usato l app
+     ritrova i dati della modalita che usava; al primo avvio parte il consenso */
+  chooseMode(getStoredMode() || 'toji');
   refreshFailureTracks().catch(() => {
     const c = document.getElementById('track-list');
     if (c) c.innerHTML = '<span class="muted">Il tuo browser non supporta il salvataggio audio locale (IndexedDB).</span>';
