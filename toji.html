@@ -325,7 +325,7 @@ body {
 .wheel-btn { flex-shrink: 0; width: 30px; height: 34px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-2); color: var(--primary); font-weight: 900; cursor: pointer; margin-left: -2px; }
 
 /* ======= Consenso ======= */
-.consent-ico { font-size: 2.4rem; margin-bottom: var(--sp-3); }
+.consent-ico { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: var(--sp-3); background: color-mix(in srgb, var(--primary) 14%, var(--surface-2)); color: var(--primary); }
 .consent-li { font-size: 0.84rem; line-height: var(--lh-base); }
 .consent-text h3 { font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.4px; color: var(--primary); margin: var(--sp-5) 0 var(--sp-2); }
 .consent-text h3:first-child { margin-top: 0; }
@@ -372,6 +372,28 @@ body {
 
 /* ======= Statistiche ======= */
 #stats-sheet { z-index: 94; }
+.history-card.hs-row { display: flex; align-items: center; gap: var(--sp-3); border-left: none; background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; }
+.hs-date { flex: 0 0 44px; display: flex; flex-direction: column; align-items: center; line-height: 1.05; font-size: 0.66rem; font-weight: 800; color: var(--muted); text-transform: uppercase; }
+.hs-date b { font-size: 1.2rem; color: var(--text); }
+.hs-main { flex: 1; min-width: 0; }
+.hs-title { display: block; font-weight: 800; font-size: 0.92rem; }
+.hs-meta { display: block; font-size: 0.74rem; color: var(--muted); margin-top: 2px; }
+.hs-tag { display: inline-block; font-size: 0.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.4px; padding: 2px 6px; border-radius: 6px; background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); vertical-align: middle; }
+.hs-tag.on { background: color-mix(in srgb, var(--primary) 18%, transparent); color: var(--primary); }
+.hs-all { width: 100%; background: none; border: none; color: var(--primary); font-weight: 800; font-size: 0.84rem; padding: var(--sp-2) 0 0; cursor: pointer; text-align: center; }
+.hs-month { font-size: 0.7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); margin: var(--sp-4) 0 var(--sp-2); }
+.hs-month:first-child { margin-top: 0; }
+.pg-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-2); }
+.pg-kpi { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 8px; text-align: center; }
+.pg-kpi b { display: block; font-size: 1.3rem; font-weight: 900; }
+.pg-kpi span { display: block; font-size: 0.66rem; color: var(--muted); font-weight: 700; margin-top: 2px; }
+.pg-kpi em { display: block; font-style: normal; font-size: 0.72rem; font-weight: 900; margin-top: 4px; color: var(--muted); }
+.pg-kpi em.su, .pg-block b.su { color: var(--success); }
+.pg-kpi em.giu, .pg-block b.giu { color: var(--danger); }
+.st-kpis { margin-bottom: var(--sp-4); }
+.pg-bn { flex: 0 0 52px; height: 44px; border-radius: 10px; background: color-mix(in srgb, var(--primary) 14%, var(--surface-2)); color: var(--primary); display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 900; font-size: 0.86rem; line-height: 1.05; }
+.pg-bn small { font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.4px; }
+.pg-block { margin-top: var(--sp-2); }
 .st-periodo { display: flex; gap: 6px; overflow-x: auto; margin-bottom: var(--sp-4); -webkit-overflow-scrolling: touch; }
 .st-periodo button { flex-shrink: 0; background: var(--surface-2); border: 1px solid var(--border); color: var(--text); border-radius: 999px; padding: 7px 12px; font-weight: 800; font-size: 0.74rem; cursor: pointer; }
 .st-periodo button.on { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
@@ -428,6 +450,34 @@ body {
 .dock-slot { transition: height .2s ease; }
 
 /* ======= Oggi ======= */
+.og-strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin: var(--sp-4) 0 var(--sp-3); }
+.og-day { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 0 6px; border-radius: 12px; background: var(--surface-1); border: 1px solid var(--border); }
+.og-dl { font-size: 0.6rem; font-weight: 900; text-transform: uppercase; color: var(--muted); letter-spacing: 0.3px; }
+.og-dn { font-size: 1rem; font-weight: 900; }
+.og-day i { width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-style: normal; font-size: 0.66rem; font-weight: 900; margin-top: 2px; border: 1.5px solid var(--border-strong); }
+.og-day.done i { background: var(--success); border-color: var(--success); color: var(--on-primary); }
+.og-day.plan i { border-color: var(--primary); }
+.og-day.miss i { border-color: var(--border-strong); border-style: dashed; }
+.og-day.rest i { border: none; background: var(--border-strong); width: 6px; height: 6px; margin: 8px 0 6px; }
+.og-day.today { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 12%, var(--surface-1)); }
+.og-day.today .og-dl { color: var(--primary); }
+#oggi-body { display: flex; flex-direction: column; min-height: calc(100dvh - 150px - env(safe-area-inset-bottom, 0px)); }
+#oggi-body > .og-today { flex: 1; display: flex; flex-direction: column; }
+#oggi-body > .og-today .btn-start-workout { margin-top: auto; }
+#oggi-body > .og-today .og-exlist { margin-bottom: var(--sp-4); }
+.og-exlist { margin-top: var(--sp-3); display: flex; flex-direction: column; gap: 6px; }
+.og-ex { display: flex; align-items: center; gap: var(--sp-3); padding: 6px 8px; background: var(--surface-2); border-radius: 10px; }
+.og-exfig { flex: 0 0 30px; height: 30px; }
+.og-exfig svg { width: 100%; height: 100%; display: block; }
+.og-exfig .bm-muscle.active { animation: none; }
+.og-exname { flex: 1; min-width: 0; font-weight: 800; font-size: 0.84rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.og-exsr { font-size: 0.74rem; color: var(--muted); font-weight: 700; white-space: nowrap; }
+.og-more { font-size: 0.74rem; color: var(--muted); font-weight: 700; padding-left: 8px; }
+.og-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); margin-bottom: var(--sp-3); }
+.og-tile { text-align: left; background: var(--surface-1); border: 1px solid var(--border); border-radius: 16px; padding: var(--sp-4); color: var(--text); cursor: pointer; display: flex; flex-direction: column; gap: 2px; font: inherit; }
+.og-tile .og-label { margin-bottom: 4px; }
+.og-tile b { font-size: 1.15rem; font-weight: 900; }
+.og-tile b small { font-size: 0.8rem; color: var(--muted); }
 .og-head { display: flex; justify-content: space-between; align-items: flex-end; gap: var(--sp-3); }
 .og-left { min-width: 0; }
 .og-ciao { font-size: 1rem; font-weight: 800; }
@@ -531,6 +581,43 @@ body {
 .aw-path-ico { font-size: 1.9rem; flex-shrink: 0; }
 .aw-path-name { display: block; font-weight: 900; font-size: 1rem; line-height: var(--lh-base); }
 .aw-path-go { font-size: 1.4rem; color: var(--primary); font-weight: 900; flex-shrink: 0; }
+.pick-icon.pick-fig { padding: 3px; overflow: hidden; }
+.pick-icon.pick-fig svg { width: 100%; height: 100%; display: block; }
+.pick-row:not(.on) .pick-fig .bm-muscle.active { animation: none; }
+.mg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); }
+.mg-grid > .mg-card:last-child:nth-child(odd) { grid-column: 1 / -1; flex-direction: row; }
+.mg-grid > .mg-card:last-child:nth-child(odd) .mg-fig { flex: 0 0 48%; height: 100%; }
+.mg-grid > .mg-card:last-child:nth-child(odd) .mg-txt { justify-content: center; padding-right: 28px; }
+.mg-grid > .mg-card:last-child:nth-child(odd) .mg-txt { text-align: left; align-items: flex-start; }
+#aw-body.aw-fill { display: flex; flex-direction: column; }
+#aw-body.aw-fill .mg-grid { flex: 1; grid-auto-rows: 1fr; min-height: 540px; }
+.mg-card { position: relative; display: flex; flex-direction: column; align-items: stretch; gap: var(--sp-2);
+  background: var(--surface-2); border: 1.5px solid var(--border); border-radius: 18px; padding: var(--sp-3);
+  color: var(--text); cursor: pointer; text-align: center; min-height: 128px; overflow: hidden; padding-bottom: var(--sp-4);
+  transition: border-color .2s ease, transform .15s ease, background .2s ease; }
+.mg-card:active { transform: scale(0.97); }
+.mg-card.on { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 12%, var(--surface-2)); }
+.mg-fig { flex: 1; min-height: 64px; display: flex; align-items: center; justify-content: center;
+  position: relative; }
+.mg-fig > svg { position: absolute; inset: 0; margin: auto; }
+.mg-fig svg { height: 100%; width: auto; max-width: 100%; display: block; }
+.mg-card:not(.on) .bm-muscle.active { animation: none; fill: color-mix(in srgb, var(--primary) 78%, var(--surface-1)); }
+.mg-txt { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.mg-name { display: block; font-weight: 900; font-size: 1rem; letter-spacing: 0.2px; }
+.mg-sub { display: block; font-size: 0.72rem; color: var(--muted); line-height: 1.25; }
+.mg-n { font-weight: 900; color: var(--primary); }
+.mg-check { position: absolute; top: 10px; right: 10px; width: 24px; height: 24px; border-radius: 50%;
+  border: 1.5px solid var(--border-strong); display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; font-weight: 900; color: var(--on-primary); }
+.mg-card.on .mg-check { background: var(--primary); border-color: var(--primary); }
+.mg-grid.compact .mg-card { min-height: 0; flex-direction: row; align-items: center; padding: var(--sp-2); gap: var(--sp-2); }
+.mg-grid.compact .mg-fig { flex: 0 0 52px; height: 52px; min-height: 0; }
+.mg-grid.compact .mg-txt { align-items: flex-start; text-align: left; }
+.mg-grid.compact .mg-sub, .mg-grid.compact .mg-n { display: none; }
+.mg-grid.compact .mg-check { top: 50%; transform: translateY(-50%); width: 20px; height: 20px; }
+.mg-grid.compact > .mg-card:last-child:nth-child(odd) .mg-fig { flex: 0 0 52px; width: 52px; height: 52px; }
+.mg-grid.compact > .mg-card:last-child:nth-child(odd) .mg-txt { padding-right: 0; }
+#aw-body.aw-fill .aw-warn { display: none; }
 .aw-groups { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
 .aw-group { background: var(--surface-2); border: 1px solid var(--border); color: var(--text); border-radius: 999px; padding: 8px 14px; font-weight: 800; font-size: 0.8rem; cursor: pointer; }
 .aw-group.on { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
@@ -866,6 +953,38 @@ body.reorder-mode .plan-card { border-color: var(--primary); }
 /* ======= Impostazioni ======= */
 .settings { position: fixed; inset: 0; z-index: 110; background: var(--bg); display: flex; flex-direction: column; }
 .settings.hidden { display: none; }
+.sr-h1 { margin: var(--sp-2) 0 var(--sp-4); }
+.sr-profile { display: flex; align-items: center; gap: var(--sp-4); width: 100%; text-align: left; background: var(--surface-2); border: 1px solid var(--border); border-radius: 16px; padding: var(--sp-4); margin-bottom: var(--sp-5); color: var(--text); cursor: pointer; font: inherit; }
+.sr-avatar { flex: 0 0 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.2rem; background: var(--primary); color: var(--on-primary); }
+.sr-pmain { flex: 1; min-width: 0; }
+.sr-pname { display: block; font-weight: 900; font-size: 1.1rem; }
+.sr-psub { display: block; font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+.sr-group { margin-bottom: var(--sp-5); }
+.sr-title { font-size: 0.68rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); margin: 0 0 var(--sp-2) var(--sp-3); }
+.sr-list { background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.sr-row { display: flex; align-items: center; gap: var(--sp-3); width: 100%; min-height: 52px; text-align: left; background: transparent; border: none; border-top: 1px solid var(--border); padding: 10px var(--sp-3); color: var(--text); cursor: pointer; font: inherit; }
+.sr-list > .sr-row:first-child, .sr-list > .set-toggle:first-child { border-top: none; }
+.sr-list > .set-toggle { background: transparent; border: none; border-top: 1px solid var(--border); border-radius: 0; margin: 0; }
+.sr-ico { flex: 0 0 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+.sr-ico.c-primary { background: color-mix(in srgb, var(--primary) 18%, transparent); color: var(--primary); }
+.sr-ico.c-success { background: color-mix(in srgb, var(--success) 18%, transparent); color: var(--success); }
+.sr-ico.c-warning { background: color-mix(in srgb, var(--warning) 18%, transparent); color: var(--warning); }
+.sr-ico.c-accent { background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); }
+.sr-ico.c-danger { background: color-mix(in srgb, var(--danger) 18%, transparent); color: var(--danger); }
+.sr-ico.c-muted { background: var(--surface-3); color: var(--muted); }
+.sr-name { flex: 1; min-width: 0; font-weight: 700; font-size: 0.92rem; }
+.sr-name small { display: block; font-weight: 500; font-size: 0.74rem; color: var(--muted); margin-top: 2px; line-height: 1.35; }
+.sr-val { flex-shrink: 1; min-width: 0; max-width: 45%; font-size: 0.84rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sr-go { color: var(--muted); font-size: 1.3rem; font-weight: 700; line-height: 1; }
+.sr-row.danger .sr-name { color: var(--danger); }
+.sr-row.danger .sr-go { display: none; }
+.sr-primary { color: var(--primary); }
+.sr-check { color: var(--primary); font-weight: 900; }
+.sr-static { cursor: default; }
+.sr-guide .sr-name { font-weight: 800; }
+.sr-input input { flex: 1; background: transparent; border: none; color: var(--text); font: inherit; font-weight: 700; font-size: 1rem; padding: 6px 0; outline: none; }
+.sr-note { font-size: 0.74rem; color: var(--muted); line-height: 1.4; margin: var(--sp-2) var(--sp-3) 0; }
+.sr-foot { text-align: center; font-size: 0.72rem; color: var(--muted); line-height: 1.5; margin: var(--sp-2) 0 var(--sp-4); }
 .set-group { margin-bottom: var(--sp-6); }
 .set-group-title { font-size: 0.68rem; font-weight: 900; line-height: var(--lh-tight); text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); margin: 0 0 var(--sp-3) 0; }
 .set-seg { display: flex; gap: 6px; background: var(--card); border: 1px solid var(--border); padding: 4px; border-radius: 10px; }
@@ -1298,6 +1417,12 @@ body.select-mode .plan-card-actions, body.select-mode .reorder-arrows { display:
 .set-flame-btn { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; background: var(--surface-2); border: 1px solid var(--border); font-size: 0.85rem; cursor: pointer; opacity: 0.55; }
 .set-flame-btn.armed { background: color-mix(in srgb, var(--danger) 20%, transparent); border-color: var(--accent); opacity: 1; }
 .set-row .flame-done-tag { flex-shrink: 0; font-size: 0.8rem; }
+.set-flame-btn.flame-on { background: color-mix(in srgb, var(--accent) 22%, var(--surface-2)); border-color: var(--accent); }
+.ex-fig { display: inline-block; width: 26px; height: 26px; vertical-align: -6px; margin-right: 8px; }
+.ex-fig svg { width: 100%; height: 100%; display: block; }
+.ex-fig .bm-muscle.active { animation: none; }
+.rpe-hint { font-size: 0.72rem; color: var(--muted); line-height: 1.4; margin: 6px 2px 0; }
+.rpe-hint b { color: var(--text); }
 .set-check { margin-left: auto; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: var(--surface-2); border: 1px solid var(--border); color: transparent; font-weight: 900; cursor: pointer; }
 .set-check.checked { background: var(--success); border-color: var(--success); color: var(--bg); }
 .edit-btn { background: transparent; border: none; color: var(--accent); font-size: 0.95rem; cursor: pointer; padding: 0 2px; }
@@ -1658,27 +1783,39 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
 
   <!-- TAB: IMPOSTAZIONI -->
   <section id="tab-impostazioni" class="tab-panel">
-    <div class="card">
-      <div class="section-title">Impostazioni</div>
-      <div class="section-hint" id="settings-sub"></div>
-      <div id="settings-body"></div>
-    </div>
+    <h1 class="og-title sr-h1">Opzioni</h1>
+    <div class="section-hint" id="settings-sub" style="display:none;"></div>
+    <div id="settings-body"></div>
   </section>
 
   <!-- TAB: STORICO -->
   <section id="tab-storico" class="tab-panel">
+    <!-- In cima i numeri che contano; la lista delle sedute resta corta
+         (ultime 3) perche dopo qualche settimana diventerebbe infinita:
+         l archivio completo si apre a parte, raggruppato per mese. -->
+    <div class="card">
+      <div class="section-title">Progressi</div>
+      <div class="pg-kpis" id="pg-kpis"></div>
+    </div>
+
+    <div class="card">
+      <div class="storico-head">
+        <div class="storico-title">Report ogni 4 settimane</div>
+      </div>
+      <div class="set-about" style="margin-top:0;">Ogni blocco si confronta con il precedente.</div>
+      <div id="pg-blocchi"></div>
+      <button class="entry-btn storico-stats" onclick="openStats('8')">
+        <span class="entry-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10"></path><path d="M10 20V4"></path><path d="M16 20v-7"></path><path d="M22 20H2"></path></svg></span>
+        <span class="aw-main"><span class="entry-name">Statistiche</span><span class="aw-meta">Periodo a scelta: 4, 8, 12 settimane o tutto</span></span>
+        <span class="aw-path-go">›</span>
+      </button>
+    </div>
+
     <div class="card">
       <div class="storico-head">
         <div class="storico-title">Allenamenti completati</div>
-        <button class="del-btn" style="font-size:0.75rem;" onclick="clearHistory()">Svuota Storico</button>
+        <button class="del-btn" style="font-size:0.75rem;" onclick="clearHistory()">Svuota storico</button>
       </div>
-      <!-- fuori dalla riga del titolo: e largo quanto la card e su schermi
-           stretti non deve contendersi lo spazio con titolo e pulsante -->
-      <button class="entry-btn storico-stats" onclick="openStats()">
-        <span class="entry-ico">📊</span>
-        <span class="aw-main"><span class="entry-name">Statistiche</span><span class="aw-meta">Primo e ultimo carico</span></span>
-        <span class="aw-path-go">›</span>
-      </button>
       <div id="history-list"></div>
     </div>
 
@@ -1740,6 +1877,22 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
       <div class="set-about" id="plate-txt" style="font-size:0.9rem;font-weight:700;"></div>
     </div>
   </div>
+</div>
+
+<div class="group-sheet hidden" id="set-page">
+  <div class="sheet-bar">
+    <button class="sheet-back" onclick="closeSetPage()" aria-label="Indietro">←</button>
+    <div class="sheet-titles"><div class="sheet-title" id="set-page-title">Opzioni</div></div>
+  </div>
+  <div class="sheet-body" id="set-page-body"></div>
+</div>
+
+<div class="group-sheet hidden" id="all-sessions-sheet">
+  <div class="sheet-bar">
+    <button class="sheet-back" onclick="closeAllSessions()" aria-label="Indietro">←</button>
+    <div class="sheet-titles"><div class="sheet-title">Allenamenti completati</div><div class="sheet-sub" id="all-sessions-sub"></div></div>
+  </div>
+  <div class="sheet-body" id="all-sessions-body"></div>
 </div>
 
 <div class="group-sheet hidden" id="stats-sheet">
@@ -1829,7 +1982,7 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
       </div>
 
     </div>
-    <div class="set-about">Se non scegli nessuna canzone, durante il cedimento continua la musica che stai gia ascoltando (Spotify, Apple Music...).</div>
+    <div class="set-about">Se non scegli nessuna canzone, durante il cedimento continua la musica che stai già ascoltando (Spotify, Apple Music…).</div>
     <button class="btn-archive" onclick="clearCedimentoAudio()">Nessuna canzone: usa la mia musica</button>
   </div>
 </div>
@@ -2035,52 +2188,52 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
 
 <div class="onb hidden" id="consent">
   <div class="onb-body">
-    <div class="consent-ico">🔒</div>
+    <div class="consent-ico"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg></div>
     <div class="onb-q">I tuoi dati, le tue regole</div>
-    <div class="onb-why">Il coach dell app puo usare alcuni tuoi dati per costruirti un programma su misura e aumentare i carichi al momento giusto.</div>
+    <div class="onb-why">Per creare un programma su misura e aumentare i carichi al momento giusto, il coach ha bisogno di conoscerti. Ecco quali informazioni usa e come le protegge.</div>
     <div class="res-card">
-      <div class="res-title">Cosa usa, se acconsenti</div>
-      <div class="consent-li">• Obiettivi, esperienza e preferenze del questionario</div>
-      <div class="consent-li">• I valori della BIA (dati sulla salute)</div>
-      <div class="consent-li">• Lo storico dei tuoi allenamenti</div>
+      <div class="res-title">Cosa usa, con il tuo consenso</div>
+      <div class="consent-li">• Obiettivi, livello di esperienza e preferenze indicati nel questionario</div>
+      <div class="consent-li">• I valori della tua analisi della composizione corporea (BIA), che sono dati sulla salute</div>
+      <div class="consent-li">• Lo storico dei tuoi allenamenti: esercizi, serie, ripetizioni e carichi</div>
     </div>
     <div class="res-card">
-      <div class="res-title">Cosa non fa mai</div>
-      <div class="consent-li">• I dati restano solo su questo telefono: non vengono inviati a nessun server</div>
-      <div class="consent-li">• Nessuna pubblicita, nessuna vendita, nessuna condivisione</div>
+      <div class="res-title">Cosa non farà mai</div>
+      <div class="consent-li">• Inviare i tuoi dati a un server: restano solo su questo telefono</div>
+      <div class="consent-li">• Mostrarti pubblicità, vendere o condividere i tuoi dati con terzi</div>
     </div>
-    <div class="onb-note">Se non acconsenti l app funziona lo stesso: costruisci e segui i tuoi allenamenti a mano. Puoi cambiare idea quando vuoi dalle Opzioni.</div>
-    <button class="set-row-btn" style="margin-top:var(--sp-4);" onclick="openConsentText()">📄 Leggi l informativa completa</button>
+    <div class="onb-note">Se non acconsenti, l’app funziona comunque: crei e segui i tuoi allenamenti in autonomia. Puoi cambiare scelta in qualsiasi momento dalle Opzioni.</div>
+    <button class="set-row-btn" style="margin-top:var(--sp-4);" onclick="openConsentText()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;margin-right:6px;"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><path d="M14 3v6h6"></path><path d="M8 13h8"></path><path d="M8 17h5"></path></svg>Leggi l’informativa completa</button>
   </div>
   <div class="onb-footer">
     <button class="btn-start-workout" style="margin:0 0 var(--sp-2);" onclick="setConsenso(true, true)">Acconsento</button>
-    <button class="btn-archive" style="margin:0;" onclick="setConsenso(false, true)">Non acconsento, uso l app a mano</button>
+    <button class="btn-archive" style="margin:0;" onclick="setConsenso(false, true)">Non acconsento, mi alleno in autonomia</button>
   </div>
 </div>
 
 <div class="group-sheet hidden" id="consent-text-sheet">
   <div class="sheet-bar">
     <button class="sheet-back" onclick="closeConsentText()" aria-label="Indietro">←</button>
-    <div class="sheet-titles"><div class="sheet-title">Informativa sui dati</div><div class="sheet-sub">Come e perche vengono usati</div></div>
+    <div class="sheet-titles"><div class="sheet-title">Informativa sui dati</div><div class="sheet-sub">Come e perché vengono usati</div></div>
   </div>
   <div class="sheet-body consent-text">
     <h3>1. Chi tratta i dati</h3>
-    <p>Tutti i dati vengono elaborati <b>sul tuo dispositivo</b>, dall app stessa. Non esiste un server che li riceve: nessuno oltre a te puo vederli.</p>
+    <p>Tutti i dati vengono elaborati <b>sul tuo dispositivo</b>, direttamente dall’app. Nessun server li riceve: nessuno, oltre a te, può vederli.</p>
     <h3>2. Quali dati</h3>
-    <p><b>Profilo di allenamento</b>: obiettivi (fino a tre), livello di esperienza, giorni e minuti disponibili, luogo di allenamento, fastidi fisici segnalati, qualita del sonno e stress, preferenze sugli attrezzi.</p>
-    <p><b>Composizione corporea (BIA)</b>: peso, altezza, massa grassa, massa magra, acqua corporea, metabolismo basale e gli altri valori del referto, inclusi i referti successivi che carichi nel tempo. Sono <b>dati relativi alla salute</b>: per il Regolamento europeo (GDPR, art. 9) il loro uso richiede il tuo consenso esplicito.</p>
-    <p><b>Storico degli allenamenti</b>: esercizi, serie, ripetizioni, carichi, cedimenti e date.</p>
-    <h3>3. Per cosa vengono usati</h3>
-    <p>Solo per: costruire il programma adatto a te; programmarlo nel calendario per la sua durata; proporre l aumento dei carichi settimana dopo settimana; valutare i tuoi progressi confrontando le BIA. Nessun altro scopo.</p>
-    <h3>4. Cosa succede se non acconsenti</h3>
-    <p>L app resta pienamente usabile in modo manuale: costruisci le schede, ti alleni, tieni lo storico. Restano spenti solo il programma personalizzato, la lettura della BIA e l aumento automatico dei carichi.</p>
-    <h3>5. Revoca</h3>
-    <p>Puoi revocare il consenso in ogni momento da Opzioni → Privacy e dati, con un tocco. Da quel momento il coach smette di usare i tuoi dati. Puoi anche cancellare profilo e referti BIA salvati.</p>
+    <p><b>Profilo di allenamento</b>: obiettivi (fino a tre), livello di esperienza, giorni e minuti disponibili, luogo di allenamento, eventuali fastidi fisici, qualità del sonno e livello di stress, preferenze sugli attrezzi.</p>
+    <p><b>Composizione corporea (BIA)</b>: peso, altezza, massa grassa, massa magra, acqua corporea, metabolismo basale e gli altri valori del referto, compresi quelli che caricherai nel tempo. Si tratta di <b>dati relativi alla salute</b>: secondo il Regolamento europeo sulla protezione dei dati (GDPR, art. 9), il loro utilizzo richiede il tuo consenso esplicito.</p>
+    <p><b>Storico degli allenamenti</b>: esercizi, serie, ripetizioni, carichi, serie a cedimento e date.</p>
+    <h3>3. Per quali scopi</h3>
+    <p>Esclusivamente per: creare un programma adatto a te; pianificarlo nel calendario per tutta la sua durata; proporti l’aumento dei carichi settimana dopo settimana; valutare i tuoi progressi confrontando le analisi BIA. Nessun altro scopo.</p>
+    <h3>4. Se non acconsenti</h3>
+    <p>L’app resta pienamente utilizzabile in modalità manuale: crei le schede, ti alleni e tieni traccia dello storico. Restano disattivati soltanto il programma personalizzato, la lettura della BIA e la progressione automatica dei carichi.</p>
+    <h3>5. Revoca del consenso</h3>
+    <p>Puoi revocare il consenso in qualsiasi momento da Opzioni → Privacy e dati. Da quel momento il coach smette di usare i tuoi dati e puoi scegliere di cancellare il profilo e i referti BIA salvati.</p>
     <h3>6. Conservazione e cancellazione</h3>
-    <p>I dati restano sul telefono finche non li cancelli tu, svuoti i dati del browser o disinstalli l app.</p>
+    <p>I dati restano sul telefono finché non li cancelli tu, svuoti i dati del browser o disinstalli l’app.</p>
     <h3>7. Limiti</h3>
-    <p>I suggerimenti del coach sono calcolati da regole di programmazione dell allenamento: non sono una valutazione medica. In presenza di patologie, dolori o dubbi su un referto, rivolgiti a un medico o a un professionista.</p>
-    <p class="consent-foot">Versione dell informativa: 1.0</p>
+    <p>I suggerimenti del coach si basano su principi consolidati di programmazione dell’allenamento e non costituiscono una valutazione medica. In presenza di patologie, dolori o dubbi su un referto, rivolgiti a un medico o a un professionista qualificato.</p>
+    <p class="consent-foot">Versione dell’informativa: 1.1</p>
   </div>
 </div>
 
@@ -2864,6 +3017,22 @@ window.renderOggi = function() {
     '<h1 class="og-title">Oggi</h1></div>' +
     (fila ? '<div class="og-fila">' + fila + (fila === 1 ? ' settimana' : ' settimane') + ' di fila</div>' : '') + '</div>';
 
+  /* striscia della settimana: a colpo d occhio cosa e fatto, cosa manca */
+  const cal0 = loadCal();
+  const lun0 = lunediDi(oggi);
+  let fattiSett = 0, previstiSett = 0;
+  html += '<div class="og-strip">' + DAYS.map((d, i) => {
+    const dd = piuGiorni(lun0, i), k = ymd(dd), v = cal0[k];
+    const fatto = !!(v && v.done);
+    const riposo = !fatto && (isRestDay(d) || (v && v.rest) || !(data[d] || []).length);
+    if (fatto) fattiSett++;
+    if (!riposo || fatto) previstiSett++;
+    const st = fatto ? 'done' : (riposo ? 'rest' : (dd < new Date(oggi.getFullYear(), oggi.getMonth(), oggi.getDate()) ? 'miss' : 'plan'));
+    return '<div class="og-day ' + st + (i === idx ? ' today' : '') + '">' +
+      '<span class="og-dl">' + d.slice(0, 3) + '</span><span class="og-dn">' + dd.getDate() + '</span>' +
+      '<i aria-hidden="true">' + (fatto ? '\u2713' : '') + '</i></div>';
+  }).join('') + '</div>';
+
   const sett = coachAttivo() ? settimanaProgramma() : null;
   if (sett && !sett.finito) {
     html += '<div class="card og-prog"><div class="og-prog-row"><span>Programma: settimana ' + sett.numero + ' di ' + sett.totale + '</span>' +
@@ -2890,8 +3059,14 @@ window.renderOggi = function() {
     if (coachAttivo()) lista.forEach(e => {
       try { if (caricoProssimo(e.name, e.weight, e.repsBase !== undefined ? e.repsBase : e.reps, e.setsBase !== undefined ? e.setsBase : e.sets).tipo === 'su') alzati++; } catch (err) {}
     });
+    const anteprima = lista.slice(0, 5).map(e =>
+      '<div class="og-ex"><span class="og-exfig">' + (findExercise(e.name) ? muscleFigure(findExercise(e.name).group) : '') + '</span>' +
+      '<span class="og-exname">' + escapeHtml(e.name.replace(/^\S+\s/, '')) + '</span>' +
+      '<span class="og-exsr">' + e.sets + ' \u00D7 ' + e.reps + (e.weight ? ' \u2022 ' + e.weight + ' kg' : '') + '</span></div>').join('') +
+      (lista.length > 5 ? '<div class="og-more">+ ' + (lista.length - 5) + (lista.length - 5 === 1 ? ' altro esercizio' : ' altri esercizi') + '</div>' : '');
     html += '<div class="og-wname">' + escapeHtml(getDayTitle(giorno)) + '</div>' +
       '<div class="og-muted">' + lista.length + ' esercizi \u2022 ' + serie + ' serie \u2022 circa ' + minuti + ' min</div>' +
+      '<div class="og-exlist">' + anteprima + '</div>' +
       (alzati ? '<div class="og-up">\u2191 Il coach ha alzato ' + alzati + (alzati === 1 ? ' carico' : ' carichi') + ' rispetto alla volta scorsa</div>' : '') +
       '<button class="btn-start-workout" onclick="iniziaOggi()">\u25B6 Inizia allenamento</button>';
   }
@@ -2916,6 +3091,17 @@ window.renderOggi = function() {
           '<div class="og-track"><i style="width:' + Math.min(100, Math.round(o.fatte / o.previste * 100)) + '%;background:' + c.colore + '"></i></div></div>';
       }).join('') + '</div></div></div>';
   }
+  /* due riquadri finali: ultimo allenamento e settimana */
+  const ult = loadHistory()[0];
+  const ud = ult ? dataSessione(ult) : null;
+  html += '<div class="og-tiles">' +
+    '<button class="og-tile" onclick="switchTab(\'storico\')"><span class="og-label">Ultimo allenamento</span>' +
+      '<b>' + (ult ? escapeHtml(getDayTitle(ult.day)) : '\u2013') + '</b>' +
+      '<span class="og-muted">' + (ud ? ud.toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short' }) : 'Nessuno ancora') + '</span></button>' +
+    '<button class="og-tile" onclick="switchTab(\'calendario\')"><span class="og-label">Questa settimana</span>' +
+      '<b>' + fattiSett + ' <small>di ' + previstiSett + '</small></b>' +
+      '<span class="og-muted">allenamenti fatti</span></button>' +
+  '</div>';
   box.innerHTML = html;
 };
 
@@ -3431,18 +3617,20 @@ function renderAddWeek() {
   }
   next.style.display = 'block';
 
+  body.classList.remove('aw-fill');
   /* ---- passo 1, strada gruppi: muscoli e poi esercizi ---- */
   if (awStep === 1 && awPath === 'gruppi') {
     document.getElementById('aw-sub').innerText = 'Passo 1 di 2 \u2022 muscoli ed esercizi';
-    let html = '<div class="aw-sec">Quali muscoli</div><div class="aw-groups">' +
-      Object.keys(MUSCLE_GROUPS).map(g => {
-        const on = awGroups.indexOf(g) !== -1;
-        return '<button class="aw-group ' + (on ? 'on' : '') + '" onclick="awToggleGroup(\'' + g + '\')">' +
-          MUSCLE_GROUPS[g].emoji + ' ' + MUSCLE_GROUPS[g].label + '</button>';
-      }).join('') + '</div>';
+    /* Senza gruppi scelti la griglia riempie tutto lo schermo; appena se ne
+       sceglie uno si compatta per lasciare posto agli esercizi sotto. */
+    body.classList.toggle('aw-fill', !awGroups.length);
+    let html = '<div class="aw-sec">Quali muscoli</div>' +
+      '<div class="mg-grid' + (awGroups.length ? ' compact' : '') + '">' +
+      Object.keys(MUSCLE_GROUPS).map(g => muscleCard(g, awGroups.indexOf(g) !== -1, 'awToggleGroup(\'' + g + '\')')).join('') +
+      '</div>';
 
     if (awGroups.length) {
-      html += '<div class="aw-sec">Quali esercizi \u2022 ' + awCustom.length + ' scelti</div>';
+      html += '<div class="aw-sec">Quali esercizi \u2022 ' + awCustom.length + (awCustom.length === 1 ? ' scelto' : ' scelti') + '</div>';
       awGroups.forEach(g => {
         const lista = EXERCISE_LIBRARY.filter(e => e.group === g)
           .sort((a, b) => (a.type === b.type ? 0 : (a.type === 'compound' ? -1 : 1)));
@@ -3450,10 +3638,10 @@ function renderAddWeek() {
           'awToggleCustom(\'' + ex.name.replace(/'/g, "\\'") + '\')')).join('');
       });
     } else {
-      html += '<div class="aw-warn">Tocca uno o piu gruppi per vedere i loro esercizi.</div>';
+      html += '<div class="aw-warn">Tocca uno o più gruppi per vedere i loro esercizi.</div>';
     }
     body.innerHTML = html;
-    next.innerText = awCustom.length ? 'Avanti con ' + awCustom.length + ' esercizi' : 'Scegli almeno un esercizio';
+    next.innerText = awCustom.length ? 'Avanti con ' + awCustom.length + (awCustom.length === 1 ? ' esercizio' : ' esercizi') : 'Scegli almeno un esercizio';
     next.disabled = awCustom.length === 0;
     return;
   }
@@ -4152,8 +4340,8 @@ function renderAllenamento() {
       <div class="workout-item ${e.skipped ? 'skipped' : ''}">
         <div class="workout-item-head">
           <div>
-            <div class="ex-name">${e.superset ? '<span class="ss-tag">⛓</span> ' : ''}${escapeHtml(e.name)}</div>
-            <div class="ex-data">${e.sets} serie × ${e.reps} reps • ${e.weight} kg • ⏱ ${e.rest}s</div>
+            <div class="ex-name">${e.superset ? '<span class="ss-tag">⛓</span> ' : ''}${findExercise(e.name) ? '<span class="ex-fig">' + muscleFigure(findExercise(e.name).group) + '</span>' + escapeHtml(e.name.replace(/^\S+\s/, '')) : escapeHtml(e.name)}</div>
+            <div class="ex-data">Recupero ${e.rest} s</div>
             ${e.coachNote && coachAttivo() ? `<span class="coach-badge-set ${e.coachTipo || ''}">\u{1F916} ${escapeHtml(e.coachNote)}</span>` : ''}
             ${e.recordSeduta ? `<span class="pr-badge">\u{1F3C6} Record! 1RM stimato ${e.recordSeduta} kg</span>` : ''}
             ${ultimaVoltaTesto(e.name) ? `<span class="last-time">${escapeHtml(ultimaVoltaTesto(e.name))}</span>` : ''}
@@ -4180,11 +4368,12 @@ function renderAllenamento() {
               <span class="set-x">×</span>
               <input type="number" class="set-input" value="${s.weight}" step="0.5" oninput="updateSetField(${idx},${si},'weight',this.value)">
               <span class="set-kg-label">kg</span>
-              ${s.done && !s.wasBerserk ? `<select class="rpe-sel" onchange="updateSetRpe(${idx},${si},this.value)" aria-label="Quanto era dura (RPE)"><option value="">RPE</option>${RPE_VALORI.map(v => `<option value="${v}" ${Number(s.rpe) === Number(v) ? 'selected' : ''}>${v.replace('.', ',')}</option>`).join('')}</select>` : s.wasBerserk ? '<span class="flame-done-tag">🔥</span>' : `<button class="set-flame-btn ${armedSet && armedSet.exIdx === idx && armedSet.setIdx === si ? 'armed' : ''}" onclick="armDropTarget(${idx},${si})" aria-label="Porta la serie ${si + 1} a cedimento" title="Porta a cedimento">🔥</button>`}
+              ${s.done && !s.wasBerserk ? `<select class="rpe-sel" onchange="updateSetRpe(${idx},${si},this.value)" aria-label="Quanto era dura (RPE)"><option value="">RPE</option>${RPE_VALORI.map(v => `<option value="${v}" ${Number(s.rpe) === Number(v) ? 'selected' : ''}>${v.replace('.', ',')}</option>`).join('')}</select>` : s.wasBerserk ? `<button class="set-flame-btn flame-on" onclick="annullaCedimento(${idx},${si})" aria-label="Togli il cedimento dalla serie ${si + 1}" title="Tocca per togliere il cedimento">🔥</button>` : `<button class="set-flame-btn ${armedSet && armedSet.exIdx === idx && armedSet.setIdx === si ? 'armed' : ''}" onclick="armDropTarget(${idx},${si})" aria-label="Porta la serie ${si + 1} a cedimento" title="Porta a cedimento">🔥</button>`}
               <button class="set-check ${s.done ? 'checked' : ''}" onclick="toggleSetDone(${idx},${si})" aria-label="Segna serie ${si + 1} completata">✓</button>
             </div>
           `).join('')}
         </div>
+        ${e.completedSets.some(s => s.done && !s.wasBerserk && !s.rpe) ? '<div class="rpe-hint"><b>RPE</b> = quanto era dura la serie: 10 cedimento, 9 ti restava 1 ripetizione, 8 te ne restavano 2, 7 tre, 6 facile.</div>' : ''}
         <div class="set-tools">
           <button class="set-tool-btn" onclick="removeSetFrom(${idx})" ${e.sets <= 1 ? 'disabled' : ''}>− Serie</button>
           <button class="set-tool-btn" onclick="addSetTo(${idx})">+ Serie</button>
@@ -4308,6 +4497,23 @@ window.toggleSetDone = function(exIdx, setIdx) {
       openRecoveryPanel(ex.name, ex.rest);
     }
   }
+};
+
+/* Il cedimento segnato per sbaglio si toglie: prima una volta acceso il
+   fuoco restava per sempre. Se il timer di quella serie sta andando, si ferma. */
+window.annullaCedimento = function(exIdx, setIdx) {
+  const data = loadData();
+  const set = ((data[currentDay] || [])[exIdx] || {}).completedSets ? data[currentDay][exIdx].completedSets[setIdx] : null;
+  if (!set) return;
+  if (armedSet && armedSet.exIdx === exIdx && armedSet.setIdx === setIdx) { stopDropSet(); armedSet = null; }
+  set.wasBerserk = false;
+  saveData(data);
+  renderAllenamento();
+  showUndo('Cedimento tolto dalla serie ' + (setIdx + 1), () => {
+    const d2 = loadData();
+    const s2 = d2[currentDay] && d2[currentDay][exIdx] && d2[currentDay][exIdx].completedSets[setIdx];
+    if (s2) { s2.wasBerserk = true; saveData(d2); renderAllenamento(); }
+  });
 };
 
 /* Arma una SERIE specifica (non l'intero esercizio) per il modulo Cedimento */
@@ -4719,6 +4925,16 @@ window.clearCedimentoAudio = function() {
   renderFailureTracks();
   refreshDropButtonState();
   aggiornaRiassuntoMusica();
+  /* la scelta e fatta: si torna indietro, come ci si aspetta da un pulsante
+     di conferma (prima restava sulla schermata e sembrava non succedere nulla) */
+  const sheet = document.getElementById('music-sheet');
+  if (sheet && !sheet.classList.contains('hidden')) {
+    sheet.classList.add('hidden');
+    const inSeduta = document.getElementById('tab-allenamento').classList.contains('active') &&
+      document.getElementById('workout-session').style.display !== 'none';
+    dockStato(inSeduta ? 'sessione' : 'nascosto');
+    if (currentTab === 'impostazioni') renderSettings();
+  }
   showUndo('Nessuna canzone: durante il cedimento continua la tua musica');
 };
 
@@ -5779,7 +5995,8 @@ function pickRow(ex, selected, onclick) {
   const reps = defaultRepsFor(ex.name);
   const unita = isTimeBased(ex.name) ? 's' : '';
   return '<button class="pick-row ' + (selected ? 'on' : '') + '" onclick="' + onclick + '">' +
-    '<span class="pick-icon">' + emoji + '</span>' +
+    '<span class="pick-icon' + (ex.group && MUSCLE_GROUPS[ex.group] ? ' pick-fig' : '') + '">' +
+      (ex.group && MUSCLE_GROUPS[ex.group] ? muscleFigure(ex.group) : emoji) + '</span>' +
     '<span class="pick-main">' +
       '<span class="pick-name">' + escapeHtml(nome) + '</span>' +
       '<span class="pick-meta">' + DEFAULT_SETS + ' \u00D7 ' + reps + unita +
@@ -5975,6 +6192,34 @@ window.clearGroupSelection = function() {
    spalle piu larghe dei fianchi, torace a trapezio, dorsali a V,
    addome diviso in fasce, cosce affusolate verso il ginocchio.
    ============================================================ */
+/* Card di un gruppo muscolare: al posto dell emoji, la stessa tavola
+   anatomica dell app ritagliata sulla zona giusta, con il muscolo acceso.
+   Coerente con la figura del Piano e disegnata a mano: niente immagini
+   di terzi. */
+const MG_VISTA = {
+  petto:   { box: '22 32 86 52',  sub: 'Pettorali' },
+  schiena: { box: '152 32 86 80', sub: 'Dorsali e trapezio' },
+  gambe:   { box: '38 118 54 124', sub: 'Quadricipiti e femorali' },
+  glutei:  { box: '168 106 54 46', sub: 'Grande e medio' },
+  spalle:  { box: '20 32 90 50',  sub: 'Deltoidi' },
+  braccia: { box: '20 46 90 110', sub: 'Bicipiti e tricipiti' },
+  core:    { box: '38 64 54 48',  sub: 'Addome e obliqui' }
+};
+window.muscleFigure = function(g) {
+  const v = MG_VISTA[g] || { box: '0 0 260 250' };
+  return renderBodyMap([g], null).replace('viewBox="0 0 260 250"', 'viewBox="' + v.box + '"')
+    .replace(/<text class="bm-label"[^<]*<\/text>/g, '');
+};
+window.muscleCard = function(g, on, onclick) {
+  const n = EXERCISE_LIBRARY.filter(e => e.group === g).length;
+  return '<button class="mg-card' + (on ? ' on' : '') + '" onclick="' + onclick + '" aria-pressed="' + (on ? 'true' : 'false') + '">' +
+    '<span class="mg-fig">' + muscleFigure(g) + '</span>' +
+    '<span class="mg-txt"><span class="mg-name">' + MUSCLE_GROUPS[g].label + '</span>' +
+    '<span class="mg-sub">' + (MG_VISTA[g] ? MG_VISTA[g].sub : '') + ' \u00B7 <b class="mg-n">' + n + '</b></span></span>' +
+    '<span class="mg-check" aria-hidden="true">' + (on ? '✓' : '') + '</span>' +
+  '</button>';
+};
+
 function renderBodyMap(active, loads) {
   /* Tavola anatomica: sagoma chiara con contorno netto, muscoli come
      forme separate da una linea sottile del colore di fondo (il modo in
@@ -6409,25 +6654,81 @@ window.endWorkout = function() {
 /* ============================================================
    TAB STORICO
    ============================================================ */
+/* Riga compatta di una seduta: una riga sola invece della card con tutti
+   gli esercizi, cosi anche dopo mesi la lista resta leggibile. */
+function rigaSeduta(session, i) {
+  const fatte = session.exercises.reduce((a, e) => a + e.doneSets, 0);
+  const tot = session.exercises.reduce((a, e) => a + e.totalSets, 0);
+  const vol = session.sessione ? session.sessione.reduce((t, e) => t + e.sets.filter(x => x.done)
+    .reduce((q, x) => q + (Number(x.reps) || 0) * (Number(x.weight) || 0), 0), 0) : 0;
+  const d = dataSessione(session);
+  return '<button class="history-card hs-row" onclick="openHistoryDetail(' + i + ')">' +
+    '<span class="hs-date"><b>' + (d ? d.getDate() : '') + '</b>' + (d ? d.toLocaleDateString('it-IT', { month: 'short' }) : '') + '</span>' +
+    '<span class="hs-main"><span class="hs-title">' + escapeHtml(getDayTitle(session.day)) +
+      (session.berserk ? ' <span class="hs-tag">Cedimento</span>' : '') + '</span>' +
+    '<span class="hs-meta">' + session.exercises.length + (session.exercises.length === 1 ? ' esercizio' : ' esercizi') +
+      ' • ' + fatte + '/' + tot + ' serie' + (vol > 0 ? ' • ' + Math.round(vol).toLocaleString('it-IT') + ' kg' : '') + '</span></span>' +
+    '<span class="aw-path-go">›</span></button>';
+}
+
 function renderStorico() {
   const history = loadHistory();
+  renderProgressiTop();
   const container = document.getElementById('history-list');
   if (history.length === 0) {
-    container.innerHTML = '<span class="muted">Nessuna sessione registrata nello storico.</span>';
+    container.innerHTML = '<span class="muted">Nessun allenamento completato.</span>';
     return;
   }
-  /* ogni allenamento si tocca per vederlo serie per serie */
-  container.innerHTML = history.map((session, i) => `
-    <button class="history-card ${session.berserk ? 'berserk' : ''}" onclick="openHistoryDetail(${i})">
-      ${session.berserk ? '<div class="berserk-score">🔥 BERSERK SCORE</div>' : ''}
-      <div class="history-date">${escapeHtml(getDayTitle(session.day))} \u2022 ${escapeHtml(session.date)}</div>
-      <div class="history-body">
-        ${session.exercises.map(e => `<div>${e.doneSets}/${e.totalSets} serie \u2022 ${escapeHtml(e.name.replace(/^\S+\s/, ''))} \u2022 ${e.weight} kg${e.wasBerserk ? ' 🔥' : ''}</div>`).join('')}
-        ${session.skipped ? `<div class="muted" style="margin-top:4px;">⏭ ${session.skipped} esercizi saltati</div>` : ''}
-      </div>
-      <div class="history-open">Vedi ogni serie \u203A</div>
-    </button>
-  `).join('');
+  container.innerHTML = history.slice(0, 3).map((x, i) => rigaSeduta(x, i)).join('') +
+    (history.length > 3
+      ? '<button class="hs-all" onclick="openAllSessions()">Vedi tutti (' + history.length + ') ›</button>'
+      : '');
+}
+
+/* Archivio completo, raggruppato per mese */
+window.openAllSessions = function() {
+  const history = loadHistory();
+  let mese = null, html = '';
+  history.forEach((x, i) => {
+    const d = dataSessione(x);
+    const m = d ? d.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' }) : 'Senza data';
+    if (m !== mese) { html += '<div class="hs-month">' + escapeHtml(m) + '</div>'; mese = m; }
+    html += rigaSeduta(x, i);
+  });
+  document.getElementById('all-sessions-sub').innerText = history.length + (history.length === 1 ? ' allenamento' : ' allenamenti');
+  document.getElementById('all-sessions-body').innerHTML = html || '<div class="dv-empty">Nessun allenamento completato.</div>';
+  document.getElementById('all-sessions-sheet').classList.remove('hidden');
+};
+window.closeAllSessions = function() { document.getElementById('all-sessions-sheet').classList.add('hidden'); };
+
+/* Numeri in cima a Progressi e l elenco dei blocchi da 4 settimane */
+function renderProgressiTop() {
+  const box = document.getElementById('pg-kpis');
+  if (!box) return;
+  const sed = tutteLeSedute();
+  const vol = sed.reduce((t, h0) => t + volumeSeduta(h0), 0);
+  const sett = {};
+  sed.forEach(h0 => { const d = dataSessione(h0); if (d) sett[ymd(lunediDi(d))] = 1; });
+  const fmtVol = vol >= 10000 ? (Math.round(vol / 100) / 10).toLocaleString('it-IT') + ' t' : Math.round(vol).toLocaleString('it-IT') + ' kg';
+  box.innerHTML =
+    '<div class="pg-kpi"><b>' + sed.length + '</b><span>allenamenti</span></div>' +
+    '<div class="pg-kpi"><b>' + Object.keys(sett).length + '</b><span>settimane attive</span></div>' +
+    '<div class="pg-kpi"><b>' + fmtVol + '</b><span>sollevati</span></div>';
+
+  const bl = blocchiQuattroSettimane();
+  const cont = document.getElementById('pg-blocchi');
+  if (!bl.length) { cont.innerHTML = '<div class="dv-empty" style="padding:var(--sp-3) 0;">Il primo report compare dopo il primo allenamento.</div>'; return; }
+  const d = (x) => x.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' });
+  cont.innerHTML = bl.slice().reverse().map(b => {
+    const r = calcolaBlocco(b.i);
+    const inc = r.mediaInc;
+    return '<button class="entry-btn pg-block" onclick="openStats(\'b' + b.i + '\')">' +
+      '<span class="pg-bn"><small>Sett.</small>' + (b.i * 4 + 1) + '–' + (b.i * 4 + 4) + '</span>' +
+      '<span class="aw-main"><span class="entry-name">' + d(b.da) + ' – ' + d(b.a) + (b.inCorso ? ' <span class="hs-tag on">In corso</span>' : '') + '</span>' +
+      '<span class="aw-meta">' + r.sessioni + (r.sessioni === 1 ? ' allenamento' : ' allenamenti') +
+        (inc !== null ? ' • carichi <b class="' + (inc > 0 ? 'su' : (inc < 0 ? 'giu' : '')) + '">' + (inc > 0 ? '+' : '') + String(inc).replace('.', ',') + '%</b>' : '') + '</span></span>' +
+      '<span class="aw-path-go">›</span></button>';
+  }).join('');
 }
 window.clearHistory = function() {
   if (confirm('Sei sicuro di voler eliminare tutto lo storico progressi?')) {
@@ -7377,7 +7678,7 @@ window.applyGeneratedProgram = function() {
    La colonna 80% e un riferimento pratico: circa l intensita a cui si
    lavora lasciando due ripetizioni in riserva.
    ============================================================ */
-const APP_VERSIONE = '2026.09.24-2';
+const APP_VERSIONE = '2026.09.25-1';
 const DISCHI_KEY = 'tz_dischi';   /* si aggiorna a ogni consegna: dice quale versione sta girando */
 const NOME_KEY = 'tz_nome';
 /* Forza il controllo della versione nuova: aggiorna il service worker e
@@ -7417,7 +7718,7 @@ function pesoSessione(ex) {
 }
 
 window.calcolaStatistiche = function(periodo) {
-  const tutte = loadHistory().slice().filter(h0 => dataSessione(h0));
+  const tutte = tutteLeSedute().slice().filter(h0 => dataSessione(h0));
   tutte.sort((a, b) => dataSessione(a) - dataSessione(b));
   let da = null;
   const p = getProgramma();
@@ -7474,20 +7775,191 @@ window.calcolaStatistiche = function(periodo) {
   };
 };
 
+/* Tutte le sedute che il telefono conosce: lo storico PIU i giorni fatti
+   del calendario che nello storico non ci sono (per esempio dopo uno
+   "Svuota storico"). Cosi le statistiche usano ogni dato gia salvato. */
+window.tutteLeSedute = function() {
+  const hist = loadHistory();
+  const ids = {}, date = {};
+  hist.forEach(h0 => { if (h0.id) ids[h0.id] = 1; if (h0.date) date[h0.date] = 1; });
+  const extra = [];
+  let cal = {};
+  try { cal = loadCal(); } catch (e) {}
+  Object.keys(cal).forEach(k => {
+    const v = cal[k];
+    if (!v || !v.done || !v.sessione || !v.sessione.length) return;
+    if ((v.historyId && ids[v.historyId]) || (v.doneAt && date[v.doneAt])) return;
+    const d = daYmd(k); d.setHours(12);
+    extra.push({
+      id: d.getTime(), date: v.doneAt || '', day: v.day, sessione: v.sessione, dalCalendario: true,
+      exercises: v.sessione.map(e => ({ name: e.name, doneSets: e.sets.filter(x => x.done).length, totalSets: e.sets.length }))
+    });
+  });
+  return hist.concat(extra);
+};
+
+function volumeSeduta(h0) {
+  if (!h0.sessione) return 0;
+  return h0.sessione.reduce((t, e) => t + e.sets.filter(s => s.done)
+    .reduce((a, s) => a + (Number(s.reps) || 0) * (Number(s.weight) || 0), 0), 0);
+}
+
+/* Blocchi da 4 settimane a partire dal lunedi del primo allenamento:
+   e il ritmo con cui un preparatore rivede la scheda. */
+window.blocchiQuattroSettimane = function() {
+  const dd = tutteLeSedute().map(dataSessione).filter(Boolean).sort((a, b) => a - b);
+  if (!dd.length) return [];
+  const origine = lunediDi(dd[0]);
+  const oggi = new Date();
+  const n = Math.floor((lunediDi(oggi) - origine) / (28 * 86400000)) + 1;
+  const out = [];
+  for (let i = 0; i < Math.max(1, n); i++) {
+    const da = piuGiorni(origine, i * 28);
+    const a = piuGiorni(origine, i * 28 + 27);
+    out.push({ i: i, da: da, a: a, inCorso: oggi >= da && oggi <= piuGiorni(a, 1) });
+  }
+  return out;
+};
+
+/* Report di un blocco: carico massimo di ogni esercizio in questo blocco
+   confrontato con il blocco precedente. Nel primo blocco non c e un
+   precedente, quindi si confronta la prima seduta con l ultima. */
+window.calcolaBlocco = function(i) {
+  const bl = blocchiQuattroSettimane();
+  const b = bl[i];
+  if (!b) return { vuoto: true, sessioni: 0, mediaInc: null };
+  const fine = piuGiorni(b.a, 1);
+  const tutte = tutteLeSedute().filter(h0 => dataSessione(h0)).sort((x, y) => dataSessione(x) - dataSessione(y));
+  const dentro = (h0, da, a) => { const d = dataSessione(h0); return d >= da && d < a; };
+  const qui = tutte.filter(h0 => dentro(h0, b.da, fine));
+  const prec = i > 0 ? tutte.filter(h0 => dentro(h0, bl[i - 1].da, b.da)) : [];
+
+  const massimi = (lista) => {
+    const m = {};
+    lista.forEach(h0 => (h0.sessione || h0.exercises || []).forEach(ex => {
+      const w = pesoSessione(ex);
+      if (w === null) return;
+      if (!m[ex.name]) m[ex.name] = { max: w, primo: w, ultimo: w, giorno: h0.day, volte: 0 };
+      m[ex.name].max = Math.max(m[ex.name].max, w);
+      m[ex.name].ultimo = w; m[ex.name].giorno = h0.day; m[ex.name].volte++;
+    }));
+    return m;
+  };
+  const mq = massimi(qui), mp = massimi(prec);
+  const esercizi = Object.keys(mq).map(k => {
+    const q = mq[k];
+    let prima, ora;
+    if (i > 0) { if (!mp[k]) return null; prima = mp[k].max; ora = q.max; }
+    else { if (q.volte < 2) return null; prima = q.primo; ora = q.ultimo; }
+    return { name: k, giorno: q.giorno, primo: prima, ultimo: ora,
+      incremento: prima > 0 ? Math.round(((ora - prima) / prima) * 1000) / 10 : null,
+      rpe80: Math.round(ora * 0.8 * 10) / 10 };
+  }).filter(Boolean);
+  const nuovi = i > 0 ? Object.keys(mq).filter(k => !mp[k]).length : 0;
+
+  const conInc = esercizi.filter(e => e.incremento !== null);
+  const mediaInc = conInc.length ? Math.round(conInc.reduce((t, e) => t + e.incremento, 0) / conInc.length * 10) / 10 : null;
+
+  let programmati = 0;
+  try {
+    const cal = loadCal();
+    Object.keys(cal).forEach(k => { const d = daYmd(k); if (d >= b.da && d < fine && cal[k] && !cal[k].rest) programmati++; });
+  } catch (e) {}
+
+  const volQ = qui.reduce((t, h0) => t + volumeSeduta(h0), 0);
+  const volP = prec.reduce((t, h0) => t + volumeSeduta(h0), 0);
+  return { vuoto: !qui.length, blocco: b, sessioni: qui.length, sessioniPrec: prec.length,
+    volume: volQ, volumePrec: volP, esercizi: esercizi, nuovi: nuovi, mediaInc: mediaInc, programmati: programmati };
+};
+
 window.setStatsPeriodo = function(v) { statsPeriodo = v; renderStats(); };
-window.openStats = function() { document.getElementById('stats-sheet').classList.remove('hidden'); renderStats(); };
+/* senza periodo apre il report del blocco in corso */
+window.openStats = function(periodo) {
+  if (periodo) statsPeriodo = String(periodo);
+  else { const bl = blocchiQuattroSettimane(); statsPeriodo = bl.length ? 'b' + (bl.length - 1) : '8'; }
+  document.getElementById('stats-sheet').classList.remove('hidden'); renderStats();
+};
 window.closeStats = function() { document.getElementById('stats-sheet').classList.add('hidden'); };
 
+/* Scheda del report di un blocco da 4 settimane, sul modello del
+   controllo periodico di un personal trainer: quanto ti sei allenato,
+   quanto lavoro hai fatto e come sono cambiati i carichi. */
+function reportBloccoHtml(i, nome) {
+  const r = calcolaBlocco(i);
+  const d = (x) => x.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' });
+  const fmt = (n) => Math.round(n).toLocaleString('it-IT');
+  if (r.vuoto) return '<div class="dv-empty">Nessun allenamento in queste 4 settimane.</div>';
+  const b = r.blocco;
+  const delta = (a, p) => {
+    if (!p || b.inCorso) return '';   /* un blocco a meta non si confronta con uno intero */
+    const v = Math.round((a - p) / p * 100);
+    return '<em class="' + (v > 0 ? 'su' : (v < 0 ? 'giu' : '')) + '">' + (v > 0 ? '+' : '') + v + '%</em>';
+  };
+  let html = '<div class="st-head">' +
+    '<div class="st-title">Report settimane ' + (i * 4 + 1) + '–' + (i * 4 + 4) + (nome ? ' — ' + escapeHtml(nome) : '') + '</div>' +
+    '<div class="st-sub">' + d(b.da) + ' – ' + d(b.a) + (b.inCorso ? ' • in corso' : '') +
+    (i > 0 ? ' • confronto con le 4 settimane prima' : ' • primo blocco: prima seduta contro ultima') + '</div></div>';
+
+  html += '<div class="pg-kpis st-kpis">' +
+    '<div class="pg-kpi"><b>' + r.sessioni + '</b><span>allenamenti' + (r.programmati ? ' su ' + r.programmati : '') + '</span>' + (i > 0 ? delta(r.sessioni, r.sessioniPrec) : '') + '</div>' +
+    '<div class="pg-kpi"><b>' + fmt(r.volume) + '</b><span>kg sollevati</span>' + (i > 0 ? delta(r.volume, r.volumePrec) : '') + '</div>' +
+    '<div class="pg-kpi"><b>' + (r.mediaInc === null ? '–' : (r.mediaInc > 0 ? '+' : '') + String(r.mediaInc).replace('.', ',') + '%') + '</b><span>carichi medi</span></div>' +
+  '</div>';
+
+  if (b.inCorso) html += '<div class="onb-note">Blocco ancora in corso: il report si completa a fine settimana ' + (i * 4 + 4) + '.</div>';
+
+  if (!r.esercizi.length) {
+    return html + '<div class="dv-empty">' + (i > 0
+      ? 'Nessun esercizio in comune con le 4 settimane precedenti: il confronto parte dal prossimo blocco.'
+      : 'Servono almeno due sedute con lo stesso esercizio per confrontare i carichi.') + '</div>';
+  }
+
+  const perGiorno = {};
+  r.esercizi.forEach(e => { (perGiorno[e.giorno] = perGiorno[e.giorno] || []).push(e); });
+  const maxInc = Math.max.apply(null, r.esercizi.map(e => Math.abs(e.incremento || 0)).concat([1]));
+  html += '<div class="st-table"><div class="st-row st-h"><span>Esercizio</span><span>' + (i > 0 ? 'Prima' : 'Inizio') + '</span><span>' + (i > 0 ? 'Ora' : 'Fine') + '</span><span>Var.</span><span>80%</span></div>';
+  Object.keys(perGiorno).forEach(g => {
+    html += '<div class="st-day">' + escapeHtml(getDayTitle(g)) + '</div>';
+    perGiorno[g].sort((a, b2) => (b2.incremento || 0) - (a.incremento || 0)).forEach(e => {
+      const inc = e.incremento;
+      const cls = inc === null ? '' : (inc > 0 ? 'su' : (inc < 0 ? 'giu' : ''));
+      html += '<div class="st-row"><span class="st-name">' + escapeHtml(e.name.replace(/^\S+\s/, '')) +
+        '<span class="st-bar"><i class="' + cls + '" style="width:' + Math.min(100, Math.abs(inc || 0) / maxInc * 100) + '%"></i></span></span>' +
+        '<span>' + e.primo + '</span><span><b>' + e.ultimo + '</b></span>' +
+        '<span class="st-inc ' + cls + '">' + (inc === null ? '–' : (inc > 0 ? '+' : '') + inc + '%') + '</span>' +
+        '<span>' + e.rpe80 + '</span></div>';
+    });
+  });
+  html += '</div>';
+
+  /* il giudizio del coach sul blocco */
+  const saliti = r.esercizi.filter(e => e.incremento > 0);
+  const fermi = r.esercizi.filter(e => e.incremento === 0);
+  const scesi = r.esercizi.filter(e => e.incremento < 0);
+  const note = [];
+  note.push(saliti.length + ' esercizi su ' + r.esercizi.length + ' sono migliorati.');
+  if (saliti.length) { const m = saliti.slice().sort((a, b2) => b2.incremento - a.incremento)[0]; note.push('Miglior progresso: ' + m.name.replace(/^\S+\s/, '') + ' +' + m.incremento + '%.'); }
+  if (fermi.length) note.push(fermi.length + (fermi.length === 1 ? ' esercizio è fermo' : ' esercizi sono fermi') + ': nel prossimo blocco punta a una ripetizione in più per serie prima di aumentare il carico.');
+  if (scesi.length) note.push(scesi.length + (scesi.length === 1 ? ' esercizio è calato' : ' esercizi sono calati') + ': controlla recupero, sonno ed esecuzione.');
+  if (r.nuovi) note.push(r.nuovi + (r.nuovi === 1 ? ' esercizio nuovo' : ' esercizi nuovi') + ' in questo blocco: entreranno nel confronto dal prossimo.');
+  if (r.programmati && r.sessioni < r.programmati) note.push('Costanza: ' + r.sessioni + ' su ' + r.programmati + ' allenamenti programmati. La costanza conta più del carico.');
+  html += '<div class="card"><div class="section-title">Giudizio del coach</div>' + note.map(x => '<div class="ag-tip">' + escapeHtml(x) + '</div>').join('') + '</div>';
+  return html;
+}
+
 window.renderStats = function() {
-  const s = calcolaStatistiche(statsPeriodo);
+  const s = statsPeriodo.charAt(0) === 'b' ? { vuoto: false } : calcolaStatistiche(statsPeriodo);
   const nome = getNome();
   const box = document.getElementById('stats-body');
   const p = getProgramma();
 
-  const scelte = [['4', '4 settimane'], ['8', '8 settimane'], ['12', '12 settimane']]
+  const blocchi = blocchiQuattroSettimane();
+  const scelte = blocchi.slice().reverse().map(b0 => ['b' + b0.i, 'Sett. ' + (b0.i * 4 + 1) + '\u2013' + (b0.i * 4 + 4)])
+    .concat([['4', '4 settimane'], ['8', '8 settimane'], ['12', '12 settimane']])
     .concat(p ? [['programma', 'Programma attuale']] : []).concat([['tutto', 'Tutto']]);
   let html = '<div class="st-periodo">' + scelte.map(([v, l]) =>
     '<button class="' + (statsPeriodo === v ? 'on' : '') + '" onclick="setStatsPeriodo(\'' + v + '\')">' + l + '</button>').join('') + '</div>';
+  if (statsPeriodo.charAt(0) === 'b') { box.innerHTML = html + reportBloccoHtml(Number(statsPeriodo.slice(1)), nome); return; }
 
   if (s.vuoto) {
     box.innerHTML = html + '<div class="dv-empty">Nessun allenamento in questo periodo.</div>';
@@ -7971,7 +8443,7 @@ window.getProfile = function() {
    BIA, niente carico progressivo automatico. L app resta usabile a mano.
    ============================================================ */
 const CONSENT_KEY = 'tz_consenso';
-const CONSENT_VERSION = '1.0';
+const CONSENT_VERSION = '1.1';
 
 window.consenso = function() {
   try { return localStorage.getItem(CONSENT_KEY); } catch (e) { return null; }
@@ -8081,94 +8553,179 @@ function toggleHtml(k, def, nome, desc) {
     '<span class="switch ' + (on ? 'on' : '') + '"></span></button>';
 }
 
+/* ============================================================
+   OPZIONI in stile Impostazioni di iPhone (come Hevy e Strong):
+   la pagina principale e una lista corta di righe icona · nome ·
+   valore attuale · freccia; i dettagli si aprono in una pagina a parte.
+   Ordine dal piu usato al meno usato, azioni pericolose in fondo.
+   ============================================================ */
+const SET_ICO = {
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+  prog: '<path d="M4 6h16"/><path d="M4 12h10"/><path d="M4 18h6"/><path d="M17 15l2 2 3-4"/>',
+  body: '<circle cx="12" cy="4.5" r="2"/><path d="M12 7v7"/><path d="M8 9.5l4-1 4 1"/><path d="M9.5 21l2.5-7 2.5 7"/>',
+  timer: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2"/><path d="M9 2h6"/>',
+  music: '<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>',
+  disc: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/>',
+  theme: '<path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/>',
+  shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+  doc: '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M8 13h8"/><path d="M8 17h5"/>',
+  book: '<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/><path d="M9 7h6"/>',
+  refresh: '<path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/>',
+  trash: '<path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/>'
+};
+function setIco(k, tono) {
+  return '<span class="sr-ico ' + (tono || '') + '"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + SET_ICO[k] + '</svg></span>';
+}
+/* riga che apre una pagina o fa un azione */
+function setRow(ico, tono, nome, valore, onclick, cls) {
+  return '<button class="sr-row ' + (cls || '') + '" onclick="' + onclick + '">' + setIco(ico, tono) +
+    '<span class="sr-name">' + nome + '</span>' +
+    (valore ? '<span class="sr-val">' + valore + '</span>' : '') +
+    '<span class="sr-go" aria-hidden="true">›</span></button>';
+}
+/* riga con interruttore, senza pagina */
+function setRowSwitch(ico, tono, k, def, nome) {
+  const on = isOn(k, def);
+  return '<button class="sr-row" onclick="toggleSetting(\'' + k + '\', ' + (def ? 'true' : 'false') + ')" role="switch" aria-checked="' + on + '">' +
+    setIco(ico, tono) + '<span class="sr-name">' + nome + '</span><span class="switch ' + (on ? 'on' : '') + '"></span></button>';
+}
+function setGroup(titolo, righe, nota) {
+  return '<div class="sr-group">' + (titolo ? '<div class="sr-title">' + titolo + '</div>' : '') +
+    '<div class="sr-list">' + righe + '</div>' + (nota ? '<div class="sr-note">' + nota + '</div>' : '') + '</div>';
+}
+
+const TEMI = { dark: 'Scuro', light: 'Chiaro', auto: 'Automatico' };
+
 function renderSettings() {
   const prof = getProfile();
   document.getElementById('settings-sub').innerText = '';
+  const nome = getNome();
+  const sett = coachAttivo() ? settimanaProgramma() : null;
+  const iniziali = (nome || '?').trim().split(/\s+/).map(x => x.charAt(0)).join('').slice(0, 2).toUpperCase();
+
+  const bia = (function() {
+    if (!coachAttivo()) return 'Serve il consenso';
+    const st = getBiaStorico();
+    if (!st.length) return 'Nessun referto';
+    return daYmd(st[st.length - 1].data).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' });
+  })();
+  const timerVal = [isOn(SOUND_KEY, true) ? 'Suono' : null, isOn(FLASH_KEY, true) ? (isOn(SOUND_KEY, true) ? 'lampeggio' : 'Lampeggio') : null].filter(Boolean).join(' e ') || 'Silenzioso';
 
   document.getElementById('settings-body').innerHTML =
-    '<div class="set-group">' +
-      '<div class="set-group-title">Aspetto</div>' +
-      segHtml([
-        { id: 'dark',  label: '\u{1F319} Scuro' },
-        { id: 'light', label: '\u2600\uFE0F Chiaro' },
-        { id: 'auto',  label: '\u{1F504} Auto' }
-      ], getSetting(THEME_KEY, 'dark'), 'setTheme') +
-      '<div class="set-about" style="margin-top:8px;">Al sole si legge meglio il chiaro. Auto segue il telefono.</div>' +
-    '</div>' +
+    '<button class="sr-profile" onclick="openSetPage(\'profilo\')">' +
+      '<span class="sr-avatar">' + escapeHtml(iniziali) + '</span>' +
+      '<span class="sr-pmain"><span class="sr-pname">' + (nome ? escapeHtml(nome) : 'Aggiungi il tuo nome') + '</span>' +
+      '<span class="sr-psub">' + (sett && !sett.finito ? 'Programma: settimana ' + sett.numero + ' di ' + sett.totale
+        : (prof ? escapeHtml(prof.split || 'Programma personalizzato') : (coachAttivo() ? 'Nessun programma attivo' : 'Allenamento in autonomia'))) + '</span></span>' +
+      '<span class="sr-go" aria-hidden="true">›</span></button>' +
 
-    '<div class="set-group">' +
-      '<div class="set-group-title">Profilo</div>' +
-      '<label class="bia-val" style="display:block;"><span>Il tuo nome</span>' +
-      '<input type="text" id="set-nome" value="' + escapeHtml(getNome()) + '" placeholder="Come ti chiami" ' +
-      'oninput="salvaNome(this.value)" style="text-align:left;font-weight:700;"></label>' +
-      '<div class="set-about">Compare nelle statistiche.</div>' +
-    '</div>' +
+    setGroup('Profilo',
+      setRow('prog', 'c-primary', 'Programma', prof ? escapeHtml(prof.split || 'Attivo') : 'Nessuno', 'openSetPage(\'programma\')') +
+      setRow('body', 'c-success', 'Composizione corporea', bia, 'openBiaSheet()')) +
 
-    '<div class="set-group">' +
-      '<div class="set-group-title">Composizione corporea</div>' +
-      '<button class="entry-btn" style="margin-top:0;" onclick="openBiaSheet()">' +
-        '<span class="entry-ico">\u{1F4C4}</span>' +
-        '<span class="aw-main"><span class="entry-name">BIA</span>' +
-        '<span class="aw-meta">' + (function() {
-          if (!coachAttivo()) return 'Serve il consenso';
-          const st = getBiaStorico();
-          if (!st.length) return 'Carica il tuo referto';
-          const u = st[st.length - 1];
-          return daYmd(u.data).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' }) + ' \u2022 ' + rigaBia(u.valori);
-        })() + '</span></span>' +
-        '<span class="aw-path-go">\u203A</span></button>' +
-    '</div>' +
+    setGroup('Allenamento',
+      setRow('timer', 'c-warning', 'Timer di recupero', timerVal, 'openSetPage(\'timer\')') +
+      '<button class="sr-row" onclick="openMusicSheet()">' + setIco('music', 'c-accent') +
+        '<span class="sr-name">Canzone del Cedimento<small>Vale per tutti gli allenamenti</small></span>' +
+        '<span class="sr-val" id="set-music-name">' + escapeHtml(nomeMusica() || 'La tua musica') + '</span><span class="sr-go" aria-hidden="true">›</span></button>' +
+      setRowSwitch('disc', 'c-muted', DISCHI_KEY, true, 'Calcolatore dischi')) +
 
-    '<div class="set-group">' +
-      '<div class="set-group-title">Privacy e dati</div>' +
-      (coachAttivo()
-        ? '<div class="set-about" style="margin:0 0 var(--sp-3);">\u2705 Hai acconsentito all uso dei tuoi dati per il coach' +
-            (localStorage.getItem(CONSENT_KEY + '_data') ? ' (' + escapeHtml(localStorage.getItem(CONSENT_KEY + '_data')) + ')' : '') + '.</div>' +
-          '<button class="set-row-btn danger" onclick="revocaConsenso()">Revoca il consenso</button>'
-        : '<div class="set-about" style="margin:0 0 var(--sp-3);">\u26D4 Nessun consenso: coach spento, usi l app a mano.</div>' +
-          '<button class="set-row-btn" onclick="setConsenso(true, false); renderSettings();">Acconsento all uso dei miei dati</button>') +
-      '<button class="set-row-btn" onclick="openConsentText()">\u{1F4C4} Leggi l informativa</button>' +
-    '</div>' +
+    setGroup('App',
+      setRow('theme', 'c-primary', 'Aspetto', TEMI[getSetting(THEME_KEY, 'dark')] || 'Scuro', 'openSetPage(\'aspetto\')')) +
 
-    '<div class="set-group">' +
-      '<div class="set-group-title">Canzone del Cedimento</div>' +
-      '<button class="entry-btn" style="margin-top:0;" onclick="openMusicSheet()">' +
-        '<span class="entry-ico">\u{1F3B5}</span>' +
-        '<span class="aw-main"><span class="entry-name" id="set-music-name">' + escapeHtml(nomeMusica() || 'Nessuna canzone scelta') + '</span>' +
-        '<span class="aw-meta">Una volta, per tutti gli allenamenti</span></span>' +
-        '<span class="aw-path-go">\u203A</span></button>' +
-    '</div>' +
+    setGroup('Privacy e dati',
+      setRow('shield', coachAttivo() ? 'c-success' : 'c-muted', 'Consenso ai dati', coachAttivo() ? 'Attivo' : 'Non dato', 'openSetPage(\'privacy\')') +
+      setRow('doc', 'c-muted', 'Informativa sui dati', '', 'openConsentText()')) +
 
-    '<div class="set-group">' +
-      '<div class="set-group-title">Seduta</div>' +
-      toggleHtml(DISCHI_KEY, true, 'Calcolatore dischi', 'Pulsante Dischi sugli esercizi col bilanciere') +
-    '</div>' +
+    setGroup('Supporto',
+      setRow('book', 'c-primary', 'Guida alle funzioni', '', 'openSetPage(\'guida\')') +
+      setRow('refresh', 'c-success', 'Cerca aggiornamenti', '', 'cercaAggiornamento()')) +
 
-    '<div class="set-group">' +
-      '<div class="set-group-title">Timer di recupero</div>' +
+    setGroup('',
+      setRow('trash', 'c-danger', 'Cancella lo storico allenamenti', '', 'clearHistory(); renderSettings();', 'danger')) +
+
+    '<div class="sr-foot">Allenamento · versione <b id="app-versione">' + APP_VERSIONE + '</b><br>' +
+      'I tuoi dati restano su questo telefono. I consigli del coach non sostituiscono il parere di un medico.</div>';
+
+  if (setPagina) renderSetPage();
+}
+
+/* ---- pagine di dettaglio ---- */
+let setPagina = null;
+const SET_PAGINE = {
+  profilo: 'Profilo', programma: 'Programma', timer: 'Timer di recupero',
+  aspetto: 'Aspetto', privacy: 'Consenso ai dati', guida: 'Guida alle funzioni'
+};
+window.openSetPage = function(id) {
+  setPagina = id;
+  document.getElementById('set-page-title').innerText = SET_PAGINE[id] || '';
+  renderSetPage();
+  document.getElementById('set-page').classList.remove('hidden');
+};
+window.closeSetPage = function() {
+  setPagina = null;
+  document.getElementById('set-page').classList.add('hidden');
+  if (currentTab === 'impostazioni') renderSettings();
+};
+
+function renderSetPage() {
+  const box = document.getElementById('set-page-body');
+  if (!box || !setPagina) return;
+  const prof = getProfile();
+  let h = '';
+  if (setPagina === 'profilo') {
+    h = setGroup('Il tuo nome',
+      '<label class="sr-row sr-input"><input type="text" id="set-nome" value="' + escapeHtml(getNome()) + '" placeholder="Come ti chiami" ' +
+      'oninput="salvaNome(this.value)" autocomplete="given-name"></label>', 'Compare nel saluto e nei report dei progressi.');
+  } else if (setPagina === 'programma') {
+    h = setGroup('Programma attuale',
+      '<div class="sr-row sr-static"><span class="sr-name">' + (prof ? escapeHtml(prof.split || 'Personalizzato') +
+        '<small>' + escapeHtml((prof.goals || [prof.goal]).filter(Boolean).join(', ')) + ' • ' + (prof.settimane || '-') + ' settimane</small>'
+        : 'Nessun programma<small>Crealo con il questionario del coach</small>') + '</span></div>') +
+      setGroup('', setRow('prog', 'c-primary', prof ? 'Rifai il programma personalizzato' : 'Crea il programma personalizzato', '', 'closeSetPage(); restartOnboarding();'),
+        'Il programma attuale viene sostituito. Gli allenamenti già completati restano nello storico.');
+  } else if (setPagina === 'timer') {
+    h = setGroup('Avvisi a fine recupero',
       toggleHtml(SOUND_KEY, true, 'Suono a fine recupero', 'Quando il tempo scade') +
       toggleHtml(COUNTDOWN_KEY, true, 'Conto alla rovescia sonoro', 'Bip negli ultimi 5 secondi') +
-      toggleHtml(AUTOCLOSE_KEY, true, 'Chiudi da solo a fine recupero', 'Senza toccarlo') +
-      toggleHtml(BYPASS_KEY, false, 'Suona anche in silenzioso', 'Ferma la musica di Spotify o Apple Music') +
       toggleHtml(FLASH_KEY, true, 'Lampeggia lo schermo', 'Funziona anche senza audio') +
-      '<button class="set-row-btn" onclick="testSound()">\u{1F50A} Prova il suono</button>' +
-      '<div class="set-about">Se col silenzioso non senti nulla, affidati al lampeggio.</div>' +
-    '</div>' +
-
-    '<div class="set-group">' +
-      '<div class="set-group-title">Programma</div>' +
-      (prof
-        ? '<div class="set-about" style="margin-bottom:8px;"><b>' + escapeHtml(prof.split || '-') + '</b> \\u2022 ' + escapeHtml((prof.goals || [prof.goal]).filter(Boolean).join(', ')) + ' \\u2022 ' + (prof.settimane || '-') + ' settimane</div>'
-        : '<div class="set-about" style="margin-bottom:8px;">Nessun programma.</div>') +
-      '<button class="set-row-btn" onclick="restartOnboarding();">\u{1F9ED} Rifai il programma personalizzato</button>' +
-    '</div>' +
-
-    '<div class="set-group">' +
-      '<div class="set-group-title">Informazioni</div>' +
-      '<div class="set-about" style="margin-top:0;">Versione <b id="app-versione">' + APP_VERSIONE + '</b></div>' +
-      '<button class="set-row-btn" onclick="cercaAggiornamento()">\u21BB Cerca aggiornamenti</button>' +
-      '<div class="set-about">I dati restano su questo telefono. I consigli non sostituiscono un medico.</div>' +
-    '</div>';
+      toggleHtml(BYPASS_KEY, false, 'Suona anche in silenzioso', 'Mette in pausa Spotify o Apple Music')) +
+      setGroup('Comportamento', toggleHtml(AUTOCLOSE_KEY, true, 'Chiudi da solo a fine recupero', 'Senza doverlo toccare')) +
+      '<button class="set-row-btn" onclick="testSound()">Prova il suono</button>' +
+      '<div class="sr-note">Se con il silenzioso non senti nulla, affidati al lampeggio.</div>';
+  } else if (setPagina === 'aspetto') {
+    h = setGroup('Tema',
+      ['dark', 'light', 'auto'].map(t => {
+        const on = getSetting(THEME_KEY, 'dark') === t;
+        return '<button class="sr-row" onclick="setTheme(\'' + t + '\')" aria-pressed="' + on + '"><span class="sr-name">' + TEMI[t] + '</span>' +
+          '<span class="sr-check">' + (on ? '✓' : '') + '</span></button>';
+      }).join(''), 'Il tema chiaro si legge meglio all’aperto. Automatico segue le impostazioni del telefono.');
+  } else if (setPagina === 'privacy') {
+    const quando = localStorage.getItem(CONSENT_KEY + '_data');
+    h = setGroup('Stato',
+      '<div class="sr-row sr-static">' + setIco('shield', coachAttivo() ? 'c-success' : 'c-muted') + '<span class="sr-name">' +
+        (coachAttivo() ? 'Consenso dato' + (quando ? '<small>' + escapeHtml(quando) + '</small>' : '') : 'Nessun consenso<small>Il coach è spento: ti alleni in autonomia</small>') +
+      '</span></div>',
+      coachAttivo() ? 'Il coach usa questionario, BIA e storico solo su questo telefono.' : 'Con il consenso il coach crea il programma e aumenta i carichi per te.') +
+      setGroup('', setRow('doc', 'c-muted', 'Leggi l’informativa', '', 'openConsentText()')) +
+      setGroup('', coachAttivo()
+        ? '<button class="sr-row danger" onclick="revocaConsenso()"><span class="sr-name">Revoca il consenso</span></button>'
+        : '<button class="sr-row" onclick="setConsenso(true, false); renderSettings();"><span class="sr-name sr-primary">Acconsento all’uso dei miei dati</span></button>');
+  } else if (setPagina === 'guida') {
+    const voci = [
+      ['Oggi', 'L’allenamento del giorno, la settimana a colpo d’occhio e gli obiettivi di serie per spinta, tirata e gambe.'],
+      ['Piano', 'La tua settimana tipo: aggiungi esercizi per gruppo muscolare, usa le schede pronte o chiedi al coach.'],
+      ['Seduta', 'Registra ripetizioni e carico di ogni serie. Il recupero parte da solo quando spunti una serie.'],
+      ['RPE', 'Quanto è stata dura la serie, da 6 a 10: 10 è il cedimento, 8 vuol dire che avevi ancora 2 ripetizioni.'],
+      ['Cedimento', 'Tocca il fuoco su una serie per portarla a cedimento con 90 secondi e la tua canzone. Ritocca il fuoco per toglierlo.'],
+      ['Calendario', 'Il mese reale: scambia i giorni nella stessa settimana, copia una settimana, esporta verso il calendario del telefono.'],
+      ['Progressi', 'Un report ogni 4 settimane confronta i tuoi carichi con il blocco precedente, con il giudizio del coach.'],
+      ['Coach', 'Con il tuo consenso crea il programma, aumenta i carichi quando completi tutte le serie e legge la tua BIA.']
+    ];
+    h = '<div class="sr-group"><div class="sr-list">' + voci.map(v =>
+      '<div class="sr-row sr-static sr-guide"><span class="sr-name">' + v[0] + '<small>' + v[1] + '</small></span></div>').join('') + '</div></div>';
+  }
+  box.innerHTML = h;
 }
 
 window.switchProtocol = function(mode) {
