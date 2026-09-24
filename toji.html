@@ -7349,7 +7349,24 @@ window.applyGeneratedProgram = function() {
    La colonna 80% e un riferimento pratico: circa l intensita a cui si
    lavora lasciando due ripetizioni in riserva.
    ============================================================ */
+const APP_VERSIONE = '2026.09.24';   /* si aggiorna a ogni consegna: dice quale versione sta girando */
 const NOME_KEY = 'tz_nome';
+/* Forza il controllo della versione nuova: aggiorna il service worker e
+   ricarica la pagina saltando le copie salvate */
+window.cercaAggiornamento = async function() {
+  try {
+    if ('serviceWorker' in navigator) {
+      const reg = await navigator.serviceWorker.getRegistration();
+      if (reg) await reg.update();
+    }
+    if (window.caches) {
+      const chiavi = await caches.keys();
+      await Promise.all(chiavi.map(k => caches.delete(k)));
+    }
+  } catch (e) {}
+  location.reload();
+};
+
 window.getNome = function() { try { return localStorage.getItem(NOME_KEY) || ''; } catch (e) { return ''; } };
 window.salvaNome = function(v) { try { localStorage.setItem(NOME_KEY, String(v).slice(0, 30)); } catch (e) {} };
 
@@ -8113,6 +8130,8 @@ function renderSettings() {
 
     '<div class="set-group">' +
       '<div class="set-group-title">Informazioni</div>' +
+      '<div class="set-about" style="margin-top:0;">Versione <b id="app-versione">' + APP_VERSIONE + '</b></div>' +
+      '<button class="set-row-btn" onclick="cercaAggiornamento()">\u21BB Cerca aggiornamenti</button>' +
       '<div class="set-about">I dati restano su questo telefono. I consigli non sostituiscono un medico.</div>' +
     '</div>';
 }
