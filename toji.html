@@ -290,6 +290,64 @@ body {
 .mc-l.plan { background: var(--primary); }
 .mc-l.done { background: var(--success); }
 .mc-l.rest { background: var(--surface-1); border: 1px solid var(--border-strong); }
+.pl-card { padding: var(--sp-3) var(--sp-4); }
+.pl-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--sp-2); margin-bottom: var(--sp-2); }
+.pl-head .cal-summary { margin: 0; font-size: 0.72rem; }
+.pl-map-row { display: flex; align-items: center; gap: var(--sp-3); }
+.pl-map { flex: 0 0 60%; aspect-ratio: 260 / 250; }
+.pl-map svg { width: 100%; height: 100%; display: block; }
+.pl-side { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--sp-3); }
+.pl-info { font-size: 0.8rem; line-height: 1.35; }
+.pl-info b { font-size: 0.95rem; }
+.pl-info span { color: var(--muted); font-size: 0.74rem; }
+.pl-days { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.pl-days button { background: var(--surface-2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 4px 8px; font-size: 0.7rem; font-weight: 800; cursor: pointer; }
+.pl-legend { display: flex; flex-direction: column; gap: 4px; font-size: 0.68rem; color: var(--muted); }
+.pl-l { display: inline-block; width: 10px; height: 10px; border-radius: 3px; vertical-align: -1px; margin-right: 4px; }
+.pl-l.start { background: color-mix(in srgb, var(--success) 40%, var(--surface-1)); }
+.pl-l.ok { background: var(--success); }
+.pl-l.high { background: var(--warning); }
+.pl-week { margin-top: var(--sp-3); }
+.pl-week .cal-day { padding: 6px 0; min-height: 0; }
+.pl-moon { display: flex; justify-content: center; color: var(--muted); }
+.pl-hint { font-size: 0.68rem; color: var(--muted); text-align: center; margin: 6px 0 0; }
+.pl-card .aw-open-btn { margin-top: var(--sp-3); }
+.mc-tools.pl-tools { grid-template-columns: repeat(3, 1fr); margin-top: var(--sp-2); }
+.pl-map .bm-muscle.load-start { fill: color-mix(in srgb, var(--success) 40%, var(--surface-1)); animation: none; }
+.pl-map .bm-muscle.load-ok { fill: var(--success); animation: none; }
+.pl-map .bm-muscle.load-high { fill: var(--warning); animation: none; }
+.pl-map .bm-muscle.sel, .pl-map .bm-muscle.sel.load-start, .pl-map .bm-muscle.sel.load-ok, .pl-map .bm-muscle.sel.load-high { fill: var(--primary); animation: bm-pulse 2.2s ease-in-out infinite; }
+.fb-intro { font-size: 0.82rem; color: var(--muted); margin-bottom: var(--sp-4); line-height: 1.4; }
+.fb-q { font-weight: 900; font-size: 0.95rem; margin: var(--sp-4) 0 var(--sp-2); }
+.fb-sub { font-weight: 800; font-size: 0.82rem; margin: var(--sp-3) 0 var(--sp-2); }
+.fb-sub b { color: var(--primary); }
+.fb-opts { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; }
+.fb-opt { background: var(--surface-2); border: 1.5px solid var(--border); border-radius: 12px; padding: 10px 4px; color: var(--text); cursor: pointer; font: inherit; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.fb-opt b { font-size: 0.84rem; }
+.fb-opt small { font-size: 0.64rem; color: var(--muted); }
+.fb-opt.on { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 14%, var(--surface-2)); }
+.fb-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.fb-chip { background: var(--surface-2); border: 1.5px solid var(--border); border-radius: 999px; padding: 7px 12px; color: var(--text); font-weight: 700; font-size: 0.78rem; cursor: pointer; }
+.fb-chip.on { border-color: var(--danger); background: color-mix(in srgb, var(--danger) 14%, var(--surface-2)); }
+.fb-range { width: 100%; accent-color: var(--danger); }
+.fb-scale { display: flex; justify-content: space-between; font-size: 0.66rem; color: var(--muted); }
+.fb-dec-title { font-weight: 900; font-size: 1.05rem; margin-bottom: var(--sp-3); }
+.fb-dec { display: flex; gap: var(--sp-3); align-items: flex-start; background: var(--surface-2); border-radius: 12px; padding: 12px; margin-bottom: var(--sp-2); font-size: 0.86rem; line-height: 1.4; }
+.fb-dec-ico { flex: 0 0 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; background: var(--surface-3); color: var(--primary); }
+.fb-dec.sostituisci .fb-dec-ico, .fb-dec.carico .fb-dec-ico, .fb-dec.medico .fb-dec-ico { color: var(--danger); }
+.fb-dec.extra .fb-dec-ico, .fb-dec.ok .fb-dec-ico { color: var(--success); }
+.fb-dec.scarico .fb-dec-ico, .fb-dec.frequenza .fb-dec-ico, .fb-dec.blocca .fb-dec-ico { color: var(--warning); }
+#fb-sheet .sheet-footer .og-link { margin-top: 4px; }
+.mc-tools { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--sp-2); margin-bottom: var(--sp-3); }
+.mc-tool { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 72px; padding: 10px 4px; background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px; color: var(--primary); cursor: pointer; font: inherit; }
+.mc-tool span { font-size: 0.68rem; font-weight: 800; color: var(--text); text-align: center; line-height: 1.2; }
+.mc-tool.primary { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
+.mc-tool.primary span { color: var(--on-primary); }
+.mc-info { font-size: 0.76rem; color: var(--muted); padding: 0 var(--sp-2); }
+.mc-info summary { cursor: pointer; font-weight: 700; color: var(--muted); list-style: none; text-align: center; padding: var(--sp-2) 0; }
+.mc-info summary::-webkit-details-marker { display: none; }
+.mc-info summary::after { content: ' \203A'; }
+.mc-info[open] summary::after { content: ' \2039'; }
 .mc-hint { font-size: 0.72rem; line-height: var(--lh-tight); color: var(--muted); text-align: center; margin-top: var(--sp-3); }
 .mc-done-box { background: color-mix(in srgb, var(--success) 12%, var(--surface-1)); border: 1px solid var(--success); border-radius: 12px; padding: var(--sp-4); margin-bottom: var(--sp-4); }
 .mc-done-t { font-weight: 900; color: var(--success); }
@@ -478,6 +536,29 @@ body {
 .dock-slot { transition: height .2s ease; }
 
 /* ======= Oggi ======= */
+/* Oggi deve stare in uno schermo senza scorrere: tutto un po piu compatto
+   e gli esercizi in una tendina che si apre solo se serve. */
+.og-drop { margin-top: var(--sp-3); background: var(--surface-2); border-radius: 12px; }
+.og-drop summary { list-style: none; cursor: pointer; padding: 10px 12px; font-weight: 800; font-size: 0.84rem; display: flex; justify-content: space-between; align-items: center; }
+.og-drop summary::-webkit-details-marker { display: none; }
+.og-drop summary::after { content: '\203A'; font-size: 1.2rem; color: var(--muted); transform: rotate(90deg); transition: transform .2s ease; }
+.og-drop[open] summary::after { transform: rotate(-90deg); }
+.og-drop .og-exlist { margin: 0; padding: 0 8px 8px; max-height: 42vh; overflow-y: auto; }
+.og-drop .og-ex { background: var(--surface-1); }
+#oggi-body .og-title { font-size: 2rem; }
+#oggi-body .og-strip { margin: var(--sp-3) 0 var(--sp-2); }
+#oggi-body .og-day { padding: 6px 0 5px; }
+#oggi-body .card { margin-bottom: var(--sp-2); padding: var(--sp-3) var(--sp-4); }
+#oggi-body .og-wname { font-size: 1.7rem; }
+#oggi-body .og-today .btn-start-workout { margin-top: var(--sp-3); }
+#oggi-body .og-link { margin-top: var(--sp-1); padding: 6px; }
+#oggi-body .og-week svg { width: 92px; height: 92px; }
+#oggi-body .og-bars { gap: var(--sp-2); }
+#oggi-body .og-tiles { margin-bottom: 0; }
+#oggi-body .og-tile { padding: var(--sp-3); }
+#oggi-body { min-height: 0; }
+#oggi-body > .card.og-today { flex: 0 0 auto; }
+#oggi-body > .card.og-today .btn-start-workout { margin-top: var(--sp-3); }
 .og-strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin: var(--sp-4) 0 var(--sp-3); }
 .og-day { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 0 6px; border-radius: 12px; background: var(--surface-1); border: 1px solid var(--border); }
 .og-dl { font-size: 0.6rem; font-weight: 900; text-transform: uppercase; color: var(--muted); letter-spacing: 0.3px; }
@@ -834,6 +915,7 @@ body.reorder-mode .plan-card { border-color: var(--primary); }
   box-shadow: 0 4px 14px var(--primary-shadow);
 }
 .btn-start-workout:active { transform: scale(0.98); }
+.btn-start-workout:disabled { opacity: 0.45; box-shadow: none; cursor: default; }
 
 /* ======= Riepilogo settimana nel piano ======= */
 .wk-row {
@@ -965,6 +1047,14 @@ body.reorder-mode .plan-card { border-color: var(--primary); }
 .ex-block-title.warn { color: var(--accent); }
 .ex-steps { margin: 0; padding-left: 20px; font-size: 0.86rem; line-height: var(--lh-loose); }
 .ex-steps li { margin-bottom: var(--sp-2); }
+.ex-muscoli { font-size: 0.8rem; font-weight: 700; color: var(--primary); background: color-mix(in srgb, var(--primary) 10%, var(--surface-2)); border-radius: 10px; padding: 8px 12px; margin-bottom: var(--sp-3); }
+.ex-p { margin: 0; font-size: 0.86rem; line-height: 1.5; }
+.ex-cue { background: var(--surface-2); border-left: 3px solid var(--primary); border-radius: 8px; padding: 10px 12px; font-size: 0.86rem; line-height: 1.45; margin: var(--sp-3) 0; }
+.ex-cue b { display: block; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.6px; color: var(--primary); margin-bottom: 2px; }
+.ex-gloss { margin-top: var(--sp-3); font-size: 0.8rem; color: var(--muted); }
+.ex-gloss summary { cursor: pointer; font-weight: 800; color: var(--text); padding: 6px 0; }
+.ex-gloss p { margin: 6px 0; line-height: 1.4; }
+.ex-gloss b { color: var(--text); }
 .ex-video { display: block; text-align: center; text-decoration: none; background: var(--primary); color: #fff; font-weight: 900; font-size: 0.86rem; padding: 13px; border-radius: 10px; margin-top: 4px; }
 .ex-note { font-size: 0.76rem; color: var(--muted); line-height: var(--lh-base); margin-top: var(--sp-4); }
 .ex-note a { color: var(--accent); }
@@ -1593,28 +1683,36 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
     <!-- VISTA A: scelta del giorno -->
     <div id="plan-day-picker">
       <button class="entry-btn agent-entry" onclick="openAgent()">
-        <span class="entry-ico">🤖</span>
+        <span class="entry-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 3v4"/><circle cx="9" cy="13" r="1.2"/><circle cx="15" cy="13" r="1.2"/><path d="M2 12v3"/><path d="M22 12v3"/></svg></span>
         <span class="aw-main"><span class="entry-name">Il tuo coach</span>
         <span class="aw-meta" id="agent-entry-meta">Programma, carichi e progressi</span></span>
         <span class="aw-path-go">›</span>
       </button>
-      <div class="card">
-        <div class="step-head"><span class="step-num">1</span><span class="step-label">La tua settimana</span></div>
-        <div class="section-hint">Tocca un giorno per costruirlo. Trascinalo sopra un altro per scambiarli.</div>
-        <div class="cal-week" id="plan-week-cal"></div>
-        <div class="cal-legend">
-          <span><i class="cal-dot full"></i> allenamento</span>
-          <span><i class="cal-dot rest"></i> riposo</span>
-          <span><i class="cal-dot empty"></i> vuoto</span>
+      <!-- La settimana si legge dal corpo: i giorni stanno gia in Oggi e nel
+           Calendario, qui conta QUALI muscoli lavori e QUANTO. La figura e
+           interattiva; i giorni restano in una riga compatta in fondo. -->
+      <div class="card pl-card">
+        <div class="pl-head"><span class="step-label">La tua settimana</span><span class="cal-summary" id="cal-summary"></span></div>
+        <div class="pl-map-row">
+          <div class="pl-map" id="plan-map"></div>
+          <div class="pl-side">
+            <div class="pl-info" id="plan-map-info"></div>
+            <div class="pl-legend">
+              <span><i class="pl-l start"></i> sotto il minimo</span>
+              <span><i class="pl-l ok"></i> nel range utile</span>
+              <span><i class="pl-l high"></i> carico alto</span>
+            </div>
+          </div>
         </div>
-        <div class="cal-summary" id="cal-summary"></div>
-        <button class="btn-start-workout aw-open-btn" onclick="openAddWeek()">+ Aggiungi allenamento alla settimana</button>
+        <div class="cal-week pl-week" id="plan-week-cal"></div>
+        <div class="pl-hint">Tocca un giorno per costruirlo · trascinalo su un altro per scambiarli</div>
+        <button class="btn-start-workout aw-open-btn" onclick="openAddWeek()">+ Aggiungi allenamento</button>
       </div>
 
-      <div class="card">
-        <button class="btn-archive" onclick="openWeekSheet()">📅 Vedi gli allenamenti della settimana</button>
-        <button class="btn-archive" onclick="saveWeekSnapshot()">💾 Salva questa settimana</button>
-        <button class="btn-archive" onclick="restartOnboarding()">🧭 Rifai il programma personalizzato</button>
+      <div class="mc-tools pl-tools">
+        <button class="mc-tool" onclick="openWeekSheet()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg><span>Dettagli settimana</span></button>
+        <button class="mc-tool" onclick="saveWeekSnapshot()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h11l3 3v15H5z"/><path d="M8 3v5h8V3"/><rect x="8" y="13" width="8" height="6"/></svg><span>Salva settimana</span></button>
+        <button class="mc-tool" onclick="restartOnboarding()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg><span>Rifai programma</span></button>
       </div>
     </div>
 
@@ -1790,23 +1888,22 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
           <button class="mc-cb-paste" id="mc-cb-paste" onclick="mcPaste()">Incolla</button>
         </div>
       </div>
-      <div class="mc-hint" id="mc-hint">Trascina un giorno sopra un altro della stessa settimana per scambiarli. Tocca la maniglia ≡ per cancellare, svuotare o copiare la settimana.</div>
+      <div class="mc-hint" id="mc-hint">Trascina per scambiare i giorni · ≡ per gestire la settimana</div>
     </div>
 
-    <div class="card" id="mc-actions">
-      <div class="section-title">La settimana tipo</div>
-      <div class="section-hint">La settimana costruita nel Piano, da lunedi a domenica.</div>
-      <button class="btn-archive" onclick="mcPlaceTemplate()">📌 Metti la settimana tipo sulla settimana corrente</button>
-      <button class="btn-archive" onclick="mcFillMonth()">⬇ Riempi tutto il mese</button>
-      <button class="btn-archive" onclick="mcClearMonth()">🗑 Svuota il mese (i giorni fatti restano)</button>
+    <!-- Tutte le azioni in una riga di quattro riquadri: prima erano tre
+         pulsanti lunghi e un paragrafo di istruzioni, e bisognava scorrere. -->
+    <div class="mc-tools" id="mc-actions">
+      <button class="mc-tool" onclick="mcPlaceTemplate()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 15h3"/></svg><span>Settimana tipo</span></button>
+      <button class="mc-tool" onclick="mcFillMonth()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M12 13v5"/><path d="M9.5 15.5L12 18l2.5-2.5"/></svg><span>Riempi mese</span></button>
+      <button class="mc-tool" onclick="mcClearMonth()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/></svg><span>Svuota mese</span></button>
+      <button class="mc-tool primary" onclick="exportIcs()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M5 15v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg><span>Esporta</span></button>
     </div>
-
-    <div class="card">
-      <div class="section-title">Calendario personale</div>
-      <div class="section-hint">Porta allenamenti fatti e in programma su Apple, Google o Outlook.</div>
-      <button class="btn-start-workout" style="margin-top:0;" onclick="exportIcs()">📤 Esporta nel calendario (.ics)</button>
+    <details class="mc-info">
+      <summary>Come funzionano esportazione e svuota mese</summary>
+      <div class="set-about" style="margin-top:var(--sp-2);">Svuota mese conserva sempre i giorni già fatti.</div>
       <div class="set-about" id="ics-help"></div>
-    </div>
+    </details>
   </section>
 
   <!-- TAB: IMPOSTAZIONI -->
@@ -1904,6 +2001,18 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
       <div class="pl-vis" id="plate-vis"></div>
       <div class="set-about" id="plate-txt" style="font-size:0.9rem;font-weight:700;"></div>
     </div>
+  </div>
+</div>
+
+<div class="group-sheet hidden" id="fb-sheet">
+  <div class="sheet-bar">
+    <button class="sheet-back" onclick="chiudiQuestionario()" aria-label="Chiudi">←</button>
+    <div class="sheet-titles"><div class="sheet-title">Com’è andata?</div><div class="sheet-sub">Il coach adatta il programma alle tue risposte</div></div>
+  </div>
+  <div class="sheet-body" id="fb-body"></div>
+  <div class="sheet-footer">
+    <button class="btn-start-workout" style="margin:0;" id="fb-send">Invia al coach</button>
+    <button class="og-link" onclick="chiudiQuestionario()">Salta</button>
   </div>
 </div>
 
@@ -2790,6 +2899,7 @@ function normalizeHistoryEntry(session) {
     day: session.day,
     date: session.date,
     berserk: !!session.berserk,
+    feedback: session.feedback || undefined,
     skipped: Number(session.skipped) || 0,
     exercises: (session.exercises || []).map(e => ({
       name: e.name,
@@ -3073,12 +3183,12 @@ window.renderOggi = function() {
   if (voce && voce.done) {
     html += '<div class="og-wname">' + escapeHtml(voce.title || getDayTitle(giorno)) + '</div>' +
       '<div class="og-ok">\u2713 Fatto \u2022 ' + escapeHtml(voce.summary || '') + '</div>' +
-      '<button class="btn-archive" onclick="openDoneView(\'' + ymd(oggi) + '\')">Vedi com e andata</button>';
+      '<button class="btn-archive" onclick="openDoneView(\'' + ymd(oggi) + '\')">Vedi com’è andata</button>';
   } else if (isRestDay(giorno) || (voce && voce.rest)) {
     html += '<div class="og-wname">Riposo</div><div class="og-muted">Oggi si recupera: il riposo fa parte del programma.</div>' +
       '<button class="btn-archive" onclick="switchTab(\'allenamento\')">Allenati lo stesso</button>';
   } else if (!lista.length) {
-    html += '<div class="og-wname">Niente in programma</div><div class="og-muted">Per oggi non c e una scheda.</div>' +
+    html += '<div class="og-wname">Niente in programma</div><div class="og-muted">Per oggi non c’è una scheda.</div>' +
       '<button class="btn-start-workout" onclick="switchTab(\'allenamento\')">Scegli un allenamento</button>';
   } else {
     const serie = lista.reduce((a, e) => a + e.sets, 0);
@@ -3087,14 +3197,15 @@ window.renderOggi = function() {
     if (coachAttivo()) lista.forEach(e => {
       try { if (caricoProssimo(e.name, e.weight, e.repsBase !== undefined ? e.repsBase : e.reps, e.setsBase !== undefined ? e.setsBase : e.sets).tipo === 'su') alzati++; } catch (err) {}
     });
-    const anteprima = lista.slice(0, 5).map(e =>
+    const anteprima = lista.map(e =>
       '<div class="og-ex"><span class="og-exfig">' + (findExercise(e.name) ? muscleFigure(findExercise(e.name).group) : '') + '</span>' +
       '<span class="og-exname">' + escapeHtml(e.name.replace(/^\S+\s/, '')) + '</span>' +
       '<span class="og-exsr">' + e.sets + ' \u00D7 ' + e.reps + (e.weight ? ' \u2022 ' + e.weight + ' kg' : '') + '</span></div>').join('') +
-      (lista.length > 5 ? '<div class="og-more">+ ' + (lista.length - 5) + (lista.length - 5 === 1 ? ' altro esercizio' : ' altri esercizi') + '</div>' : '');
+      '';
     html += '<div class="og-wname">' + escapeHtml(getDayTitle(giorno)) + '</div>' +
       '<div class="og-muted">' + lista.length + ' esercizi \u2022 ' + serie + ' serie \u2022 circa ' + minuti + ' min</div>' +
-      '<div class="og-exlist">' + anteprima + '</div>' +
+      '<details class="og-drop"><summary>Vedi gli esercizi <span class="og-muted">(' + lista.length + ')</span></summary>' +
+        '<div class="og-exlist">' + anteprima + '</div></details>' +
       (alzati ? '<div class="og-up">\u2191 Il coach ha alzato ' + alzati + (alzati === 1 ? ' carico' : ' carichi') + ' rispetto alla volta scorsa</div>' : '') +
       '<button class="btn-start-workout" onclick="iniziaOggi()">\u25B6 Inizia allenamento</button>';
   }
@@ -3437,6 +3548,39 @@ function aggiornaIngressoAgente() {
   el.innerText = s.finito ? 'Programma concluso: rifai la BIA' : 'Settimana ' + s.numero + ' di ' + s.totale + (s.fase === 'scarico' ? ' \u2022 scarico' : ' \u2022 carico');
 }
 
+/* Figura della settimana: ogni muscolo colorato secondo le serie
+   settimanali (sotto il minimo, nel range utile, carico alto). Toccando
+   un muscolo si vede quanto lo alleni e in quali giorni. */
+let planMapGruppo = null;
+function renderPlanMap() {
+  const box = document.getElementById('plan-map');
+  if (!box) return;
+  const vol = weeklyVolumeByGroup();
+  box.innerHTML = renderBodyMap(planMapGruppo ? [planMapGruppo] : [], vol);
+  box.querySelectorAll('[data-g]').forEach(el => {
+    el.style.cursor = 'pointer';
+    el.addEventListener('click', (ev) => { ev.stopPropagation(); planMapSelect(el.getAttribute('data-g')); });
+  });
+  const info = document.getElementById('plan-map-info');
+  if (!info) return;
+  if (!planMapGruppo) {
+    const lavorati = Object.keys(vol).filter(g => vol[g].sets > 0).length;
+    info.innerHTML = '<b>' + lavorati + ' di ' + Object.keys(MUSCLE_GROUPS).length + '</b> gruppi allenati<br><span>Tocca un muscolo per i dettagli</span>';
+    return;
+  }
+  const v = vol[planMapGruppo] || { sets: 0, days: 0 };
+  const lvl = volLevel(v.sets);
+  const data = loadData();
+  const giorni = DAYS.filter(d => !isRestDay(d) && (data[d] || []).some(e => { const m = findExercise(e.name); return m && m.group === planMapGruppo; }));
+  const giudizio = !lvl ? 'Non lo alleni questa settimana' : lvl === 'start' ? 'Sotto le ' + VOL_MIN_UTILE + ' serie utili' : lvl === 'ok' ? 'Nel range utile' : 'Oltre le ' + VOL_MAX_UTILE + ' serie: rischi di non recuperare';
+  info.innerHTML = '<b>' + MUSCLE_GROUPS[planMapGruppo].label + '</b> · ' + v.sets + ' serie<br><span>' + giudizio + '</span>' +
+    (giorni.length ? '<div class="pl-days">' + giorni.map(d => '<button onclick="planDayClick(\'' + d + '\')">' + escapeHtml(d.slice(0, 3)) + '</button>').join('') + '</div>' : '');
+}
+window.planMapSelect = function(g) {
+  planMapGruppo = planMapGruppo === g ? null : g;
+  renderPlanMap();
+};
+
 function renderPlanDayPicker() {
   aggiornaIngressoAgente();
   const data = loadData();
@@ -3459,7 +3603,7 @@ function renderPlanDayPicker() {
       'aria-label="' + escapeHtml(titolo) + '">' +
       '<span class="cal-dow">' + SIGLE[i] + '</span>' +
       (riposo
-        ? '<span class="cal-num">\u{1F634}</span>'
+        ? '<span class="cal-num pl-moon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></span>'
         : '<span class="cal-num' + (pieno ? '' : ' vuoto') + '">' + (pieno ? list.length : '\u2013') + '</span>') +
       '<span class="cal-sub">' + (riposo ? 'riposo' : (pieno ? escapeHtml(breve || 'esercizi') : '')) + '</span>' +
     '</button>';
@@ -3472,6 +3616,8 @@ function renderPlanDayPicker() {
     onSwap: planSwapDays
   }));
 
+  renderPlanMap();
+
   /* riepilogo in una riga sola, al posto delle sette schede */
   const giorni = DAYS.filter(d => !isRestDay(d) && (data[d] || []).length > 0).length;
   const serie = DAYS.reduce((s2, d) => s2 + (isRestDay(d) ? 0 : (data[d] || []).reduce((a, e) => a + e.sets, 0)), 0);
@@ -3480,7 +3626,7 @@ function renderPlanDayPicker() {
   if (sum) {
     sum.innerText = giorni === 0
       ? 'Nessun allenamento ancora programmato'
-      : giorni + ' allenamenti \u2022 ' + serie + ' serie' + (riposi ? ' \u2022 ' + riposi + ' giorni di riposo' : '');
+      : giorni + ' allenamenti \u2022 ' + serie + ' serie';
   }
 }
 
@@ -4370,7 +4516,7 @@ function renderAllenamento() {
           <div>
             <div class="ex-name">${e.superset ? '<span class="ss-tag">⛓</span> ' : ''}${findExercise(e.name) ? '<span class="ex-fig">' + muscleFigure(findExercise(e.name).group) + '</span>' + escapeHtml(e.name.replace(/^\S+\s/, '')) : escapeHtml(e.name)}</div>
             <div class="ex-data">Recupero ${e.rest} s</div>
-            ${e.coachNote && coachAttivo() ? `<span class="coach-badge-set ${e.coachTipo || ''}">\u{1F916} ${escapeHtml(e.coachNote)}</span>` : ''}
+            ${e.coachNote && coachAttivo() ? `<span class="coach-badge-set ${e.coachTipo || ''}"><b>Coach ·</b> ${escapeHtml(e.coachNote)}</span>` : ''}
             ${e.recordSeduta ? `<span class="pr-badge">\u{1F3C6} Record! 1RM stimato ${e.recordSeduta} kg</span>` : ''}
             ${ultimaVoltaTesto(e.name) ? `<span class="last-time">${escapeHtml(ultimaVoltaTesto(e.name))}</span>` : ''}
             ${e.note ? `<div class="plan-note">📝 ${escapeHtml(e.note)}</div>` : ''}
@@ -5132,12 +5278,51 @@ function controllaAvvioMusica() {
   }, 1500);
 }
 
+/* ============================================================
+   LA CANZONE DEL CEDIMENTO E LA MUSICA DELLE ALTRE APP
+   Il difetto: dopo aver scelto una canzone, finito il cedimento la
+   musica di Spotify o Apple Music non ripartiva. La canzone veniva
+   suonata come "playback", che su iPhone ferma le altre app e non le
+   fa ripartire. La specifica Audio Session prevede apposta il tipo
+   "transient-solo": suona da solo e, quando finisce, fa RIPRENDERE
+   l audio messo in pausa. Finito il cedimento l app lascia subito
+   la sessione (pausa + tipo transitorio + sorgente scaricata), cosi il
+   telefono restituisce l audio alle altre app. Dove il browser non
+   conosce "transient-solo" si ricade su "playback", come prima.
+   ============================================================ */
+function sessioneCanzoneAttiva() {
+  tipoSessione('transient-solo');
+  try {
+    if ('audioSession' in navigator && navigator.audioSession.type !== 'transient-solo') tipoSessione('playback');
+  } catch (e) {}
+}
+function rilasciaSessioneCanzone() {
+  if (isOn(BYPASS_KEY, false)) return;   /* l utente ha scelto di tenere il canale aperto */
+  tipoSessione('transient');
+  const audio = document.getElementById('failure-audio');
+  if (audio && audio.getAttribute('src')) {
+    /* scaricare e ricaricare la sorgente chiude davvero il lettore:
+       una semplice pausa lo lascia "proprietario" dell audio */
+    const src = audio.getAttribute('src');
+    try { audio.removeAttribute('src'); audio.load(); audio.src = src; audio.preload = 'metadata'; } catch (e) {}
+  }
+}
+/* anche l ascolto di prova nella schermata della canzone restituisce
+   l audio quando lo fermi */
+(function() {
+  const a = document.getElementById('failure-audio');
+  if (!a) return;
+  a.addEventListener('play', () => { if (!dropActive) sessioneCanzoneAttiva(); });
+  a.addEventListener('pause', () => { if (!dropActive) tipoSessione('transient'); });
+  a.addEventListener('ended', () => { if (!dropActive) tipoSessione('transient'); });
+})();
+
 function startDropAudio() {
   const mode = getResolvedAudioMode();
   /* se hai scelto una canzone nell app, e lei a suonare e prende il
      controllo; se non l hai scelta, l app non tocca l audio e la tua
      musica (Spotify, Apple Music...) continua senza interruzioni */
-  if (mode) tipoSessione('playback');
+  if (mode) sessioneCanzoneAttiva();
   const vol = Number(document.getElementById('drop-volume').value);
   if (mode === 'mp3') {
     const audio = document.getElementById('failure-audio');
@@ -5167,16 +5352,16 @@ function startDropAudio() {
 }
 function stopDropAudio() {
   const mode = getResolvedAudioMode();
-  /* finita la serie, la musica delle altre app torna libera */
-  if (!isOn(BYPASS_KEY, false)) setTimeout(() => tipoSessione('transient'), 50);
   if (mode === 'mp3') {
     const audio = document.getElementById('failure-audio');
     if (audio) { try { audio.pause(); } catch (e) {} }
+    rilasciaSessioneCanzone();
   } else if (mode === 'youtube' && ytPlayerReady) {
     try { ytPlayer.pauseVideo(); } catch (e) {}
   } else if (mode === 'spotify' && spotifyController) {
     try { spotifyController.pause(); } catch (e) {}
   }
+  if (mode !== 'mp3') rilasciaSessioneCanzone();
 }
 
 function updateDropTimerDisplay() {
@@ -5384,6 +5569,7 @@ window.selectTrack = function(id, silenzioso) {
 
   const audio = document.getElementById('failure-audio');
   audio.style.display = 'block';
+  audio.preload = 'metadata';   /* legge solo la durata: non occupa l audio */
   audio.src = selectedTrackUrl;
   if (typeof audio.load === 'function') { try { audio.load(); } catch (e) {} }
 
@@ -6677,6 +6863,11 @@ window.endWorkout = function() {
   renderAllenamento();
   backToDayPicker();
   switchTab('storico');
+  /* il questionario usa dati sulla salute (dolore): solo con il consenso */
+  if (coachAttivo()) {
+    consumaAggiusti(historyEntry);
+    if (anySetChecked) apriQuestionario(historyEntry);
+  }
 };
 
 /* ============================================================
@@ -7706,7 +7897,7 @@ window.applyGeneratedProgram = function() {
    La colonna 80% e un riferimento pratico: circa l intensita a cui si
    lavora lasciando due ripetizioni in riserva.
    ============================================================ */
-const APP_VERSIONE = '2026.09.25-2';
+const APP_VERSIONE = '2026.09.25-3';
 const DISCHI_KEY = 'tz_dischi';   /* si aggiorna a ogni consegna: dice quale versione sta girando */
 const NOME_KEY = 'tz_nome';
 /* Forza il controllo della versione nuova: aggiorna il service worker e
@@ -8113,7 +8304,301 @@ function frenoBia() {
   return null;
 }
 
+
+/* ============================================================
+   QUESTIONARIO DI FINE ALLENAMENTO E DECISIONI DEL COACH
+   A fine seduta l allievo dice in quattro tocchi com e andata: fatica
+   della seduta (RPE di sessione, Foster), come era arrivato, come ha
+   sentito i carichi e se qualcosa ha fatto male. Il coach decide con
+   regole prese dalla letteratura:
+   - DOLORE (modello di monitoraggio del dolore, Silbernagel 2007):
+     fino a 3/10 si continua e si osserva; 4-5/10 si abbassa il carico
+     del 10% sugli esercizi coinvolti; se torna nella stessa zona, o se
+     e 6/10 o piu, l esercizio si SOSTITUISCE con una variante che
+     carica meno quell articolazione (presa neutra, macchina, meno leva).
+   - FATICA (autoregolazione e scarico reattivo, Bell 2022): due sedute
+     su tre "al limite" o arrivando stanchi = scarico nella seduta
+     successiva (serie -40%, carico -10%). Se continua per tre sedute
+     su quattro il coach propone di togliere un giorno a settimana.
+   - SENSAZIONE DEI CARICHI: leggeri e seduta facile = aumento extra la
+     prossima volta; pesanti e seduta al limite = niente aumenti.
+   Ogni decisione ha il suo motivo scritto ed e annullabile.
+   ============================================================ */
+const AGG_KEY = () => 'coach_plus_aggiusti_' + currentMode;
+window.aggiustiCoach = function() {
+  try { const a = JSON.parse(localStorage.getItem(AGG_KEY()) || 'null'); if (a) return a; } catch (e) {}
+  return { esercizi: {}, scarico: null };
+};
+function salvaAggiusti(a) { try { localStorage.setItem(AGG_KEY(), JSON.stringify(a)); } catch (e) {} }
+
+const ZONE_DOLORE = [
+  ['spalla', 'Spalla'], ['gomito', 'Gomito'], ['polso', 'Polso'], ['schiena', 'Schiena bassa'],
+  ['anca', 'Anca'], ['ginocchio', 'Ginocchio'], ['caviglia', 'Caviglia']
+];
+/* quali esercizi caricano di piu ogni articolazione */
+const STRESS_ZONA = {
+  spalla: ['Panca Piana Bilanciere', 'Panca Inclinata Bilanciere', 'Panca Declinata', 'Dip alle Parallele', 'Military Press', 'Lento Avanti Manubri', 'Arnold Press', 'Tirate al Mento (Upright Row)', 'Croci su Panca Manubri', 'Trazioni alla Sbarra (Pull-ups)', 'Dip su Panca', 'Pullover con Manubrio', 'Alzate Frontali'],
+  gomito: ['French Press', 'Curl Bilanciere Bicipiti', 'Panca Presa Stretta', 'Dip su Panca', 'Trazioni Presa Inversa (Chin-up)', 'Curl su Panca Scott'],
+  polso: ['Curl Bilanciere Bicipiti', 'Front Squat', 'Panca Piana Bilanciere', 'Panca Presa Stretta', 'Piegamenti a Terra (Push-up)'],
+  schiena: ['Stacco da Terra (Deadlift)', 'Rematore con Bilanciere', 'Good Morning', 'Squat con Bilanciere', 'T-Bar Row', 'Stacco Rumeno', 'Military Press', 'Stacco Sumo', 'Hyperextension (Lombari)'],
+  anca: ['Squat con Bilanciere', 'Affondi Bulgari', 'Stacco Sumo', 'Affondi in Camminata', 'Hip Thrust', 'Leg Press'],
+  ginocchio: ['Squat con Bilanciere', 'Front Squat', 'Hack Squat', 'Affondi Manubri', 'Affondi in Camminata', 'Affondi Bulgari', 'Step-up su Panca', 'Leg Extension', 'Leg Press', 'Goblet Squat'],
+  caviglia: ['Calf Raise in Piedi', 'Affondi in Camminata', 'Step-up su Panca', 'Mountain Climber', 'Squat con Bilanciere']
+};
+/* la variante che risolve il problema: meno leva, presa neutra,
+   traiettoria guidata o carico spostato su un altra articolazione */
+const SOSTITUZIONI = {
+  spalla: { 'Panca Piana Bilanciere': 'Chest Press Machine', 'Panca Inclinata Bilanciere': 'Panca Inclinata Manubri', 'Panca Declinata': 'Chest Press Machine',
+    'Dip alle Parallele': 'Pushdown Tricipiti ai Cavi', 'Military Press': 'Shoulder Press Machine', 'Lento Avanti Manubri': 'Shoulder Press Machine',
+    'Arnold Press': 'Shoulder Press Machine', 'Tirate al Mento (Upright Row)': 'Alzate Laterali', 'Croci su Panca Manubri': 'Croci ai Cavi',
+    'Trazioni alla Sbarra (Pull-ups)': 'Lat Machine Presa Inversa', 'Dip su Panca': 'Pushdown Tricipiti ai Cavi', 'Pullover con Manubrio': 'Pullover ai Cavi', 'Alzate Frontali': 'Face Pull' },
+  gomito: { 'French Press': 'Pushdown Tricipiti ai Cavi', 'Curl Bilanciere Bicipiti': 'Hammer Curl', 'Panca Presa Stretta': 'Pushdown Tricipiti ai Cavi',
+    'Dip su Panca': 'Kickback Tricipiti', 'Trazioni Presa Inversa (Chin-up)': 'Lat Machine', 'Curl su Panca Scott': 'Curl ai Cavi' },
+  polso: { 'Curl Bilanciere Bicipiti': 'Hammer Curl', 'Front Squat': 'Goblet Squat', 'Panca Piana Bilanciere': 'Chest Press Machine',
+    'Panca Presa Stretta': 'Pushdown Tricipiti ai Cavi', 'Piegamenti a Terra (Push-up)': 'Chest Press Machine' },
+  schiena: { 'Stacco da Terra (Deadlift)': 'Hip Thrust', 'Rematore con Bilanciere': 'Pulley Basso', 'Good Morning': 'Leg Curl Sdraiato',
+    'Squat con Bilanciere': 'Leg Press', 'T-Bar Row': 'Pulley Basso', 'Stacco Rumeno': 'Leg Curl Sdraiato', 'Military Press': 'Shoulder Press Machine',
+    'Stacco Sumo': 'Hip Thrust', 'Hyperextension (Lombari)': 'Ponte Glutei' },
+  anca: { 'Squat con Bilanciere': 'Leg Press', 'Affondi Bulgari': 'Leg Press', 'Stacco Sumo': 'Stacco Rumeno', 'Affondi in Camminata': 'Leg Press',
+    'Hip Thrust': 'Ponte Glutei', 'Leg Press': 'Leg Extension' },
+  ginocchio: { 'Squat con Bilanciere': 'Hip Thrust', 'Front Squat': 'Hip Thrust', 'Hack Squat': 'Hip Thrust', 'Affondi Manubri': 'Stacco Rumeno',
+    'Affondi in Camminata': 'Stacco Rumeno', 'Affondi Bulgari': 'Hip Thrust', 'Step-up su Panca': 'Ponte Glutei', 'Leg Extension': 'Leg Curl Seduto',
+    'Leg Press': 'Hip Thrust', 'Goblet Squat': 'Stacco Rumeno' },
+  caviglia: { 'Calf Raise in Piedi': 'Calf Raise Seduto', 'Affondi in Camminata': 'Leg Press', 'Step-up su Panca': 'Leg Press',
+    'Mountain Climber': 'Plank', 'Squat con Bilanciere': 'Leg Press' }
+};
+const senzaEmoji = (n) => String(n).replace(/^\S+\s/, '');
+function nomeInLibreria(pulito) {
+  const m = EXERCISE_LIBRARY.find(e => senzaEmoji(e.name) === pulito);
+  return m ? m.name : null;
+}
+
+let fbState = null;
+window.apriQuestionario = function(entry) {
+  fbState = { id: entry.id, day: entry.day, esercizi: (entry.sessione || []).map(e => e.name),
+    srpe: null, arrivo: null, carichi: null, dolore: null, zone: [], livello: 3, coinvolti: [] };
+  const b = document.getElementById('fb-send');
+  b.onclick = () => inviaQuestionario();
+  const salta = document.querySelector('#fb-sheet .sheet-footer .og-link');
+  if (salta) salta.style.display = '';
+  renderQuestionario();
+  document.getElementById('fb-sheet').classList.remove('hidden');
+};
+window.fbSet = function(k, v) {
+  fbState[k] = v;
+  if (k === 'dolore' && !v) { fbState.zone = []; fbState.coinvolti = []; }
+  renderQuestionario();
+};
+window.fbZona = function(z) {
+  const i = fbState.zone.indexOf(z);
+  if (i === -1) {
+    fbState.zone.push(z);
+    /* preseleziona gli esercizi di oggi che caricano quella zona */
+    fbState.esercizi.forEach(n => { if ((STRESS_ZONA[z] || []).indexOf(senzaEmoji(n)) !== -1 && fbState.coinvolti.indexOf(n) === -1) fbState.coinvolti.push(n); });
+  } else fbState.zone.splice(i, 1);
+  renderQuestionario();
+};
+window.fbEsercizio = function(i) {
+  const n = fbState.esercizi[i];
+  const j = fbState.coinvolti.indexOf(n);
+  if (j === -1) fbState.coinvolti.push(n); else fbState.coinvolti.splice(j, 1);
+  renderQuestionario();
+};
+window.fbLivello = function(v) { fbState.livello = Number(v); const l = document.getElementById('fb-liv'); if (l) l.innerText = fbState.livello + '/10 • ' + etichettaDolore(fbState.livello); };
+function etichettaDolore(v) { return v <= 3 ? 'lieve' : (v <= 5 ? 'moderato' : 'forte'); }
+
+function fbScelta(k, opzioni) {
+  return '<div class="fb-opts">' + opzioni.map(([v, l, d]) =>
+    '<button class="fb-opt' + (fbState[k] === v ? ' on' : '') + '" onclick="fbSet(\'' + k + '\', ' + (typeof v === 'string' ? '\'' + v + '\'' : v) + ')">' +
+    '<b>' + l + '</b>' + (d ? '<small>' + d + '</small>' : '') + '</button>').join('') + '</div>';
+}
+function renderQuestionario() {
+  const f = fbState;
+  let h = '<div class="fb-intro">Quattro tocchi: il coach usa le tue risposte per decidere carichi, varianti e recupero.</div>' +
+    '<div class="fb-q">1. Quanto è stata dura la seduta?</div>' +
+    fbScelta('srpe', [[4, 'Facile', 'RPE 1–4'], [7, 'Giusta', 'RPE 5–7'], [9, 'Dura', 'RPE 8–9'], [10, 'Al limite', 'RPE 10']]) +
+    '<div class="fb-q">2. Come ci sei arrivato?</div>' +
+    fbScelta('arrivo', [['riposato', 'Riposato'], ['normale', 'Normale'], ['stanco', 'Stanco']]) +
+    '<div class="fb-q">3. Come hai sentito i carichi?</div>' +
+    fbScelta('carichi', [['leggeri', 'Leggeri'], ['giusti', 'Giusti'], ['pesanti', 'Pesanti']]) +
+    '<div class="fb-q">4. Qualcosa ti ha fatto male?</div>' +
+    fbScelta('dolore', [[false, 'No'], [true, 'Sì']]);
+  if (f.dolore) {
+    h += '<div class="fb-sub">Dove?</div><div class="fb-chips">' + ZONE_DOLORE.map(([z, l]) =>
+      '<button class="fb-chip' + (f.zone.indexOf(z) !== -1 ? ' on' : '') + '" onclick="fbZona(\'' + z + '\')">' + l + '</button>').join('') + '</div>' +
+      '<div class="fb-sub">Quanto, da 0 a 10? <b id="fb-liv">' + f.livello + '/10 • ' + etichettaDolore(f.livello) + '</b></div>' +
+      '<input type="range" class="fb-range" min="1" max="10" step="1" value="' + f.livello + '" oninput="fbLivello(this.value)" aria-label="Intensità del dolore">' +
+      '<div class="fb-scale"><span>fastidio</span><span>moderato</span><span>forte</span></div>' +
+      (f.esercizi.length ? '<div class="fb-sub">Durante quali esercizi?</div><div class="fb-chips">' + f.esercizi.map((n, i) =>
+        '<button class="fb-chip' + (f.coinvolti.indexOf(n) !== -1 ? ' on' : '') + '" onclick="fbEsercizio(' + i + ')">' + escapeHtml(senzaEmoji(n)) + '</button>').join('') + '</div>' : '');
+  }
+  document.getElementById('fb-body').innerHTML = h;
+  const ok = f.srpe !== null && f.arrivo !== null && f.carichi !== null && f.dolore !== null && (!f.dolore || f.zone.length);
+  const b = document.getElementById('fb-send');
+  b.disabled = !ok;
+  b.innerText = ok ? 'Invia al coach' : 'Rispondi alle domande';
+}
+window.chiudiQuestionario = function() {
+  document.getElementById('fb-sheet').classList.add('hidden');
+  fbState = null;
+};
+
+/* Il cuore: dalle risposte alle decisioni. Funzione pura sui dati salvati,
+   cosi e verificabile dai test. */
+window.decisioniCoach = function(fb, storicoFeedback) {
+  const out = [];
+  const prec = (storicoFeedback || []).filter(Boolean);   /* dal piu recente */
+  const ultimi3 = [fb].concat(prec.slice(0, 2));
+  const ultimi4 = [fb].concat(prec.slice(0, 3));
+  const pesante = (x) => x.srpe >= 9 || x.arrivo === 'stanco';
+
+  /* dolore */
+  if (fb.dolore && fb.zone.length) {
+    fb.zone.forEach(z => {
+      const tornato = prec.slice(0, 2).some(p => p.dolore && (p.zone || []).indexOf(z) !== -1 && (p.livello || 0) >= 4);
+      const coinvolti = (fb.coinvolti.length ? fb.coinvolti : fb.esercizi)
+        .filter(n => (STRESS_ZONA[z] || []).indexOf(senzaEmoji(n)) !== -1 || fb.coinvolti.indexOf(n) !== -1);
+      const zNome = (ZONE_DOLORE.find(x => x[0] === z) || [z, z])[1].toLowerCase();
+      if (fb.livello <= 3) {
+        out.push({ tipo: 'osserva', testo: 'Fastidio lieve alla ' + zNome + ' (' + fb.livello + '/10): si continua. Se domattina è peggio del solito, segnalalo la prossima volta.' });
+        return;
+      }
+      coinvolti.forEach(n => {
+        const variante = (SOSTITUZIONI[z] || {})[senzaEmoji(n)];
+        const nomeV = variante ? nomeInLibreria(variante) : null;
+        if ((fb.livello >= 6 || tornato) && nomeV) {
+          out.push({ tipo: 'sostituisci', esercizio: n, variante: nomeV, zona: z,
+            testo: senzaEmoji(n) + ' → ' + variante + ': ' + (fb.livello >= 6 ? 'dolore forte' : 'il dolore alla ' + zNome + ' è tornato') + ', la variante carica meno la ' + zNome + '.' });
+        } else {
+          out.push({ tipo: 'carico', esercizio: n, fattore: fb.livello >= 6 ? 0.8 : 0.9, sedute: 2,
+            testo: senzaEmoji(n) + ': carico ' + (fb.livello >= 6 ? '-20%' : '-10%') + ' per due sedute, per il dolore alla ' + zNome + '.' });
+        }
+      });
+      if (fb.livello >= 6) out.push({ tipo: 'medico', testo: 'Dolore forte: se non passa in pochi giorni o peggiora, fatti vedere da un medico o da un fisioterapista.' });
+    });
+  }
+
+  /* fatica e recupero */
+  const pesanti3 = ultimi3.filter(pesante).length;
+  const pesanti4 = ultimi4.filter(pesante).length;
+  if (pesanti4 >= 3 && prec.length >= 3) {
+    out.push({ tipo: 'frequenza', testo: 'Tre sedute su quattro al limite o arrivando stanco: il recupero non basta. Il coach propone di togliere un allenamento a settimana.' });
+  }
+  if (pesanti3 >= 2) {
+    out.push({ tipo: 'scarico', testo: 'Fatica accumulata: la prossima seduta è di scarico (serie -40%, carico -10%) per ricaricare le energie.' });
+  } else if (fb.carichi === 'pesanti' && fb.srpe >= 9) {
+    out.push({ tipo: 'blocca', testo: 'Carichi pesanti e seduta al limite: la prossima volta nessun aumento, consolida prima.' });
+  } else if (fb.carichi === 'leggeri' && fb.srpe <= 5 && !fb.dolore) {
+    out.push({ tipo: 'extra', testo: 'Carichi leggeri e seduta facile: la prossima volta un aumento in più dove hai completato tutte le serie.' });
+  }
+  if (!out.length) out.push({ tipo: 'ok', testo: 'Seduta nella norma: il programma prosegue come previsto.' });
+  return out;
+};
+
+/* applica le decisioni ai dati; restituisce la funzione per annullare */
+function applicaDecisioni(dec, fb) {
+  const primaDati = localStorage.getItem(dataKey());
+  const primaAgg = localStorage.getItem(AGG_KEY());
+  const primaRest = localStorage.getItem(restKey());
+  const ag = aggiustiCoach();
+  const data = loadData();
+  dec.forEach(d => {
+    if (d.tipo === 'carico') ag.esercizi[d.esercizio] = { fattore: d.fattore, sedute: d.sedute, motivo: 'Dolore segnalato: carico ridotto (' + Math.round((1 - d.fattore) * 100) + '%)' };
+    if (d.tipo === 'blocca' || d.tipo === 'extra') fb.esercizi.forEach(n => { if (!ag.esercizi[n]) ag.esercizi[n] = { [d.tipo]: true, sedute: 1 }; });
+    if (d.tipo === 'scarico') ag.scarico = { sedute: 1, motivo: 'fatica accumulata nelle ultime sedute' };
+    if (d.tipo === 'sostituisci') {
+      const lib = findExercise(d.variante);
+      DAYS.forEach(g => (data[g] || []).forEach(e => {
+        if (e.name !== d.esercizio) return;
+        e.name = d.variante;
+        if (lib) { e.weight = lib.weight; e.completedSets = e.completedSets.map(sx => Object.assign({}, sx, { weight: lib.weight, done: false })); }
+        e.coachNote = 'Variante scelta dal coach: ' + senzaEmoji(d.esercizio) + ' dava dolore';
+        e.coachTipo = 'scarico';
+      }));
+      ag.esercizi[d.variante] = { nota: 'Variante scelta dal coach al posto di ' + senzaEmoji(d.esercizio), sedute: 1 };
+    }
+  });
+  saveData(data);
+  salvaAggiusti(ag);
+  return () => {
+    if (primaDati !== null) localStorage.setItem(dataKey(), primaDati);
+    if (primaAgg !== null) localStorage.setItem(AGG_KEY(), primaAgg); else localStorage.removeItem(AGG_KEY());
+    if (primaRest !== null) localStorage.setItem(restKey(), primaRest); else localStorage.removeItem(restKey());
+    renderPiano(); renderAllenamento();
+  };
+}
+
+/* toglie il giorno di allenamento piu leggero: diventa riposo (annullabile) */
+window.riduciFrequenza = function() {
+  const data = loadData();
+  const giorni = DAYS.filter(d => !isRestDay(d) && (data[d] || []).length);
+  if (giorni.length <= 2) { showUndo('Ti alleni già due volte a settimana: meglio ridurre le serie che i giorni'); return; }
+  const piuLeggero = giorni.slice().sort((a, b) => (data[a] || []).reduce((t, e) => t + e.sets, 0) - (data[b] || []).reduce((t, e) => t + e.sets, 0))[0];
+  const r = loadRestDays(); r.push(piuLeggero); saveRestDays(r);
+  renderPiano();
+  const btn = document.getElementById('fb-freq-btn'); if (btn) { btn.disabled = true; btn.innerText = getDayTitle(piuLeggero) + ' ora è riposo'; }
+  showUndo(getDayTitle(piuLeggero) + ' diventa giorno di riposo', () => { const r2 = loadRestDays().filter(x => x !== piuLeggero); saveRestDays(r2); renderPiano(); });
+};
+
+window.inviaQuestionario = function() {
+  const f = fbState;
+  if (!f) return;
+  const fb = { srpe: f.srpe, arrivo: f.arrivo, carichi: f.carichi, dolore: !!f.dolore, zone: f.zone.slice(), livello: f.dolore ? f.livello : 0,
+    coinvolti: f.coinvolti.slice(), esercizi: f.esercizi.slice() };
+  const hist = loadHistory();
+  const i = hist.findIndex(h => h.id === f.id);
+  const precedenti = hist.filter(h => h.id !== f.id && h.feedback).map(h => h.feedback);
+  if (i !== -1) { hist[i].feedback = fb; saveHistory(hist); }
+  const dec = decisioniCoach(fb, precedenti);
+  const annulla = applicaDecisioni(dec, fb);
+  const ico = { sostituisci: '⇄', carico: '↓', scarico: '↻', blocca: '‖', extra: '↑', frequenza: '−', medico: '!', osserva: '•', ok: '✓' };
+  document.getElementById('fb-body').innerHTML =
+    '<div class="fb-dec-title">Il coach ha deciso</div>' +
+    dec.map(d => '<div class="fb-dec ' + d.tipo + '"><span class="fb-dec-ico">' + ico[d.tipo] + '</span><span>' + escapeHtml(d.testo) + '</span></div>').join('') +
+    (dec.some(d => d.tipo === 'frequenza') ? '<button class="set-row-btn" id="fb-freq-btn" onclick="riduciFrequenza()">Togli un allenamento a settimana</button>' : '') +
+    '<button class="btn-archive" onclick="(' + 'window.__fbAnnulla && window.__fbAnnulla()' + ')">Annulla le decisioni</button>';
+  window.__fbAnnulla = () => { annulla(); showUndo('Decisioni annullate: il programma resta com era'); chiudiQuestionario(); };
+  const b = document.getElementById('fb-send');
+  b.disabled = false; b.innerText = 'Fatto';
+  b.onclick = () => chiudiQuestionario();
+  const salta = document.querySelector('#fb-sheet .sheet-footer .og-link');
+  if (salta) salta.style.display = 'none';
+  renderPiano(); renderAllenamento();
+};
+
+/* a fine seduta si consumano gli aggiustamenti usati */
+function consumaAggiusti(entry) {
+  const ag = aggiustiCoach();
+  (entry.sessione || []).forEach(e => {
+    const a = ag.esercizi[e.name];
+    if (a) { a.sedute = (a.sedute || 1) - 1; if (a.sedute <= 0) delete ag.esercizi[e.name]; }
+  });
+  if (ag.scarico) { ag.scarico.sedute -= 1; if (ag.scarico.sedute <= 0) ag.scarico = null; }
+  salvaAggiusti(ag);
+}
+
 window.caricoProssimo = function(nome, base, repsTarget, setsBase) {
+  const r = caricoProssimoBase(nome, base, repsTarget, setsBase);
+  let ag;
+  try { ag = aggiustiCoach(); } catch (e) { return r; }
+  if (ag.scarico && ag.scarico.sedute > 0 && r.tipo !== 'scarico') {
+    r.weight = arrotonda(r.weight * 0.9);
+    r.sets = Math.max(2, Math.round((setsBase || 3) * 0.6));
+    r.tipo = 'scarico';
+    r.motivo = 'Scarico deciso dal coach: ' + ag.scarico.motivo;
+  }
+  const a = ag.esercizi[nome];
+  if (a && a.sedute > 0) {
+    const inc = incrementoPer(nome);
+    if (a.fattore) { r.weight = arrotonda(r.weight * a.fattore); r.tipo = 'giu'; r.motivo = a.motivo; }
+    else if (a.blocca && r.tipo === 'su') { r.weight = arrotonda(Math.max(0, r.weight - inc)); r.tipo = 'fermo'; r.motivo = 'Stesso carico: l ultima seduta era al limite'; }
+    else if (a.extra && r.tipo === 'su') { r.weight = arrotonda(r.weight + inc); r.motivo += ' • +' + inc + ' kg in più: l ultima volta era leggero'; }
+    else if (a.nota) { r.motivo = a.nota; }
+  }
+  return r;
+};
+
+function caricoProssimoBase(nome, base, repsTarget, setsBase) {
   const sett = settimanaProgramma();
   const scarico = sett && sett.fase === 'scarico';
   const prof = getProfile() || {};
@@ -9029,7 +9514,7 @@ const PATTERN_INFO = {
            'Le ginocchia seguono la direzione delle punte dei piedi.',
            'Risali spingendo con tutto il piede, non solo con le punte.'],
     errori: ['Ginocchia che cadono verso l interno.', 'Talloni che si staccano da terra.', 'Schiena che si arrotonda in fondo.'] },
-  hinge: { nome: 'Piegamento dell anca', complesso: true,
+  hinge: { nome: 'Piegamento dell’anca', complesso: true,
     come: ['Il movimento parte dall anca, non dalla schiena: il sedere va indietro.',
            'La schiena resta dritta come un asse, dall inizio alla fine.',
            'Il bilanciere sfiora le gambe per tutta la salita.',
@@ -9060,7 +9545,7 @@ const PATTERN_INFO = {
            'Scendi finche il ginocchio dietro sfiora quasi terra.',
            'Risali spingendo con il tallone della gamba davanti.'],
     errori: ['Ginocchio davanti che cede verso l interno.', 'Busto che crolla in avanti.'] },
-  hip: { nome: 'Spinta dell anca', complesso: false,
+  hip: { nome: 'Spinta dell’anca', complesso: false,
     come: ['Schiena appoggiata a una panca, piedi ben piantati.',
            'Spingi il bacino verso l alto stringendo i glutei.',
            'In cima corpo dritto dalle ginocchia alle spalle.'],
@@ -9257,6 +9742,53 @@ function paneRecord(sed) {
     '</div><div class="set-about">Il massimale stimato e calcolato con la formula di Epley: una stima, non un test da fare.</div>';
 }
 
+/* ============================================================
+   SCHEDE TECNICHE PER ESERCIZIO
+   Scritte come le spiegherebbe un preparatore: termini di biomeccanica
+   (fase eccentrica, retrazione scapolare, estensione d anca...) sempre
+   tradotti tra parentesi o nel glossario, cosi l allievo impara il
+   linguaggio senza perdersi. Basate sulle linee guida tecniche NSCA e
+   sulla letteratura di riferimento per ogni esercizio.
+   ============================================================ */
+const TECNICA = {"Panca Piana Bilanciere":{"m":"Primari: gran pettorale · Secondari: deltoide anteriore, tricipite","s":"Sdraiato con occhi sotto il bilanciere. Cinque punti di contatto: testa, scapole e glutei sulla panca, piedi a terra. Scapole addotte e depresse (strette e portate verso il basso): creano una base stabile e proteggono la spalla.","e":["Impugnatura poco più larga delle spalle: a metà discesa gli avambracci devono essere verticali.","Fase eccentrica (discesa) controllata in 2–3 secondi: il bilanciere scende verso la parte bassa del petto, gomiti a circa 45–70° dal busto, non aperti a 90°.","Tocca il petto senza rimbalzare, poi spingi: il bilanciere risale leggermente verso gli occhi (traiettoria a \"J\").","Blocca i gomiti in alto senza perdere la posizione delle scapole."],"x":["Gomiti aperti a 90°: sovraccaricano la spalla anteriore.","Glutei che si staccano dalla panca o rimbalzo sul petto."],"c":"Pensa a \"piegare il bilanciere\" con le mani: attiva i dorsali e stabilizza le spalle."},"Panca Inclinata Bilanciere":{"m":"Primari: fasci claveari (alti) del gran pettorale · Secondari: deltoide anteriore, tricipite","s":"Schienale a 30°: oltre i 45° lavora soprattutto la spalla. Scapole addotte e depresse, piedi saldi a terra.","e":["Impugnatura poco più larga delle spalle.","Scendi controllando verso la parte alta del petto, sotto le clavicole.","Spingi in verticale fino a braccia distese, senza staccare i glutei."],"x":["Schienale troppo alto: l'esercizio diventa uno shoulder press.","Bilanciere che scende sul collo o sull'addome."],"c":"Il petto \"va incontro\" al bilanciere: sterno alto per tutta la serie."},"Panca Inclinata Manubri":{"m":"Primari: fasci claveari del gran pettorale · Secondari: deltoide anteriore, tricipite","s":"Schienale a 30°, manubri appoggiati sulle cosce per portarli su con una spinta delle ginocchia. Scapole strette e basse.","e":["Parti con i manubri sopra le spalle, palmi in avanti o leggermente ruotati.","Scendi finché i manubri sono all'altezza del petto, gomiti a 45° dal busto: il pettorale si allunga più che col bilanciere.","Spingi convergendo leggermente verso l'alto, senza far sbattere i manubri."],"x":["Scendere troppo in basso perdendo le scapole: spalla in avanti.","Manubri che oscillano per mancanza di controllo."],"c":"Immagina di stringere il petto mentre spingi, come per avvicinare le braccia."},"Panca Declinata":{"m":"Primari: fasci sternocostali (bassi) del gran pettorale · Secondari: tricipite, deltoide anteriore","s":"Panca declinata di 15–30°, gambe bloccate dai rulli. Scapole addotte e depresse.","e":["Impugnatura poco più larga delle spalle.","Scendi controllato verso la parte bassa del petto.","Spingi fino a braccia distese, traiettoria quasi verticale."],"x":["Declinazione eccessiva: il sangue va alla testa e il controllo peggiora.","Usarla senza assistenza con carichi alti: il bilanciere è difficile da riagganciare."],"c":"Movimento corto e potente: niente rimbalzi."},"Chest Press Machine":{"m":"Primari: gran pettorale · Secondari: deltoide anteriore, tricipite","s":"Regola il sedile: le maniglie all'altezza della metà del petto. Schiena appoggiata, scapole strette e basse.","e":["Spingi in avanti fino quasi a distendere i gomiti.","Torna indietro lentamente finché senti allungare il petto, senza far toccare i pesi.","Mantieni i polsi dritti, in linea con l'avambraccio."],"x":["Sedile troppo basso o alto: le spalle lavorano al posto del petto.","Staccare la schiena dallo schienale nello sforzo."],"c":"Spingi con il palmo vicino al polso, non con le dita."},"Dip alle Parallele":{"m":"Primari: gran pettorale (fasci bassi), tricipite · Secondari: deltoide anteriore","s":"In sospensione sulle parallele, braccia tese, spalle basse lontane dalle orecchie.","e":["Inclina leggermente il busto in avanti per coinvolgere di più il petto.","Scendi piegando i gomiti finché le spalle arrivano all'altezza dei gomiti (circa 90°).","Risali spingendo fino a braccia distese."],"x":["Scendere troppo in basso: stress sulla capsula anteriore della spalla.","Spalle che salgono verso le orecchie."],"c":"Spalle \"in tasca\": basse e indietro per tutta la discesa."},"Piegamenti a Terra (Push-up)":{"m":"Primari: gran pettorale · Secondari: tricipite, deltoide anteriore, core","s":"Mani poco più larghe delle spalle, corpo in linea da testa a talloni: glutei e addome contratti (bacino in leggera retroversione, cioè \"chiuso\").","e":["Scendi con i gomiti a circa 45° dal corpo.","Il petto arriva a pochi centimetri da terra.","Spingi il pavimento lontano da te fino a braccia distese, scapole che si aprono in fondo."],"x":["Bacino che cede verso il basso (iperestensione lombare).","Gomiti aperti a T."],"c":"Corpo rigido come una tavola: si muovono solo le braccia."},"Croci ai Cavi":{"m":"Primari: gran pettorale (adduzione orizzontale) · Secondari: deltoide anteriore","s":"Cavi all'altezza delle spalle o poco sopra, un passo avanti, busto leggermente inclinato, gomiti appena flessi e bloccati.","e":["Porta le mani una verso l'altra davanti al petto con un arco ampio.","Stringi il petto 1 secondo quando le mani si incontrano.","Torna indietro lentamente finché senti un buon allungamento, senza superare la linea delle spalle."],"x":["Piegare e distendere i gomiti: diventa una spinta.","Aprire troppo dietro: stress sulla spalla anteriore."],"c":"Pensa ad \"abbracciare un albero\"."},"Croci su Panca Manubri":{"m":"Primari: gran pettorale · Secondari: deltoide anteriore","s":"Sdraiato, manubri sopra il petto con palmi che si guardano, gomiti leggermente flessi e fissi.","e":["Apri le braccia ad arco finché i manubri sono all'altezza del petto.","Senti il pettorale allungarsi senza dolore alla spalla.","Risali con lo stesso arco, stringendo il petto in alto."],"x":["Carichi eccessivi che obbligano a piegare molto i gomiti.","Scendere sotto la linea del busto."],"c":"Movimento lento: qui conta la tensione, non il peso."},"Pectoral Machine (Butterfly)":{"m":"Primari: gran pettorale · Secondari: deltoide anteriore","s":"Sedile regolato con le maniglie all'altezza del petto, schiena appoggiata, scapole strette.","e":["Porta le braccia davanti a te fino a far quasi toccare le maniglie.","Tieni la contrazione 1 secondo.","Torna controllando fino a sentire l'allungamento, senza far sbattere i pesi."],"x":["Spalle che si portano in avanti a fine movimento.","Movimento a scatti."],"c":"Spingi con i gomiti, non con le mani."},"Pullover con Manubrio":{"m":"Primari: gran pettorale, gran dorsale · Secondari: tricipite (capo lungo), dentato anteriore","s":"Sdraiato sulla panca, manubrio tenuto a due mani sopra il petto, gomiti leggermente flessi.","e":["Porta il manubrio dietro la testa con un arco, finché le braccia sono in linea con il busto.","Addome contratto: la schiena non si inarca.","Riporta il manubrio sopra il petto con lo stesso arco."],"x":["Inarcare la zona lombare per scendere di più.","Piegare molto i gomiti trasformandolo in un French press."],"c":"Costole giù: l'arco lo fanno le braccia, non la schiena."},"Stacco da Terra (Deadlift)":{"m":"Primari: glutei, ischiocrurali, erettori spinali · Secondari: quadricipiti, dorsali, trapezio, avambracci","s":"Piedi alla larghezza delle anche, bilanciere sopra la metà del piede. Piegati prendendo il bilanciere appena fuori dalle gambe: tibie che lo toccano, schiena in posizione neutra (curve naturali), spalle leggermente davanti al bilanciere.","e":["Inspira, contrai l'addome e \"togli il gioco\" al bilanciere tirandolo verso di te.","Spingi il pavimento con le gambe: il bilanciere sale strisciando su tibie e cosce.","Superate le ginocchia, porta le anche in avanti fino a stare dritto (estensione completa d'anca), senza inclinarti all'indietro.","Scendi invertendo il movimento: prima le anche indietro, poi le ginocchia."],"x":["Schiena che si arrotonda (flessione lombare) sotto carico.","Bilanciere lontano dalle gambe: aumenta il braccio di leva sulla schiena."],"c":"Non \"tirare\" il peso: spingi il pavimento lontano da te."},"Trazioni alla Sbarra (Pull-ups)":{"m":"Primari: gran dorsale · Secondari: bicipite, brachiale, romboidi, trapezio medio-inferiore","s":"Presa prona (palmi in avanti) poco più larga delle spalle, braccia tese, core contratto e gambe unite.","e":["Inizia abbassando le scapole (depressione scapolare): le spalle si allontanano dalle orecchie.","Tira portando i gomiti verso i fianchi finché il mento supera la sbarra.","Scendi controllato fino a braccia distese."],"x":["Slanciarsi con le gambe (kipping) senza volerlo.","Mezze ripetizioni senza distendere le braccia."],"c":"Porta il petto verso la sbarra, non il mento."},"Trazioni Presa Inversa (Chin-up)":{"m":"Primari: gran dorsale, bicipite · Secondari: brachiale, pettorale (fasci bassi)","s":"Presa supina (palmi verso di te) alla larghezza delle spalle, braccia tese.","e":["Abbassa le scapole prima di piegare le braccia.","Tira i gomiti verso il basso e avanti finché il mento supera la sbarra.","Scendi lentamente fino a braccia quasi distese."],"x":["Ondeggiare con il corpo.","Iperestendere i gomiti in basso di colpo."],"c":"Gomiti verso le tasche dei pantaloni."},"Lat Machine":{"m":"Primari: gran dorsale · Secondari: grande rotondo, bicipite, romboidi, trapezio medio","s":"Cosce bloccate sotto i rulli, presa prona poco più larga delle spalle, busto appena inclinato indietro (10–20°), petto alto.","e":["Abbassa prima le scapole, poi tira la barra verso la parte alta del petto.","I gomiti scendono verso i fianchi, un po' indietro.","Risali lentamente fino a braccia distese, lasciando salire le scapole."],"x":["Tirare la barra dietro la nuca: posizione sfavorevole per spalla e collo.","Oscillare con il busto per usare lo slancio."],"c":"Pensa di \"spingere i gomiti in basso e indietro\", le mani sono solo ganci."},"Lat Machine Presa Inversa":{"m":"Primari: gran dorsale, bicipite · Secondari: grande rotondo, brachiale","s":"Presa supina alla larghezza delle spalle, cosce bloccate, petto alto.","e":["Abbassa le scapole.","Tira la barra verso lo sterno portando i gomiti vicino ai fianchi.","Risali controllato fino a braccia distese."],"x":["Tirare solo con le braccia inclinandosi molto indietro.","Polsi piegati."],"c":"Gomiti stretti e vicini al corpo per tutta la tirata."},"Rematore con Bilanciere":{"m":"Primari: gran dorsale, romboidi, trapezio medio · Secondari: deltoide posteriore, bicipite, erettori spinali","s":"Stacca il bilanciere, piega le anche portandole indietro (hip hinge) fino a busto a 30–45° da terra, ginocchia morbide, schiena neutra.","e":["Tira il bilanciere verso l'ombelico, gomiti a 30–45° dal busto.","Stringi le scapole in alto per 1 secondo.","Scendi controllato fino a braccia distese senza cambiare l'angolo del busto."],"x":["Raddrizzare il busto a ogni ripetizione per aiutarsi.","Schiena che si arrotonda."],"c":"Il busto è una tavola ferma: si muovono solo braccia e scapole."},"Rematore con Manubrio":{"m":"Primari: gran dorsale · Secondari: romboidi, deltoide posteriore, bicipite","s":"Mano e ginocchio sulla panca, altra gamba a terra, schiena neutra e parallela al pavimento.","e":["Tira il manubrio verso l'anca, non verso la spalla.","Il gomito resta vicino al fianco.","Scendi fino a braccio disteso, lasciando allungare il dorsale."],"x":["Ruotare il busto per sollevare più peso.","Tirare verso il petto: lavora più il trapezio."],"c":"Disegna un arco: dalla spalla verso la tasca posteriore."},"T-Bar Row":{"m":"Primari: gran dorsale, romboidi, trapezio medio · Secondari: deltoide posteriore, bicipite","s":"Piedi ai lati della barra, anche indietro, busto a circa 45°, schiena neutra, presa neutra (palmi che si guardano).","e":["Tira la maniglia verso l'addome.","Stringi le scapole in alto.","Scendi lentamente senza perdere la schiena neutra."],"x":["Usare la spinta delle gambe per sollevare.","Collo iperesteso per guardare avanti."],"c":"Sguardo a terra, un metro davanti a te: collo in linea."},"Pulley Basso":{"m":"Primari: gran dorsale, romboidi, trapezio medio · Secondari: bicipite, deltoide posteriore","s":"Seduto, piedi sulla pedana, ginocchia leggermente flesse, busto dritto, presa neutra.","e":["Tira la maniglia verso l'ombelico portando i gomiti indietro vicino ai fianchi.","Stringi le scapole 1 secondo.","Torna distendendo le braccia e lasciando le scapole andare avanti, senza piegare la schiena."],"x":["Dondolare il busto avanti e indietro.","Spalle che salgono verso le orecchie."],"c":"Petto alto verso la maniglia: la schiena resta ferma."},"Pullover ai Cavi":{"m":"Primari: gran dorsale · Secondari: grande rotondo, tricipite (capo lungo)","s":"In piedi davanti al cavo alto, barra dritta o corda, busto leggermente inclinato, braccia quasi tese.","e":["Porta la barra verso le cosce con un arco, braccia quasi distese.","Stringi i dorsali in basso.","Risali lentamente finché senti i dorsali allungarsi."],"x":["Piegare i gomiti: diventa un pushdown per tricipiti.","Muovere il busto."],"c":"Le braccia sono leve rigide: il movimento parte dalla spalla."},"Hyperextension (Lombari)":{"m":"Primari: erettori spinali, glutei · Secondari: ischiocrurali","s":"Sulla panca a 45°, bordo del cuscino appena sotto le anche, piedi bloccati, braccia incrociate sul petto.","e":["Scendi piegando le anche con la schiena neutra.","Risali fino ad avere il corpo in linea retta.","Contrai i glutei in alto senza inarcare oltre la linea."],"x":["Iperestendere la schiena in alto.","Movimento veloce e a scatti."],"c":"Arriva dritto come un righello, non a banana."},"Squat con Bilanciere":{"m":"Primari: quadricipiti, grande gluteo · Secondari: adduttori, ischiocrurali, erettori spinali","s":"Bilanciere sui trapezi (non sul collo), piedi alla larghezza delle spalle o poco più, punte leggermente in fuori (15–30°). Inspira e contrai l'addome (bracing) prima di scendere.","e":["Scendi piegando insieme anche e ginocchia, come per sederti tra i talloni.","Le ginocchia seguono la direzione delle punte dei piedi: non devono cadere verso l'interno (valgismo).","Arriva almeno con le cosce parallele al pavimento mantenendo la schiena neutra.","Risali spingendo con tutto il piede: petto e anche salgono insieme."],"x":["Ginocchia che crollano verso l'interno.","Talloni che si sollevano o bacino che si arrotonda in fondo."],"c":"Spingi il pavimento \"allargandolo\" con i piedi: ginocchia fuori."},"Front Squat":{"m":"Primari: quadricipiti · Secondari: grande gluteo, core, erettori spinali alti","s":"Bilanciere appoggiato sui deltoidi anteriori, gomiti alti e avanti, busto molto verticale.","e":["Scendi mantenendo i gomiti alti.","Le ginocchia avanzano più che nello squat classico: è normale.","Risali tenendo il petto alto."],"x":["Gomiti che cadono: il bilanciere scivola in avanti.","Busto che si piega in avanti."],"c":"Gomiti verso il muro davanti a te."},"Goblet Squat":{"m":"Primari: quadricipiti, grande gluteo · Secondari: adduttori, core","s":"Manubrio o kettlebell tenuto davanti al petto, piedi poco più larghi delle spalle, punte leggermente in fuori.","e":["Scendi tra le gambe tenendo il busto dritto.","I gomiti scendono all'interno delle ginocchia.","Risali spingendo con tutto il piede."],"x":["Peso lontano dal corpo.","Talloni che si sollevano."],"c":"Ottimo per imparare lo squat: il peso davanti ti tiene dritto."},"Hack Squat":{"m":"Primari: quadricipiti · Secondari: grande gluteo, adduttori","s":"Schiena e spalle ben appoggiate, piedi a metà pedana alla larghezza delle spalle.","e":["Sblocca la macchina e scendi controllato fino a cosce parallele o sotto.","Ginocchia in linea con le punte.","Spingi con tutto il piede senza bloccare di colpo le ginocchia in alto."],"x":["Staccare il bacino dallo schienale in fondo.","Ridurre l'escursione per caricare di più."],"c":"Piedi più in basso = più quadricipiti; più in alto = più glutei."},"Leg Press":{"m":"Primari: quadricipiti, grande gluteo · Secondari: adduttori, ischiocrurali","s":"Schiena e bacino ben appoggiati, piedi a metà pedana alla larghezza delle anche.","e":["Sblocca e scendi finché le ginocchia arrivano a circa 90° o finché il bacino resta appoggiato.","Spingi con tutto il piede.","Distendi senza bloccare di scatto le ginocchia."],"x":["Scendere troppo: il bacino si stacca e la zona lombare si arrotonda.","Ginocchia che si avvicinano spingendo."],"c":"Il bacino resta incollato allo schienale: è lui a dirti dove fermarti."},"Affondi Manubri":{"m":"Primari: quadricipiti, grande gluteo · Secondari: adduttori, stabilizzatori dell'anca","s":"In piedi, manubri lungo i fianchi, piedi alla larghezza delle anche.","e":["Fai un passo avanti e scendi finché entrambe le ginocchia sono a circa 90°.","Il ginocchio avanti resta in linea con il piede.","Spingi con il tallone della gamba avanti per tornare alla posizione iniziale."],"x":["Passo troppo corto: il ginocchio va molto oltre la punta e il tallone si alza.","Busto che crolla in avanti."],"c":"Scendi in verticale, come in un ascensore."},"Affondi in Camminata":{"m":"Primari: quadricipiti, grande gluteo · Secondari: adduttori, core, stabilizzatori dell'anca","s":"In piedi, busto dritto, manubri ai fianchi o mani sui fianchi.","e":["Fai un passo lungo e scendi finché il ginocchio dietro sfiora il pavimento.","Spingi e porta avanti l'altra gamba nel passo successivo.","Mantieni il busto dritto e il passo regolare."],"x":["Ginocchio avanti che cade verso l'interno.","Perdere l'equilibrio per passi troppo stretti: tieni i piedi come su due binari."],"c":"Piedi su due binari, non su una corda."},"Step-up su Panca":{"m":"Primari: quadricipiti, grande gluteo · Secondari: ischiocrurali, stabilizzatori dell'anca","s":"Davanti a una panca stabile alta circa come il ginocchio, un piede sopra.","e":["Spingi con il piede sulla panca fino a stare in piedi sopra.","Non darti la spinta con il piede a terra.","Scendi controllato con la stessa gamba."],"x":["Rimbalzare con la gamba dietro.","Ginocchio che cade verso l'interno."],"c":"Il lavoro lo fa solo la gamba sulla panca."},"Leg Extension":{"m":"Primari: quadricipiti (soprattutto il retto femorale)","s":"Schiena appoggiata, ginocchio allineato al perno della macchina, rullo sopra le caviglie.","e":["Distendi le ginocchia fino quasi al blocco.","Contrai i quadricipiti 1 secondo in alto.","Scendi lentamente in 2–3 secondi."],"x":["Slanciare il peso.","Sollevare i glutei dal sedile."],"c":"Punte dei piedi verso di te: senti meglio la contrazione."},"Leg Curl Sdraiato":{"m":"Primari: ischiocrurali (bicipite femorale, semitendinoso, semimembranoso) · Secondari: gastrocnemio","s":"Prono, ginocchia appena oltre il bordo del cuscino, rullo sopra i talloni, anche premute sul cuscino.","e":["Porta i talloni verso i glutei.","Contrai 1 secondo in alto.","Scendi lentamente senza far toccare i pesi."],"x":["Anche che si sollevano dal cuscino.","Movimento veloce senza controllo in discesa."],"c":"Bacino schiacciato sul cuscino per tutta la serie."},"Leg Curl Seduto":{"m":"Primari: ischiocrurali · Secondari: gastrocnemio","s":"Seduto, ginocchia allineate al perno, rullo sopra le cosce ben stretto, rullo inferiore sotto i polpacci.","e":["Piega le ginocchia portando i talloni sotto il sedile.","Contrai in fondo.","Torna lentamente fino quasi a gambe tese."],"x":["Rullo delle cosce allentato.","Busto che si stacca dallo schienale."],"c":"Busto leggermente in avanti: allunghi di più i femorali."},"Calf Raise in Piedi":{"m":"Primari: gastrocnemio · Secondari: soleo","s":"Avampiedi sul bordo di un gradino o della pedana, ginocchia distese ma non bloccate.","e":["Scendi con i talloni sotto il livello del gradino (dorsiflessione) per allungare il polpaccio.","Sali sulle punte il più in alto possibile (flessione plantare).","Tieni 1 secondo in alto."],"x":["Rimbalzare in basso: il tendine lavora come una molla e il muscolo meno.","Piegare le ginocchia."],"c":"Pausa di 1 secondo in basso e in alto."},"Calf Raise Seduto":{"m":"Primari: soleo · Secondari: gastrocnemio","s":"Seduto, ginocchia a 90° sotto il rullo, avampiedi sulla pedana.","e":["Scendi con i talloni fino al massimo allungamento.","Sali sulle punte.","Contrai 1 secondo in alto."],"x":["Escursione ridotta.","Movimento a rimbalzo."],"c":"A ginocchio piegato lavora soprattutto il soleo: serve anche lui."},"Hip Thrust":{"m":"Primari: grande gluteo · Secondari: ischiocrurali, quadricipiti, adduttori","s":"Parte alta della schiena (sotto le scapole) sulla panca, bilanciere sulle anche con un cuscinetto, piedi alla larghezza delle anche.","e":["Spingi con i talloni e porta le anche in alto fino all'estensione completa: in alto le tibie sono verticali.","In alto porta il pube verso le costole (leggera retroversione del bacino), costole basse, mento verso il petto.","Tieni 1 secondo stringendo i glutei, poi scendi controllato."],"x":["Inarcare la schiena in alto invece di estendere le anche.","Piedi troppo lontani (lavorano i femorali) o troppo vicini (lavorano i quadricipiti)."],"c":"Sguardo avanti, non al soffitto: il bacino resta nella posizione giusta."},"Stacco Rumeno":{"m":"Primari: ischiocrurali, grande gluteo · Secondari: erettori spinali, adduttori","s":"In piedi con il bilanciere, piedi alla larghezza delle anche, ginocchia leggermente flesse e poi fisse.","e":["Porta le anche indietro (hip hinge) facendo scendere il bilanciere lungo le cosce.","Scendi finché senti tirare i femorali, di solito a metà tibia, schiena sempre neutra.","Risali spingendo le anche in avanti."],"x":["Piegare le ginocchia trasformandolo in uno stacco classico.","Schiena che si arrotonda per scendere più in basso."],"c":"Chiudi una porta con il sedere: le anche vanno indietro, non giù."},"Stacco Sumo":{"m":"Primari: grande gluteo, adduttori, quadricipiti · Secondari: ischiocrurali, erettori spinali","s":"Piedi molto larghi con punte in fuori, presa stretta dentro le gambe, busto più verticale che nello stacco classico.","e":["Spingi le ginocchia verso l'esterno, in linea con i piedi.","Spingi il pavimento e porta le anche in avanti.","Blocca in alto stringendo i glutei."],"x":["Ginocchia che cadono verso l'interno.","Anche che salgono prima delle spalle."],"c":"Allarga il pavimento con i piedi."},"Affondi Bulgari":{"m":"Primari: quadricipiti, grande gluteo · Secondari: adduttori, stabilizzatori dell'anca","s":"Piede dietro appoggiato su una panca, piede avanti a circa un passo e mezzo.","e":["Scendi in verticale finché la coscia avanti è parallela al pavimento.","Busto leggermente in avanti per più glutei, dritto per più quadricipiti.","Spingi con il piede avanti per risalire."],"x":["Piede avanti troppo vicino alla panca.","Spingere con la gamba dietro."],"c":"La gamba dietro è solo un appoggio."},"Good Morning":{"m":"Primari: ischiocrurali, erettori spinali · Secondari: grande gluteo","s":"Bilanciere sui trapezi come nello squat, piedi alla larghezza delle anche, ginocchia leggermente flesse.","e":["Porta le anche indietro e inclina il busto in avanti con la schiena neutra.","Scendi finché senti i femorali in tensione, busto quasi parallelo o poco sopra.","Risali spingendo le anche in avanti."],"x":["Arrotondare la schiena.","Usare carichi alti prima di padroneggiare il movimento."],"c":"Usa carichi leggeri: è un esercizio di controllo."},"Ponte Glutei":{"m":"Primari: grande gluteo · Secondari: ischiocrurali","s":"Supino, ginocchia piegate, piedi a terra alla larghezza delle anche, braccia lungo i fianchi.","e":["Spingi con i talloni e solleva il bacino fino ad allineare spalle, anche e ginocchia.","Stringi i glutei in alto 1–2 secondi.","Scendi lentamente."],"x":["Inarcare la schiena invece di spingere con i glutei.","Ginocchia che si aprono o si chiudono."],"c":"Premi i talloni come se volessi trascinarli verso di te."},"Abductor Machine":{"m":"Primari: medio e piccolo gluteo · Secondari: tensore della fascia lata","s":"Seduto, schiena appoggiata, cuscinetti sull'esterno delle ginocchia.","e":["Apri le gambe spingendo verso l'esterno.","Tieni 1 secondo in apertura.","Torna lentamente senza far toccare i pesi."],"x":["Usare lo slancio.","Staccare il bacino dal sedile."],"c":"Busto leggermente in avanti: senti di più il gluteo."},"Kickback ai Cavi":{"m":"Primari: grande gluteo · Secondari: ischiocrurali","s":"Cavigliera al cavo basso, mani sulla macchina, busto leggermente inclinato, addome contratto.","e":["Spingi la gamba indietro estendendo l'anca.","Fermati quando l'anca è estesa, senza inarcare la schiena.","Torna controllato."],"x":["Compensare inarcando la zona lombare.","Ruotare il bacino."],"c":"Il bacino resta fermo come se fosse dentro una cintura rigida."},"Slanci Laterali a Terra":{"m":"Primari: medio gluteo · Secondari: piccolo gluteo, tensore della fascia lata","s":"Sdraiato sul fianco, corpo in linea, testa appoggiata sul braccio.","e":["Solleva la gamba superiore di circa 30–45°, punta leggermente verso il basso.","Tieni 1 secondo.","Scendi lentamente."],"x":["Ruotare il bacino indietro.","Portare la gamba in avanti."],"c":"Tallone che guida il movimento, leggermente indietro."},"Military Press":{"m":"Primari: deltoide anteriore e laterale · Secondari: tricipite, trapezio superiore, core","s":"In piedi, bilanciere sulle clavicole, presa appena più larga delle spalle, glutei e addome contratti.","e":["Spingi il bilanciere in verticale spostando la testa leggermente indietro per farlo passare.","Superata la fronte, porta la testa \"dentro\" le braccia.","Blocca in alto sopra la metà del piede, poi scendi controllato."],"x":["Inarcare la schiena all'indietro.","Bilanciere che va avanti invece che in verticale."],"c":"Glutei stretti: il bacino non si muove."},"Lento Avanti Manubri":{"m":"Primari: deltoide anteriore e laterale · Secondari: tricipite, trapezio","s":"Seduto con schienale quasi verticale, manubri all'altezza delle spalle, palmi avanti o leggermente ruotati.","e":["Spingi i manubri in alto convergendo leggermente.","Distendi senza far sbattere i manubri.","Scendi fino all'altezza delle orecchie o delle spalle."],"x":["Staccare la schiena dallo schienale.","Gomiti troppo dietro il busto."],"c":"Gomiti leggermente avanti, nel piano della scapola."},"Arnold Press":{"m":"Primari: deltoide anteriore e laterale · Secondari: tricipite","s":"Seduto, manubri davanti al viso con i palmi verso di te.","e":["Mentre spingi in alto ruota i palmi verso l'avanti.","Distendi le braccia sopra la testa.","Torna ruotando al contrario."],"x":["Rotazione a scatti.","Carichi eccessivi che impediscono la rotazione completa."],"c":"Rotazione e spinta in un unico gesto fluido."},"Shoulder Press Machine":{"m":"Primari: deltoide anteriore e laterale · Secondari: tricipite","s":"Sedile regolato con le maniglie all'altezza delle spalle, schiena appoggiata.","e":["Spingi in alto fino quasi a distendere.","Scendi controllato fino all'altezza delle spalle.","Polsi dritti."],"x":["Sollevare le spalle verso le orecchie.","Staccare la schiena."],"c":"Spalle basse mentre spingi."},"Tirate al Mento (Upright Row)":{"m":"Primari: deltoide laterale, trapezio superiore · Secondari: bicipite","s":"In piedi, bilanciere o cavo, presa alla larghezza delle spalle (non stretta).","e":["Tira portando i gomiti in alto e ai lati.","Fermati quando i gomiti arrivano all'altezza delle spalle, non oltre.","Scendi controllato."],"x":["Presa stretta e gomiti sopra le spalle: aumentano il rischio di conflitto (impingement) nella spalla.","Slanciare con il busto."],"c":"Gomiti che guidano, mani che seguono."},"Alzate Laterali":{"m":"Primari: deltoide laterale · Secondari: sovraspinato, trapezio","s":"In piedi, manubri ai lati, gomiti leggermente flessi, busto leggermente in avanti.","e":["Solleva le braccia leggermente in avanti (circa 30°, il piano della scapola) fino all'altezza delle spalle.","Il mignolo non va più in alto del pollice.","Scendi lentamente in 2–3 secondi."],"x":["Sollevare le spalle verso le orecchie: lavora il trapezio.","Slanciare con il busto."],"c":"Allontana i manubri dal corpo, come per allargarti."},"Alzate Frontali":{"m":"Primari: deltoide anteriore · Secondari: gran pettorale (fasci alti)","s":"In piedi, manubri davanti alle cosce, gomiti leggermente flessi.","e":["Solleva un braccio o entrambi in avanti fino all'altezza delle spalle.","Tieni il busto fermo.","Scendi lentamente."],"x":["Salire oltre la linea degli occhi.","Oscillare all'indietro."],"c":"Movimento corto e pulito: il deltoide anteriore lavora già molto nelle spinte."},"Alzate Posteriori (Reverse Fly)":{"m":"Primari: deltoide posteriore · Secondari: romboidi, trapezio medio","s":"Busto inclinato in avanti quasi parallelo al pavimento (o petto su panca inclinata), manubri sotto il petto, gomiti leggermente flessi.","e":["Apri le braccia verso l'esterno fino alla linea delle spalle.","Stringi senza avvicinare troppo le scapole.","Scendi controllato."],"x":["Usare il trapezio stringendo forte le scapole.","Slanciare con il busto."],"c":"Pensa di spingere i manubri verso le pareti ai lati."},"Face Pull":{"m":"Primari: deltoide posteriore, extrarotatori della cuffia · Secondari: romboidi, trapezio medio","s":"Cavo all'altezza del viso con corda, presa con i pollici verso di te, un passo indietro.","e":["Tira la corda verso il viso separando le mani.","A fine movimento le mani sono ai lati delle orecchie, gomiti alti (rotazione esterna).","Torna lentamente."],"x":["Tirare verso il collo con i gomiti bassi.","Inclinarsi all'indietro."],"c":"Posa da \"doppio bicipite\" alla fine: ottimo per la salute della spalla."},"Scrollate (Shrug)":{"m":"Primari: trapezio superiore · Secondari: elevatore della scapola","s":"In piedi, manubri o bilanciere, braccia distese.","e":["Solleva le spalle verso le orecchie in verticale.","Tieni 1 secondo.","Scendi lentamente."],"x":["Ruotare le spalle: non serve e stressa l'articolazione.","Piegare i gomiti."],"c":"Su e giù, come a dire \"non lo so\"."},"Curl Bilanciere Bicipiti":{"m":"Primari: bicipite brachiale · Secondari: brachiale, brachioradiale","s":"In piedi, presa supina alla larghezza delle spalle, gomiti vicino ai fianchi.","e":["Piega i gomiti portando il bilanciere verso le spalle.","I gomiti restano fermi, non avanzano.","Scendi lentamente fino a braccia quasi distese."],"x":["Oscillare con la schiena.","Gomiti che vanno avanti a fine salita."],"c":"Gomiti inchiodati ai fianchi."},"Curl Manubri Alternato":{"m":"Primari: bicipite brachiale · Secondari: brachiale, brachioradiale","s":"In piedi o seduto, manubri lungo i fianchi, palmi verso le cosce.","e":["Solleva un manubrio ruotando il palmo verso l'alto (supinazione) durante la salita.","Contrai in alto.","Scendi lentamente e alterna."],"x":["Slanciare il manubrio.","Non ruotare il polso: perdi parte del lavoro del bicipite."],"c":"Il mignolo sale verso la spalla: la supinazione completa accende il bicipite."},"Hammer Curl":{"m":"Primari: brachiale, brachioradiale · Secondari: bicipite brachiale","s":"In piedi, manubri con presa neutra (palmi che si guardano).","e":["Piega i gomiti mantenendo la presa neutra.","Gomiti fermi ai fianchi.","Scendi controllato."],"x":["Oscillare con il busto.","Portare i gomiti avanti."],"c":"Tieni i manubri come due martelli."},"Curl su Panca Scott":{"m":"Primari: bicipite brachiale (capo corto) · Secondari: brachiale","s":"Ascelle appoggiate al bordo della panca, braccia sul cuscino, presa supina.","e":["Piega i gomiti portando il peso verso le spalle.","Scendi lentamente senza distendere di colpo.","Fermati poco prima della distensione completa."],"x":["Staccare i gomiti dal cuscino.","Scendere a scatto: stress sul gomito."],"c":"La discesa lenta è la parte più utile di questo esercizio."},"Curl ai Cavi":{"m":"Primari: bicipite brachiale · Secondari: brachiale","s":"Cavo basso con barra o maniglie, gomiti vicino ai fianchi.","e":["Piega i gomiti portando la barra verso il petto.","Contrai in alto.","Scendi controllato: il cavo tiene la tensione costante."],"x":["Portare i gomiti avanti.","Inclinarsi all'indietro."],"c":"Tensione continua: non riposare in basso."},"Curl di Concentrazione":{"m":"Primari: bicipite brachiale · Secondari: brachiale","s":"Seduto, gomito appoggiato all'interno della coscia, manubrio in mano.","e":["Piega il gomito portando il manubrio verso la spalla.","Contrai in alto 1 secondo.","Scendi lentamente."],"x":["Muovere il busto.","Staccare il gomito dalla coscia."],"c":"Guarda il bicipite lavorare: aiuta la connessione mente-muscolo."},"Pushdown Tricipiti ai Cavi":{"m":"Primari: tricipite brachiale (capi laterale e mediale)","s":"Cavo alto con barra o corda, gomiti vicino ai fianchi, busto leggermente inclinato.","e":["Distendi i gomiti spingendo verso il basso.","Con la corda, apri le mani in fondo.","Risali controllato fino a gomiti a 90°."],"x":["Gomiti che si allontanano dal corpo.","Usare il peso del corpo per spingere."],"c":"Solo l'avambraccio si muove: il gomito è un cardine."},"French Press":{"m":"Primari: tricipite brachiale (soprattutto capo lungo)","s":"Sdraiato, bilanciere EZ o manubri sopra il petto, braccia leggermente inclinate verso la testa.","e":["Piega i gomiti portando il peso verso la fronte o dietro la testa.","I gomiti restano stretti e fermi.","Distendi le braccia tornando alla posizione iniziale."],"x":["Gomiti che si aprono verso l'esterno.","Muovere le spalle."],"c":"Gomiti puntati al soffitto per tutta la serie."},"Panca Presa Stretta":{"m":"Primari: tricipite brachiale · Secondari: gran pettorale, deltoide anteriore","s":"Come la panca piana, ma con le mani alla larghezza delle spalle (non più strette).","e":["Scendi con i gomiti vicini al busto verso la parte bassa del petto.","Tocca il petto senza rimbalzare.","Spingi fino a braccia distese."],"x":["Presa troppo stretta: stress sui polsi.","Gomiti che si aprono."],"c":"Gomiti che sfiorano i fianchi."},"Dip su Panca":{"m":"Primari: tricipite brachiale · Secondari: deltoide anteriore, pettorale","s":"Mani sul bordo di una panca dietro di te, gambe avanti, glutei vicini alla panca.","e":["Scendi piegando i gomiti fino a circa 90°.","Gomiti che puntano indietro, non ai lati.","Spingi fino a braccia distese."],"x":["Scendere troppo: stress sulla spalla anteriore.","Allontanare i glutei dalla panca."],"c":"Schiena che sfiora la panca."},"Kickback Tricipiti":{"m":"Primari: tricipite brachiale","s":"Busto inclinato in avanti, braccio parallelo al busto, gomito a 90°.","e":["Distendi il gomito portando il manubrio indietro.","Contrai 1 secondo a braccio disteso.","Torna a 90° lentamente."],"x":["Braccio che scende durante il movimento.","Slanciare il manubrio."],"c":"Il braccio resta fermo parallelo al busto."},"Plank":{"m":"Primari: retto dell'addome, trasverso · Secondari: obliqui, glutei, spalle","s":"Avambracci a terra sotto le spalle, gambe distese, punte dei piedi a terra.","e":["Corpo in linea da testa a talloni.","Contrai glutei e addome portando il bacino in leggera retroversione.","Respira senza perdere la posizione."],"x":["Bacino che cede verso il basso.","Glutei troppo alti."],"c":"Spingi il pavimento con gli avambracci e allontanalo."},"Plank Laterale":{"m":"Primari: obliqui, quadrato dei lombi · Secondari: medio gluteo, spalla","s":"Sul fianco, avambraccio sotto la spalla, gambe distese una sull'altra.","e":["Solleva il bacino fino ad allineare il corpo.","Non ruotare il busto né in avanti né indietro.","Tieni la posizione respirando."],"x":["Bacino che scende.","Spalla che sale verso l'orecchio."],"c":"Anche alte, come se un filo le tirasse verso il soffitto."},"Crunch a Terra":{"m":"Primari: retto dell'addome","s":"Supino, ginocchia piegate, piedi a terra, mani sul petto o dietro la testa senza tirare il collo.","e":["Arrotola la parte alta del busto portando le costole verso il bacino.","Stacca solo le scapole da terra.","Scendi lentamente."],"x":["Tirare la testa con le mani.","Sollevare tutto il busto usando i flessori dell'anca."],"c":"Espira forte mentre sali: l'addome si contrae di più."},"Crunch al Cavo":{"m":"Primari: retto dell'addome · Secondari: obliqui","s":"In ginocchio davanti al cavo alto, corda ai lati della testa.","e":["Arrotola il busto portando i gomiti verso le cosce.","Il bacino resta fermo: si muove la colonna.","Torna lentamente."],"x":["Sedersi sui talloni per usare il peso del corpo.","Tirare con le braccia."],"c":"Pensa di avvicinare lo sterno all'ombelico."},"Leg Raise alla Sbarra":{"m":"Primari: retto dell'addome (parte bassa), flessori dell'anca · Secondari: obliqui","s":"Appeso alla sbarra, spalle attive (non a peso morto), gambe unite.","e":["Solleva le gambe portando il bacino in retroversione (arrotolalo verso l'alto).","Sali almeno fino a 90°.","Scendi controllato senza oscillare."],"x":["Dondolare.","Sollevare le gambe senza muovere il bacino: lavorano solo i flessori dell'anca."],"c":"Arrotola il bacino, non limitarti ad alzare le gambe."},"Leg Raise a Terra":{"m":"Primari: retto dell'addome (parte bassa), flessori dell'anca","s":"Supino, mani sotto i glutei o lungo i fianchi, gambe distese.","e":["Solleva le gambe fino a 90° con la zona lombare a terra.","Scendi lentamente fermandoti prima che la schiena si inarchi.","Ripeti senza appoggiare i talloni."],"x":["Zona lombare che si stacca da terra.","Scendere troppo veloce."],"c":"Se la schiena si inarca, piega un po' le ginocchia."},"Russian Twist":{"m":"Primari: obliqui · Secondari: retto dell'addome","s":"Seduto, busto inclinato indietro a circa 45°, ginocchia piegate, piedi a terra o sollevati.","e":["Ruota il busto da un lato all'altro portando le mani o il peso vicino al fianco.","La rotazione parte dal torace, non solo dalle braccia.","Schiena lunga, non curva."],"x":["Muovere solo le braccia.","Schiena arrotondata."],"c":"Lo sterno segue le mani."},"Mountain Climber":{"m":"Primari: retto dell'addome, flessori dell'anca · Secondari: spalle, quadricipiti","s":"In posizione di plank a braccia tese, mani sotto le spalle.","e":["Porta un ginocchio verso il petto e torna indietro alternando.","Il bacino resta basso e stabile.","Ritmo sostenuto ma controllato."],"x":["Bacino che sale e scende.","Mani avanti rispetto alle spalle."],"c":"Spalle sopra le mani per tutta la serie."},"Hollow Hold":{"m":"Primari: retto dell'addome, trasverso · Secondari: flessori dell'anca","s":"Supino, braccia distese sopra la testa, gambe distese.","e":["Premi la zona lombare a terra.","Solleva spalle e gambe di pochi centimetri: il corpo forma una \"barchetta\".","Tieni respirando."],"x":["Zona lombare che si stacca.","Gambe troppo alte: l'esercizio diventa facile."],"c":"Più braccia e gambe sono basse, più è difficile: trova il tuo livello."},"Ab Wheel":{"m":"Primari: retto dell'addome, trasverso · Secondari: gran dorsale, spalle","s":"In ginocchio, mani sulla rotella sotto le spalle, addome contratto.","e":["Rotola in avanti mantenendo il bacino in retroversione.","Vai avanti solo finché la schiena non si inarca.","Torna tirando con addome e dorsali."],"x":["Zona lombare che si inarca.","Andare troppo avanti all'inizio."],"c":"Esercizio avanzato: aumenta l'escursione settimana dopo settimana."}};
+
+const RESPIRO = {
+  compound: 'Inspira profondamente e contrai l’addome prima della fase più difficile (con carichi alti puoi trattenere il fiato 1–2 secondi: manovra di Valsalva). Espira superato il punto più duro della salita.',
+  isolation: 'Inspira nella fase eccentrica (quando il muscolo si allunga), espira nella fase concentrica (quando si accorcia e solleva il peso).',
+  core: 'Respira corto e continuo senza mai perdere la tensione dell’addome: non trattenere il fiato a lungo.'
+};
+const GLOSSARIO = [
+  ['Fase eccentrica', 'la parte in cui il muscolo si allunga sotto carico, di solito la discesa. Va controllata: 2–3 secondi.'],
+  ['Fase concentrica', 'la parte in cui il muscolo si accorcia e solleva il peso.'],
+  ['Scapole addotte e depresse', 'strette tra loro e portate verso il basso: danno una base stabile alle spalle.'],
+  ['Schiena neutra', 'la colonna con le sue curve naturali, né arrotondata né inarcata.'],
+  ['Hip hinge', 'piegamento che parte dalle anche portandole indietro, con la schiena che resta neutra.'],
+  ['Estensione d’anca', 'portare le anche in avanti fino a stare dritti: è il lavoro del gluteo.'],
+  ['Retroversione del bacino', 'ruotare il bacino portando il pube verso le costole, come per “chiudere” la pancia.'],
+  ['Valgismo', 'ginocchio che cade verso l’interno: va evitato.'],
+  ['Bracing', 'contrarre l’addome a 360° come prima di ricevere un colpo, per proteggere la schiena.']
+];
+
+function schedaTecnica(name, info) {
+  const t = TECNICA[String(name).replace(/^\S+\s/, '')];
+  const meta = findExercise(name);
+  if (!t) {
+    return '<div class="ex-block"><div class="ex-block-title">Come si fa</div><ol class="ex-steps">' +
+      info.come.map(x => '<li>' + escapeHtml(x) + '</li>').join('') + '</ol></div>' +
+      '<div class="ex-block"><div class="ex-block-title warn">Errori da evitare</div><ul class="ex-steps">' +
+      info.errori.map(x => '<li>' + escapeHtml(x) + '</li>').join('') + '</ul></div>';
+  }
+  const tipo = meta && meta.group === 'core' ? 'core' : (meta && meta.type === 'compound' ? 'compound' : 'isolation');
+  return '<div class="ex-muscoli">' + escapeHtml(t.m) + '</div>' +
+    '<div class="ex-block"><div class="ex-block-title">Posizione di partenza</div><p class="ex-p">' + escapeHtml(t.s) + '</p></div>' +
+    '<div class="ex-block"><div class="ex-block-title">Come si fa</div><ol class="ex-steps">' +
+      t.e.map(x => '<li>' + escapeHtml(x) + '</li>').join('') + '</ol></div>' +
+    '<div class="ex-block"><div class="ex-block-title">Respirazione</div><p class="ex-p">' + escapeHtml(RESPIRO[tipo]) + '</p></div>' +
+    '<div class="ex-block"><div class="ex-block-title warn">Errori da evitare</div><ul class="ex-steps">' +
+      t.x.map(x => '<li>' + escapeHtml(x) + '</li>').join('') + '</ul></div>' +
+    '<div class="ex-cue"><b>Il consiglio del coach</b>' + escapeHtml(t.c) + '</div>';
+}
+
 window.openExerciseInfo = function(name, tab) {
   const meta = findExercise(name);
   const pid = patternFor(name);
@@ -9270,7 +9802,7 @@ window.openExerciseInfo = function(name, tab) {
   const verificato = !!VIDEO_VERIFICATI[name];
 
   document.getElementById('ex-info-title').innerText = String(name).replace(/^\S+\s/, '');
-  document.getElementById('ex-info-sub').innerText = (gruppo ? gruppo.emoji + ' ' + gruppo.label : '') +
+  document.getElementById('ex-info-sub').innerText = (gruppo ? gruppo.label : '') +
     (meta ? ' \u2022 ' + (meta.type === 'compound' ? 'multiarticolare' : 'isolamento') : '');
 
   exInfoNome = name;
@@ -9286,17 +9818,14 @@ window.openExerciseInfo = function(name, tab) {
     '<div id="ex-pane-come" class="ex-pane">' +
     '<div class="ex-draw-wrap">' + disegno + '</div>' +
     '<div class="ex-pattern">Schema: ' + escapeHtml(info.nome) + '</div>' +
-    '<div class="ex-block"><div class="ex-block-title">Come si fa</div><ol class="ex-steps">' +
-      info.come.map(s => '<li>' + escapeHtml(s) + '</li>').join('') + '</ol></div>' +
-    '<div class="ex-block"><div class="ex-block-title warn">Errori da evitare</div><ul class="ex-steps">' +
-      info.errori.map(s => '<li>' + escapeHtml(s) + '</li>').join('') + '</ul></div>' +
-    (info.complesso
-      ? '<a class="ex-video" href="' + videoLinkFor(name) + '" target="_blank" rel="noopener noreferrer">\u25B6 ' +
-        (verificato ? 'Guarda il video tutorial' : 'Cerca un video di questo esercizio') + '</a>' +
-        '<div class="ex-note">Questo e un movimento tecnico: vale la pena vederlo eseguire prima di caricarlo. ' +
-        (verificato ? 'Il video e una fonte italiana che ho verificato.' : 'Il pulsante apre una ricerca su YouTube: non posso guardare i video, quindi preferisco non indicarti uno specifico senza averlo visto.') +
-        ' Una raccolta di tutorial in italiano che ho verificato: <a href="' + VIDEO_PLAYLIST + '" target="_blank" rel="noopener noreferrer">playlist Project inVictus</a>.</div>'
-      : '<div class="ex-note">Movimento semplice: bastano le indicazioni qui sopra. Se qualcosa tira o fa male, fermati e chiedi a un professionista.</div>') +
+    schedaTecnica(name, info) +
+    '<a class="ex-video" href="' + videoLinkFor(name) + '" target="_blank" rel="noopener noreferrer">\u25B6 ' +
+      (verificato ? 'Guarda il video tutorial' : 'Cerca un video su YouTube') + '</a>' +
+    '<div class="ex-note">' + (verificato ? 'Il video è una fonte italiana che ho verificato.' :
+      'Il pulsante apre una ricerca su YouTube: non posso guardare i video, quindi preferisco non indicarti uno specifico senza averlo visto.') +
+      ' Una raccolta di tutorial in italiano che ho verificato: <a href="' + VIDEO_PLAYLIST + '" target="_blank" rel="noopener noreferrer">playlist Project inVictus</a>.</div>' +
+    '<details class="ex-gloss"><summary>Parole del coach</summary>' +
+      GLOSSARIO.map(g => '<p><b>' + g[0] + '</b>: ' + g[1] + '</p>').join('') + '</details>' +
     '</div>';
 
   setExInfoTab(tab || 'come');
@@ -10128,9 +10657,9 @@ function aggiornaAiutoIcs() {
   const el = document.getElementById('ics-help');
   if (!el) return;
   el.innerHTML =
-    '<b>iPhone:</b> tocca Esporta, poi scegli Calendario e "Aggiungi tutti".<br>' +
-    '<b>Google:</b> dal computer, su calendar.google.com \u2192 Impostazioni \u2192 Importa. Dall app Google non si importano file; per un giorno solo usa il pulsante dentro al giorno.<br>' +
-    '<b>Da sapere:</b> e una copia, non un collegamento vivo. Dopo nuovi allenamenti, riesporta: su Apple gli eventi gia presenti si aggiornano, su Google potrebbero duplicarsi.';
+    '<b>iPhone:</b> Esporta \u2192 Calendario \u2192 "Aggiungi tutti".<br>' +
+    '<b>Google:</b> da computer, calendar.google.com \u2192 Impostazioni \u2192 Importa.<br>' +
+    '<b>Da sapere:</b> è una copia, non un collegamento: dopo nuovi allenamenti riesporta.';
 }
 
 /* ============================================================
