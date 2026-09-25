@@ -2,19 +2,25 @@
    il segnale spesso manca). Strategia: network-first con fallback alla cache,
    così vedi sempre l'ultima versione se sei online, ma l'app parte comunque offline. */
 
-const CACHE_NAME = 'toji-workout-v2';   /* cambiando il nome, le copie vecchie vengono buttate */
+const CACHE_NAME = 'toji-workout-v3';   /* cambiando il nome, le copie vecchie vengono buttate */
 const ASSETS = [
   './',
   './toji.html',
   './manifest.json',
   './icon-192.png',
-  './icon-512.png'
+  './icon-512.png',
+  /* illustrazioni degli esercizi: salvate subito, cosi in palestra si
+     vedono anche senza connessione. Ogni nuovo disegno va aggiunto qui. */
+  './esercizi/ex-01-panca-piana.svg',
+  './esercizi/ex-02-panca-inclinata-su-a.svg'
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(ASSETS))
+      /* uno per uno: se manca un file (es. un disegno non ancora caricato)
+         gli altri vengono salvati lo stesso; addAll fallirebbe in blocco */
+      .then((cache) => Promise.allSettled(ASSETS.map((u) => cache.add(u))))
       .then(() => self.skipWaiting())
       .catch(() => self.skipWaiting()) /* se un asset manca, non bloccare l'installazione */
   );
