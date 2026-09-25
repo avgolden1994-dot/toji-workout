@@ -69,33 +69,61 @@
 }
 
 html[data-theme="light"], body[data-theme="light"] {
-  /* Tonalita chiara uniforme e testo nero definito, come richiesto.
-     La carta calda precedente rendeva il contrasto molle e sporco: qui
-     lo sfondo e' un chiaro unico, le superfici sono bianche e il testo
-     e' nero pieno, cosi le lettere si staccano nette. */
-  --bg: #f4f4f4;
+  /* Tema chiaro rifatto sul modello delle Impostazioni di iPhone e delle
+     app di allenamento piu curate (Hevy, Strong):
+     - fondo grigio freddo appena percettibile (#f2f2f7, lo stesso di iOS)
+       e card bianche che si staccano con un ombra leggera, non con bordi
+       pesanti;
+     - testo nero pieno (richiesto dall utente) ma secondario grigio medio,
+       non quasi nero: prima tutto aveva lo stesso peso e la pagina era
+       "pesante";
+     - arancio del marchio VIVO (arancio 700) invece del marrone ruggine:
+       resta leggibile (5,2:1 sul bianco) ma si riconosce come arancio;
+     - verde, ambra e rosso di stato alla stessa luminosita, cosi nessuno
+       grida piu degli altri. Tutti verificati col calcolo WCAG. */
+  --bg: #f2f2f7;
   --surface-1: #ffffff;
-  --surface-2: #f2f2f2;
+  --surface-2: #f2f2f7;
   --surface-3: #ffffff;
-  --border: #cfcfcf;
-  --border-strong: #ababab;
+  --border: #d1d1d6;
+  --border-strong: #aeaeb2;
 
   --text: #000000;        /* nero definito */
-  --muted: #3d3d3d;       /* grigio scuro, non slavato */
-  --text-dim: #6b6b6b;
+  --muted: #5c5c63;       /* secondario: si legge, ma fa un passo indietro */
+  --text-dim: #7a7a80;
 
-  --primary: #a83c07;
-  --primary-glow: #7d2c05;
-  --primary-shadow: color-mix(in srgb, var(--primary) 22%, transparent);
-  --accent: #a21212;
+  --primary: #c2410c;
+  --primary-glow: #9a3412;
+  --primary-shadow: color-mix(in srgb, var(--primary) 20%, transparent);
+  --accent: #c62828;
   --on-primary: #ffffff;
   --on-accent: #ffffff;
 
-  --success: #11662f;
-  --warning: #8a5206;
-  --danger: #a21212;
+  --success: #15803d;
+  --warning: #b45309;
+  --danger: #c62828;
   --on-status: #ffffff;
 }
+
+/* Nel chiaro la profondita si esprime con l ombra, come su iOS: il bordo
+   si alleggerisce e card e riquadri prendono un ombra morbida. */
+html[data-theme="light"] .card, html[data-theme="light"] .sr-list, html[data-theme="light"] .sr-profile,
+html[data-theme="light"] .og-tile, html[data-theme="light"] .og-day, html[data-theme="light"] .mg-card,
+html[data-theme="light"] .pg-kpi, html[data-theme="light"] .entry-btn, html[data-theme="light"] .hs-row,
+html[data-theme="light"] .st-table, html[data-theme="light"] .pick-row {
+  border-color: color-mix(in srgb, var(--border) 60%, transparent);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 6%, transparent), 0 2px 8px color-mix(in srgb, var(--text) 4%, transparent);
+}
+/* Il pannello del recupero ha testo bianco: nel chiaro la sfumatura verso
+   il bianco della card lo rendeva illeggibile. Qui resta un pieno arancio. */
+html[data-theme="light"] .recovery-overlay { background: linear-gradient(160deg, var(--primary), var(--primary-glow)); }
+/* i pulsanti secondari: niente bordo rosso urlato, un grigio con testo del marchio */
+html[data-theme="light"] .btn-archive { background: var(--surface-1); color: var(--primary); border-color: var(--border); }
+html[data-theme="light"] .card .btn-archive { background: var(--surface-2); border-color: transparent; }
+/* dentro una card bianca i riquadri annidati sono grigi e piatti */
+html[data-theme="light"] .card .pg-kpi, html[data-theme="light"] .card .entry-btn, html[data-theme="light"] .card .hs-row,
+html[data-theme="light"] .card .og-ex { box-shadow: none; background: var(--surface-2); border-color: transparent; }
+html[data-theme="light"] .mg-card:not(.on), html[data-theme="light"] .pick-row:not(.on) { background: var(--surface-1); }
 
 /* marchio Maki: giada e viola, freddo e tagliente */
 html[data-mode="maki"], body[data-mode="maki"] {
@@ -7678,7 +7706,7 @@ window.applyGeneratedProgram = function() {
    La colonna 80% e un riferimento pratico: circa l intensita a cui si
    lavora lasciando due ripetizioni in riserva.
    ============================================================ */
-const APP_VERSIONE = '2026.09.25-1';
+const APP_VERSIONE = '2026.09.25-2';
 const DISCHI_KEY = 'tz_dischi';   /* si aggiorna a ogni consegna: dice quale versione sta girando */
 const NOME_KEY = 'tz_nome';
 /* Forza il controllo della versione nuova: aggiorna il service worker e
@@ -8517,7 +8545,7 @@ window.applyTheme = function() {
   document.body.dataset.theme = tema;
   document.documentElement.dataset.theme = tema;
   const meta = document.getElementById('theme-color-meta');
-  if (meta) meta.setAttribute('content', tema === 'light' ? '#f5f4f1' : (MODE_META[currentMode] ? MODE_META[currentMode].themeColor : '#08080a'));
+  if (meta) meta.setAttribute('content', tema === 'light' ? '#f2f2f7' : (MODE_META[currentMode] ? MODE_META[currentMode].themeColor : '#08080a'));
 };
 
 window.setTheme = function(v) {
