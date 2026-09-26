@@ -2538,7 +2538,7 @@ function trAttr(el) {
     const k = '__i18n_' + a;
     if (el[k] === v) return;
     const t = window.tr(v);
-    el[k] = t;
+    el[k] = t; el[k + '_it'] = v;
     if (t !== v) el.setAttribute(a, t);
   });
 }
@@ -2554,9 +2554,11 @@ function trAlbero(root) {
 }
 window.traduciPagina = function() { trAlbero(document.body); document.title = window.tr(document.title); };
 
+let I18N_ATTIVO = false;
 function avviaTraduttore() {
   document.documentElement.lang = LINGUA;
-  if (LINGUA === 'it') return;
+  if (LINGUA === 'it' || I18N_ATTIVO) return;
+  I18N_ATTIVO = true;
   const a0 = window.alert, c0 = window.confirm, p0 = window.prompt;
   window.alert = function(m) { return a0.call(window, window.tr(m)); };
   window.confirm = function(m) { return c0.call(window, window.tr(m)); };
@@ -2574,22 +2576,69 @@ function avviaTraduttore() {
   if (document.body) via(); else document.addEventListener('DOMContentLoaded', via);
 }
 
-/* cambiare lingua ricarica l app: ogni schermata si ridisegna gia tradotta */
+/* iniziali dei giorni nel calendario, nella lingua scelta */
+const DOW_IT = ['L', 'M', 'M', 'G', 'V', 'S', 'D'];
+function applicaGiorniSettimana() {
+  const box = document.getElementById('mc-dow'); if (!box) return;
+  const sp = box.querySelectorAll('span');
+  for (let i = 0; i < 7; i++) {
+    if (!sp[i + 1]) continue;
+    sp[i + 1].textContent = LINGUA === 'it' ? DOW_IT[i] : new Date(2024, 0, 1 + i).toLocaleDateString(LOCALE(), { weekday: 'narrow' });
+  }
+}
+
+/* ritraduce tutto partendo dall italiano originale di ogni testo */
+function ritraduciTutto() {
+  const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
+  let n;
+  while ((n = w.nextNode())) {
+    if (n.nodeType === 3) {
+      const p = n.parentNode;
+      if (!p || p.nodeName === 'SCRIPT' || p.nodeName === 'STYLE' || (p.closest && p.closest('[data-no-tr]'))) continue;
+      const o = I18N_ORIG.get(n);
+      const base = (o && n.nodeValue === o.t) ? o.it : n.nodeValue;
+      const t = window.tr(base);
+      I18N_ORIG.set(n, { it: base, t: t });
+      if (n.nodeValue !== t) n.nodeValue = t;
+    } else {
+      I18N_ATTR.forEach(a => {
+        if (!n.hasAttribute(a)) return;
+        const k = '__i18n_' + a, v = n.getAttribute(a);
+        const base = (n[k] === v && n[k + '_it'] != null) ? n[k + '_it'] : v;
+        const t = window.tr(base);
+        n[k] = t; n[k + '_it'] = base;
+        if (v !== t) n.setAttribute(a, t);
+      });
+    }
+  }
+}
+
+/* cambio lingua sul posto, senza ricaricare: niente schermo nero */
 window.setLingua = function(l) {
   if (!LINGUE[l]) return;
   try { localStorage.setItem(LINGUA_KEY, l); } catch (e) {}
   if (l === LINGUA) return;
-  LINGUA = l;
-  try { location.reload(); } catch (e) {}
+  const b = document.body;
+  const esegui = () => {
+    LINGUA = l;
+    document.documentElement.lang = l;
+    avviaTraduttore();
+    ritraduciTutto();
+    applicaGiorniSettimana();
+    try {
+      if (typeof renderSettings === 'function' && currentTab === 'impostazioni') renderSettings();
+      if (typeof renderSetPage === 'function') renderSetPage();
+    } catch (e) {}
+    if (b) b.style.opacity = '1';
+  };
+  if (b && b.animate && !window.navigator.webdriver) {
+    b.style.transition = 'opacity .14s ease';
+    b.style.opacity = '0.25';
+    setTimeout(esegui, 140);
+  } else esegui();
 };
 </script>
-<script>avviaTraduttore();
-(function () {
-  if (lingua() === 'it') return;
-  const box = document.getElementById('mc-dow'); if (!box) return;
-  const sp = box.querySelectorAll('span');
-  for (let i = 0; i < 7; i++) { const d = new Date(2024, 0, 1 + i); if (sp[i + 1]) sp[i + 1].textContent = d.toLocaleDateString(LOCALE(), { weekday: 'narrow' }); }
-})();</script>
+<script>avviaTraduttore(); if (lingua() !== 'it') applicaGiorniSettimana();</script>
 
 <script>
   if ('serviceWorker' in navigator) {
@@ -8001,7 +8050,7 @@ window.applyGeneratedProgram = function() {
    La colonna 80% e un riferimento pratico: circa l intensita a cui si
    lavora lasciando due ripetizioni in riserva.
    ============================================================ */
-const APP_VERSIONE = '2026.09.26-3';
+const APP_VERSIONE = '2026.09.26-4';
 const DISCHI_KEY = 'tz_dischi';   /* si aggiorna a ogni consegna: dice quale versione sta girando */
 const NOME_KEY = 'tz_nome';
 /* Forza il controllo della versione nuova: aggiorna il service worker e
