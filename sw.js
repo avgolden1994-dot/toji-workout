@@ -2,7 +2,7 @@
    il segnale spesso manca). Strategia: network-first con fallback alla cache,
    così vedi sempre l'ultima versione se sei online, ma l'app parte comunque offline. */
 
-const CACHE_NAME = 'toji-workout-v3';   /* cambiando il nome, le copie vecchie vengono buttate */
+const CACHE_NAME = 'toji-workout-v4';   /* cambiando il nome, le copie vecchie vengono buttate */
 const ASSETS = [
   './',
   './toji.html',
@@ -12,7 +12,14 @@ const ASSETS = [
   /* illustrazioni degli esercizi: salvate subito, cosi in palestra si
      vedono anche senza connessione. Ogni nuovo disegno va aggiunto qui. */
   './esercizi/ex-01-panca-piana.svg',
-  './esercizi/ex-02-panca-inclinata-su-a.svg'
+  './esercizi/ex-02-panca-inclinata.svg',
+  './esercizi/ex-03-panca-inclinata-manubri.svg',
+  './esercizi/ex-04-panca-declinata.svg',
+  './esercizi/ex-05-chest-press.svg',
+  './esercizi/ex-06-dip-parallele.svg',
+  './esercizi/ex-07-push-up.svg',
+  './esercizi/ex-08-croci-cavi.svg',
+  './esercizi/ex-09-croci-panca-manubri.svg'
 ];
 
 self.addEventListener('install', (event) => {
