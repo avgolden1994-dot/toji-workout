@@ -1,7 +1,7 @@
 {
-  "name": "Allenamento",
-  "short_name": "Allenamento",
-  "description": "Tracker di allenamento con coach e carico progressivo",
+  "name": "3in",
+  "short_name": "3in",
+  "description": "3in: allenamenti, calendario e coach",
   "start_url": "./toji.html",
   "scope": "./",
   "display": "standalone",
