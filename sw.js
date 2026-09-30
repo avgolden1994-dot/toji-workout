@@ -2,7 +2,7 @@
    il segnale spesso manca). Strategia: network-first con fallback alla cache,
    così vedi sempre l'ultima versione se sei online, ma l'app parte comunque offline. */
 
-const CACHE_NAME = 'toji-workout-v5';   /* cambiando il nome, le copie vecchie vengono buttate */
+const CACHE_NAME = 'toji-workout-v6';   /* cambiando il nome, le copie vecchie vengono buttate */
 const ASSETS = [
   './',
   './toji.html',

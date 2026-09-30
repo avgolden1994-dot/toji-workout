@@ -2843,7 +2843,6 @@ const ICO_PATHS = {
   mondo: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
   disco: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/>',
   salta: '<path d="M5 5l9 7-9 7z"/><path d="M19 5v14"/>',
-  scintilla: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M18 6l-2.5 2.5M8.5 15.5L6 18"/>',
   bersaglio: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
   bilancia: '<path d="M12 4v16M7 20h10M5 7h14M5 7l-3 6a3 3 0 0 0 6 0zM19 7l-3 6a3 3 0 0 0 6 0z"/>',
   cuore: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
@@ -3092,6 +3091,39 @@ window.setLingua = function(l) {
 </script>
 
 <script>
+/* ============================================================
+   GUIDA: RIPRISTINO DEI DATI VERI
+   La guida di prova riempie l app con dati di esempio e tiene da parte
+   una copia di quelli veri (tz_guida_backup). Se l app viene chiusa,
+   ricaricata o uccisa dal telefono a meta guida, la copia resta: qui,
+   prima che l app legga qualsiasi dato, i dati veri tornano al loro posto.
+   ============================================================ */
+const GUIDA_BACKUP = 'tz_guida_backup';
+function guidaApplicaFoto(foto) {
+  const tieni = ['tz_guida_vista', 'tz_theme', 'tz_lingua'];   /* restano come sono ora */
+  Object.keys(foto).forEach(k => {
+    if (k === GUIDA_BACKUP) return;
+    if (tieni.indexOf(k) !== -1 && localStorage.getItem(k) !== null) return;
+    try { localStorage.setItem(k, foto[k]); } catch (e) {}
+  });
+  const via = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k !== GUIDA_BACKUP && tieni.indexOf(k) === -1 && !Object.prototype.hasOwnProperty.call(foto, k)) via.push(k);
+  }
+  via.forEach(k => { try { localStorage.removeItem(k); } catch (e) {} });
+  try { localStorage.removeItem(GUIDA_BACKUP); } catch (e) {}
+}
+(function guidaRecuperaInterrotta() {
+  try {
+    const b = localStorage.getItem(GUIDA_BACKUP);
+    if (b === null) return;
+    const foto = JSON.parse(b);
+    if (foto && typeof foto === 'object') guidaApplicaFoto(foto);
+    else localStorage.removeItem(GUIDA_BACKUP);
+  } catch (e) { try { localStorage.removeItem(GUIDA_BACKUP); } catch (e2) {} }
+})();
+
 /* ============================================================
    COSTANTI & STATO GLOBALE
    ============================================================ */
@@ -11248,7 +11280,7 @@ window.chiediConsensoSeServe = function() {
    avvio; si ripete da Opzioni.
    ============================================================ */
 const GUIDA_KEY = 'tz_guida_vista';
-let guidaPasso = -1, guidaTimer = null, guidaFoto = null;
+let guidaPasso = -1, guidaTimer = null, guidaFoto = null, guidaUltimoCambio = 0;
 const GUIDA = [
   { t: 'Benvenuto in 3in', x: 'Sono il tuo coach. In due minuti ti faccio usare l’app davvero. Per la prova la riempio con sei mesi di allenamenti di esempio: grafici, statistiche e storico pieni. Alla fine torna tutto com’era.', btn: 'Iniziamo', inizio: true },
   { sel: '#oggi-body .btn-start-workout', t: 'Oggi', x: 'Qui trovi l’allenamento del giorno. Tocca «Inizia allenamento».',
@@ -11342,18 +11374,21 @@ function guidaDatiDemo() {
   localStorage.setItem(pesoObKey(), '75');
 }
 function guidaPreparaProva() {
-  guidaFoto = {};
-  for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); guidaFoto[k] = localStorage.getItem(k); }
-  try { guidaDatiDemo(); } catch (e) {}
-  localStorage.removeItem(cardioKey());
+  if (guidaFoto) return true;   /* gia in prova: mai fotografare i dati di esempio come se fossero veri */
+  const foto = {};
+  for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k !== GUIDA_BACKUP) foto[k] = localStorage.getItem(k); }
+  /* la copia va su disco PRIMA di toccare i dati: se l app muore a meta guida
+     si ripristina al prossimo avvio. Se non c e spazio, niente prova. */
+  try { localStorage.setItem(GUIDA_BACKUP, JSON.stringify(foto)); } catch (e) { return false; }
+  guidaFoto = foto;
+  try { guidaDatiDemo(); localStorage.removeItem(cardioKey()); }
+  catch (e) { guidaRipristina(); return false; }
+  return true;
 }
 function guidaRipristina() {
-  if (!guidaFoto) return;
-  const tieni = {};
-  [GUIDA_KEY, THEME_KEY, 'tz_lingua'].forEach(k => { const v = localStorage.getItem(k); if (v !== null) tieni[k] = v; });
-  localStorage.clear();
-  Object.keys(guidaFoto).forEach(k => localStorage.setItem(k, guidaFoto[k]));
-  Object.keys(tieni).forEach(k => localStorage.setItem(k, tieni[k]));
+  let foto = guidaFoto;
+  if (!foto) { try { foto = JSON.parse(localStorage.getItem(GUIDA_BACKUP)); } catch (e) { foto = null; } }
+  if (foto && typeof foto === 'object') guidaApplicaFoto(foto);
   guidaFoto = null;
 }
 window.avviaGuida = function() {
@@ -11407,17 +11442,42 @@ function guidaMostra() {
       (p.btn ? '<button class="g-go" onclick="guidaAvanti()">' + tr(p.btn) + '</button>' : '<span class="g-wait">' + tr('Tocca dove è illuminato') + '</span>') + '</div>';
   g.classList.toggle('attesa', !!p.fatto);
   guidaPosiziona();
+  const passo = guidaPasso;
+  let senzaEl = 0;
+  guidaUltimoCambio = Date.now();
   guidaTimer = setInterval(() => {
-    if (guidaPasso < 0) { clearInterval(guidaTimer); return; }
+    if (guidaPasso < 0 || guidaPasso !== passo) { clearInterval(guidaTimer); return; }
     guidaPosiziona();
-    const q = GUIDA[guidaPasso];
-    if (q.fatto) { let ok = false; try { ok = q.fatto(); } catch (e) {} if (ok) { clearInterval(guidaTimer); setTimeout(guidaAvanti, 350); } }
+    const q = GUIDA[passo];
+    if (q.fatto) {
+      let ok = false; try { ok = q.fatto(); } catch (e) {}
+      if (ok) { clearInterval(guidaTimer); setTimeout(() => { if (guidaPasso === passo) guidaAvanti(true); }, 350); return; }
+      /* bersaglio sparito (schermata cambiata, niente da toccare): dopo 4 secondi si va avanti
+         da soli, invece di lasciare lo schermo oscurato senza via d uscita */
+      const e = q.sel ? document.querySelector(q.sel) : null;
+      const r = e ? e.getBoundingClientRect() : null;
+      senzaEl = (q.sel && (!r || !r.width || !r.height)) ? senzaEl + 1 : 0;
+      if (senzaEl >= 16) { clearInterval(guidaTimer); guidaAvanti(true); }
+    }
   }, 250);
 }
-window.guidaAvanti = function() {
+window.guidaAvanti = function(auto) {
   const p = GUIDA[guidaPasso];
   if (!p) return;
-  if (p.inizio) guidaPreparaProva();
+  if (auto !== true) {
+    /* un tocco vale solo sui passi con il bottone, e non subito dopo un cambio di passo:
+       un doppio tocco su «Iniziamo» saltava il passo successivo e rompeva la guida */
+    if (!p.btn && !p.fine) return;
+    if (Date.now() - guidaUltimoCambio < 400) return;
+  }
+  if (p.inizio && !guidaPreparaProva()) {
+    /* prova impossibile (niente spazio o dati non preparabili): si esce senza toccare nulla */
+    clearInterval(guidaTimer); guidaPasso = -1;
+    try { localStorage.setItem(GUIDA_KEY, '1'); } catch (e) {}
+    const g = document.getElementById('guida'); if (g) g.classList.remove('on');
+    try { showUndo('Guida non disponibile: spazio insufficiente'); } catch (e) {}
+    return;
+  }
   if (p.fine) { chiudiGuida(); return; }
   guidaPasso++;
   guidaMostra();
@@ -11428,10 +11488,15 @@ window.chiudiGuida = function() {
   try { localStorage.setItem(GUIDA_KEY, '1'); } catch (e) {}
   const g = document.getElementById('guida');
   if (g) g.classList.remove('on');
-  if (guidaFoto) {
-    guidaRipristina();
-    try { location.reload(); } catch (e) {}
-  }
+  /* in prova c e il recupero, il cronometro o un drop set che girano: si fermano prima di rimettere i dati */
+  let inProva = !!guidaFoto;
+  try { if (!inProva) inProva = localStorage.getItem(GUIDA_BACKUP) !== null; } catch (e) {}
+  if (!inProva) return;
+  try { stopDropSet(); } catch (e) {}
+  try { closeRecoveryPanel(); } catch (e) {}
+  try { fermaTempoSeduta(false); } catch (e) {}
+  try { guidaRipristina(); } catch (e) {}
+  try { location.reload(); } catch (e) {}
 };
 window.addEventListener('resize', () => { if (guidaPasso >= 0) guidaPosiziona(); });
 
@@ -11759,7 +11824,7 @@ function sedutaAperta() { const s = document.getElementById('workout-session'); 
 
 /* ============ 2. BACKUP E RIPRISTINO ============ */
 const CHIAVI_APP = /^(coach_plus|tz_)/;
-const CHIAVI_TEMPORANEE = /^(tz_seduta_inizio|tz_seduta_speciale)$|_rotto_/;
+const CHIAVI_TEMPORANEE = /^(tz_seduta_inizio|tz_seduta_speciale|tz_guida_backup)$|_rotto_/;
 function chiaviApp() {
   const k = [];
   for (let i = 0; i < localStorage.length; i++) { const x = localStorage.key(i); if (CHIAVI_APP.test(x) && !CHIAVI_TEMPORANEE.test(x)) k.push(x); }
