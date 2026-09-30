@@ -1983,7 +1983,8 @@ html:not([data-theme="light"]) .sr-input input[type=time] { color-scheme: dark; 
 @keyframes g-pulse { 50% { box-shadow: 0 0 0 8px color-mix(in srgb, var(--primary) 25%, transparent); } }
 @media (prefers-reduced-motion: reduce) { .g-hole { animation: none; } .g-dim, .g-hole, .g-bub { transition: none !important; } .g-bub > * { animation: none !important; } }
 /* alla prima apparizione tutto nasce gia al suo posto, senza scivolare dall angolo */
-.guida.g-init .g-dim, .guida.g-init .g-hole, .guida.g-init .g-bub { transition: none !important; }
+.guida.g-init .g-dim, .guida.g-init .g-hole, .guida.g-init .g-bub,
+.guida.g-segui .g-dim, .guida.g-segui .g-hole, .guida.g-segui .g-bub { transition: none !important; }
 @keyframes g-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 .g-bub > * { animation: g-in .3s var(--g-ease) both; }
 .g-bub > *:nth-child(2) { animation-delay: .04s; } .g-bub > *:nth-child(3) { animation-delay: .08s; } .g-bub > *:nth-child(4) { animation-delay: .12s; }
@@ -11449,13 +11450,39 @@ function guidaPosiziona() {
   b.style.bottom = 'auto'; b.style.transform = 'none';
   b.style.top = Math.max(8, Math.min(top, H - hb - 8)) + 'px';
 }
+function guidaRidotto() { return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); }
+function guidaVisibile(el) { const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0; }
+/* serve scorrere? No se il bersaglio e gia tutto in vista con posto per il fumetto, o se sta in un
+   elemento fisso (barra in basso, pannelli): li lo scorrimento non lo sposterebbe comunque. */
+function guidaServeScroll(el) {
+  for (let n = el; n && n !== document.body; n = n.parentElement) {
+    if (getComputedStyle(n).position === 'fixed') return false;
+  }
+  const r = el.getBoundingClientRect();
+  if (!r.width || !r.height) return false;
+  const H = window.innerHeight;
+  const nav = document.getElementById('bottom-nav'), nr = nav ? nav.getBoundingClientRect() : null;
+  const fondo = nr && nr.height > 0 ? Math.min(H, nr.top) : H;
+  const bub = document.querySelector('#guida .g-bub'), hb = (bub && bub.offsetHeight) || 190;
+  const inVista = r.top >= 8 && r.bottom <= fondo - 8;
+  const posto = r.bottom + 6 + hb + 24 < H || r.top - 6 - hb - 24 > 0;
+  return !(inVista && posto);
+}
+/* Porta il bersaglio al centro solo quando serve. Se la pagina scorre, il riquadro lo segue da subito
+   (senza scivolare verso dove il bersaglio stava prima di muoversi); se non serve, scivola.
+   Con «riduci movimento» lo scorrimento e istantaneo. */
+function guidaScorriVerso(el) {
+  if (!el || !el.scrollIntoView || !guidaServeScroll(el)) return;
+  guidaSegui();
+  try { el.scrollIntoView({ block: 'center', behavior: guidaRidotto() ? 'instant' : 'smooth' }); }
+  catch (e) { el.scrollIntoView({ block: 'center' }); }
+}
 function guidaMostra() {
   const g = guidaEl();
   const p = GUIDA[guidaPasso];
   clearInterval(guidaTimer);
   if (p.prep) try { p.prep(); } catch (e) {}
   const el = p.sel ? document.querySelector(p.sel) : null;
-  if (el && el.scrollIntoView) el.scrollIntoView({ block: 'center', behavior: 'smooth' });
   const tot = GUIDA.length - 1;
   g.querySelector('.g-bub').innerHTML =
     (guidaPasso > 0 && !p.fine ? '<div class="g-num">' + tr('Passo # di #').replace('#', guidaPasso).replace('#', tot - 1) + '</div>' : '') +
@@ -11463,22 +11490,27 @@ function guidaMostra() {
     '<div class="g-bar">' + (p.fine ? '<span></span>' : '<button class="g-link" onclick="chiudiGuida()">' + tr('Salta la guida') + '</button>') +
       (p.btn ? '<button class="g-go" onclick="guidaAvanti()">' + tr(p.btn) + '</button>' : '<span class="g-wait">' + tr('Tocca dove è illuminato') + '</span>') + '</div>';
   g.classList.toggle('attesa', !!p.fatto);
+  /* il fumetto c e gia (serve la sua altezza per decidere se scorrere), poi si scorre, poi si posiziona */
+  guidaScorriVerso(el);
   guidaPosiziona();
   const passo = guidaPasso;
   let senzaEl = 0;
+  let portato = !p.sel || !!(el && guidaVisibile(el));   /* bersaglio gia in pagina e portato in vista */
   guidaUltimoCambio = Date.now();
   guidaTimer = setInterval(() => {
     if (guidaPasso < 0 || guidaPasso !== passo) { clearInterval(guidaTimer); return; }
-    guidaPosiziona();
     const q = GUIDA[passo];
+    const e = q.sel ? document.querySelector(q.sel) : null;
+    const pronto = !!(e && guidaVisibile(e));
+    /* il bersaglio e comparso dopo l inizio del passo (schermata che si disegna): ora si porta in vista */
+    if (!portato && pronto) { portato = true; guidaScorriVerso(e); }
+    guidaPosiziona();
     if (q.fatto) {
-      let ok = false; try { ok = q.fatto(); } catch (e) {}
+      let ok = false; try { ok = q.fatto(); } catch (x) {}
       if (ok) { clearInterval(guidaTimer); setTimeout(() => { if (guidaPasso === passo) guidaAvanti(true); }, 350); return; }
       /* bersaglio sparito (schermata cambiata, niente da toccare): dopo 4 secondi si va avanti
          da soli, invece di lasciare lo schermo oscurato senza via d uscita */
-      const e = q.sel ? document.querySelector(q.sel) : null;
-      const r = e ? e.getBoundingClientRect() : null;
-      senzaEl = (q.sel && (!r || !r.width || !r.height)) ? senzaEl + 1 : 0;
+      senzaEl = (q.sel && !pronto) ? senzaEl + 1 : 0;
       if (senzaEl >= 16) { clearInterval(guidaTimer); guidaAvanti(true); }
     }
   }, 250);
@@ -11520,17 +11552,19 @@ window.chiudiGuida = function() {
   try { guidaRipristina(); } catch (e) {}
   try { location.reload(); } catch (e) {}
 };
-window.addEventListener('resize', () => { if (guidaPasso >= 0) guidaPosiziona(); });
-/* mentre la pagina scorre il riquadro segue il bersaglio frame per frame, senza scivolare in ritardo */
-let guidaScrollT = null;
-window.addEventListener('scroll', () => {
-  if (guidaPasso < 0) return;
+/* Mentre la pagina scorre o cambia misura, il riquadro resta incollato al bersaglio frame per frame
+   (g-segui = niente scivolamento). Finito il movimento, da fermo, torna a scivolare. */
+let guidaSeguiT = null;
+function guidaSegui() {
   const g = document.getElementById('guida');
-  if (g) g.classList.add('g-init');
+  if (!g || guidaPasso < 0) return;
+  g.classList.add('g-segui');
   guidaPosiziona();
-  clearTimeout(guidaScrollT);
-  guidaScrollT = setTimeout(() => { if (g) g.classList.remove('g-init'); }, 150);
-}, true);
+  clearTimeout(guidaSeguiT);
+  guidaSeguiT = setTimeout(() => g.classList.remove('g-segui'), 200);
+}
+window.addEventListener('resize', guidaSegui);
+window.addEventListener('scroll', guidaSegui, true);
 
 window.setConsenso = function(si, primoAvvio) {
   try {
