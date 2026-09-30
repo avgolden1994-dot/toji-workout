@@ -1977,11 +1977,17 @@ html:not([data-theme="light"]) .sr-input input[type=time] { color-scheme: dark; 
 
 .guida { position: fixed; inset: 0; z-index: 300; pointer-events: none; display: none; }
 .guida.on { display: block; }
-.g-dim { position: fixed; background: rgba(0, 0, 0, 0.62); pointer-events: auto; }
-.g-hole { position: fixed; border: 2px solid var(--on-primary); border-radius: 14px; box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 60%, transparent); pointer-events: none; animation: g-pulse 1.6s ease-in-out infinite; }
+.g-dim { position: fixed; background: rgba(0, 0, 0, 0.62); pointer-events: auto; transition: left .34s var(--g-ease), top .34s var(--g-ease), width .34s var(--g-ease), height .34s var(--g-ease); }
+.guida { --g-ease: cubic-bezier(0.16, 1, 0.3, 1); }
+.g-hole { position: fixed; border: 2px solid var(--on-primary); border-radius: 14px; box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 60%, transparent); pointer-events: none; animation: g-pulse 1.6s ease-in-out infinite; transition: left .34s var(--g-ease), top .34s var(--g-ease), width .34s var(--g-ease), height .34s var(--g-ease), opacity .2s ease; }
 @keyframes g-pulse { 50% { box-shadow: 0 0 0 8px color-mix(in srgb, var(--primary) 25%, transparent); } }
-@media (prefers-reduced-motion: reduce) { .g-hole { animation: none; } }
-.g-bub { position: fixed; left: 16px; right: 16px; max-width: 448px; margin: 0 auto; background: var(--surface-1); color: var(--text); border-radius: 16px; padding: 14px 16px; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35); pointer-events: auto; }
+@media (prefers-reduced-motion: reduce) { .g-hole { animation: none; } .g-dim, .g-hole, .g-bub { transition: none !important; } .g-bub > * { animation: none !important; } }
+/* alla prima apparizione tutto nasce gia al suo posto, senza scivolare dall angolo */
+.guida.g-init .g-dim, .guida.g-init .g-hole, .guida.g-init .g-bub { transition: none !important; }
+@keyframes g-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.g-bub > * { animation: g-in .3s var(--g-ease) both; }
+.g-bub > *:nth-child(2) { animation-delay: .04s; } .g-bub > *:nth-child(3) { animation-delay: .08s; } .g-bub > *:nth-child(4) { animation-delay: .12s; }
+.g-bub { transition: top .34s var(--g-ease); position: fixed; left: 16px; right: 16px; max-width: 448px; margin: 0 auto; background: var(--surface-1); color: var(--text); border-radius: 16px; padding: 14px 16px; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35); pointer-events: auto; }
 .g-num { font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
 .g-tit { font-size: 17px; font-weight: 800; margin-top: 2px; }
 .g-txt { font-size: 15px; line-height: 1.45; margin-top: 4px; }
@@ -11404,8 +11410,10 @@ function guidaRipristina() {
 window.avviaGuida = function() {
   try { closeSetPage(); } catch (e) {}
   guidaPasso = 0;
-  guidaEl().classList.add('on');
+  const g = guidaEl();
+  g.classList.add('on', 'g-init');
   guidaMostra();
+  requestAnimationFrame(() => requestAnimationFrame(() => g.classList.remove('g-init')));
 };
 window.offriGuida = function() {
   if (localStorage.getItem(GUIDA_KEY) || navigator.webdriver || /jsdom/i.test(navigator.userAgent || '')) return;
@@ -11430,12 +11438,16 @@ function guidaPosiziona() {
   st('.g-b', { left: 0, top: y1 + 'px', width: W + 'px', height: Math.max(0, H - y1) + 'px' });
   st('.g-l', { left: 0, top: y0 + 'px', width: x0 + 'px', height: Math.max(0, y1 - y0) + 'px' });
   st('.g-r', { left: x1 + 'px', top: y0 + 'px', width: Math.max(0, W - x1) + 'px', height: Math.max(0, y1 - y0) + 'px' });
-  st('.g-hole', { left: x0 + 'px', top: y0 + 'px', width: Math.max(0, x1 - x0) + 'px', height: Math.max(0, y1 - y0) + 'px', display: r ? 'block' : 'none' });
+  st('.g-hole', { left: x0 + 'px', top: y0 + 'px', width: Math.max(0, x1 - x0) + 'px', height: Math.max(0, y1 - y0) + 'px', opacity: r ? '1' : '0' });
   const b = g.querySelector('.g-bub');
   const hb = b.offsetHeight || 190;
-  const sotto = !r || (y1 + hb + 24 < H), sopra = r && y0 - hb - 24 > 0;
-  Object.assign(b.style, !r ? { top: '50%', bottom: 'auto', transform: 'translateY(-50%)' } : sotto ? { top: (y1 + 12) + 'px', bottom: 'auto' } : sopra ? { top: 'auto', bottom: (H - y0 + 12) + 'px' } : { top: 'auto', bottom: '16px' });
-  if (r) b.style.transform = 'none';
+  let top;
+  if (!r) top = (H - hb) / 2;
+  else if (y1 + hb + 24 < H) top = y1 + 12;
+  else if (y0 - hb - 24 > 0) top = y0 - hb - 12;
+  else top = H - hb - 16;
+  b.style.bottom = 'auto'; b.style.transform = 'none';
+  b.style.top = Math.max(8, Math.min(top, H - hb - 8)) + 'px';
 }
 function guidaMostra() {
   const g = guidaEl();
@@ -11443,7 +11455,7 @@ function guidaMostra() {
   clearInterval(guidaTimer);
   if (p.prep) try { p.prep(); } catch (e) {}
   const el = p.sel ? document.querySelector(p.sel) : null;
-  if (el && el.scrollIntoView) el.scrollIntoView({ block: 'center' });
+  if (el && el.scrollIntoView) el.scrollIntoView({ block: 'center', behavior: 'smooth' });
   const tot = GUIDA.length - 1;
   g.querySelector('.g-bub').innerHTML =
     (guidaPasso > 0 && !p.fine ? '<div class="g-num">' + tr('Passo # di #').replace('#', guidaPasso).replace('#', tot - 1) + '</div>' : '') +
@@ -11509,6 +11521,16 @@ window.chiudiGuida = function() {
   try { location.reload(); } catch (e) {}
 };
 window.addEventListener('resize', () => { if (guidaPasso >= 0) guidaPosiziona(); });
+/* mentre la pagina scorre il riquadro segue il bersaglio frame per frame, senza scivolare in ritardo */
+let guidaScrollT = null;
+window.addEventListener('scroll', () => {
+  if (guidaPasso < 0) return;
+  const g = document.getElementById('guida');
+  if (g) g.classList.add('g-init');
+  guidaPosiziona();
+  clearTimeout(guidaScrollT);
+  guidaScrollT = setTimeout(() => { if (g) g.classList.remove('g-init'); }, 150);
+}, true);
 
 window.setConsenso = function(si, primoAvvio) {
   try {
