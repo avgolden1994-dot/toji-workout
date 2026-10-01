@@ -21,7 +21,7 @@
 .template-meta { font-size: 0.72rem; color: var(--primary); font-weight: 800; margin-bottom: 10px; }
 .template-actions { display: flex; gap: 6px; }
 .template-btn { flex: 1; border: none; border-radius: 8px; padding: 9px 6px; font-size: 0.74rem; font-weight: 800; cursor: pointer; }
-.template-btn.replace { background: var(--primary); color: #fff; }
+.template-btn.replace { background: var(--primary); color: var(--on-primary); }
 .template-btn.append { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
 
 /* ======= Allenamento: lista set-by-set ======= */
@@ -51,7 +51,7 @@
 .rpe-hint { font-size: 0.72rem; color: var(--muted); line-height: 1.4; margin: 6px 2px 0; }
 .rpe-hint b { color: var(--text); }
 .set-check { margin-left: auto; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: var(--surface-2); border: 1px solid var(--border); color: transparent; font-weight: 900; cursor: pointer; }
-.set-check.checked { background: var(--success); border-color: var(--success); color: var(--bg); }
+.set-check.checked { background: var(--success); border-color: var(--success); color: var(--on-status); }
 .edit-btn { background: transparent; border: none; color: var(--accent); font-size: 0.95rem; cursor: pointer; padding: 0 2px; }
 .piano-item-actions { display: flex; align-items: center; gap: 10px; }
 #cancel-edit-btn { display: none; background: transparent; border: none; color: var(--muted); font-size: 0.75rem; text-decoration: underline; cursor: pointer; padding: 4px 0; }
@@ -61,7 +61,7 @@
 .drop-hint { font-size: 0.78rem; color: var(--accent); font-weight: 700; margin-bottom: 10px; min-height: 1.2em; }
 .source-tabs { display: flex; gap: 6px; background: var(--surface-2); padding: 4px; border-radius: 10px; margin-bottom: 10px; }
 .source-tab-btn { flex: 1; background: transparent; border: none; color: var(--muted); padding: 8px 4px; border-radius: 7px; font-weight: 800; font-size: 0.7rem; text-transform: uppercase; cursor: pointer; }
-.source-tab-btn.active { background: var(--primary); color: #fff; }
+.source-tab-btn.active { background: var(--primary); color: var(--on-primary); }
 .source-panel { display: none; }
 .source-panel.active { display: block; }
 

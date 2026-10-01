@@ -199,7 +199,7 @@
 .days-bar { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; width: 100%; }
 .days-bar::-webkit-scrollbar { display: none; }
 .day-chip { background: var(--card); border: 1px solid var(--border); color: var(--muted); padding: 8px 12px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0; }
-.day-chip.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 0 10px var(--primary-shadow); }
+.day-chip.active { background: var(--primary); color: var(--on-primary); border-color: var(--primary); box-shadow: 0 0 10px var(--primary-shadow); }
 
 /* ======= Tab panels ======= */
 .tab-panel { display: none; flex-direction: column; gap: var(--sp-5); }
@@ -229,7 +229,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 .stepper-btn.minus { border-radius: 8px 0 0 8px; }
 .stepper-btn.plus { border-radius: 0 8px 8px 0; }
 
-.btn-main { background: var(--primary); color: #fff; border: none; padding: 11px; border-radius: 8px; font-weight: 800; font-size: 0.9rem; cursor: pointer; width: 100%; text-transform: uppercase; letter-spacing: 0.5px; }
+.btn-main { background: var(--primary); color: var(--on-primary); border: none; padding: 11px; border-radius: 8px; font-weight: 800; font-size: 0.9rem; cursor: pointer; width: 100%; text-transform: uppercase; letter-spacing: 0.5px; }
 .btn-main:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(50%); }
 .btn-archive { background: var(--surface-2); color: var(--accent); border: 1px solid var(--accent); padding: 10px; border-radius: 8px; font-weight: 800; font-size: 0.85rem; cursor: pointer; width: 100%; text-transform: uppercase; margin-top: 10px; }
 
@@ -243,17 +243,17 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 .plan-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
 .plan-summary { font-size: 0.72rem; line-height: var(--lh-tight); color: var(--muted); font-weight: 600; margin-top: var(--sp-1); }
 .plan-tool-btn { background: var(--surface-2); border: 1px solid var(--border); color: var(--text); padding: 7px 10px; border-radius: 8px; font-size: 0.72rem; font-weight: 800; cursor: pointer; white-space: nowrap; }
-.plan-tool-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+.plan-tool-btn.active { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
 
 .plan-card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 8px; }
 .plan-card.superset { border-left: 3px solid var(--accent); }
 .plan-card-top { display: flex; align-items: flex-start; gap: 8px; }
-.plan-order-num { flex-shrink: 0; width: 22px; height: 22px; border-radius: 6px; background: var(--primary); color: #fff; font-size: 0.72rem; font-weight: 900; display: flex; align-items: center; justify-content: center; margin-top: 2px; }
+.plan-order-num { flex-shrink: 0; width: 22px; height: 22px; border-radius: 6px; background: var(--primary); color: var(--on-primary); font-size: 0.72rem; font-weight: 900; display: flex; align-items: center; justify-content: center; margin-top: 2px; }
 .plan-card-main { flex: 1; min-width: 0; }
 .plan-ex-name { font-weight: 700; font-size: 0.92rem; word-break: break-word; }
 .plan-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
 .plan-badge { background: var(--surface-2); border: 1px solid var(--border); border-radius: 999px; padding: 3px 9px; font-size: 0.72rem; font-weight: 800; }
-.plan-badge.reps { background: var(--primary); border-color: var(--primary); color: #fff; }
+.plan-badge.reps { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
 .plan-badge.rest { color: var(--accent); border-color: var(--accent); }
 .plan-badge.superset-tag { color: var(--accent); border-color: var(--accent); }
 .plan-note { font-size: 0.74rem; color: var(--muted); font-style: italic; margin-top: 6px; word-break: break-word; }
@@ -275,6 +275,9 @@ body.reorder-mode .plan-card { border-color: var(--primary); }
 }
 .btn-start-workout:active { transform: scale(0.98); }
 .btn-start-workout:disabled { opacity: 0.45; box-shadow: none; cursor: default; }
+/* Nel tema scuro il testo bianco sull arancio chiaro del gradiente arrivava a 2.4:1.
+   Qui pieno arancio e testo scuro (on-primary, 8:1); nel chiaro il gradiente col bianco resta (5.2:1). */
+html:not([data-theme="light"]) .btn-start-workout { background: var(--primary); color: var(--on-primary); }
 
 /* ======= Riepilogo settimana nel piano ======= */
 .wk-row {
@@ -326,5 +329,5 @@ body.reorder-mode .plan-card { border-color: var(--primary); }
   color: var(--muted); font-size: 1.25rem; font-weight: 900; cursor: pointer;
   transition: transform .15s ease, color .15s ease, background .15s ease;
 }
-.wheel-num.on { background: var(--primary); border-color: var(--primary); color: #fff; transform: scale(1.14); }
+.wheel-num.on { background: var(--primary); border-color: var(--primary); color: var(--on-primary); transform: scale(1.14); }
 .wheel-mask { text-align: center; font-size: 0.7rem; color: var(--muted); padding-top: 2px; }
