@@ -1,19 +1,24 @@
 # Piano: piattaforma di coaching con coach reali (sito + app 3in)
 
-Stato: **architettura v3** (1 ottobre 2026), aggiornata con le decisioni del titolare. Progetto a parte rispetto all'app: nuovo repository (`3in-coach`), che parla con l'app attraverso un contratto di eventi (capitolo 7) e condivide con essa libreria esercizi e regole (capitolo 9). I dettagli si decidono per fasi.
+Stato: **architettura v4** (1 ottobre 2026), aggiornata con le decisioni del titolare. Progetto a parte rispetto all'app: nuovo repository (`3in-coach`), che parla con l'app attraverso un contratto di eventi (capitolo 7) e condivide con essa libreria esercizi e regole (capitolo 9). I dettagli si decidono per fasi.
 
 ## 1. Decisioni prese
 | # | Tema | Decisione |
 |---|---|---|
 | 1 | Modello | **Piattaforma con più coach iscritti**, ognuno con il proprio account e i propri allievi |
 | 2 | Servizi | **Solo nutrizione** oppure **servizio completo** (allenamento + nutrizione) |
-| 3 | Rapporto coach–allievo | **Contratto firmato**, **moduli sul trattamento dei dati** scambiati, **prestazioni pagate una a una** |
+| 3 | Rapporto coach–allievo | **Contratto firmato** e **moduli sul trattamento dei dati** scambiati. Si vende un **programma a pacchetto** (vedi 11) |
 | 4 | Più professionisti per un allievo | **Sì**: allenatore e nutrizionista si collegano **insieme**; l'app mette a disposizione di tutti **tutta l'informazione**; **ognuno modifica solo ciò che compete al suo ruolo** (il nutrizionista solo il piano alimentare, l'allenatore solo gli allenamenti) |
 | 5 | Sedute | Il coach **commenta le sedute fatte** e **modifica quelle da fare** |
 | 6 | Chat | Serve; si attiva **solo con il codice di coaching** (icona «Coaching» nell'app); l'allievo ha anche il **sito come allievo** per le descrizioni dettagliate |
 | 7 | Scelta del coach | Un **elenco di coach** tra cui l'allievo sceglie |
 | 8 | Titolare | Per ora una **piattaforma di interazione**, il titolare è **l'unico responsabile** |
 | 9 | Paesi e lingue | **Solo Italia, solo italiano** |
+| 11 | Cosa si vende | Un **programma con un numero di videochiamate in un totale di settimane**, perché l'allievo viva un **percorso**. Nel prezzo è incluso tutto: revisione, allenamento, coaching, chat |
+| 12 | Chat | Chat **a tre** (allievo + allenatore + nutrizionista) e, nella **scheda allievo**, una **chat di coordinamento solo tra i due professionisti** (l'allievo **non** la vede e **non** vede le note interne), così si coordinano senza uscire dalla piattaforma |
+| 13 | Dati dopo la fine | Restano sul server **per un periodo, in forma di archivio**, poi vengono **cancellati** |
+| 14 | Coach | Accede **solo con il proprio account**; **non può delegare** la videochiamata, ma può **spostarla**. Se il coach si ritira dopo il pagamento, **l'intero piano passa a un altro coach** |
+| 15 | Comunicazione | **Videochiamata + chat** |
 | 10 | Suggerimenti e rapporti | Il sito prepara per il coach **suggerimenti e un rapporto** (regole dell'app e ricerche); il coach **deve leggere tutto il rapporto prima di proseguire o accettare**; **serve sempre il consenso umano** |
 
 Da decidere: vedi capitolo 16.
@@ -35,7 +40,7 @@ Da decidere: vedi capitolo 16.
 | **Coach – nutrizione** | Come sopra ma modifica solo il **piano alimentare** | idem |
 | **Amministratore** (tu) | Approva e verifica i coach, gestisce l'elenco, segnalazioni, rimborsi, richieste GDPR, commissioni | back-office |
 
-**Il team dell'allievo:** un allievo ha **al massimo un coach per ruolo** (un allenatore e un nutrizionista). I due **lavorano insieme per impostazione predefinita**: vedono gli stessi report e grafici e si leggono a vicenda le note interne condivise; ognuno scrive solo nel proprio campo. Un coach non vede gli allievi degli altri coach.
+**Il team dell'allievo:** un allievo ha **al massimo un coach per ruolo** (un allenatore e un nutrizionista). I due **lavorano insieme per impostazione predefinita**: vedono gli stessi report e grafici e si leggono a vicenda le note interne condivise; ognuno scrive solo nel proprio campo. Un coach non vede gli allievi degli altri coach. Il coach lavora **solo con il proprio account** (due passaggi) e **non può far svolgere la videochiamata a un'altra persona**.
 
 ## 4. Panoramica
 
@@ -63,10 +68,12 @@ Da decidere: vedi capitolo 16.
 | Peso, misure, BIA, foto | vede | vede | vede, registra |
 | Prontezza, sonno, dolore | vede | vede | registra |
 | Questionario di salute (PAR-Q) | vede se concesso | vede se concesso | decide |
-| Chat | con l'allievo; chat di gruppo se attiva | con l'allievo; chat di gruppo se attiva | tutte |
-| Note interne tra professionisti | sì | sì | no (decisione da confermare) |
+| Chat a tre (con l'allievo) | sì | sì | sì |
+| Note interne tra professionisti e **chat di coordinamento** | sì | sì | **no** (non le vede) |
 
 **Consenso (importante):** vedere «tutto» significa che il nutrizionista legge i dati di allenamento e viceversa. Per il GDPR l'allievo deve **sapere e accettare** chi vede cosa: quando collega il secondo professionista compare il consenso con l'elenco delle categorie e degli accessi; l'impostazione predefinita è «tutto condiviso nel team», ma l'allievo può togliere categorie (soprattutto questionario di salute e foto). Il registro degli accessi mostra chi ha aperto cosa.
+
+**Nota sulle note interne:** anche se l'allievo non le vede nella piattaforma, sono **dati personali che lo riguardano**: se li chiede (diritto di accesso, GDPR art. 15) vanno forniti, salvo eccezioni. Per questo le note interne si scrivono in modo professionale e circoscritto. Da confermare con il legale.
 
 **Attenzione professionale:** in Italia prescrivere diete è riservato a professioni regolamentate (dietista, biologo nutrizionista, medico). Un personal trainer **non** può dare piani alimentari: per questo il permesso di modificare il piano alimentare esiste **solo** per il ruolo «nutrizione», verificato (titolo, iscrizione all'albo, assicurazione). Da confermare con un legale.
 
@@ -85,6 +92,24 @@ Da decidere: vedi capitolo 16.
 
 **L'elenco dei coach:** profilo con titoli verificati (indicazione «verificato dalla piattaforma»), servizi e prezzi, disponibilità; ricerca per ruolo e specializzazione. Recensioni: **non all'inizio** (richiedono moderazione e regole), eventualmente dopo. La pubblicità sanitaria ha regole specifiche in Italia: **da verificare con un legale** prima di mostrare titoli e promesse.
 
+## 6b. Il programma a pacchetto, le videochiamate, il passaggio del percorso
+**Il prodotto.** Il coach (o la piattaforma) pubblica uno o più **pacchetti** nel proprio profilo, per esempio «12 settimane, 6 videochiamate». Un pacchetto ha: **durata in settimane**, **numero di videochiamate** (e durata di ciascuna), **tipo di servizio** (allenamento, nutrizione, completo), **prezzo unico**. Comprende tutto: programma, revisioni, commenti, chat, rapporti. L'allievo lo acquista **una volta** e firma il contratto relativo.
+
+**Le videochiamate**
+- Si prenotano da un **calendario** del coach (disponibilità, fuso orario unico: Italia) e si svolgono **dentro la piattaforma** (video nel sito; l'app apre il collegamento).
+- **Solo il coach titolare** può condurla: entra con il **proprio account** (due passaggi); nessuna delega a collaboratori o sostituti.
+- Il coach **può spostarla** (un numero limitato di volte, con preavviso minimo); l'allievo può spostarla entro regole fissate nel contratto (preavviso). Le chiamate non fatte per colpa del coach **non si perdono**; quelle saltate dall'allievo senza preavviso **sì** (da decidere).
+- Con **allenatore + nutrizionista** il pacchetto «completo» prevede chiamate con ciascuno o di gruppo (da decidere).
+- **Nessuna registrazione** di default; se mai, solo con consenso esplicito e conservazione breve.
+- Tecnica: servizio video già pronto con server in UE (es. fornitori WebRTC) invece di costruirlo da zero; da valutare costi e requisiti privacy.
+
+**Il passaggio del percorso (il coach si ritira)**
+1. Il coach (o l'amministratore) segnala il ritiro; il programma **non si interrompe**.
+2. L'amministratore **propone un altro coach** dello stesso ruolo; l'allievo **accetta o rifiuta**. Se rifiuta, ha diritto al **rimborso proporzionale** a quanto non svolto.
+3. Con l'accettazione: il **contratto passa al nuovo coach** (cessione, con nuova firma e **nuovi moduli sui dati**, perché cambia il titolare del trattamento), **storico, programma, rapporti e chat restano** e il nuovo coach li vede.
+4. Il **pagamento** si divide in proporzione: ciò che resta da svolgere va al nuovo coach. Per questo i fondi **non vengono trasferiti tutti al coach all'acquisto** ma **a tappe** (per esempio a ogni videochiamata svolta e a ogni settimana completata). Stripe lo permette (incasso della piattaforma e trasferimenti separati).
+5. Il vecchio coach **perde l'accesso** ai dati dell'allievo da quel momento (resta l'archivio di legge delle proprie prestazioni).
+
 ## 7. Il contratto tra app e servizio
 **Eventi dall'app** (append-only, con id univoco: l'invio si può ripetere senza duplicare; coda con ripetizione se manca la rete):
 
@@ -100,7 +125,12 @@ Da decidere: vedi capitolo 16.
 
 **Dal coach all'app:** `programma.modificato` (sedute **ancora da fare**), `commento.seduta` (sedute fatte), `messaggio`, `carico.indicato`.
 
-**Chat:** testo, allegati (immagini, PDF), note vocali più avanti; segni di lettura; notifiche; segnalazione abusi. I messaggi contengono dati di salute: stessa protezione degli altri dati.
+**Chat:** due tipi, separati fin dal database:
+- **chat a tre** (allievo + allenatore + nutrizionista; con un solo professionista, chat a due);
+- **coordinamento** (solo allenatore + nutrizionista, nella scheda allievo): l'allievo **non** la vede.
+Testo, allegati (immagini, PDF), segni di lettura, notifiche, segnalazione abusi. I messaggi contengono dati di salute: stessa protezione degli altri dati, e il **registro degli accessi** vale anche per la chat.
+
+**Videochiamate:** `chiamata.prenotata`, `chiamata.spostata` (con chi e perché), `chiamata.svolta` (durata reale), `chiamata.saltata`.
 
 **API (bozza):** `/v1/abbina`, `/v1/eventi` (a lotti), `/v1/da-coach?dopo=…` + tempo reale, `/v1/foto/url`, `/v1/chat`, `/v1/contratti`, `/v1/pagamenti`, `/v1/revoca`. Schema JSON per ogni evento e test di compatibilità app–servizio.
 
@@ -138,11 +168,12 @@ Avvisi: seduta saltata · dolore segnalato · prontezza bassa · carico sceso du
 
 **Sito allievo:** chat con il coach e descrizioni dettagliate (schede, note, allegati) · contratto e moduli · pagamenti e ricevute · progressi in sola lettura · gestione del consenso e cancellazione dati.
 
-## 10. Pagamenti (a prestazione)
-- **Modello:** il coach definisce un **listino** (es. «controllo mensile», «revisione scheda», «consulto nutrizionale»); l'allievo paga **ogni prestazione**; la piattaforma trattiene una commissione.
-- **Tecnica consigliata:** **Stripe Connect** (i soldi vanno al coach, la piattaforma incassa la commissione; Stripe fa la verifica d'identità dei coach).
-- **Da definire:** quando si paga (prima o dopo), rimborsi, controversie, **fatture** (è il coach che fattura all'allievo; la piattaforma fattura la commissione al coach), IVA.
-- **Store (App Store/Google):** le prestazioni **da persona a persona** possono avere regole particolari sui pagamenti **da verificare nelle linee guida aggiornate**; il pagamento avviene sul sito allievo, non nell'app, per evitare problemi.
+## 10. Pagamenti (a pacchetto)
+- **Modello:** l'allievo paga **il pacchetto in un'unica soluzione** (o a rate, da decidere); la piattaforma trattiene una **commissione**.
+- **Fondi a tappe:** la piattaforma incassa e **trasferisce al coach man mano** che il servizio viene svolto (videochiamata svolta, settimana completata). Così il **passaggio a un altro coach** e i **rimborsi** sono possibili senza dover recuperare soldi già pagati.
+- **Tecnica consigliata:** **Stripe Connect** (incasso separato dai trasferimenti ai coach, verifica d'identità dei coach).
+- **Da definire con un legale/commercialista:** diritto di recesso del consumatore (14 giorni) e servizi già avviati, rimborsi, fatture (il coach all'allievo; la piattaforma al coach per la commissione), IVA, ritenute.
+- **Store:** il pagamento avviene sul **sito allievo**, non nell'app. Per i servizi da persona a persona le linee guida degli store hanno regole particolari: **da verificare** sulla versione aggiornata prima dell'invio.
 
 ## 11. Scelte tecniche (consiglio + alternativa)
 | Tema | Consiglio | Alternativa |
@@ -165,6 +196,7 @@ Avvisi: seduta saltata · dolore segnalato · prontezza bassa · carico sceso du
 - Testi in it/en/es/de, informativa, test (`tests/browser/coaching.js`), documenti aggiornati.
 
 ## 13. Privacy, legge e store (prima del lancio)
+- **Archivio e cancellazione:** alla fine del pacchetto i dati passano in **archivio a sola lettura** per un periodo fisso (**da decidere con un legale: proposta di partenza 12 mesi**), poi vengono **cancellati** in modo definitivo, con **avviso** all'allievo e al coach e possibilità di **esportare** prima (file scaricabile). Restano **per i tempi di legge** solo contratti e fatture (in genere 10 anni), separati dai dati di salute. L'allievo può chiedere la cancellazione anticipata (salvo gli obblighi di legge). Le chat e le note seguono lo stesso periodo.
 - **GDPR:** dati di salute (art. 9), consenso esplicito, valutazione d'impatto (DPIA), contratti con i fornitori, server UE, conservazione, esportazione e cancellazione, registro accessi visibile all'allievo.
 - **Ruoli privacy:** coach = titolare del trattamento dei dati dei propri allievi; piattaforma = responsabile (e titolare per i dati dei coach e dei pagamenti). Serve un accordo di nomina e le condizioni d'uso dei coach.
 - **Professioni regolamentate** (nutrizione) e **responsabilità**: titoli, assicurazione, limiti dichiarati; la piattaforma non è un dispositivo medico.
@@ -182,31 +214,41 @@ Avvisi: seduta saltata · dolore segnalato · prontezza bassa · carico sceso du
    **Dati condivisi nel team:** il nutrizionista legge dati di allenamento e viceversa: serve consenso chiaro e registro accessi.
    **Elenco pubblico dei coach:** responsabilità sulla verifica dei titoli e sulla pubblicità sanitaria.
 6. **Sincronizzazione** (offline, versioni diverse dell'app).
+7. **Videochiamate:** costi, qualità, privacy, assenze (coach che non si presenta), controversie.
+8. **Pacchetti a lunga durata:** rischio di rimborsi e contestazioni; serve un contratto chiaro e fondi trattenuti a tappe.
+9. **Passaggio del percorso:** cambia il titolare dei dati; senza consenso e nuovi moduli è una violazione.
 
 ## 15. Fasi
 | Fase | Contenuto | Risultato |
 |---|---|---|
-| 0. Decisioni e legale | domande aperte, consulenza legale (contratto, nutrizione, pubblicità sanitaria, GDPR, forma societaria), scelta del servizio, nome e dominio | via libera scritto |
-| 1. Fondamenta | account coach/allievo/admin, verifica coach, **elenco coach**, abbinamento (elenco o codice), contratto e moduli | un coach segue un allievo, senza pagamenti |
-| 2. Dati e grafici | invio sedute/carichi/programma, scheda allievo con grafici, aderenza, avvisi | coach in «sola lettura» completo |
-| 3. Rapporti e suggerimenti | **pacchetto condiviso delle regole**, rapporto, coda «Da rivedere», lettura obbligatoria, registro | coach assistito con consenso umano |
-| 4. Il coach scrive | modifica delle sedute da fare, commenti, **chat** (app e sito allievo), icona «Coaching» | ciclo completo |
-| 5. Foto e misure | foto a confronto, misure/BIA, prontezza e dolore | |
-| 6. Soldi | listino, Stripe Connect, ricevute e fatture, rimborsi | servizio a pagamento |
-| 7. Team e nutrizione | secondo professionista, vista condivisa, **diario e piano alimentare**, regole nutrizionali validate | servizio completo |
-| 8. Scala | cifratura end-to-end, studi/team di coach, app desktop, assistenza, recensioni | |
+| 0. Decisioni e legale | domande aperte, consulenza legale (contratto, pacchetti, recesso, nutrizione, pubblicità sanitaria, GDPR, **forma societaria**), fornitore video, fornitore pagamenti, nome e dominio | via libera scritto |
+| 1. Fondamenta | account coach/allievo/admin, verifica coach, **elenco coach e pacchetti**, abbinamento, contratto e moduli | un coach e un allievo collegati, senza pagamenti |
+| 2. Dati e grafici | invio sedute/carichi/programma, scheda allievo, grafici, aderenza, avvisi | coach in «sola lettura» completo |
+| 3. Rapporti e suggerimenti | pacchetto condiviso delle regole, rapporto, coda «Da rivedere», lettura obbligatoria, registro | coach assistito con consenso umano |
+| 4. Comunicazione | **chat** (app e sito allievo), icona «Coaching», modifica delle sedute da fare | ciclo completo |
+| 5. Videochiamate | calendario, prenotazione e spostamento, chiamata nel sito, registro delle svolte | pacchetto utilizzabile |
+| 6. Soldi | Stripe Connect, pacchetti, fondi a tappe, ricevute e fatture, rimborsi | servizio a pagamento |
+| 7. Continuità | **passaggio del percorso ad altro coach**, archivio e cancellazione programmata, esportazione dati | tutela dell'allievo |
+| 8. Foto e misure | foto a confronto, misure/BIA, prontezza e dolore | |
+| 9. Team e nutrizione | secondo professionista, **chat di coordinamento**, vista condivisa, diario e piano alimentare, regole nutrizionali validate | servizio completo |
+| 10. Scala | cifratura end-to-end, studi/team di coach, app desktop, assistenza, recensioni | |
 | Parallela | prove di sicurezza (come `docs/SICUREZZA.md`), privacy store, revisione legale continua | |
 
-Ordine consigliato: partire **con coach di allenamento** e portare la nutrizione e il team alla fase 7, perché sono la parte con più rischio legale. Da confermare.
+Ordine consigliato: partire **con coach di allenamento** e portare nutrizione e team in fase 9, perché hanno più rischio legale. Le fasi 5-7 (video, soldi, continuità) sono il cuore commerciale: **non lanciare a pagamento senza averle tutte e tre**. Da confermare.
 
 ## 16. Domande ancora aperte
-1. **«Seduta» a pagamento** (da decidere): è una **prestazione del coach** (consulto, revisione, videochiamata) o ogni **allenamento** dell'allievo? Cambia listino, contratto e fatture.
-2. **Responsabilità del titolare:** da persona fisica si risponde con il proprio patrimonio. Valutare con un commercialista/legale una forma societaria o assicurazione **prima** di aprire a pagamenti e dati di salute.
-3. **Note interne tra professionisti:** l'allievo le vede o no? Chat di gruppo allievo+allenatore+nutrizionista sì/no?
-4. **Cosa succede ai dati** se il coach chiude l'account, o se l'allievo cambia coach (passaggio dello storico)?
-5. **Commissione** della piattaforma e chi la sostiene; **fatture** (il coach all'allievo; la piattaforma al coach).
-6. **Videochiamate** o solo chat?
-7. **Recensioni** nell'elenco coach: subito, dopo, mai?
-8. **Rapporto:** frequenza (settimanale, a ogni seduta, a richiesta)? Il coach può **delegare** la lettura (es. a un collaboratore)?
-9. **Obbligo di lettura:** basta apertura di tutte le sezioni + conferma, o si vuole un controllo più stretto (es. domanda di verifica)?
-10. **Regole nutrizionali:** chi le scrive e le valida? (professionista esterno consulente)
+**Decise:** pacchetto a durata fissa con videochiamate, chat a tre + chat di coordinamento riservata, archivio con cancellazione, coach solo con account e passaggio del percorso, videochiamata + chat.
+
+**Da decidere**
+1. **Archivio:** per quanto tempo? (proposta: 12 mesi dopo la fine del pacchetto, poi cancellazione; contratti e fatture separati, 10 anni). Verifica con un legale.
+2. **Videochiamate:** quante volte il coach e l'allievo possono spostarle, preavviso minimo, cosa succede se l'allievo non si presenta, cosa succede se non si presenta il coach, quando scadono quelle non usate.
+3. **Pacchetto completo:** le chiamate sono con ciascun professionista, di gruppo o miste?
+4. **Prezzo e commissione:** chi stabilisce i prezzi (il coach, la piattaforma, un intervallo)? Quanto trattiene la piattaforma? Pagamento unico o a rate?
+5. **Rimborsi e recesso:** regole in caso di rinuncia a metà percorso o di ritiro del coach; diritto di recesso di 14 giorni.
+6. **Responsabilità del titolare:** da persona fisica si risponde con il proprio patrimonio; valutare una forma societaria o un'assicurazione **prima** di aprire a pagamenti e dati di salute.
+7. **Passaggio del percorso:** chi sceglie il nuovo coach? L'allievo può rifiutare e avere il rimborso? E se non c'è nessun coach disponibile?
+8. **Rapporto:** frequenza (settimanale, a ogni seduta, a richiesta)? Il coach può delegare la **lettura del rapporto** (diversa dalla videochiamata, che non si delega)?
+9. **Obbligo di lettura:** basta apertura di tutte le sezioni + conferma, o un controllo più stretto?
+10. **Regole nutrizionali:** chi le scrive e le valida (professionista esterno consulente)?
+11. **Fornitore video** (e se è il caso un'alternativa semplice: link a un servizio esterno scelto dal coach, con meno controllo ma meno lavoro e costi).
+12. **Recensioni** nell'elenco coach: subito, dopo, mai?
