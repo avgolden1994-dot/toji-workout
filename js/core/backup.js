@@ -5,6 +5,13 @@
 /* ============ 2. BACKUP E RIPRISTINO ============ */
 const CHIAVI_APP = /^(coach_plus|tz_)/;
 const CHIAVI_TEMPORANEE = /^(tz_seduta_inizio|tz_seduta_speciale|tz_guida_backup)$|_rotto_/;
+/* un file di backup non puo dare i consensi al posto dell utente (ne quello ai dati ne quello al Coach IA) ne cambiare l identificativo del dispositivo */
+const CHIAVI_NON_RIPRISTINABILI = /^(tz_consenso|tz_device_ia)/;
+/* testi di un backup: via < e > da ogni valore, cosi un file manomesso non puo iniettare codice nelle schermate */
+function valorePulito(v) {
+  try { const j = JSON.parse(v); if (j && typeof j === 'object') return JSON.stringify(pulisciDeep(j)); } catch (e) {}
+  return String(v).replace(/[<>]/g, '');
+}
 function chiaviApp() {
   const k = [];
   for (let i = 0; i < localStorage.length; i++) { const x = localStorage.key(i); if (CHIAVI_APP.test(x) && !CHIAVI_TEMPORANEE.test(x)) k.push(x); }
@@ -45,7 +52,7 @@ window.ripristinaBackup = function() {
 };
 function applicaFotografia(d, esatta) {
   if (esatta) chiaviApp().forEach(k => { if (!(k in d)) localStorage.removeItem(k); });
-  Object.keys(d).forEach(k => { if (CHIAVI_APP.test(k) && !CHIAVI_TEMPORANEE.test(k) && typeof d[k] === 'string') localStorage.setItem(k, d[k]); });
+  Object.keys(d).forEach(k => { if (CHIAVI_APP.test(k) && !CHIAVI_TEMPORANEE.test(k) && !CHIAVI_NON_RIPRISTINABILI.test(k) && typeof d[k] === 'string') localStorage.setItem(k, valorePulito(d[k])); });
 }
 function ricaricaApp() {
   const L = localStorage.getItem(LINGUA_KEY);

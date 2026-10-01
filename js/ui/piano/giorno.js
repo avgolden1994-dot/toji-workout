@@ -110,7 +110,7 @@ function renderDayView() {
           (e.superset ? ' \u2022 superset' : '') + '</span>' +
         (e.note ? '<span class="dv-note">' + escapeHtml(e.note) + '</span>' : '') +
       '</span>' +
-      '<button class="dv-info" onclick="openExerciseInfo(\'' + e.name.replace(/'/g, "\\'") + '\')" aria-label="Come si fa">\u2139</button>' +
+      '<button class="dv-info" onclick="openExerciseInfo(\'' + jsArg(e.name) + '\')" aria-label="Come si fa">\u2139</button>' +
     '</div>';
   }).join('');
 }

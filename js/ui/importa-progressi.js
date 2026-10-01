@@ -192,7 +192,7 @@ window.confermaImportProgressi = function() {
   saveHistory(storia);
   nuoveH.forEach(h => segnaFattoNelCalendario(Object.assign({}, h, { passata: true })));
   const pers = eserciziPersonalizzati();
-  Object.keys(foglioDati.r.sconosciuti || {}).forEach(n => { if (pers.indexOf(n) === -1) pers.push(n); });
+  Object.keys(foglioDati.r.sconosciuti || {}).forEach(n => { if (pers.indexOf(nomeSicuro(n)) === -1) pers.push(nomeSicuro(n)); });
   localStorage.setItem(personalizzatiKey(), JSON.stringify(pers));
   const n = nuoveH.length;
   foglioDati = null;

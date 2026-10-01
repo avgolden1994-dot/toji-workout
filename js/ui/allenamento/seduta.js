@@ -176,7 +176,7 @@ function renderAllenamento() {
             ${ultimaVoltaTesto(e.name) ? `<span class="last-time">${escapeHtml(ultimaVoltaTesto(e.name))}</span>` : ''}
             ${e.note ? `<div class="plan-note">📝 ${escapeHtml(e.note)}</div>` : ''}
           </div>
-          <button class="info-btn" onclick="openExerciseInfo('${e.name.replace(/'/g, "\\'")}')" title="Come si fa" aria-label="Come si fa">ℹ</button>
+          <button class="info-btn" onclick="openExerciseInfo('${jsArg(e.name)}')" title="Come si fa" aria-label="Come si fa">ℹ</button>
           <button class="skip-btn ${e.skipped ? 'on' : ''}" onclick="toggleSkipExercise(${idx})">${e.skipped ? '↺ Riprendi' : '⏭ Salta'}</button>
         </div>
         <div class="set-rows">

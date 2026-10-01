@@ -103,7 +103,7 @@ function renderSuggested() {
   const sotto = items.slice(VISIBILI);
 
   let html = sopra.map(ex => pickRow(ex, present.has(ex.name),
-    'togglePickExercise(\'' + ex.name.replace(/'/g, "\\'") + '\')')).join('');
+    'togglePickExercise(\'' + jsArg(ex.name) + '\')')).join('');
 
   if (sotto.length) {
     const quantiScelti = sotto.filter(e => present.has(e.name)).length;
@@ -113,7 +113,7 @@ function renderSuggested() {
       '<span class="caret">\u25BE</span></button>' +
       '<div class="drawer-body ' + (suggestedExpanded ? 'open' : '') + '">' +
         sotto.map(ex => pickRow(ex, present.has(ex.name),
-          'togglePickExercise(\'' + ex.name.replace(/'/g, "\\'") + '\')')).join('') +
+          'togglePickExercise(\'' + jsArg(ex.name) + '\')')).join('') +
       '</div>';
   }
 
@@ -173,7 +173,7 @@ function renderSheetExercises() {
   const sotto = list.slice(VISIBILI);
 
   let html = sopra.map(ex => pickRow(ex, present.has(ex.name),
-    'togglePickExercise(\'' + ex.name.replace(/'/g, "\\'") + '\')')).join('');
+    'togglePickExercise(\'' + jsArg(ex.name) + '\')')).join('');
 
   if (sotto.length) {
     const quantiScelti = sotto.filter(e => present.has(e.name)).length;
@@ -183,7 +183,7 @@ function renderSheetExercises() {
       '<span class="caret">\u25BE</span></button>' +
       '<div class="drawer-body ' + (sheetExpanded ? 'open' : '') + '">' +
         sotto.map(ex => pickRow(ex, present.has(ex.name),
-          'togglePickExercise(\'' + ex.name.replace(/'/g, "\\'") + '\')')).join('') +
+          'togglePickExercise(\'' + jsArg(ex.name) + '\')')).join('') +
       '</div>';
   }
 

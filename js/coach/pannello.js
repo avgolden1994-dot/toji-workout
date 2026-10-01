@@ -34,7 +34,7 @@ function renderCoach() {
     '<div class="coach-item">' +
       '<div><div class="coach-name">' + escapeHtml(s.name) + '</div>' +
       '<div class="coach-reason">' + escapeHtml(s.reason) + '</div></div>' +
-      '<button class="lib-add-btn" onclick="addLibraryExercise(\'' + s.name.replace(/'/g, "\\'") + '\')" aria-label="Aggiungi">+</button>' +
+      '<button class="lib-add-btn" onclick="addLibraryExercise(\'' + jsArg(s.name) + '\')" aria-label="Aggiungi">+</button>' +
     '</div>'
   ).join('');
 }

@@ -415,6 +415,9 @@ function ensurePdfJs() {
     const t = setTimeout(() => reject(new Error('timeout')), timeoutMs);
     const s = document.createElement('script');
     s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    /* impronta del file: se la rete lo cambia, il browser lo rifiuta */
+    s.integrity = 'sha512-q+4liFwdPC/bNdhUpZx6aXDx/h77yEQtn4I1slHydcbZK34nLaR3cAeYSJshoxIOq3mjEf7xJE8YWIUHMn+oCQ==';
+    s.crossOrigin = 'anonymous';
     s.onload = () => {
       clearTimeout(t);
       if (window.pdfjsLib) {
