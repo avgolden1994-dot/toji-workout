@@ -1,0 +1,138 @@
+/* ======= Lettore musicale fisso ======= */
+.music-dock {
+  position: fixed; z-index: 99; left: var(--sp-3); right: var(--sp-3);
+  bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+  max-width: 456px; margin: 0 auto;
+  background: var(--surface-1); border: 1px solid var(--border-strong);
+  border-radius: 14px; padding: 6px; box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  transition: transform .25s ease, opacity .25s ease;
+}
+/* nascosto ma non rimosso: il lettore non si ricarica e non perde lo sblocco */
+.music-dock.nascosto { transform: translateY(160%); opacity: 0; pointer-events: none; }
+.music-dock.anteprima { z-index: 131; bottom: calc(var(--sp-4) + env(safe-area-inset-bottom, 0px)); }
+.music-dock.chiama { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-shadow), 0 8px 24px rgba(0,0,0,0.35); }
+.music-dock.chiama .dock-bar { animation: bm-pulse 1.1s ease-in-out infinite; }
+.dock-bar { display: flex; align-items: center; gap: 8px; width: 100%; background: transparent; border: none; color: var(--text); font-weight: 800; font-size: 0.8rem; padding: 6px 6px; cursor: pointer; text-align: left; }
+.dock-title { flex: 1; }
+.dock-caret { color: var(--muted); }
+.music-dock.anteprima .dock-bar { display: none; }
+.dock-msg { font-size: 0.74rem; font-weight: 800; line-height: 1.3; color: var(--primary); padding: 0 6px 6px; }
+.dock-player .youtube-wrap, .dock-player .spotify-wrap { margin: 0; }
+/* il video resta sempre della sua misura piena, almeno 200 px */
+.dock-player iframe { width: 100% !important; min-height: 200px; border-radius: 10px; display: block; }
+/* barra sottile: il lettore c e ancora, a misura piena, solo fuori vista */
+.music-dock.compatto .dock-player { height: 0; overflow: hidden; }
+.music-dock.compatto .dock-msg { display: none !important; }
+/* in seduta: appoggiato sul suo posto nella card, scorre con la pagina */
+.music-dock.sessione { position: absolute; bottom: auto; right: auto; margin: 0; max-width: none; box-shadow: none; z-index: 20; }
+.dock-slot { transition: height .2s ease; }
+
+/* ======= Oggi ======= */
+/* Oggi deve stare in uno schermo senza scorrere: tutto un po piu compatto
+   e gli esercizi in una tendina che si apre solo se serve. */
+.og-drop { margin-top: var(--sp-3); background: var(--surface-2); border-radius: 12px; }
+.og-drop summary { list-style: none; cursor: pointer; padding: 10px 12px; font-weight: 800; font-size: 0.84rem; display: flex; justify-content: space-between; align-items: center; }
+.og-drop summary::-webkit-details-marker { display: none; }
+.og-drop summary::after { content: '\203A'; font-size: 1.2rem; color: var(--muted); transform: rotate(90deg); transition: transform .2s ease; }
+.og-drop[open] summary::after { transform: rotate(-90deg); }
+.og-drop .og-exlist { margin: 0; padding: 0 8px 8px; max-height: 42vh; overflow-y: auto; }
+.og-drop .og-ex { background: var(--surface-1); }
+#oggi-body .og-title { font-size: 2rem; }
+#oggi-body .og-strip { margin: var(--sp-3) 0 var(--sp-2); }
+#oggi-body .og-day { padding: 6px 0 5px; }
+#oggi-body .card { margin-bottom: var(--sp-2); padding: var(--sp-3) var(--sp-4); }
+#oggi-body .og-wname { font-size: 1.7rem; }
+#oggi-body .og-today .btn-start-workout { margin-top: var(--sp-3); }
+#oggi-body .og-link { margin-top: var(--sp-1); padding: 6px; }
+#oggi-body .og-week svg { width: 92px; height: 92px; }
+#oggi-body .og-bars { gap: var(--sp-2); }
+#oggi-body .og-tiles { margin-bottom: 0; }
+#oggi-body .og-tile { padding: var(--sp-3); }
+#oggi-body { min-height: 0; }
+#oggi-body > .card.og-today { flex: 0 0 auto; }
+#oggi-body > .card.og-today .btn-start-workout { margin-top: var(--sp-3); }
+.og-strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin: var(--sp-4) 0 var(--sp-3); }
+.og-day { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 0 6px; border-radius: 12px; background: var(--surface-1); border: 1px solid var(--border); }
+.og-dl { font-size: 0.6rem; font-weight: 900; text-transform: uppercase; color: var(--muted); letter-spacing: 0.3px; }
+.og-dn { font-size: 1rem; font-weight: 900; }
+.og-day i { width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-style: normal; font-size: 0.66rem; font-weight: 900; margin-top: 2px; border: 1.5px solid var(--border-strong); }
+.og-day.done i { background: var(--success); border-color: var(--success); color: var(--on-primary); }
+.og-day.plan i { border-color: var(--primary); }
+.og-day.miss i { border-color: var(--border-strong); border-style: dashed; }
+.og-day.rest i { border: none; background: var(--border-strong); width: 6px; height: 6px; margin: 8px 0 6px; }
+.og-day.today { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 12%, var(--surface-1)); }
+.og-day.today .og-dl { color: var(--primary); }
+#oggi-body { display: flex; flex-direction: column; min-height: calc(100dvh - 150px - env(safe-area-inset-bottom, 0px)); }
+#oggi-body > .og-today { flex: 1; display: flex; flex-direction: column; }
+#oggi-body > .og-today .btn-start-workout { margin-top: auto; }
+#oggi-body > .og-today .og-exlist { margin-bottom: var(--sp-4); }
+.og-exlist { margin-top: var(--sp-3); display: flex; flex-direction: column; gap: 6px; }
+.og-ex { display: flex; align-items: center; gap: var(--sp-3); padding: 6px 8px; background: var(--surface-2); border-radius: 10px; }
+.og-exfig { flex: 0 0 30px; height: 30px; }
+.og-exfig svg { width: 100%; height: 100%; display: block; }
+.og-exfig .bm-muscle.active { animation: none; }
+.og-exname { flex: 1; min-width: 0; font-weight: 800; font-size: 0.84rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.og-exsr { font-size: 0.74rem; color: var(--muted); font-weight: 700; white-space: nowrap; }
+.og-more { font-size: 0.74rem; color: var(--muted); font-weight: 700; padding-left: 8px; }
+.og-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); margin-bottom: var(--sp-3); }
+.og-tile { text-align: left; background: var(--surface-1); border: 1px solid var(--border); border-radius: 16px; padding: var(--sp-4); color: var(--text); cursor: pointer; display: flex; flex-direction: column; gap: 2px; font: inherit; }
+.og-tile .og-label { margin-bottom: 4px; }
+.og-tile b { font-size: 1.15rem; font-weight: 900; }
+.og-tile b small { font-size: 0.8rem; color: var(--muted); }
+.og-head { display: flex; justify-content: space-between; align-items: flex-end; gap: var(--sp-3); }
+.og-left { min-width: 0; }
+.og-ciao { font-size: 1rem; font-weight: 800; }
+.og-data { font-size: 0.8rem; color: var(--muted); font-weight: 600; }
+.og-title { margin: 0; font-size: 2.4rem; font-weight: 900; text-transform: uppercase; line-height: 1; letter-spacing: 0.5px; }
+.og-fila { flex-shrink: 0; white-space: nowrap; margin-bottom: 6px; background: color-mix(in srgb, var(--primary) 14%, var(--surface-1)); color: var(--primary); border-radius: 999px; padding: 6px 12px; font-size: 0.74rem; font-weight: 900; }
+.og-prog-row { display: flex; justify-content: space-between; gap: var(--sp-2); font-size: 0.84rem; font-weight: 700; margin-bottom: var(--sp-2); }
+.og-muted { color: var(--muted); font-size: 0.84rem; }
+.og-label { font-size: 0.7rem; font-weight: 900; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: var(--sp-2); }
+.og-wname { font-size: 2rem; font-weight: 900; text-transform: uppercase; line-height: 1.05; margin-bottom: var(--sp-1); }
+.og-up { color: var(--success); font-weight: 800; font-size: 0.84rem; margin-top: var(--sp-2); }
+.og-ok { color: var(--success); font-weight: 800; font-size: 0.9rem; margin: var(--sp-1) 0 var(--sp-2); }
+.og-today .btn-start-workout, .og-today .btn-archive { margin-top: var(--sp-4); }
+.og-link { display: block; width: 100%; margin-top: var(--sp-3); background: transparent; border: none; color: var(--primary); font-weight: 800; font-size: 0.84rem; cursor: pointer; padding: 8px; }
+.og-week-row { display: flex; align-items: center; gap: var(--sp-4); }
+.og-perc { fill: var(--text); font-size: 28px; font-weight: 900; }
+.og-bars { flex: 1; display: flex; flex-direction: column; gap: var(--sp-3); }
+.og-bar-top { display: flex; justify-content: space-between; font-size: 0.82rem; font-weight: 800; margin-bottom: 4px; }
+.og-track { height: 6px; border-radius: 3px; background: var(--surface-3); overflow: hidden; }
+.og-track i { display: block; height: 100%; border-radius: 3px; }
+
+/* ======= Seduta: ultima volta, RPE, riscaldamento, dischi, record ======= */
+.last-time { display: block; font-size: 0.72rem; color: var(--muted); font-weight: 700; margin-top: var(--sp-1); }
+.pr-badge { display: inline-block; margin-top: var(--sp-1); background: color-mix(in srgb, var(--success) 16%, var(--surface-1)); color: var(--success); border-radius: 999px; padding: 3px 10px; font-size: 0.72rem; font-weight: 900; }
+.set-row.warmup { opacity: 0.85; }
+.set-num.warm { color: var(--warning); font-weight: 900; }
+.set-input.small { width: 44px; }
+.rpe-sel { width: 52px; height: 34px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); font-weight: 800; font-size: 0.74rem; text-align: center; padding: 0 2px; }
+.session-elapsed { font-size: 0.74rem; color: var(--muted); font-weight: 700; }
+.plate-bar-btn.on { background: var(--primary) !important; border-color: var(--primary) !important; color: var(--on-primary) !important; }
+.pl-vis { display: flex; align-items: center; gap: 3px; min-height: 90px; margin: var(--sp-3) 0; }
+.pl-bar { width: 44px; height: 8px; border-radius: 4px; background: color-mix(in srgb, var(--text) 38%, var(--surface-2)); }
+.pl-disc { width: 13px; border-radius: 3px; }
+.pl-end { flex: 1; height: 8px; border-radius: 4px; background: color-mix(in srgb, var(--text) 38%, var(--surface-2)); }
+
+/* ======= Scheda esercizio a sezioni ======= */
+.ex-tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 4px; margin-bottom: var(--sp-4); position: sticky; top: 0; z-index: 2; }
+.ex-tabs button { min-height: 40px; border: none; border-radius: 9px; background: transparent; color: var(--muted); font-weight: 800; font-size: 0.76rem; cursor: pointer; }
+.ex-tabs button.on { background: var(--primary); color: var(--on-primary); }
+.exh-row { display: flex; gap: var(--sp-3); padding: var(--sp-3) 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+.exh-date { width: 72px; flex-shrink: 0; font-size: 0.76rem; font-weight: 800; color: var(--muted); padding-top: 3px; }
+.exh-sets { display: flex; flex-wrap: wrap; gap: 6px; }
+.exh-sets span { background: var(--surface-2); border-radius: 8px; padding: 4px 9px; font-size: 0.82rem; font-weight: 700; }
+.exg-head { font-size: 0.7rem; font-weight: 900; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: var(--sp-2); }
+.exg { width: 100%; height: auto; display: block; }
+.exg-axis { stroke: var(--border); stroke-width: 1; }
+.exg-line { fill: none; stroke: var(--primary); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.exg-dot { fill: var(--primary); }
+.exg-lbl { fill: var(--muted); font-size: 11px; font-weight: 700; }
+.exg-diff { margin-top: var(--sp-2); font-weight: 900; font-size: 0.9rem; }
+.exg-diff.su { color: var(--success); }
+.exg-diff.giu { color: var(--danger); }
+.exr-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-2); }
+.exr-tile { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: var(--sp-3); display: flex; flex-direction: column; gap: 2px; }
+.exr-et { font-size: 0.68rem; font-weight: 800; color: var(--muted); }
+.exr-v { font-size: 1.3rem; font-weight: 900; }
+.exr-d { font-size: 0.68rem; color: var(--muted); }

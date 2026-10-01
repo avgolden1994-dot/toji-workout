@@ -1,0 +1,73 @@
+/* ======= Overlay scelta personaggio ======= */
+.mode-overlay {
+  position: fixed; inset: 0; background: var(--bg); z-index: 999;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 22px; padding: 24px; text-align: center;
+}
+.mode-overlay.hidden { display: none; }
+.mode-eyebrow { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+.mode-heading { font-size: 1.35rem; font-weight: 900; margin-top: 6px; }
+.mode-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.mode-card { width: 150px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px 12px; cursor: pointer; transition: transform .12s ease, border-color .12s ease; }
+.mode-card:active { transform: scale(0.96); }
+.mode-card.maki-card:hover, .mode-card.maki-card:focus-visible { border-color: var(--success); }
+.mode-emoji { font-size: 2.2rem; margin-bottom: 8px; }
+.mode-name { font-weight: 900; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.5px; }
+.mode-sub { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+.mode-hint { font-size: 0.7rem; color: var(--muted); max-width: 280px; }
+.mode-cancel { background: transparent; border: none; color: var(--muted); font-size: 0.75rem; text-decoration: underline; cursor: pointer; padding: 4px; }
+
+/* ======= Shell app ======= */
+/* Il contenuto parte SOTTO la barra di stato del telefono (ora, batteria,
+   isola dinamica). Prima il banner e la barra di modifica ci finivano
+   sotto e si mescolavano. env(safe-area-inset-top) e l altezza esatta di
+   quella zona, diversa per ogni modello. */
+.app-shell {
+  max-width: 480px; margin: 0 auto;
+  padding: calc(env(safe-area-inset-top, 0px) + var(--sp-4)) var(--sp-4) calc(96px + env(safe-area-inset-bottom, 0px));
+  padding-left: calc(env(safe-area-inset-left, 0px) + var(--sp-4));
+  padding-right: calc(env(safe-area-inset-right, 0px) + var(--sp-4));
+  display: flex; flex-direction: column; gap: var(--sp-5);
+}
+
+/* ======= Giorno: vista in sola lettura / modifica =======
+   Toccando un giorno gia costruito si VEDE l allenamento, non si entra
+   nell editor. La modifica e' un azione esplicita, col suo pulsante:
+   cosi non si rischia di cambiare qualcosa solo per guardarla. */
+#plan-day-screen.viewing .edit-only { display: none !important; }
+#plan-day-screen:not(.viewing) .view-only { display: none !important; }
+
+.dv-head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--sp-3); margin-bottom: var(--sp-4); }
+.dv-summary { font-size: 0.76rem; line-height: var(--lh-tight); color: var(--muted); font-weight: 700; margin-top: var(--sp-1); }
+.dv-row {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: var(--sp-3) 0; border-bottom: 1px solid var(--border);
+}
+.dv-row:last-child { border-bottom: none; }
+.dv-num {
+  flex-shrink: 0; width: 26px; height: 26px; border-radius: 8px;
+  background: var(--surface-2); color: var(--muted);
+  font-size: 0.74rem; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+}
+.dv-main { flex: 1; min-width: 0; }
+.dv-name { display: block; font-weight: 800; font-size: 0.9rem; line-height: var(--lh-tight); }
+.dv-meta { display: block; font-size: 0.74rem; line-height: var(--lh-tight); color: var(--muted); margin-top: var(--sp-1); }
+.dv-meta b { color: var(--text); font-weight: 800; }
+.dv-note { display: block; font-size: 0.72rem; color: var(--muted); font-style: italic; margin-top: var(--sp-1); }
+.dv-info { flex-shrink: 0; background: transparent; border: none; color: var(--muted); font-size: 1rem; cursor: pointer; padding: 4px 6px; }
+.dv-empty { text-align: center; padding: var(--sp-5) var(--sp-2); color: var(--muted); font-size: 0.84rem; line-height: var(--lh-base); }
+.dv-actions { display: flex; flex-direction: column; gap: var(--sp-3); }
+.dv-actions .btn-archive, .dv-actions .btn-start-workout { margin-top: 0; }
+.dv-edit-btn { font-size: 0.9rem; padding: 13px; }
+
+/* barra che ricorda che si sta modificando, fissa in alto */
+.edit-bar {
+  position: sticky; top: calc(env(safe-area-inset-top, 0px) + var(--sp-2)); z-index: 30;
+  display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3);
+  background: color-mix(in srgb, var(--primary) 14%, var(--surface-1));
+  border: 1px solid var(--primary); border-radius: 12px;
+  padding: var(--sp-2) var(--sp-3); margin-bottom: var(--sp-5);
+}
+.edit-bar-label { font-size: 0.78rem; font-weight: 900; color: var(--primary); text-transform: uppercase; letter-spacing: 0.4px; }
+.edit-bar-done { background: var(--primary); color: var(--on-primary); border: none; border-radius: 8px; padding: 8px 16px; font-weight: 900; font-size: 0.82rem; cursor: pointer; }

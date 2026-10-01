@@ -1,7 +1,7 @@
 # Mappa delle regole del coach
 
 > **Fotografia del codice al 1 ottobre 2026** (commit `611ea0c`). Copia di sicurezza dell'app prima del riordino: ramo `backup/prima-del-riordino-coach-2026-10-01`.
-> Questo documento **descrive** cosa fa oggi il coach: non propone e non cambia nulla. I numeri di riga si riferiscono a `toji.html` in quel commit e si spostano a ogni modifica: per ritrovare una regola cerca il nome della funzione.
+> Questo documento **descrive** cosa fa oggi il coach: non propone e non cambia nulla. Il codice vive in `js/coach/` (vedi la tabella «Dove sta il codice» in fondo e `docs/indice-codice.md`): per ritrovare una regola cerca il nome della funzione. Eventuali numeri di riga citati sotto si riferiscono alla vecchia versione in un solo file e non valgono più.
 
 ## 1. Come leggere la mappa
 
@@ -473,7 +473,7 @@ Tassonomie diverse per le zone del corpo: i **fastidi** del questionario sono 3 
 
 Elenco in ordine di importanza. Sono fatti letti nel codice, non ancora corretti.
 
-1. **Consenso del Coach IA incompleto (privacy).** Il testo che l'utente accetta dice: serie fatte, obiettivi, livello, niente nome e niente BIA. Il codice (`contestoSeduta`) invia anche fase del corpo, **stato "modalita prudente" (che deriva dal questionario di salute)**, punteggio di prontezza, durata, settimana del programma e un identificativo anonimo del dispositivo (IA-03/04). Da decidere: o si toglie dall'invio, o si aggiunge al testo del consenso.
+1. ~~Consenso del Coach IA incompleto~~ — risolto: il testo elenca tutto ciò che esce dal telefono (`TESTI_IA` in `js/coach/coach-ia.js`) e un test controlla che sia tradotto. Resta da verificare lato Worker se i dati vengono conservati.
 2. **Conoscenza degli esercizi ripetuta** in 14 tabelle (capitolo 16), e due tabelle mai usate: `STANDARD_FORZA` e `ALZATE_BASE` (pensate per il livello "dai numeri", ma `livelloStimato` non le legge). La scheda tecnica con muscoli primari e secondari (`TECNICA`) e usata solo per mostrare la scheda dell'esercizio, non dalle regole.
 3. **Soglie diverse per lo stesso concetto.**
    - Massa grassa alta nelle donne: 30% e 35% in `analyzeBia`, 32% in `fattoreFisico` e nella ricomposizione (BIA, MET-03, COR-02).
@@ -482,12 +482,39 @@ Elenco in ordine di importanza. Sono fatti letti nel codice, non ancora corretti
 4. **Commenti che non corrispondono al codice.** L'intestazione del suggeritore elenca 5 regole, il codice ne applica 8 (SUG). L'intestazione di `schemaMisto` dice che col dimagrimento "i recuperi sono piu brevi", un commento nel codice dice che "le pause NON si accorciano" (PRG-04). Il commento del motore dei carichi dice "-10% dopo due mancate", ma per i principianti il codice applica -5% (CAR-07).
 5. **Regole di progressione dei metodi famosi solo descritte.** Starting Strength, StrongLifts, GZCLP e altri dichiarano le loro regole di progressione; nel motore dei carichi non ho trovato diramazioni per metodo: vale sempre la progressione unica (MET-06). Da verificare con una prova.
 6. **Sostituzioni "per sempre" e continuita dei progressi.** Le sostituzioni del coach (dolore, azione "cambia variante", rotazione accessori) cambiano il nome dell'esercizio in tutti i giorni e usano il carico di partenza stimato dai dati del corpo (dal 1 ottobre; prima il valore di default della libreria); lo storico e i massimali restano legati al nome vecchio, quindi per il nuovo esercizio la progressione riparte da quella stima ("prima volta"). Il nuovo "Macchinario occupato" e invece temporaneo.
-7. **Regola ripetuta.** Il limite di 3 serie per principianti e over 65 e applicato in tre punti diversi (PRG-18, PRG-19, PRG-31).
-8. **Numeri magici sparsi.** Soglie e fattori (0,9, 0,6, 0,96, 0,8, 1,2, 11 serie, 70%...) sono scritti dentro le funzioni, senza una tabella unica dei parametri.
-9. **Il codice del coach e mescolato al resto**: circa 3.400 righe su 16.000 in oltre 15 sezioni, tra timer, musica e calendario.
+7. ~~Regola ripetuta~~ — risolto: il limite di 3 serie usa un solo parametro (`serieMaxPrudente`).
+8. ~~Numeri magici sparsi~~ — in parte risolto: i principali sono in `js/coach/parametri.js`; restano soglie minori dentro le funzioni.
+9. ~~Il codice del coach era mescolato al resto~~ — risolto: ora sta in `js/coach/` (una cartella, un file per argomento).
 
 ## 18. Come usare questa mappa
 
 1. Leggila e segna le regole da **tenere**, **cambiare** o **togliere** (ad esempio con T / C / X accanto al codice).
 2. Decidi i punti del capitolo 17, a cominciare dall'1 (consenso del Coach IA).
 3. Il riordino consigliato parte da qui: una scheda per esercizio al posto delle tabelle (capitolo 16), un catalogo unico di regole con i parametri in una tabella, e test sui casi noti. Questa mappa diventa l'elenco dei casi da provare.
+
+## 19. Regole aggiunte dalla ricerca (RIC)
+
+Cinque regole nuove, ognuna spegnibile (`regolaAttiva`, vedi `js/coach/parametri.js`), con il motivo scritto nella nota dell'esercizio. Non toccano le salvaguardie: modalità prudente, over 65, principianti, dolore e scarico hanno la precedenza (le regole RIC-01 e RIC-02 non scattano per loro). Codice in `js/coach/regole-nuove.js` e, per RIC-03, in `js/coach/programma/schemi.js`.
+
+- **RIC-01** serie in più nelle settimane centrali del blocco (Pelland 2025, Bell 2024): in una settimana di carico che non è né la prima né l'ultima prima dello scarico, +1 serie (massimo 5) sugli esercizi dei muscoli prioritari, se la prontezza media delle ultime due sedute registrate è almeno 70 (o non c'è alcun dato). Con lo scarico si torna alle serie del programma.
+- **RIC-02** pausa prima di abbassare il carico (Singer 2024): se nell'ultima seduta tutte le serie tranne l'ultima erano complete (almeno 3 serie) e il carico resta fermo, +45 secondi di pausa. Prima lo faceva solo il principiante (+30).
+- **RIC-03** posizione allungata per petto, schiena e glutei (Maeo 2021-2023, Pedrosa 2025): croci su panca coi manubri, pullover coi manubri, affondi bulgari e stacco rumeno contano come esercizi in allungamento (preferiti nella scelta); «Croci ai Cavi» e «Pullover ai Cavi» si scambiano con le varianti coi manubri se l'attrezzo c'è.
+- **RIC-04** tetto alle tecniche al cedimento (Robinson 2024): al massimo una tecnica intensa (drop set, AMRAP, parziali, calibrazione) per seduta; nessuna nella settimana di scarico o con prontezza sotto 50. La tecnica del programma resta: per quel giorno non compare.
+- **RIC-05** rientro per tutto il piano (detraining, SBS): se dall'ultima seduta sono passati almeno 14 giorni (7 sopra i 65 anni), la prima seduta ha il 25% di serie in meno su ogni esercizio (minimo 2) in aggiunta al calo di carico per esercizio di CAR (rientro dopo una pausa). Il carico per esercizio c'era già: la novità è il volume.
+
+## 20. Dove sta il codice
+
+| Area | File |
+|---|---|
+| Suggerimento del prossimo esercizio (SUG) | `js/coach/suggeritore.js` |
+| Costruzione del programma (PRG, MET, PRZ) | `js/coach/programma/motore.js`, `schemi.js`, `ricette.js` (contiene `buildProgram`), `alternative.js`, `archivio.js` |
+| Carichi (CAR) | `js/coach/carichi/progressivo.js`, `partenza.js` |
+| Questionario e decisioni (DEC, STR) | `js/coach/questionario-decisioni.js` |
+| Prontezza, «mi sento male», dolore (PAR, LIV, DOL) | `js/coach/prontezza.js`, `mi-sento-male.js`, `dolore-mattina.js` |
+| Repertorio e regole dalla ricerca | `js/coach/repertorio.js`, `regole-ricerca.js`, `regole-nuove.js` (RIC) |
+| Parametri e catalogo | `js/coach/parametri.js`, `catalogo-regole.js` (generato dalla mappa) |
+| Consigli e agente | `js/coach/agente-consigli.js` |
+| Dati del corpo (BIA) | `js/coach/bia/lettore.js`, `opzioni.js` |
+| Biomeccanica, esigenza, psicologia, metodi e momenti | `js/coach/biomeccanica.js`, `esigenza.js`, `psicologia.js`, `metodi-momenti.js`, `compone.js` |
+| Stato e pannello del coach | `js/coach/stato.js`, `pannello.js` |
+| Coach IA (IA) | `js/coach/coach-ia.js` |
