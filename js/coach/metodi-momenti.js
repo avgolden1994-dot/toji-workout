@@ -63,9 +63,15 @@ const METODI = [
     split: () => ({ nome: 'Full Body corpo libero', giorni: FB(3) }), luogo: 'corpo', superserie: true,
     schema: (e) => { e.sets = 3; if (!isTimeBased(e.name)) e.reps = 8; e.rest = 90; } },
   { id: 'hit', nome: 'Alta intensità (HIT)', fonte: 'Mike Mentzer, Heavy Duty', livelli: ['intermedio', 'avanzato'], giorni: [2, 3], intensita: 'alta', struttura: 'rigida', varieta: 0.5, minuti: [30, 45], luoghi: ['palestra'], obiettivi: ['massa'], applicabile: true,
-    come: 'Una o due serie per esercizio fino al cedimento, poi a casa. Sedute brevi e durissime.', perChi: 'Chi ama spingere al massimo e ha poco tempo.', attenzione: 'Una serie cresce meno di più serie (Krieger 2010): il coach ne tiene due.',
-    split: (g) => g >= 4 ? UL4 : { nome: 'Full Body', giorni: FB(Math.min(3, g)) }, nEs: () => 6,
-    schema: (e) => { e.sets = 2; e.reps = isTimeBased(e.name) ? e.reps : 8; e.rest = 120; } },
+    come: 'Poche serie al cedimento, poi a casa. Mentzer: una serie per esercizio dopo il riscaldamento, 6-10 ripetizioni per la parte alta e 12-20 per le gambe, 4-7 giorni prima di rifare lo stesso muscolo.', perChi: 'Chi ama spingere al massimo e ha poco tempo.',
+    attenzione: 'Una serie cresce meno di più serie (Krieger 2010): il coach ne tiene due. Tiene anche il fondamentale per primo: il pre-affaticamento non dà più crescita (Gentil e altri).',
+    split: (g) => g >= 4 ? UL4 : (g === 3 ? { nome: 'Petto e Schiena / Gambe / Spalle e Braccia', giorni: ['petto-schiena', 'legs', 'spalle-braccia'] } : { nome: 'Full Body', giorni: FB(2) }), nEs: () => 6, essenziale: true,
+    schema: (e, i, sd) => {
+      const g = (findExercise(e.name) || {}).group;
+      e.sets = 2; e.reps = isTimeBased(e.name) ? e.reps : ((g === 'gambe' || g === 'glutei') ? 15 : 8); e.rest = 120;
+      /* riposo-pausa sull ultimo esercizio (Mentzer lo usava; stessa crescita, tempo dimezzato: Prestes 2019) */
+      if (i === sd.esercizi.length - 1 && !isTimeBased(e.name) && tipoCarico(e.name) !== 'pesante' && g !== 'core') e.tecnica = 'riposopausa';
+    } },
   { id: '531', nome: '5/3/1', fonte: 'Jim Wendler', livelli: ['intermedio', 'avanzato'], giorni: [3, 4], intensita: 'media', struttura: 'rigida', varieta: 0, minuti: [45, 75], luoghi: ['palestra'], obiettivi: ['forza'], applicabile: false,
     come: 'Massimale di allenamento al 90%, onde di 4 settimane (65-75-85%, 70-80-90%, 75-85-95%, scarico), +2,5/5 kg a ciclo.', perChi: 'Intermedi pazienti: progressi lenti ma per anni.', attenzione: 'Ispirazione: il coach usa già onde di RIR simili.' },
   { id: 'madcow', nome: 'Madcow 5×5 / Texas Method', fonte: 'Bill Starr, Glenn Pendlay', livelli: ['intermedio'], giorni: [3], intensita: 'alta', struttura: 'rigida', varieta: 0, minuti: [60, 90], luoghi: ['palestra'], obiettivi: ['forza'], applicabile: false,

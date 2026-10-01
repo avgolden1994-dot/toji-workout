@@ -13,7 +13,7 @@ favicon-32.png      icona nella scheda del browser (ricavata da icon-512.png)
 css/                stile, un file per area, nell'ordine in cui si applicano
 js/lingue/          dizionari en/es/de (una frase per riga) + traduttore automatico
 js/core/            fondamenta: costanti, storage, modalità, navigazione, utility, audio, backup, consenso
-js/dati/            dati fissi: schede pronte, libreria esercizi, dettagli (attrezzo, presa, focus), disegni, schede tecniche
+js/dati/            dati fissi: schede pronte (anche dell'epoca d'oro), libreria esercizi, dettagli (attrezzo, presa, focus), disegni, schede tecniche
 js/coach/           il coach a regole (vedi docs/coach-mappa-regole.md)
 js/ui/              le schermate: oggi, piano, allenamento, musica, progressi, calendario, opzioni, guida…
 js/avvio.js         ultimo script: accende l'app

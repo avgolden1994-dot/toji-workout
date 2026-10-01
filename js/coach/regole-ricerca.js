@@ -26,7 +26,14 @@ const TECNICHE = {
   amrap: 'Ultima serie AMRAP: fai piu ripetizioni possibili con buona tecnica',
   backoff: 'Back-off: dopo la serie piu pesante, le altre a -5%',
   parziali: 'A fine serie qualche ripetizione parziale nella parte allungata',
-  calibrazione: 'Calibrazione: ultima serie fino al cedimento, il coach impara quanto stimi le ripetizioni in riserva'
+  calibrazione: 'Calibrazione: ultima serie fino al cedimento, il coach impara quanto stimi le ripetizioni in riserva',
+  /* tecniche dell epoca d oro (TEC-01..05): le assegnano solo i metodi che le prevedono */
+  piramide: 'Piramide: serie dopo serie il carico sale e le ripetizioni scendono (per esempio 12, 10, 8, 6), come faceva Arnold',
+  negativa: 'Negative: nell’ultima serie scendi in 4-5 secondi (serve un compagno che ti aiuti a salire): il sovraccarico in discesa dà un piccolo vantaggio sulla massa',
+  forzate: 'Ripetizioni forzate: al cedimento un compagno ti aiuta per 1-2 ripetizioni, solo su panca o macchine',
+  riposopausa: 'Riposo-pausa: al cedimento 15 secondi di pausa e ancora qualche ripetizione, per due volte',
+  picco: 'Contrazione di picco: in cima a ogni ripetizione fermati 2 secondi stringendo il muscolo',
+  ottoperotto: 'Gironda 8×8: otto serie da otto con 30 secondi di pausa, con circa il 70% del carico delle 8 ripetizioni'
 };
 function profiloCoach() {
   const p = getProfile() || {};
@@ -46,6 +53,7 @@ function rirBersaglio(nome) {
   let piu = psicoCoach((getProfile() || {}).psico).intensita === 'bassa' ? 1 : 0;
   const mo = momentoAttivo();
   if (mo && !mo.scaduto) piu += mo.rir || 0;
+  if (typeof rirExtraIntensita === 'function') piu += rirExtraIntensita(nome);   /* INT-03/04: BIA con bandiere di prudenza, prima volta con l esercizio */
   let out = piu ? [Math.min(4, r[0] + piu), Math.min(5, r[1] + piu)] : r.slice();
   if (!piu && esigenzaCoach() >= 1.15 && tipoCarico(nome) !== 'pesante') { const a = Math.max(0, out[0] - 1); out = [a, Math.max(a, out[1] - 1)]; }
   if (!stabile(nome) && out[0] < 1) out = [1, Math.max(2, out[1])];

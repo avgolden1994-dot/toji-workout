@@ -40,13 +40,15 @@ function splitFor(level, days) {
     if (days === 3) return { nome: 'Full Body 3x', giorni: ['fullbody', 'fullbody', 'fullbody'] };
     return { nome: 'Upper / Lower', giorni: ['upper', 'lower', 'upper', 'lower'] };
   }
+  /* ABB-05, 3 giorni: Upper / Lower / Full Body, cosi ogni muscolo si allena 2 volte (ACSM 2026) e nessun muscolo supera
+     le circa 11 serie in una seduta (Pelland 2025). Il Push / Pull / Legs una volta sola resta per chi sceglie la frequenza 1 */
   if (level === 'intermedio') {
-    if (days === 3) return { nome: 'Push / Pull / Legs', giorni: ['push', 'pull', 'legs'] };
+    if (days === 3) return { nome: 'Upper / Lower / Full Body', giorni: ['upper', 'lower', 'fullbody'] };
     if (days === 4) return { nome: 'Upper / Lower x2', giorni: ['upper', 'lower', 'upper', 'lower'] };
     if (days >= 6) return { nome: 'Push / Pull / Legs x2', giorni: ['push', 'pull', 'legs', 'push', 'pull', 'legs'] };
     return { nome: 'Push / Pull / Legs + Upper / Lower', giorni: ['push', 'pull', 'legs', 'upper', 'lower'] };
   }
-  if (days === 3) return { nome: 'Push / Pull / Legs', giorni: ['push', 'pull', 'legs'] };
+  if (days === 3) return { nome: 'Upper / Lower / Full Body', giorni: ['upper', 'lower', 'fullbody'] };
   if (days === 4) return { nome: 'Upper / Lower x2', giorni: ['upper', 'lower', 'upper', 'lower'] };
   if (days === 5) return { nome: 'Push / Pull / Legs + Upper / Lower', giorni: ['push', 'pull', 'legs', 'upper', 'lower'] };
   return { nome: 'Push / Pull / Legs x2', giorni: ['push', 'pull', 'legs', 'push', 'pull', 'legs'] };

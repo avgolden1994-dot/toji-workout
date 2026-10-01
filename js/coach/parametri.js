@@ -28,7 +28,7 @@ const COACH_PARAMETRI = {
 
 /* Una regola si puo spegnere (utile per le regole nuove e per le prove).
    Le regole gia in uso restano sempre accese: spegnerle non e previsto. */
-const REGOLE_SPEGNIBILI = ['RIC-01', 'RIC-02', 'RIC-03', 'RIC-04', 'RIC-05'];
+const REGOLE_SPEGNIBILI = ['RIC-01', 'RIC-02', 'RIC-03', 'RIC-04', 'RIC-05', 'INT-04', 'INT-05'];
 const REGOLE_SPENTE_KEY = 'tz_regole_spente';
 window.regolaAttiva = function(codice) {
   if (!REGOLE_SPEGNIBILI.includes(codice)) return true;

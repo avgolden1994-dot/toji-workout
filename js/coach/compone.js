@@ -68,7 +68,7 @@ const TOCCHI = {
   amrap: { testo: 'l’ultima serie del primo fondamentale a ripetizioni massime', fa: (sd, ps) => { const e = sd.esercizi.find(x => tipoCarico(x.name) === 'pesante' && !x.tecnica); if (e && ps.intensita !== 'bassa') e.tecnica = 'amrap'; } },
   piramide: { testo: 'l’ultimo isolamento leggero da 15-20 ripetizioni', fa: (sd) => { const iso = sd.esercizi.filter(x => tipoCarico(x.name) === 'isolamento' && !isTimeBased(x.name)); const e = iso[iso.length - 1]; if (e) { e.reps = 20; e.rest = 60; } } },
   isolamenti: { testo: 'isolamenti da 12-15 ripetizioni', fa: (sd) => sd.esercizi.forEach(x => { if (tipoCarico(x.name) === 'isolamento' && !isTimeBased(x.name)) x.reps = Math.max(x.reps, 15); }) },
-  superserie: { testo: 'spinte e tirate in superserie per risparmiare tempo', fa: (sd) => { const es = sd.esercizi; for (let k = 1; k < es.length; k++) { const a = schemaDi(es[k - 1].name), b = schemaDi(es[k].name); if (a && b && !es[k - 1].superset && !es[k].superset && ((/spinta/.test(a) && /tirata/.test(b)) || (/tirata/.test(a) && /spinta/.test(b)))) { es[k].superset = true; k++; } } } }
+  superserie: { testo: 'spinte e tirate in superserie per risparmiare tempo', fa: (sd) => { strSuperserie(sd); } }
 };
 
 /* ---- il collegamento: chi sei + cosa vivi -> quali metodi ---- */
