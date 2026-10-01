@@ -146,6 +146,27 @@
 .st-inc.su { color: var(--success); }
 .st-inc.giu { color: var(--danger); }
 
+/* Poligono di frequenza: allenamenti per settimana */
+.st-graf { margin-bottom: var(--sp-4); }
+.stg-svg { display: block; width: 100%; height: auto; margin: var(--sp-1) 0 var(--sp-2); overflow: visible; }
+.stg-grid { stroke: var(--border); stroke-width: 1; stroke-dasharray: 3 4; }
+.stg-axis { stroke: var(--border-strong); stroke-width: 1.2; }
+.stg-area { fill: color-mix(in srgb, var(--primary) 20%, transparent); stroke: none; }
+.stg-line { fill: none; stroke: var(--primary); stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; }
+.stg-pt { fill: var(--primary); stroke: var(--surface-1); stroke-width: 1.6; }
+.stg-pt.vivo { fill: var(--surface-1); stroke: var(--primary); stroke-width: 2.2; }
+.stg-lbl { fill: var(--muted); font-size: 10px; font-weight: 700; }
+.stg-val { fill: var(--text); font-size: 11px; font-weight: 900; paint-order: stroke; stroke: var(--surface-1); stroke-width: 3px; stroke-linejoin: round; }
+.st-nota { font-size: 0.72rem; color: var(--muted); line-height: 1.45; margin-bottom: var(--sp-3); }
+.pg-pane > .card + .card { margin-top: var(--sp-4); }
+.st-graf .st-nota:last-child { margin-bottom: 0; }
+.stg-kpis { margin-bottom: var(--sp-3); }
+.st-graf .st-periodo, #pg-stats-grafico .st-periodo { margin-bottom: var(--sp-3); }
+#pg-stats-grafico .storico-stats { margin-bottom: 0; }
+.onb-note + .st-table { margin-top: var(--sp-4); }
+.st-sez { margin: var(--sp-5) 0 0; }
+.st-sez-sub { margin: var(--sp-1) 0 var(--sp-3); }
+
 /* ======= Intestazione dello Storico ======= */
 .storico-head { display: flex; justify-content: space-between; align-items: center; gap: var(--sp-3); }
 .storico-title { font-weight: 800; font-size: 0.9rem; text-transform: uppercase; min-width: 0; }

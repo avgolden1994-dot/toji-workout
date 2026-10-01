@@ -78,6 +78,7 @@ const ASSETS = [
   './js/coach/programma/archivio.js',
   './js/coach/programma/alternative.js',
   './js/ui/statistiche.js',
+  './js/ui/statistiche-grafico.js',
   './js/coach/carichi/progressivo.js',
   './js/coach/carichi/partenza.js',
   './js/coach/questionario-decisioni.js',

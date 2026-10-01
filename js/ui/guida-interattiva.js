@@ -11,6 +11,10 @@
    ============================================================ */
 const GUIDA_KEY = 'tz_guida_vista';
 let guidaPasso = -1, guidaTimer = null, guidaFoto = null, guidaUltimoCambio = 0;
+/* Cosa si tocca in ogni passo (vedi «Durante la guida si tocca solo dove e illuminato»):
+   - passo con 'fatto' (si deve fare qualcosa): tutto il bersaglio;
+   - passo con 'btn' (Avanti): il bersaglio e solo da guardare, tranne le parti in 'tocca';
+   - 'soloTrascina': in 'tocca' si trascina ma un tocco semplice non fa nulla (nel calendario aprirebbe il giorno). */
 const GUIDA = [
   { t: 'Benvenuto in 3in', x: 'Sono il tuo coach. In due minuti ti faccio usare l’app davvero. Per la prova la riempio con sei mesi di allenamenti di esempio: grafici, statistiche e storico pieni. Alla fine torna tutto com’era.', btn: 'Iniziamo', inizio: true },
   { sel: '#oggi-body .btn-start-workout', t: 'Oggi', x: 'Qui trovi l’allenamento del giorno. Tocca «Inizia allenamento».',
@@ -20,17 +24,17 @@ const GUIDA = [
   { sel: '#recovery-overlay .recovery-close-btn', t: 'Il recupero', x: 'Il cronometro ti dice quando ripartire. Qui lo accorci o lo allunghi. Per la prova, chiudilo.',
     fatto: () => !document.getElementById('recovery-overlay').classList.contains('visible') },
   { sel: '.btn-cardio', t: 'Il cardio', x: 'Hai fatto cardio? Si segna qui, prima di terminare. Tocca «Cardio».', fatto: () => cardioAperto },
-  { sel: '.cardio-box', t: 'Il cardio', x: 'Scegli il tipo e i minuti. Per chi fa pesi la camminata in pendenza è la più facile da recuperare. «Termina allenamento» salva tutto: oggi non serve, è una prova.', btn: 'Avanti' },
+  { sel: '.cardio-box', t: 'Il cardio', x: 'Scegli il tipo e i minuti. Per chi fa pesi la camminata in pendenza è la più facile da recuperare. «Termina allenamento» salva tutto: oggi non serve, è una prova.', btn: 'Avanti', tocca: '.cardio-box' },
   { sel: '.nav-btn[data-tab="piano"]', t: 'Il Piano', x: 'Adesso la tua settimana. Tocca «Piano».', fatto: () => currentTab === 'piano' },
   { sel: '#plan-map', t: 'La figura', x: 'Il colore dice quanto alleni ogni muscolo. Tocca il petto.', fatto: () => !!planMapGruppo },
   { sel: '#plan-map-list', t: 'Giorno per giorno', x: 'Ecco gli esercizi del petto, giorno per giorno. Da qui ne modifichi uno o ne aggiungi uno nuovo.', btn: 'Avanti' },
   { sel: '.nav-btn[data-tab="calendario"]', t: 'Il Calendario', x: 'Tocca «Calendario».', fatto: () => currentTab === 'calendario' },
-  { sel: '#mc-grid', t: 'Il mese', x: 'Il tuo mese. Per spostare un allenamento, trascina il giorno su un altro della stessa settimana.', btn: 'Avanti' },
+  { sel: '#mc-grid', t: 'Il mese', x: 'Il tuo mese. Per spostare un allenamento, trascina il giorno su un altro della stessa settimana.', btn: 'Avanti', tocca: '#mc-grid .mc-cell', soloTrascina: true },
   { sel: '.nav-btn[data-tab="storico"]', t: 'I Progressi', x: 'Tocca «Progressi».', fatto: () => currentTab === 'storico' },
   { sel: '#pg-tiles .pg-tile:nth-child(1)', t: 'I Progressi', x: 'Ecco sei mesi di esempio. Più sotto vedi l’anno e come stanno recuperando i muscoli. Tocca «Peso e foto».', fatto: () => pgPagina === 'peso' },
   { sel: '#pg-peso', t: 'Il peso', x: 'La linea scende piano verso l’obiettivo: è il ritmo giusto per non perdere forza. Qui segni il peso, e ogni 2 settimane una foto.', btn: 'Avanti' },
   { sel: '#pg-tiles .pg-tile:nth-child(2)', t: 'Le statistiche', x: 'Tocca «Statistiche».', prep: () => chiudiPagProgressi(), fatto: () => pgPagina === 'stats' },
-  { sel: '#pg-blocchi', t: 'Le statistiche', x: 'Ogni 4 settimane confronto i tuoi carichi con il blocco precedente. Tocca un blocco per vedere ogni esercizio; più sotto c’è il cardio.', btn: 'Avanti' },
+  { sel: '#pg-stats-grafico', t: 'Le statistiche', x: 'Il grafico mostra quanti allenamenti fai ogni settimana: cambia periodo coi pulsanti. Sotto, ogni 4 settimane confronto i carichi con il blocco precedente, poi c’è il cardio.', btn: 'Avanti', tocca: '.st-periodo' },
   { sel: '.nav-btn[data-tab="impostazioni"]', t: 'Le Opzioni', x: 'Tocca «Opzioni».', prep: () => { if (pgPagina) chiudiPagProgressi(); }, fatto: () => currentTab === 'impostazioni' },
   { t: 'Sei pronto', x: 'Qui trovi il coach, i tuoi dati e questa guida, se vuoi rifarla. La prova è finita: rimetto tutto com’era. Buon allenamento.', btn: 'Fine', fine: true }
 ];
@@ -278,6 +282,55 @@ function guidaSegui() {
 }
 window.addEventListener('resize', guidaSegui);
 window.addEventListener('scroll', guidaSegui, true);
+
+/* ============================================================
+   DURANTE LA GUIDA SI TOCCA SOLO DOVE E ILLUMINATO
+   I riquadri scuri fermano i tocchi fuori dal cerchio, ma non bastano: il
+   margine del cerchio e dentro il foro, e nei passi «Avanti» il bersaglio e
+   solo da guardare (un tocco su un giorno del calendario apriva il giorno
+   sopra la guida e la rompeva). Per questo ogni tocco, clic e tasto si
+   controlla prima che arrivi all app: passa solo se cade nel fumetto o nel
+   bersaglio del passo, e li solo dove il passo lo prevede.
+   ============================================================ */
+window.guidaAttiva = function() {
+  const g = document.getElementById('guida');
+  return guidaPasso >= 0 && !!g && g.classList.contains('on');
+};
+function guidaConsente(t, tipo) {
+  if (!guidaAttiva() || !t || !t.closest) return true;
+  if (t.closest('#guida')) return true;                       /* fumetto e riquadri scuri */
+  const p = GUIDA[guidaPasso];
+  const el = p && p.sel ? document.querySelector(p.sel) : null;
+  if (!el || !el.contains(t)) return false;                   /* fuori dal bersaglio, anche nel margine del cerchio */
+  if (p.soloTrascina && (tipo === 'click' || tipo === 'dblclick')) return false;
+  const zona = p.tocca || (p.btn ? null : '*');
+  if (!zona) return false;                                    /* passo «Avanti»: si guarda e basta */
+  if (zona === '*') return true;
+  const m = t.closest(zona);
+  return !!m && el.contains(m);
+}
+/* un tocco rifiutato: il fumetto fa un piccolo cenno, cosi si capisce che e voluto */
+function guidaCenno() {
+  const b = document.querySelector('#guida .g-bub');
+  if (!b) return;
+  b.classList.remove('g-nudge'); void b.offsetWidth; b.classList.add('g-nudge');
+  setTimeout(() => b.classList.remove('g-nudge'), 350);
+}
+['pointerdown', 'mousedown', 'click', 'dblclick', 'contextmenu'].forEach(nome => {
+  window.addEventListener(nome, (e) => {
+    if (!guidaAttiva()) return;
+    const sopraBuio = e.target && e.target.closest && e.target.closest('.g-dim');
+    if (sopraBuio) { if (nome === 'pointerdown') guidaCenno(); return; }
+    if (guidaConsente(e.target, nome)) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    if (nome === 'pointerdown') guidaCenno();
+  }, true);
+});
+window.addEventListener('keydown', (e) => {
+  if (!guidaAttiva() || (e.key !== 'Enter' && e.key !== ' ')) return;
+  if (guidaConsente(e.target, 'keydown')) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+}, true);
 
 window.setConsenso = function(si, primoAvvio) {
   try {
