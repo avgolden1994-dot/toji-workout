@@ -1,17 +1,22 @@
 # Piano: piattaforma di coaching con coach reali (sito + app 3in)
 
-Stato: **architettura v2** (1 ottobre 2026), aggiornata con le decisioni del titolare. Progetto a parte rispetto all'app: nuovo repository (`3in-coach`), che parla con l'app attraverso un contratto di eventi (capitolo 7). I dettagli si decidono per fasi.
+Stato: **architettura v3** (1 ottobre 2026), aggiornata con le decisioni del titolare. Progetto a parte rispetto all'app: nuovo repository (`3in-coach`), che parla con l'app attraverso un contratto di eventi (capitolo 7) e condivide con essa libreria esercizi e regole (capitolo 9). I dettagli si decidono per fasi.
 
 ## 1. Decisioni prese
 | # | Tema | Decisione |
 |---|---|---|
 | 1 | Modello | **Piattaforma con più coach iscritti**, ognuno con il proprio account e i propri allievi |
-| 2 | Servizi | Due tipi: **solo nutrizionista** oppure **servizio completo** (allenamento + nutrizione) |
-| 3 | Rapporto coach–allievo | Si **firma un contratto** tra le parti; i **moduli sul trattamento dei dati** si scambiano; le **prestazioni si pagano una a una** (a servizio) |
-| 5 | Sedute | Il coach può **commentare le sedute già fatte** e **modificare quelle ancora da fare** |
-| 6 | Chat | Serve. Si attiva **solo con il codice di coaching**: nell'app compare l'icona «Coaching». L'allievo ha accesso anche al **sito come allievo**, dove il coach può scrivere descrizioni più dettagliate |
+| 2 | Servizi | **Solo nutrizione** oppure **servizio completo** (allenamento + nutrizione) |
+| 3 | Rapporto coach–allievo | **Contratto firmato**, **moduli sul trattamento dei dati** scambiati, **prestazioni pagate una a una** |
+| 4 | Più professionisti per un allievo | **Sì**: allenatore e nutrizionista si collegano **insieme**; l'app mette a disposizione di tutti **tutta l'informazione**; **ognuno modifica solo ciò che compete al suo ruolo** (il nutrizionista solo il piano alimentare, l'allenatore solo gli allenamenti) |
+| 5 | Sedute | Il coach **commenta le sedute fatte** e **modifica quelle da fare** |
+| 6 | Chat | Serve; si attiva **solo con il codice di coaching** (icona «Coaching» nell'app); l'allievo ha anche il **sito come allievo** per le descrizioni dettagliate |
+| 7 | Scelta del coach | Un **elenco di coach** tra cui l'allievo sceglie |
+| 8 | Titolare | Per ora una **piattaforma di interazione**, il titolare è **l'unico responsabile** |
+| 9 | Paesi e lingue | **Solo Italia, solo italiano** |
+| 10 | Suggerimenti e rapporti | Il sito prepara per il coach **suggerimenti e un rapporto** (regole dell'app e ricerche); il coach **deve leggere tutto il rapporto prima di proseguire o accettare**; **serve sempre il consenso umano** |
 
-Ancora da decidere: vedi capitolo 13.
+Da decidere: vedi capitolo 16.
 
 ## 2. Principi (non negoziabili)
 1. **L'app resta utilizzabile da sola**, offline, senza account. Il coaching è un'aggiunta.
@@ -19,16 +24,18 @@ Ancora da decidere: vedi capitolo 13.
 3. **Consenso a categorie e revocabile**, con elenco chiaro di cosa esce (come per il Coach IA).
 4. **Dati di salute = dati sensibili** (GDPR art. 9): consenso esplicito, server in UE, cancellazione, registro degli accessi.
 5. **Le salvaguardie di sicurezza del coach a regole restano** (PAR-Q, over 65, dolore). Un coach reale decide i numeri, ma se supera un limite l'app lo segnala all'allievo.
-6. **Il coach vede solo ciò che il suo tipo di servizio richiede** (nutrizione ≠ allenamento, capitolo 5).
+6. **Ogni professionista modifica solo la propria area** (allenatore: allenamenti; nutrizionista: piano alimentare). La visibilità tra i membri del team è ampia ma **solo con il consenso** dell'allievo (capitolo 5).
+7. **Nessuna decisione sulla salute senza un umano**: suggerimenti e rapporti sono supporto, la decisione è sempre del coach (capitolo 9).
 
 ## 3. Attori e ruoli
 | Ruolo | Cosa fa | Accesso |
 |---|---|---|
-| **Allievo** | Usa l'app; con il codice attiva il coaching; sul sito vede chat, contratti, pagamenti, schede | app (senza account) + **sito allievo** (con account: serve per chat, contratto, pagamenti) |
-| **Coach** (allenamento, nutrizione, completo) | Segue gli allievi, scrive il programma, commenta, chatta, fattura | sito coach, account con verifica a due passaggi |
-| **Amministratore** (tu) | Approva i coach, gestisce segnalazioni, rimborsi, richieste GDPR, commissioni | back-office |
+| **Allievo** | Usa l'app; con un codice attiva il coaching; sceglie il coach dall'elenco; sul sito vede chat, contratti, pagamenti, schede | app (senza account) + **sito allievo** (con account: chat, contratto, pagamenti) |
+| **Coach – allenamento** | Segue gli allievi, scrive/modifica gli allenamenti, commenta le sedute, chatta, fattura | sito coach, account con due passaggi |
+| **Coach – nutrizione** | Come sopra ma modifica solo il **piano alimentare** | idem |
+| **Amministratore** (tu) | Approva e verifica i coach, gestisce l'elenco, segnalazioni, rimborsi, richieste GDPR, commissioni | back-office |
 
-Gli allievi di un coach non vedono gli allievi degli altri. Un coach vede solo gli allievi che hanno firmato con lui.
+**Il team dell'allievo:** un allievo ha **al massimo un coach per ruolo** (un allenatore e un nutrizionista). I due **lavorano insieme per impostazione predefinita**: vedono gli stessi report e grafici e si leggono a vicenda le note interne condivise; ognuno scrive solo nel proprio campo. Un coach non vede gli allievi degli altri coach.
 
 ## 4. Panoramica
 
@@ -46,28 +53,37 @@ Gli allievi di un coach non vedono gli allievi degli altri. Un coach vede solo g
  Abbinamento: codice del coach (6-8 caratteri, scade in 10 min, monouso) → consenso → collegamento
 ```
 
-## 5. Servizi e visibilità dei dati
-| Dato | Solo nutrizione | Servizio completo | Note |
+## 5. Chi vede e chi modifica cosa
+**Principio:** tutti i professionisti del team **vedono tutto** (report e grafici completi); **modificano solo la propria area**.
+
+| Dato | Allenatore | Nutrizionista | Allievo |
 |---|---|---|---|
-| Peso, misure, BIA, foto | sì | sì | foto solo se l'allievo le concede |
-| Diario alimentare (**nuovo, da costruire nell'app**) | sì | sì | oggi l'app non registra l'alimentazione |
-| Programma, sedute, carichi, RPE | no | sì | |
-| Prontezza, sonno, dolore | solo sonno e stress | tutto | |
-| Questionario di salute (PAR-Q) | solo se serve | solo se l'allievo lo concede | spento di default |
-| Chat | sì | sì | |
+| Programma, sedute, carichi, RPE | vede, **modifica** (sedute da fare), commenta le fatte | vede, commenta | vede, esegue |
+| Piano alimentare e diario alimentare (**nuovo**) | vede | vede, **modifica** | vede, registra |
+| Peso, misure, BIA, foto | vede | vede | vede, registra |
+| Prontezza, sonno, dolore | vede | vede | registra |
+| Questionario di salute (PAR-Q) | vede se concesso | vede se concesso | decide |
+| Chat | con l'allievo; chat di gruppo se attiva | con l'allievo; chat di gruppo se attiva | tutte |
+| Note interne tra professionisti | sì | sì | no (decisione da confermare) |
 
-Il tipo di servizio è nel contratto e decide quali categorie compaiono nel consenso. Cambiare tipo = nuovo contratto/addendum.
+**Consenso (importante):** vedere «tutto» significa che il nutrizionista legge i dati di allenamento e viceversa. Per il GDPR l'allievo deve **sapere e accettare** chi vede cosa: quando collega il secondo professionista compare il consenso con l'elenco delle categorie e degli accessi; l'impostazione predefinita è «tutto condiviso nel team», ma l'allievo può togliere categorie (soprattutto questionario di salute e foto). Il registro degli accessi mostra chi ha aperto cosa.
 
-**Attenzione professionale:** in Italia prescrivere diete è riservato a professioni regolamentate (es. dietista, biologo nutrizionista, medico). Un personal trainer **non** può dare piani alimentari. Quindi i coach «solo nutrizione» e «servizio completo» vanno **verificati** (titolo, iscrizione all'albo, assicurazione) all'iscrizione, e il servizio completo deve avere un'**équipe**: o il coach ha entrambi i titoli, o serve un secondo professionista collegato all'allievo. Da chiarire con un legale (capitolo 13).
+**Attenzione professionale:** in Italia prescrivere diete è riservato a professioni regolamentate (dietista, biologo nutrizionista, medico). Un personal trainer **non** può dare piani alimentari: per questo il permesso di modificare il piano alimentare esiste **solo** per il ruolo «nutrizione», verificato (titolo, iscrizione all'albo, assicurazione). Da confermare con un legale.
 
 ## 6. Come si inizia (abbinamento, contratto, pagamento)
-1. **Iscrizione del coach**: account, verifica a due passaggi, caricamento di titoli/assicurazione, approvazione dell'amministratore, profilo con listino (servizi e prezzi).
-2. Il coach preme «Nuovo allievo» e sceglie il servizio: il server genera un **codice** (es. `K7M-4QX`, valido 10 minuti, monouso) e un **invito al contratto**.
-3. L'allievo inserisce il codice in **Opzioni → Coaching** (oppure sul sito allievo, dove crea l'account se non ce l'ha).
+1. **Iscrizione del coach**: account, verifica a due passaggi, caricamento di titoli/assicurazione, **approvazione dell'amministratore**, profilo pubblico (foto, titoli, specializzazioni, servizi e listino).
+2. **Due modi di incontrarsi:**
+   - **dall'elenco:** l'allievo (sul sito allievo o nell'app) sfoglia i coach, apre il profilo e **richiede il collegamento**; il coach accetta;
+   - **per invito:** il coach preme «Nuovo allievo» e il server genera un **codice** (es. `K7M-4QX`, valido 10 minuti, monouso) e un invito al contratto.
+3. Con il codice (o la richiesta accettata) l'allievo prosegue in **Opzioni → Coaching** o dal sito allievo, dove crea l'account se non ce l'ha.
 4. **Contratto:** l'allievo legge e firma (firma elettronica semplice: testo versionato, data e ora, indirizzo, impronta del documento; il coach firma per primo o in anticipo). Il contratto indica servizio, prezzi, durata, recesso, rimborsi, limiti (il coach non è un medico).
 5. **Moduli sul trattamento dei dati:** informativa del coach come titolare del trattamento, consenso esplicito ai dati di salute, consenso per categoria (come per il Coach IA), nomina della piattaforma come responsabile. Ogni modulo è versionato e conservato.
 6. **Collegamento attivo:** il server dà all'app un **token** (solo sul telefono, mai nei backup). L'app compare con l'icona **«Coaching»** (chat, programma del coach, comunicazioni).
 7. **Revoca:** l'allievo può interrompere dall'app o dal sito; il coach dal sito. Il token muore subito. I dati già inviati: si seguono i termini del contratto (conservazione minima di legge per le prestazioni fatturate, cancellazione del resto su richiesta).
+
+**Secondo professionista:** l'allievo aggiunge un nuovo coach (altro ruolo) con lo stesso percorso; il contratto e il consenso sono **separati per professionista**, e al collegamento il team si forma automaticamente (capitolo 3).
+
+**L'elenco dei coach:** profilo con titoli verificati (indicazione «verificato dalla piattaforma»), servizi e prezzi, disponibilità; ricerca per ruolo e specializzazione. Recensioni: **non all'inizio** (richiedono moderazione e regole), eventualmente dopo. La pubblicità sanitaria ha regole specifiche in Italia: **da verificare con un legale** prima di mostrare titoli e promesse.
 
 ## 7. Il contratto tra app e servizio
 **Eventi dall'app** (append-only, con id univoco: l'invio si può ripetere senza duplicare; coda con ripetizione se manca la rete):
@@ -88,14 +104,32 @@ Il tipo di servizio è nel contratto e decide quali categorie compaiono nel cons
 
 **API (bozza):** `/v1/abbina`, `/v1/eventi` (a lotti), `/v1/da-coach?dopo=…` + tempo reale, `/v1/foto/url`, `/v1/chat`, `/v1/contratti`, `/v1/pagamenti`, `/v1/revoca`. Schema JSON per ogni evento e test di compatibilità app–servizio.
 
-## 8. Regole sui cambiamenti del programma
-- **Sedute già fatte:** il coach può **solo commentare**; non cambiano mai i dati registrati.
-- **Sedute da fare:** il coach le **modifica direttamente**; l'allievo vede un avviso «modificato dal coach» con l'elenco delle differenze e può **annullare una volta** (come gli altri annulla dell'app).
-- **Un solo autore alla volta:** se l'allievo e il coach modificano la stessa seduta, vince l'ultima versione e l'altro viene avvisato (versioni numerate per seduta).
-- **Il coach a regole diventa consigliere:** i carichi automatici restano come suggerimento visibile, ma la decisione è del coach reale. Le salvaguardie di sicurezza non si spengono.
-- Il Coach IA con il coaching attivo: i commenti dell'IA si mostrano solo se il coach lo permette.
+## 8. Regole sui cambiamenti
+- **Sedute già fatte:** il coach può **solo commentare**; i dati registrati non cambiano mai.
+- **Sedute da fare:** il coach dell'ambito le **modifica direttamente**; l'allievo vede un avviso «modificato dal coach» con le differenze e può **annullare una volta**.
+- **Piano alimentare:** solo il nutrizionista; stesso avviso all'allievo.
+- **Un autore alla volta per area:** versioni numerate; se l'allievo e il coach modificano la stessa seduta, vince l'ultima e l'altro viene avvisato.
+- **Il coach a regole diventa consigliere:** le regole restano come suggerimenti, **non modificano** nulla da sole quando c'è un coach reale; le salvaguardie di sicurezza restano.
+- **Il consenso umano è sempre necessario** (capitolo 9): nessun suggerimento automatico arriva all'allievo senza che il coach lo abbia letto e accettato.
 
-## 9. Il sito del coach
+## 9. Suggerimenti e rapporti per il coach (consenso umano sempre)
+**Cosa fa il sito:** per ogni allievo prepara un **rapporto** periodico (e a richiesta) usando le **stesse regole dell'app** (mappa delle regole, regole RIC, carichi, prontezza, dolore) e le ricerche citate, e propone **suggerimenti** al coach, ognuno con: cosa cambiare, **perché**, **codice della regola** e **fonte**.
+
+**Come lavora il coach:**
+1. Arriva nella **coda «Da rivedere»** (ordinata per priorità: dolore, calo prestazioni, seduta saltata…).
+2. Apre il rapporto e **lo legge per intero**: l'accettazione dei suggerimenti si abilita solo dopo l'apertura di tutte le sezioni e una conferma esplicita «ho letto il rapporto». (Il sistema non può provare che il coach abbia davvero letto: registra apertura, tempi e conferma, e ogni accettazione richiede un gesto per suggerimento.)
+3. Per ogni suggerimento: **accetta**, **modifica** o **rifiuta** (con motivo facoltativo). Solo allora la modifica passa all'allievo con l'avviso del capitolo 8.
+4. Resta il **registro**: versione del rapporto, chi ha letto, cosa ha accettato, quando.
+
+**Perché è anche una tutela legale:** una decisione che incide sulla salute presa **solo** da un sistema automatico è limitata dal GDPR (art. 22); con il coach che legge, decide e firma l'azione, la decisione è **umana**. Il rapporto è **supporto**, non prescrizione.
+
+**Motore condiviso:** le regole dell'app sono codice JavaScript senza server. Per non scrivere due volte le regole, si estrae un **pacchetto condiviso** (`regole-3in`: libreria esercizi + regole + parametri + catalogo), usato dall'app e dal servizio. La mappa e il catalogo diventano la fonte unica. Il pacchetto viene versionato: ogni rapporto riporta la versione delle regole.
+
+**Il Coach IA:** facoltativo, solo per **scrivere meglio** il rapporto (riassunti, spiegazioni); non decide numeri; ogni testo prodotto dall'IA è **etichettato** come tale; invio dei dati con consenso (come oggi).
+
+**Nutrizione:** le regole dell'app sul corpo e l'alimentazione sono oggi **solo informative** (famiglie COR e BIA). Per il nutrizionista servono **regole nutrizionali nuove, scritte e validate da un professionista**: non si inventano dai dati dell'app. Fino ad allora il rapporto nutrizionale mostra dati e andamenti, senza suggerimenti di dieta.
+
+## 9b. Il sito del coach
 Pagine: elenco allievi con avvisi · scheda allievo (calendario e aderenza, sedute, grafici, foto a confronto, misure) · editor del programma (stessa libreria esercizi dell'app, pacchetto condiviso) · chat · contratti e moduli · listino e incassi · profilo.
 
 Grafici: carico massimo stimato per esercizio · volume per gruppo muscolare · aderenza · RPE · peso e massa magra · prontezza.
@@ -126,6 +160,7 @@ Avvisi: seduta saltata · dolore segnalato · prontezza bassa · carico sceso du
 - Icona **«Coaching»** nella barra: compare **solo con un collegamento attivo**.
 - **CSP** (`connect-src`) aperta verso il dominio del servizio; il token **non entra nei backup**.
 - Nuova famiglia di regole `COA` nella mappa (coach reale prevale sui numeri; salvaguardie sempre attive).
+- L'app deve poter **ricevere i suggerimenti accettati** dal coach (con l'avviso «modificato dal coach») e mostrare **chi** ha cambiato **cosa**; regole e libreria passano a un **pacchetto condiviso** con il servizio.
 - Fase successiva: **diario alimentare** (necessario per il servizio nutrizionista).
 - Testi in it/en/es/de, informativa, test (`tests/browser/coaching.js`), documenti aggiornati.
 
@@ -143,30 +178,35 @@ Avvisi: seduta saltata · dolore segnalato · prontezza bassa · carico sceso du
 3. **Complessità di una piattaforma**: account, verifica coach, pagamenti, rimborsi, assistenza: più lavoro di un portale per un solo coach.
 4. **Costi** (foto, chat, tempo reale) e commissioni di pagamento.
 5. **Conflitti sul programma** tra allievo, coach e coach a regole (capitolo 8).
+   **Troppa fiducia nel rapporto:** il coach potrebbe accettare senza pensare. Mitigazioni: lettura registrata, un gesto per suggerimento, motivi e fonti sempre visibili, parole prudenti.
+   **Dati condivisi nel team:** il nutrizionista legge dati di allenamento e viceversa: serve consenso chiaro e registro accessi.
+   **Elenco pubblico dei coach:** responsabilità sulla verifica dei titoli e sulla pubblicità sanitaria.
 6. **Sincronizzazione** (offline, versioni diverse dell'app).
 
 ## 15. Fasi
 | Fase | Contenuto | Risultato |
 |---|---|---|
-| 0. Decisioni e legale | domande aperte, consulenza legale (contratto, nutrizione, GDPR), scelta del servizio, nome e dominio | via libera scritto |
-| 1. Fondamenta | account coach/allievo/admin, verifica coach, abbinamento, contratto e moduli, collegamento | un coach segue un allievo, senza pagamenti |
+| 0. Decisioni e legale | domande aperte, consulenza legale (contratto, nutrizione, pubblicità sanitaria, GDPR, forma societaria), scelta del servizio, nome e dominio | via libera scritto |
+| 1. Fondamenta | account coach/allievo/admin, verifica coach, **elenco coach**, abbinamento (elenco o codice), contratto e moduli | un coach segue un allievo, senza pagamenti |
 | 2. Dati e grafici | invio sedute/carichi/programma, scheda allievo con grafici, aderenza, avvisi | coach in «sola lettura» completo |
-| 3. Il coach scrive | modifica delle sedute da fare, commenti, **chat** (app e sito allievo), icona «Coaching» | ciclo completo |
-| 4. Foto e misure | foto a confronto, misure/BIA, prontezza e dolore | |
-| 5. Soldi | listino, Stripe Connect, ricevute e fatture, rimborsi | servizio a pagamento |
-| 6. Nutrizione | diario alimentare nell'app, viste del nutrizionista | secondo servizio |
-| 7. Scala | cifratura end-to-end, team/studi, app desktop, assistenza | |
+| 3. Rapporti e suggerimenti | **pacchetto condiviso delle regole**, rapporto, coda «Da rivedere», lettura obbligatoria, registro | coach assistito con consenso umano |
+| 4. Il coach scrive | modifica delle sedute da fare, commenti, **chat** (app e sito allievo), icona «Coaching» | ciclo completo |
+| 5. Foto e misure | foto a confronto, misure/BIA, prontezza e dolore | |
+| 6. Soldi | listino, Stripe Connect, ricevute e fatture, rimborsi | servizio a pagamento |
+| 7. Team e nutrizione | secondo professionista, vista condivisa, **diario e piano alimentare**, regole nutrizionali validate | servizio completo |
+| 8. Scala | cifratura end-to-end, studi/team di coach, app desktop, assistenza, recensioni | |
 | Parallela | prove di sicurezza (come `docs/SICUREZZA.md`), privacy store, revisione legale continua | |
 
-Nota di ordine: partire **solo con coach di allenamento** e rimandare la nutrizione (fase 6) riduce il rischio legale iniziale. Da confermare.
+Ordine consigliato: partire **con coach di allenamento** e portare la nutrizione e il team alla fase 7, perché sono la parte con più rischio legale. Da confermare.
 
 ## 16. Domande ancora aperte
-1. **«Seduta» a pagamento:** è una **prestazione del coach** (consulto, revisione, videochiamata) o ogni **allenamento** dell'allievo? Cambia il listino e la fatturazione.
-2. **Più coach per un allievo?** (es. allenamento e nutrizione da persone diverse): per il servizio completo con titoli diversi è quasi obbligatorio.
-3. **Come si trovano i coach:** solo per invito diretto del coach, oppure un **elenco pubblico** dove l'allievo sceglie? (cambia marketing, verifica, responsabilità)
-4. Cosa succede ai **dati** se il coach chiude l'account o l'allievo cancella l'app (conservazione, passaggio ad altro coach)?
-5. **Chi è il titolare** dell'attività (tu come persona, una società)? Serve per contratti, fatture, Stripe.
-6. **Paesi e lingue** all'inizio: solo Italia e italiano?
-7. **Commissione** della piattaforma e chi la sostiene.
-8. **Videochiamate** o solo chat? (le visite a distanza richiedono strumenti e regole in più)
-9. **Nutrizione dall'inizio o da fase 6?** (capitolo 15)
+1. **«Seduta» a pagamento** (da decidere): è una **prestazione del coach** (consulto, revisione, videochiamata) o ogni **allenamento** dell'allievo? Cambia listino, contratto e fatture.
+2. **Responsabilità del titolare:** da persona fisica si risponde con il proprio patrimonio. Valutare con un commercialista/legale una forma societaria o assicurazione **prima** di aprire a pagamenti e dati di salute.
+3. **Note interne tra professionisti:** l'allievo le vede o no? Chat di gruppo allievo+allenatore+nutrizionista sì/no?
+4. **Cosa succede ai dati** se il coach chiude l'account, o se l'allievo cambia coach (passaggio dello storico)?
+5. **Commissione** della piattaforma e chi la sostiene; **fatture** (il coach all'allievo; la piattaforma al coach).
+6. **Videochiamate** o solo chat?
+7. **Recensioni** nell'elenco coach: subito, dopo, mai?
+8. **Rapporto:** frequenza (settimanale, a ogni seduta, a richiesta)? Il coach può **delegare** la lettura (es. a un collaboratore)?
+9. **Obbligo di lettura:** basta apertura di tutte le sezioni + conferma, o si vuole un controllo più stretto (es. domanda di verifica)?
+10. **Regole nutrizionali:** chi le scrive e le valida? (professionista esterno consulente)
