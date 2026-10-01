@@ -13,6 +13,7 @@ Ogni regola ha un **codice** (tre lettere e un numero): il codice indica l'area,
 | PRG | Costruzione del programma | creazione o rifacimento del programma | `buildProgram`, `splitFor`, `schemeFor`, `consentito`, `sostituto` |
 | MET | Metodi famosi e scelta della struttura | creazione del programma | `METODI`, `metodiPerTe`, `sceltaMetodo`, `fattoreFisico` |
 | PRZ | Prontezza prima della seduta | prima di iniziare | `applicaProntezza` |
+| PAR | Carico di partenza dai dati del corpo (dal 1 ottobre) | creazione programma, esercizi nuovi o sostituiti | `stimaCaricoIniziale`, `contestoCarichi`, `pesoPartenza` |
 | PRO, CAR | Carico della prossima seduta | all'apertura della seduta | `caricoProssimo`, `caricoProssimoBase`, `applicaCaricoProgressivo` |
 | BIO | Biomeccanica e prove fai-da-te | programma, scelta esercizi, seduta | `cueEsercizio`, `bonusBiomecc`, `TEST_FAI_DA_TE` |
 | DEC, DOL | Questionario di fine seduta, decisioni, dolore | dopo la seduta e la mattina dopo | `decisioniCoach`, `applicaDecisioni`, `rispostaDolore` |
@@ -224,7 +225,7 @@ Si applica all'apertura di una seduta (solo con il consenso, solo se non ci sono
 Ordine di valutazione in caricoProssimoBase:
 
 - **CAR-01** esercizi a tempo (plank ecc.): tenuta completata = +5 secondi; altrimenti stessa durata.
-- **CAR-02** mai fatto: carico del programma (in scarico: x0,9).
+- **CAR-02** mai fatto: carico del programma, che dal 1 ottobre e una stima dai dati del corpo (vedi PAR); in scarico x0,9.
 - **CAR-03** settimana di scarico del programma: serie = serie base x dose, carico = ultimo x dose; la dose dipende dalla fatica (livelloFatica, Bell 2024): bassa (RPE medio <7 e prontezza >=70) volume -35% (carico x0,95); media volume -50% e carico -10%; alta (RPE >=9 o prontezza <50) volume -70% e carico -10%. "Mai stop totale: la forza calerebbe".
 - **CAR-04** rientro dopo una pausa su QUELL'esercizio (detraining, SBS): 10-20 giorni -10%; 21-28 giorni -20%; fino a 90 giorni -30%; oltre -50%; sopra i 65 anni i giorni contano il doppio. Con "3 ripetizioni in riserva".
 - **CAR-05** corpo libero (carico 0): tutte le serie complete = +1 ripetizione; altrimenti stesse ripetizioni.
@@ -253,6 +254,18 @@ RIR bersaglio (rirBersaglio): pesante 1-3, macchina 0-2, isolamento 0-1; modalit
 
 Ciclo di vita degli "aggiusti" (coach_plus_aggiusti_<modalita>): ogni aggiusto ha un contatore "sedute"; a fine seduta (consumaAggiusti) ogni esercizio fatto scala di 1 e quando arriva a 0 sparisce; lo scarico del coach scala di 1 per seduta. Campi: esercizi{fattore|blocca|extra|nota, sedute, alteRip, motivo}, scarico{sedute, motivo}, controlloDolore, stalli{esercizio:n}, rirBias, ruotatoBlocco, aderenzaChiesta.
 
+
+### Carico di partenza dai dati del corpo (aggiunto il 1 ottobre) e sua evoluzione
+
+Prima un esercizio mai fatto partiva dal valore generico della libreria (pensato per un uomo di 75 kg, principiante). Ora parte da una **stima per te**, che nelle sedute successive passa dai dati della BIA a quello che sollevi davvero. I coefficienti sono approssimazioni prudenti da affinare con i dati reali (tabella `PARAM_PARTENZA`), non misure.
+
+- **PAR-01** dati del corpo (`contestoCarichi`): si usano i dati appena inseriti, altrimenti l'ultima BIA salvata. Ordine di preferenza: massa muscolare scheletrica (SMM, riferimento 34 kg) > massa magra (FFM, riferimento 61,5 kg) > peso x massa grassa % > solo peso (x0,82 uomini, x0,74 donne). Valori fuori scala vengono ignorati.
+- **PAR-02** fattore dal corpo (`scalaDaCorpo`) = massa / riferimento x livello (principiante 1, intermedio 1,3, avanzato 1,6) x sesso (donne, solo parte alta del corpo: 0,9; gambe e glutei no) x eta (50-64 anni 0,95; da 65 anni 0,85) x PAR-Q positivo 0,85 x prudenza 0,85 (si parte sotto il limite). Limiti 0,45-1,8.
+- **PAR-03** dallo storico (`scalaDaStorico`): mediana, sugli esercizi gia fatti, del rapporto tra il massimale stimato (Epley) e quello del valore di libreria. Il peso dello storico cresce con il numero di esercizi fatti: a 4 esercizi la stima si fonda solo sulle sedute e la BIA non conta piu.
+- **PAR-04** peso finale = valore di libreria x fattore, arrotondato a pesi reali: barra da 20 kg (mai sotto, salvo esercizi con default inferiore), manubri e corpo libero a passi di 1 kg (2 kg da 10 kg), macchine e cavi a 2,5 kg. Esercizi a corpo libero o a tempo: nessuna stima.
+- **PAR-05** dove si applica: creazione del programma (tutte le sedute, comprese le aggiunte per schemi mancanti, regioni e glutei), esercizi nuovi o sostituiti dal coach (dolore, azione "cambia variante", rotazione accessori), "Macchinario occupato", seduta libera e aggiunta dalla libreria. Senza consenso ai dati o senza dati del corpo resta il valore di libreria. Il record porta il segno `stimato` e la nota col motivo, che compare alla prima seduta ("Carico di partenza stimato dalla tua massa muscolare...").
+- **CAR-16** calibrazione, serie facili: nelle prime sedute con un esercizio (meno di 3 in storico) l'autoregolazione dall'RPE sale piu in fretta: +5% per punto di scarto dal bersaglio (massimo +15%) invece di +4% (massimo +10%).
+- **CAR-17** calibrazione, carico troppo alto: nelle prime sedute, se le serie sono molto sotto il previsto (meno del 60% completate, oppure ripetizioni medie di almeno 3 sotto il bersaglio) il carico scende subito del 5% senza aspettare il secondo errore. Un errore piccolo non cambia il carico.
 
 ## 9. Biomeccanica e prove fai-da-te
 
@@ -468,7 +481,7 @@ Elenco in ordine di importanza. Sono fatti letti nel codice, non ancora corretti
    - Due definizioni di scarico: il "reattivo" (da questionario, prontezza o strain) usa serie x0,6 e carico x0,9; quello di programma usa una dose per fatica (volume -35%, -50% o -70%; carico x0,95 o x0,9) (CAR-03/10, DEC-06).
 4. **Commenti che non corrispondono al codice.** L'intestazione del suggeritore elenca 5 regole, il codice ne applica 8 (SUG). L'intestazione di `schemaMisto` dice che col dimagrimento "i recuperi sono piu brevi", un commento nel codice dice che "le pause NON si accorciano" (PRG-04). Il commento del motore dei carichi dice "-10% dopo due mancate", ma per i principianti il codice applica -5% (CAR-07).
 5. **Regole di progressione dei metodi famosi solo descritte.** Starting Strength, StrongLifts, GZCLP e altri dichiarano le loro regole di progressione; nel motore dei carichi non ho trovato diramazioni per metodo: vale sempre la progressione unica (MET-06). Da verificare con una prova.
-6. **Sostituzioni "per sempre" e continuita dei progressi.** Le sostituzioni del coach (dolore, azione "cambia variante", rotazione accessori) cambiano il nome dell'esercizio in tutti i giorni e riportano il carico al valore di default della libreria; lo storico e i massimali restano legati al nome vecchio, quindi per il nuovo esercizio la progressione riparte dal valore di default della libreria ("prima volta"). Il nuovo "Macchinario occupato" e invece temporaneo.
+6. **Sostituzioni "per sempre" e continuita dei progressi.** Le sostituzioni del coach (dolore, azione "cambia variante", rotazione accessori) cambiano il nome dell'esercizio in tutti i giorni e usano il carico di partenza stimato dai dati del corpo (dal 1 ottobre; prima il valore di default della libreria); lo storico e i massimali restano legati al nome vecchio, quindi per il nuovo esercizio la progressione riparte da quella stima ("prima volta"). Il nuovo "Macchinario occupato" e invece temporaneo.
 7. **Regola ripetuta.** Il limite di 3 serie per principianti e over 65 e applicato in tre punti diversi (PRG-18, PRG-19, PRG-31).
 8. **Numeri magici sparsi.** Soglie e fattori (0,9, 0,6, 0,96, 0,8, 1,2, 11 serie, 70%...) sono scritti dentro le funzioni, senza una tabella unica dei parametri.
 9. **Il codice del coach e mescolato al resto**: circa 3.400 righe su 16.000 in oltre 15 sezioni, tra timer, musica e calendario.
