@@ -2,7 +2,7 @@
    il segnale spesso manca). Strategia: network-first con fallback alla cache,
    così vedi sempre l'ultima versione se sei online, ma l'app parte comunque offline. */
 
-const CACHE_NAME = '3in-v7';   /* cambiando il nome, le copie vecchie vengono buttate */
+const CACHE_NAME = '3in-v8';   /* cambiando il nome, le copie vecchie vengono buttate */
 const ASSETS = [
   './',
   /* Elenco generato da tools/genera-sw.js (npm run sw): non si modifica a mano.
@@ -35,6 +35,8 @@ const ASSETS = [
   './js/core/costanti.js',
   './js/dati/schede-pronte.js',
   './js/dati/libreria-esercizi.js',
+  './js/coach/parametri.js',
+  './js/coach/catalogo-regole.js',
   './js/coach/suggeritore.js',
   './js/core/stato-condiviso.js',
   './js/core/storage.js',
@@ -84,6 +86,7 @@ const ASSETS = [
   './js/coach/repertorio.js',
   './js/coach/dolore-mattina.js',
   './js/coach/regole-ricerca.js',
+  './js/coach/regole-nuove.js',
   './js/coach/agente-consigli.js',
   './js/coach/bia/opzioni.js',
   './js/core/consenso.js',
@@ -113,6 +116,7 @@ const ASSETS = [
   './js/dati/disegni-esercizi.js',
   './js/ui/scheda-quattro-sezioni.js',
   './js/dati/schede-tecniche.js',
+  './js/dati/scheda-unica.js',
   './js/ui/calendario/mese.js',
   './js/ui/calendario/gruppi.js',
   './js/ui/calendario/scambio.js',

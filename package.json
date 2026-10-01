@@ -8,7 +8,8 @@
     "test:browser": "for f in tests/browser/*.js; do echo \"== $f\"; node $f || exit 1; done",
     "sw": "node tools/genera-sw.js",
     "indice": "node tools/indice.js",
-    "controlla": "npm run sw -- --check && npm run indice -- --check && npm test"
+    "controlla": "npm run sw -- --check && npm run catalogo -- --check && npm run indice -- --check && npm test",
+    "catalogo": "node tools/genera-catalogo.js"
   },
   "devDependencies": {
     "acorn": "^8.18.0",

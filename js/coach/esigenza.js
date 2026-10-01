@@ -32,7 +32,7 @@ window.aggiornaEsigenza = function() {
   let delta = 0;
   const motivi = [];
   const previsti = Number(p.days) || 3;
-  if (sed.length / previsti < 0.7) { delta -= 0.10; motivi.push('aderenza sotto il 70%'); }
+  if (sed.length / previsti < COACH_PARAMETRI.aderenzaMinima) { delta -= 0.10; motivi.push('aderenza sotto il 70%'); }
   const scarti = [];
   let tutte = true;
   sed.forEach(h => (h.sessione || []).forEach(x => (x.sets || []).forEach(st => {

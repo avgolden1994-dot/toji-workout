@@ -55,7 +55,7 @@ window.saltaProntezza = function() {
 };
 window.applicaProntezza = function(r) {
   const punteggio = punteggioProntezza(r);
-  const f = punteggio >= 70 ? 1 : (punteggio >= 50 ? 0.96 : 0.9);
+  const f = punteggio >= COACH_PARAMETRI.prontezzaBuona ? 1 : (punteggio >= COACH_PARAMETRI.prontezzaMedia ? COACH_PARAMETRI.prontezzaFattoreMedia : COACH_PARAMETRI.prontezzaFattoreBassa);
   const prima = localStorage.getItem(dataKey());
   const data = loadData();
   let toccati = 0;

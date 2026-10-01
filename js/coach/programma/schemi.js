@@ -24,6 +24,11 @@ const ISOLAMENTI = [
 function isolamentoDi(nome) { const n = senzaEmoji(nome); const x = ISOLAMENTI.find(i => i[1].test(n)); return x ? x[0] : null; }
 /* esercizi in allungamento con prove (Maeo 2021-2023) */
 const IN_ALLUNGAMENTO = /sopra la testa|leg curl seduto|panca inclinata \(|curl su panca inclinata|bayesiano|da seduto|piede rialzato/i;
+/* RIC-03: petto, schiena e glutei (Maeo 2021-2023, Pedrosa 2025): croci e pullover coi manubri, affondi bulgari, stacco rumeno */
+const IN_ALLUNGAMENTO_NUOVI = /croci su panca|pullover con manubrio|affondi bulgari|stacco rumeno/i;
+const SCAMBI_ALLUNGAMENTO_NUOVI = [['Croci ai Cavi', 'Croci su Panca Manubri'], ['Pullover ai Cavi', 'Pullover con Manubrio']];
+function inAllungamento(nome) { return IN_ALLUNGAMENTO.test(nome) || (regolaAttiva('RIC-03') && IN_ALLUNGAMENTO_NUOVI.test(nome)); }
+function scambiAllungamento() { return regolaAttiva('RIC-03') ? SCAMBI_ALLUNGAMENTO.concat(SCAMBI_ALLUNGAMENTO_NUOVI) : SCAMBI_ALLUNGAMENTO; }
 const SCAMBI_ALLUNGAMENTO = [['Pushdown Tricipiti ai Cavi', 'Estensione Tricipiti sopra la Testa ai Cavi'], ['Leg Curl Sdraiato', 'Leg Curl Seduto'], ['French Press', 'Estensione Tricipiti sopra la Testa con Manubrio']];
 /* stimolo/fatica: al massimo uno di questi per seduta */
 const SCHIENA_PESANTE = /Stacco da Terra|Squat con Bilanciere|Rematore con Bilanciere|Good Morning|T-Bar Row|Stacco Sumo/;

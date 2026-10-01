@@ -336,7 +336,7 @@ function htmlAderenza() {
   if (!coachAttivo()) return '';
   const a = aderenzaDueSettimane();
   const ag = aggiustiCoach();
-  if (a.previste < 4 || a.fatte / a.previste >= 0.7) return '';
+  if (a.previste < 4 || a.fatte / a.previste >= COACH_PARAMETRI.aderenzaMinima) return '';
   if (ag.aderenzaChiesta && giorniTra(daYmd(ag.aderenzaChiesta), new Date()) < 14) return '';
   return '<div class="card og-saltata"><div class="og-dol-t">' + ico('idea') + ' Parliamone</div>' +
     '<p><span>Nelle ultime due settimane</span>: ' + a.fatte + ' / ' + a.previste + '. <span>Cosa ti frena di più?</span></p>' +
@@ -385,7 +385,7 @@ function verdettoCiclo() {
   const nomi = Object.keys(perEs).filter(n => perEs[n].filter(Boolean).length >= 2);
   const saliti = nomi.filter(n => { const v = perEs[n].filter(Boolean); return v[0] > v[v.length - 1] * 1.02; });
   const quota = nomi.length ? saliti.length / nomi.length : 0;
-  const esito = aderenza < 0.7 ? 'aderenza' : (quota >= 0.5 ? 'buono' : 'stallo');
+  const esito = aderenza < COACH_PARAMETRI.aderenzaMinima ? 'aderenza' : (quota >= 0.5 ? 'buono' : 'stallo');
   return { aderenza: Math.round(aderenza * 100), quota: Math.round(quota * 100), esito: esito };
 }
 function htmlFineCiclo() {

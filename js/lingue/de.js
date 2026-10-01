@@ -3129,5 +3129,11 @@ window.I18N["de"] = {
 "Le statistiche": "Die Statistiken",
 "Tocca «Statistiche».": "Tippe auf «Statistiken».",
 "Ogni 4 settimane confronto i tuoi carichi con il blocco precedente. Tocca un blocco per vedere ogni esercizio; più sotto c’è il cardio.": "Alle 4 Wochen vergleiche ich deine Gewichte mit dem vorherigen Block. Tippe auf einen Block, um jede Übung zu sehen; weiter unten ist das Cardio.",
-"Dopo %s": "Nach %s"
+"Dopo %s": "Nach %s",
+"Per commentare le sedute, l’app invia al server del coach: le serie fatte (esercizi, ripetizioni, carichi, RPE) con quelle della volta precedente, titolo, data e durata della seduta, esercizi saltati, la tua prontezza prima della seduta, i tuoi obiettivi, il livello, la fase e la settimana del programma, la lingua e se è attiva la modalità prudente del questionario di salute (solo il fatto che è attiva, non le risposte).": "Um deine Trainings zu kommentieren, sendet die App an den Server des Coachs: die absolvierten Sätze (Übungen, Wiederholungen, Gewichte, RPE) mit denen vom letzten Mal, Titel, Datum und Dauer des Trainings, übersprungene Übungen, deine Bereitschaft vor dem Training, deine Ziele, Level, Phase und Programmwoche, die Sprache und ob der vorsichtige Modus aus dem Gesundheitsfragebogen aktiv ist (nur dass er aktiv ist, nicht die Antworten).",
+"Non invia: nome, peso, misure e dati BIA, foto, risposte del questionario di salute.": "Nicht gesendet werden: dein Name, Gewicht, Maße und BIA-Daten, Fotos oder die Antworten des Gesundheitsfragebogens.",
+"Invia anche un codice casuale di questo dispositivo, che non è il tuo nome: serve a contare i consulti del mese.": "Außerdem wird ein zufälliger Code dieses Geräts gesendet, der nicht dein Name ist: er dient dazu, die Abfragen des Monats zu zählen.",
+"Puoi spegnerlo quando vuoi nelle Opzioni.": "Du kannst es jederzeit in den Einstellungen ausschalten.",
+"Attivare?": "Aktivieren?",
+"Invia le serie della seduta con quelle precedenti, data, durata, prontezza, obiettivi, livello, fase e settimana, lingua, se è attiva la modalità prudente e un codice casuale del dispositivo. Mai nome, BIA, foto o risposte di salute. I numeri li decide sempre il coach delle regole.": "Sendet die Sätze des Trainings mit den vorherigen, Datum, Dauer, Bereitschaft, Ziele, Level, Phase und Woche, Sprache, ob der vorsichtige Modus aktiv ist, und einen zufälligen Gerätecode. Nie Name, BIA, Fotos oder Gesundheitsantworten. Die Zahlen bestimmt immer der Regel-Coach."
 };

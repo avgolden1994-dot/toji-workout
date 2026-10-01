@@ -3129,5 +3129,11 @@ window.I18N["en"] = {
 "Le statistiche": "Statistics",
 "Tocca «Statistiche».": "Tap «Statistics».",
 "Ogni 4 settimane confronto i tuoi carichi con il blocco precedente. Tocca un blocco per vedere ogni esercizio; più sotto c’è il cardio.": "Every 4 weeks I compare your loads with the previous block. Tap a block to see each exercise; cardio is further down.",
-"Dopo %s": "After %s"
+"Dopo %s": "After %s",
+"Per commentare le sedute, l’app invia al server del coach: le serie fatte (esercizi, ripetizioni, carichi, RPE) con quelle della volta precedente, titolo, data e durata della seduta, esercizi saltati, la tua prontezza prima della seduta, i tuoi obiettivi, il livello, la fase e la settimana del programma, la lingua e se è attiva la modalità prudente del questionario di salute (solo il fatto che è attiva, non le risposte).": "To comment on your workouts, the app sends the coach's server: the sets you did (exercises, reps, weights, RPE) with those from the previous time, the workout's title, date and length, skipped exercises, your readiness before the workout, your goals, level, phase and programme week, the language, and whether the cautious mode from the health questionnaire is on (only that it is on, not the answers).",
+"Non invia: nome, peso, misure e dati BIA, foto, risposte del questionario di salute.": "It does not send: your name, weight, measurements and BIA data, photos, or the answers to the health questionnaire.",
+"Invia anche un codice casuale di questo dispositivo, che non è il tuo nome: serve a contare i consulti del mese.": "It also sends a random code for this device, which is not your name: it is used to count the month's consultations.",
+"Puoi spegnerlo quando vuoi nelle Opzioni.": "You can turn it off any time in Settings.",
+"Attivare?": "Turn it on?",
+"Invia le serie della seduta con quelle precedenti, data, durata, prontezza, obiettivi, livello, fase e settimana, lingua, se è attiva la modalità prudente e un codice casuale del dispositivo. Mai nome, BIA, foto o risposte di salute. I numeri li decide sempre il coach delle regole.": "Sends the workout's sets with the previous ones, date, length, readiness, goals, level, phase and week, language, whether cautious mode is on, and a random device code. Never your name, BIA, photos or health answers. The numbers are always decided by the rules coach."
 };

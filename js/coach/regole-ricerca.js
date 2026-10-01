@@ -111,7 +111,7 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase) {
   }
 
   if (!sess.length) {
-    return { weight: scarico ? arrotonda(base * 0.9) : base, reps: repsTarget, sets: sets, tipo: scarico ? 'scarico' : 'nuovo',
+    return { weight: scarico ? arrotonda(base * COACH_PARAMETRI.scaricoReattivoCarico) : base, reps: repsTarget, sets: sets, tipo: scarico ? 'scarico' : 'nuovo',
              motivo: scarico ? 'Settimana di scarico: carico e serie ridotti' : 'Prima volta: parti dal carico del programma' };
   }
 
@@ -209,13 +209,13 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase) {
       return { weight: pesoUltimo, reps: 3, sets: 5, tipo: 'fermo', stallo: true,
         motivo: 'Secondo stallo: stesso peso ma schema 5\u00D73 (poi 6\u00D72 e 10\u00D71), come nel GZCLP' };
     if (pc.livello === 'principiante') return { weight: arrotonda(pesoUltimo * 0.95), reps: repsTarget, sets: sets, tipo: 'giu', stallo: true, motivo: 'Due volte di fila non completato: -5% e si ricostruisce' };
-    return { weight: arrotonda(pesoUltimo * 0.9), reps: repsTarget, sets: sets, tipo: 'giu', stallo: true, motivo: 'Due volte di fila non completato: -10% e si ricostruisce' };
+    return { weight: arrotonda(pesoUltimo * COACH_PARAMETRI.dopoDueMancateCarico), reps: repsTarget, sets: sets, tipo: 'giu', stallo: true, motivo: 'Due volte di fila non completato: -10% e si ricostruisce' };
   }
   /* scarico mirato: massimale stimato in calo per due sedute di fila */
   if (sd.length >= 3) {
     const m = sd.map(x => e1rmSeduta(x.ex));
     if (m[0] && m[1] && m[2] && m[0] < m[1] && m[1] < m[2]) {
-      return { weight: arrotonda(pesoUltimo * 0.9), reps: repsTarget, sets: Math.max(2, Math.round(sets * 0.5)), tipo: 'scarico',
+      return { weight: arrotonda(pesoUltimo * COACH_PARAMETRI.scaricoReattivoCarico), reps: repsTarget, sets: Math.max(2, Math.round(sets * COACH_PARAMETRI.scaricoProgressioneSerie)), tipo: 'scarico',
                motivo: 'Massimale stimato in calo da due sedute: scarico solo qui (-10% e meta serie), il resto non cambia' };
     }
   }

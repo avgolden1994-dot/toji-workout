@@ -62,7 +62,7 @@ function sostituto(nome, prefs, usati) {
   const sch = schemaDi(nome), bersaglio = isolamentoDi(nome);
   const punteggio = (e) => (e.type === meta.type ? 10 : 0) +
     (sch && schemaDi(e.name) === sch ? 8 : 0) + (bersaglio && isolamentoDi(e.name) === bersaglio ? 6 : 0) +
-    (IN_ALLUNGAMENTO.test(e.name) ? 2 : 0) + ((prefs.graditi || []).indexOf(e.name) !== -1 ? 4 : 0) +
+    (inAllungamento(e.name) ? 2 : 0) + ((prefs.graditi || []).indexOf(e.name) !== -1 ? 4 : 0) +
     (prefs.attrezzi === 'macchine' && attrezzoDi(e.name) === 'macchine' ? 3 : 0) +
     (prefs.attrezzi === 'liberi' && (attrezzoDi(e.name) === 'bilanciere' || attrezzoDi(e.name) === 'manubri') ? 3 : 0);
   candidati.sort((a, b) => punteggio(b) - punteggio(a));

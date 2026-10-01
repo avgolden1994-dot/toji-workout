@@ -54,8 +54,8 @@ window.caricoProssimo = function(nome, base, repsTarget, setsBase) {
   let ag;
   try { ag = aggiustiCoach(); } catch (e) { return r; }
   if (ag.scarico && ag.scarico.sedute > 0 && r.tipo !== 'scarico') {
-    r.weight = arrotonda(r.weight * 0.9);
-    r.sets = Math.max(2, Math.round((setsBase || 3) * 0.6));
+    r.weight = arrotonda(r.weight * COACH_PARAMETRI.scaricoReattivoCarico);
+    r.sets = Math.max(2, Math.round((setsBase || 3) * COACH_PARAMETRI.scaricoReattivoSerie));
     r.tipo = 'scarico';
     r.motivo = 'Scarico deciso dal coach: ' + ag.scarico.motivo;
   }

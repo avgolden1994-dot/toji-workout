@@ -136,7 +136,7 @@ window.buildProgram = function(d) {
       const punteggio = (x) => {
         let v = prio(x) + bonusBiomecc(x, slot.replace(/\d$/, ''), testFisici, prefs.fastidi);
         if ((prefs.graditi || []).indexOf(x.name) !== -1) v += 3;
-        if (IN_ALLUNGAMENTO.test(x.name)) v += 1.5;
+        if (inAllungamento(x.name)) v += 1.5;
         if (usatiSett[x.name]) v -= level === 'principiante' ? 1 : 4;   /* varieta tra i giorni */
         if (!fisso) v += rng() * (level === 'principiante' ? 1 : 2.5) * fattoreVarieta;    /* la variazione del coach, dosata sul gusto */
         if (ps.disagio && !fisso && attrezzoDi(senzaEmoji(x.name)) === 'bilanciere') v -= 2;   /* a disagio: meno bilanciere, meno postazioni */
@@ -150,7 +150,7 @@ window.buildProgram = function(d) {
     });
     /* allungamento dove e provato (le varianti restano in scheda se non disponibili) */
     base.forEach(e => {
-      const sc = SCAMBI_ALLUNGAMENTO.find(x => senzaEmoji(e.name) === x[0]);
+      const sc = scambiAllungamento().find(x => senzaEmoji(e.name) === x[0]);
       if (!sc) return;
       const alt = nomeInLibreria(sc[1]);
       if (alt && consentito(alt, prefs) && !base.some(y => y.name === alt)) { e.name = alt; e.weight = (findExercise(alt) || {}).weight || e.weight; }
@@ -180,8 +180,8 @@ window.buildProgram = function(d) {
         if (isComp) primoComp = false;
         if (!isComp && scheme.isoMassa) { sets = 3; reps = 12; }
         sets = Math.min(sets, scheme.tettoSerie);
-        if (level === 'principiante') sets = Math.min(sets, 3);   /* 2-3 serie impegnative (Barbell Medicine) */
-        if (over65) { sets = Math.min(sets, 3); reps = Math.max(8, Math.min(12, reps)); }
+        if (level === 'principiante') sets = Math.min(sets, COACH_PARAMETRI.serieMaxPrudente);   /* 2-3 serie impegnative (Barbell Medicine) */
+        if (over65) { sets = Math.min(sets, COACH_PARAMETRI.serieMaxPrudente); reps = Math.max(8, Math.min(12, reps)); }
         if ((d.parq === 'si' || d.parq === true) && isComp) reps = Math.max(8, Math.min(12, reps));   /* pressione: 60-80%, niente apnea (ACSM) */
         if (donna) rest = Math.max(60, Math.round(rest * 0.85));   /* recupero piu rapido tra le serie (PeerJ 2025) */
         if (isTimeBased(e.name)) reps = meta ? meta.reps : 30;
@@ -261,7 +261,7 @@ window.buildProgram = function(d) {
   /* volume per muscolo: partenza per livello, tetto di 11 serie per seduta */
   let [vMin, vMax] = goals[0] === 'salute' ? [6, 12] : (VOLUME_LIVELLO[level] || VOLUME_LIVELLO.intermedio);
   /* fattore fisico: massa magra bassa = piu volume; in calo = meno */
-  if (fis.ffmiBasso && goals[0] !== 'dimagrimento') { vMin = Math.round(vMin * 1.2); vMax = Math.round(vMax * 1.2); }
+  if (fis.ffmiBasso && goals[0] !== 'dimagrimento') { vMin = Math.round(vMin * COACH_PARAMETRI.fattoreVolumeFfmiBasso); vMax = Math.round(vMax * COACH_PARAMETRI.fattoreVolumeFfmiBasso); }
   if (fis.magraInCalo) { vMin = Math.round(vMin * 0.85); vMax = Math.round(vMax * 0.85); }
   /* esigenza del coach: +20% all inizio, poi segue l andamento (mai oltre il massimo del livello) */
   const moG = typeof momentoAttivo === 'function' ? momentoAttivo() : null;
@@ -297,7 +297,7 @@ window.buildProgram = function(d) {
     sd.esercizi.forEach(e => { const g = (findExercise(e.name) || {}).group; if (g) conta[g] = (conta[g] || 0) + e.sets; });
     Object.keys(conta).forEach(g => {
       let giri = 0;
-      while (conta[g] > 11 && giri++ < 20) {
+      while (conta[g] > COACH_PARAMETRI.serieMaxMuscoloSeduta && giri++ < 20) {
         const e = sd.esercizi.filter(x => (findExercise(x.name) || {}).group === g && x.sets > 2 && !x.fisso).sort((a, b) => b.sets - a.sets)[0];
         if (!e) break; e.sets--; conta[g]--;
       }
@@ -308,7 +308,7 @@ window.buildProgram = function(d) {
     (split.freq === 1 ? 'Ogni muscolo una volta a settimana, come hai scelto: fino a 11 serie in una seduta, oltre si sprecano.' : 'Ogni muscolo ' + split.freq + ' volte a settimana, come hai scelto.'));
 
   /* principianti e over 65: mai piu di 3 serie per esercizio */
-  if (level === 'principiante' || over65) sedute.forEach(sd => sd.esercizi.forEach(e => { e.sets = Math.min(e.sets, 3); }));
+  if (level === 'principiante' || over65) sedute.forEach(sd => sd.esercizi.forEach(e => { e.sets = Math.min(e.sets, COACH_PARAMETRI.serieMaxPrudente); }));
   /* poco sonno o molto stress: una serie in meno sugli accessori (dopo il volume) */
   if (prefs.sonno === 'male') sedute.forEach(sd => sd.esercizi.forEach((e, i) => { if (i > 0 && !e.fisso) e.sets = Math.max(2, e.sets - 1); }));
   /* la seduta deve stare nei minuti dichiarati */

@@ -6,11 +6,24 @@
    Le decisioni sui numeri restano alle regole del coach; l IA commenta e
    spiega. Il server (Worker Cloudflare) tiene nascosta la chiave e conta i
    consulti. Serve un consenso a parte: i dati della seduta escono dal
-   telefono, senza nome e senza BIA.
+   telefono: l elenco esatto e in TESTI_IA qui sotto.
    ============================================================ */
 const COACH_IA_URL = 'https://coach-allenamento.avgolden1994.workers.dev';
 const IA_CONSENT_KEY = 'tz_consenso_ia';
 const IA_DEVICE_KEY = 'tz_device_ia';
+
+/* Cosa esce dal telefono, in parole. Deve restare uguale a contestoSeduta()
+   e a chiamaCoachIA(): se cambi quelle, cambia anche questo (lo controlla
+   tests/struttura.test.js). */
+const TESTI_IA = {
+  titolo: 'Coach IA',
+  invia: 'Per commentare le sedute, l’app invia al server del coach: le serie fatte (esercizi, ripetizioni, carichi, RPE) con quelle della volta precedente, titolo, data e durata della seduta, esercizi saltati, la tua prontezza prima della seduta, i tuoi obiettivi, il livello, la fase e la settimana del programma, la lingua e se è attiva la modalità prudente del questionario di salute (solo il fatto che è attiva, non le risposte).',
+  non: 'Non invia: nome, peso, misure e dati BIA, foto, risposte del questionario di salute.',
+  codice: 'Invia anche un codice casuale di questo dispositivo, che non è il tuo nome: serve a contare i consulti del mese.',
+  spegni: 'Puoi spegnerlo quando vuoi nelle Opzioni.',
+  chiedi: 'Attivare?',
+  nota: 'Invia le serie della seduta con quelle precedenti, data, durata, prontezza, obiettivi, livello, fase e settimana, lingua, se è attiva la modalità prudente e un codice casuale del dispositivo. Mai nome, BIA, foto o risposte di salute. I numeri li decide sempre il coach delle regole.'
+};
 
 window.coachIAAttivo = function() {
   try { return coachAttivo() && localStorage.getItem(IA_CONSENT_KEY) === 'si'; } catch (e) { return false; }
@@ -18,7 +31,7 @@ window.coachIAAttivo = function() {
 window.setCoachIA = function(si) {
   if (si) {
     if (!coachAttivo()) { alert('Prima serve il consenso ai dati del coach.'); return; }
-    const ok = confirm('Coach IA\n\nPer commentare le sedute, l’app invia al server del coach le serie fatte (esercizi, ripetizioni, carichi, RPE), i tuoi obiettivi e il livello. Niente nome, niente BIA.\n\nI dati servono solo a scrivere la risposta e non vengono salvati sul server. Puoi spegnerlo quando vuoi.\n\nAttivare?');
+    const ok = confirm([TESTI_IA.titolo, TESTI_IA.invia, TESTI_IA.non, TESTI_IA.codice, TESTI_IA.spegni, TESTI_IA.chiedi].map(t => window.tr(t)).join('\n\n'));
     if (!ok) return;
   }
   try {
@@ -36,7 +49,7 @@ function htmlPrivacyIA() {
       '<span class="sr-name">Commenti del coach IA' + (on && quando ? '<small>Attivo dal ' + escapeHtml(quando) + '</small>' : '<small>Due righe da allenatore dopo ogni seduta</small>') + '</span>' +
       '<span class="switch ' + (on ? 'on' : '') + '"></span></button>' +
     (on && uso ? '<div class="sr-row sr-static"><span class="sr-name">Consulti questo mese<small>' + uso.usati + ' di ' + uso.limite + '</small></span></div>' : ''),
-    'Invia solo le serie della seduta, gli obiettivi e il livello, senza nome né BIA. I numeri li decide sempre il coach delle regole.');
+    TESTI_IA.nota);
 }
 
 function deviceIA() {
