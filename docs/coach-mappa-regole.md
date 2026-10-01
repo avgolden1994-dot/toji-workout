@@ -445,7 +445,11 @@ Le regole non leggono una scheda unica per esercizio: la stessa conoscenza ("qua
 
 | Tabella | Riga | Cosa contiene |
 |---|---|---|
-| `EXERCISE_LIBRARY` | 3338 | 114 esercizi: gruppo, tipo, serie/ripetizioni/peso/recupero di partenza |
+| `EXERCISE_LIBRARY` | 3338 | 139 esercizi: gruppo, tipo, serie/ripetizioni/peso/recupero di partenza |
+| `DETTAGLI` (js/dati/dettagli-esercizi.js) | — | una riga per esercizio: sezione (macchinari e cavi, pesi liberi, corpo libero), attrezzo, presa o attacco, sottogruppo, focus, muscoli secondari e la nota sul perche l'attacco conta (con la fonte). La sezione deve combaciare con `attrezzoDi`: lo controlla `tests/browser/dettagli-esercizi.js` |
+| `SOTTOGRUPPI` | — | le parti di ogni gruppo muscolare (per esempio schiena: dorsali larghezza, spessore, lombari): ordinano gli elenchi e dicono cosa copre una seduta |
+| `NOTE_ATTACCO` | — | 13 note su presa e attacco (rematore seduto, pulldown, pushdown, curl ai cavi, croci, leg extension, pressa, calf, leg curl...), con le prove EMG e la loro forza |
+| `TECNICA` + `schede-varianti.js` | — | le varianti (presa o attacco diversi) riprendono passi ed errori dell'esercizio base e cambiano partenza, muscoli e consiglio |
 | `MUSCLE_GROUPS` | 3328 | 7 gruppi: antagonisti e sinergisti |
 | `attrezzoDi` | 8802 | attrezzo (bilanciere, manubri, macchine, corpo) dal nome, con regex |
 | `RISCHIO` | 8812 | esercizi a rischio per spalle, ginocchia, schiena (fastidi dichiarati) |

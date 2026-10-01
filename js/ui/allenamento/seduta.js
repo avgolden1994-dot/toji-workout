@@ -168,6 +168,7 @@ function renderAllenamento() {
         <div class="workout-item-head">
           <div>
             <div class="ex-name">${e.superset ? '<span class="ss-tag">⛓</span> ' : ''}${findExercise(e.name) ? '<span class="ex-fig">' + muscleFigure(findExercise(e.name).group) + '</span>' + escapeHtml(e.name.replace(EMOJI_TESTA, '')) : escapeHtml(e.name)}</div>
+            ${dettaglioEsercizio(e.name) ? `<div class="ex-focus">${escapeHtml(etichettaAttrezzo(e.name))} \u2022 <span>Focus</span>: ${escapeHtml(focusEsercizio(e.name))}</div>` : ''}
             <div class="ex-data">Recupero ${e.rest} s${infoEsercizio(e.name)}</div>
             ${htmlSostituito(e)}
             ${e.coachNote && coachAttivo() ? `<span class="coach-badge-set ${e.coachTipo || ''}"><b>Coach ·</b> ${escapeHtml(e.coachNote)}</span>` : ''}
@@ -177,6 +178,7 @@ function renderAllenamento() {
             ${e.note ? `<div class="plan-note">📝 ${escapeHtml(e.note)}</div>` : ''}
           </div>
           <button class="info-btn" onclick="openExerciseInfo('${jsArg(e.name)}')" title="Come si fa" aria-label="Come si fa">ℹ</button>
+          <a class="info-btn video-btn" href="${escapeHtml(videoLinkFor(e.name))}" target="_blank" rel="noopener noreferrer" title="Cerca un video su YouTube" aria-label="Cerca un video su YouTube">\u25B6</a>
           <button class="skip-btn ${e.skipped ? 'on' : ''}" onclick="toggleSkipExercise(${idx})">${e.skipped ? '↺ Riprendi' : '⏭ Salta'}</button>
         </div>
         <div class="set-rows">

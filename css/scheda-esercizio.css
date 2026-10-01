@@ -99,3 +99,12 @@ html[data-theme="light"] .ex-img-slot:not(.vuoto) { background: var(--surface-1)
   transition: opacity .12s linear;
 }
 .screen-flash.on { opacity: 0.55; }
+
+/* attrezzo, presa e focus nella scheda dell esercizio, sotto il nome nell allenamento e le altre prese */
+.ex-focus { font-size: 0.72rem; line-height: 1.35; color: var(--muted); margin-top: 3px; }
+a.video-btn { text-decoration: none; display: inline-flex; align-items: center; color: var(--primary); }
+.ex-det .res-line b { text-align: right; }
+.ex-note-att { font-size: 0.76rem; color: var(--muted); line-height: var(--lh-base); margin-top: var(--sp-3); padding: var(--sp-2) var(--sp-3); border-left: 3px solid var(--accent); background: var(--surface-2); border-radius: 0 8px 8px 0; }
+.ex-var-t { margin-top: var(--sp-4); }
+.ex-var { display: flex; flex-wrap: wrap; gap: 6px; }
+.ex-var-b { background: var(--surface-2); border: 1px solid var(--border); color: var(--text); border-radius: 999px; padding: 6px 12px; font-weight: 800; font-size: 0.74rem; cursor: pointer; }

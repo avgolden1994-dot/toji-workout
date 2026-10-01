@@ -41,6 +41,14 @@ test('le tre lingue hanno le stesse frasi', () => {
     assert.deepStrictEqual(mancano, [], l + ' non traduce: ' + mancano.slice(0, 5).join(' | '));
   });
 });
+test('in spagnolo «Dolenzia» (domanda di inizio seduta) e «Dolor muscular», non «agujetas»', () => {
+  /* «agujetas» e solo spagnolo di Spagna e vuol dire un tipo preciso di dolore dopo lo sforzo; in America Latina significa altro.
+     La domanda chiede quanto dolore muscolare c e oggi, con le risposte Mucho / Un poco / Nada. */
+  global.window = {};
+  new Function(leggi('js/lingue/es.js')).call(global);
+  assert.strictEqual(window.I18N.es['Dolenzia'], 'Dolor muscular');
+  assert.ok(!/agujetas/i.test(leggi('js/lingue/es.js')), 'agujetas e ancora in es.js');
+});
 test('sw.js elenca esattamente i file dell app', () => {
   const r = require('child_process').spawnSync('node', [path.join(R, 'tools/genera-sw.js'), '--check'], { encoding: 'utf8' });
   assert.strictEqual(r.status, 0, r.stderr);

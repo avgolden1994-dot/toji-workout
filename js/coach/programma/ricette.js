@@ -28,7 +28,7 @@ const SLOT_DEF = {
   isoPetto: e => e.group === 'petto' && e.type !== 'compound',
   isoDeltL: e => /alzate laterali/i.test(_n(e)),
   isoDeltP: e => /face pull|reverse|alzate posteriori|y-raise/i.test(_n(e)),
-  isoBic: e => e.group === 'braccia' && /curl/i.test(_n(e)),
+  isoBic: e => e.group === 'braccia' && /curl/i.test(_n(e)) && !/inverso|zottman/i.test(_n(e)),   /* il curl inverso e per gli avambracci, lo Zottman e un classico: non sono il posto del bicipite */
   isoTri: e => e.group === 'braccia' && /pushdown|french press|estensione tricipiti|kickback tricipiti/i.test(_n(e)),
   isoFem: e => /leg curl|nordic/i.test(_n(e)),
   isoQuad: e => /leg extension/i.test(_n(e)),
