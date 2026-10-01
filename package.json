@@ -1,0 +1,17 @@
+{
+  "name": "3in",
+  "version": "0.1.0",
+  "private": true,
+  "description": "3in: allenamenti, calendario e coach (PWA)",
+  "scripts": {
+    "test": "node --test tests/struttura.test.js tests/avvio.test.js",
+    "test:browser": "for f in tests/browser/*.js; do echo \"== $f\"; node $f || exit 1; done",
+    "sw": "node tools/genera-sw.js",
+    "indice": "node tools/indice.js",
+    "controlla": "npm run sw -- --check && npm run indice -- --check && npm test"
+  },
+  "devDependencies": {
+    "acorn": "^8.18.0",
+    "playwright-core": "^1.50.0"
+  }
+}

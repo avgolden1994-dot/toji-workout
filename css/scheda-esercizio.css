@@ -1,0 +1,101 @@
+/* ============================================================
+   BLOCCHI DI TESTO SCRITTI COME ELEMENTI IN LINEA
+   Nome e descrizione erano elementi in linea, che per natura restano sulla stessa
+   riga: si leggeva "Suono a fine recuperoUn segnale quando...".
+   Qui tutti i contenitori e le righe di testo diventano blocchi veri,
+   con lo spazio corretto tra titolo e descrizione.
+   ============================================================ */
+.set-toggle-main, .pick-main, .onb-opt-main,
+.wday-main, .wk-main, .week-main, .plan-card-main, .sugg-main { display: block; min-width: 0; }
+
+.set-toggle-name, .set-toggle-desc,
+.pick-name, .pick-meta,
+.onb-opt-name, .onb-opt-desc,
+.wday-name, .wday-meta,
+.wk-name, .wk-meta,
+.week-name, .week-meta,
+.track-name, .track-meta,
+.template-name, .template-desc, .template-meta,
+.coach-name, .coach-reason,
+.sugg-name, .sugg-meta,
+.ex-name, .ex-data, .plan-ex-name,
+.lib-name, .lib-meta,
+.mode-name, .mode-sub {
+  display: block;
+}
+
+/* lo spazio tra titolo e sua descrizione, ovunque e sempre uguale */
+.set-toggle-desc, .pick-meta, .onb-opt-desc, .wday-meta, .wk-meta,
+.week-meta, .track-meta, .coach-reason, .sugg-meta, .ex-data,
+.lib-meta, .mode-sub {
+  margin-top: var(--sp-1);
+}
+.template-desc { margin-top: var(--sp-2); }
+.template-meta { margin-top: var(--sp-2); }
+
+/* ======= Scheda esercizio: disegno e spiegazione ======= */
+.ex-draw-wrap {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: var(--sp-4); margin-bottom: var(--sp-5);
+  aspect-ratio: 300 / 165;      /* spazio riservato: niente stiramenti */
+  display: flex; align-items: center; justify-content: center;
+}
+/* Segnaposto dell immagine: lo spazio e' gia quello definitivo, cosi
+   quando arriveranno foto o video il resto della scheda non si spostera. */
+.ex-img-slot {
+  width: 100%; height: 100%;
+  border: 1.5px dashed var(--border); border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+}
+.ex-img-slot { position: relative; }
+.ex-img { width: 100%; height: 100%; object-fit: contain; display: block; border-radius: 10px; }
+/* il segnaposto compare solo quando il disegno manca davvero */
+.ex-img-hint {
+  position: absolute; inset: 0; display: none;
+  align-items: center; justify-content: center;
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.4px;
+  color: var(--muted); opacity: 0.7; text-transform: uppercase;
+}
+.ex-img-slot.vuoto .ex-img-hint { display: flex; }
+.ex-img-slot:not(.vuoto) { border-style: solid; border-color: var(--border); }
+/* le illustrazioni sono disegnate su fondo chiaro: nel tema scuro il riquadro
+   diventa chiaro anche lui, altrimenti il fondo semitrasparente sembra grigio sporco */
+.ex-img-slot:not(.vuoto) { background: color-mix(in srgb, var(--text) 92%, var(--surface-1)); }
+html[data-theme="light"] .ex-img-slot:not(.vuoto) { background: var(--surface-1); }
+.ex-draw { width: 100%; height: 100%; display: block; }
+/* la figura ha corpo pieno con un contorno piu marcato, cosi si legge
+   come una persona anche a schermo piccolo */
+.ex-draw .bd { fill: var(--text); fill-opacity: 0.88; stroke: var(--bg); stroke-width: 1.2; stroke-linejoin: round; }
+.ex-draw .bar { fill: var(--muted); }
+.ex-draw .plate { fill: var(--primary); }
+.ex-draw .bench { fill: var(--muted); fill-opacity: 0.45; }
+.ex-draw .ground { stroke: var(--border); }
+.ex-draw .arrow { stroke: var(--accent); }
+.ex-draw .lbl { fill: var(--accent); }
+.ex-draw .lbl2 { fill: var(--muted); }
+.ex-pattern { font-size: 0.68rem; font-weight: 900; line-height: var(--lh-tight); text-transform: uppercase; letter-spacing: 0.6px; color: var(--accent); margin: 0 0 var(--sp-5) 0; }
+.ex-block { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: var(--sp-4); margin-bottom: var(--sp-3); }
+.ex-block-title { font-size: 0.72rem; font-weight: 900; line-height: var(--lh-tight); text-transform: uppercase; letter-spacing: 0.5px; color: var(--primary); margin: 0 0 var(--sp-3) 0; }
+.ex-block-title.warn { color: var(--accent); }
+.ex-steps { margin: 0; padding-left: 20px; font-size: 0.86rem; line-height: var(--lh-loose); }
+.ex-steps li { margin-bottom: var(--sp-2); }
+.ex-muscoli { font-size: 0.8rem; font-weight: 700; color: var(--primary); background: color-mix(in srgb, var(--primary) 10%, var(--surface-2)); border-radius: 10px; padding: 8px 12px; margin-bottom: var(--sp-3); }
+.ex-p { margin: 0; font-size: 0.86rem; line-height: 1.5; }
+.ex-cue { background: var(--surface-2); border-left: 3px solid var(--primary); border-radius: 8px; padding: 10px 12px; font-size: 0.86rem; line-height: 1.45; margin: var(--sp-3) 0; }
+.ex-cue b { display: block; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.6px; color: var(--primary); margin-bottom: 2px; }
+.ex-gloss { margin-top: var(--sp-3); font-size: 0.8rem; color: var(--muted); }
+.ex-gloss summary { cursor: pointer; font-weight: 800; color: var(--text); padding: 6px 0; }
+.ex-gloss p { margin: 6px 0; line-height: 1.4; }
+.ex-gloss b { color: var(--text); }
+.ex-video { display: block; text-align: center; text-decoration: none; background: var(--primary); color: #fff; font-weight: 900; font-size: 0.86rem; padding: 13px; border-radius: 10px; margin-top: 4px; }
+.ex-note { font-size: 0.76rem; color: var(--muted); line-height: var(--lh-base); margin-top: var(--sp-4); }
+.ex-note a { color: var(--accent); }
+.info-btn { background: transparent; border: none; color: var(--muted); font-size: 0.95rem; cursor: pointer; padding: 3px 5px; border-radius: 6px; flex-shrink: 0; }
+
+/* lampeggio di fine recupero: si vede sempre, anche a telefono zittito */
+.screen-flash {
+  position: fixed; inset: 0; z-index: 200; pointer-events: none;
+  background: var(--primary); opacity: 0;
+  transition: opacity .12s linear;
+}
+.screen-flash.on { opacity: 0.55; }

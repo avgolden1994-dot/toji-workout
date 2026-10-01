@@ -1,0 +1,330 @@
+/* ======= Scambio dei giorni trascinandoli ======= */
+.cal-day, .mc-cell { touch-action: none; }
+.swap-from { opacity: 0.45; outline: 2px dashed var(--primary); outline-offset: -2px; }
+.swap-no { outline: 2px dashed var(--danger); outline-offset: -2px; }
+.swap-fuori { opacity: 0.3; }
+.swap-to { outline: 2px solid var(--primary); outline-offset: -2px; transform: scale(1.06); background: color-mix(in srgb, var(--primary) 22%, var(--surface-1)) !important; }
+
+/* ======= Copia della settimana come blocco ======= */
+.mc-week.sorgente { background: color-mix(in srgb, var(--primary) 16%, transparent); box-shadow: 0 0 0 2px var(--primary) inset; }
+.mc-week.sorgente .mc-grip { color: var(--primary); }
+.mc-week.bersaglio { background: color-mix(in srgb, var(--success) 16%, transparent); box-shadow: 0 0 0 2px var(--success) inset; }
+.mc-week.drop { background: color-mix(in srgb, var(--success) 22%, transparent); box-shadow: 0 0 0 2px var(--success) inset; }
+#mc-grid.copiando .mc-cell { cursor: copy; }
+.mc-grip { font-size: 1.25rem; min-height: 40px; }
+.mc-copybar {
+  margin-top: var(--sp-4); padding: var(--sp-4);
+  border: 1px solid var(--primary); border-radius: 12px;
+  background: color-mix(in srgb, var(--primary) 8%, var(--surface-1));
+}
+.mc-cb-text { font-size: 0.8rem; line-height: var(--lh-base); }
+.mc-cb-label { font-size: 0.64rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin: var(--sp-3) 0 var(--sp-2); }
+.mc-cb-row { display: flex; gap: var(--sp-2); margin-top: var(--sp-2); }
+.mc-cb-rep { flex: 1; background: var(--surface-2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 9px 0; font-weight: 900; cursor: pointer; }
+.mc-cb-cancel { flex: 1; background: var(--surface-2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 11px; font-weight: 800; cursor: pointer; }
+.mc-cb-paste { flex: 2; background: var(--primary); border: none; color: var(--on-primary); border-radius: 8px; padding: 11px; font-weight: 900; cursor: pointer; }
+.mc-cb-paste:disabled { opacity: 0.4; cursor: not-allowed; }
+/* etichetta che segue il dito durante il trascinamento */
+.mc-ghost {
+  position: fixed; z-index: 210; display: none; pointer-events: none;
+  transform: translate(-50%, -140%);
+  background: var(--primary); color: var(--on-primary);
+  font-size: 0.74rem; font-weight: 900; padding: 6px 12px; border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35); white-space: nowrap;
+}
+
+/* ======= Aggiungi allenamento alla settimana ======= */
+.aw-path {
+  display: flex; align-items: center; gap: var(--sp-4); width: 100%; text-align: left;
+  background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px;
+  padding: var(--sp-5) var(--sp-4); margin-bottom: var(--sp-3); cursor: pointer; color: var(--text);
+}
+.aw-path:active { transform: scale(0.99); }
+.aw-path-ico { font-size: 1.9rem; flex-shrink: 0; }
+.aw-path-name { display: block; font-weight: 900; font-size: 1rem; line-height: var(--lh-base); }
+.aw-path-go { font-size: 1.4rem; color: var(--primary); font-weight: 900; flex-shrink: 0; }
+.pick-icon.pick-fig { padding: 3px; overflow: hidden; }
+.pick-icon.pick-fig svg { width: 100%; height: 100%; display: block; }
+.pick-row:not(.on) .pick-fig .bm-muscle.active { animation: none; }
+.mg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); }
+.mg-grid > .mg-card:last-child:nth-child(odd) { grid-column: 1 / -1; flex-direction: row; }
+.mg-grid > .mg-card:last-child:nth-child(odd) .mg-fig { flex: 0 0 48%; height: 100%; }
+.mg-grid > .mg-card:last-child:nth-child(odd) .mg-txt { justify-content: center; padding-right: 28px; }
+.mg-grid > .mg-card:last-child:nth-child(odd) .mg-txt { text-align: left; align-items: flex-start; }
+#aw-body.aw-fill { display: flex; flex-direction: column; }
+#aw-body.aw-fill .mg-grid { flex: 1; grid-auto-rows: 1fr; min-height: 540px; }
+.mg-card { position: relative; display: flex; flex-direction: column; align-items: stretch; gap: var(--sp-2);
+  background: var(--surface-2); border: 1.5px solid var(--border); border-radius: 18px; padding: var(--sp-3);
+  color: var(--text); cursor: pointer; text-align: center; min-height: 128px; overflow: hidden; padding-bottom: var(--sp-4);
+  transition: border-color .2s ease, transform .15s ease, background .2s ease; }
+.mg-card:active { transform: scale(0.97); }
+.mg-card.on { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 12%, var(--surface-2)); }
+.mg-fig { flex: 1; min-height: 64px; display: flex; align-items: center; justify-content: center;
+  position: relative; }
+.mg-fig > svg { position: absolute; inset: 0; margin: auto; }
+.mg-fig svg { height: 100%; width: auto; max-width: 100%; display: block; }
+.mg-card:not(.on) .bm-muscle.active { animation: none; fill: color-mix(in srgb, var(--primary) 78%, var(--surface-1)); }
+.mg-txt { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.mg-name { display: block; font-weight: 900; font-size: 1rem; letter-spacing: 0.2px; }
+.mg-sub { display: block; font-size: 0.72rem; color: var(--muted); line-height: 1.25; }
+.mg-n { font-weight: 900; color: var(--primary); }
+.mg-check { position: absolute; top: 10px; right: 10px; width: 24px; height: 24px; border-radius: 50%;
+  border: 1.5px solid var(--border-strong); display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; font-weight: 900; color: var(--on-primary); }
+.mg-card.on .mg-check { background: var(--primary); border-color: var(--primary); }
+.mg-grid.compact .mg-card { min-height: 0; flex-direction: row; align-items: center; padding: var(--sp-2); gap: var(--sp-2); }
+.mg-grid.compact .mg-fig { flex: 0 0 52px; height: 52px; min-height: 0; }
+.mg-grid.compact .mg-txt { align-items: flex-start; text-align: left; }
+.mg-grid.compact .mg-sub, .mg-grid.compact .mg-n { display: none; }
+.mg-grid.compact .mg-check { top: 50%; transform: translateY(-50%); width: 20px; height: 20px; }
+.mg-grid.compact > .mg-card:last-child:nth-child(odd) .mg-fig { flex: 0 0 52px; width: 52px; height: 52px; }
+.mg-grid.compact > .mg-card:last-child:nth-child(odd) .mg-txt { padding-right: 0; }
+#aw-body.aw-fill .aw-warn { display: none; }
+.aw-groups { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+.aw-group { background: var(--surface-2); border: 1px solid var(--border); color: var(--text); border-radius: 999px; padding: 8px 14px; font-weight: 800; font-size: 0.8rem; cursor: pointer; }
+.aw-group.on { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
+
+.aw-open-btn { margin-top: var(--sp-4); }
+.aw-sec { font-size: 0.68rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); margin: var(--sp-5) 0 var(--sp-3); }
+.aw-sec:first-child { margin-top: 0; }
+.aw-pick {
+  display: flex; align-items: center; gap: var(--sp-3); width: 100%; text-align: left;
+  background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px;
+  padding: var(--sp-3) var(--sp-4); margin-bottom: var(--sp-2); cursor: pointer; color: var(--text);
+}
+.aw-pick.on { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 10%, var(--surface-1)); box-shadow: 0 0 0 1px var(--primary) inset; }
+.aw-radio { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border-strong); }
+.aw-pick.on .aw-radio { border-color: var(--primary); background: radial-gradient(circle, var(--primary) 45%, transparent 50%); }
+.aw-main { flex: 1; min-width: 0; }
+.aw-name { display: block; font-weight: 800; font-size: 0.88rem; line-height: var(--lh-tight); }
+.aw-meta { display: block; font-size: 0.72rem; line-height: var(--lh-tight); color: var(--muted); margin-top: var(--sp-1); }
+.aw-chosen { background: var(--surface-2); border-radius: 10px; padding: var(--sp-3) var(--sp-4); margin-bottom: var(--sp-5); }
+.aw-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: var(--sp-1); }
+.aw-day {
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
+  padding: var(--sp-2) 2px; cursor: pointer; color: var(--text);
+  display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 64px;
+}
+.aw-day.on { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 16%, var(--surface-1)); box-shadow: 0 0 0 1px var(--primary) inset; }
+.aw-day .cal-dow { font-size: 0.58rem; }
+.aw-day-state { font-size: 0.55rem; font-weight: 700; color: var(--muted); text-align: center; line-height: 1.15; }
+.aw-day.on .aw-day-state { color: var(--primary); }
+.aw-check { font-size: 0.95rem; font-weight: 900; line-height: 1; color: var(--border-strong); }
+.aw-day.on .aw-check { color: var(--primary); }
+.aw-quick { display: flex; gap: var(--sp-2); margin-top: var(--sp-3); }
+.aw-quick button { flex: 1; background: var(--surface-2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 8px 4px; font-size: 0.72rem; font-weight: 800; cursor: pointer; }
+.aw-warn { font-size: 0.76rem; line-height: var(--lh-base); color: var(--muted); margin-top: var(--sp-5); }
+
+/* ======= Calendario della settimana =======
+   Sette celle su una riga: la settimana si legge tutta in un colpo
+   d occhio invece di scorrere sette schede una sotto l altra. */
+.cal-week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--sp-1); }
+.cal-day {
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
+  padding: var(--sp-2) 2px var(--sp-1); cursor: pointer; color: var(--text);
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  min-height: 74px; transition: border-color .15s ease, background .15s ease;
+  min-width: 0; overflow: hidden;
+}
+.cal-day:active { transform: scale(0.97); }
+.cal-day.oggi { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary) inset; }
+.cal-day.pieno { background: color-mix(in srgb, var(--primary) 12%, var(--surface-1)); }
+.cal-day.riposo { opacity: 1; }
+.cal-day.riposo .cal-num { color: var(--muted); }
+.cal-dow { font-size: 0.58rem; font-weight: 900; letter-spacing: 0.4px; color: var(--muted); text-transform: uppercase; }
+.cal-num { font-size: 1.05rem; font-weight: 900; line-height: 1.1; }
+.cal-num.vuoto { color: var(--text-dim); font-weight: 700; }
+.cal-sub { font-size: 11px; font-weight: 700; color: var(--muted); text-align: center; line-height: 1.15; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cal-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+.cal-dot.full { background: var(--primary); }
+.cal-dot.rest { background: var(--muted); }
+.cal-dot.empty { background: transparent; border: 1px solid var(--border-strong); }
+.cal-legend { display: flex; gap: var(--sp-3); justify-content: center; flex-wrap: wrap; font-size: 0.62rem; color: var(--muted); margin-top: var(--sp-3); }
+.cal-legend span { display: flex; align-items: center; gap: 4px; }
+.cal-summary { font-size: 0.72rem; font-weight: 800; color: var(--primary); text-align: center; margin-top: var(--sp-3); }
+
+/* ======= Banner =======
+   Costruito in CSS sui token, non piu' con un disegno a colori fissi:
+   cosi segue il tema invece di restare una macchia scura sul chiaro.
+   Tre strati: una velatura del colore del protocollo dall alto a
+   sinistra, due fendenti diagonali, e la superficie della card sotto. */
+.banner {
+  position: relative; overflow: hidden;
+  border-radius: 14px; border: 1px solid var(--border);
+  background:
+    radial-gradient(120% 90% at 12% 8%, color-mix(in srgb, var(--primary) 26%, transparent) 0%, transparent 62%),
+    radial-gradient(90% 80% at 96% 96%, color-mix(in srgb, var(--accent) 18%, transparent) 0%, transparent 60%),
+    linear-gradient(150deg, var(--surface-2) 0%, var(--surface-1) 100%);
+  height: 108px; display: flex; flex-direction: column; justify-content: flex-end;
+  padding: var(--sp-4);
+}
+/* i due fendenti: lame di luce oblique, nel colore del protocollo */
+.banner::before, .banner::after {
+  content: ''; position: absolute; pointer-events: none;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--primary) 55%, transparent) 45%,
+    transparent 100%);
+}
+.banner::before {
+  top: -30%; left: -12%; width: 130%; height: 7px;
+  transform: rotate(-19deg);
+  opacity: 0.85;
+}
+.banner::after {
+  top: 32%; left: -18%; width: 140%; height: 3px;
+  transform: rotate(-19deg);
+  opacity: 0.5;
+}
+.banner-quote { position: relative; font-size: 0.68rem; color: var(--primary); text-transform: uppercase; font-weight: 900; letter-spacing: 1.2px; line-height: var(--lh-tight); }
+.banner-title {
+  position: relative;
+  font-size: 1.4rem; font-weight: 900; color: var(--text);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  line-height: var(--lh-loose); margin: var(--sp-1) 0 0 0;
+}
+.banner-title:active { opacity: 0.7; }
+
+/* campi parametri nella lista Gruppi */
+.lib-row { padding: 10px 0; border-bottom: 1px solid var(--border); }
+.lib-row:last-child { border-bottom: none; }
+.lib-row-top { margin-bottom: 6px; }
+.lib-row-params { display: flex; align-items: flex-end; gap: 5px; }
+.mini-field { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.mini-field span { font-size: 0.6rem; color: var(--muted); text-transform: uppercase; font-weight: 800; }
+.mini-field input { padding: 6px 2px; text-align: center; font-size: 16px; }
+
+/* ======= Barra giorni ======= */
+.day-bar-wrap { display: flex; }
+.days-bar { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; width: 100%; }
+.days-bar::-webkit-scrollbar { display: none; }
+.day-chip { background: var(--card); border: 1px solid var(--border); color: var(--muted); padding: 8px 12px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0; }
+.day-chip.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 0 10px var(--primary-shadow); }
+
+/* ======= Tab panels ======= */
+.tab-panel { display: none; flex-direction: column; gap: var(--sp-5); }
+.tab-panel.active { display: flex; gap: var(--sp-5); }
+
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: var(--sp-4); }
+.section-title { font-size: 0.85rem; font-weight: 800; line-height: var(--lh-tight); margin: 0 0 var(--sp-2) 0; text-transform: uppercase; letter-spacing: 0.4px; }
+.section-hint { font-size: 0.78rem; line-height: var(--lh-base); color: var(--muted); margin: 0 0 var(--sp-5) 0; }
+.muted { color: var(--muted); font-size: 0.85rem; }
+
+/* ======= Form Piano ======= */
+.grid-form { display: flex; flex-direction: column; gap: 8px; }
+input, select {
+  background: var(--bg); border: 1px solid var(--border); color: var(--text);
+  padding: 10px; border-radius: 8px; font-size: 0.9rem; width: 100%; outline: none;
+}
+input:focus, select:focus { border-color: var(--primary); }
+/* focus da tastiera: un contorno sempre visibile su ogni comando. Con il tocco
+   non compare (:focus-visible), quindi sul telefono non cambia niente. */
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offset: 0; }
+.stepper-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.stepper-label { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; font-weight: 800; margin-bottom: 3px; display: block; }
+.stepper { display: flex; align-items: stretch; }
+.stepper input { text-align: center; border-radius: 0; border-left: none; border-right: none; padding: 10px 2px; }
+.stepper-btn { background: var(--surface-2); border: 1px solid var(--border); color: var(--text); width: 34px; font-size: 1.1rem; font-weight: 800; cursor: pointer; flex-shrink: 0; }
+.stepper-btn.minus { border-radius: 8px 0 0 8px; }
+.stepper-btn.plus { border-radius: 0 8px 8px 0; }
+
+.btn-main { background: var(--primary); color: #fff; border: none; padding: 11px; border-radius: 8px; font-weight: 800; font-size: 0.9rem; cursor: pointer; width: 100%; text-transform: uppercase; letter-spacing: 0.5px; }
+.btn-main:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(50%); }
+.btn-archive { background: var(--surface-2); color: var(--accent); border: 1px solid var(--accent); padding: 10px; border-radius: 8px; font-weight: 800; font-size: 0.85rem; cursor: pointer; width: 100%; text-transform: uppercase; margin-top: 10px; }
+
+.exercise-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.exercise-item:last-child { border-bottom: none; }
+.ex-name { font-weight: 700; font-size: 0.95rem; }
+.ex-data { font-size: 0.8rem; line-height: var(--lh-tight); color: var(--muted); margin-top: var(--sp-1); }
+.del-btn { background: transparent; border: none; color: var(--primary); font-size: 1rem; cursor: pointer; }
+
+/* ======= Piano: card esercizio in stile scheda ======= */
+.plan-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
+.plan-summary { font-size: 0.72rem; line-height: var(--lh-tight); color: var(--muted); font-weight: 600; margin-top: var(--sp-1); }
+.plan-tool-btn { background: var(--surface-2); border: 1px solid var(--border); color: var(--text); padding: 7px 10px; border-radius: 8px; font-size: 0.72rem; font-weight: 800; cursor: pointer; white-space: nowrap; }
+.plan-tool-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+.plan-card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 8px; }
+.plan-card.superset { border-left: 3px solid var(--accent); }
+.plan-card-top { display: flex; align-items: flex-start; gap: 8px; }
+.plan-order-num { flex-shrink: 0; width: 22px; height: 22px; border-radius: 6px; background: var(--primary); color: #fff; font-size: 0.72rem; font-weight: 900; display: flex; align-items: center; justify-content: center; margin-top: 2px; }
+.plan-card-main { flex: 1; min-width: 0; }
+.plan-ex-name { font-weight: 700; font-size: 0.92rem; word-break: break-word; }
+.plan-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.plan-badge { background: var(--surface-2); border: 1px solid var(--border); border-radius: 999px; padding: 3px 9px; font-size: 0.72rem; font-weight: 800; }
+.plan-badge.reps { background: var(--primary); border-color: var(--primary); color: #fff; }
+.plan-badge.rest { color: var(--accent); border-color: var(--accent); }
+.plan-badge.superset-tag { color: var(--accent); border-color: var(--accent); }
+.plan-note { font-size: 0.74rem; color: var(--muted); font-style: italic; margin-top: 6px; word-break: break-word; }
+.plan-card-actions { display: flex; gap: 4px; flex-shrink: 0; }
+.plan-icon-btn { background: transparent; border: none; color: var(--muted); font-size: 0.95rem; cursor: pointer; padding: 3px 4px; border-radius: 6px; }
+.plan-icon-btn:hover { color: var(--text); background: var(--surface-2); }
+.plan-icon-btn.danger { color: var(--accent); }
+.reorder-arrows { display: none; flex-direction: column; gap: 2px; flex-shrink: 0; }
+body.reorder-mode .reorder-arrows { display: flex; }
+body.reorder-mode .plan-card { border-color: var(--primary); }
+.reorder-btn { background: var(--surface-2); border: 1px solid var(--border); color: var(--text); width: 30px; height: 24px; border-radius: 5px; font-size: 0.7rem; font-weight: 800; cursor: pointer; line-height: 1; }
+.reorder-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.btn-start-workout {
+  width: 100%; margin-top: 10px; padding: 14px; border: none; border-radius: 10px; cursor: pointer;
+  background: linear-gradient(135deg, var(--primary), var(--primary-glow));
+  color: #fff; font-weight: 900; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px;
+  box-shadow: 0 4px 14px var(--primary-shadow);
+}
+.btn-start-workout:active { transform: scale(0.98); }
+.btn-start-workout:disabled { opacity: 0.45; box-shadow: none; cursor: default; }
+
+/* ======= Riepilogo settimana nel piano ======= */
+.wk-row {
+  display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+  background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px;
+  padding: 11px 12px; margin-bottom: 6px; cursor: pointer; color: var(--text);
+}
+.wk-row.open { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 7%, transparent); }
+.wk-main { flex: 1; min-width: 0; }
+.wk-name { font-weight: 800; font-size: 0.88rem; }
+.wk-meta { font-size: 0.74rem; line-height: var(--lh-tight); color: var(--muted); margin-top: var(--sp-1); }
+.wk-count { flex-shrink: 0; font-size: 0.72rem; font-weight: 900; color: var(--primary); background: color-mix(in srgb, var(--primary) 14%, transparent); border-radius: 999px; padding: 3px 9px; }
+.wk-caret { flex-shrink: 0; color: var(--muted); font-weight: 900; transition: transform .15s ease; }
+.wk-row.open .wk-caret { transform: rotate(90deg); color: var(--primary); }
+.wk-empty { font-size: 0.8rem; color: var(--muted); padding: 4px 0 8px; }
+.wk-total { font-size: 0.7rem; color: var(--muted); font-weight: 800; text-align: right; margin-bottom: 8px; }
+
+/* ultimi secondi del recupero: l anello pulsa per avvisare a colpo d occhio */
+@keyframes rec-ending {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+.recovery-overlay.ending .recovery-ring-progress { animation: rec-ending .5s ease-in-out infinite; }
+.recovery-overlay.ending .recovery-time-big { animation: rec-ending .5s ease-in-out infinite; }
+
+/* ======= Rotella dei numeri =======
+   Sugli intervalli piccoli (qui 6-20) la rotella e un pattern adatto:
+   si vede subito il minimo e il massimo e si sceglie con un tocco.
+   Resta valido anche lo stepper, perche c e un valore usato quasi
+   sempre (10) e gli altri se ne discostano di poco. */
+.wheel-overlay { position: fixed; inset: 0; z-index: 130; background: rgba(0,0,0,0.6); display: flex; align-items: flex-end; justify-content: center; }
+.wheel-overlay.hidden { display: none; }
+.wheel-sheet {
+  position: relative; width: 100%; max-width: 480px;
+  background: var(--card); border-top: 2px solid var(--primary);
+  border-radius: 16px 16px 0 0; padding: 14px 0 calc(14px + env(safe-area-inset-bottom));
+  animation: wheel-in .22s ease;
+}
+@keyframes wheel-in { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.wheel-overlay.closing .wheel-sheet { animation: wheel-out .18s ease forwards; }
+@keyframes wheel-out { to { transform: translateY(100%); } }
+.wheel-head { display: flex; justify-content: space-between; align-items: center; padding: 0 16px 10px; }
+.wheel-title { font-weight: 900; font-size: 0.95rem; text-transform: uppercase; }
+.wheel-track { display: flex; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 50% 10px; scrollbar-width: none; }
+.wheel-track::-webkit-scrollbar { display: none; }
+.wheel-num {
+  flex: 0 0 56px; height: 62px; scroll-snap-align: center;
+  background: transparent; border: 1px solid var(--border); border-radius: 12px;
+  color: var(--muted); font-size: 1.25rem; font-weight: 900; cursor: pointer;
+  transition: transform .15s ease, color .15s ease, background .15s ease;
+}
+.wheel-num.on { background: var(--primary); border-color: var(--primary); color: #fff; transform: scale(1.14); }
+.wheel-mask { text-align: center; font-size: 0.7rem; color: var(--muted); padding-top: 2px; }

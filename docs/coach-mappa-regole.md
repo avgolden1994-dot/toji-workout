@@ -1,7 +1,7 @@
 # Mappa delle regole del coach
 
 > **Fotografia del codice al 1 ottobre 2026** (commit `611ea0c`). Copia di sicurezza dell'app prima del riordino: ramo `backup/prima-del-riordino-coach-2026-10-01`.
-> Questo documento **descrive** cosa fa oggi il coach: non propone e non cambia nulla. I numeri di riga si riferiscono a `toji.html` in quel commit e si spostano a ogni modifica: per ritrovare una regola cerca il nome della funzione.
+> Questo documento **descrive** cosa fa oggi il coach: non propone e non cambia nulla. Il codice vive in `js/coach/` (vedi la tabella «Dove sta il codice» in fondo e `docs/indice-codice.md`): per ritrovare una regola cerca il nome della funzione. Eventuali numeri di riga citati sotto si riferiscono alla vecchia versione in un solo file e non valgono più.
 
 ## 1. Come leggere la mappa
 
@@ -484,10 +484,26 @@ Elenco in ordine di importanza. Sono fatti letti nel codice, non ancora corretti
 6. **Sostituzioni "per sempre" e continuita dei progressi.** Le sostituzioni del coach (dolore, azione "cambia variante", rotazione accessori) cambiano il nome dell'esercizio in tutti i giorni e usano il carico di partenza stimato dai dati del corpo (dal 1 ottobre; prima il valore di default della libreria); lo storico e i massimali restano legati al nome vecchio, quindi per il nuovo esercizio la progressione riparte da quella stima ("prima volta"). Il nuovo "Macchinario occupato" e invece temporaneo.
 7. **Regola ripetuta.** Il limite di 3 serie per principianti e over 65 e applicato in tre punti diversi (PRG-18, PRG-19, PRG-31).
 8. **Numeri magici sparsi.** Soglie e fattori (0,9, 0,6, 0,96, 0,8, 1,2, 11 serie, 70%...) sono scritti dentro le funzioni, senza una tabella unica dei parametri.
-9. **Il codice del coach e mescolato al resto**: circa 3.400 righe su 16.000 in oltre 15 sezioni, tra timer, musica e calendario.
+9. ~~Il codice del coach era mescolato al resto~~ — risolto: ora sta in `js/coach/` (una cartella, un file per argomento).
 
 ## 18. Come usare questa mappa
 
 1. Leggila e segna le regole da **tenere**, **cambiare** o **togliere** (ad esempio con T / C / X accanto al codice).
 2. Decidi i punti del capitolo 17, a cominciare dall'1 (consenso del Coach IA).
 3. Il riordino consigliato parte da qui: una scheda per esercizio al posto delle tabelle (capitolo 16), un catalogo unico di regole con i parametri in una tabella, e test sui casi noti. Questa mappa diventa l'elenco dei casi da provare.
+
+## 19. Dove sta il codice
+
+| Area | File |
+|---|---|
+| Suggerimento del prossimo esercizio (SUG) | `js/coach/suggeritore.js` |
+| Costruzione del programma (PRG, MET, PRZ) | `js/coach/programma/motore.js`, `schemi.js`, `ricette.js` (contiene `buildProgram`), `alternative.js`, `archivio.js` |
+| Carichi (CAR) | `js/coach/carichi/progressivo.js`, `partenza.js` |
+| Questionario e decisioni (DEC, STR) | `js/coach/questionario-decisioni.js` |
+| Prontezza, «mi sento male», dolore (PAR, LIV, DOL) | `js/coach/prontezza.js`, `mi-sento-male.js`, `dolore-mattina.js` |
+| Repertorio e regole dalla ricerca | `js/coach/repertorio.js`, `regole-ricerca.js` |
+| Consigli e agente | `js/coach/agente-consigli.js` |
+| Dati del corpo (BIA) | `js/coach/bia/lettore.js`, `opzioni.js` |
+| Biomeccanica, esigenza, psicologia, metodi e momenti | `js/coach/biomeccanica.js`, `esigenza.js`, `psicologia.js`, `metodi-momenti.js`, `compone.js` |
+| Stato e pannello del coach | `js/coach/stato.js`, `pannello.js` |
+| Coach IA (IA) | `js/coach/coach-ia.js` |

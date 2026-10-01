@@ -1,0 +1,137 @@
+/* Alternative e applicazione del programma
+   (3in, parte di coach; ordine di caricamento: vedi index.html) */
+
+
+window.altraVariante = function() {
+  onbData.variante = (onbData.variante || 0) + 1;
+  onbData.scelte = {};
+  renderOnb();
+};
+
+/* ---- Esercizi alternativi: una tendina per ogni esercizio ----
+   Alternative dello stesso schema di movimento (o dello stesso posto nella
+   ricetta), dello stesso muscolo, con attrezzi e fastidi consentiti. */
+function alternativeDi(nome, prefs, sessione) {
+  const m = findExercise(nome);
+  if (!m) return [];
+  const sch = schemaDi(nome);
+  const posti = Object.keys(SLOT_DEF).filter(k => k !== 'core' && SLOT_DEF[k](m));
+  const nomi = sessione.map(e => e.name);
+  return EXERCISE_LIBRARY.filter(x => x.name !== nome && nomi.indexOf(x.name) === -1 && x.group === m.group &&
+      (sch ? schemaDi(x.name) === sch : (posti.length ? posti.some(k => SLOT_DEF[k](x)) : x.type === m.type)) &&
+      consentito(x.name, prefs))
+    .sort((a, b) => (PRIORI[senzaEmoji(b.name)] || 1) - (PRIORI[senzaEmoji(a.name)] || 1))
+    .slice(0, 6);
+}
+let altScelte = {};
+window.apriAlternative = function() {
+  altScelte = Object.assign({}, onbData.scelte || {});
+  renderAlternative();
+  document.getElementById('alt-sheet').classList.remove('hidden');
+};
+window.chiudiAlternative = function() { document.getElementById('alt-sheet').classList.add('hidden'); };
+window.sceltaAlternativa = function(orig, nuovo) {
+  if (!nuovo || nuovo === orig) delete altScelte[orig]; else altScelte[orig] = nuovo;
+};
+window.applicaAlternative = function() {
+  onbData.scelte = Object.assign({}, altScelte);
+  chiudiAlternative();
+  renderOnb();
+  const n = Object.keys(onbData.scelte).length;
+  showUndo(n ? n + (n === 1 ? ' esercizio cambiato' : ' esercizi cambiati') : 'Esercizi del coach');
+};
+window.rimescolaAlternative = function() { chiudiAlternative(); altraVariante(); };
+function renderAlternative() {
+  const box = document.getElementById('alt-body');
+  if (!box) return;
+  const base = buildProgram(Object.assign({}, onbData, { scelte: {} }));
+  box.innerHTML = '<div class="alt-intro">Cambia solo quelli che vuoi. Le alternative allenano gli stessi muscoli.</div>' +
+    base.sedute.map(sd => '<div class="alt-day"><span>' + escapeHtml(sd.titolo) + '</span> · <span>' + sd.giorno + '</span></div>' +
+      sd.esercizi.map(e => {
+        const alt = alternativeDi(e.name, base.prefs, sd.esercizi);
+        const sel = altScelte[e.name] || e.name;
+        const id = 'alt-' + Math.random().toString(36).slice(2, 8);
+        return '<div class="alt-row" data-no-tr><label for="' + id + '">' + escapeHtml(trEs(e.name)) + '</label>' +
+          (alt.length
+            ? '<select id="' + id + '" onchange="sceltaAlternativa(' + escapeHtml(JSON.stringify(e.name)) + ', this.value)">' +
+                '<option value="' + escapeHtml(e.name) + '"' + (sel === e.name ? ' selected' : '') + '>' + escapeHtml(trEs(e.name)) + ' (' + tr('attuale') + ')</option>' +
+                alt.map(x => '<option value="' + escapeHtml(x.name) + '"' + (sel === x.name ? ' selected' : '') + '>' + escapeHtml(trEs(x.name)) + '</option>').join('') +
+              '</select>'
+            : '<div class="alt-none">' + tr('Nessuna alternativa adatta con i tuoi attrezzi.') + '</div>') + '</div>';
+      }).join('')).join('') +
+    '<button class="btn-start-workout" onclick="applicaAlternative()">Applica le scelte</button>' +
+    '<button class="set-row-btn" onclick="rimescolaAlternative()">Rimescola tutto</button>';
+}
+window.applyGeneratedProgram = function() {
+  const prog = buildProgram(onbData);
+  const data = loadData();
+  const titles = loadTitles();
+
+  DAYS.forEach(g => { data[g] = []; });
+  prog.sedute.forEach(s => {
+    data[s.giorno] = s.esercizi.map(e => normalizeExerciseRecord(Object.assign({}, e, { completedSets: [] })));
+    titles[s.giorno] = s.titolo;
+  });
+  saveData(data);
+  saveTitles(titles);
+  saveRestDays(prog.riposo.slice());
+
+  /* Il programma parte dalla data scelta e si registra con quella data.
+     Da li in avanti il vecchio programma viene ripulito, ma i giorni gia
+     completati restano: sono storico. */
+  const inizio = onbData.inizio === 'prossima' ? piuGiorni(lunediDi(new Date()), 7) : lunediDi(new Date());
+  const cal = loadCal();
+  const daQui = ymd(inizio);
+  Object.keys(cal).forEach(k => { if (k >= daQui && !cal[k].done) delete cal[k]; });
+  for (let w = 0; w < prog.settimane; w++) {
+    const l = piuGiorni(inizio, w * 7);
+    mettiSettimana(l, cal);
+    if (prog.fasi[w] === 'scarico') {
+      for (let i = 0; i < 7; i++) {
+        const k = ymd(piuGiorni(l, i));
+        if (cal[k] && !cal[k].rest && !cal[k].done) cal[k].title = cal[k].title + ' \u2022 scarico';
+      }
+    }
+  }
+  saveCal(cal);
+
+  localStorage.setItem(progKey(), JSON.stringify({
+    creato: formatNow(), inizio: ymd(inizio), settimane: prog.settimane, blocco: prog.blocco, fasi: prog.fasi,
+    goals: prog.goals, prefs: prog.prefs, split: prog.split.nome, rirSett: prog.rirSett,
+    schema: { sets: prog.scheme.sets, reps: prog.scheme.reps }, seme: prog.seme, ispirazioni: prog.ispirazioni
+  }));
+  localStorage.setItem(PROFILE_KEY(), JSON.stringify({
+    goal: prog.goals[0], goals: prog.goals, level: onbData.level, days: onbData.days, minutes: onbData.minutes,
+    prefs: prog.prefs, sex: onbData.sex, age: onbData.age, bia: onbData.bia, parq: onbData.parq === 'si' || onbData.parq === true,
+    weight: onbData.weight, height: onbData.height, luogo: onbData.luogo, fastidi: onbData.fastidi, sonno: onbData.sonno, attrezzi: onbData.attrezzi,
+    priorita: onbData.priorita || [], attrezziPalestra: onbData.attrezziPalestra !== undefined ? onbData.attrezziPalestra : ((getProfile() || {}).attrezziPalestra || null),
+    graditi: onbData.graditi || (getProfile() || {}).graditi || [], odiati: onbData.odiati || (getProfile() || {}).odiati || [], cicloTraccia: (getProfile() || {}).cicloTraccia || false,
+    psico: onbData.psico || (getProfile() || {}).psico || null,
+    momento: (getProfile() || {}).momento || null,
+    test: Object.assign({}, (getProfile() || {}).test || {}, onbData.test || {}), freq: onbData.freq || (getProfile() || {}).freq || null,
+    esigenza: (getProfile() || {}).esigenza || null,
+    orario: onbData.orario || (getProfile() || {}).orario || '', fase: onbData.fase || (getProfile() || {}).fase || '', cicli: onbData.cicli || 0, bloccoTipo: onbData.bloccoTipo || 'ipertrofia',
+    settimane: prog.settimane, split: prog.split.nome, creato: formatNow()
+  }));
+  if (onbData.bia && Object.keys(onbData.bia).some(k => onbData.bia[k])) {
+    (onbData.bia.storico || []).forEach(x => { if (x.data !== onbData.bia.data) aggiungiBia(x.valori, x.data); });
+    aggiungiBia(onbData.bia, onbData.bia.data);
+  }
+  localStorage.setItem(ONB_KEY, '1');
+  /* un periodo difficile in corso resta: il nuovo piano parte gia alleggerito */
+  const moAtt = (getProfile() || {}).momento, moNuovo = onbData.momentoNuovo;
+  if (moNuovo || moAtt) {
+    const pM = getProfile(); const idM = moNuovo || moAtt.id; delete pM.momento; localStorage.setItem(PROFILE_KEY(), JSON.stringify(pM));
+    setMomento(idM, true);
+  }
+
+  currentDay = prog.sedute.length ? prog.sedute[0].giorno : DAYS[0];
+  armedSet = null;
+  selectedGroups = [];
+  document.getElementById('onb').classList.add('hidden');
+  renderDayBar(); renderPiano(); renderGruppi(); renderAllenamento();
+  switchTab('piano');
+  offriGuida();
+  const quando = onbData.inizio === 'prossima' ? 'da luned\u00EC prossimo' : 'da questa settimana';
+  showUndo(trP('Programma creato: %s, ' + prog.settimane + ' settimane %s', tr(prog.split.nome), tr(quando)), null, 6000);
+};
