@@ -70,4 +70,6 @@
   padding: var(--sp-2) var(--sp-3); margin-bottom: var(--sp-5);
 }
 .edit-bar-label { font-size: 0.78rem; font-weight: 900; color: var(--primary); text-transform: uppercase; letter-spacing: 0.4px; }
+/* Nel tema chiaro il testo arancio sulla propria tinta era 4.2:1: scurito un poco (4.6:1). */
+html[data-theme="light"] .edit-bar-label { color: color-mix(in srgb, var(--primary) 94%, #000); }
 .edit-bar-done { background: var(--primary); color: var(--on-primary); border: none; border-radius: 8px; padding: 8px 16px; font-weight: 900; font-size: 0.82rem; cursor: pointer; }
