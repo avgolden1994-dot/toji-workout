@@ -95,9 +95,9 @@ if (el) { const k0 = await p.evaluate(()=>localStorage.length); await p.mouse.cl
 
 console.log('== passo «Le statistiche» (solo i pulsanti del periodo)');
 await vai(15, ()=>{switchTab('storico');apriPagProgressi('stats');});
-const ch = await p.evaluate(()=>({chip:guidaConsente(document.querySelector('#pg-stats-grafico .st-periodo button'),'click'), carichi:guidaConsente(document.querySelector('#pg-stats-grafico .storico-stats'),'click')}));
+const ch = await p.evaluate(()=>({chip:guidaConsente(document.querySelector('#pg-stats-vista .st-periodo button'),'click'), carichi:guidaConsente(document.querySelector('#pg-stats-grafico .storico-stats'),'click')}));
 ok(ch.chip===true && ch.carichi===false,'i pulsanti del periodo si toccano, «Carichi per esercizio» no: '+JSON.stringify(ch));
-const c12 = await p.evaluate(()=>{const e=[...document.querySelectorAll('#pg-stats-grafico .st-periodo button')].find(x=>/12/.test(x.innerText)); const r=e.getBoundingClientRect(); return {x:r.left+r.width/2,y:r.top+r.height/2};});
+const c12 = await p.evaluate(()=>{const e=[...document.querySelectorAll('#pg-stats-vista .st-periodo button')].find(x=>/12/.test(x.innerText)); const r=e.getBoundingClientRect(); return {x:r.left+r.width/2,y:r.top+r.height/2};});
 await p.mouse.click(c12.x,c12.y); await p.waitForTimeout(400);
 ok(await p.evaluate(()=>statsGrafPeriodo)==='12','toccando «12 settimane» il grafico cambia periodo');
 const cb = await centro('#pg-stats-grafico .storico-stats');

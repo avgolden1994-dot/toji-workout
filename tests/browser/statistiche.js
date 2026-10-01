@@ -29,7 +29,7 @@ const forma = (p) => p.evaluate(()=>{
   const pt=s.querySelector('.stg-line').getAttribute('points').trim().split(/\s+/).map(x=>x.split(',').map(Number));
   const base=Number(s.querySelector('.stg-axis').getAttribute('y1'));
   return {settimane:s.querySelectorAll('.stg-pt').length, partenza:pt[0][1]===base, arrivo:pt[pt.length-1][1]===base, nPunti:pt.length,
-    area:!!s.querySelector('.stg-area'), kpi:[...s.parentNode.querySelectorAll('.pg-kpi b')].map(e=>e.innerText), vivo:s.querySelectorAll('.stg-pt.vivo').length};
+    area:!!s.querySelector('.stg-area'), kpi:[...s.closest('.stg-vista').parentNode.querySelectorAll('.pg-kpi b')].map(e=>e.innerText), vivo:s.querySelectorAll('.stg-pt.vivo').length};
 });
 
 for (const theme of ['dark','light']) {

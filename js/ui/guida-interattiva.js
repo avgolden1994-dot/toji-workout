@@ -32,9 +32,9 @@ const GUIDA = [
   { sel: '#mc-grid', t: 'Il mese', x: 'Il tuo mese. Per spostare un allenamento, trascina il giorno su un altro della stessa settimana.', btn: 'Avanti', tocca: '#mc-grid .mc-cell', soloTrascina: true },
   { sel: '.nav-btn[data-tab="storico"]', t: 'I Progressi', x: 'Tocca «Progressi».', fatto: () => currentTab === 'storico' },
   { sel: '#pg-tiles .pg-tile:nth-child(1)', t: 'I Progressi', x: 'Ecco sei mesi di esempio. Più sotto vedi l’anno e come stanno recuperando i muscoli. Tocca «Peso e foto».', fatto: () => pgPagina === 'peso' },
-  { sel: '#pg-peso', t: 'Il peso', x: 'La linea scende piano verso l’obiettivo: è il ritmo giusto per non perdere forza. Qui segni il peso, e ogni 2 settimane una foto.', btn: 'Avanti' },
+  { sel: '#pg-peso-grafico', t: 'Il peso', x: 'La linea scende piano verso l’obiettivo: è il ritmo giusto per non perdere forza. Più sotto segni il peso, e ogni 2 settimane una foto.', btn: 'Avanti' },
   { sel: '#pg-tiles .pg-tile:nth-child(2)', t: 'Le statistiche', x: 'Tocca «Statistiche».', prep: () => chiudiPagProgressi(), fatto: () => pgPagina === 'stats' },
-  { sel: '#pg-stats-grafico', t: 'Le statistiche', x: 'Il grafico mostra quanti allenamenti fai ogni settimana: cambia periodo coi pulsanti. Sotto, ogni 4 settimane confronto i carichi con il blocco precedente, poi c’è il cardio.', btn: 'Avanti', tocca: '.st-periodo' },
+  { sel: '#pg-stats-vista', t: 'Le statistiche', x: 'Il grafico mostra quanti allenamenti fai ogni settimana: cambia periodo coi pulsanti. Sotto, ogni 4 settimane confronto i carichi con il blocco precedente, poi c’è il cardio.', btn: 'Avanti', tocca: '.st-periodo' },
   { sel: '.nav-btn[data-tab="impostazioni"]', t: 'Le Opzioni', x: 'Tocca «Opzioni».', prep: () => { if (pgPagina) chiudiPagProgressi(); }, fatto: () => currentTab === 'impostazioni' },
   { t: 'Sei pronto', x: 'Qui trovi il coach, i tuoi dati e questa guida, se vuoi rifarla. La prova è finita: rimetto tutto com’era. Buon allenamento.', btn: 'Fine', fine: true }
 ];

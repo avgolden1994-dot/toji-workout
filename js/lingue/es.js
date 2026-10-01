@@ -3135,7 +3135,7 @@ window.I18N["es"] = {
 "Sono il tuo coach. In due minuti ti faccio usare l’app davvero. Per la prova la riempio con sei mesi di allenamenti di esempio: grafici, statistiche e storico pieni. Alla fine torna tutto com’era.": "Soy tu coach. En dos minutos te hago usar la app de verdad. Para la prueba la lleno con seis meses de entrenamientos de ejemplo: gráficos, estadísticas e historial completos. Al final todo vuelve a estar como antes.",
 "Ecco sei mesi di esempio. Più sotto vedi l’anno e come stanno recuperando i muscoli. Tocca «Peso e foto».": "Aquí tienes seis meses de ejemplo. Más abajo ves el año y cómo se recuperan los músculos. Toca «Peso y fotos».",
 "Il peso": "El peso",
-"La linea scende piano verso l’obiettivo: è il ritmo giusto per non perdere forza. Qui segni il peso, e ogni 2 settimane una foto.": "La línea baja despacio hacia el objetivo: es el ritmo adecuado para no perder fuerza. Aquí anotas el peso y, cada 2 semanas, una foto.",
+"La linea scende piano verso l’obiettivo: è il ritmo giusto per non perdere forza. Più sotto segni il peso, e ogni 2 settimane una foto.": "La línea baja despacio hacia el objetivo: es el ritmo adecuado para no perder fuerza. Más abajo anotas el peso y, cada 2 semanas, una foto.",
 "Le statistiche": "Las estadísticas",
 "Tocca «Statistiche».": "Toca «Estadísticas».",
 "Il grafico mostra quanti allenamenti fai ogni settimana: cambia periodo coi pulsanti. Sotto, ogni 4 settimane confronto i carichi con il blocco precedente, poi c’è il cardio.": "El gráfico muestra cuántos entrenamientos haces cada semana: cambia el periodo con los botones. Debajo, cada 4 semanas comparo tus cargas con el bloque anterior y luego viene el cardio.",

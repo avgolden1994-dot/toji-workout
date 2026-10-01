@@ -91,16 +91,18 @@ function poligonoFrequenzaSvg(sett) {
     escapeHtml('Allenamenti a settimana: ' + sett.map(s => s.n).join(', ')) + '">' + g + '</svg>';
 }
 
-/* Grafico + tre numeri (senzaNumeri: solo il grafico), da mettere in una card.
-   Se nel periodo non c e nessun allenamento dice cosi. */
-function graficoFrequenzaHtml(periodo, senzaNumeri) {
+/* Grafico + tre numeri, da mettere in una card. Se nel periodo non c e nessun allenamento dice cosi.
+   opz.senzaNumeri: solo il grafico; opz.testa: html da mettere sopra il grafico (i pulsanti del periodo);
+   opz.id: nome del contenitore di testa + grafico + nota (e il bersaglio della guida). */
+function graficoFrequenzaHtml(periodo, opz) {
+  opz = opz || {};
   const r = frequenzaSettimanale(periodo);
-  if (r.vuoto) return '<div class="dv-empty">Nessun allenamento in questo periodo.</div>';
+  if (r.vuoto) return (opz.testa || '') + '<div class="dv-empty">Nessun allenamento in questo periodo.</div>';
   const nf = (v) => v.toLocaleString(LOCALE(), { maximumFractionDigits: 1 });
-  return poligonoFrequenzaSvg(r.settimane) +
+  return '<div class="stg-vista"' + (opz.id ? ' id="' + opz.id + '"' : '') + '>' + (opz.testa || '') + poligonoFrequenzaSvg(r.settimane) +
     '<div class="st-nota"><span>Ogni punto è una settimana, da lunedì a domenica.</span>' +
-      (r.settimane.some(s => s.inCorso) ? ' <span>Il punto vuoto è la settimana in corso.</span>' : '') + '</div>' +
-    (senzaNumeri ? '' : '<div class="pg-kpis stg-kpis">' +
+      (r.settimane.some(s => s.inCorso) ? ' <span>Il punto vuoto è la settimana in corso.</span>' : '') + '</div></div>' +
+    (opz.senzaNumeri ? '' : '<div class="pg-kpis stg-kpis">' +
       '<div class="pg-kpi"><b data-no-tr>' + r.totale + '</b><span>allenamenti</span></div>' +
       '<div class="pg-kpi"><b data-no-tr>' + nf(r.media) + '</b><span>media a settimana</span></div>' +
       '<div class="pg-kpi"><b data-no-tr>' + r.migliore + '</b><span>settimana migliore</span></div>' +
@@ -132,8 +134,7 @@ window.renderStatsPagina = function() {
   if (!box) return;
   if (statsGrafPeriodo === 'programma' && !getProgramma()) statsGrafPeriodo = '8';
   box.innerHTML = '<div class="section-title">Allenamenti a settimana</div>' +
-    scelteStatsPeriodo(statsGrafPeriodo, 'setStatsGrafPeriodo', false) +
-    graficoFrequenzaHtml(statsGrafPeriodo) +
+    graficoFrequenzaHtml(statsGrafPeriodo, { id: 'pg-stats-vista', testa: scelteStatsPeriodo(statsGrafPeriodo, 'setStatsGrafPeriodo', false) }) +
     '<button class="entry-btn storico-stats" onclick="openStats(statsGrafPeriodo)">' +
       '<span class="entry-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7"/></svg></span>' +
       '<span class="aw-main"><span class="entry-name">Carichi per esercizio</span><span class="aw-meta">Dal primo all ultimo carico</span></span>' +

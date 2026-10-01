@@ -3135,7 +3135,7 @@ window.I18N["en"] = {
 "Sono il tuo coach. In due minuti ti faccio usare l’app davvero. Per la prova la riempio con sei mesi di allenamenti di esempio: grafici, statistiche e storico pieni. Alla fine torna tutto com’era.": "I’m your coach. In two minutes I’ll have you actually use the app. For this practice I’ll fill it with six months of sample workouts: full charts, statistics and history. At the end everything goes back to how it was.",
 "Ecco sei mesi di esempio. Più sotto vedi l’anno e come stanno recuperando i muscoli. Tocca «Peso e foto».": "Here are six sample months. Further down you see the year and how your muscles are recovering. Tap «Weight and photos».",
 "Il peso": "Weight",
-"La linea scende piano verso l’obiettivo: è il ritmo giusto per non perdere forza. Qui segni il peso, e ogni 2 settimane una foto.": "The line drops slowly towards the goal: the right pace to keep your strength. Log your weight here, and a photo every 2 weeks.",
+"La linea scende piano verso l’obiettivo: è il ritmo giusto per non perdere forza. Più sotto segni il peso, e ogni 2 settimane una foto.": "The line drops slowly towards the goal: the right pace to keep your strength. Further down you log your weight, and a photo every 2 weeks.",
 "Le statistiche": "Statistics",
 "Tocca «Statistiche».": "Tap «Statistics».",
 "Il grafico mostra quanti allenamenti fai ogni settimana: cambia periodo coi pulsanti. Sotto, ogni 4 settimane confronto i carichi con il blocco precedente, poi c’è il cardio.": "The chart shows how many workouts you do each week: change the period with the buttons. Below, every 4 weeks I compare your loads with the previous block, then comes cardio.",

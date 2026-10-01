@@ -237,7 +237,7 @@ function reportBloccoHtml(i, nome) {
     '<div class="st-sub">' + d(b.da) + ' – ' + d(b.a) + (b.inCorso ? ' • in corso' : '') +
     (i > 0 ? ' • confronto con le 4 settimane prima' : ' • primo blocco: prima seduta contro ultima') + '</div></div>';
 
-  html += '<div class="card st-graf"><div class="section-title">Allenamenti a settimana</div>' + graficoFrequenzaHtml('b' + i, true) + '</div>';
+  html += '<div class="card st-graf"><div class="section-title">Allenamenti a settimana</div>' + graficoFrequenzaHtml('b' + i, { senzaNumeri: true }) + '</div>';
 
   html += '<div class="pg-kpis st-kpis">' +
     '<div class="pg-kpi"><b>' + r.sessioni + '</b><span>allenamenti' + (r.programmati ? ' su ' + r.programmati : '') + '</span>' + (i > 0 ? delta(r.sessioni, r.sessioniPrec) : '') + '</div>' +
