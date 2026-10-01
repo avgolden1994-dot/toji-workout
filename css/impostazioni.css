@@ -40,7 +40,7 @@
 .set-group-title { font-size: 0.68rem; font-weight: 900; line-height: var(--lh-tight); text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); margin: 0 0 var(--sp-3) 0; }
 .set-seg { display: flex; gap: 6px; background: var(--card); border: 1px solid var(--border); padding: 4px; border-radius: 10px; }
 .set-seg button { flex: 1; background: transparent; border: none; color: var(--muted); padding: 10px 4px; border-radius: 7px; font-weight: 800; font-size: 0.76rem; cursor: pointer; }
-.set-seg button.on { background: var(--primary); color: #fff; }
+.set-seg button.on { background: var(--primary); color: var(--on-primary); }
 .set-toggle { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 8px; cursor: pointer; color: var(--text); }
 .set-toggle-main { flex: 1; min-width: 0; }
 .set-toggle-name { font-weight: 800; font-size: 0.86rem; }

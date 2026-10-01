@@ -9,6 +9,7 @@ index.html          markup delle schermate + elenco ordinato di fogli di stile e
 toji.html           vecchio indirizzo: rimanda a index.html (per chi ha già installato l'app)
 sw.js               service worker: l'app parte anche senza rete (elenco file generato)
 manifest.json       dati di installazione (nome 3in, icone)
+favicon-32.png      icona nella scheda del browser (ricavata da icon-512.png)
 css/                stile, un file per area, nell'ordine in cui si applicano
 js/lingue/          dizionari en/es/de (una frase per riga) + traduttore automatico
 js/core/            fondamenta: costanti, storage, modalità, navigazione, utility, audio, backup, consenso
