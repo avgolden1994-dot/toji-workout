@@ -239,224 +239,228 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 53. `js/ui/statistiche.js` — Statistiche: progresso dei carichi nel tempo
 
-`APP_VERSIONE` · `DISCHI_KEY` · `NOME_KEY` · `window.cercaAggiornamento()` · `window.getNome()` · `window.salvaNome()` · `statsPeriodo` · `dataSessione()` · `pesoSessione()` · `window.calcolaStatistiche()` · `window.tutteLeSedute()` · `volumeSeduta()` · `window.blocchiQuattroSettimane()` · `window.calcolaBlocco()` · `window.setStatsPeriodo()` · `window.openStats()` · `window.closeStats()` · `reportBloccoHtml()` · `window.renderStats()`
+`APP_VERSIONE` · `DISCHI_KEY` · `NOME_KEY` · `window.cercaAggiornamento()` · `window.getNome()` · `window.salvaNome()` · `statsPeriodo` · `dataSessione()` · `pesoSessione()` · `window.inizioPeriodo()` · `window.calcolaStatistiche()` · `window.tutteLeSedute()` · `volumeSeduta()` · `window.blocchiQuattroSettimane()` · `window.calcolaBlocco()` · `window.setStatsPeriodo()` · `window.openStats()` · `window.closeStats()` · `reportBloccoHtml()` · `periodoTitolo()` · `window.renderStats()`
+
+### 54. `js/ui/statistiche-grafico.js` — Statistiche: poligono di frequenza degli allenamenti
+
+`statsGrafPeriodo` · `STG` · `window.frequenzaSettimanale()` · `poligonoFrequenzaSvg()` · `graficoFrequenzaHtml()` · `scelteStatsPeriodo()` · `mostraPeriodoAttivo()` · `window.setStatsGrafPeriodo()` · `window.renderStatsPagina()`
 
 ## js/coach
 
-### 54. `js/coach/carichi/progressivo.js` — Carico progressivo
+### 55. `js/coach/carichi/progressivo.js` — Carico progressivo
 
 `arrotonda()` · `incrementoPer()` · `ultimeSessioni()` · `esito()` · `window.settimanaProgramma()` · `frenoBia()`
 
-### 55. `js/coach/carichi/partenza.js` — Carico di partenza dai dati del corpo
+### 56. `js/coach/carichi/partenza.js` — Carico di partenza dai dati del corpo
 
 `PARAM_PARTENZA` · `MOTIVI_STIMA` · `contestoCarichi()` · `scalaDaCorpo()` · `scalaDaStorico()` · `arrotondaPartenza()` · `window.stimaCaricoIniziale()` · `pesoPartenza()`
 
-### 56. `js/coach/questionario-decisioni.js` — Questionario di fine allenamento e decisioni
+### 57. `js/coach/questionario-decisioni.js` — Questionario di fine allenamento e decisioni
 
 `AGG_KEY` · `window.aggiustiCoach()` · `salvaAggiusti()` · `ZONE_DOLORE` · `ZONA_ART` · `zonaA()` · `zonaIl()` · `STRESS_ZONA` · `SOSTITUZIONI` · `senzaEmoji` · `nomeInLibreria()` · `fbState` · `window.apriQuestionario()` · `window.fbSet()` · `window.fbZona()` · `window.fbEsercizio()` · `window.fbLivello()` · `etichettaDolore()` · `fbScelta()` · `renderQuestionario()` · `window.chiudiQuestionario()` · `window.decisioniCoach()` · `applicaDecisioni()` · `window.riduciFrequenza()` · `window.inviaQuestionario()`
 
-### 57. `js/coach/prontezza.js` — Prontezza prima della seduta
+### 58. `js/coach/prontezza.js` — Prontezza prima della seduta
 
 `PRONTEZZA_KEY` · `PRONTEZZA_VOCI` · `VOCE_CICLO` · `vociProntezza()` · `prontezzaStato` · `leggiProntezza()` · `prontezzaOggi()` · `punteggioProntezza()` · `renderProntezza()` · `window.sceltaProntezza()` · `window.saltaProntezza()` · `window.applicaProntezza()`
 
-### 58. `js/coach/mi-sento-male.js` — Mi sento male in seduta
+### 59. `js/coach/mi-sento-male.js` — Mi sento male in seduta
 
 `window.apriMiSentoMale()` · `window.chiudiMiSentoMale()` · `window.chiudiSedutaInterrotta()` · `minutiSeduta()`
 
-### 59. `js/coach/repertorio.js` — Coach 2: repertorio completo
+### 60. `js/coach/repertorio.js` — Coach 2: repertorio completo
 
 `STANDARD_FORZA` · `ALZATE_BASE` · `pesoCorporeo()` · `window.livelloStimato()` · `prefsCoach()` · `sostituisciNelPiano()` · `cambiaSerieNelPiano()` · `conAnnulla()` · `window.azioneCoach()` · `bloccoCorrente()` · `eserciziFermi()` · `strainSettimane()` · `controlloSchemi()` · `azioniCoach()` · `corpoCoach()` · `sedutaSaltata()` · `prossimoGiornoLibero()` · `htmlSedutaSaltata()` · `window.sceltaSaltata()` · `aderenzaDueSettimane()` · `htmlAderenza()` · `window.rispostaAderenza()` · `htmlOrario()` · `verdettoCiclo()` · `htmlFineCiclo()` · `window.nuovoCiclo()`
 
-### 60. `js/coach/dolore-mattina.js` — Controllo del dolore la mattina dopo
+### 61. `js/coach/dolore-mattina.js` — Controllo del dolore la mattina dopo
 
 `controlloDoloreDaFare()` · `htmlControlloDolore()` · `window.rispostaDolore()` · `consumaAggiusti()` · `window.caricoProssimo()`
 
-### 61. `js/coach/regole-ricerca.js` — Coach 2: regole nuove dalla ricerca
+### 62. `js/coach/regole-ricerca.js` — Coach 2: regole nuove dalla ricerca
 
 `TECNICHE` · `profiloCoach()` · `BIL_PESANTI` · `tipoCarico()` · `RIR_TIPO` · `rirBersaglio()` · `rirBersaglioBase()` · `livelloFatica()` · `DOSE_SCARICO` · `storicoProntezza()` · `rpeBersaglio()` · `testoRir()` · `e1rmSerie()` · `e1rmSeduta()` · `sessioniConData()` · `rientroDopoPausa()` · `fmtKg` · `caricoProssimoBase()` · `window.applicaCaricoProgressivo()` · `imparaDallaSeduta()`
 
-### 62. `js/coach/regole-nuove.js` — Regole del coach aggiunte dalla ricerca (RIC-01..05)
+### 63. `js/coach/regole-nuove.js` — Regole del coach aggiunte dalla ricerca (RIC-01..05)
 
 `TECNICHE_INTENSE` · `sedutePassate()` · `giorniDallUltimaSeduta()` · `prontezzaRecente()` · `rientroPiano()` · `settimanaCentraleBlocco()` · `gruppoInPriorita()` · `mancavaSoloUltimaSerie()` · `_caricoProssimoPrima` · `window.caricoProssimo()` · `limitaTecnicheIntense()` · `_applicaCaricoPrima` · `window.applicaCaricoProgressivo()` · `_applicaProntezzaPrima` · `window.applicaProntezza()`
 
-### 63. `js/coach/agente-consigli.js` — Agente coach e consigli del coach 2
+### 64. `js/coach/agente-consigli.js` — Agente coach e consigli del coach 2
 
 `deltaTesto()` · `consigliCoach2()` · `consigliAgente()` · `window.openAgent()` · `window.closeAgent()` · `window.renderAgent()`
 
-### 64. `js/coach/bia/opzioni.js` — BIA nelle opzioni
+### 65. `js/coach/bia/opzioni.js` — BIA nelle opzioni
 
 `biaLetta` · `window.openBiaSheet()` · `window.closeBiaSheet()` · `rigaBia()` · `renderBiaSheet()` · `window.toggleBiaManuale()` · `window.salvaBiaLetta()` · `window.eliminaBia()` · `window.agentBiaPdf()` · `window.compilaBiaAgente()` · `window.salvaBiaAgente()` · `window.restartOnboarding()` · `window.getProfile()`
 
 ## js/core
 
-### 65. `js/core/consenso.js` — Consenso ai dati
+### 66. `js/core/consenso.js` — Consenso ai dati
 
 `CONSENT_KEY` · `CONSENT_VERSION` · `window.consenso()` · `window.coachAttivo()` · `window.chiediConsensoSeServe()`
 
 ## js/ui
 
-### 66. `js/ui/guida-interattiva.js` — Guida interattiva
+### 67. `js/ui/guida-interattiva.js` — Guida interattiva
 
-`GUIDA_KEY` · `guidaPasso` · `guidaTimer` · `guidaFoto` · `guidaUltimoCambio` · `GUIDA` · `guidaEl()` · `guidaDatiDemo()` · `guidaPreparaProva()` · `guidaRipristina()` · `window.avviaGuida()` · `window.offriGuida()` · `guidaPosiziona()` · `guidaRidotto()` · `guidaVisibile()` · `guidaServeScroll()` · `guidaScorriVerso()` · `guidaMostra()` · `window.guidaAvanti()` · `window.chiudiGuida()` · `guidaSeguiT` · `guidaSegui()` · `window.setConsenso()` · `window.revocaConsenso()` · `INFORMATIVA` · `renderInformativa()` · `window.openConsentText()` · `window.closeConsentText()`
+`GUIDA_KEY` · `guidaPasso` · `guidaTimer` · `guidaFoto` · `guidaUltimoCambio` · `GUIDA` · `guidaEl()` · `guidaDatiDemo()` · `guidaPreparaProva()` · `guidaRipristina()` · `window.avviaGuida()` · `window.offriGuida()` · `guidaPosiziona()` · `guidaRidotto()` · `guidaVisibile()` · `guidaServeScroll()` · `guidaScorriVerso()` · `guidaMostra()` · `window.guidaAvanti()` · `window.chiudiGuida()` · `guidaSeguiT` · `guidaSegui()` · `window.guidaAttiva()` · `guidaConsente()` · `guidaCenno()` · `window.setConsenso()` · `window.revocaConsenso()` · `INFORMATIVA` · `renderInformativa()` · `window.openConsentText()` · `window.closeConsentText()`
 
-### 67. `js/ui/opzioni/impostazioni.js` — Impostazioni
+### 68. `js/ui/opzioni/impostazioni.js` — Impostazioni
 
 `THEME_KEY` · `SOUND_KEY` · `COUNTDOWN_KEY` · `AUTOCLOSE_KEY` · `BYPASS_KEY` · `FLASH_KEY` · `window.getSetting()` · `window.setSetting()` · `window.isOn()` · `window.applyTheme()` · `window.setTheme()` · `ZOOM_KEY` · `window.applicaZoom()` · `window.openSettings()` · `window.closeSettings()` · `window.toggleSetting()` · `segHtml()` · `toggleHtml()`
 
-### 68. `js/ui/opzioni/stile-iphone.js` — Opzioni in stile Impostazioni di iPhone
+### 69. `js/ui/opzioni/stile-iphone.js` — Opzioni in stile Impostazioni di iPhone
 
 `SET_ICO` · `setIco()` · `setRow()` · `setRowSwitch()` · `setGroup()`
 
-### 69. `js/ui/opzioni/il-coach.js` — Opzioni: il coach
+### 70. `js/ui/opzioni/il-coach.js` — Opzioni: il coach
 
 `FASI_CORPO` · `ATTREZZI_PALESTRA` · `chipCoach()` · `paginaCoach()` · `toggleCoach()` · `window.setCoach()` · `window.setFreqCoach()` · `window.toggleCoachLista()` · `window.togliPreferenza()`
 
-### 70. `js/ui/fogli.js` — Fogli e scambio di file
+### 71. `js/ui/fogli.js` — Fogli e scambio di file
 
 `foglioDati` · `apriFoglio()` · `window.chiudiFoglio()` · `scegliFile()` · `scaricaFile()` · `dataOra()`
 
 ## js/core
 
-### 71. `js/core/schermo-acceso.js` — Schermo acceso durante la seduta
+### 72. `js/core/schermo-acceso.js` — Schermo acceso durante la seduta
 
 `WAKE_KEY` · `wakeLock` · `wakeVoluto` · `window.tieniSchermoAcceso()` · `sedutaAperta()`
 
-### 72. `js/core/backup.js` — Backup e ripristino
+### 73. `js/core/backup.js` — Backup e ripristino
 
 `CHIAVI_APP` · `CHIAVI_TEMPORANEE` · `CHIAVI_NON_RIPRISTINABILI` · `valorePulito()` · `chiaviApp()` · `fotografia()` · `window.esportaBackup()` · `contaAllenamenti()` · `window.ripristinaBackup()` · `applicaFotografia()` · `ricaricaApp()` · `window.confermaRipristino()`
 
 ## js/ui
 
-### 73. `js/ui/importa-csv.js` — Importazione CSV di altre app
+### 74. `js/ui/importa-csv.js` — Importazione CSV di altre app
 
 `leggiCSV()` · `MESI_EN` · `dataDaCSV()` · `numeroCSV()` · `secondiCSV()` · `ALIAS_ESTERI` · `nomeDaEstero()` · `leggiExport()` · `sedutaImportata()` · `window.importaCSV()`
 
-### 74. `js/ui/importa-progressi.js` — Importa i tuoi progressi
+### 75. `js/ui/importa-progressi.js` — Importa i tuoi progressi
 
 `personalizzatiKey` · `eserciziPersonalizzati()` · `normNome()` · `indiceNomiCache` · `indiceNomi()` · `riconosciEsercizio()` · `MESI_NOMI` · `dataInRiga()` · `serieInRiga()` · `leggiTestoLibero()` · `testoDaPdfRighe()` · `leggiFileProgressi()` · `analizzaProgressi()` · `window.importaProgressi()` · `mostraAnteprimaImport()` · `window.confermaImportProgressi()` · `window.confermaImport()`
 
-### 75. `js/ui/seduta-libera.js` — Seduta libera e sedute extra
+### 76. `js/ui/seduta-libera.js` — Seduta libera e sedute extra
 
 `SPEC_KEY` · `specialeAttiva()` · `window.sedutaPassataAttiva()` · `ripristinaSpeciale()` · `window.annullaSpeciale()` · `liberaSel` · `liberaTipo` · `liberaFiltro` · `liberaCerca` · `liberaQuando` · `window.apriSedutaLibera()` · `ultimoUso()` · `FILTRI_ATTREZZI` · `renderSedutaLibera()` · `htmlListaLibera()` · `window.renderListaLibera()` · `window.liberaToggle()` · `eserciziDaNomi()` · `window.liberaDaScelta()` · `window.liberaDaStorico()` · `window.liberaDaGiorno()` · `avviaSpeciale()` · `renderSpecialeBox()` · `renderSeduteExtra()` · `arrotondaCarico()` · `window.aggiungiExtra()` · `window.aggiornaExtra()` · `window.togliExtra()` · `window.spuntaExtra()` · `htmlExtra()`
 
-### 76. `js/ui/lavoro-cronometro.js` — Cronometro di lavoro e info esercizio
+### 77. `js/ui/lavoro-cronometro.js` — Cronometro di lavoro e info esercizio
 
 `infoEsercizio()` · `lavoro` · `window.fermaLavoro()` · `window.avviaLavoro()` · `tickLavoro()` · `htmlLavoro()`
 
-### 77. `js/ui/progressi/riepilogo.js` — Prossima seduta, fatica muscolare e anno
+### 78. `js/ui/progressi/riepilogo.js` — Prossima seduta, fatica muscolare e anno
 
 `prossimaSerie()` · `aggiornaProssima()` · `htmlProssimaSeduta()` · `faticaMuscoli()` · `renderFatica()` · `renderAnno()` · `annoRiassunto()`
 
-### 78. `js/ui/progressi/pagine.js` — Progressi: pagine e pesate
+### 79. `js/ui/progressi/pagine.js` — Progressi: pagine e pesate
 
 `PG_PAGINE` · `PG_ICO` · `pgPagina` · `renderPgTiles()` · `window.apriPagProgressi()` · `window.chiudiPagProgressi()` · `pesateTutte` · `htmlPesate()`
 
-### 79. `js/ui/progressi/foto.js` — Foto dei progressi
+### 80. `js/ui/progressi/foto.js` — Foto dei progressi
 
 `FOTO_DB` · `FOTO_STORE` · `fotoDB()` · `fotoTutte()` · `fotoSalva()` · `fotoTogli()` · `fotoUltimaKey` · `fotoPromemoria()` · `fotoRiduci()` · `window.aggiungiFoto()` · `fotoUrl` · `fotoConfronto` · `window.renderFoto()` · `window.avviaConfronto()` · `window.toccaFoto()` · `mostraFoto()` · `window.chiudiFoto()` · `window.eliminaFoto()`
 
-### 80. `js/ui/progressi/peso.js` — Peso corporeo
+### 81. `js/ui/progressi/peso.js` — Peso corporeo
 
 `pesoKey` · `pesoObKey` · `pesiTutti()` · `tendenzaPeso()` · `faseCorpo()` · `consiglioPeso()` · `graficoPeso()` · `renderPesoCard()` · `window.registraPeso()` · `window.salvaObiettivoPeso()`
 
-### 81. `js/ui/stampa-scheda.js` — Condividi e stampa la scheda
+### 82. `js/ui/stampa-scheda.js` — Condividi e stampa la scheda
 
 `righeScheda()` · `testoScheda()` · `window.condividiScheda()` · `window.stampaScheda()`
 
 ## js/coach
 
-### 82. `js/coach/metodi-momenti.js` — Metodi di allenamento e momenti
+### 83. `js/coach/metodi-momenti.js` — Metodi di allenamento e momenti
 
 `FB` · `UL4` · `METODI` · `metodoDa()` · `MOMENTI` · `momentoDa()` · `momentoAttivo()` · `applicaMomento()` · `momentoInAttesa` · `window.chiediMomento()` · `window.confermaMomento()` · `window.setMomento()` · `terminaMomento()` · `window.verificaMomento()` · `window.vaiAlMomento()` · `window.fineMomento()` · `prontezzaBassaSettimana()` · `htmlMomento()`
 
-### 83. `js/coach/compone.js` — Il coach compone
+### 84. `js/coach/compone.js` — Il coach compone
 
 `fattoreFisico()` · `metodoAmmesso()` · `sceltaMetodo()` · `TOCCHI` · `metodiPerTe()` · `htmlMetodi()` · `window.apriTuttiMetodi()` · `htmlIspirazioni()`
 
-### 84. `js/coach/stato.js` — Stato del coach
+### 85. `js/coach/stato.js` — Stato del coach
 
 `renderPianoCoach()` · `htmlMomentoBreve()` · `ultimoGiornoAllenamento()` · `momentoDaChiedere()` · `htmlDomandaMomento()`
 
-### 85. `js/coach/biomeccanica.js` — Biomeccanica del coach
+### 86. `js/coach/biomeccanica.js` — Biomeccanica del coach
 
 `CUE_SCHEMA` · `cueEsercizio()` · `respiroPer()` · `stabile()` · `htmlProva()` · `TEST_FAI_DA_TE` · `window.setTest()` · `htmlTestFaiDaTe()` · `bonusBiomecc()` · `SCALE_DOLORE`
 
-### 86. `js/coach/esigenza.js` — Esigenza del coach
+### 87. `js/coach/esigenza.js` — Esigenza del coach
 
 `ESIGENZA_INIZIO` · `esigenzaEsclusa()` · `window.esigenzaCoach()` · `window.aggiornaEsigenza()` · `segnaDoloreEsigenza()` · `htmlEsigenza()`
 
-### 87. `js/coach/psicologia.js` — Psicologia: chi ha davanti il coach
+### 88. `js/coach/psicologia.js` — Psicologia: chi ha davanti il coach
 
 `PSICO_DOMANDE` · `psicoCoach()` · `ritrattoCoach()` · `window.onbPsico()` · `window.setPsico()` · `htmlDomandePsico()` · `renderPsicoStep()` · `window.onbMomento()` · `htmlPrimiPassi()` · `sedutaPianoB()` · `TEMI` · `renderSettings()` · `setPagina` · `SET_PAGINE` · `window.openSetPage()` · `window.closeSetPage()` · `renderSetPage()` · `window.switchProtocol()`
 
 ## js/ui
 
-### 88. `js/ui/schede-esercizio.js` — Schede esercizio: disegno e spiegazione
+### 89. `js/ui/schede-esercizio.js` — Schede esercizio: disegno e spiegazione
 
 `arto()` · `tronco()` · `testa()` · `bilanciere()` · `manubrio()` · `freccia()` · `suolo()` · `wrapSvg()` · `inPiedi()` · `accosciato()` · `piegato()` · `sdraiato()` · `PATTERN_DRAW` · `PATTERN_INFO` · `PATTERN_RULES` · `window.patternFor()` · `VIDEO_VERIFICATI` · `VIDEO_PLAYLIST` · `window.videoLinkFor()`
 
 ## js/dati
 
-### 89. `js/dati/disegni-esercizi.js` — Disegni degli esercizi
+### 90. `js/dati/disegni-esercizi.js` — Disegni degli esercizi
 
 `window.slugEsercizio()` · `IMMAGINI_ESERCIZI` · `window.immagineEsercizio()` · `slotImmagine()`
 
 ## js/ui
 
-### 90. `js/ui/scheda-quattro-sezioni.js` — Scheda esercizio a quattro sezioni
+### 91. `js/ui/scheda-quattro-sezioni.js` — Scheda esercizio a quattro sezioni
 
 `exInfoNome` · `exInfoTab` · `seduteEsercizio()` · `window.setExInfoTab()` · `exVuoto()` · `paneStorico()` · `paneGrafico()` · `paneRecord()`
 
 ## js/dati
 
-### 91. `js/dati/schede-tecniche.js` — Schede tecniche per esercizio
+### 92. `js/dati/schede-tecniche.js` — Schede tecniche per esercizio
 
 `TECNICA` · `RESPIRO` · `GLOSSARIO` · `schedaTecnica()` · `pausaConsigliata()` · `preferenzaEsercizio()` · `window.preferisci()` · `window.openExerciseInfo()` · `window.closeExerciseInfo()`
 
-### 92. `js/dati/scheda-unica.js` — Scheda unica per esercizio: tutto quello che l'app sa di un esercizio, in un oggetto solo
+### 93. `js/dati/scheda-unica.js` — Scheda unica per esercizio: tutto quello che l'app sa di un esercizio, in un oggetto solo
 
 `window.schedaUnica()` · `window.bucchiNelleSchede()`
 
 ## js/ui
 
-### 93. `js/ui/calendario/mese.js` — Calendario del mese
+### 94. `js/ui/calendario/mese.js` — Calendario del mese
 
 `calKey` · `loadCal` · `saveCal` · `mcAnno` · `mcMese` · `ymd()` · `daYmd()` · `lunediDi()` · `giorniTra()` · `piuGiorni()` · `giornoSettimana()` · `voceDaPiano()` · `mettiSettimana()` · `copiaSettimana()` · `settimaneDelMese()`
 
-### 94. `js/ui/calendario/gruppi.js` — Gruppi muscolari nel calendario
+### 95. `js/ui/calendario/gruppi.js` — Gruppi muscolari nel calendario
 
 `GRUPPO_COLORE` · `GRUPPI_ORDINE` · `_mcStorico` · `gruppiDelGiorno()` · `puntiniGruppi()` · `renderLegendaGruppi()` · `renderMonthCal()` · `window.mcMove()`
 
-### 95. `js/ui/calendario/scambio.js` — Scambiare i giorni trascinandoli
+### 96. `js/ui/calendario/scambio.js` — Scambiare i giorni trascinandoli
 
 `swapAppenaTrascinato` · `attachSwapDrag()` · `window.mcSwapDays()` · `window.mcCellClick()` · `scambiaNelCalendario()` · `aggiornaDopoScambio()` · `window.planSwapDays()` · `window.planDayClick()`
 
-### 96. `js/ui/calendario/copia-settimana.js` — Copiare una settimana come blocco
+### 97. `js/ui/calendario/copia-settimana.js` — Copiare una settimana come blocco
 
 `mcCopySrc` · `mcCopyTargets` · `etichettaSettimana()` · `settimanaPiena()` · `window.mcSelectWeek()` · `window.mcToggleTarget()` · `window.mcRepeat()` · `window.mcCancelCopy()` · `window.mcPaste()` · `renderCopyBar()` · `attachWeekDrag()` · `window.mcCopyWeeks()` · `window.mcPlaceTemplate()` · `window.mcFillMonth()`
 
-### 97. `js/ui/menu-settimana.js` — Menu della settimana
+### 98. `js/ui/menu-settimana.js` — Menu della settimana
 
 `wmLunedi` · `window.openWeekMenu()` · `window.closeWeekMenu()` · `renderWeekMenu()` · `window.wmCancellaGiorno()` · `window.wmSvuotaSettimana()` · `window.wmCopiaProssima()` · `window.wmSelezionaPerCopiare()` · `window.mcClearMonth()` · `window.mcOpenDay()` · `window.mcCloseDay()` · `window.mcPlanDay()` · `window.mcRemoveDay()` · `window.segnaFattoNelCalendario()`
 
-### 98. `js/ui/sessione-completata.js` — Sessione gia completata
+### 99. `js/ui/sessione-completata.js` — Sessione gia completata
 
 `mostraSessione()` · `window.openDoneView()`
 
 ## js/coach
 
-### 99. `js/coach/coach-ia.js` — Coach IA
+### 100. `js/coach/coach-ia.js` — Coach IA
 
 `COACH_IA_URL` · `IA_CONSENT_KEY` · `IA_DEVICE_KEY` · `TESTI_IA` · `window.coachIAAttivo()` · `window.setCoachIA()` · `htmlPrivacyIA()` · `deviceIA()` · `serieCompatte()` · `nomePulito()` · `contestoSeduta()` · `chiamaCoachIA()` · `iaInCorso` · `window.iaErrore()` · `window.commentaSeduta()` · `aggiornaBoxIA()` · `window.htmlCommentoIA()` · `window.openHistoryDetail()` · `window.closeDoneView()`
 
 ## js/ui
 
-### 100. `js/ui/esporta-ics.js` — Esportazione verso calendari (.ics)
+### 101. `js/ui/esporta-ics.js` — Esportazione verso calendari (.ics)
 
 `icsEscape()` · `icsFold()` · `icsData()` · `window.buildIcs()` · `window.exportIcs()` · `linkGoogle()` · `aggiornaAiutoIcs()`
 
 ## js
 
-### 101. `js/avvio.js` — Avvio: ultimo file caricato
+### 102. `js/avvio.js` — Avvio: ultimo file caricato
 
 _solo istruzioni, nessun nome pubblico_

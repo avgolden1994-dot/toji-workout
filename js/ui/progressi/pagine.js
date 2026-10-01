@@ -28,7 +28,7 @@ function renderPgTiles() {
   const n = loadHistory().length;
   const sub = {
     peso: (ult ? '<span data-no-tr>' + f1(ult.kg) + ' kg</span>' : '<span>' + (fp.dovuta ? 'foto da fare' : 'Peso e foto ogni 2 settimane') + '</span>'),
-    stats: '<span>Report e periodi</span>',
+    stats: '<span>Frequenza e report</span>',
     storico: '<span>' + n + ' allenamenti</span>'
   };
   box.innerHTML = Object.keys(PG_PAGINE).map(k => '<button class="pg-tile' + (k === 'peso' && fp.dovuta ? ' dovuta' : '') + '" onclick="apriPagProgressi(\'' + k + '\')">' +
@@ -43,6 +43,7 @@ window.apriPagProgressi = function(k) {
   if (k === 'storico') { renderStorico(); renderWeeks(); }
   if (k === 'stats') { renderProgressiTop(); renderCardioStat(); }
   document.getElementById('pg-sheet').classList.remove('hidden');
+  if (k === 'stats') renderStatsPagina();   /* dopo averla aperta: il periodo scelto si porta in vista */
   const b = document.getElementById('pg-sheet-body'); if (b) b.scrollTop = 0;
 };
 window.chiudiPagProgressi = function() {

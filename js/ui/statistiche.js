@@ -9,7 +9,7 @@
    La colonna 80% e un riferimento pratico: circa l intensita a cui si
    lavora lasciando due ripetizioni in riserva.
    ============================================================ */
-const APP_VERSIONE = '2026.09.29-7';
+const APP_VERSIONE = '2026.10.01-1';
 const DISCHI_KEY = 'tz_dischi';   /* si aggiorna a ogni consegna: dice quale versione sta girando */
 const NOME_KEY = 'tz_nome';
 /* Forza il controllo della versione nuova: aggiorna il service worker e
@@ -48,13 +48,19 @@ function pesoSessione(ex) {
   return Number(ex.weight) || null;
 }
 
+/* Dove comincia il periodo scelto (null = dal primo allenamento). Le
+   settimane sono quelle del calendario, da lunedi: "8 settimane" sono questa
+   e le sette prima. Cosi tabella e grafico contano gli stessi allenamenti. */
+window.inizioPeriodo = function(periodo) {
+  if (periodo === 'tutto') return null;
+  if (periodo === 'programma') { const p = getProgramma(); return p ? daYmd(p.inizio) : null; }
+  return piuGiorni(lunediDi(new Date()), -7 * (Number(periodo) - 1));
+};
+
 window.calcolaStatistiche = function(periodo) {
   const tutte = tutteLeSedute().slice().filter(h0 => dataSessione(h0));
   tutte.sort((a, b) => dataSessione(a) - dataSessione(b));
-  let da = null;
-  const p = getProgramma();
-  if (periodo === 'programma' && p) da = daYmd(p.inizio);
-  else if (periodo !== 'tutto') da = piuGiorni(new Date(), -7 * Number(periodo));
+  const da = inizioPeriodo(periodo);
   const sess = da ? tutte.filter(h0 => dataSessione(h0) >= da) : tutte;
   if (!sess.length) return { vuoto: true };
 
@@ -231,6 +237,8 @@ function reportBloccoHtml(i, nome) {
     '<div class="st-sub">' + d(b.da) + ' – ' + d(b.a) + (b.inCorso ? ' • in corso' : '') +
     (i > 0 ? ' • confronto con le 4 settimane prima' : ' • primo blocco: prima seduta contro ultima') + '</div></div>';
 
+  html += '<div class="card st-graf"><div class="section-title">Allenamenti a settimana</div>' + graficoFrequenzaHtml('b' + i, { senzaNumeri: true }) + '</div>';
+
   html += '<div class="pg-kpis st-kpis">' +
     '<div class="pg-kpi"><b>' + r.sessioni + '</b><span>allenamenti' + (r.programmati ? ' su ' + r.programmati : '') + '</span>' + (i > 0 ? delta(r.sessioni, r.sessioniPrec) : '') + '</div>' +
     '<div class="pg-kpi"><b>' + (r.mediaInc === null ? '–' : (r.mediaInc > 0 ? '+' : '') + String(r.mediaInc).replace('.', ',') + '%') + '</b><span>carichi medi</span></div>' +
@@ -277,38 +285,45 @@ function reportBloccoHtml(i, nome) {
   return html;
 }
 
+/* Titolo del report per periodo */
+function periodoTitolo(v) {
+  if (v === 'programma') return 'Programma attuale';
+  if (v === 'tutto') return 'Tutto lo storico';
+  return 'Ultime ' + v + ' settimane';
+}
+
 window.renderStats = function() {
   const s = statsPeriodo.charAt(0) === 'b' ? { vuoto: false } : calcolaStatistiche(statsPeriodo);
   const nome = getNome();
   const box = document.getElementById('stats-body');
-  const p = getProgramma();
 
-  const blocchi = blocchiQuattroSettimane();
-  const scelte = blocchi.slice().reverse().map(b0 => ['b' + b0.i, 'Sett. ' + (b0.i * 4 + 1) + '\u2013' + (b0.i * 4 + 4)])
-    .concat([['4', '4 settimane'], ['8', '8 settimane'], ['12', '12 settimane']])
-    .concat(p ? [['programma', 'Programma attuale']] : []).concat([['tutto', 'Tutto']]);
-  let html = '<div class="st-periodo">' + scelte.map(([v, l]) =>
-    '<button class="' + (statsPeriodo === v ? 'on' : '') + '" onclick="setStatsPeriodo(\'' + v + '\')">' + l + '</button>').join('') + '</div>';
-  if (statsPeriodo.charAt(0) === 'b') { box.innerHTML = html + reportBloccoHtml(Number(statsPeriodo.slice(1)), nome); return; }
+  let html = scelteStatsPeriodo(statsPeriodo, 'setStatsPeriodo', true);
+  if (statsPeriodo.charAt(0) === 'b') { box.innerHTML = html + reportBloccoHtml(Number(statsPeriodo.slice(1)), nome); mostraPeriodoAttivo(box); return; }
 
   if (s.vuoto) {
     box.innerHTML = html + '<div class="dv-empty">Nessun allenamento in questo periodo.</div>';
+    mostraPeriodoAttivo(box);
     return;
   }
 
   const d = (x) => x.toLocaleDateString(LOCALE(), { day: 'numeric', month: 'short' });
   html += '<div class="st-head">' +
-    '<div class="st-title">Progresso carichi' + (nome ? ' \u2014 ' + escapeHtml(nome) : '') + '</div>' +
-    '<div class="st-sub">Dal primo all ultimo carico \u2022 ' + d(s.primo) + ' \u2013 ' + d(s.ultimo) +
-    ' \u2022 ' + s.sessioni + (s.sessioni === 1 ? ' allenamento' : ' allenamenti') + '</div></div>';
+    '<div class="st-title">' + periodoTitolo(statsPeriodo) + (nome ? ' \u2014 ' + escapeHtml(nome) : '') + '</div>' +
+    '<div class="st-sub">' + d(s.primo) + ' \u2013 ' + d(s.ultimo) + '</div></div>';
 
   if (s.breve) {
     html += '<div class="onb-note">Il periodo copre ' + s.giorniSpan + ' giorni: sotto le due settimane i numeri raccontano il caso piu che l andamento. Scegli un periodo piu lungo per leggerli davvero.</div>';
   }
+
+  /* prima di tutto il grafico: com e stata la frequenza, settimana per settimana */
+  html += '<div class="card st-graf"><div class="section-title">Allenamenti a settimana</div>' + graficoFrequenzaHtml(statsPeriodo) + '</div>';
+
   if (!s.esercizi.length) {
     box.innerHTML = html + '<div class="dv-empty">Servono almeno due sedute con lo stesso esercizio per confrontare i carichi.</div>';
+    mostraPeriodoAttivo(box);
     return;
   }
+  html += '<div class="section-title st-sez">Progresso dei carichi</div><div class="st-sub st-sez-sub">Dal primo all ultimo carico</div>';
 
   /* raggruppati per giorno, come una scheda */
   const perGiorno = {};
@@ -353,4 +368,5 @@ window.renderStats = function() {
     '<div class="set-about" style="margin-top:0;">Prendo l ultimo carico che hai usato e ne calcolo l 80%. E un riferimento pratico per le serie in cui vuoi restare a circa due ripetizioni dal cedimento: utile nelle giornate storte o nelle settimane di scarico. Formula: ultimo carico \u00D7 0,80.</div></div>';
 
   box.innerHTML = html;
+  mostraPeriodoAttivo(box);
 };

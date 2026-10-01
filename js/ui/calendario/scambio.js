@@ -79,11 +79,13 @@ window.mcSwapDays = function(a, b) {
   /* la settimana e un blocco: i giorni si scambiano solo al suo interno.
      Per spostare una settimana intera c e la maniglia \u2261 */
   if (ymd(lunediDi(daYmd(a))) !== ymd(lunediDi(daYmd(b)))) {
+    if (window.guidaAttiva && guidaAttiva()) return false;   /* in guida un rilascio fuori posto non apre avvisi sopra il riquadro */
     alert('Lo scambio si fa dentro la stessa settimana, cosi la settimana resta un blocco. Per spostare o copiare una settimana intera usa la maniglia \u2261.');
     return false;
   }
   const cal = loadCal();
   if ((cal[a] && cal[a].done) || (cal[b] && cal[b].done)) {
+    if (window.guidaAttiva && guidaAttiva()) return false;
     alert('Un giorno gia fatto non si sposta: fa parte del tuo storico.');
     return false;
   }

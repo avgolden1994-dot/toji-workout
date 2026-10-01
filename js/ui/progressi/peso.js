@@ -85,10 +85,10 @@ function renderPesoCard() {
   } else if (ob && ult && Math.abs(ob - ult.kg) < 0.3) eta = 'Obiettivo raggiunto.';
   const f1 = (v) => String(Math.round(v * 10) / 10).replace('.', ',');
   box.innerHTML = '<div class="section-title">Peso corporeo</div>' +
-    '<div class="peso-top"><div><b class="peso-big">' + (ult ? f1(ult.kg) : '–') + '</b> kg' +
+    '<div id="pg-peso-grafico"><div class="peso-top"><div><b class="peso-big">' + (ult ? f1(ult.kg) : '–') + '</b> kg' +
       (t ? '<small> • <span data-no-tr>' + (t.settimana > 0 ? '+' : '') + f1(t.settimana) + '</span> <span>kg/sett</span></small>' : '') + '</div>' +
       (ob ? '<div class="og-muted">Obiettivo <b>' + f1(ob) + '</b> kg</div>' : '') + '</div>' +
-    graficoPeso(pts, ob) + htmlPesate(pts, ob) +
+    graficoPeso(pts, ob) + '</div>' + htmlPesate(pts, ob) +
     '<div class="peso-in"><input type="number" inputmode="decimal" step="0.1" id="peso-in" placeholder="Peso di oggi (kg)" aria-label="Peso di oggi in kg">' +
       '<button class="set-tool-btn" onclick="registraPeso()">Registra</button></div>' +
     '<label class="peso-in peso-ob-row"><span>Obiettivo</span><input type="number" inputmode="decimal" step="0.5" id="peso-ob" placeholder="kg" value="' + (ob || '') + '" aria-label="Peso obiettivo in kg" onchange="salvaObiettivoPeso(this.value)"><span>kg</span></label>' +
