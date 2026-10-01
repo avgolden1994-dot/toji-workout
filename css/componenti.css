@@ -44,7 +44,7 @@
 .use-tag.week { background: color-mix(in srgb, var(--warning) 15%, transparent); color: var(--warning); border: 1px solid var(--warning); }
 .sugg-row.used-week, .lib-row.used-week { opacity: 0.72; }
 .sugg-row.used-today, .lib-row.used-today { opacity: 0.55; }
-.lib-add-btn.week { background: var(--warning); color: var(--bg); }
+.lib-add-btn.week { background: var(--warning); color: var(--on-status); }
 
 /* schede pronte: colore diverso se gia caricate */
 .carousel-card.tpl-partial { border-color: var(--warning); }
@@ -53,6 +53,10 @@
 .tpl-state.partial { background: color-mix(in srgb, var(--warning) 15%, transparent); color: var(--warning); border: 1px solid var(--warning); }
 .tpl-state.done { background: color-mix(in srgb, var(--success) 18%, transparent); color: var(--success); border: 1px solid var(--success); }
 .tpl-state.fresh { background: var(--surface-2); color: var(--muted); border: 1px solid var(--border); }
+/* Nel tema chiaro il testo verde e ambra sulla propria tinta si fermava a 3.5-4.1:1:
+   qui si scurisce un poco (4.5:1 e oltre). Il tema scuro e gia sopra 5:1. */
+html[data-theme="light"] .use-tag.today, html[data-theme="light"] .tpl-state.done { color: color-mix(in srgb, var(--success) 86%, #000); }
+html[data-theme="light"] .use-tag.week, html[data-theme="light"] .tpl-state.partial { color: color-mix(in srgb, var(--warning) 88%, #000); }
 
 /* ======= Carico settimanale per gruppo: due tonalita' ======= */
 /* VERDE = gruppo gia in programma, volume dentro il range utile
@@ -80,9 +84,9 @@
   width: 17px; height: 17px; border-radius: 50%;
   font-size: 0.62rem; font-weight: 900; line-height: 17px; text-align: center;
 }
-.vol-check.ok { background: var(--success); color: var(--bg); }
+.vol-check.ok { background: var(--success); color: var(--on-status); }
 .vol-check.start { background: color-mix(in srgb, var(--low) 30%, transparent); color: var(--low); }
-.vol-check.high { background: var(--warning); color: var(--bg); }
+.vol-check.high { background: var(--warning); color: var(--on-status); }
 .group-vol { font-size: 0.62rem; font-weight: 800; margin-top: 2px; }
 .group-vol.ok { color: var(--success); }
 .group-vol.start { color: var(--low); }
@@ -111,7 +115,7 @@
 .plan-tool-btn.danger { color: var(--accent); border-color: var(--accent); }
 .plan-check { flex-shrink: 0; width: 26px; height: 26px; border-radius: 6px; background: var(--surface-2); border: 1px solid var(--border); color: transparent; font-weight: 900; font-size: 0.85rem; cursor: pointer; margin-top: 2px; display: none; }
 body.select-mode .plan-check { display: block; }
-.plan-check.on { background: var(--primary); border-color: var(--primary); color: #fff; }
+.plan-check.on { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
 body.select-mode .plan-card-actions, body.select-mode .reorder-arrows { display: none; }
 .plan-card.picked { border-color: var(--primary); }
 
@@ -127,7 +131,7 @@ body.select-mode .plan-card-actions, body.select-mode .reorder-arrows { display:
 .swipe-host { position: relative; overflow: hidden; border-radius: 10px; }
 .swipe-bg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; font-weight: 900; font-size: 0.8rem; border-radius: 10px; }
 .swipe-bg .sw-add { color: var(--success); }
-.swipe-bg .sw-del { color: #fff; }
+.swipe-bg .sw-del { color: var(--on-status); }
 .swipe-host.to-left .swipe-bg { background: color-mix(in srgb, var(--danger) 90%, transparent); }
 .swipe-host.to-right .swipe-bg { background: color-mix(in srgb, var(--success) 18%, transparent); }
 .swipe-fg { position: relative; background: var(--surface-1); transition: transform .18s ease; will-change: transform; touch-action: pan-y; }
@@ -231,8 +235,8 @@ body.select-mode .plan-card-actions, body.select-mode .reorder-arrows { display:
 .step-head { display: flex; align-items: center; gap: var(--sp-2); margin: 0 0 var(--sp-2) 0; }
 .step-num {
   flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
-  background: var(--primary); color: #fff; font-size: 0.72rem; font-weight: 900;
+  background: var(--primary); color: var(--on-primary); font-size: 0.72rem; font-weight: 900;
   display: flex; align-items: center; justify-content: center;
 }
 .step-label { font-size: 0.85rem; font-weight: 800; line-height: var(--lh-tight); text-transform: uppercase; letter-spacing: 0.4px; }
-.plan-tool-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.plan-tool-btn.active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }

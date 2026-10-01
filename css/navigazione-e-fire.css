@@ -68,7 +68,7 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
 .pz-row { display: grid; grid-template-columns: 74px 1fr; gap: 8px; align-items: center; margin-bottom: 8px; font-size: 0.8rem; font-weight: 700; }
 .pz-opts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
 .pz-opt { padding: 8px 4px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); font-weight: 700; font-size: 0.75rem; }
-.pz-opt.on { background: var(--primary); border-color: var(--primary); color: #fff; }
+.pz-opt.on { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
 .og-dolore { border: 1px solid color-mix(in srgb, var(--danger) 40%, transparent); }
 .og-dol-t { font-size: 0.7rem; font-weight: 900; letter-spacing: .6px; text-transform: uppercase; color: var(--danger); display: flex; gap: 6px; align-items: center; }
 .og-dolore p { margin: 6px 0 10px; font-size: 0.88rem; }
@@ -83,7 +83,7 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
 .ag-az-b .set-row-btn { flex: 1 1 auto; margin: 0; font-size: 0.78rem; padding: 8px 10px; }
 .ex-pref { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
 .ex-pref-b { padding: 10px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); font-weight: 800; font-size: 0.8rem; display: flex; gap: 6px; align-items: center; justify-content: center; }
-.ex-pref-b.on { background: var(--primary); color: #fff; border-color: var(--primary); }
+.ex-pref-b.on { background: var(--primary); color: var(--on-primary); border-color: var(--primary); }
 .ex-pref-b.on.no { background: var(--danger); border-color: var(--danger); }
 .sr-chips-pad { padding: 10px 12px; }
 .sr-input .sr-name + input { flex: 0 0 110px; max-width: 110px; text-align: right; border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; }
@@ -94,7 +94,7 @@ html:not([data-theme="light"]) .sr-input input[type=time] { color-scheme: dark; 
 .set-row.extra .extra-num { background: color-mix(in srgb, var(--accent) 22%, transparent); color: var(--accent); font-size: 11px; }
 .work-btn { font-variant-numeric: tabular-nums; font-weight: 700; min-width: 36px; }
 .work-btn .ico { width: 18px; height: 18px; }
-.work-btn.on { background: var(--primary); color: #fff; }
+.work-btn.on { background: var(--primary); color: var(--on-primary); }
 .work-btn.on.pronti { background: var(--warning); }
 .recovery-next { font-size: 13px; color: var(--muted); padding: 6px 4px 2px; text-align: center; line-height: 1.35; }
 .recovery-next:empty { display: none; }

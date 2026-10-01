@@ -2,7 +2,7 @@
    il segnale spesso manca). Strategia: network-first con fallback alla cache,
    così vedi sempre l'ultima versione se sei online, ma l'app parte comunque offline. */
 
-const CACHE_NAME = '3in-v9';   /* cambiando il nome, le copie vecchie vengono buttate */
+const CACHE_NAME = '3in-v10';   /* cambiando il nome, le copie vecchie vengono buttate */
 const ASSETS = [
   './',
   /* Elenco generato da tools/genera-sw.js (npm run sw): non si modifica a mano.
@@ -10,6 +10,7 @@ const ASSETS = [
   /*INIZIO-ASSET*/
   './index.html',
   './manifest.json',
+  './favicon-32.png',
   './icon-192.png',
   './icon-512.png',
   './css/base.css',

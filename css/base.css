@@ -32,7 +32,7 @@
   /* testo, tre livelli di importanza */
   --text: #f3f3f6;
   --muted: #a8a8b6;
-  --text-dim: #71717f;
+  --text-dim: #8a8a98;
 
   /* marchio 3in: braci, energia */
   --primary: #fb8b3c;
@@ -81,7 +81,7 @@ html[data-theme="light"], body[data-theme="light"] {
 
   --text: #000000;        /* nero definito */
   --muted: #5c5c63;       /* secondario: si legge, ma fa un passo indietro */
-  --text-dim: #7a7a80;
+  --text-dim: #6e6e74;
 
   --primary: #c2410c;
   --primary-glow: #9a3412;
@@ -90,8 +90,8 @@ html[data-theme="light"], body[data-theme="light"] {
   --on-primary: #ffffff;
   --on-accent: #ffffff;
 
-  --success: #15803d;
-  --warning: #b45309;
+  --success: #157f3c;
+  --warning: #b25209;
   --danger: #c62828;
   --on-status: #ffffff;
   --low: #4a63ad;

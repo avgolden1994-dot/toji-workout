@@ -76,8 +76,8 @@ html[data-theme="light"] .bm-ln { stroke: var(--surface-1); stroke-width: 0.6; }
 .lib-type { display: inline-block; font-size: 0.62rem; font-weight: 900; text-transform: uppercase; border-radius: 999px; padding: 1px 7px; margin-left: 6px; }
 .lib-type.compound { color: var(--primary); border: 1px solid var(--primary); }
 .lib-type.isolation { color: var(--muted); border: 1px solid var(--border); }
-.lib-add-btn { flex-shrink: 0; background: var(--primary); border: none; color: #fff; width: 32px; height: 32px; border-radius: 8px; font-size: 1.05rem; font-weight: 900; cursor: pointer; }
-.lib-add-btn.added { background: var(--success); color: var(--bg); }
+.lib-add-btn { flex-shrink: 0; background: var(--primary); border: none; color: var(--on-primary); width: 32px; height: 32px; border-radius: 8px; font-size: 1.05rem; font-weight: 900; cursor: pointer; }
+.lib-add-btn.added { background: var(--success); color: var(--on-status); }
 
 /* ======= Pannello Coach ======= */
 .coach-box { margin-top: 12px; border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 10px; padding: 10px; background: var(--surface-1); }
