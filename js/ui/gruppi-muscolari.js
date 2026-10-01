@@ -16,8 +16,6 @@ window.toggleGroup = function(groupId) {
 
 let sheetGroup = null;
 let sheetOrder = null;      /* ordine congelato mentre la schermata e aperta */
-let sheetExpanded = false;  /* tenda della schermata gruppo */
-let suggestedExpanded = false;
 let suggestedOrder = [];
 let suggestedOrderKey = null;
 
@@ -25,11 +23,6 @@ let suggestedOrderKey = null;
    da solo: la scelta resta dell'utente, un esercizio alla volta. */
 window.toggleGroupInPlan = function(groupId) {
   openGroupSheet(groupId);
-};
-
-window.toggleSuggestedExpanded = function() {
-  suggestedExpanded = !suggestedExpanded;
-  renderSuggested();
 };
 
 /* Riga selezionabile: si tocca tutta la riga, l'icona si illumina.
@@ -46,6 +39,7 @@ function pickRow(ex, selected, onclick) {
       '<span class="pick-name">' + escapeHtml(nome) + '</span>' +
       '<span class="pick-meta">' + DEFAULT_SETS + ' \u00D7 ' + reps + unita +
         ' \u2022 ' + (ex.type === 'compound' ? 'multiarticolare' : 'isolamento') + '</span>' +
+      htmlDettaglioRiga(ex.name) +
     '</span>' +
     '<span class="pick-check">' + (selected ? '\u2713' : '+') + '</span>' +
   '</button>';
@@ -86,7 +80,7 @@ function renderSuggested() {
     suggestedOrder = items.slice().sort((a, b) => {
       const r = usageRank(usageState(a.name, usage)) - usageRank(usageState(b.name, usage));
       if (r !== 0) return r;
-      return (a.type === b.type ? 0 : (a.type === 'compound' ? -1 : 1));
+      return ordineEsercizi(a, b);
     }).map(e => e.name);
   }
   const pos = {};
@@ -97,25 +91,13 @@ function renderSuggested() {
   document.getElementById('suggested-hint').innerText =
     'Proposte per ' + nomi + ': tocca l\'esercizio per metterlo in scheda. Parte sempre da ' + DEFAULT_SETS + ' serie da ' + DEFAULT_REPS + ', poi lo regoli il giorno dell\'allenamento.';
 
-  /* Prime 4 in chiaro, il resto dietro una tenda: cosi la schermata resta corta */
-  const VISIBILI = 4;
-  const sopra = items.slice(0, VISIBILI);
-  const sotto = items.slice(VISIBILI);
-
-  let html = sopra.map(ex => pickRow(ex, present.has(ex.name),
-    'togglePickExercise(\'' + jsArg(ex.name) + '\')')).join('');
-
-  if (sotto.length) {
-    const quantiScelti = sotto.filter(e => present.has(e.name)).length;
-    html += '<button class="drawer-btn ' + (suggestedExpanded ? 'open' : '') + '" onclick="toggleSuggestedExpanded()">' +
-      '<span>' + (suggestedExpanded ? 'Chiudi' : 'Altri ' + sotto.length + ' esercizi') +
-      (quantiScelti ? ' \u2022 ' + quantiScelti + ' gia scelti' : '') + '</span>' +
-      '<span class="caret">\u25BE</span></button>' +
-      '<div class="drawer-body ' + (suggestedExpanded ? 'open' : '') + '">' +
-        sotto.map(ex => pickRow(ex, present.has(ex.name),
-          'togglePickExercise(\'' + jsArg(ex.name) + '\')')).join('') +
-      '</div>';
-  }
+  /* organizzato: macchinari e cavi, pesi liberi, corpo libero; poi gruppo e sottogruppo. Ordine dentro il sottogruppo:
+     quelli mai scelti prima (la lista congelata qui sopra), poi i multiarticolari */
+  const html = htmlEserciziOrganizzati(items, {
+    ctx: 'proposte', presente: ex => present.has(ex.name), mostraGruppi: selectedGroups.length > 1,
+    cmp: (x, y) => (pos[x.name] === undefined ? 999 : pos[x.name]) - (pos[y.name] === undefined ? 999 : pos[y.name]),
+    riga: ex => pickRow(ex, present.has(ex.name), 'togglePickExercise(\'' + jsArg(ex.name) + '\')')
+  });
 
   listEl.innerHTML = html;
 }
@@ -123,7 +105,7 @@ function renderSuggested() {
 window.openGroupSheet = function(groupId) {
   sheetGroup = groupId;
   sheetOrder = null; /* si ricalcola a ogni apertura, non a ogni tocco */
-  sheetExpanded = false;
+  azzeraSezioniEsercizi('gruppo:' + groupId);
   if (selectedGroups.indexOf(groupId) === -1) selectedGroups.push(groupId);
   const g = MUSCLE_GROUPS[groupId];
   document.getElementById('sheet-title').innerText = g.label;
@@ -153,7 +135,7 @@ function renderSheetExercises() {
       .sort((a, b) => {
         const r = usageRank(usageState(a.name, usage)) - usageRank(usageState(b.name, usage));
         if (r !== 0) return r;
-        return (a.type === b.type ? 0 : (a.type === 'compound' ? -1 : 1));
+        return ordineEsercizi(a, b);
       })
       .map(e => e.name);
   }
@@ -168,32 +150,17 @@ function renderSheetExercises() {
     ? '\u2713 Fatto \u2014 torna al piano'
     : '\u2190 Torna al piano';
 
-  const VISIBILI = 4;
-  const sopra = list.slice(0, VISIBILI);
-  const sotto = list.slice(VISIBILI);
-
-  let html = sopra.map(ex => pickRow(ex, present.has(ex.name),
-    'togglePickExercise(\'' + jsArg(ex.name) + '\')')).join('');
-
-  if (sotto.length) {
-    const quantiScelti = sotto.filter(e => present.has(e.name)).length;
-    html += '<button class="drawer-btn ' + (sheetExpanded ? 'open' : '') + '" onclick="toggleSheetExpanded()">' +
-      '<span>' + (sheetExpanded ? 'Chiudi' : 'Altri ' + sotto.length + ' esercizi') +
-      (quantiScelti ? ' \u2022 ' + quantiScelti + ' gia scelti' : '') + '</span>' +
-      '<span class="caret">\u25BE</span></button>' +
-      '<div class="drawer-body ' + (sheetExpanded ? 'open' : '') + '">' +
-        sotto.map(ex => pickRow(ex, present.has(ex.name),
-          'togglePickExercise(\'' + jsArg(ex.name) + '\')')).join('') +
-      '</div>';
-  }
+  /* organizzato per sezione e sottogruppo; l ordine dentro il sottogruppo e quello congelato all apertura */
+  const posSheet = {};
+  sheetOrder.forEach((n, i) => { posSheet[n] = i; });
+  const html = htmlEserciziOrganizzati(list, {
+    ctx: 'gruppo:' + sheetGroup, presente: ex => present.has(ex.name), mostraGruppi: false,
+    cmp: (x, y) => posSheet[x.name] - posSheet[y.name],
+    riga: ex => pickRow(ex, present.has(ex.name), 'togglePickExercise(\'' + jsArg(ex.name) + '\')')
+  });
 
   document.getElementById('sheet-exercises').innerHTML = html;
 }
-
-window.toggleSheetExpanded = function() {
-  sheetExpanded = !sheetExpanded;
-  renderSheetExercises();
-};
 
 /* Rimuove dal giorno corrente un esercizio individuato per nome */
 window.removeExerciseByName = function(name) {
@@ -219,8 +186,8 @@ window.clearGroupSelection = function() {
   if (selectedGroups.length === 0) return;
   const quanti = selectedGroups.length;
   selectedGroups = [];
-  suggestedExpanded = false;
   suggestedOrderKey = null;   /* senza questo l ordine vecchio restava in memoria */
+  azzeraSezioniEsercizi('proposte');
   suggestedOrder = [];
   renderGruppi();
   renderSuggested();

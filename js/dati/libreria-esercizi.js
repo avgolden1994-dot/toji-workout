@@ -139,7 +139,35 @@ const EXERCISE_LIBRARY = [
   { name: '🎯 Russian Twist', group: 'core', type: 'isolation', sets: 3, reps: 20, weight: 5, rest: 45 },
   { name: '🎯 Mountain Climber', group: 'core', type: 'isolation', sets: 3, reps: 30, weight: 0, rest: 40 },
   { name: '🎯 Hollow Hold', group: 'core', type: 'isolation', sets: 3, reps: 30, weight: 0, rest: 45 },
-  { name: '🎯 Ab Wheel', group: 'core', type: 'isolation', sets: 3, reps: 12, weight: 0, rest: 60 }
+  { name: '🎯 Ab Wheel', group: 'core', type: 'isolation', sets: 3, reps: 12, weight: 0, rest: 60 },
+
+  /* varianti dove l attacco o la presa cambiano il muscolo (dettagli in js/dati/dettagli-esercizi.js) e
+     alcuni classici dell epoca d oro (Golden Six di Arnold, curl Zottman, sissy squat di Gironda) */
+  { name: '🏹 Pulley Basso Barra Larga (Presa Prona)', group: 'schiena', type: 'compound', sets: 3, reps: 12, weight: 30, rest: 75 },
+  { name: '🏹 Pulley Basso Presa Inversa', group: 'schiena', type: 'compound', sets: 3, reps: 12, weight: 30, rest: 75 },
+  { name: '🏹 Pulley Basso a un Braccio', group: 'schiena', type: 'compound', sets: 3, reps: 12, weight: 15, rest: 75, lato: true },
+  { name: '🏹 Lat Machine Triangolo (Presa Neutra)', group: 'schiena', type: 'compound', sets: 3, reps: 12, weight: 35, rest: 75 },
+  { name: '🏹 Rematore Presa Inversa (Yates)', group: 'schiena', type: 'compound', sets: 3, reps: 8, weight: 30, rest: 90 },
+  { name: '🏹 Trazioni Presa Neutra', group: 'schiena', type: 'compound', sets: 3, reps: 8, weight: 0, rest: 105 },
+  { name: '💪 Croci ai Cavi Alti (Parte Bassa)', group: 'petto', type: 'isolation', sets: 3, reps: 12, weight: 8, rest: 60 },
+  { name: '💪 Piegamenti Declinati (Piedi Rialzati)', group: 'petto', type: 'compound', sets: 3, reps: 10, weight: 0, rest: 60 },
+  { name: '🦾 Piegamenti a Diamante', group: 'braccia', type: 'compound', sets: 3, reps: 10, weight: 0, rest: 60 },
+  { name: '🦵 Adductor Machine', group: 'gambe', type: 'isolation', sets: 3, reps: 15, weight: 25, rest: 45 },
+  { name: '🦵 Calf Raise a un Piede (Corpo Libero)', group: 'gambe', type: 'isolation', sets: 3, reps: 15, weight: 0, rest: 45, lato: true },
+  { name: '🦵 Sissy Squat', group: 'gambe', type: 'isolation', sets: 3, reps: 10, weight: 0, rest: 75 },
+  { name: '🛡️ Alzate Laterali alla Macchina', group: 'spalle', type: 'isolation', sets: 3, reps: 15, weight: 15, rest: 45 },
+  { name: '🛡️ Pike Push-up', group: 'spalle', type: 'compound', sets: 3, reps: 8, weight: 0, rest: 75 },
+  { name: '🦾 Curl ai Cavi con Corda (Presa Martello)', group: 'braccia', type: 'isolation', sets: 3, reps: 12, weight: 12, rest: 45 },
+  { name: '🦾 Curl Inverso con Bilanciere EZ', group: 'braccia', type: 'isolation', sets: 3, reps: 12, weight: 15, rest: 45 },
+  { name: '🦾 Curl alla Macchina (Scott)', group: 'braccia', type: 'isolation', sets: 3, reps: 12, weight: 20, rest: 45 },
+  { name: '🦾 Curl Zottman', group: 'braccia', type: 'isolation', sets: 3, reps: 10, weight: 8, rest: 60 },
+  { name: '🦾 Pushdown Presa Inversa', group: 'braccia', type: 'isolation', sets: 3, reps: 12, weight: 15, rest: 60 },
+  { name: '🦾 Pushdown con Barra V', group: 'braccia', type: 'isolation', sets: 3, reps: 12, weight: 20, rest: 60 },
+  { name: '🦾 Dip alla Macchina (Tricipiti)', group: 'braccia', type: 'compound', sets: 3, reps: 10, weight: 30, rest: 75 },
+  { name: '🎯 Crunch alla Macchina', group: 'core', type: 'isolation', sets: 3, reps: 15, weight: 20, rest: 45 },
+  { name: '🎯 Woodchop ai Cavi (Rotazioni)', group: 'core', type: 'isolation', sets: 3, reps: 12, weight: 10, rest: 45, lato: true },
+  { name: '🎯 Leg Raise alla Sedia Romana', group: 'core', type: 'isolation', sets: 3, reps: 12, weight: 0, rest: 45 },
+  { name: '🎯 Sit-up a Ginocchia Piegate', group: 'core', type: 'isolation', sets: 3, reps: 15, weight: 0, rest: 45 }
 ];
 
 /* Il menu a tendina si genera dalla libreria: una sola fonte di verita',

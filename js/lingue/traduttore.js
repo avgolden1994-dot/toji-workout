@@ -103,6 +103,13 @@ window.LOCALE = function() { return LOCALI[LINGUA] || 'it-IT'; };
 const I18N_SEP = [' • ', ' · ', ' — ', ' – ', ' → ', ': ', ' / ', ', '];
 function trCore(c, d, prof) {
   if (Object.prototype.hasOwnProperty.call(d, c)) return d[c];
+  /* stessa frase con l iniziale maiuscola o minuscola ("Gran dorsale" e "gran dorsale"): basta una voce sola.
+     In tedesco i nomi restano sempre maiuscoli, quindi la traduzione non si abbassa mai */
+  const c0 = c.charAt(0), alta = c0 !== c0.toLowerCase(), alt = (alta ? c0.toLowerCase() : c0.toUpperCase()) + c.slice(1);
+  if (alt !== c && Object.prototype.hasOwnProperty.call(d, alt)) {
+    const r = d[alt];
+    return alta ? r.charAt(0).toUpperCase() + r.slice(1) : (LINGUA === 'de' ? r : r.charAt(0).toLowerCase() + r.slice(1));
+  }
   const nums = [];
   const k = c.replace(/\d+(?:[.,]\d+)*/g, x => { nums.push(x); return '#'; });
   if (nums.length && Object.prototype.hasOwnProperty.call(d, k)) { let i = 0; return d[k].replace(/#/g, () => nums[i++] !== undefined ? nums[i - 1] : '#'); }

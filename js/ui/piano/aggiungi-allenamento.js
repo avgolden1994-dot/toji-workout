@@ -46,6 +46,7 @@ let awCustom = [];          /* esercizi scelti nella strada "gruppi" */
 window.openAddWeek = function() {
   awStep = 0; awPath = null; awSource = null; awDays = []; awMode = 'sostituisci';
   awGroups = []; awCustom = [];
+  azzeraSezioniEsercizi('aw');
   document.getElementById('add-week-sheet').classList.remove('hidden');
   renderAddWeek();
 };
@@ -153,11 +154,9 @@ function renderAddWeek() {
 
     if (awGroups.length) {
       html += '<div class="aw-sec">Quali esercizi \u2022 ' + awCustom.length + (awCustom.length === 1 ? ' scelto' : ' scelti') + '</div>';
-      awGroups.forEach(g => {
-        const lista = EXERCISE_LIBRARY.filter(e => e.group === g)
-          .sort((a, b) => (a.type === b.type ? 0 : (a.type === 'compound' ? -1 : 1)));
-        html += lista.map(ex => pickRow(ex, awCustom.indexOf(ex.name) !== -1,
-          'awToggleCustom(\'' + jsArg(ex.name) + '\')')).join('');
+      html += htmlEserciziOrganizzati(EXERCISE_LIBRARY.filter(e => awGroups.indexOf(e.group) !== -1), {
+        ctx: 'aw', presente: ex => awCustom.indexOf(ex.name) !== -1, mostraGruppi: awGroups.length > 1,
+        riga: ex => pickRow(ex, awCustom.indexOf(ex.name) !== -1, 'awToggleCustom(\'' + jsArg(ex.name) + '\')')
       });
     } else {
       html += '<div class="aw-warn">Tocca uno o più gruppi per vedere i loro esercizi.</div>';
@@ -414,6 +413,7 @@ function renderPiano() {
           <div class="plan-order-num">${idx + 1}</div>
           <div class="plan-card-main">
             <div class="plan-ex-name">${findExercise(e.name) ? '<span class="ex-fig">' + muscleFigure(findExercise(e.name).group) + '</span>' : ''}${escapeHtml(senzaEmoji(e.name))}</div>
+            ${dettaglioEsercizio(e.name) ? `<div class="ex-focus">${escapeHtml(etichettaAttrezzo(e.name))} \u2022 <span>Focus</span>: ${escapeHtml(focusEsercizio(e.name))}</div>` : ''}
             <div class="plan-badges">
               <span class="plan-badge reps">${e.sets}\u00D7${e.reps}</span>
               <span class="plan-badge">${e.weight} kg</span>

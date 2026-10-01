@@ -13,7 +13,7 @@
    RIC-04 al massimo una tecnica al cedimento per seduta (Robinson 2024)
    RIC-05 rientro dopo una pausa: serie ridotte su tutto il piano (detraining, SBS)
    ============================================================ */
-const TECNICHE_INTENSE = ['drop', 'amrap', 'parziali', 'calibrazione'];
+const TECNICHE_INTENSE = ['drop', 'amrap', 'parziali', 'calibrazione', 'negativa', 'forzate', 'riposopausa'];   /* tutte arrivano al cedimento */
 
 function sedutePassate() {
   return loadHistory().filter(h0 => h0.sessione && h0.sessione.length && !h0.interrotta)

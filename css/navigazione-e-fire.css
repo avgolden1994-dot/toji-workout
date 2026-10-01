@@ -99,6 +99,11 @@ html:not([data-theme="light"]) .sr-input input[type=time] { color-scheme: dark; 
 .recovery-next { font-size: 13px; color: var(--muted); padding: 6px 4px 2px; text-align: center; line-height: 1.35; }
 .recovery-next:empty { display: none; }
 .recovery-next b { color: var(--text); font-weight: 600; }
+/* Il pannello del recupero ha sempre un fondo arancione (nel chiaro) o dal rame allo scuro (nello scuro) e
+   tutto il suo testo e bianco. La riga «Prossima» usava il grigio e il nero del tema: nel chiaro il grigio
+   sull arancione aveva lo stesso valore di luce dello sfondo e spariva. Qui segue il resto del pannello. */
+.recovery-overlay .recovery-next { color: rgba(255, 255, 255, 0.92); }
+.recovery-overlay .recovery-next b { color: #fff; font-weight: 700; }
 .recovery-overlay:not(.expanded) .recovery-next { font-size: 12px; padding-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .og-next { display: flex; gap: 8px; align-items: center; margin: 10px 0 2px; font-size: 14px; color: var(--muted); }
 .og-next .ico { width: 18px; height: 18px; flex: none; }

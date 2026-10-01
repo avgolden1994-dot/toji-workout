@@ -96,7 +96,7 @@ Nota: il commento in testa elenca 5 regole, il codice ne applica 8.
 ### Struttura e durata
 
 - **PRG-01** durata e blocchi per livello (strutturaProgramma): principiante 8 sett. (blocco 4 = 3+1 scarico); intermedio 12 sett. (blocco 4); avanzato 12 sett. (blocco 6 = 5+1). Fasi: ogni ultima settimana del blocco = 'scarico'.
-- **PRG-02** divisione settimanale (splitFor / splitPerFrequenza): <=2 giorni Full Body; principiante 3 gg Full Body 3x, 4+ Upper/Lower; intermedio 3 PPL, 4 Upper/Lower x2, 5 PPL+UL, 6 PPL x2; avanzato (stessi schemi per 3-6 gg). Se l'utente sceglie la frequenza (1x, 2x, 3x a settimana per muscolo) si rispetta (Schoenfeld 2019, Ramos-Campo 2024): 1x -> PPL/Upper-Lower + "punti deboli"; 2x -> Upper/Lower/FullBody...; 3x -> Full Body ecc.
+- **PRG-02** divisione settimanale (splitFor / splitPerFrequenza): <=2 giorni Full Body; principiante 3 gg Full Body 3x, 4+ Upper/Lower; intermedio e avanzato 3 Upper/Lower/Full Body (ABB-05; il PPL una volta sola resta per chi sceglie la frequenza 1), 4 Upper/Lower x2, 5 PPL+UL, 6 PPL x2; avanzato (stessi schemi per 3-6 gg). Se l'utente sceglie la frequenza (1x, 2x, 3x a settimana per muscolo) si rispetta (Schoenfeld 2019, Ramos-Campo 2024): 1x -> PPL/Upper-Lower + "punti deboli"; 2x -> Upper/Lower/FullBody...; 3x -> Full Body ecc.
 - **PRG-03** numero di esercizi per seduta (exerciseCountFor): n = floor((minuti - 10) / (serie*(35+recupero multiarticolare)/60)), min 3, max 7. Principiante con poca fiducia (psico) e >3 esercizi: -1.
 
 ### Obiettivi (schemeFor) — serie x ripetizioni, recuperi
@@ -115,7 +115,7 @@ forza 5x5, rec. multi 210 s / iso 90 s, 8 sett. (Robinson 2024, ACSM 2026); mass
 - **PRG-08** con obiettivo forza il primo esercizio pesante e FISSO (niente variazione): la forza e specifica dello strumento.
 - **PRG-09** se l'esercizio migliore non e consentito si registra la sostituzione ("Evito X: uso Y").
 - **PRG-10** allungamento (SCAMBI_ALLUNGAMENTO): dove provato, si scambia la variante (es. pushdown -> estensione sopra la testa, leg curl sdraiato -> seduto, French press -> sopra la testa) se consentita (Maeo 2021-2023).
-- **PRG-11** PHUL: l'intermedio (senza metodo famoso) con upper/lower: la prima seduta e "forza", la seconda "ipertrofia".
+- **PRG-11** PHUL: l'intermedio (senza metodo famoso) con upper/lower: la prima seduta e "forza", la seconda "ipertrofia". Con 3 giorni (Upper / Lower / Full Body) upper e lower sono "forza" e il full body e "ipertrofia": ogni muscolo prova carichi alti e carichi medi.
 
 ### Serie, ripetizioni e recuperi per ogni esercizio
 
@@ -140,7 +140,7 @@ forza 5x5, rec. multi 210 s / iso 90 s, 8 sett. (Robinson 2024, ACSM 2026); mass
 
 - **PRG-25** volume settimanale (serie): VOLUME_LIVELLO principiante 8-10, intermedio 10-14, avanzato 14-20; salute 6-12.
 - **PRG-26** fattore fisico: massa magra bassa (FFMI basso) e non dimagrimento: x1,2; massa magra in calo: x0,85.
-- **PRG-27** esigenza del coach (ESIGENZA_INIZIO): +20% di volume all'inizio, segue l'andamento; =1 se cauto o con un "momento di vita" attivo che riduce volume o aumenta RIR; >=1,15 aggiunge la nota "Coach esigente". <1 riduce min e max.
+- **PRG-27** esigenza del coach (ESIGENZA_INIZIO, ora `esigenzaIniziale`, INT-02): +20% di volume all'inizio solo senza bandiere dalla BIA (100% con una, 95% con due), segue l'andamento; =1 se cauto o con un "momento di vita" attivo che riduce volume o aumenta RIR; >=1,15 aggiunge la nota "Coach esigente". <1 riduce min e max.
 - **PRG-28** conteggio frazionario: 1 serie per il muscolo principale, 0,5 per sinergisti nei multiarticolari (Pelland 2025). Aggiusta le serie (+1 al meno carico, max 5; -1 al piu carico, min 2, senza toccare i "fissi") finche il volume e dentro min-max.
 - **PRG-29** priorita: gruppo prioritario x1,2 (x1,5 se avanzato che specializza); avanzato che specializza: gli altri gruppi min 6, max = vMin.
 - **PRG-30** tetto di 11 serie per muscolo per seduta (si tolgono serie dagli esercizi non fissi, min 2).
@@ -157,12 +157,27 @@ forza 5x5, rec. multi 210 s / iso 90 s, 8 sett. (Robinson 2024, ACSM 2026); mass
 - **PRG-38** avanzati: mesociclo con RIR 3,2,1,0 nelle settimane di carico, 4 nello scarico.
 - **PRG-39** esercizi alternativi scelti dall'utente: sostituiti nello stesso posto, peso di partenza dalla libreria.
 
+### Abbinamenti e struttura professionale (ABB)
+
+Cosa controlla un coach dopo aver scelto gli esercizi. Prove e forza di ogni affermazione: `docs/ricerca-struttura-e-intensita.md`. Codice in `js/coach/programma/struttura-pro.js`, agganciato a `buildProgram`. Le salvaguardie (principianti, over 65, dolore) non cambiano. I metodi famosi (MET) tengono il loro ordine e le loro coppie; la ridondanza (ABB-02) vale per tutti.
+
+- **ABB-01** ordine della seduta (`strOrdina`): prima i multiarticolari (i pesanti col bilanciere davanti alle macchine), poi gli isolamenti dei grandi muscoli, poi quelli dei piccoli (deltoidi, braccia, polpacci), il core sempre in fondo. Il giorno "punti deboli" resta nell'ordine di priorita dell'utente. Motivo: ACSM 2009 (grandi prima dei piccoli, multi prima dei mono); per la forza migliora di piu l'esercizio fatto per primo (Nunes 2021); per la massa l'ordine conta poco.
+- **ABB-02** niente esercizi doppi (`strRidondante`): due esercizi con stesso gruppo, stessa parte del muscolo (SOTTOGRUPPI), stesso tipo e stesso schema fanno lo stesso lavoro, e la seconda panca piana diventa una inclinata. Penalita di 4 punti nella scelta del posto. Fanno eccezione lo squat (macchina dopo il bilanciere: 2) e i glutei multiarticolari (2).
+- **ABB-03** copertura della settimana (`strCopri`): per massa o ricomposizione, non principianti, da 3 giorni: un esercizio per i polpacci se si allenano le gambe, uno per i deltoidi posteriori se ci sono spinte (convenzione dei coach, prove dirette scarse); da 4 giorni anche un curl per il bicipite e un tricipite diretto (studi piccoli: le braccia crescono anche con i soli multiarticolari, l'isolamento sposta la crescita su altre regioni); con 3 giorni o piu e non salute: un esercizio di core a fine seduta (convenzione). Le aggiunte hanno 2-3 serie, `protetto: true` (non si tolgono per il tempo: si tagliano serie agli altri) e fanno crescere la seduta di al massimo due esercizi. Non vale per i metodi "essenziale".
+- **ABB-04** tirate non meno del 90% delle spinte (`strBilancia`): con almeno 8 serie tra spinte e tirate, prima +1 serie alle tirate (al massimo 4, 3 per principianti e over 65), poi -1 alle spinte (minimo 2), infine un esercizio di spinta doppione (lo stesso schema due volte nella stessa seduta: sedute diverse sono la frequenza 2 e non si toccano) diventa una tirata dello stesso tipo di carico (stesso piano se c'e, altrimenti l'altro). Non vale con un metodo famoso. Convenzione dei coach per l'equilibrio delle spalle. Nota alla scheda.
+- **ABB-05** 3 giorni per intermedi e avanzati: Upper / Lower / Full Body invece di Push / Pull / Legs (`splitFor`, onboarding.js). Ogni muscolo 2 volte a settimana (ACSM 2026) e nessun muscolo oltre le circa 11 serie frazionarie in una seduta (Pelland, preprint 2025). Chi sceglie la frequenza 1 tiene il Push / Pull / Legs.
+- **ABB-06** superserie sicure (`strSuperserie`): solo antagonisti (spinta-tirata, petto-schiena, bicipiti-tricipiti, quadricipiti-femorali), adiacenti, mai con un fondamentale pesante, a tempo o di core; gli esercizi si avvicinano nell'ordine senza uscire dal loro gruppo (multiarticolari con multiarticolari, isolamenti con isolamenti). Antagonisti: stesso volume e crescita in circa un terzo di tempo in meno (meta-analisi 2025, 19 studi); coppie dello stesso muscolo: meno volume. Si usano con poco tempo (<=45 minuti), con il "tocco" superserie e con i metodi "superserie" (tranne la Recommended Routine, che ha le sue coppie).
+- **ABB-07** schiena pesante due giorni di fila: se il giorno prima c'era un esercizio di `SCHIENA_PESANTE` o lo stacco rumeno, la scelta dei posti penalizza di 5 punti gli stessi esercizi (convenzione). Non vale con un metodo.
+- **ABB-08** il fondamentale (primo multiarticolare pesante) non ha meno serie degli altri multiarticolari non pesanti della seduta (un secondo fondamentale pesante, come nella forza, ha le sue) (`strFinale`, dopo il taglio del tempo): le serie si spostano (+1 al fondamentale, -1 all'altro, minimo 2), non si aggiungono. Non vale per i "fissi" ne per gli stacchi (ABB-09).
+- **ABB-09** gli stacchi da terra (stacco da terra, sumo, trap bar, good morning) al massimo 3 serie: molta fatica sistemica per lo stimolo che danno (Israetel, Helms: convenzione).
+- **ABB-10** priorita: a parita di tipo, il gruppo prioritario dell'utente per primo (principio della priorita di Arnold; le prestazioni migliorano di piu negli esercizi fatti all'inizio, Nunes 2021).
+
 Uscita: programma con sedute, giorni, note, sostituzioni, fasi, RIR a settimana, seme (ripetibile).
 
 
 ## 6. Metodi famosi e scelta della struttura
 
-- **MET-01** catalogo di 19 metodi (7 non applicabili: solo ispirazione). Tabella estratta dal codice:
+- **MET-01** catalogo di 25 metodi (8 non applicabili: solo ispirazione). Tabella estratta dal codice:
 
 | id | nome | livelli | giorni | intensita | minuti | luoghi | obiettivi | applicabile |
 |---|---|---|---|---|---|---|---|---|
@@ -185,14 +200,39 @@ Uscita: programma con sedute, giorni, note, sostituzioni, fasi, RIR a settimana,
 | kettlebell | Simple & Sinister | principiante/intermedio | 5,6 | media | 20-30 | manubri/corpo | salute/forza | no (solo ispirazione) |
 | gvt | German Volume Training 10×10 | avanzato | 4 | alta | 60-75 | palestra | massa | no (solo ispirazione) |
 | brosplit | Bro split (un muscolo al giorno) | intermedio/avanzato | 5 | alta | 60-90 | palestra | massa | no (solo ispirazione) |
+| goldensix | Golden Six | principiante/intermedio | 3 | media | 45-75 | palestra | massa/forza/ricomposizione/salute | si |
+| park | 5×5 di Reg Park | intermedio | 3 | alta | 60-90 | palestra | forza/massa | si |
+| arnold6 | Arnold: schema a 6 giorni | avanzato | 6 | alta | 60-90 | palestra | massa | si |
+| gironda | Gironda 8×8 | intermedio/avanzato | 3 | alta | 45-75 | palestra | massa/ricomposizione | si |
+| reeves | Steve Reeves | principiante/intermedio | 3 | media | 60-90 | palestra | massa | no (solo ispirazione) |
+| yates | Dorian Yates | avanzato | 4 | alta | 45-75 | palestra | massa | no (solo ispirazione) |
 
-_totale 19 | con tocco: stronglifts->amrap, greyskull->amrap, gzclp->amrap, gbr->isolamenti, hatfield->piramide, redditppl->amrap, minimo->superserie_
+_totale 25 | con tocco: stronglifts->amrap, greyskull->amrap, gzclp->amrap, gbr->isolamenti, hatfield->piramide, redditppl->amrap, minimo->superserie_
 
 - **MET-02** punteggio di un metodo per te (metodiPerTe): luogo non adatto = escluso; livello adatto +3 (altrimenti -4); giorni adatti +2 (altrimenti -1); obiettivo principale adatto +2 (altrimenti -2); minuti disponibili: sotto il minimo del metodo -2, dentro il range (+15) +1; intensita uguale a quella psicologica +2 (se intensita bassa e metodo alto: -4); routine (varieta 0) con metodo rigido +2; chi ama cambiare (varieta>1): +2 con metodi variabili, -1 con quelli senza variazione; fiducia bassa: +2 per metodi flessibili da <=45 minuti, -2 per intensita alta; disagio in palestra: +2 a corpo libero/dose minima, -2 ai metodi con fondamentali pesanti; motivazione "piacere": +1 ai metodi con record/AMRAP; tutto-o-niente: +2 se sedute <=30 min; corpo libero: +3 alla Recommended Routine; "momento di vita": Mantenimento +6/+8 se volume <=0,6/0,5, Dose minima +4, -3 ai metodi ad alta intensita se il volume e ridotto, +1 ai rigidi per chi ha ansia; il metodo del coach +1; non applicabili -1.
 - **MET-03** fattore fisico sulla scelta (sceltaMetodo): massa magra bassa +2 a GBR, Hatfield, Reddit PPL, PHUL; grasso alto +1 a coach/minimo/GBR e -1 ai metodi con pesanti; massa magra in calo -2 ai metodi ad alta intensita.
 - **MET-04** ammissione (metodoAmmesso): applicabile, livello, giorni, luogo, obiettivo, cauto (PAR-Q o over 65) esclude alta intensita; Recommended Routine solo a corpo libero; Mantenimento solo con un periodo di vita a volume <=0,6; Dose minima solo con periodo difficile, <=35 minuti, fiducia bassa o tutto-o-niente; HIT solo con intensita psicologica alta; minuti disponibili almeno il minimo-5.
 - **MET-05** la STRUTTURA cambia solo se un metodo batte chiaramente quello del coach (+2 punti); un secondo metodo (fino a -3 punti dal coach) puo dare un "tocco": AMRAP sull'ultima serie del primo fondamentale, ultimo isolamento da 15-20 (piramide), isolamenti da 12-15, superserie spinte+tirate.
 - **MET-06** cosa decide un metodo applicato: split, numero di esercizi, ricette dei posti, schema (serie, ripetizioni, recuperi, tecniche), superserie, PHUL, luogo. Il programma mostra "da dove ha preso spunto" con i motivi (fino a 3).
+
+### Epoca d'oro: schede, metodi e tecniche (EPO, TEC)
+
+Fonti e giudizio moderno di ogni scheda: `docs/ricerca-struttura-e-intensita.md`, capitolo 2. Codice: `js/coach/metodi-epoca-oro.js` (metodi), `js/dati/schede-epoca-oro.js` (13 sedute pronte, tag "Epoca d'oro", con il giudizio di oggi nella descrizione), `TECNICHE` in `regole-ricerca.js` (tecniche). Come per gli altri metodi, il coach ne tiene la struttura e corregge cio che non regge (voce `attenzione` di ogni metodo).
+
+- **EPO-01** Golden Six (`goldensix`, Reg Park e Arnold): 3 giorni, full body, 6 posti (squat, spinta orizzontale, tirata verticale, spinta verticale, curl, core), serie e ripetizioni 4x10, 3x10, 3x8, 4x10, 3x10, 3x15, pause 120 s sullo squat e 90 s sul resto (60 sul core); il press dietro la nuca e il press normale. Stessa seduta ogni volta (EPO-07). Nessuna aggiunta del coach (`essenziale`).
+- **EPO-02** 5x5 di Reg Park (`park`, intermedi): full body A/B, 3 giorni. A: squat, tirata verticale, spinta orizzontale 5x5 e polpacci 2x15; B: squat, tirata orizzontale, spinta verticale 5x5, stacco 3x5 e polpacci. Pause 180 s. Fondamentali pesanti favoriti (`pesanti`).
+- **EPO-03** Arnold a 6 giorni (`arnold6`, avanzati, 6 giorni): Petto e Schiena / Spalle e Braccia / Gambe, due volte; 4 serie sui fondamentali dei primi quattro posti e 3 sul resto (l'originale ne ha di piu: il coach toglie una serie), 90 s, tecnica "piramide" sui multiarticolari, petto e schiena in superserie (spinta + tirata). Due sedute nuove nelle ricette: `petto-schiena` e `spalle-braccia`.
+- **EPO-04** Gironda 8x8 (`gironda`, intermedi e avanzati, 3 giorni Push / Pull / Legs): un multiarticolare per seduta in 8 serie da 8 con 30 s di pausa e il 70% del carico (`fattoreCarico` 0,7, applicato dopo la stima dai dati del corpo), poi 3 esercizi da 3x12 a 75 s. Mai bilancieri pesanti (`leggeri`): sotto i 60 s di pausa il volume cala e la crescita ne risente un poco (Singer 2024). Tecnica "ottoperotto".
+- **EPO-05** Heavy Duty di Mentzer (metodo `hit`, rivisto): 2 serie (non una: Krieger 2010) al cedimento, 8 ripetizioni per la parte alta e 15 per gambe e glutei (Mentzer: 6-10 e 12-20), pausa 120 s; con 3 giorni split Petto e Schiena / Gambe / Spalle e Braccia, cosi ogni muscolo riposa 7 giorni (Mentzer: 4-7); l'ultimo esercizio non pesante ha "riposo-pausa" (Prestes 2019: stessa crescita, meno tempo). Il fondamentale resta per primo: il pre-affaticamento non da piu crescita (Gentil e altri). Senza aggiunte del coach (`essenziale`). Con un metodo non si applicano le superserie e il drop set del poco tempo.
+- **EPO-06** Reeves e Yates: solo ispirazione (`applicabile: false`) e sedute pronte. Reeves parte dai muscoli piccoli (contro ABB-01); Yates porta tutto al cedimento (le fonti sulle sue serie divergono: 2 di lavoro nel 1987-92, una dopo).
+- **EPO-07** `ripeti`: i metodi con la stessa seduta ogni volta (Golden Six, Park, Arnold, Gironda) non penalizzano l'esercizio gia usato in settimana (-4): ogni giorno uguale ha gli stessi esercizi.
+- **TEC-01** piramide: carico che sale, ripetizioni che scendono (12, 10, 8, 6). Assegnata da `arnold6`; le sedute pronte di Arnold la portano. Non e tra le tecniche al cedimento.
+- **TEC-02** negative: l'ultima serie scende in 4-5 secondi con un compagno che aiuta a salire. Il sovraccarico eccentrico da un piccolo vantaggio sulla massa (Schoenfeld 2017; ACSM 2026). Solo testo: nessun metodo la assegna da solo.
+- **TEC-03** ripetizioni forzate: un compagno aiuta per 1-2 ripetizioni oltre il cedimento, su panca o macchine. Solo testo.
+- **TEC-04** riposo-pausa: al cedimento 15 secondi e ancora qualche ripetizione, due volte. Assegnata al `hit` sull'ultimo esercizio non pesante e di non-core; le sedute di Mentzer la portano.
+- **TEC-05** contrazione di picco: 2 secondi di stretta in cima a ogni ripetizione. Solo testo.
+- **TEC-06** Gironda 8x8 (`ottoperotto`): 8 serie da 8, 30 secondi, circa il 70% del carico delle 8 ripetizioni.
+- **TEC-07** le tecniche al cedimento (negative, forzate, riposo-pausa, oltre a drop, AMRAP, parziali e calibrazione) contano per il tetto di RIC-04: al massimo una per seduta, nessuna in scarico o con prontezza sotto 50.
 
 Attenzione: nel motore dei carichi (caricoProssimo) non ho trovato diramazioni per metodo: le regole di progressione descritte nei metodi (es. Starting Strength "+2,5 kg a ogni seduta; due mancate = -5%", StrongLifts "mancato piu volte = -10%", GZCLP "6x2, poi 10x1") sono "come" testuali; la progressione reale e quella unica di G.
 
@@ -347,9 +387,19 @@ Soglie di "grasso alto" ripetute altrove con valori DIVERSI: analisi BIA donne 3
 ### Esigenza del coach
 
 
-- **ESI-01** parte al 120% (piu volume dentro il range del livello, un RIR in meno su macchine e isolamenti); limiti 90-130%; si corregge ogni settimana (aggiornaEsigenza, si calcola il lunedi per la settimana precedente).
+- **ESI-01** parte al 120% senza bandiere dalla BIA, al 100% con una e al 95% con due (INT-02); a 120% piu volume dentro il range del livello e un RIR in meno su macchine e isolamenti; limiti 90-130%; si corregge ogni settimana (aggiornaEsigenza, si calcola il lunedi per la settimana precedente).
 - **ESI-02** variazioni settimanali: aderenza <70% (sedute fatte / giorni previsti): -10%; RPE medio sopra il bersaglio di almeno 1 (con >=3 serie con RPE): -5%; altrimenti prontezza media <50: -5%; altrimenti serie facili (RPE <= bersaglio-1, tutte le serie fatte, >=3 con RPE, nessun altro calo): +5%; dolore che non passa nella settimana: -10%.
 - **ESI-03** esclusi (esigenza = 100%): modalita prudente (PAR-Q), over 65, "momento di vita" attivo che riduce volume o aumenta RIR.
+
+### Intensita dal corpo e dalle prime sedute (INT)
+
+Il coach non parte piu da un +20% uguale per tutti. Prove e limiti: `docs/ricerca-struttura-e-intensita.md`, capitolo 1.3. Codice: `js/coach/intensita.js`. Parametri in `PARAM_INTENSITA`. Nessuno studio dice di prescrivere i carichi dalla BIA: angolo di fase e ECW/TBW sono **bandiere di prudenza** e dicono se la lettura e affidabile.
+
+- **INT-01** stato del corpo dalla BIA (`statoBia`): angolo di fase basso = sotto la media di eta e sesso di piu di 1,3 gradi (circa il 5 percentile, riferimenti a 50 kHz di Bosy-Westphal 2006, interpolati sopra i 50 anni) o sotto 5,04 uomini / 4,20 donne (soglia dove la funzione fisica peggiora, OR 3,07: molto basso); ECW/TBW da 0,40 in su = acqua extracellulare alta (normale 0,36-0,39; da 0,39 a 0,40 solo una nota sul modo di misurare). Livello di prudenza = numero di bandiere (angolo basso 1, molto basso 2, ECW alto 1; massimo 2). Valori fuori scala (angolo fuori 2-12, rapporto fuori 0,3-0,5) si ignorano. Le note spiegano numeri, limite e che non e una diagnosi, e consigliano di ripetere la BIA a digiuno e a riposo.
+- **INT-02** esigenza di partenza (`esigenzaIniziale`): 120% senza bandiere, 100% con una, 95% con due. Si usa alla creazione del programma e quando il profilo non ha ancora un'esigenza. Non cambia per cauto, over 65 o periodi difficili (ESI-03).
+- **INT-03** con due bandiere (livello 2) una ripetizione in riserva in piu su tutti gli esercizi (`rirExtraIntensita`, usata da `rirBersaglio`). Motivo: le stime di RIR sbagliano gia di circa una ripetizione, per difetto (Halperin 2022; Refalo 2023).
+- **INT-04** prima volta con un esercizio (nessuna seduta in storico, spegnibile): una serie in meno (minimo 2) e una ripetizione in riserva in piu. Motivo: le prime sedute fanno piu indolenzimento (effetto della seduta ripetuta) e il carico di partenza e una stima (PAR-01..05). Il carico si corregge piu in fretta con CAR-16 e CAR-17.
+- **INT-05** bilancio delle prime due sedute del programma (spegnibile, `bilancioPrimeSedute`, chiamato a fine seduta): con le prime due sedute registrate dall'inizio del programma, confronta serie fatte, sforzo (RPE rispetto al bersaglio) e prontezza. Meno del 75% delle serie fatte, o RPE medio di almeno 1 sopra il bersaglio, o prontezza sotto 50 (-5 invece di -10): esigenza -10 punti. Almeno il 95% delle serie fatte e RPE medio di almeno 1,5 sotto: +10 punti. Altrimenti resta. Limiti 90-130%. Si fa una volta per programma e il lunedi la correzione settimanale (ESI-02) non conta due volte lo sforzo e la prontezza della stessa settimana. Mostra un messaggio breve.
 
 
 ## 12. Chi hai davanti: psicologia e momenti di vita
@@ -445,7 +495,12 @@ Le regole non leggono una scheda unica per esercizio: la stessa conoscenza ("qua
 
 | Tabella | Riga | Cosa contiene |
 |---|---|---|
-| `EXERCISE_LIBRARY` | 3338 | 114 esercizi: gruppo, tipo, serie/ripetizioni/peso/recupero di partenza |
+| `EXERCISE_LIBRARY` | 3338 | 139 esercizi: gruppo, tipo, serie/ripetizioni/peso/recupero di partenza |
+| `DETTAGLI` (js/dati/dettagli-esercizi.js) | — | una riga per esercizio: sezione (macchinari e cavi, pesi liberi, corpo libero), attrezzo, presa o attacco, sottogruppo, focus, muscoli secondari e la nota sul perche l'attacco conta (con la fonte). La sezione deve combaciare con `attrezzoDi`: lo controlla `tests/browser/dettagli-esercizi.js` |
+| `SOTTOGRUPPI` | — | le parti di ogni gruppo muscolare (per esempio schiena: dorsali larghezza, spessore, lombari): ordinano gli elenchi e dicono cosa copre una seduta |
+| `NOTE_ATTACCO` | — | 13 note su presa e attacco (rematore seduto, pulldown, pushdown, curl ai cavi, croci, leg extension, pressa, calf, leg curl...), con le prove EMG e la loro forza |
+| `TECNICA` + `schede-varianti.js` | — | le varianti (presa o attacco diversi) riprendono passi ed errori dell'esercizio base e cambiano partenza, muscoli e consiglio |
+| `WORKOUT_TEMPLATES` + `schede-epoca-oro.js` | — | 8 sedute pronte classiche (push, pull, legs, upper, lower, full body, glutei, core) e 13 sedute dell'epoca d'oro (Golden Six, Park A/B, Arnold, Mentzer, Yates, Reeves) con il giudizio di oggi nella descrizione |
 | `MUSCLE_GROUPS` | 3328 | 7 gruppi: antagonisti e sinergisti |
 | `attrezzoDi` | 8802 | attrezzo (bilanciere, manubri, macchine, corpo) dal nome, con regex |
 | `RISCHIO` | 8812 | esercizi a rischio per spalle, ginocchia, schiena (fastidi dichiarati) |
@@ -494,7 +549,7 @@ Elenco in ordine di importanza. Sono fatti letti nel codice, non ancora corretti
 
 ## 19. Regole aggiunte dalla ricerca (RIC)
 
-Cinque regole nuove, ognuna spegnibile (`regolaAttiva`, vedi `js/coach/parametri.js`), con il motivo scritto nella nota dell'esercizio. Non toccano le salvaguardie: modalità prudente, over 65, principianti, dolore e scarico hanno la precedenza (le regole RIC-01 e RIC-02 non scattano per loro). Codice in `js/coach/regole-nuove.js` e, per RIC-03, in `js/coach/programma/schemi.js`.
+Cinque regole nuove, ognuna spegnibile (`regolaAttiva`, vedi `js/coach/parametri.js`; spegnibili anche INT-04 e INT-05), con il motivo scritto nella nota dell'esercizio. Non toccano le salvaguardie: modalità prudente, over 65, principianti, dolore e scarico hanno la precedenza (le regole RIC-01 e RIC-02 non scattano per loro). Codice in `js/coach/regole-nuove.js` e, per RIC-03, in `js/coach/programma/schemi.js`.
 
 - **RIC-01** serie in più nelle settimane centrali del blocco (Pelland 2025, Bell 2024): in una settimana di carico che non è né la prima né l'ultima prima dello scarico, +1 serie (massimo 5) sugli esercizi dei muscoli prioritari, se la prontezza media delle ultime due sedute registrate è almeno 70 (o non c'è alcun dato). Con lo scarico si torna alle serie del programma.
 - **RIC-02** pausa prima di abbassare il carico (Singer 2024): se nell'ultima seduta tutte le serie tranne l'ultima erano complete (almeno 3 serie) e il carico resta fermo, +45 secondi di pausa. Prima lo faceva solo il principiante (+30).
@@ -508,6 +563,9 @@ Cinque regole nuove, ognuna spegnibile (`regolaAttiva`, vedi `js/coach/parametri
 |---|---|
 | Suggerimento del prossimo esercizio (SUG) | `js/coach/suggeritore.js` |
 | Costruzione del programma (PRG, MET, PRZ) | `js/coach/programma/motore.js`, `schemi.js`, `ricette.js` (contiene `buildProgram`), `alternative.js`, `archivio.js` |
+| Abbinamenti e struttura professionale (ABB) | `js/coach/programma/struttura-pro.js` (ABB-05 in `splitFor`, `js/ui/onboarding.js`) |
+| Intensita dal corpo e dalle prime sedute (INT) | `js/coach/intensita.js` |
+| Metodi e schede dell'epoca d'oro (EPO, TEC) | `js/coach/metodi-epoca-oro.js`, `js/dati/schede-epoca-oro.js`, `TECNICHE` in `js/coach/regole-ricerca.js` |
 | Carichi (CAR) | `js/coach/carichi/progressivo.js`, `partenza.js` |
 | Questionario e decisioni (DEC, STR) | `js/coach/questionario-decisioni.js` |
 | Prontezza, «mi sento male», dolore (PAR, LIV, DOL) | `js/coach/prontezza.js`, `mi-sento-male.js`, `dolore-mattina.js` |

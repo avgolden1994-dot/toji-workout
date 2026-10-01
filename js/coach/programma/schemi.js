@@ -12,7 +12,7 @@ const SCHEMI_MOV = [
   ['hinge', /stacco|good morning|hip thrust|ponte glutei|hyperextension/i, 'Hinge'],
   ['spintaO', /panca (piana|inclinata|declinata)|chest press|piegamenti|dip alle/i, 'Spinta orizzontale'],
   ['tirataO', /rematore|t-bar|pulley basso/i, 'Tirata orizzontale'],
-  ['spintaV', /military|lento avanti|arnold|shoulder press/i, 'Spinta verticale'],
+  ['spintaV', /military|lento avanti|arnold|shoulder press|pike push/i, 'Spinta verticale'],
   ['tirataV', /trazioni|lat machine/i, 'Tirata verticale']
 ];
 function schemaDi(nome) { const n = senzaEmoji(nome); if (/curl|croci|french|estensione|alzate|y-raise|kickback/i.test(n)) return null; const x = SCHEMI_MOV.find(sc => sc[1].test(n)); return x ? x[0] : null; }

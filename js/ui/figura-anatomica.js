@@ -79,8 +79,12 @@ function renderBodyMap(active, loads) {
    Le regolazioni si fanno il giorno dell'allenamento. */
 const DEFAULT_SETS = 3;
 const DEFAULT_REPS = 10;
-const REPS_MIN = 6;
+const REPS_MIN = 3;       /* con un carico: dalle 3 ripetizioni di forza alle 20 di resistenza (il coach prescrive anche 3x5 e 5x3) */
 const REPS_MAX = 20;
+/* corpo libero: dipende dalla corporatura. Chi pesa molto o e alle prime trazioni ne fa 1 o 2, chi e leggero e forte
+   ne fa 25. Per questo il minimo e 1 e il massimo sale. */
+const REPS_MIN_CORPO = 1;
+const REPS_MAX_CORPO = 30;
 
 /* Eccezione onesta: gli isometrici si misurano in secondi, non in ripetizioni
    (un plank da 10 "reps" non vuol dire niente). Per loro la scala e' piu ampia. */
@@ -94,8 +98,11 @@ window.isTimeBased = function(name) {
 window.perLato = function(name) { const m = findExercise(name); return !!(m && m.lato); };
 /* corpo libero: niente kg, al massimo una zavorra */
 window.corpoLibero = function(name) { const m = findExercise(name); return !!m && !m.weight && attrezzoDi(name) === 'corpo'; };
+/* trazioni e dip a corpo libero, e le trazioni assistite alla macchina (il carico e il proprio corpo meno l aiuto) */
+window.repsCorporatura = function(name) { return corpoLibero(name) || /assistit/i.test(String(name)); };
 window.repsRange = function(name) {
-  return isTimeBased(name) ? { min: TIME_MIN, max: TIME_MAX } : { min: REPS_MIN, max: REPS_MAX };
+  if (isTimeBased(name)) return { min: TIME_MIN, max: TIME_MAX };
+  return repsCorporatura(name) ? { min: REPS_MIN_CORPO, max: REPS_MAX_CORPO } : { min: REPS_MIN, max: REPS_MAX };
 };
 window.defaultRepsFor = function(name) {
   const m = findExercise(name);

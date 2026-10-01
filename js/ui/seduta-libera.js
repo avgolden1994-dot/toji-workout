@@ -27,6 +27,7 @@ let liberaSel = [], liberaTipo = 'libera', liberaFiltro = 'tutti', liberaCerca =
 window.apriSedutaLibera = function(tipo) {
   liberaTipo = tipo || 'libera';
   liberaSel = []; liberaFiltro = 'tutti'; liberaCerca = '';
+  azzeraSezioniEsercizi('libera');
   if (liberaTipo === 'passata') { const d = new Date(); d.setDate(d.getDate() - 1); d.setHours(18, 0, 0, 0); liberaQuando = d.getTime(); }
   renderSedutaLibera();
 };
@@ -83,12 +84,19 @@ function renderSedutaLibera() {
 }
 function htmlListaLibera(lista) {
   if (!lista.length) return '<div class="sr-row sr-static"><span class="sr-name"><small>Nessun esercizio con questo filtro</small></span></div>';
-  return lista.map(e => {
-    const on = liberaSel.indexOf(e.name) !== -1;
-    return '<button class="sr-row" onclick="liberaToggle(' + JSON.stringify(e.name).replace(/"/g, '&quot;') + ')" aria-pressed="' + on + '">' +
-      '<span class="og-exfig">' + muscleFigure(e.group) + '</span><span class="sr-name">' + escapeHtml(senzaEmoji(e.name)) + '<small>' + MUSCLE_GROUPS[e.group].label + (e.lato ? ' • per lato' : '') + '</small></span>' +
-      '<span class="sr-check">' + (on ? '✓' : '') + '</span></button>';
-  }).join('');
+  /* organizzata come tutti gli elenchi: macchinari e cavi, pesi liberi, corpo libero; poi gruppo e sottogruppo.
+     Con una ricerca o un filtro attivo le sezioni restano aperte */
+  return htmlEserciziOrganizzati(lista, {
+    ctx: 'libera', presente: ex => liberaSel.indexOf(ex.name) !== -1, mostraGruppi: true, tuttoAperto: !!liberaCerca || liberaFiltro !== 'tutti',
+    riga: e => {
+      const on = liberaSel.indexOf(e.name) !== -1, d = dettaglioEsercizio(e.name);
+      return '<button class="sr-row" onclick="liberaToggle(' + JSON.stringify(e.name).replace(/"/g, '&quot;') + ')" aria-pressed="' + on + '">' +
+        '<span class="og-exfig">' + muscleFigure(e.group) + '</span><span class="sr-name">' + escapeHtml(senzaEmoji(e.name)) +
+        '<small>' + MUSCLE_GROUPS[e.group].label + (e.lato ? ' \u2022 per lato' : '') + (d ? ' \u2022 ' + escapeHtml(etichettaAttrezzo(e.name)) : '') + '</small>' +
+        (d ? '<small class="sr-focus"><span>Focus</span>: ' + escapeHtml(d.focus) + '</small>' : '') + '</span>' +
+        '<span class="sr-check">' + (on ? '✓' : '') + '</span></button>';
+    }
+  });
 }
 window.renderListaLibera = function() {
   const box = document.getElementById('lib-lista');

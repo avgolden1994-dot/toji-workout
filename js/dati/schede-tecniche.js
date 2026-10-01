@@ -48,6 +48,24 @@ function schedaTecnica(name, info) {
       t.x.map(x => '<li>' + escapeHtml(x) + '</li>').join('') + '</ul></div>' +
     '<div class="ex-cue"><b>Il consiglio del coach</b>' + escapeHtml(t.c) + '</div>' + preferenzaEsercizio(name);
 }
+/* Attrezzo, presa o attacco, focus e le altre prese dello stesso movimento */
+function htmlDettaglioScheda(name) {
+  const d = dettaglioEsercizio(name), m = findExercise(name);
+  if (!d) return '';
+  const sez = (SEZIONI_ESERCIZI.find(x => x[0] === d.sez) || ['', ''])[1];
+  const varianti = variantiEsercizio(name);
+  return '<div class="ex-block ex-det"><div class="ex-block-title">Attrezzo e focus</div>' +
+    '<div class="res-line"><span>Dove</span><b>' + escapeHtml(sez) + '</b></div>' +
+    '<div class="res-line"><span>Attrezzo</span><b>' + escapeHtml(d.att) + '</b></div>' +
+    (d.attacco ? '<div class="res-line"><span>Presa o attacco</span><b>' + escapeHtml(d.attacco) + '</b></div>' : '') +
+    '<div class="res-line"><span>Tipo</span><b>' + (m && m.type === 'compound' ? 'multiarticolare' : 'isolamento') + '</b></div>' +
+    '<div class="res-line"><span>Focus</span><b>' + escapeHtml(d.focus) + '</b></div>' +
+    (d.sec ? '<div class="res-line"><span>Secondari</span><b>' + escapeHtml(d.sec) + '</b></div>' : '') +
+    (d.nota ? '<div class="ex-note-att">' + escapeHtml(d.nota) + '</div>' : '') +
+    (varianti.length ? '<div class="ex-block-title ex-var-t">Altre prese e attacchi</div><div class="ex-var">' +
+      varianti.map(v => '<button type="button" class="ex-var-b" onclick="openExerciseInfo(\'' + jsArg(v.name) + '\', \'come\')">' + escapeHtml(senzaEmoji(v.name)) + '</button>').join('') + '</div>' : '') +
+    '</div>';
+}
 function pausaConsigliata(nome) { const t = tipoCarico(nome); return t === 'pesante' ? '2–3 min (forza 3–5)' : (t === 'macchina' ? '1,5–2 min' : '60–90 s'); }
 function preferenzaEsercizio(name) {
   const sch = schemaDi(name), sc = sch ? SCHEMI_MOV.find(x => x[0] === sch)[2] : null;
@@ -119,6 +137,7 @@ window.openExerciseInfo = function(name, tab) {
     '<div id="ex-pane-come" class="ex-pane">' +
     '<div class="ex-draw-wrap">' + disegno + '</div>' +
     '<div class="ex-pattern">Schema: ' + escapeHtml(info.nome) + '</div>' +
+    htmlDettaglioScheda(name) +
     schedaTecnica(name, info) +
     '<a class="ex-video" href="' + videoLinkFor(name) + '" target="_blank" rel="noopener noreferrer">\u25B6 ' +
       (verificato ? 'Guarda il video tutorial' : 'Cerca un video su YouTube') + '</a>' +

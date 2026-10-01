@@ -324,11 +324,11 @@ const PATTERN_INFO = {
 
 /* Ogni esercizio della libreria ricondotto al suo schema */
 const PATTERN_RULES = [
-  [/leg press|leg extension|leg curl|hack squat|pectoral|chest press|shoulder press|abductor|lat machine|pulley|pushdown|croci ai cavi|crunch al cavo|kickback ai cavi|curl ai cavi/i, 'machine'],
+  [/leg press|leg extension|leg curl|hack squat|pectoral|chest press|shoulder press|abductor|adductor|lat machine|pulley|pushdown|croci ai cavi|crunch al cavo|kickback ai cavi|curl ai cavi|dip alla macchina/i, 'machine'],
   [/squat|goblet/i, 'squat'],
   [/stacco|good morning/i, 'hinge'],
   [/panca|piegamenti|dip|croci|pullover/i, 'pushH'],
-  [/military|lento avanti|arnold|tirate al mento/i, 'pushV'],
+  [/military|lento avanti|arnold|tirate al mento|pike/i, 'pushV'],
   [/trazioni|chin/i, 'pullV'],
   [/rematore|t-bar|hyperextension/i, 'pullH'],
   [/affondi|step-up/i, 'lunge'],
@@ -337,7 +337,7 @@ const PATTERN_RULES = [
   [/french press|panca presa stretta|dip su panca|kickback/i, 'ext'],
   [/alzate|face pull|scrollate/i, 'raise'],
   [/plank|hollow/i, 'coreStatic'],
-  [/crunch|leg raise|russian|mountain|ab wheel/i, 'coreFlex'],
+  [/crunch|leg raise|russian|mountain|ab wheel|woodchop|sit-up/i, 'coreFlex'],
   [/calf/i, 'calf']
 ];
 
@@ -358,8 +358,20 @@ const VIDEO_VERIFICATI = {
 };
 const VIDEO_PLAYLIST = 'https://www.youtube.com/playlist?list=PLP3v68UxbrjAchVp8RRso71h5Dx9LBOH5';
 
+/* La ricerca porta il nome nella lingua dell app, il nome inglese (e quello con piu video) e, se l esercizio ha un
+   attacco o una presa (il cavo con triangolo, barra o corda non e lo stesso esercizio), anche quelli. */
+window.testoRicercaVideo = function(name) {
+  const pulito = String(name).replace(EMOJI_TESTA, '');
+  const d = typeof dettaglioEsercizio === 'function' ? dettaglioEsercizio(name) : null;
+  const l = typeof lingua === 'function' ? lingua() : 'it';
+  const nome = l === 'it' ? pulito : String(window.tr(pulito));
+  const en = (window.I18N && I18N.en && I18N.en[pulito]) || '';
+  const parole = { it: 'tecnica esecuzione', en: 'proper form tutorial', es: 'técnica ejecución', de: 'Technik Ausführung' };
+  const att = d ? [d.att, d.attacco].filter(Boolean).map(x => l === 'it' ? x : String(window.tr(x))) : [];
+  const q = [nome].concat(en && en !== nome ? [en] : [], att, [parole[l] || parole.en]).join(' ');
+  return q.replace(/[(),·]/g, ' ').replace(/\s+/g, ' ').trim();
+};
 window.videoLinkFor = function(name) {
   if (VIDEO_VERIFICATI[name]) return VIDEO_VERIFICATI[name];
-  const q = encodeURIComponent(String(name).replace(EMOJI_TESTA, '') + ' tecnica esecuzione tutorial');
-  return 'https://www.youtube.com/results?search_query=' + q;
+  return 'https://www.youtube.com/results?search_query=' + encodeURIComponent(testoRicercaVideo(name));
 };
