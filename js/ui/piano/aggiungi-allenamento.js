@@ -157,7 +157,7 @@ function renderAddWeek() {
         const lista = EXERCISE_LIBRARY.filter(e => e.group === g)
           .sort((a, b) => (a.type === b.type ? 0 : (a.type === 'compound' ? -1 : 1)));
         html += lista.map(ex => pickRow(ex, awCustom.indexOf(ex.name) !== -1,
-          'awToggleCustom(\'' + ex.name.replace(/'/g, "\\'") + '\')')).join('');
+          'awToggleCustom(\'' + jsArg(ex.name) + '\')')).join('');
       });
     } else {
       html += '<div class="aw-warn">Tocca uno o più gruppi per vedere i loro esercizi.</div>';
@@ -423,7 +423,7 @@ function renderPiano() {
             ${e.note ? `<div class="plan-note">\u{1F4DD} ${escapeHtml(e.note)}</div>` : ''}
           </div>
           <div class="plan-card-actions">
-            <button class="plan-icon-btn" onclick="openExerciseInfo('${e.name.replace(/'/g, "\\'")}')" title="Come si fa" aria-label="Come si fa">ℹ</button>
+            <button class="plan-icon-btn" onclick="openExerciseInfo('${jsArg(e.name)}')" title="Come si fa" aria-label="Come si fa">ℹ</button>
             <button class="plan-icon-btn" onclick="toggleSuperset(${idx})" title="Superset col precedente" aria-label="Superset">\u26D3</button>
             <button class="plan-icon-btn" onclick="duplicateExercise(${idx})" title="Duplica" aria-label="Duplica">\u29C9</button>
             <button class="plan-icon-btn" onclick="startEditExercise(${idx})" title="Modifica" aria-label="Modifica">\u270E</button>

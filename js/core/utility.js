@@ -7,6 +7,25 @@
 function escapeHtml(str) {
   return String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
+/* Sicurezza dei testi che arrivano da fuori (backup, CSV, testo incollato).
+   nomeSicuro: toglie i caratteri che servono a iniettare codice nell HTML. */
+function nomeSicuro(n) {
+  return String(n == null ? '' : n).replace(/[<>"`\\\u0000-\u001f\u007f]/g, '').trim().slice(0, 120);
+}
+/* pulisciDeep: applica nomeSicuro-leggero (via < e >) a ogni testo di un dato JSON */
+function pulisciDeep(v, prof) {
+  if ((prof || 0) > 12) return null;
+  if (typeof v === 'string') return v.replace(/[<>]/g, '');
+  if (Array.isArray(v)) return v.map(x => pulisciDeep(x, (prof || 0) + 1));
+  if (v && typeof v === 'object') {
+    const o = {};
+    Object.keys(v).forEach(k => { if (k !== '__proto__' && k !== 'constructor' && k !== 'prototype') o[k.replace(/[<>]/g, '')] = pulisciDeep(v[k], (prof || 0) + 1); });
+    return o;
+  }
+  return v;
+}
+/* jsArg: un testo da mettere tra apici dentro un onclick="..." (prima si protegge per JS, poi per HTML) */
+function jsArg(s) { return escapeHtml(String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/[\u0000-\u001f]/g, ' ')); }
 function formatMMSS(totalSeconds) {
   const s = Math.max(0, Math.round(totalSeconds));
   const m = Math.floor(s / 60);

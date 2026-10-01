@@ -154,7 +154,7 @@ function nomeDaEstero(n) {
   const nostro = nomeInLibreria(pulito);
   if (nostro) return nostro;
   const a = ALIAS_ESTERI.find(x => x[0].test(pulito));
-  return (a && nomeInLibreria(a[1])) || pulito;
+  return (a && nomeInLibreria(a[1])) || nomeSicuro(pulito);
 }
 function leggiExport(testo) {
   const righe = leggiCSV(testo);
@@ -201,10 +201,10 @@ function leggiExport(testo) {
 function sedutaImportata(s, origine) {
   const giorno = DAYS[(s.quando.getDay() + 6) % 7];
   return {
-    id: s.quando.getTime(), day: giorno, date: dataOra(s.quando), titolo: s.titolo || origine, importata: origine,
+    id: s.quando.getTime(), day: giorno, date: dataOra(s.quando), titolo: nomeSicuro(s.titolo || origine), importata: nomeSicuro(origine),
     berserk: s.es.some(e => e.sets.some(x => x.wasBerserk)), skipped: 0,
-    sessione: s.es.map(e => ({ name: e.name, rest: 0, sets: e.sets, riscaldamento: [], extra: e.extra.length ? e.extra : undefined })),
-    exercises: s.es.map(e => ({ name: e.name, weight: e.sets.length ? e.sets[e.sets.length - 1].weight : 0, totalSets: e.sets.length, doneSets: e.sets.length, wasBerserk: e.sets.some(x => x.wasBerserk) }))
+    sessione: s.es.map(e => ({ name: nomeSicuro(e.name), rest: 0, sets: e.sets, riscaldamento: [], extra: e.extra.length ? e.extra : undefined })),
+    exercises: s.es.map(e => ({ name: nomeSicuro(e.name), weight: e.sets.length ? e.sets[e.sets.length - 1].weight : 0, totalSets: e.sets.length, doneSets: e.sets.length, wasBerserk: e.sets.some(x => x.wasBerserk) }))
   };
 }
 window.importaCSV = function() {

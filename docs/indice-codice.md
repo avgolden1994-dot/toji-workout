@@ -89,7 +89,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 20. `js/core/utility.js` — Utility
 
-`escapeHtml()` · `formatMMSS()` · `formatNow()` · `handleSelectExercise()` · `audioCtx` · `getAudioCtx()`
+`escapeHtml()` · `nomeSicuro()` · `pulisciDeep()` · `jsArg()` · `formatMMSS()` · `formatNow()` · `handleSelectExercise()` · `audioCtx` · `getAudioCtx()`
 
 ### 21. `js/core/audio-silenzioso.js` — Suono con il telefono in silenzioso
 
@@ -323,7 +323,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 72. `js/core/backup.js` — Backup e ripristino
 
-`CHIAVI_APP` · `CHIAVI_TEMPORANEE` · `chiaviApp()` · `fotografia()` · `window.esportaBackup()` · `contaAllenamenti()` · `window.ripristinaBackup()` · `applicaFotografia()` · `ricaricaApp()` · `window.confermaRipristino()`
+`CHIAVI_APP` · `CHIAVI_TEMPORANEE` · `CHIAVI_NON_RIPRISTINABILI` · `valorePulito()` · `chiaviApp()` · `fotografia()` · `window.esportaBackup()` · `contaAllenamenti()` · `window.ripristinaBackup()` · `applicaFotografia()` · `ricaricaApp()` · `window.confermaRipristino()`
 
 ## js/ui
 
