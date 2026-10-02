@@ -1,0 +1,9 @@
+# graphify: solo l app (js, css, tests, tools, docs); le skill di terzi e le immagini no
+.agents/
+agent/
+.claude/
+esercizi/
+node_modules/
+skills-lock.json
+package-lock.json
+*.png
