@@ -1,0 +1,376 @@
+# Inventario esercizi e immagini
+
+Generato con uno script node che legge `EXERCISE_LIBRARY` (`js/dati/libreria-esercizi.js`) e la mappa `IMMAGINI_ESERCIZI` (`js/dati/disegni-esercizi.js`), poi controlla il disco. Ramo: `claude/immagini-esercizi`.
+
+## 1. Riepilogo numeri
+
+| Voce | Valore |
+|---|---|
+| Esercizi nel catalogo (`EXERCISE_LIBRARY`) | 139 |
+| Con immagine (campo presente e file esistente) | 9 |
+| Senza immagine | 130 |
+| File in `esercizi/` | 10 (tutti SVG) |
+| File orfani (non referenziati) | 1 (`ex-02-panca-inclinata-su-a.svg`) |
+| Peso totale `esercizi/` | 426.0 KB |
+| Peso medio per file | 42.6 KB |
+
+Copertura per gruppo muscolare:
+
+| Gruppo | Esercizi | Con immagine | Senza |
+|---|---|---|---|
+| Petto | 17 | 9 | 8 |
+| Schiena | 23 | 0 | 23 |
+| Gambe | 24 | 0 | 24 |
+| Glutei | 15 | 0 | 15 |
+| Spalle | 16 | 0 | 16 |
+| Braccia | 26 | 0 | 26 |
+| Core | 18 | 0 | 18 |
+
+Note: gli esercizi usati in `schede-*.js` e le chiavi di `DETTAGLI` (139) coincidono con la libreria: nessun esercizio fuori catalogo. `tools/genera-catalogo.js` NON riguarda gli esercizi: genera il catalogo delle regole del coach da `docs/coach-mappa-regole.md`.
+
+## 2. Tabella completa
+
+Il nome e' mostrato senza emoji iniziale. Percorso `img/<slug>.png` e' il ripiego di `immagineEsercizio()` quando non c'e' una voce in `IMMAGINI_ESERCIZI` (la cartella `img/` non esiste).
+
+| # | Esercizio | Gruppo | Percorso immagine |
+|---|---|---|---|
+| 1 | Panca Piana Bilanciere | Petto | `esercizi/ex-01-panca-piana.svg` |
+| 2 | Panca Inclinata Bilanciere | Petto | `esercizi/ex-02-panca-inclinata.svg` |
+| 3 | Panca Inclinata Manubri | Petto | `esercizi/ex-03-panca-inclinata-manubri.svg` |
+| 4 | Panca Declinata | Petto | `esercizi/ex-04-panca-declinata.svg` |
+| 5 | Chest Press Machine | Petto | `esercizi/ex-05-chest-press.svg` |
+| 6 | Dip alle Parallele | Petto | `esercizi/ex-06-dip-parallele.svg` |
+| 7 | Piegamenti a Terra (Push-up) | Petto | `esercizi/ex-07-push-up.svg` |
+| 8 | Croci ai Cavi | Petto | `esercizi/ex-08-croci-cavi.svg` |
+| 9 | Croci su Panca Manubri | Petto | `esercizi/ex-09-croci-panca-manubri.svg` |
+| 10 | Pectoral Machine (Butterfly) | Petto | nessuna (ripiego inesistente `img/pectoral-machine.png`) |
+| 11 | Pullover con Manubrio | Petto | nessuna (ripiego inesistente `img/pullover-con-manubrio.png`) |
+| 12 | Stacco da Terra (Deadlift) | Schiena | nessuna (ripiego inesistente `img/stacco-da-terra.png`) |
+| 13 | Trazioni alla Sbarra (Pull-ups) | Schiena | nessuna (ripiego inesistente `img/trazioni-alla-sbarra.png`) |
+| 14 | Trazioni Presa Inversa (Chin-up) | Schiena | nessuna (ripiego inesistente `img/trazioni-presa-inversa.png`) |
+| 15 | Lat Machine | Schiena | nessuna (ripiego inesistente `img/lat-machine.png`) |
+| 16 | Lat Machine Presa Inversa | Schiena | nessuna (ripiego inesistente `img/lat-machine-presa-inversa.png`) |
+| 17 | Rematore con Bilanciere | Schiena | nessuna (ripiego inesistente `img/rematore-con-bilanciere.png`) |
+| 18 | Rematore con Manubrio | Schiena | nessuna (ripiego inesistente `img/rematore-con-manubrio.png`) |
+| 19 | T-Bar Row | Schiena | nessuna (ripiego inesistente `img/t-bar-row.png`) |
+| 20 | Pulley Basso | Schiena | nessuna (ripiego inesistente `img/pulley-basso.png`) |
+| 21 | Pullover ai Cavi | Schiena | nessuna (ripiego inesistente `img/pullover-ai-cavi.png`) |
+| 22 | Hyperextension (Lombari) | Schiena | nessuna (ripiego inesistente `img/hyperextension.png`) |
+| 23 | Squat con Bilanciere | Gambe | nessuna (ripiego inesistente `img/squat-con-bilanciere.png`) |
+| 24 | Front Squat | Gambe | nessuna (ripiego inesistente `img/front-squat.png`) |
+| 25 | Goblet Squat | Gambe | nessuna (ripiego inesistente `img/goblet-squat.png`) |
+| 26 | Hack Squat | Gambe | nessuna (ripiego inesistente `img/hack-squat.png`) |
+| 27 | Leg Press | Gambe | nessuna (ripiego inesistente `img/leg-press.png`) |
+| 28 | Affondi Manubri | Gambe | nessuna (ripiego inesistente `img/affondi-manubri.png`) |
+| 29 | Affondi in Camminata | Gambe | nessuna (ripiego inesistente `img/affondi-in-camminata.png`) |
+| 30 | Step-up su Panca | Gambe | nessuna (ripiego inesistente `img/step-up-su-panca.png`) |
+| 31 | Leg Extension | Gambe | nessuna (ripiego inesistente `img/leg-extension.png`) |
+| 32 | Leg Curl Sdraiato | Gambe | nessuna (ripiego inesistente `img/leg-curl-sdraiato.png`) |
+| 33 | Leg Curl Seduto | Gambe | nessuna (ripiego inesistente `img/leg-curl-seduto.png`) |
+| 34 | Calf Raise in Piedi | Gambe | nessuna (ripiego inesistente `img/calf-raise-in-piedi.png`) |
+| 35 | Calf Raise Seduto | Gambe | nessuna (ripiego inesistente `img/calf-raise-seduto.png`) |
+| 36 | Hip Thrust | Glutei | nessuna (ripiego inesistente `img/hip-thrust.png`) |
+| 37 | Stacco Rumeno | Glutei | nessuna (ripiego inesistente `img/stacco-rumeno.png`) |
+| 38 | Stacco Sumo | Glutei | nessuna (ripiego inesistente `img/stacco-sumo.png`) |
+| 39 | Affondi Bulgari | Glutei | nessuna (ripiego inesistente `img/affondi-bulgari.png`) |
+| 40 | Good Morning | Glutei | nessuna (ripiego inesistente `img/good-morning.png`) |
+| 41 | Ponte Glutei | Glutei | nessuna (ripiego inesistente `img/ponte-glutei.png`) |
+| 42 | Abductor Machine | Glutei | nessuna (ripiego inesistente `img/abductor-machine.png`) |
+| 43 | Kickback ai Cavi | Glutei | nessuna (ripiego inesistente `img/kickback-ai-cavi.png`) |
+| 44 | Slanci Laterali a Terra | Glutei | nessuna (ripiego inesistente `img/slanci-laterali-a-terra.png`) |
+| 45 | Military Press | Spalle | nessuna (ripiego inesistente `img/military-press.png`) |
+| 46 | Lento Avanti Manubri | Spalle | nessuna (ripiego inesistente `img/lento-avanti-manubri.png`) |
+| 47 | Arnold Press | Spalle | nessuna (ripiego inesistente `img/arnold-press.png`) |
+| 48 | Shoulder Press Machine | Spalle | nessuna (ripiego inesistente `img/shoulder-press-machine.png`) |
+| 49 | Tirate al Mento (Upright Row) | Spalle | nessuna (ripiego inesistente `img/tirate-al-mento.png`) |
+| 50 | Alzate Laterali | Spalle | nessuna (ripiego inesistente `img/alzate-laterali.png`) |
+| 51 | Alzate Frontali | Spalle | nessuna (ripiego inesistente `img/alzate-frontali.png`) |
+| 52 | Alzate Posteriori (Reverse Fly) | Spalle | nessuna (ripiego inesistente `img/alzate-posteriori.png`) |
+| 53 | Face Pull | Spalle | nessuna (ripiego inesistente `img/face-pull.png`) |
+| 54 | Scrollate (Shrug) | Spalle | nessuna (ripiego inesistente `img/scrollate.png`) |
+| 55 | Curl Bilanciere Bicipiti | Braccia | nessuna (ripiego inesistente `img/curl-bilanciere-bicipiti.png`) |
+| 56 | Curl Manubri Alternato | Braccia | nessuna (ripiego inesistente `img/curl-manubri-alternato.png`) |
+| 57 | Hammer Curl | Braccia | nessuna (ripiego inesistente `img/hammer-curl.png`) |
+| 58 | Curl su Panca Scott | Braccia | nessuna (ripiego inesistente `img/curl-su-panca-scott.png`) |
+| 59 | Curl ai Cavi | Braccia | nessuna (ripiego inesistente `img/curl-ai-cavi.png`) |
+| 60 | Curl di Concentrazione | Braccia | nessuna (ripiego inesistente `img/curl-di-concentrazione.png`) |
+| 61 | Pushdown Tricipiti ai Cavi | Braccia | nessuna (ripiego inesistente `img/pushdown-tricipiti-ai-cavi.png`) |
+| 62 | French Press | Braccia | nessuna (ripiego inesistente `img/french-press.png`) |
+| 63 | Panca Presa Stretta | Braccia | nessuna (ripiego inesistente `img/panca-presa-stretta.png`) |
+| 64 | Dip su Panca | Braccia | nessuna (ripiego inesistente `img/dip-su-panca.png`) |
+| 65 | Kickback Tricipiti | Braccia | nessuna (ripiego inesistente `img/kickback-tricipiti.png`) |
+| 66 | Panca Piana Manubri | Petto | nessuna (ripiego inesistente `img/panca-piana-manubri.png`) |
+| 67 | Croci ai Cavi dal Basso | Petto | nessuna (ripiego inesistente `img/croci-ai-cavi-dal-basso.png`) |
+| 68 | Piegamenti Inclinati (Mani Rialzate) | Petto | nessuna (ripiego inesistente `img/piegamenti-inclinati.png`) |
+| 69 | Rematore alla Macchina | Schiena | nessuna (ripiego inesistente `img/rematore-alla-macchina.png`) |
+| 70 | Pulldown a Braccia Tese | Schiena | nessuna (ripiego inesistente `img/pulldown-a-braccia-tese.png`) |
+| 71 | Trazioni Assistite (Macchina) | Schiena | nessuna (ripiego inesistente `img/trazioni-assistite.png`) |
+| 72 | Rematore Inverso (Corpo Libero) | Schiena | nessuna (ripiego inesistente `img/rematore-inverso.png`) |
+| 73 | Squat a Corpo Libero | Gambe | nessuna (ripiego inesistente `img/squat-a-corpo-libero.png`) |
+| 74 | Affondi Inversi | Gambe | nessuna (ripiego inesistente `img/affondi-inversi.png`) |
+| 75 | Nordic Curl | Gambe | nessuna (ripiego inesistente `img/nordic-curl.png`) |
+| 76 | Wall Sit | Gambe | nessuna (ripiego inesistente `img/wall-sit.png`) |
+| 77 | Pull-Through ai Cavi | Glutei | nessuna (ripiego inesistente `img/pull-through-ai-cavi.png`) |
+| 78 | Ponte Glutei a una Gamba | Glutei | nessuna (ripiego inesistente `img/ponte-glutei-a-una-gamba.png`) |
+| 79 | Abduzioni ai Cavi | Glutei | nessuna (ripiego inesistente `img/abduzioni-ai-cavi.png`) |
+| 80 | Landmine Press | Spalle | nessuna (ripiego inesistente `img/landmine-press.png`) |
+| 81 | Y-Raise su Panca Inclinata | Spalle | nessuna (ripiego inesistente `img/y-raise-su-panca-inclinata.png`) |
+| 82 | Curl con Bilanciere EZ | Braccia | nessuna (ripiego inesistente `img/curl-con-bilanciere-ez.png`) |
+| 83 | Spider Curl | Braccia | nessuna (ripiego inesistente `img/spider-curl.png`) |
+| 84 | Pushdown con Corda | Braccia | nessuna (ripiego inesistente `img/pushdown-con-corda.png`) |
+| 85 | Pallof Press | Core | nessuna (ripiego inesistente `img/pallof-press.png`) |
+| 86 | Dead Bug | Core | nessuna (ripiego inesistente `img/dead-bug.png`) |
+| 87 | Bird Dog | Core | nessuna (ripiego inesistente `img/bird-dog.png`) |
+| 88 | Farmer Walk | Core | nessuna (ripiego inesistente `img/farmer-walk.png`) |
+| 89 | Estensione Tricipiti sopra la Testa ai Cavi | Braccia | nessuna (ripiego inesistente `img/estensione-tricipiti-sopra-la-testa-ai-cavi.png`) |
+| 90 | Estensione Tricipiti sopra la Testa con Manubrio | Braccia | nessuna (ripiego inesistente `img/estensione-tricipiti-sopra-la-testa-con-manubrio.png`) |
+| 91 | Curl su Panca Inclinata | Braccia | nessuna (ripiego inesistente `img/curl-su-panca-inclinata.png`) |
+| 92 | Curl Bayesiano ai Cavi | Braccia | nessuna (ripiego inesistente `img/curl-bayesiano-ai-cavi.png`) |
+| 93 | Alzate Laterali ai Cavi | Spalle | nessuna (ripiego inesistente `img/alzate-laterali-ai-cavi.png`) |
+| 94 | Reverse Pec Deck | Spalle | nessuna (ripiego inesistente `img/reverse-pec-deck.png`) |
+| 95 | Rematore con Petto Appoggiato | Schiena | nessuna (ripiego inesistente `img/rematore-con-petto-appoggiato.png`) |
+| 96 | Lat Machine a un Braccio | Schiena | nessuna (ripiego inesistente `img/lat-machine-a-un-braccio.png`) |
+| 97 | Pendulum Squat | Gambe | nessuna (ripiego inesistente `img/pendulum-squat.png`) |
+| 98 | Squat al Multipower | Gambe | nessuna (ripiego inesistente `img/squat-al-multipower.png`) |
+| 99 | Calf Raise alla Leg Press | Gambe | nessuna (ripiego inesistente `img/calf-raise-alla-leg-press.png`) |
+| 100 | Stacco con Trap Bar | Gambe | nessuna (ripiego inesistente `img/stacco-con-trap-bar.png`) |
+| 101 | Hip Thrust alla Macchina | Glutei | nessuna (ripiego inesistente `img/hip-thrust-alla-macchina.png`) |
+| 102 | Hyperextension a 45° per Glutei | Glutei | nessuna (ripiego inesistente `img/hyperextension-a-45-per-glutei.png`) |
+| 103 | Affondi al Multipower (Piede Rialzato) | Glutei | nessuna (ripiego inesistente `img/affondi-al-multipower.png`) |
+| 104 | Croci ai Cavi da Seduto | Petto | nessuna (ripiego inesistente `img/croci-ai-cavi-da-seduto.png`) |
+| 105 | Plank | Core | nessuna (ripiego inesistente `img/plank.png`) |
+| 106 | Plank Laterale | Core | nessuna (ripiego inesistente `img/plank-laterale.png`) |
+| 107 | Crunch a Terra | Core | nessuna (ripiego inesistente `img/crunch-a-terra.png`) |
+| 108 | Crunch al Cavo | Core | nessuna (ripiego inesistente `img/crunch-al-cavo.png`) |
+| 109 | Leg Raise alla Sbarra | Core | nessuna (ripiego inesistente `img/leg-raise-alla-sbarra.png`) |
+| 110 | Leg Raise a Terra | Core | nessuna (ripiego inesistente `img/leg-raise-a-terra.png`) |
+| 111 | Russian Twist | Core | nessuna (ripiego inesistente `img/russian-twist.png`) |
+| 112 | Mountain Climber | Core | nessuna (ripiego inesistente `img/mountain-climber.png`) |
+| 113 | Hollow Hold | Core | nessuna (ripiego inesistente `img/hollow-hold.png`) |
+| 114 | Ab Wheel | Core | nessuna (ripiego inesistente `img/ab-wheel.png`) |
+| 115 | Pulley Basso Barra Larga (Presa Prona) | Schiena | nessuna (ripiego inesistente `img/pulley-basso-barra-larga.png`) |
+| 116 | Pulley Basso Presa Inversa | Schiena | nessuna (ripiego inesistente `img/pulley-basso-presa-inversa.png`) |
+| 117 | Pulley Basso a un Braccio | Schiena | nessuna (ripiego inesistente `img/pulley-basso-a-un-braccio.png`) |
+| 118 | Lat Machine Triangolo (Presa Neutra) | Schiena | nessuna (ripiego inesistente `img/lat-machine-triangolo.png`) |
+| 119 | Rematore Presa Inversa (Yates) | Schiena | nessuna (ripiego inesistente `img/rematore-presa-inversa.png`) |
+| 120 | Trazioni Presa Neutra | Schiena | nessuna (ripiego inesistente `img/trazioni-presa-neutra.png`) |
+| 121 | Croci ai Cavi Alti (Parte Bassa) | Petto | nessuna (ripiego inesistente `img/croci-ai-cavi-alti.png`) |
+| 122 | Piegamenti Declinati (Piedi Rialzati) | Petto | nessuna (ripiego inesistente `img/piegamenti-declinati.png`) |
+| 123 | Piegamenti a Diamante | Braccia | nessuna (ripiego inesistente `img/piegamenti-a-diamante.png`) |
+| 124 | Adductor Machine | Gambe | nessuna (ripiego inesistente `img/adductor-machine.png`) |
+| 125 | Calf Raise a un Piede (Corpo Libero) | Gambe | nessuna (ripiego inesistente `img/calf-raise-a-un-piede.png`) |
+| 126 | Sissy Squat | Gambe | nessuna (ripiego inesistente `img/sissy-squat.png`) |
+| 127 | Alzate Laterali alla Macchina | Spalle | nessuna (ripiego inesistente `img/alzate-laterali-alla-macchina.png`) |
+| 128 | Pike Push-up | Spalle | nessuna (ripiego inesistente `img/pike-push-up.png`) |
+| 129 | Curl ai Cavi con Corda (Presa Martello) | Braccia | nessuna (ripiego inesistente `img/curl-ai-cavi-con-corda.png`) |
+| 130 | Curl Inverso con Bilanciere EZ | Braccia | nessuna (ripiego inesistente `img/curl-inverso-con-bilanciere-ez.png`) |
+| 131 | Curl alla Macchina (Scott) | Braccia | nessuna (ripiego inesistente `img/curl-alla-macchina.png`) |
+| 132 | Curl Zottman | Braccia | nessuna (ripiego inesistente `img/curl-zottman.png`) |
+| 133 | Pushdown Presa Inversa | Braccia | nessuna (ripiego inesistente `img/pushdown-presa-inversa.png`) |
+| 134 | Pushdown con Barra V | Braccia | nessuna (ripiego inesistente `img/pushdown-con-barra-v.png`) |
+| 135 | Dip alla Macchina (Tricipiti) | Braccia | nessuna (ripiego inesistente `img/dip-alla-macchina.png`) |
+| 136 | Crunch alla Macchina | Core | nessuna (ripiego inesistente `img/crunch-alla-macchina.png`) |
+| 137 | Woodchop ai Cavi (Rotazioni) | Core | nessuna (ripiego inesistente `img/woodchop-ai-cavi.png`) |
+| 138 | Leg Raise alla Sedia Romana | Core | nessuna (ripiego inesistente `img/leg-raise-alla-sedia-romana.png`) |
+| 139 | Sit-up a Ginocchia Piegate | Core | nessuna (ripiego inesistente `img/sit-up-a-ginocchia-piegate.png`) |
+
+## 3. Esercizi senza immagine
+
+130 esercizi. Motivo per tutti: **nessun campo** in `IMMAGINI_ESERCIZI`, quindi l'app prova `img/<slug>.png`, il file non esiste e compare il segnaposto "Immagine in arrivo". Nessun file referenziato risulta assente su disco e non ci sono placeholder file.
+
+| Gruppo | Esercizio | Motivo | File atteso dal ripiego |
+|---|---|---|---|
+| Petto | Pectoral Machine (Butterfly) | nessun campo nella mappa | `img/pectoral-machine.png` |
+| Petto | Pullover con Manubrio | nessun campo nella mappa | `img/pullover-con-manubrio.png` |
+| Schiena | Stacco da Terra (Deadlift) | nessun campo nella mappa | `img/stacco-da-terra.png` |
+| Schiena | Trazioni alla Sbarra (Pull-ups) | nessun campo nella mappa | `img/trazioni-alla-sbarra.png` |
+| Schiena | Trazioni Presa Inversa (Chin-up) | nessun campo nella mappa | `img/trazioni-presa-inversa.png` |
+| Schiena | Lat Machine | nessun campo nella mappa | `img/lat-machine.png` |
+| Schiena | Lat Machine Presa Inversa | nessun campo nella mappa | `img/lat-machine-presa-inversa.png` |
+| Schiena | Rematore con Bilanciere | nessun campo nella mappa | `img/rematore-con-bilanciere.png` |
+| Schiena | Rematore con Manubrio | nessun campo nella mappa | `img/rematore-con-manubrio.png` |
+| Schiena | T-Bar Row | nessun campo nella mappa | `img/t-bar-row.png` |
+| Schiena | Pulley Basso | nessun campo nella mappa | `img/pulley-basso.png` |
+| Schiena | Pullover ai Cavi | nessun campo nella mappa | `img/pullover-ai-cavi.png` |
+| Schiena | Hyperextension (Lombari) | nessun campo nella mappa | `img/hyperextension.png` |
+| Gambe | Squat con Bilanciere | nessun campo nella mappa | `img/squat-con-bilanciere.png` |
+| Gambe | Front Squat | nessun campo nella mappa | `img/front-squat.png` |
+| Gambe | Goblet Squat | nessun campo nella mappa | `img/goblet-squat.png` |
+| Gambe | Hack Squat | nessun campo nella mappa | `img/hack-squat.png` |
+| Gambe | Leg Press | nessun campo nella mappa | `img/leg-press.png` |
+| Gambe | Affondi Manubri | nessun campo nella mappa | `img/affondi-manubri.png` |
+| Gambe | Affondi in Camminata | nessun campo nella mappa | `img/affondi-in-camminata.png` |
+| Gambe | Step-up su Panca | nessun campo nella mappa | `img/step-up-su-panca.png` |
+| Gambe | Leg Extension | nessun campo nella mappa | `img/leg-extension.png` |
+| Gambe | Leg Curl Sdraiato | nessun campo nella mappa | `img/leg-curl-sdraiato.png` |
+| Gambe | Leg Curl Seduto | nessun campo nella mappa | `img/leg-curl-seduto.png` |
+| Gambe | Calf Raise in Piedi | nessun campo nella mappa | `img/calf-raise-in-piedi.png` |
+| Gambe | Calf Raise Seduto | nessun campo nella mappa | `img/calf-raise-seduto.png` |
+| Glutei | Hip Thrust | nessun campo nella mappa | `img/hip-thrust.png` |
+| Glutei | Stacco Rumeno | nessun campo nella mappa | `img/stacco-rumeno.png` |
+| Glutei | Stacco Sumo | nessun campo nella mappa | `img/stacco-sumo.png` |
+| Glutei | Affondi Bulgari | nessun campo nella mappa | `img/affondi-bulgari.png` |
+| Glutei | Good Morning | nessun campo nella mappa | `img/good-morning.png` |
+| Glutei | Ponte Glutei | nessun campo nella mappa | `img/ponte-glutei.png` |
+| Glutei | Abductor Machine | nessun campo nella mappa | `img/abductor-machine.png` |
+| Glutei | Kickback ai Cavi | nessun campo nella mappa | `img/kickback-ai-cavi.png` |
+| Glutei | Slanci Laterali a Terra | nessun campo nella mappa | `img/slanci-laterali-a-terra.png` |
+| Spalle | Military Press | nessun campo nella mappa | `img/military-press.png` |
+| Spalle | Lento Avanti Manubri | nessun campo nella mappa | `img/lento-avanti-manubri.png` |
+| Spalle | Arnold Press | nessun campo nella mappa | `img/arnold-press.png` |
+| Spalle | Shoulder Press Machine | nessun campo nella mappa | `img/shoulder-press-machine.png` |
+| Spalle | Tirate al Mento (Upright Row) | nessun campo nella mappa | `img/tirate-al-mento.png` |
+| Spalle | Alzate Laterali | nessun campo nella mappa | `img/alzate-laterali.png` |
+| Spalle | Alzate Frontali | nessun campo nella mappa | `img/alzate-frontali.png` |
+| Spalle | Alzate Posteriori (Reverse Fly) | nessun campo nella mappa | `img/alzate-posteriori.png` |
+| Spalle | Face Pull | nessun campo nella mappa | `img/face-pull.png` |
+| Spalle | Scrollate (Shrug) | nessun campo nella mappa | `img/scrollate.png` |
+| Braccia | Curl Bilanciere Bicipiti | nessun campo nella mappa | `img/curl-bilanciere-bicipiti.png` |
+| Braccia | Curl Manubri Alternato | nessun campo nella mappa | `img/curl-manubri-alternato.png` |
+| Braccia | Hammer Curl | nessun campo nella mappa | `img/hammer-curl.png` |
+| Braccia | Curl su Panca Scott | nessun campo nella mappa | `img/curl-su-panca-scott.png` |
+| Braccia | Curl ai Cavi | nessun campo nella mappa | `img/curl-ai-cavi.png` |
+| Braccia | Curl di Concentrazione | nessun campo nella mappa | `img/curl-di-concentrazione.png` |
+| Braccia | Pushdown Tricipiti ai Cavi | nessun campo nella mappa | `img/pushdown-tricipiti-ai-cavi.png` |
+| Braccia | French Press | nessun campo nella mappa | `img/french-press.png` |
+| Braccia | Panca Presa Stretta | nessun campo nella mappa | `img/panca-presa-stretta.png` |
+| Braccia | Dip su Panca | nessun campo nella mappa | `img/dip-su-panca.png` |
+| Braccia | Kickback Tricipiti | nessun campo nella mappa | `img/kickback-tricipiti.png` |
+| Petto | Panca Piana Manubri | nessun campo nella mappa | `img/panca-piana-manubri.png` |
+| Petto | Croci ai Cavi dal Basso | nessun campo nella mappa | `img/croci-ai-cavi-dal-basso.png` |
+| Petto | Piegamenti Inclinati (Mani Rialzate) | nessun campo nella mappa | `img/piegamenti-inclinati.png` |
+| Schiena | Rematore alla Macchina | nessun campo nella mappa | `img/rematore-alla-macchina.png` |
+| Schiena | Pulldown a Braccia Tese | nessun campo nella mappa | `img/pulldown-a-braccia-tese.png` |
+| Schiena | Trazioni Assistite (Macchina) | nessun campo nella mappa | `img/trazioni-assistite.png` |
+| Schiena | Rematore Inverso (Corpo Libero) | nessun campo nella mappa | `img/rematore-inverso.png` |
+| Gambe | Squat a Corpo Libero | nessun campo nella mappa | `img/squat-a-corpo-libero.png` |
+| Gambe | Affondi Inversi | nessun campo nella mappa | `img/affondi-inversi.png` |
+| Gambe | Nordic Curl | nessun campo nella mappa | `img/nordic-curl.png` |
+| Gambe | Wall Sit | nessun campo nella mappa | `img/wall-sit.png` |
+| Glutei | Pull-Through ai Cavi | nessun campo nella mappa | `img/pull-through-ai-cavi.png` |
+| Glutei | Ponte Glutei a una Gamba | nessun campo nella mappa | `img/ponte-glutei-a-una-gamba.png` |
+| Glutei | Abduzioni ai Cavi | nessun campo nella mappa | `img/abduzioni-ai-cavi.png` |
+| Spalle | Landmine Press | nessun campo nella mappa | `img/landmine-press.png` |
+| Spalle | Y-Raise su Panca Inclinata | nessun campo nella mappa | `img/y-raise-su-panca-inclinata.png` |
+| Braccia | Curl con Bilanciere EZ | nessun campo nella mappa | `img/curl-con-bilanciere-ez.png` |
+| Braccia | Spider Curl | nessun campo nella mappa | `img/spider-curl.png` |
+| Braccia | Pushdown con Corda | nessun campo nella mappa | `img/pushdown-con-corda.png` |
+| Core | Pallof Press | nessun campo nella mappa | `img/pallof-press.png` |
+| Core | Dead Bug | nessun campo nella mappa | `img/dead-bug.png` |
+| Core | Bird Dog | nessun campo nella mappa | `img/bird-dog.png` |
+| Core | Farmer Walk | nessun campo nella mappa | `img/farmer-walk.png` |
+| Braccia | Estensione Tricipiti sopra la Testa ai Cavi | nessun campo nella mappa | `img/estensione-tricipiti-sopra-la-testa-ai-cavi.png` |
+| Braccia | Estensione Tricipiti sopra la Testa con Manubrio | nessun campo nella mappa | `img/estensione-tricipiti-sopra-la-testa-con-manubrio.png` |
+| Braccia | Curl su Panca Inclinata | nessun campo nella mappa | `img/curl-su-panca-inclinata.png` |
+| Braccia | Curl Bayesiano ai Cavi | nessun campo nella mappa | `img/curl-bayesiano-ai-cavi.png` |
+| Spalle | Alzate Laterali ai Cavi | nessun campo nella mappa | `img/alzate-laterali-ai-cavi.png` |
+| Spalle | Reverse Pec Deck | nessun campo nella mappa | `img/reverse-pec-deck.png` |
+| Schiena | Rematore con Petto Appoggiato | nessun campo nella mappa | `img/rematore-con-petto-appoggiato.png` |
+| Schiena | Lat Machine a un Braccio | nessun campo nella mappa | `img/lat-machine-a-un-braccio.png` |
+| Gambe | Pendulum Squat | nessun campo nella mappa | `img/pendulum-squat.png` |
+| Gambe | Squat al Multipower | nessun campo nella mappa | `img/squat-al-multipower.png` |
+| Gambe | Calf Raise alla Leg Press | nessun campo nella mappa | `img/calf-raise-alla-leg-press.png` |
+| Gambe | Stacco con Trap Bar | nessun campo nella mappa | `img/stacco-con-trap-bar.png` |
+| Glutei | Hip Thrust alla Macchina | nessun campo nella mappa | `img/hip-thrust-alla-macchina.png` |
+| Glutei | Hyperextension a 45° per Glutei | nessun campo nella mappa | `img/hyperextension-a-45-per-glutei.png` |
+| Glutei | Affondi al Multipower (Piede Rialzato) | nessun campo nella mappa | `img/affondi-al-multipower.png` |
+| Petto | Croci ai Cavi da Seduto | nessun campo nella mappa | `img/croci-ai-cavi-da-seduto.png` |
+| Core | Plank | nessun campo nella mappa | `img/plank.png` |
+| Core | Plank Laterale | nessun campo nella mappa | `img/plank-laterale.png` |
+| Core | Crunch a Terra | nessun campo nella mappa | `img/crunch-a-terra.png` |
+| Core | Crunch al Cavo | nessun campo nella mappa | `img/crunch-al-cavo.png` |
+| Core | Leg Raise alla Sbarra | nessun campo nella mappa | `img/leg-raise-alla-sbarra.png` |
+| Core | Leg Raise a Terra | nessun campo nella mappa | `img/leg-raise-a-terra.png` |
+| Core | Russian Twist | nessun campo nella mappa | `img/russian-twist.png` |
+| Core | Mountain Climber | nessun campo nella mappa | `img/mountain-climber.png` |
+| Core | Hollow Hold | nessun campo nella mappa | `img/hollow-hold.png` |
+| Core | Ab Wheel | nessun campo nella mappa | `img/ab-wheel.png` |
+| Schiena | Pulley Basso Barra Larga (Presa Prona) | nessun campo nella mappa | `img/pulley-basso-barra-larga.png` |
+| Schiena | Pulley Basso Presa Inversa | nessun campo nella mappa | `img/pulley-basso-presa-inversa.png` |
+| Schiena | Pulley Basso a un Braccio | nessun campo nella mappa | `img/pulley-basso-a-un-braccio.png` |
+| Schiena | Lat Machine Triangolo (Presa Neutra) | nessun campo nella mappa | `img/lat-machine-triangolo.png` |
+| Schiena | Rematore Presa Inversa (Yates) | nessun campo nella mappa | `img/rematore-presa-inversa.png` |
+| Schiena | Trazioni Presa Neutra | nessun campo nella mappa | `img/trazioni-presa-neutra.png` |
+| Petto | Croci ai Cavi Alti (Parte Bassa) | nessun campo nella mappa | `img/croci-ai-cavi-alti.png` |
+| Petto | Piegamenti Declinati (Piedi Rialzati) | nessun campo nella mappa | `img/piegamenti-declinati.png` |
+| Braccia | Piegamenti a Diamante | nessun campo nella mappa | `img/piegamenti-a-diamante.png` |
+| Gambe | Adductor Machine | nessun campo nella mappa | `img/adductor-machine.png` |
+| Gambe | Calf Raise a un Piede (Corpo Libero) | nessun campo nella mappa | `img/calf-raise-a-un-piede.png` |
+| Gambe | Sissy Squat | nessun campo nella mappa | `img/sissy-squat.png` |
+| Spalle | Alzate Laterali alla Macchina | nessun campo nella mappa | `img/alzate-laterali-alla-macchina.png` |
+| Spalle | Pike Push-up | nessun campo nella mappa | `img/pike-push-up.png` |
+| Braccia | Curl ai Cavi con Corda (Presa Martello) | nessun campo nella mappa | `img/curl-ai-cavi-con-corda.png` |
+| Braccia | Curl Inverso con Bilanciere EZ | nessun campo nella mappa | `img/curl-inverso-con-bilanciere-ez.png` |
+| Braccia | Curl alla Macchina (Scott) | nessun campo nella mappa | `img/curl-alla-macchina.png` |
+| Braccia | Curl Zottman | nessun campo nella mappa | `img/curl-zottman.png` |
+| Braccia | Pushdown Presa Inversa | nessun campo nella mappa | `img/pushdown-presa-inversa.png` |
+| Braccia | Pushdown con Barra V | nessun campo nella mappa | `img/pushdown-con-barra-v.png` |
+| Braccia | Dip alla Macchina (Tricipiti) | nessun campo nella mappa | `img/dip-alla-macchina.png` |
+| Core | Crunch alla Macchina | nessun campo nella mappa | `img/crunch-alla-macchina.png` |
+| Core | Woodchop ai Cavi (Rotazioni) | nessun campo nella mappa | `img/woodchop-ai-cavi.png` |
+| Core | Leg Raise alla Sedia Romana | nessun campo nella mappa | `img/leg-raise-alla-sedia-romana.png` |
+| Core | Sit-up a Ginocchia Piegate | nessun campo nella mappa | `img/sit-up-a-ginocchia-piegate.png` |
+
+Controlli: file referenziati ma assenti = 0; voci di mappa non presenti in libreria = 0.
+
+## 4. Orfani
+
+| File | Peso | Note |
+|---|---|---|
+| `esercizi/ex-02-panca-inclinata-su-a.svg` | 30.9 KB | Non referenziato da `IMMAGINI_ESERCIZI`. E' il fotogramma "su" (posa alta) usato per costruire `ex-02-panca-inclinata.svg` (vedi commento SVG: "giu-a spostata di 13px per combaciare con su-a"). Unico SVG senza animazione ne' metadati C2PA, con sfondo `rect` bianco. Resta nel precache. |
+
+## 5. Precache sw.js
+
+- Cache: `CACHE_NAME = '3in-v10'` (cambiare il nome butta le copie vecchie).
+- Le immagini SONO nel precache: elenco **statico** tra i marcatori `/*INIZIO-ASSET*/ ... /*FINE-ASSET*/`, con 10 righe `./esercizi/*.svg` (compreso l'orfano).
+- L'elenco e' rigenerato da `tools/genera-sw.js` (`npm run sw`, `-- --check` per verificarlo): fa un glob di `esercizi/*.svg` (solo `.svg`, ordinato), piu' index, manifest, icone e i riferimenti di `index.html`. Quindi un nuovo SVG in `esercizi/` entra nel precache dopo `npm run sw`; PNG/WebP no (andrebbe esteso il filtro).
+- Install: `Promise.allSettled(ASSETS.map(cache.add))`, un file mancante non blocca gli altri.
+- Fetch: network-first con fallback alla cache, e le risposte vengono messe in cache a runtime (`cache.put`). Per immagini non trovate (png/jpg/jpeg/webp/svg) risponde 404 pulito, cosi si vede il segnaposto.
+- Promemoria: dopo aver aggiunto immagini, rilanciare `npm run sw` e alzare la versione della cache.
+- Manifest/README: nessun riferimento alle immagini (solo `docs/ARCHITETTURA.md`: "esercizi/ disegni SVG degli esercizi").
+
+## 6. Stile e convenzioni delle immagini esistenti
+
+### Provenienza (tracce trovate)
+
+- Ogni SVG (tranne `-su-a`, che ha solo il commento) contiene il commento `<!-- SVG created with Arrow, by QuiverAI (https://quiver.ai) -->`: conferma Quiver.ai, modello **Arrow**. Il commento di `ex-02-...-su-a.svg` e' l'unica traccia della versione originale grezza.
+- Gli altri 9 SVG hanno un blocco `<metadata><c2pa:manifest>` (Content Credentials C2PA, base64) con ingredient `image/svg+xml` e relazione `parentOf`; nessun prompt leggibile.
+- **Prompt: non trovati** ne' nei file, ne' nei commit, ne' nei docs. Il commento di assemblaggio descrive il lavoro successivo (nome dei fotogrammi sorgente come "ex-04-a", "ex-05-v2-a", "su-a", "giu-a", offset di allineamento).
+- Commit: `3593a20` (26 set 2026, upload manuale di ex-01 e ex-02-su-a), `5849241` (30 set, spostamento in `esercizi/`, nessun prompt). Nessun commit parla di prompt.
+- Nel codice (`disegni-esercizi.js`): "Illustrazioni animate create con Quiver AI".
+
+### Dati tecnici
+
+| File | KB | viewBox |
+|---|---|---|
+| `ex-01-panca-piana.svg` | 59.0 | 0 0 400 300 |
+| `ex-02-panca-inclinata-su-a.svg` | 30.9 | 0 0 400 300 |
+| `ex-02-panca-inclinata.svg` | 66.7 | 0 0 400 300 |
+| `ex-03-panca-inclinata-manubri.svg` | 55.4 | 0 0 400 300 |
+| `ex-04-panca-declinata.svg` | 31.4 | 226 84 200 150 |
+| `ex-05-chest-press.svg` | 38.2 | 228 20 240 180 |
+| `ex-06-dip-parallele.svg` | 33.7 | 152 0 387 290 |
+| `ex-07-push-up.svg` | 24.5 | 0 25 40 30 |
+| `ex-08-croci-cavi.svg` | 48.4 | 170 22 313 235 |
+| `ex-09-croci-panca-manubri.svg` | 37.8 | 170 30 300 225 |
+
+Formato SVG vettoriale (nessun PNG/WebP); peso medio 42.6 KB, totale 426.0 KB. Il viewBox base e' 400x300 (rapporto 4:3); gli altri sono ritagli sulla figura (rapporti diversi, da 40x30 a 387x290). Nessun attributo width/height (tranne l'orfano 400x300): scalano al riquadro CSS `.ex-img` (`object-fit: contain`, rapporto 300/165).
+
+### Convenzione nome file
+
+`ex-NN-slug-esercizio.svg`, NN a due cifre progressivo (01-09), slug minuscolo senza accenti con trattini, in italiano. Il nome esercizio e' associato in `IMMAGINI_ESERCIZI` (chiave = nome senza emoji). Suffissi `-a` / `-su-a` indicano i fotogrammi sorgente. Ripiego storico: `img/<slug>.png`.
+
+### Style guide per nuovi prompt
+
+Illustrazioni vettoriali di una figura umana che esegue l'esercizio, in due pose (fine corsa basso e alto) sovrapposte e alternate in dissolvenza (loop CSS). Il tratto e' scuro e sottile su fondo trasparente/chiaro, con riempimenti piatti in grigi freddi per attrezzi e panche e carnagione calda per la figura; nessun testo.
+
+- Formato: SVG pulito, `fill="none"` sul root, `role="img"` e `aria-label` in italiano (es. "Panca piana con bilanciere").
+- Inquadratura: profilo laterale (panche, chest press, dip, push-up) o frontale (croci); scena intera con attrezzo, figura centrata, ritaglio stretto sul soggetto. Base 400x300.
+- Sfondo: nessuno opaco; al piu' un `rect` bianco semitrasparente (`fill-opacity .6-.7`) e un'ombra a terra ellittica grigio chiaro (`#D9D9D9`, `#C4C4C4` con opacity .5; contatto `#76777C`). Nel tema scuro l'app dipinge dietro un riquadro chiaro.
+- Palette (colori piu' frequenti): contorni quasi neri `#151617`, `#191919`, `#121212`, `#1D1D1D`; riempimenti scuri `#333`, `#2D2D2D`, `#333536`, `#232323`, `#252728`, `#222`; metalli/attrezzi grigio-azzurri `#8a919c`, `#A6A8AC`, `#81858C`, `#7D8087`, `#56585D`/`#54585D`; pelle `#FFB588`, `#D1B9A8`, ombre pelle `#AD998E`, `#9B8B81`, `#77665D`; bianco `#fff`.
+- Tratto: `stroke-linecap="round"`, spessori molto sottili in unita' viewBox (`.31` `.41` `.52` `.58` `.60` `.8065`), `.8065` il piu' usato; molti piccoli path per muscoli e pieghe (50-200 path per file), niente gradienti, filtri o testo.
+- Figura: anatomia realistica semplificata, abbigliamento scuro (canotta/pantaloni `#333`), muscoli con ombreggiatura a campiture piatte; attrezzi con dettagli (dischi, borchie, cavi).
+- Animazione: due gruppi `#f-giu` e `#f-su` (classe `.fr`) sovrapposti; CSS `3.2s ease-in-out infinite`, keyframes `0%,30%{opacity:1} 45%,80%{opacity:0} 95%,100%{opacity:1}` (e inverso); `@media (prefers-reduced-motion:reduce)` ferma l'animazione. La seconda posa e' spesso la prima specchiata/traslata (`translate(400 0) scale(-1 1)`).
+- Per prompt coerenti: chiedere "pose basse e alte dello stesso esercizio, stessa inquadratura e stessa posizione dell'attrezzo, fondo trasparente, nessun testo, tratto scuro sottile, colori grigio freddo + pelle calda".
+
+File di esempio: `esercizi/ex-01-panca-piana.svg` (profilo, 2 fotogrammi, 400x300), `esercizi/ex-08-croci-cavi.svg` (frontale, torri allineate), `esercizi/ex-07-push-up.svg` (profilo a terra, il piu' leggero, 25.1 KB).
