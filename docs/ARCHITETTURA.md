@@ -56,6 +56,21 @@ npm run controlla    tutto insieme (sw aggiornato, indice aggiornato, test)
 
 Le prove lunghe usano Chromium: `CHROMIUM=/percorso/chrome npm run test:browser` se non è in `/opt/pw-browsers/chromium`. La guida passa senza segnalazioni a 390×844 e a 360×640 (`tests/browser/guida.js`, `guida-tocchi.js`).
 
+## Grafo del codice
+
+`graphify-out/` contiene il grafo della conoscenza dell'app (codice, prove e documenti in `docs/`), generato con graphify:
+
+| File | A cosa serve |
+|---|---|
+| `graphify-out/GRAPH_REPORT.md` | panoramica: nodi più collegati, comunità, collegamenti inattesi, domande utili |
+| `graphify-out/graph.html` | grafo interattivo da aprire nel browser (carica vis-network da unpkg, serve la rete) |
+| `graphify-out/graph.json` | grafo completo, interrogabile con graphify (`query`, `path`, `explain`) |
+| `graphify-out/manifest.json` | impronte dei file, per aggiornare il grafo solo dove il codice è cambiato |
+
+È un riferimento per orientarsi, non una fonte di verità: dove grafo e codice divergono vale il codice. Il codice è letto in modo automatico (collegamenti estratti dall'AST); il livello dei documenti (regole del coach ↔ funzioni) è stato estratto a mano da nove file di `docs/`. `.graphifyignore` lascia fuori skill di terzi, immagini e `node_modules`; la cache (`graphify-out/cache/`) non si versiona.
+
+Per aggiornarlo dopo una modifica al codice: `graphify update .` (solo codice, senza costi). Dopo una modifica ai documenti serve `/graphify . --update`.
+
 ## Mappa rapida
 
 `docs/indice-codice.md` elenca ogni file con le sue funzioni, nell'ordine di caricamento. È generato: non si modifica a mano.
