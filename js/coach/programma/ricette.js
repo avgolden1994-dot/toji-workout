@@ -293,7 +293,7 @@ window.buildProgram = function(d) {
   const freqScelta = ['1', '2', '3'].indexOf(String(d.freq || prof0.freq || '')) !== -1 ? String(d.freq || prof0.freq) : null;
   let split = splitPerFrequenza(level, d.days, freqScelta);
   let nEs = exerciseCountFor(d.minutes, scheme, { level: level, prudente: cauto });
-  const struttura = strutturaProgramma(level);
+  const struttura = strutturaProgramma(level, cauto);   /* B4: over 65, PAR-Q positivo e minorenni restano a blocchi 3+1; PRN-03: gli altri principianti hanno lo scarico solo all'8a */
   const prefs = { luogo: d.luogo || 'palestra', fastidi: (d.fastidi || []).filter(f => f !== 'nessuno'), sonno: d.sonno || 'bene', attrezzi: d.attrezzi || 'indifferente',
     attrezziPalestra: d.attrezziPalestra !== undefined ? d.attrezziPalestra : (prof0.attrezziPalestra || null), graditi: d.graditi || prof0.graditi || [], odiati: d.odiati || prof0.odiati || [],
     priorita: (d.priorita || prof0.priorita || []).slice(0, 3) };
@@ -374,7 +374,7 @@ window.buildProgram = function(d) {
         }
         /* CAS-14 (ponte di W0-T2, B28): senza sbarra ne macchine il posto della tirata verticale prende il Pullover con Manubrio (dorsali);
            se non c e nemmeno quello, il rematore della seduta ha una serie in piu (sotto) */
-        if (slot.replace(/\d$/, '') === 'tirataV') tirataVVuota = true;
+        if (slot.replace(/\d$/, '') === 'tirataV' && regolaAttiva('CAS-14')) tirataVVuota = true;
         return;
       }
       const punteggio = (x) => {

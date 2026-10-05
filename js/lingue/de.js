@@ -3691,5 +3691,7 @@ window.I18N["de"] = {
 "Lascia com’è": "So lassen",
 "Alla tua età non do numeri su peso o cibo: sono cose da parlare con un medico o un dietista. Se pensi spesso al peso o salti i pasti, parlane con qualcuno di cui ti fidi.": "In deinem Alter gebe ich keine Zahlen zu Gewicht oder Essen: Das sind Dinge, die du mit einem Arzt oder einer Ernährungsfachkraft besprechen solltest. Wenn du oft ans Gewicht denkst oder Mahlzeiten auslässt, sprich mit jemandem, dem du vertraust.",
 "ampiezza senza dolore, discesa in # s": "schmerzfreier Umfang, # s absenken",
-"Dolore segnalato: carico ridotto (#%)": "Schmerz gemeldet: Last reduziert (#%)"
+"Dolore segnalato: carico ridotto (#%)": "Schmerz gemeldet: Last reduziert (#%)",
+"Secondari: adduttori": "Sekundär: Adduktoren",
+"Secondari: adduttori, erettori spinali": "Sekundär: Adduktoren, Rückenstrecker"
 };

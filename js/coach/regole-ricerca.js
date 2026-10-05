@@ -116,6 +116,9 @@ function rirBersaglioBase(nome, sett) {
   if (primaSettimanaBlocco(p, numero) && r[0] < MES_RIR.pisoPrimaSettimana) r = [MES_RIR.pisoPrimaSettimana, Math.max(r[1], MES_RIR.pisoPrimaSettimana + 1)];
   return r;
 }
+/* MES-08: con le risposte 3/6/8/10 (Facile, Giusta, Dura, Al limite) la fatica e «alta» solo se la media delle ultime sedute e quasi sempre «Al limite» (9,5; era 9: bastava
+   una Dura in piu); Convenzione (ricerca-mesocicli-periodizzazione-scarichi.md, MES-08) */
+const SOGLIA_SRPE_ALTA = 9.5;
 /* scarico dosato sul bisogno (Bell 2024): poca, media o molta fatica */
 function livelloFatica() {
   const hist = loadHistory().filter(h => h.feedback && !h.interrotta).slice(0, 3);
@@ -123,7 +126,7 @@ function livelloFatica() {
   if (!hist.length && !pr.length) return 'media';
   const srpe = hist.length ? hist.reduce((t, h) => t + (h.feedback.srpe || 7), 0) / hist.length : 7;
   const pz = pr.length ? pr.reduce((t, x) => t + x, 0) / pr.length : 70;
-  if (srpe >= 9 || pz < 50) return 'alta';
+  if (srpe >= SOGLIA_SRPE_ALTA || pz < 50) return 'alta';
   if (srpe < 7 && pz >= 70) return 'bassa';
   return 'media';
 }

@@ -501,6 +501,8 @@ function htmlFineCiclo() {
 }
 window.nuovoCiclo = function(soloPreferenze) {
   const p = getProfile() || {};
+  /* ETA-01: un profilo con un'eta da 1 a 12 anni non ottiene un nuovo programma (buildProgram lancerebbe l'errore); l'eta non detta resta «adulto» come per i programmi gia salvati */
+  if (p.age && etaPerProgramma(p.age).motivo === 'sotto-minimo') { showUndo(etaPerProgramma(p.age).messaggio); return; }
   const v = soloPreferenze ? { esito: 'buono' } : (verdettoCiclo() || { esito: 'buono' });
   const d = { goals: (p.goals || [p.goal || 'salute']).slice(), level: p.level || 'intermedio', days: p.days || 3, minutes: p.minutes || 60,
     luogo: p.luogo || (p.prefs && p.prefs.luogo) || 'palestra', fastidi: p.fastidi || (p.prefs && p.prefs.fastidi) || [], sonno: p.sonno || (p.prefs && p.prefs.sonno) || 'bene',

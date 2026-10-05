@@ -213,7 +213,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 48. `js/ui/onboarding.js` — Schermata iniziale: creazione del programma
 
-`ONB_KEY` · `PROFILE_KEY` · `onbStep` · `onbData` · `ONB_GOALS` · `ONB_LEVELS` · `splitFor()` · `splitPerFrequenza()` · `SLOT_PRIORITA` · `ricettaPunti()` · `schemeFor()` · `exerciseCountFor()` · `window.startOnboarding()` · `nuovoOnbData()` · `window.onbSkipAll()` · `window.onbPrev()` · `ONB_ULTIMO` · `window.onbNext()` · `onbStepValid()` · `ONB_FREQ` · `window.onbSetTest()` · `window.onbPick()` · `window.onbToggleGoal()` · `window.onbTogglePriorita()` · `window.onbToggleFastidio()` · `ONB_LUOGHI` · `ONB_FASTIDI` · `ONB_PARQ` · `PARQ_DOMANDE` · `ONB_SONNO` · `ONB_ATTREZZI` · `chip()` · `renderOnb()` · `optHtml()` · `renderBiaStep()` · `onbManuale` · `window.onbToggleManuale()` · `biaField()` · `bindBiaInputs()` · `ensurePdfJs()`
+`ONB_KEY` · `PROFILE_KEY` · `onbStep` · `onbData` · `ONB_GOALS` · `ONB_LEVELS` · `splitFor()` · `splitPerFrequenza()` · `SLOT_PRIORITA` · `ricettaPunti()` · `schemeFor()` · `PARAM_NUMERO_ESERCIZI` · `serieEffettive()` · `pausaMediaPerTipo()` · `exerciseCountFor()` · `PARAM_ETA` · `MSG_ETA_SOTTO_MINIMO` · `MSG_ETA_MANCANTE` · `etaPerProgramma()` · `window.startOnboarding()` · `nuovoOnbData()` · `window.onbSkipAll()` · `window.onbPrev()` · `ONB_ULTIMO` · `window.onbNext()` · `onbStepValid()` · `ONB_FREQ` · `window.onbSetTest()` · `window.onbPick()` · `window.onbSetEta()` · `window.onbToggleGoal()` · `window.onbTogglePriorita()` · `window.onbToggleFastidio()` · `ONB_LUOGHI` · `ONB_FASTIDI` · `ONB_PARQ` · `PARQ_DOMANDE` · `ONB_SONNO` · `ONB_ATTREZZI` · `chip()` · `renderOnb()` · `optHtml()` · `renderBiaStep()` · `onbManuale` · `window.onbToggleManuale()` · `biaField()` · `bindBiaInputs()` · `ensurePdfJs()`
 
 ## js/coach
 
@@ -231,7 +231,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 52. `js/coach/programma/ricette.js` — Variazione del coach: ricette a slot e buildProgram
 
-`rngDa()` · `_n` · `SLOT_DEF` · `RICETTE` · `PRIORI` · `window.buildProgram()`
+`rngDa()` · `_n` · `SLOT_DEF` · `RICETTE` · `PRIORI` · `TECNICHE_AL_CEDIMENTO` · `senzaCedimento()` · `adattoAlCincoPerCinque()` · `SCHEMI_ATTESI` · `SLOT_PER_SCHEMA` · `adattoAllaSeduta()` · `RIPETIZIONI_SETTIMANA_MAX` · `GRUPPI_DELLA_SEDUTA` · `PARAM_TEMPO` · `tipoObiettivoDi()` · `stimaMinutiSeduta()` · `GRUPPI_FRAZIONARI` · `FRAZIONARI_NON_CONTATI` · `gruppoFrazionario()` · `creditoSerie()` · `frazionarieSettimana()` · `limitaVolumePerMuscolo()` · `rinforzaFemorali()` · `riempiTempo()` · `window.buildProgram()`
 
 ### 53. `js/coach/programma/struttura-pro.js` — Struttura professionale della scheda (ABB-01..10)
 
@@ -295,7 +295,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 66. `js/coach/regole-ricerca.js` — Coach 2: regole nuove dalla ricerca
 
-`TECNICHE` · `profiloCoach()` · `BIL_PESANTI` · `tipoCarico()` · `RIR_TIPO` · `MES_RIR` · `primaSettimanaBlocco()` · `inDeficitCalorico()` · `pisoRirEsigenza()` · `rirBersaglio()` · `rirBersaglioBase()` · `livelloFatica()` · `DOSE_SCARICO` · `storicoProntezza()` · `rpeBersaglio()` · `testoRir()` · `e1rmSerie()` · `e1rmSeduta()` · `PARAM_ANALISI` · `faseDelGiorno()` · `settimanaDellaSeduta()` · `inScarico()` · `sessioniConData()` · `ripresaDopoScarico()` · `rientroDopoPausa()` · `fmtKg` · `obiettivoForza()` · `caricoProssimoBase()` · `window.applicaCaricoProgressivo()` · `imparaDallaSeduta()`
+`TECNICHE` · `profiloCoach()` · `BIL_PESANTI` · `tipoCarico()` · `RIR_TIPO` · `MES_RIR` · `primaSettimanaBlocco()` · `inDeficitCalorico()` · `pisoRirEsigenza()` · `rirBersaglio()` · `rirBersaglioBase()` · `SOGLIA_SRPE_ALTA` · `livelloFatica()` · `DOSE_SCARICO` · `storicoProntezza()` · `rpeBersaglio()` · `testoRir()` · `e1rmSerie()` · `e1rmSeduta()` · `PARAM_ANALISI` · `faseDelGiorno()` · `settimanaDellaSeduta()` · `inScarico()` · `sessioniConData()` · `ripresaDopoScarico()` · `rientroDopoPausa()` · `fmtKg` · `obiettivoForza()` · `caricoProssimoBase()` · `window.applicaCaricoProgressivo()` · `imparaDallaSeduta()`
 
 ### 67. `js/coach/regole-nuove.js` — Regole del coach aggiunte dalla ricerca (RIC-01..05)
 
@@ -393,7 +393,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 88. `js/coach/metodi-momenti.js` — Metodi di allenamento e momenti
 
-`FB` · `UL4` · `METODI` · `metodoDa()` · `MOMENTI` · `momentoDa()` · `momentoAttivo()` · `applicaMomento()` · `momentoInAttesa` · `window.chiediMomento()` · `window.confermaMomento()` · `window.setMomento()` · `terminaMomento()` · `window.verificaMomento()` · `window.vaiAlMomento()` · `window.fineMomento()` · `prontezzaBassaSettimana()` · `htmlMomento()`
+`ATTENZIONE_AMRAP` · `FB` · `UL4` · `METODI` · `metodoDa()` · `MOMENTI` · `momentoDa()` · `momentoAttivo()` · `applicaMomento()` · `momentoInAttesa` · `window.chiediMomento()` · `window.confermaMomento()` · `window.setMomento()` · `terminaMomento()` · `window.verificaMomento()` · `window.vaiAlMomento()` · `window.fineMomento()` · `prontezzaBassaSettimana()` · `htmlMomento()`
 
 ### 89. `js/coach/metodi-epoca-oro.js` — Metodi dell'epoca d'oro del culturismo
 

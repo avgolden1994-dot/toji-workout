@@ -3691,5 +3691,7 @@ window.I18N["es"] = {
 "Lascia com’è": "Dejarlo como está",
 "Alla tua età non do numeri su peso o cibo: sono cose da parlare con un medico o un dietista. Se pensi spesso al peso o salti i pasti, parlane con qualcuno di cui ti fidi.": "A tu edad no doy números sobre peso o comida: son cosas que conviene hablar con un médico o un dietista. Si piensas a menudo en el peso o te saltas comidas, habla con alguien de confianza.",
 "ampiezza senza dolore, discesa in # s": "recorrido sin dolor, bajada en # s",
-"Dolore segnalato: carico ridotto (#%)": "Dolor indicado: carga reducida (#%)"
+"Dolore segnalato: carico ridotto (#%)": "Dolor indicado: carga reducida (#%)",
+"Secondari: adduttori": "Secundarios: aductores",
+"Secondari: adduttori, erettori spinali": "Secundarios: aductores, erectores espinales"
 };

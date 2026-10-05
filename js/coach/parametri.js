@@ -32,7 +32,10 @@ const REGOLE_SPEGNIBILI = ['RIC-01', 'RIC-02', 'RIC-03', 'RIC-04', 'RIC-05', 'IN
   /* onda 0 del coach v2 (W0-T3, W0-T4): ALG-02 «blocca»/«extra», MES-02 RIR di partenza, MES-06 carico di riferimento e ripresa dopo lo
      scarico, MES-09 etichetta di fase sulla seduta, MES-10/11/12 scarico fuori dalle analisi, PRN-01 esigenza del principiante, STD-01
      tabelle di forza, ETA-04 niente numeri su peso e cibo ai minori */
-  'ALG-02', 'MES-02', 'MES-06', 'MES-09', 'MES-10', 'MES-11', 'MES-12', 'PRN-01', 'STD-01', 'ETA-04'];
+  'ALG-02', 'MES-02', 'MES-06', 'MES-09', 'MES-10', 'MES-11', 'MES-12', 'PRN-01', 'STD-01', 'ETA-04',
+  /* onda 0, integrazione: CAS-14 (tirata verticale senza sbarra) e un ponte di scelta degli esercizi, non una salvaguardia: si spegne.
+     MAV-02, MAV-03, ETA-01..03 sono salvaguardie (tolgono o riducono: niente cedimento, niente tecniche a chi non puo, profilo minorenne): restano sempre accese */
+  'CAS-14'];
 const REGOLE_SPENTE_KEY = 'tz_regole_spente';
 window.regolaAttiva = function(codice) {
   if (!REGOLE_SPEGNIBILI.includes(codice)) return true;

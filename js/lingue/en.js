@@ -3691,5 +3691,7 @@ window.I18N["en"] = {
 "Lascia com’è": "Leave it as it is",
 "Alla tua età non do numeri su peso o cibo: sono cose da parlare con un medico o un dietista. Se pensi spesso al peso o salti i pasti, parlane con qualcuno di cui ti fidi.": "At your age I don’t give numbers about weight or food: those are things to talk through with a doctor or a dietitian. If you often think about your weight or skip meals, talk to someone you trust.",
 "ampiezza senza dolore, discesa in # s": "pain-free range, lower in # s",
-"Dolore segnalato: carico ridotto (#%)": "Pain reported: load reduced (#%)"
+"Dolore segnalato: carico ridotto (#%)": "Pain reported: load reduced (#%)",
+"Secondari: adduttori": "Secondary: adductors",
+"Secondari: adduttori, erettori spinali": "Secondary: adductors, spinal erectors"
 };
