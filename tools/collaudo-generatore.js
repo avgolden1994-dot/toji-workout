@@ -315,7 +315,7 @@ const CRITERI = [
         if (a.inf.tipo !== 'isolation' || a.inf.tempo || a.inf.gruppoLib === 'core') return;
         for (let j = i + 1; j < s.es.length; j++) {
           const b = s.es[j];
-          if (b.inf.tipo === 'compound' && !b.inf.tempo && (b.inf.bers === a.inf.bers || b.inf.sec.indexOf(a.inf.bers) !== -1)) { out.push({ msg: s.titolo + ': ' + a.pulito + ' prima di ' + b.pulito + ' (' + a.inf.bers + ')', gravita: 2 }); break; }
+          if (b.inf.tipo === 'compound' && !b.inf.tempo && (b.inf.bers === a.inf.bers || b.inf.sec.indexOf(a.inf.bers) !== -1)) { out.push({ msg: s.titolo + ': ' + a.pulito + ' prima di ' + b.pulito + ' (' + a.inf.bers + ')', tag: a.pulito + ' > ' + b.pulito, gravita: 2 }); break; }
         }
       }));
       return out; } },
@@ -350,7 +350,7 @@ const CRITERI = [
     dove: [STRUTTURA_JS + ': strSuperserie / strAntagonisti', RICETTE_JS + ': buildProgram (coppie del metodo "rr": trazione + squat, dip + hinge)'],
     check: (m, c) => {
       const out = [];
-      m.sedute.forEach(s => s.es.forEach((e, i) => { if (e.superset && i > 0 && !antagonisti(s.es[i - 1], e)) out.push({ msg: s.titolo + ': ' + s.es[i - 1].pulito + ' + ' + e.pulito + (c.metodo ? ' (metodo ' + c.metodo + ')' : ''), gravita: 2 }); }));
+      m.sedute.forEach(s => s.es.forEach((e, i) => { if (e.superset && i > 0 && !antagonisti(s.es[i - 1], e)) out.push({ msg: s.titolo + ': ' + s.es[i - 1].pulito + ' + ' + e.pulito + (c.metodo ? ' (metodo ' + c.metodo + ')' : ''), tag: s.es[i - 1].pulito + ' + ' + e.pulito, gravita: 2 }); }));
       return out; } },
   { id: 'SS-02', nome: 'Superserie con un multiarticolare pesante o con un esercizio a tempo o di core', sev: 3, forza: 'Moderata', fonte: 'Paz 2017: le coppie fanno calare il carico; ABB-06',
     dove: [STRUTTURA_JS + ': strPuoSuperserie', RICETTE_JS + ': buildProgram (metodi con superserie imposta)'],
@@ -368,7 +368,7 @@ const CRITERI = [
         Object.keys(k).forEach(key => {
           const [b, t] = key.split('|'), n = k[key].length;
           const ammessi = (t === 'isolation' && (b === 'bicipiti' || b === 'tricipiti')) || (t === 'compound' && (b === 'quadricipiti' || b === 'grande_gluteo')) ? 2 : 1;
-          if (n > ammessi) out.push({ sub: b, msg: s.titolo + ': ' + k[key].map(e => e.pulito).join(' + '), gravita: n - ammessi });
+          if (n > ammessi) out.push({ sub: b, msg: s.titolo + ': ' + k[key].map(e => e.pulito).join(' + '), tag: k[key].map(e => e.pulito).join(' + '), gravita: n - ammessi });
         });
       });
       return out; } },
@@ -377,7 +377,7 @@ const CRITERI = [
     check: (m, c) => {
       const conta = {};
       m.sedute.forEach(s => s.es.forEach(e => { if (!e.inf.tempo && e.inf.gruppoLib !== 'core') conta[e.pulito] = (conta[e.pulito] || 0) + 1; }));
-      return Object.keys(conta).filter(n => conta[n] > RIPETIZIONI_ESERCIZIO_SETT_MAX).map(n => ({ msg: n + ' in ' + conta[n] + ' sedute su ' + m.sedute.length + (c.metodo ? ' (metodo ' + c.metodo + ')' : ''), gravita: conta[n] - 2 })); } },
+      return Object.keys(conta).filter(n => conta[n] > RIPETIZIONI_ESERCIZIO_SETT_MAX).map(n => ({ msg: n + ' in ' + conta[n] + ' sedute su ' + m.sedute.length + (c.metodo ? ' (metodo ' + c.metodo + ')' : ''), tag: n, gravita: conta[n] - 2 })); } },
 
   /* ---------------- equilibrio ---------------- */
   { id: 'EQ-01', nome: 'Piu serie di spinta che di tirata (spalle sbilanciate)', sev: 3, forza: 'Convenzione', fonte: 'ABB-04; pratica dei coach: tirate almeno pari alle spinte',
@@ -451,7 +451,7 @@ const CRITERI = [
       m.sedute.forEach(s => s.es.forEach(e => {
         if (e.inf.tempo || !(e.reps > 0)) return;
         const r = (c.cauto ? REPS_AMMESSE_PRUDENTE : REPS_AMMESSE[c.tipoObiettivo])[e.inf.carico];
-        if (e.reps < r[0] || e.reps > r[1]) out.push({ sub: c.tipoObiettivo + '/' + e.inf.carico, msg: s.titolo + ': ' + e.pulito + ' ' + e.sets + 'x' + e.reps + ' (' + e.inf.carico + ', ' + (c.cauto ? 'modalita prudente' : c.tipoObiettivo) + ': ' + r[0] + '-' + r[1] + ')' + (c.metodo ? ' metodo ' + c.metodo : ''), gravita: Math.abs(e.reps < r[0] ? r[0] - e.reps : e.reps - r[1]) });
+        if (e.reps < r[0] || e.reps > r[1]) out.push({ sub: c.tipoObiettivo + '/' + e.inf.carico, msg: s.titolo + ': ' + e.pulito + ' ' + e.sets + 'x' + e.reps + ' (' + e.inf.carico + ', ' + (c.cauto ? 'modalita prudente' : c.tipoObiettivo) + ': ' + r[0] + '-' + r[1] + ')' + (c.metodo ? ' metodo ' + c.metodo : ''), tag: e.pulito + ' ' + e.reps + ' rip', gravita: Math.abs(e.reps < r[0] ? r[0] - e.reps : e.reps - r[1]) });
       }));
       return out; } },
   { id: 'RX-02', nome: 'Recupero tra le serie fuori dalla fascia dell obiettivo e del tipo di esercizio', sev: 3, forza: 'Moderata', fonte: 'Singer 2024, Schoenfeld 2016, ACSM 2009 (2-3 minuti sui fondamentali per la forza)',
@@ -461,7 +461,7 @@ const CRITERI = [
       m.sedute.forEach(s => s.es.forEach(e => {
         if (e.superset || (s.es[s.es.indexOf(e) + 1] && s.es[s.es.indexOf(e) + 1].superset)) return;   /* nelle coppie il recupero e della coppia */
         const r = PAUSA_AMMESSA[c.tipoObiettivo][e.inf.carico];
-        if (e.rest < r[0] || e.rest > r[1]) out.push({ sub: (e.rest < r[0] ? 'troppo-corto' : 'troppo-lungo') + '/' + c.tipoObiettivo + '/' + e.inf.carico, msg: s.titolo + ': ' + e.pulito + ' recupero ' + e.rest + ' s (' + e.inf.carico + ', ' + c.tipoObiettivo + ': ' + r[0] + '-' + r[1] + ')' + (c.metodo ? ' metodo ' + c.metodo : ''), gravita: Math.abs(e.rest < r[0] ? r[0] - e.rest : e.rest - r[1]) / 30 });
+        if (e.rest < r[0] || e.rest > r[1]) out.push({ sub: (e.rest < r[0] ? 'troppo-corto' : 'troppo-lungo') + '/' + c.tipoObiettivo + '/' + e.inf.carico, msg: s.titolo + ': ' + e.pulito + ' recupero ' + e.rest + ' s (' + e.inf.carico + ', ' + c.tipoObiettivo + ': ' + r[0] + '-' + r[1] + ')' + (c.metodo ? ' metodo ' + c.metodo : ''), tag: e.pulito + ' ' + e.rest + ' s', gravita: Math.abs(e.rest < r[0] ? r[0] - e.rest : e.rest - r[1]) / 30 });
       }));
       return out; } },
   { id: 'RX-03', nome: 'Una sola serie su un esercizio, o oltre 6 serie', sev: 3, forza: 'Solida', fonte: 'Krieger 2010, Ralston 2017 (2-3 serie battono 1); Amirthalingam 2017 (oltre 5-6 non rende di piu)',
@@ -497,7 +497,7 @@ const CRITERI = [
     check: (m, c) => {
       const out = [];
       if (c.level !== 'principiante' && !c.cauto) return out;
-      m.sedute.forEach(s => s.es.forEach(e => { if (['drop', 'parziali', 'amrap', 'backoff'].indexOf(e.tecnica) !== -1) out.push({ sub: e.tecnica, msg: s.titolo + ': ' + e.pulito + ' con tecnica ' + e.tecnica + (c.cauto ? ' (modalita prudente)' : ' (principiante)'), gravita: 2 }); }));
+      m.sedute.forEach(s => s.es.forEach(e => { if (['drop', 'parziali', 'amrap', 'backoff'].indexOf(e.tecnica) !== -1) out.push({ sub: e.tecnica, msg: s.titolo + ': ' + e.pulito + ' con tecnica ' + e.tecnica + (c.cauto ? ' (modalita prudente)' : ' (principiante)'), tag: e.pulito, gravita: 2 }); }));
       return out; } },
   { id: 'PRI-01', nome: 'Muscolo prioritario dichiarato ma senza serie in piu rispetto al programma senza priorita', sev: 2, forza: 'Convenzione', fonte: 'ABB-10, PRG-29 ("qualche serie in piu")',
     dove: [RICETTE_JS + ': buildProgram (prio / specializza nel blocco "volume per muscolo")'],
@@ -531,25 +531,25 @@ const CRITERI = [
     dove: [MOTORE_JS + ': RISCHIO / consentito (tre regioni, regex sul nome; nessun dato nella libreria)', 'js/coach/biomeccanica.js: bonusBiomecc'],
     check: (m, c) => {
       const out = [];
-      c.fastidi.forEach(f => m.sedute.forEach(s => s.es.forEach(e => { if (CONTROINDICAZIONI[f] && CONTROINDICAZIONI[f].forte.test(e.pulito)) out.push({ sub: f, msg: s.titolo + ': ' + e.pulito + ' con fastidio a ' + f + (c.rischio[f] && c.rischio[f].test(e.nome) ? ' (RISCHIO lo vieta ma e entrato lo stesso)' : ' (RISCHIO non lo copre)'), gravita: 3 }); })));
+      c.fastidi.forEach(f => m.sedute.forEach(s => s.es.forEach(e => { if (CONTROINDICAZIONI[f] && CONTROINDICAZIONI[f].forte.test(e.pulito)) out.push({ sub: f, msg: s.titolo + ': ' + e.pulito + ' con fastidio a ' + f + (c.rischio[f] && c.rischio[f].test(e.nome) ? ' (RISCHIO lo vieta ma e entrato lo stesso)' : ' (RISCHIO non lo copre)'), tag: e.pulito, gravita: 3 }); })));
       return out; } },
   { id: 'SAF-02', nome: 'Esercizio da usare con cautela per un fastidio dichiarato', sev: CAUTELA_SEV, forza: 'Convenzione', fonte: 'pratica clinica e dei coach; elenco del collaudo in CONTROINDICAZIONI',
     dove: [MOTORE_JS + ': RISCHIO / consentito', 'js/coach/biomeccanica.js: SCALE_DOLORE'],
     check: (m, c) => {
       const out = [];
-      c.fastidi.forEach(f => m.sedute.forEach(s => s.es.forEach(e => { if (CONTROINDICAZIONI[f] && CONTROINDICAZIONI[f].cautela.test(e.pulito)) out.push({ sub: f, msg: s.titolo + ': ' + e.pulito + ' con fastidio a ' + f, gravita: 1 }); })));
+      c.fastidi.forEach(f => m.sedute.forEach(s => s.es.forEach(e => { if (CONTROINDICAZIONI[f] && CONTROINDICAZIONI[f].cautela.test(e.pulito)) out.push({ sub: f, msg: s.titolo + ': ' + e.pulito + ' con fastidio a ' + f, tag: e.pulito, gravita: 1 }); })));
       return out; } },
   { id: 'SAF-03', nome: 'Attrezzatura non disponibile per il luogo dichiarato', sev: 4, forza: 'Convenzione', fonte: 'coerenza con la risposta ("A casa con manubri: manubri e una panca"; "Corpo libero: senza attrezzi"; attrezzi della palestra)',
     dove: [MOTORE_JS + ': attrezzoDi (regex sul nome, non legge DETTAGLI) / consentito'],
     check: (m, c) => {
       const out = [];
-      m.sedute.forEach(s => s.es.forEach(e => { const v = violaAttrezzatura(e, c); if (v === 'duro') out.push({ sub: c.luogo, msg: s.titolo + ': ' + e.pulito + ' richiede ' + e.inf.att + ' (luogo: ' + c.luogo + (c.attrezziPalestra ? ' con ' + c.attrezziPalestra.join('+') : '') + ')', gravita: 3 }); }));
+      m.sedute.forEach(s => s.es.forEach(e => { const v = violaAttrezzatura(e, c); if (v === 'duro') out.push({ sub: c.luogo, msg: s.titolo + ': ' + e.pulito + ' richiede ' + e.inf.att + ' (luogo: ' + c.luogo + (c.attrezziPalestra ? ' con ' + c.attrezziPalestra.join('+') : '') + ')', tag: e.pulito, gravita: 3 }); }));
       return out; } },
   { id: 'SAF-04', nome: 'Attrezzatura non garantita nel luogo dichiarato (sbarra, parallele, sedia romana a casa o a corpo libero)', sev: 2, forza: 'Convenzione', fonte: 'coerenza con la risposta; il questionario non chiede la sbarra',
     dove: [MOTORE_JS + ': attrezzoDi (le trazioni contano come "corpo")', 'js/ui/onboarding.js: ONB_LUOGHI (nessuna domanda sulla sbarra)'],
     check: (m, c) => {
       const out = [];
-      m.sedute.forEach(s => s.es.forEach(e => { if (violaAttrezzatura(e, c) === 'quasi') out.push({ sub: c.luogo, msg: s.titolo + ': ' + e.pulito + ' richiede ' + e.inf.att + ' (luogo: ' + c.luogo + ')', gravita: 1 }); }));
+      m.sedute.forEach(s => s.es.forEach(e => { if (violaAttrezzatura(e, c) === 'quasi') out.push({ sub: c.luogo, msg: s.titolo + ': ' + e.pulito + ' richiede ' + e.inf.att + ' (luogo: ' + c.luogo + ')', tag: e.pulito + ' [' + e.inf.att + ']', gravita: 1 }); }));
       return out; } },
   { id: 'SAF-05', nome: 'Esercizio tecnicamente impegnativo a un principiante o in modalita prudente (over 65, PAR-Q)', sev: 2, forza: 'Convenzione', fonte: 'pratica dei coach: il principiante parte da macchine, manubri e regressioni; ACSM 2026 per over 65 e pressione',
     dove: [RICETTE_JS + ': buildProgram (prio: +3 ai pesanti se !cauto, anche ai principianti; cauto toglie solo 3 punti)', MOTORE_JS + ': consentito'],
@@ -557,7 +557,7 @@ const CRITERI = [
       const out = [];
       const rx = c.cauto ? TECNICI_PRUDENTE : (c.level === 'principiante' ? TECNICI_PRINCIPIANTE : null);
       if (!rx) return out;
-      m.sedute.forEach(s => s.es.forEach(e => { if (rx.test(e.pulito)) out.push({ sub: c.cauto ? 'prudente' : 'principiante', msg: s.titolo + ': ' + e.pulito + ' (' + (c.cauto ? 'modalita prudente' : 'principiante') + ')', gravita: c.cauto ? 2 : 1 }); }));
+      m.sedute.forEach(s => s.es.forEach(e => { if (rx.test(e.pulito)) out.push({ sub: c.cauto ? 'prudente' : 'principiante', msg: s.titolo + ': ' + e.pulito + ' (' + (c.cauto ? 'modalita prudente' : 'principiante') + ')', tag: e.pulito, gravita: c.cauto ? 2 : 1 }); }));
       return out; } },
   { id: 'SAF-06', nome: 'Fastidio alla spalla senza lavoro per la cuffia o i deltoidi posteriori', sev: 2, forza: 'Convenzione', fonte: 'docs/ricerca-metodi-coach-pratici.md H-08 (Cressey: rotazione esterna della cuffia almeno una volta a settimana)',
     dove: ['js/coach/biomeccanica.js: SCALE_DOLORE (solo una nota)', STRUTTURA_JS + ': strCopri (aggiunge i deltoidi posteriori solo per ipertrofia non principiante)'],
@@ -867,9 +867,11 @@ function eseguiMatrice(profili, opz) {
     if (a.prog && a.prog.metodo) { tot.conMetodo++; tot.perMetodo[a.prog.metodo] = (tot.perMetodo[a.prog.metodo] || 0) + 1; }
     if (a.prog && a.prog.scheme && a.prog.scheme.settimane !== a.prog.settimane) tot.scemaSettimaneDiverse++;
     const viste = new Map(), conteggi = new Map();
+    const tagViste = new Map();
     a.trovati.forEach(t => {
       const key = t.crit.id + (t.f.sub ? ':' + t.f.sub : '');
       conteggi.set(key, (conteggi.get(key) || 0) + 1);
+      if (t.f.tag) { const ts = tagViste.get(key) || tagViste.set(key, new Set()).get(key); ts.add(t.f.tag); }
       const prec = viste.get(key);
       t.sev = t.f.sev || t.crit.sev;
       if (!prec || t.f.gravita > prec.f.gravita) viste.set(key, t);
@@ -880,8 +882,9 @@ function eseguiMatrice(profili, opz) {
       nFall++;
       if (t.sev >= 4) gravi = true;
       let cl = classi.get(key);
-      if (!cl) { cl = { chiave: key, codice: t.crit.id, sub: t.f.sub || '', nome: t.crit.nome, sev: t.sev, forza: t.crit.forza, fonte: t.crit.fonte, dove: t.crit.dove, n: 0, w: 0, occorrenze: 0, res: [], visti: 0, peggiore: null, perDim: {} }; classi.set(key, cl); }
+      if (!cl) { cl = { chiave: key, codice: t.crit.id, sub: t.f.sub || '', nome: t.crit.nome, sev: t.sev, forza: t.crit.forza, fonte: t.crit.fonte, dove: t.crit.dove, n: 0, w: 0, tags: {}, occorrenze: 0, res: [], visti: 0, peggiore: null, perDim: {} }; classi.set(key, cl); }
       cl.n++; cl.w += wp; cl.occorrenze += conteggi.get(key);
+      (tagViste.get(key) || []).forEach(tg => { cl.tags[tg] = (cl.tags[tg] || 0) + 1; });
       Object.keys(dimVals).forEach(d => { cl.perDim[d] = cl.perDim[d] || {}; cl.perDim[d][dimVals[d]] = (cl.perDim[d][dimVals[d]] || 0) + 1; });
       cl.visti++;
       const cand = () => ({ profilo: p, msg: t.f.msg, gravita: t.f.gravita, tabella: tabellaSettimana(a.m), metodo: a.prog && a.prog.metodo || null });
@@ -1021,7 +1024,10 @@ function mdReport(profili, ris, opz, meta, verifiche) {
     L.push('Severita ' + cl.sev + ' (' + NOME_SEV[cl.sev] + '), forza della prova: ' + cl.forza + '. Fonte: ' + cl.fonte + '. Colpisce ' + cl.n + ' programmi su ' + tot.profili + ' (' + cl.pct.toFixed(1) + '% della matrice, ' + cl.pctPesata.toFixed(1) + '% pesata).');
     L.push('Dove guardare: ' + cl.dove.join('; ') + '.');
     const dimTop = ['livello', 'minuti', 'luogo', 'giorni'].map(d => { const o = cl.perDim[d] || {}; return d + ': ' + Object.keys(o).sort((a, b) => o[b] - o[a]).slice(0, 3).map(k => k + ' ' + o[k]).join(', '); }).join(' | ');
-    L.push('Dove cade di piu: ' + dimTop + '.', '');
+    L.push('Dove cade di piu: ' + dimTop + '.');
+    const tg = Object.keys(cl.tags || {}).sort((a, b) => cl.tags[b] - cl.tags[a]).slice(0, 6);
+    if (tg.length) L.push('Piu frequenti: ' + tg.map(k => k + ' (' + cl.tags[k] + ')').join('; ') + '.');
+    L.push('');
     sceglieEsempi(cl, opz.esempi).forEach((e, k) => {
       L.push('**Esempio ' + (k + 1) + '.** Profilo: ' + profiloCompatto(e.profilo) + (e.metodo ? ' (metodo scelto dal coach: ' + e.metodo + ')' : ''), '');
       L.push(e.tabella, '');
@@ -1228,7 +1234,7 @@ function main() {
   const file = dirUscita(o);
   fs.mkdirSync(path.dirname(file.md), { recursive: true });
   fs.writeFileSync(file.md, mdReport(profili, ris, o, meta, verifiche));
-  const json = { meta, riepilogo: riepilogoCompatto(ris, meta), totali: ris.tot, perDimensione: ris.dimensioni, classi: ris.elenco.map((cl, i) => ({ rango: i + 1, chiave: cl.chiave, codice: cl.codice, sub: cl.sub, nome: cl.nome, sev: cl.sev, forza: cl.forza, fonte: cl.fonte, dove: cl.dove, programmiColpiti: cl.n, percentuale: Number(cl.pct.toFixed(2)), percentualePesata: Number(cl.pctPesata.toFixed(2)), occorrenze: cl.occorrenze, impatto: Number(cl.impatto.toFixed(2)), perDimensione: cl.perDim,
+  const json = { meta, riepilogo: riepilogoCompatto(ris, meta), totali: ris.tot, perDimensione: ris.dimensioni, classi: ris.elenco.map((cl, i) => ({ rango: i + 1, chiave: cl.chiave, codice: cl.codice, sub: cl.sub, nome: cl.nome, sev: cl.sev, forza: cl.forza, fonte: cl.fonte, dove: cl.dove, programmiColpiti: cl.n, percentuale: Number(cl.pct.toFixed(2)), percentualePesata: Number(cl.pctPesata.toFixed(2)), occorrenze: cl.occorrenze, impatto: Number(cl.impatto.toFixed(2)), perDimensione: cl.perDim, piuFrequenti: Object.keys(cl.tags || {}).sort((a, b) => cl.tags[b] - cl.tags[a]).slice(0, 8).map(k => [k, cl.tags[k]]),
     esempi: i < o.top ? sceglieEsempi(cl, o.esempi).map(e => ({ profilo: e.profilo, metodo: e.metodo, cosaNonVa: e.msg, settimana: e.tabella })) : undefined })),
     criteri: CRITERI.map(c => ({ id: c.id, nome: c.nome, sev: c.sev, forza: c.forza, fonte: c.fonte, dove: c.dove })), verificheModello: verifiche, coperturaLibreria: ris.copertura };
   fs.writeFileSync(file.json, JSON.stringify(json, null, 1));
