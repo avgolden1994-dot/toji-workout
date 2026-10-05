@@ -95,6 +95,7 @@ function normalizeHistoryEntry(session) {
     passata: session.passata ? true : undefined,
     libera: session.libera ? true : undefined,
     skipped: Number(session.skipped) || 0,
+    settimana: session.settimana && typeof session.settimana.fase === 'string' && session.settimana.fase ? { numero: Number(session.settimana.numero) || 0, fase: session.settimana.fase.slice(0, 20) } : undefined,   /* MES-09: settimana e fase del programma (facoltativa) */
     exercises: (session.exercises || []).map(e => ({
       name: e.name,
       weight: e.weight,

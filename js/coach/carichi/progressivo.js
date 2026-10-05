@@ -32,14 +32,16 @@ function faseSedutaSalvata(h, prog) {
   const p = prog || getProgramma(), d = h ? dataSessione(h) : null;
   if (!p || !p.inizio || !Array.isArray(p.fasi) || !d) return null;
   const w = Math.floor(giorniTra(daYmd(p.inizio), lunediDi(d)) / 7) + 1;
-  return w >= 1 && w <= p.settimane ? (p.fasi[w - 1] || null) : null;
+  return w >= 1 && w <= p.fasi.length ? (p.fasi[w - 1] || null) : null;
 }
 /* Il carico di questo esercizio, in questa seduta, era di scarico? Si, se il coach lo aveva deciso per l esercizio (obiettivo.coachTipo:
    anche lo scarico deciso dal coach o mirato su un solo esercizio) oppure se la seduta era in una settimana di scarico del programma
-   (anche se la prontezza del giorno ha cambiato il tipo in «giu»: era comunque un carico di scarico) */
+   (anche se la prontezza del giorno ha cambiato il tipo in «giu»: era comunque un carico di scarico; «scarico...» vale anche per fasi
+   con un suffisso, come «scarico-reattivo»). E l unica definizione di «seduta di scarico»: la usano MES-06 (riferimento e ripresa) e,
+   con l interruttore di MES-10, inScarico (regole-ricerca.js) per le analisi. */
 function esercizioInScarico(h, ex, prog) {
   if (ex && ex.obiettivo && ex.obiettivo.coachTipo === 'scarico') return true;
-  return faseSedutaSalvata(h, prog) === 'scarico';
+  return /^scarico/.test(String(faseSedutaSalvata(h, prog) || ''));
 }
 
 /* Le sedute in cui compare l esercizio, dalla piu recente: { h: la voce di storico, ex: l esercizio con le sue serie }.

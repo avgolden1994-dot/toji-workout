@@ -39,7 +39,7 @@ const r=await p.evaluate(()=>{
   const d2=loadData(); d2[g].forEach(e=>{e.tecnicaSeduta='';}); saveData(d2);
   programma(4,['carico','carico','carico','scarico']); out.r4s=limitaTecnicheIntense(g);
   // RIC-03
-  out.r3=['💪 Croci su Panca Manubri','🍑 Stacco Rumeno','💪 Pullover con Manubrio','💪 Panca Piana Bilanciere'].map(n=>inAllungamento(n));
+  out.r3=['💪 Croci su Panca Manubri','🍑 Stacco Rumeno','💪 Pullover con Manubrio','💪 Panca Piana Bilanciere','💪 Croci ai Cavi'].map(n=>inAllungamento(n));
   // catalogo
   out.cat=regolaDescritta('RIC-01')&&regolaDescritta('RIC-05')&&COACH_REGOLE.length;
   return out;
@@ -51,7 +51,7 @@ console.log('RIC-02'); ok(r.r2.piuPausa===45,'mancava solo l ultima serie: +45 s
 console.log('RIC-05'); ok(r.r5.sets===3&&/rientro dopo 20/.test(r.r5.motivo),'dopo 20 giorni: 4 serie -> 3'); ok(r.r5no.sets===4,'dopo 5 giorni: invariato'); ok(/rientro/.test(r.r5eta.motivo),'a 70 anni basta una settimana (8 giorni contano 16)');
 console.log('RIC-04'); ok(r.r4n===2&&JSON.stringify(r.r4)===JSON.stringify(['','-','-','']),'tre tecniche intense: resta la prima, le altre tolte (il backoff non conta)');
 ok(r.r4s===3,'in settimana di scarico: tutte le intense tolte');
-console.log('RIC-03'); ok(r.r3.join()==='true,true,true,false','croci su panca, stacco rumeno, pullover coi manubri contano come allungamento');
+console.log('RIC-03'); ok(r.r3.join()==='false,true,true,false,false','stacco rumeno e pullover coi manubri contano come allungamento, le croci (su panca e ai cavi) alla pari e senza il bonus (D-P8, W0-T6)');
 console.log('Catalogo'); ok(r.cat>100,'catalogo con '+r.cat+' regole, RIC incluse');
 ok(errs.length===0,'nessun errore di pagina '+errs.join('|'));
 await b.close();

@@ -6,26 +6,6 @@
       "es": "sobre la carga de referencia (# kg), la misma en todas las sesiones de la semana",
       "de": "auf Basis des Referenzgewichts (# kg), in jeder Einheit der Woche gleich"
     },
-    "Dopo lo scarico si riparte dal carico di prima": {
-      "en": "After the deload you restart from the previous load",
-      "es": "Tras la descarga se vuelve a la carga de antes",
-      "de": "Nach der Deload-Woche geht es mit dem Gewicht von vorher weiter"
-    },
-    "-#% perché il recupero non è ancora pieno": {
-      "en": "-#% because recovery is not complete yet",
-      "es": "-#% porque la recuperación aún no es completa",
-      "de": "-#% weil die Erholung noch nicht vollständig ist"
-    },
-    "il carico di prima è lontano: si risale in due passi": {
-      "en": "the previous load is far off: you work back up in two steps",
-      "es": "la carga de antes queda lejos: se sube en dos pasos",
-      "de": "das frühere Gewicht ist weit entfernt: du steigerst dich in zwei Schritten"
-    },
-    "una ripetizione in riserva in più": {
-      "en": "one more rep in reserve",
-      "es": "una repetición más en reserva",
-      "de": "eine Wiederholung mehr in Reserve"
-    },
     "aumento dimezzato: dopo i # anni si sale più piano": {
       "en": "increase halved: after age # you progress more slowly",
       "es": "aumento reducido a la mitad: a partir de los # años se sube más despacio",
@@ -66,6 +46,11 @@
     {
       "capitolo": 7,
       "riga": "- **PRZ-03** ritirata (decisione D-P14 del registro del coach v2): una giornata ottima (>=70%) non aggiunge più serie. \"Tutto normale\" vale circa 78 e la serie in più sugli isolamenti scattava quasi ogni giorno, oltre il tetto di 3 serie dei principianti (B18). Resta solo il +1 settimanale per unità di volume (PCO-03, W3-T4). (storica, ritirata nell'onda 0)",
+      "sostituisce": true
+    },
+    {
+      "capitolo": 8,
+      "riga": "- **CAR-04** rientro dopo una pausa su QUELL'esercizio (detraining, SBS): 10-20 giorni -10%; 21-28 giorni -20%; fino a 90 giorni -30%; oltre -50%. I giorni sono quelli veri per tutti, anche sopra i 65 anni (prima contavano il doppio: 5 giorni davano «Rientro dopo 5 giorni: -10%»; chi ha più di 65 anni resta protetto da RIR 3-4, aumenti dimezzati e ripresa al 95%). Con \"3 ripetizioni in riserva\". Dopo uno scarico riuscito il calo si applica al carico di riferimento (MES-06). (storica, corretta nell'onda 0)",
       "sostituisce": true
     },
     {
@@ -153,10 +138,6 @@
     },
     {
       "capitolo": 19,
-      "riga": "- **MES-06** (spegnibile) carico di riferimento nello scarico (`riferimentoNonScarico` in `regole-ricerca.js`; se c'è usa `caricoRiferimento()` di W0-T3): in scarico il carico è il riferimento (ultima seduta non di scarico, entro 28 giorni) x la dose, uguale in tutte le sedute della settimana (prima 60, 54, 48,5, 43,5 kg); la prima seduta dopo lo scarico riparte dal riferimento con una ripetizione in riserva in più (95% con la prontezza media sotto 60 o in prudenza, mai oltre il 130% dell'ultima seduta). Convenzione + Moderata (una o due settimane ridotte mantengono la forza)."
-    },
-    {
-      "capitolo": 19,
       "riga": "- **MES-10** (spegnibile) lo scarico fuori dalle analisi (`inScarico`, `faseDelGiorno` in `regole-ricerca.js`): le sedute della settimana di scarico, o scaricate dal coach, non contano per l'esigenza (ESI-02), gli esercizi fermi (STA-01), lo scarico mirato (CAR-08, con la soglia del 3%), il verdetto del ciclo (CIC-01) e lo strain (STR-01: nessun secondo scarico entro 14 giorni). Per le sedute senza etichetta la fase si ricostruisce dal programma e dalla data. Convenzione (rumore del RIR, circa 3%)."
     },
     {
@@ -181,10 +162,10 @@
     }
   ],
   "mappaAgenti": [
-    "scarico fuori dalle analisi (MES-10): `inScarico(h, ex)`, `faseDelGiorno(d)` e `settimanaDellaSeduta(h)` in js/coach/regole-ricerca.js; le usano esigenza.js (`aggiornaEsigenza`), repertorio.js (`eserciziFermi`, `strainSettimane`, `verdettoCiclo`, `scaricoRecente`) e `caricoProssimoBase` (CAR-08)",
-    "carico di riferimento nello scarico e ripresa (MES-06): `riferimentoNonScarico`, `ripresaDopoScarico` in js/coach/regole-ricerca.js (se c'è usano `caricoRiferimento()` di progressivo.js, W0-T3); `rirExtraIntensita` (intensita.js) dà il RIR in più alla ripresa",
+    "scarico fuori dalle analisi (MES-10): `inScarico(h, ex)` (con l'interruttore di MES-10, sopra `esercizioInScarico` di progressivo.js), `faseDelGiorno(d)` e `settimanaDellaSeduta(h)` in js/coach/regole-ricerca.js; le usano esigenza.js (`aggiornaEsigenza`), repertorio.js (`eserciziFermi`, `strainSettimane`, `verdettoCiclo`, `scaricoRecente`) e `caricoProssimoBase` (CAR-08)",
+    "carico di riferimento nello scarico e ripresa (MES-06, una sola implementazione con W0-T3): dentro `caricoProssimoBase` di js/coach/regole-ricerca.js, sul `caricoRiferimento()` di progressivo.js; `ripresaDopoScarico` (regole-ricerca.js) dà il RIR in più a `rirExtraIntensita` (intensita.js) e `testoRir` lo scrive; la definizione di «seduta di scarico» è `esercizioInScarico` (progressivo.js), `inScarico` ne è l'interruttore di MES-10",
     "RIR di partenza per livello (MES-02, PRN-01): `MES_RIR`, `rirBersaglioBase(nome, sett)`, `rirBersaglio(nome, sett)`, `rpeBersaglio(nome, sett)` in js/coach/regole-ricerca.js; l'esigenza del principiante in `esigenzaEsclusa`, `tettoEsigenza` (esigenza.js) e `esigenzaIniziale` (intensita.js)",
     "livello e tabelle di forza (STD-01): `livelloStandardForza`, `proposteLivello`, `livelloStimato` (campi `salita`, `revisione`, `standard`) e le azioni `livello`, `rivediLivello`, `livelloOk` di `azioneCoach` in js/coach/repertorio.js"
   ],
-  "nota": "W0-T4 Intensità e analisi pulite. Per l'integrazione (INT-0): (1) aggiungere a REGOLE_SPEGNIBILI in js/coach/parametri.js i codici PRN-01, MES-02, MES-06, MES-10, MES-11, MES-12, STD-01, ETA-04 (il codice li legge con regolaAttiva e li tratta come accesi finché non ci sono; tests/intensita-onda0.test.js li aggiunge da sé per provare lo stato spento); (2) 'squadra' non è compilata perché il capitolo 0 della mappa arriva con W1-T1: PRN-01 e MES-02/06/10/11/12 vanno al dosatore e alla sentinella secondo A.3 del registro, STD-01 al regista, ETA-04 alla sentinella; (3) soglie nuove, tutte Convenzione, in js/coach/regole-ricerca.js: PARAM_ANALISI {rumoreE1rm 0.03, giorniRiferimento 28, giorniDopoScarico 14, prontezzaRipresa 60, ripresaPrudente 0.95, saltoMaxRipresa 1.3}; MES_RIR {principianteInizio [3,4], principianteDopo [2,3], principianteSettimaneInizio 2, pisoPrimaSettimana 2, pisoPesante 1}; in repertorio.js STD_SOGLIA_INTERMEDIO 3, STD_SOGLIA_AVANZATO 4, STD_MINIMO_ALZATE 2, COACH_GIORNI_REVISIONE_LIVELLO 28; (4) cancello: collaudo RIR-02 = 0 e RIR-03 = 0 (prima 11,4% e 30,9%/33,2% pesati sulla matrice rapida); nessun criterio peggiora oltre 0,5 punti (VOL-01:femorali +0,3 per l'esigenza 1,0 dei principianti, assorbito da W0-T2 e W2-T1); (5) dipendenze con W0-T3 (nomi, non obblighi): caricoRiferimento(nome), settimana.{numero,fase} e obiettivo.{rir,coachTipo} nelle sedute salvate; senza, inScarico ricostruisce la fase dal programma e dalla data; (6) intensita.js: rirExtraIntensita chiama ripresaDopoScarico di regole-ricerca.js (stesso ordine di caricamento di prima, solo a runtime)."
+  "nota": "W0-T4 Intensità e analisi pulite, riconciliato con W0-T3 dopo l'unione. Per l'integrazione (INT-0): (1) i codici PRN-01, MES-02, MES-06, MES-10, MES-11, MES-12, STD-01, ETA-04 sono gia in REGOLE_SPEGNIBILI di js/coach/parametri.js (aggiunti nella riconciliazione, con ALG-02 e MES-09 di W0-T3); (2) 'squadra' non è compilata perché il capitolo 0 della mappa arriva con W1-T1: PRN-01 e MES-02/06/10/11/12 vanno al dosatore e alla sentinella secondo A.3 del registro, STD-01 al regista, ETA-04 alla sentinella; la riga di MES-06 è in w0-t3.json (una sola nella mappa); (3) soglie nuove, tutte Convenzione, in js/coach/regole-ricerca.js: PARAM_ANALISI {rumoreE1rm 0.03, giorniDopoScarico 14, prontezzaRipresa 60, ripresaPrudente 0.95, saltoMaxRipresa 1.25 (era 1.3: unificato al +25% di W0-T3)}; il riferimento vale 28 giorni (GIORNI_CARICO_RIFERIMENTO in progressivo.js); MES_RIR {principianteInizio [3,4], principianteDopo [2,3], principianteSettimaneInizio 2, pisoPrimaSettimana 2, pisoPesante 1}; in repertorio.js STD_SOGLIA_INTERMEDIO 3, STD_SOGLIA_AVANZATO 4, STD_MINIMO_ALZATE 2, COACH_GIORNI_REVISIONE_LIVELLO 28; (4) cancello: collaudo RIR-02 = 0 e RIR-03 = 0 (prima 11,4% e 30,9%/33,2% pesati sulla matrice rapida); nessun criterio peggiora oltre 0,5 punti (VOL-01:femorali +0,3 per l'esigenza 1,0 dei principianti, assorbito da W0-T2 e W2-T1); (5) MES-06 usa caricoRiferimento(nome) di W0-T3 (nessuna copia locale); la ripresa, il RIR in più e le frasi sono in un posto solo; (6) intensita.js: rirExtraIntensita chiama ripresaDopoScarico di regole-ricerca.js (stesso ordine di caricamento di prima, solo a runtime); (7) CAR-04 (rientro dopo una pausa): i giorni sono quelli veri anche sopra i 65 anni (prima doppi: 5 giorni davano -10%), le altre soglie (10, 20, 28, 90 giorni) non cambiano; restano doppi sopra i 65 anni RIC-05 (rientroPiano, regole-nuove.js: 14 giorni, 7 oltre i 65, e la prova tests/browser/regole-nuove.js) e il testo di B20 del registro («giorni doppi oltre i 65»): da allineare in W4-T2 (CST-01, CST-02) insieme alle soglie di MES-15."
 }

@@ -13,15 +13,19 @@
    - Principiante: due volte mancato = -5% (Starting Strength), gli
      altri -10%.
    - Rientro dopo una pausa (detraining, SBS): 10-20 giorni -10%, fino a
-     4 settimane -20%, fino a 3 mesi -30%, oltre -50%. Over 65 perdono
-     il doppio: soglie dimezzate.
+     4 settimane -20%, fino a 3 mesi -30%, oltre -50%. I giorni sono quelli veri
+     per tutti (onda 0: per gli over 65 si contavano doppi e 5 giorni davano gia
+     «Rientro dopo 5 giorni: -10%»; l eta resta protetta dal RIR 3-4, dagli aumenti
+     dimezzati e dalla ripresa al 95%).
    - Scarico mirato (Dr. Muscle): massimale stimato in calo per due
      sedute di fila su un esercizio = -10% e meta serie solo li.
    Onda 0 del coach v2 (W0-T4, docs/piano-coach-v2.md E.1):
    - MES-02 (ponte) RIR di partenza per livello: principiante 3-4 nelle prime due settimane e poi 2-3, mai 0;
      intermedio e avanzato almeno 2 nella prima settimana del blocco e almeno 1 sui pesanti col bilanciere (anche con rirSett).
-   - MES-06 carico di riferimento nello scarico: la stessa dose su un carico fisso, uguale in tutte le sedute della settimana,
-     e la prima seduta dopo lo scarico riparte da li (con un RIR in piu); prima i carichi si componevano (60, 54, 48,5 kg).
+   - MES-06 carico di riferimento nello scarico (W0-T3 + W0-T4, una sola implementazione, qui in caricoProssimoBase): la stessa dose
+     su un carico fisso (caricoRiferimento, progressivo.js), uguale in tutte le sedute della settimana; la prima seduta dopo uno scarico
+     riuscito riparte da li (95% in prudenza, al massimo +25% sull ultima seduta) con un RIR in piu (testoRir); se lo scarico e mancato
+     il carico resta com e. Prima i carichi si componevano (60, 54, 48,5 kg). Lo scarico deciso dal coach (CAR-10) e in dolore-mattina.js.
    - MES-10 lo scarico fuori dalle analisi (inScarico): il massimale in calo (CAR-08) non lo conta e vuole il 3% (il rumore del RIR).
    - CAR-06 (ETA-18) aumenti dimezzati anche dopo i 65 anni, come dice il capitolo 14 della mappa.
    - CAR-07 (PCO-01, riga del principiante) lo schema 5x3 solo con obiettivo forza; altrimenti stesso peso, 30 secondi in piu, poi -5%.
@@ -126,7 +130,12 @@ function livelloFatica() {
 const DOSE_SCARICO = { bassa: { serie: 0.65, carico: 0.95, t: 'volume -35%' }, media: { serie: 0.5, carico: 0.9, t: 'volume -50% e carico -10%' }, alta: { serie: 0.3, carico: 0.9, t: 'volume -70% e carico -10%' } };
 function storicoProntezza() { try { return JSON.parse(localStorage.getItem('coach_plus_prontezza_storia_' + currentMode) || '[]'); } catch (e) { return []; } }
 function rpeBersaglio(nome, sett) { const r = rirBersaglio(nome, sett); return 10 - (r[0] + r[1]) / 2; }
-function testoRir(nome) { const r = rirBersaglio(nome); return r[1] === 1 && r[0] === 0 ? 'fino a 0–1 ripetizioni in riserva' : 'lascia ' + r[0] + '–' + r[1] + ' ripetizioni in riserva'; }
+/* il RIR di oggi in una frase; dopo uno scarico (MES-06) dice che e una ripetizione in piu: lo stesso rirBersaglio (ripresaDopoScarico) lo alza di uno */
+function testoRir(nome) {
+  const r = rirBersaglio(nome);
+  if (r[1] === 1 && r[0] === 0) return 'fino a 0–1 ripetizioni in riserva';
+  return 'lascia ' + r[0] + '–' + r[1] + ' ripetizioni in riserva' + (ripresaDopoScarico(nome) ? ', una in più dopo lo scarico' : '');
+}
 /* massimale stimato (Epley) solo da serie fino a 12 ripetizioni */
 function e1rmSerie(x) { const w = Number(x.weight) || 0, r = Number(x.reps) || 0; if (!w || !r || r > 12) return 0; return w * (1 + r / 30); }
 function e1rmSeduta(ex) { const v = (ex.sets || []).filter(x => x.done).map(e1rmSerie); return v.length ? Math.max.apply(null, v) : 0; }
@@ -136,11 +145,11 @@ function e1rmSeduta(ex) { const v = (ex.sets || []).filter(x => x.done).map(e1rm
    di allora non c e piu, la seduta conta come di carico. */
 const PARAM_ANALISI = {
   rumoreE1rm: 0.03,           /* MES-10/MES-12: sotto il 3% una differenza di massimale non si distingue dall errore di stima del RIR (circa 1 ripetizione, Epley) */
-  giorniRiferimento: 28,      /* MES-06: il carico di riferimento vale se l ultima seduta di carico e di non oltre 4 settimane fa */
   giorniDopoScarico: 14,      /* MES-10: nessun nuovo scarico del coach entro due settimane dall ultimo */
   prontezzaRipresa: 60,       /* MES-06: ripresa dopo lo scarico al 95% se la prontezza media degli ultimi giorni e sotto questa soglia */
-  ripresaPrudente: 0.95,
-  saltoMaxRipresa: 1.3        /* MES-06: dopo uno scarico (anche vecchio, con carichi composti) non si torna a oltre il 130% dell ultima seduta in un colpo: si risale in due passi */
+  ripresaPrudente: 0.95,      /* MES-06: ... e per prudenti, over 65 e sonno scarso (il riferimento vale 28 giorni: GIORNI_CARICO_RIFERIMENTO, progressivo.js) */
+  saltoMaxRipresa: 1.25       /* MES-06: la ripresa non sale di piu del 25% rispetto all ultima seduta (uno scarico normale vale al massimo +11%: serve solo
+                                 per i dati vecchi con lo scarico gia composto, 24,5 -> 22 -> 20 -> 18 kg, e si risale per gradi) */
 };
 /* p0 = il programma gia letto (chi scorre tutto lo storico lo legge una volta sola) */
 function faseDelGiorno(d, p0) {
@@ -156,41 +165,33 @@ function settimanaDellaSeduta(h) {
   const w = Math.floor(giorniTra(daYmd(p.inizio), lunediDi(d)) / 7) + 1;
   return w >= 1 && w <= (p.settimane || 0) ? w : 0;
 }
+/* MES-10: la seduta conta come di scarico nelle analisi. La definizione e una sola, esercizioInScarico (progressivo.js); qui c e solo l interruttore */
 function inScarico(h, ex, p0) {
-  if (!h || !regolaAttiva('MES-10')) return false;
-  if (ex && ex.obiettivo && ex.obiettivo.coachTipo === 'scarico') return true;
-  if (h.settimana && h.settimana.fase) return /^scarico/.test(String(h.settimana.fase));
-  return faseDelGiorno(dataSessione(h), p0) === 'scarico';
+  return !!h && regolaAttiva('MES-10') && esercizioInScarico(h, ex, p0);
 }
+/* le ultime n sedute con l esercizio, dalla piu recente. `scarico`: conta come scarico nelle analisi (MES-10, spegnibile); `eraDiScarico`:
+   era davvero di scarico (la usa MES-06, che non dipende dall interruttore di MES-10) */
 function sessioniConData(nome, n, senzaScarico) {
-  const out = [], prog = getProgramma();
+  const out = [], prog = getProgramma(), mes10 = regolaAttiva('MES-10');
   loadHistory().forEach(h => {
     if (out.length >= n || !h.sessione || h.interrotta) return;
     const ex = h.sessione.find(e => e.name === nome);
     if (!ex) return;
-    const scarico = inScarico(h, ex, prog);
+    const eraDiScarico = esercizioInScarico(h, ex, prog), scarico = eraDiScarico && mes10;
     if (senzaScarico && scarico) return;
-    out.push({ ex: ex, data: dataSessione(h), scarico: scarico });
+    out.push({ ex: ex, data: dataSessione(h), scarico: scarico, eraDiScarico: eraDiScarico });
   });
   return out;
 }
-/* MES-06: carico di riferimento = il carico massimo dell ultima seduta di quell esercizio che non era di scarico, entro 28 giorni
-   (se c e, lo da caricoRiferimento() di progressivo.js, W0-T3; 0 se non c e). Lo scarico e la ripresa si calcolano su questo. */
-function riferimentoNonScarico(nome, lista) {
-  if (typeof caricoRiferimento === 'function') { try { const r = Number(caricoRiferimento(nome)); if (r > 0) return r; } catch (e) {} }
-  const s = (lista || sessioniConData(nome, 40)).filter(x => !x.scarico)[0];
-  if (!s || !s.data || giorniTra(s.data, new Date()) > PARAM_ANALISI.giorniRiferimento) return 0;
-  const pesi = s.ex.sets.filter(x => x.done).map(x => Number(x.weight) || 0);
-  return pesi.length ? Math.max.apply(null, pesi) : 0;
-}
-/* MES-06: la seduta di questo esercizio prima di oggi era di scarico: oggi si riparte dal riferimento, con un RIR in piu (usata da rirExtraIntensita) */
+/* MES-06: la seduta di questo esercizio prima di oggi era di scarico (e c e un carico di riferimento, caricoRiferimento in progressivo.js):
+   oggi si riparte da quel carico, con un RIR in piu (usata da rirExtraIntensita e da testoRir). Con la settimana di scarico in corso no. */
 function ripresaDopoScarico(nome) {
   if (!coachAttivo() || !regolaAttiva('MES-06') || isTimeBased(nome)) return false;
   const s = sessioniConData(nome, 1)[0];
-  return !!(s && s.scarico && !((settimanaProgramma() || {}).fase === 'scarico'));
+  return !!(s && s.eraDiScarico && !((settimanaProgramma() || {}).fase === 'scarico') && caricoRiferimento(nome) > 0);
 }
-function rientroDopoPausa(giorni, eta) {
-  const g = eta >= 65 ? giorni * 2 : giorni;
+/* CAR-04: i giorni sono quelli veri, per tutti (prima oltre i 65 anni si contavano doppi: 5 giorni davano gia -10%) */
+function rientroDopoPausa(g) {
   if (g < 10) return null;
   if (g <= 20) return { f: 0.9, t: '-10%' };
   if (g <= 28) return { f: 0.8, t: '-20%' };
@@ -228,35 +229,52 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase) {
   const pesoUltimo = fatteUltima.length ? Math.max.apply(null, fatteUltima.map(x => Number(x.weight) || 0)) : base;
   /* prime sedute con questo esercizio: il carico di partenza e una stima, quindi si corregge piu in fretta */
   const calibrazione = ultimeSessioni(nome, 3).length < 3;
-  const lista = sessioniConData(nome, 40);   /* una sola lettura dello storico: le ultime sedute, le ultime di carico e il riferimento */
+  const lista = sessioniConData(nome, 40);   /* una sola lettura dello storico per le ultime sedute e le ultime di carico */
   const sd = lista.slice(0, 3);              /* allineata a sess: stesse sedute, stesso ordine */
   const e1 = esito(sess[0], repsTarget);
   const e2 = sess[1] && !(sd[1] && sd[1].scarico) ? esito(sess[1], repsTarget) : null;   /* una seduta di scarico non conta come mancata */
   const freno = frenoBia();
 
-  /* MES-06: lo scarico si calcola sul carico di riferimento (l ultima seduta non di scarico), non sull ultima seduta: cosi la dose e la
-     stessa in tutte le sedute della settimana (prima 60 -> 54 -> 48,5 -> 43,5 kg) */
-  const rif = regolaAttiva('MES-06') ? riferimentoNonScarico(nome, lista) : 0;
-  if (scarico) return { weight: arrotonda((rif > 0 ? rif : pesoUltimo) * dose.carico), reps: repsTarget, sets: sets, tipo: 'scarico',
-    motivo: 'Settimana di scarico: ' + dose.t + ', per recuperare e ripartire piu forte (mai stop totale: la forza calerebbe)' + (rif > 0 ? ' \u2022 sul carico di riferimento (' + fmtKg(rif) + ' kg), lo stesso in tutte le sedute della settimana' : '') };
+  /* MES-06 (W0-T3 + W0-T4, l unica implementazione): lo scarico si calcola sul carico di riferimento (caricoRiferimento: l ultima seduta
+     NON di scarico, entro 28 giorni), non sull ultima seduta: cosi la dose e la stessa in tutte le sedute della settimana (60 -> 54 -> 54,
+     prima 60 -> 54 -> 48,5 -> 43,5 kg). Senza riferimento (esercizio mai fatto fuori da uno scarico) l ultima seduta di scarico resta com e:
+     la dose non si applica due volte. */
+  const mes06 = regolaAttiva('MES-06');
+  const ultimaDiScarico = !!(sd[0] && sd[0].eraDiScarico);
+  const rif = mes06 && (scarico || ultimaDiScarico) ? caricoRiferimento(nome) : 0;   /* serve solo in scarico e subito dopo */
+  if (scarico) {
+    const gia = mes06 && rif <= 0 && ultimaDiScarico;
+    return { weight: gia ? pesoUltimo : arrotonda((rif > 0 ? rif : pesoUltimo) * dose.carico), reps: repsTarget, sets: sets, tipo: 'scarico',
+      motivo: 'Settimana di scarico: ' + dose.t + ', per recuperare e ripartire piu forte (mai stop totale: la forza calerebbe)' + (rif > 0 ? ' \u2022 sul carico di riferimento (' + fmtKg(rif) + ' kg), lo stesso in tutte le sedute della settimana' : '') };
+  }
 
-  /* MES-06: la seduta di prima era di scarico: oggi si riparte dal carico di riferimento (5% in meno con la prontezza bassa o in prudenza) */
-  const dopoScarico = !!(sd[0] && sd[0].scarico) && rif > 0;
-  const pesoBase = dopoScarico ? rif : pesoUltimo;
+  /* MES-06: la seduta di prima era di scarico e c e un riferimento. Scarico riuscito (tutte le serie fatte alle ripetizioni previste): si
+     riparte da li, non dal carico di scarico piu un incremento, 5% sotto in prudenza, con sonno scarso o con la prontezza media bassa;
+     al massimo +25% sull ultima seduta (dati vecchi con lo scarico gia composto: si risale per gradi). Scarico mancato: il carico resta
+     com e e il motore decide. Il RIR in piu lo da rirBersaglio (ripresaDopoScarico), il testo lo scrive testoRir. */
+  const scaricoRiuscito = rif > 0 && ultimaDiScarico && e1 === 'ok';
+  const tettoRipresa = pesoUltimo > 0 ? arrotonda(pesoUltimo * PARAM_ANALISI.saltoMaxRipresa) : Infinity;
 
-  /* rientro dopo una pausa su questo esercizio */
+  /* rientro dopo una pausa su questo esercizio (dopo uno scarico riuscito il calo si applica al riferimento, non al carico di scarico) */
   const giorni = sd[0] && sd[0].data ? giorniTra(sd[0].data, new Date()) : 0;
-  const rientro = rientroDopoPausa(giorni, pc.eta);
-  if (rientro && pesoBase > 0) {
-    return { weight: arrotonda(pesoBase * rientro.f), reps: repsTarget, sets: sets, tipo: 'giu',
+  const rientro = rientroDopoPausa(giorni);
+  const pesoRientro = scaricoRiuscito ? rif : pesoUltimo;
+  if (rientro && pesoRientro > 0) {
+    const w = arrotonda(pesoRientro * rientro.f);
+    return { weight: scaricoRiuscito ? Math.min(w, tettoRipresa) : w, reps: repsTarget, sets: sets, tipo: 'giu',
              motivo: 'Rientro dopo ' + giorni + ' giorni: carico ' + rientro.t + ' e 3 ripetizioni in riserva, si risale in fretta' };
   }
-  if (dopoScarico) {
+  if (scaricoRiuscito) {
     const pr = storicoProntezza().slice(-3).map(x => x.punteggio).filter(x => typeof x === 'number');
-    const stanco = prudente || (pr.length && pr.reduce((t, x) => t + x, 0) / pr.length < PARAM_ANALISI.prontezzaRipresa);
-    const voluto = rif * (stanco ? PARAM_ANALISI.ripresaPrudente : 1), tetto = pesoUltimo > 0 ? pesoUltimo * PARAM_ANALISI.saltoMaxRipresa : voluto;
-    return { weight: arrotonda(Math.min(voluto, tetto)), reps: repsTarget, sets: sets, tipo: 'fermo',
-             motivo: 'Dopo lo scarico si riparte dal carico di prima' + (stanco ? ' \u2022 -5% perché il recupero non è ancora pieno' : '') + (voluto > tetto ? ' \u2022 il carico di prima è lontano: si risale in due passi' : '') + ' \u2022 una ripetizione in riserva in più' };
+    const stanco = prudente || (pr.length > 0 && pr.reduce((t, x) => t + x, 0) / pr.length < PARAM_ANALISI.prontezzaRipresa);
+    const f = stanco ? PARAM_ANALISI.ripresaPrudente : 1, pieno = arrotonda(rif * f), da = Math.min(pieno, tettoRipresa);
+    if (da > pesoUltimo) {   /* se in scarico si e gia lavorato a quel carico o oltre, la ripresa non c e: vale la progressione normale */
+      const perGradi = da < pieno;
+      return { weight: da, reps: repsTarget, sets: sets, tipo: perGradi ? 'su' : 'fermo',
+               motivo: perGradi ? 'Dopo lo scarico si risale per gradi verso il carico di prima: oggi +' + Math.round((da / pesoUltimo - 1) * 100) + '%'
+                 : f < 1 ? 'Dopo lo scarico riparti poco sotto il carico che avevi prima (-' + Math.round((1 - f) * 100) + '%), per prudenza'
+                         : 'Dopo lo scarico riparti dal carico che avevi prima' };
+    }
   }
 
   /* esercizi a corpo libero: si progredisce con le ripetizioni */

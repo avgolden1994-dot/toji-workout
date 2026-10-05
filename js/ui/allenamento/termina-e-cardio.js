@@ -9,17 +9,8 @@ let ultimaChiusuraSeduta = 0;
 /* MES-09: la seduta salvata ricorda in che settimana e fase del programma e stata fatta (`settimana: { numero, fase }`) e,
    per ogni esercizio, cosa il coach prevedeva (`obiettivo: { reps, sets, rir, tecnica, coachTipo }`): senza, uno scarico
    e una seduta qualunque (carico di riferimento, analisi, RPE contro il RIR di quel giorno). Campi facoltativi: le voci
-   vecchie non li hanno e restano valide.
-   loadHistory() ricostruisce ogni voce campo per campo (normalizeHistoryEntry, js/core/storage.js) e scarterebbe `settimana`
-   a ogni lettura e risalvataggio dello storico: qui la si rimette (valida o assente). `obiettivo` sta dentro `sessione`,
-   che normalizeHistoryEntry lascia com e. */
-const _normalizeHistoryEntryPrimaFase = normalizeHistoryEntry;
-normalizeHistoryEntry = function(session) {
-  const out = _normalizeHistoryEntryPrimaFase(session);
-  const s = session && session.settimana;
-  if (s && typeof s === 'object' && typeof s.fase === 'string' && s.fase) out.settimana = { numero: Number(s.numero) || 0, fase: s.fase.slice(0, 20) };
-  return out;
-};
+   vecchie non li hanno e restano valide. `settimana` la conserva normalizeHistoryEntry (js/core/storage.js); `obiettivo` sta
+   dentro `sessione`, che normalizeHistoryEntry lascia com e. */
 function obiettivoSeduta(e) {
   const reps = Number(e.reps), serie = Number(e.sets);
   const o = { reps: reps > 0 ? reps : undefined, sets: serie > 0 ? serie : undefined, tecnica: e.tecnicaSeduta || e.tecnica || undefined, coachTipo: e.coachTipo || undefined };

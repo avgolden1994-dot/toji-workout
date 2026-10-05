@@ -217,7 +217,7 @@ test('MES-06: lo stesso esercizio 3 volte nella settimana di scarico ha lo stess
   app.storia(dallaPiuRecente(lista));
   const dopo = app.dati(app.chiama('caricoProssimo', PANCA, 60, 8, 3));
   assert.strictEqual(dopo.weight, 60, 'riparte dal carico di prima: ' + JSON.stringify(dopo));
-  assert.ok(/Dopo lo scarico si riparte dal carico di prima/.test(dopo.motivo) && /ripetizione in riserva in più/.test(dopo.motivo));
+  assert.ok(/Dopo lo scarico riparti dal carico che avevi prima/.test(dopo.motivo) && /in riserva, una in più dopo lo scarico/.test(dopo.motivo), dopo.motivo);
   assert.ok(app.dati(app.chiama('rirBersaglio', PANCA))[0] >= 2, 'con un RIR in piu');
   /* la seduta dopo ancora: progressione normale dal carico ripreso */
   lista.push(sed(app, '2026-10-05', [{ nome: PANCA, serie: tre(60, 8) }]));
@@ -235,7 +235,7 @@ test('MES-06: lo stesso esercizio 3 volte nella settimana di scarico ha lo stess
   assert.strictEqual(nuovo.dati(nuovo.chiama('caricoProssimo', PANCA, 60, 8, 3)).weight, 54);
 });
 
-test('MES-06: se esiste caricoRiferimento() di W0-T3 si usa quello (aggancio per nome)', () => {
+test('MES-06: il carico di riferimento dello scarico è quello di caricoRiferimento() (progressivo.js, W0-T3): un solo calcolo, nessuna copia', () => {
   const app = caricaApp({ ora: '2026-09-30T12:00:00' });
   app.profilo({ level: 'intermedio' }); app.programma(programma());
   app.storia([sed(app, '2026-09-28', [{ nome: PANCA, serie: tre(50, 8) }])]);

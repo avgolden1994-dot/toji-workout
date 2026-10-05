@@ -205,7 +205,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 46. `js/ui/allenamento/termina-e-cardio.js` — Termina allenamento e cardio
 
-`ultimaChiusuraSeduta` · `CARDIO_TIPI` · `cardioKey` · `cardioCorrente()` · `cardioAperto` · `nomeCardio()` · `window.renderCardio()` · `window.toggleCardio()` · `window.aggiungiCardio()` · `window.togliCardio()` · `minutiCardioSettimana()` · `window.renderCardioStat()` · `window.endWorkout()`
+`ultimaChiusuraSeduta` · `obiettivoSeduta()` · `CARDIO_TIPI` · `cardioKey` · `cardioCorrente()` · `cardioAperto` · `nomeCardio()` · `window.renderCardio()` · `window.toggleCardio()` · `window.aggiungiCardio()` · `window.togliCardio()` · `minutiCardioSettimana()` · `window.renderCardioStat()` · `window.endWorkout()`
 
 ### 47. `js/ui/storico.js` — Tab Storico
 
@@ -223,11 +223,11 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 50. `js/coach/programma/motore.js` — Coach engine: costruzione del programma
 
-`strutturaProgramma()` · `fasiProgramma()` · `attrezzoDi()` · `RISCHIO` · `consentito()` · `sostituto()` · `alternativeStessoMuscolo()` · `schemaMisto()`
+`strutturaProgramma()` · `fasiProgramma()` · `attrezzoDi()` · `RISCHIO` · `ECCEZIONI_RISCHIO` · `senzaMacchine()` · `ATTREZZI_NON_DI_CASA` · `ATTREZZI_NON_CON_I_MANUBRI` · `attrezzoFisicoDi()` · `attrezzoDiCasaMancante()` · `eccezioneRischio()` · `consentito()` · `sostituto()` · `alternativeStessoMuscolo()` · `schemaMisto()`
 
 ### 51. `js/coach/programma/schemi.js` — Schemi di movimento e regole di costruzione
 
-`SCHEMI_MOV` · `schemaDi()` · `ISOLAMENTI` · `isolamentoDi()` · `IN_ALLUNGAMENTO` · `IN_ALLUNGAMENTO_NUOVI` · `SCAMBI_ALLUNGAMENTO_NUOVI` · `inAllungamento()` · `scambiAllungamento()` · `SCAMBI_ALLUNGAMENTO` · `SCHIENA_PESANTE` · `GLUTEI_FAMIGLIE` · `VOLUME_LIVELLO` · `GRUPPI_PRINCIPALI` · `libNome()`
+`SCHEMI_MOV` · `SCHEMI_RISERVA` · `schemaDi()` · `ISOLAMENTI` · `isolamentoDi()` · `IN_ALLUNGAMENTO` · `IN_ALLUNGAMENTO_NUOVI` · `SCAMBI_ALLUNGAMENTO_NUOVI` · `inAllungamento()` · `scambiAllungamento()` · `SCAMBI_ALLUNGAMENTO` · `SCHIENA_PESANTE` · `GLUTEI_FAMIGLIE` · `VOLUME_LIVELLO` · `GRUPPI_PRINCIPALI` · `libNome()`
 
 ### 52. `js/coach/programma/ricette.js` — Variazione del coach: ricette a slot e buildProgram
 
@@ -267,7 +267,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 59. `js/coach/carichi/progressivo.js` — Carico progressivo
 
-`arrotonda()` · `incrementoPer()` · `ultimeSessioni()` · `esito()` · `window.settimanaProgramma()` · `frenoBia()`
+`arrotonda()` · `incrementoPer()` · `faseSedutaSalvata()` · `esercizioInScarico()` · `sedutePerEsercizio()` · `ultimeSessioni()` · `GIORNI_CARICO_RIFERIMENTO` · `caricoRiferimento()` · `pesoUltimoDi()` · `esito()` · `window.settimanaProgramma()` · `frenoBia()`
 
 ### 60. `js/coach/carichi/partenza.js` — Carico di partenza dai dati del corpo
 
@@ -275,7 +275,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 61. `js/coach/questionario-decisioni.js` — Questionario di fine allenamento e decisioni
 
-`AGG_KEY` · `window.aggiustiCoach()` · `salvaAggiusti()` · `ZONE_DOLORE` · `ZONA_ART` · `zonaA()` · `zonaIl()` · `STRESS_ZONA` · `SOSTITUZIONI` · `senzaEmoji` · `nomeInLibreria()` · `fbState` · `window.apriQuestionario()` · `window.fbSet()` · `window.fbZona()` · `window.fbEsercizio()` · `window.fbLivello()` · `etichettaDolore()` · `fbScelta()` · `renderQuestionario()` · `window.chiudiQuestionario()` · `window.decisioniCoach()` · `applicaDecisioni()` · `window.riduciFrequenza()` · `window.inviaQuestionario()`
+`AGG_KEY` · `window.aggiustiCoach()` · `salvaAggiusti()` · `ZONE_DOLORE` · `ZONA_ART` · `zonaA()` · `zonaIl()` · `STRESS_ZONA` · `senzaEmoji` · `nomeInLibreria()` · `REGIONE_RISCHIO_DOLORE` · `varianteStessoMuscolo()` · `eserciziDeiGiorniCon()` · `PARAM_FATICA_SEDUTA` · `NOTA_AMPIEZZA_SENZA_DOLORE` · `sedutaPesante()` · `fbState` · `window.apriQuestionario()` · `window.fbSet()` · `window.fbZona()` · `window.fbEsercizio()` · `window.fbLivello()` · `etichettaDolore()` · `fbScelta()` · `renderQuestionario()` · `window.chiudiQuestionario()` · `window.decisioniCoach()` · `applicaDecisioni()` · `window.riduciFrequenza()` · `window.inviaQuestionario()`
 
 ### 62. `js/coach/prontezza.js` — Prontezza prima della seduta
 
@@ -287,15 +287,15 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 64. `js/coach/repertorio.js` — Coach 2: repertorio completo
 
-`STANDARD_FORZA` · `ALZATE_BASE` · `pesoCorporeo()` · `window.livelloStimato()` · `prefsCoach()` · `sostituisciNelPiano()` · `cambiaSerieNelPiano()` · `conAnnulla()` · `window.azioneCoach()` · `bloccoCorrente()` · `eserciziFermi()` · `strainSettimane()` · `controlloSchemi()` · `azioniCoach()` · `corpoCoach()` · `sedutaSaltata()` · `prossimoGiornoLibero()` · `htmlSedutaSaltata()` · `window.sceltaSaltata()` · `aderenzaDueSettimane()` · `htmlAderenza()` · `window.rispostaAderenza()` · `htmlOrario()` · `verdettoCiclo()` · `htmlFineCiclo()` · `window.nuovoCiclo()`
+`STANDARD_FORZA` · `ALZATE_BASE` · `pesoCorporeo()` · `STD_SOGLIA_INTERMEDIO` · `STD_SOGLIA_AVANZATO` · `STD_MINIMO_ALZATE` · `COACH_GIORNI_REVISIONE_LIVELLO` · `livelloStandardForza()` · `proposteLivello()` · `window.livelloStimato()` · `prefsCoach()` · `sostituisciNelPiano()` · `cambiaSerieNelPiano()` · `conAnnulla()` · `window.azioneCoach()` · `bloccoCorrente()` · `eserciziFermi()` · `strainSettimane()` · `scaricoRecente()` · `controlloSchemi()` · `azioniCoach()` · `corpoCoach()` · `sedutaSaltata()` · `prossimoGiornoLibero()` · `htmlSedutaSaltata()` · `window.sceltaSaltata()` · `aderenzaDueSettimane()` · `htmlAderenza()` · `window.rispostaAderenza()` · `htmlOrario()` · `verdettoCiclo()` · `htmlFineCiclo()` · `window.nuovoCiclo()`
 
 ### 65. `js/coach/dolore-mattina.js` — Controllo del dolore la mattina dopo
 
-`controlloDoloreDaFare()` · `htmlControlloDolore()` · `window.rispostaDolore()` · `consumaAggiusti()` · `window.caricoProssimo()`
+`controlloDoloreDaFare()` · `htmlControlloDolore()` · `window.rispostaDolore()` · `consumaAggiusti()` · `RIR_MIN_DOLORE` · `window.caricoProssimo()`
 
 ### 66. `js/coach/regole-ricerca.js` — Coach 2: regole nuove dalla ricerca
 
-`TECNICHE` · `profiloCoach()` · `BIL_PESANTI` · `tipoCarico()` · `RIR_TIPO` · `rirBersaglio()` · `rirBersaglioBase()` · `livelloFatica()` · `DOSE_SCARICO` · `storicoProntezza()` · `rpeBersaglio()` · `testoRir()` · `e1rmSerie()` · `e1rmSeduta()` · `sessioniConData()` · `rientroDopoPausa()` · `fmtKg` · `caricoProssimoBase()` · `window.applicaCaricoProgressivo()` · `imparaDallaSeduta()`
+`TECNICHE` · `profiloCoach()` · `BIL_PESANTI` · `tipoCarico()` · `RIR_TIPO` · `MES_RIR` · `primaSettimanaBlocco()` · `inDeficitCalorico()` · `pisoRirEsigenza()` · `rirBersaglio()` · `rirBersaglioBase()` · `livelloFatica()` · `DOSE_SCARICO` · `storicoProntezza()` · `rpeBersaglio()` · `testoRir()` · `e1rmSerie()` · `e1rmSeduta()` · `PARAM_ANALISI` · `faseDelGiorno()` · `settimanaDellaSeduta()` · `inScarico()` · `sessioniConData()` · `ripresaDopoScarico()` · `rientroDopoPausa()` · `fmtKg` · `obiettivoForza()` · `caricoProssimoBase()` · `window.applicaCaricoProgressivo()` · `imparaDallaSeduta()`
 
 ### 67. `js/coach/regole-nuove.js` — Regole del coach aggiunte dalla ricerca (RIC-01..05)
 
@@ -413,7 +413,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 93. `js/coach/esigenza.js` — Esigenza del coach
 
-`ESIGENZA_INIZIO` · `esigenzaEsclusa()` · `window.esigenzaCoach()` · `window.aggiornaEsigenza()` · `segnaDoloreEsigenza()` · `htmlEsigenza()`
+`ESIGENZA_INIZIO` · `esigenzaEsclusa()` · `tettoEsigenza()` · `rpeBersaglioSeduta()` · `window.esigenzaCoach()` · `window.aggiornaEsigenza()` · `segnaDoloreEsigenza()` · `htmlEsigenza()`
 
 ### 94. `js/coach/psicologia.js` — Psicologia: chi ha davanti il coach
 

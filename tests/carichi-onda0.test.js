@@ -146,7 +146,9 @@ test('settimana di scarico: tre sedute dello stesso esercizio, stesso carico in 
   const dopo = carico(app, LUN_SETT9, PANCA, 60, 8, 4);
   assert.deepStrictEqual([dopo.weight, dopo.reps, dopo.sets, dopo.tipo], [60, 8, 4, 'fermo'], 'la prima seduta dopo lo scarico riparte dal carico di prima');
   assert.match(dopo.motivo, /Dopo lo scarico riparti dal carico che avevi prima/);
-  assert.match(dopo.motivo, /lascia \d–\d ripetizioni in riserva/);
+  assert.match(dopo.motivo, /lascia \d–\d ripetizioni in riserva, una in più dopo lo scarico/);
+  assert.strictEqual((dopo.motivo.match(/in riserva/g) || []).length, 1, 'il RIR si dice una volta sola, con la ripetizione in più: ' + dopo.motivo);
+  assert.strictEqual(dopo.motivo.split(' • ').length, 2, 'una frase di ripresa e una di RIR, nessun doppione: ' + dopo.motivo);
   /* poi le regole normali: fatta la seduta a 60, la volta dopo +2,5 kg */
   registra(app, LUN_SETT9, PANCA, 60, 8, 4);
   const poi = carico(app, '2026-10-21T10:00:00', PANCA, 60, 8, 4);
@@ -182,6 +184,7 @@ test('dopo lo scarico si riparte dal carico di prima solo se lo scarico è andat
   registra(app, LUN_SETT8, PANCA, 54, 5, 2);   /* nemmeno il carico ridotto è riuscito: «mancato» */
   const r = carico(app, LUN_SETT9, PANCA, 60, 8, 4);
   assert.ok(r.weight <= 54, 'non si torna a 60 dopo uno scarico non riuscito: ' + r.weight + ' ' + r.tipo);
+  assert.doesNotMatch(r.motivo, /Dopo lo scarico/, 'e non lo si dice');
 });
 test('dopo lo scarico: prudenti e over 65 ripartono dal 95% del carico di prima, chi è in forma dal 100%', () => {
   const prepara = prof => {
@@ -212,17 +215,65 @@ test('scarico già composto nei dati vecchi (24,5 → 22 → 20 → 18 kg): la r
   const poi = carico(app, '2026-10-21T10:00:00', PANCA, 24.5, 8, 4);
   assert.deepStrictEqual([poi.tipo, poi.weight, poi.reps], ['su', 22.5, 9], 'poi la progressione normale (con un carico così basso prima una ripetizione in più): non ricade nello scarico');
 });
-test('dopo lo scarico e una pausa (rientro, doppia oltre i 65 anni): il -10% si applica al carico di prima, non a quello di scarico', () => {
+test('dopo lo scarico e una pausa di 10 giorni o più (rientro): il -10% si applica al carico di prima, non a quello di scarico, a ogni età', () => {
   const prepara = prof => {
     const app = nuovaApp(prof, LUN_SETT7);
     registra(app, '2026-10-02T18:00:00', PANCA, 60, 8, 4);
-    registra(app, LUN_SETT8, PANCA, 54, 8, 2);   /* sette giorni prima: per un 70enne sono 14 giorni di pausa, -10% */
+    registra(app, LUN_SETT8, PANCA, 54, 8, 2);   /* scarico fatto il 12 ottobre: il 26 sono 14 giorni */
     return app;
   };
-  const r = carico(prepara({ age: 70 }), LUN_SETT9, PANCA, 60, 8, 4);
-  assert.deepStrictEqual([r.tipo, r.weight], ['giu', 54], 'prima: 54 x 0,9 = 48,5');
-  assert.match(r.motivo, /Rientro dopo 7 giorni/);
-  assert.strictEqual(kg(carico(prepara({}), LUN_SETT9, PANCA, 60, 8, 4)), 60, 'a 30 anni sette giorni non sono una pausa');
+  const DOPO_14 = '2026-10-26T10:00:00';
+  [{}, { age: 70 }].forEach(prof => {
+    const r = carico(prepara(prof), DOPO_14, PANCA, 60, 8, 4);
+    assert.deepStrictEqual([r.tipo, r.weight], ['giu', 54], JSON.stringify(prof) + ' (prima: 54 x 0,9 = 48,5)');
+    assert.match(r.motivo, /Rientro dopo 14 giorni: carico -10%/);
+  });
+});
+test('rientro (CAR-04): i giorni sono quelli veri anche oltre i 65 anni (prima si contavano doppi: 5 giorni davano «Rientro dopo 5 giorni: -10%»)', () => {
+  const prepara = (prof, ultima, kg) => {
+    const app = nuovaApp(prof, LUN_SETT7);
+    registra(app, ultima, PANCA, kg, 8, 4);
+    return app;
+  };
+  /* sedute normali: 5 giorni sono il ritmo di due allenamenti a settimana, non una pausa */
+  const cinque = carico(prepara({ age: 70 }, '2026-10-02T10:00:00', 60), '2026-10-07T10:00:00', PANCA, 60, 8, 4);
+  assert.notStrictEqual(cinque.tipo, 'giu', cinque.motivo);
+  assert.doesNotMatch(cinque.motivo, /Rientro/);
+  assert.strictEqual(cinque.weight, 61.5, 'nessun taglio: l\'aumento dimezzato oltre i 65 anni (+1,25 kg, arrotondato a 0,5)');
+  /* a 70 anni nove giorni non sono ancora una pausa, dieci sì: stesse soglie degli altri (10, 20, 28, 90 giorni) */
+  assert.doesNotMatch(carico(prepara({ age: 70 }, '2026-09-26T10:00:00', 60), LUN_SETT7, PANCA, 60, 8, 4).motivo, /Rientro/);
+  const dieci = carico(prepara({ age: 70 }, '2026-09-25T10:00:00', 60), LUN_SETT7, PANCA, 60, 8, 4);
+  assert.deepStrictEqual([dieci.tipo, dieci.weight], ['giu', 54]);
+  assert.match(dieci.motivo, /Rientro dopo 10 giorni: carico -10%/);
+  const trenta = carico(prepara({ age: 70 }, '2026-09-05T10:00:00', 60), LUN_SETT7, PANCA, 60, 8, 4);
+  assert.deepStrictEqual([trenta.tipo, trenta.weight], ['giu', 42], '30 giorni: -30%');
+});
+test('scarico senza riferimento (esercizio fatto solo in scarico): la seconda seduta della settimana ripete il carico, non applica la dose una seconda volta', () => {
+  const app = nuovaApp({}, LUN_SETT8);
+  const primo = carico(app, LUN_SETT8, PANCA, 60, 8, 4);
+  assert.deepStrictEqual([primo.tipo, primo.weight], ['scarico', 54], 'prima volta: carico del programma x 0,9');
+  registra(app, LUN_SETT8, PANCA, primo.weight, 8, primo.sets);
+  const secondo = carico(app, MER_SETT8, PANCA, 60, 8, 4);
+  assert.deepStrictEqual([secondo.tipo, secondo.weight], ['scarico', 54], 'prima: 54 x 0,9 = 48,5');
+});
+test('MES-06 non dipende da MES-10 (le analisi senza scarico): con MES-10 spenta lo scarico resta 54, 54 e la ripresa torna a 60', () => {
+  const app = conSpegnibili(nuovaApp({}, LUN_SETT7));
+  app.g("REGOLE_SPEGNIBILI.indexOf('MES-10') === -1 && REGOLE_SPEGNIBILI.push('MES-10')");
+  app.spegni(['MES-10']);
+  registra(app, '2026-10-02T18:00:00', PANCA, 60, 8, 4);
+  const pesi = [];
+  [LUN_SETT8, MER_SETT8].forEach(quando => { const r = carico(app, quando, PANCA, 60, 8, 4); pesi.push(r.weight); registra(app, quando, PANCA, r.weight, 8, r.sets); });
+  assert.deepStrictEqual(pesi, [54, 54]);
+  const dopo = carico(app, LUN_SETT9, PANCA, 60, 8, 4);
+  assert.deepStrictEqual([dopo.tipo, dopo.weight], ['fermo', 60]);
+  assert.match(dopo.motivo, /una in più dopo lo scarico/);
+});
+test('una fase «scarico-…» (scarico deciso dal coach, W1-T3) vale come scarico per il riferimento e per la ripresa', () => {
+  const app = nuovaApp({}, LUN_SETT9);
+  registra(app, '2026-10-02T18:00:00', PANCA, 60, 8, 4);
+  registra(app, '2026-10-14T18:00:00', PANCA, 54, 8, 2, { voce: { settimana: { numero: 8, fase: 'scarico-reattivo' } } });
+  assert.strictEqual(app.g('caricoRiferimento(' + JSON.stringify(PANCA) + ')'), 60);
+  assert.strictEqual(kg(carico(app, null, PANCA, 60, 8, 4)), 60);
 });
 test('scarico deciso dal coach (CAR-10): il carico si calcola sul riferimento, non su quello già progredito, e non si compone tra le sedute', () => {
   const app = nuovaApp({}, LUN_SETT7);
