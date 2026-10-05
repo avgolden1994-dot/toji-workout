@@ -168,7 +168,9 @@ test('lo schema coincide con schemaDi dove la regex risponde (affondi e step-up 
 /* W1-T5: le stesse ragioni per le righe nuove: Stacco in Deficit (come lo stacco da terra), Scrollate con Manubri (trapezio), Tibialis Raise (tibiale anteriore),
    Suitcase Carry (trasporto: 0,5 come il Farmer Walk) */
 const ECCEZIONI_CREDITO_PIENO = ['Stacco da Terra (Deadlift)', 'Stacco con Trap Bar', 'Hyperextension (Lombari)', 'Scrollate (Shrug)', 'Farmer Walk',
-  'Stacco in Deficit', 'Scrollate con Manubri', 'Tibialis Raise', 'Suitcase Carry'];
+  'Stacco in Deficit', 'Scrollate con Manubri', 'Tibialis Raise', 'Suitcase Carry',
+  /* INT-2a (M4 della revisione dell onda 1): il credito pieno va a un altra unita del bersaglio (co-bersaglio documentato) o scende a 0,5 (cuffia) */
+  'Stacco Rumeno', 'Stacco Rumeno con Manubri', 'Stacco Rumeno a una Gamba', 'Affondi Bulgari', 'Affondi al Multipower (Piede Rialzato)', 'Extrarotazione al Cavo'];
 
 test('le unita di volume sono le 15 di B6 e ogni muscolo di MUSCOLI ha la sua (o nessuna)', () => {
   assert.deepStrictEqual(UNITA, ['petto', 'dorsali', 'schiena_spessore', 'quadricipiti', 'femorali', 'grande_gluteo', 'adduttori', 'abduttori', 'polpacci',
@@ -225,7 +227,7 @@ test('i femorali valgono 0 in ogni squat e nella leg press (Kubo 2019); gli stab
   /* qualche conto a mano, dai dati di DETTAGLI */
   assert.deepStrictEqual(ATTR['Squat con Bilanciere'].muscoli, { quadricipiti: 1, grande_gluteo: 0.5, adduttori: 0.5, femorali: 0 });
   assert.deepStrictEqual(ATTR['Panca Piana Bilanciere'].muscoli, { petto: 1, deltoide_anteriore: 0.5, tricipiti: 0.5 });
-  assert.deepStrictEqual(ATTR['Stacco Rumeno'].muscoli, { grande_gluteo: 1, femorali: 0.5 });
+  assert.deepStrictEqual(ATTR['Stacco Rumeno'].muscoli, { femorali: 1, grande_gluteo: 0.5 }, 'INT-2a (M4): come il Good Morning, stesso movimento (prima gluteo 1, femorali 0,5)');
   assert.deepStrictEqual(ATTR['Stacco da Terra (Deadlift)'].muscoli, { grande_gluteo: 0.5, femorali: 0.5, quadricipiti: 0.5, dorsali: 0 });
   assert.deepStrictEqual(ATTR['Hammer Curl'].muscoli, { bicipiti: 1 }, 'il brachioradiale conta con i bicipiti: un\'unita sola');
   assert.deepStrictEqual(ATTR['Pullover con Manubrio'].muscoli, { dorsali: 1, petto: 0.5, tricipiti: 0 });
@@ -239,7 +241,8 @@ test('stress: ogni coppia esercizio-zona dell\'elenco esperto del collaudo e 2 (
   const CORREZIONI_NUOVI = {
     'Squat con Pausa|schiena': [2, 'variante dello Squat con Bilanciere (bilanciere sulla schiena): la regex del collaudo cerca «squat con bilanciere» e non lo prende per nome'],
     'Squat su Scatola|ginocchia': [1, 'è la modifica dello squat per le ginocchia delicate (si siede su una scatola alta): la regex «squat» lo darebbe «forte»; cautela'],
-    'Step-up Basso|ginocchia': [1, 'è il gradino basso per le ginocchia delicate (recupero §3: «step-up bassi»): la regex «step-up» lo darebbe «forte»; cautela']
+    'Step-up Basso|ginocchia': [1, 'è il gradino basso per le ginocchia delicate (recupero §3: «step-up bassi»): la regex «step-up» lo darebbe «forte»; cautela'],
+    'Kettlebell Swing|schiena': [2, 'INT-2a (M4 della revisione dell onda 1): il ramo balistico dell hinge con un carico, come lo stacco rumeno coi manubri (forte): la regex del collaudo non lo conosce per nome']
   };
   let forti = 0;
   LIB.forEach(e => {
@@ -383,7 +386,6 @@ const DIFFERENZE = [
   ['RISCHIO', 'Panca con Pausa', 'spalla: lo toglie → stress 1', 'W1-T5: stessi crediti e stesso stress della Panca Piana Bilanciere (cautela, non divieto: l’elenco del collaudo la tiene in cautela per la spalla); RISCHIO.spalle la toglie come la panca piana'],
   ['RISCHIO', 'Squat su Scatola', 'ginocchio: lo toglie → stress 1', 'W1-T5, D-P3: ginocchio 1 invece di 2 (lo squat alto e per le ginocchia delicate); RISCHIO.ginocchia lo toglie ancora per il nome (preferenza prudente come per lo Squat a Corpo Libero, B13: nessuna eccezione in ECCEZIONI_RISCHIO)'],
   ['RISCHIO', 'Step-up Basso', 'ginocchio: lo toglie → stress 1', 'W1-T5, D-P3: ginocchio 1 invece di 2 (il gradino basso e per le ginocchia delicate); RISCHIO.ginocchia lo toglie ancora per il nome (preferenza prudente)'],
-  ['STRESS_ZONA', 'Kettlebell Swing', 'schiena: assente → stress 1', 'W1-T5: lo swing e il ramo balistico dell’hinge; l’elenco del collaudo non lo conosceva (cautela)'],
   ['STRESS_ZONA', 'Scrollate con Manubri', 'collo: zona nuova → stress 1', 'ricerca-recupero §3 (collo): come le Scrollate (Shrug), versioni supportate o carichi ridotti'],
   ['stabile', 'Hip Thrust con Manubrio', 'false → stabilita 1', 'W1-T5: il manubrio sul bacino si lascia cadere di lato e la schiena è appoggiata alla panca: cedimento accettabile (il vecchio stabile() vede solo il multiarticolare libero)'],
   ['stabile', 'Lat Pulldown con Elastico', 'false → stabilita 1', 'INT-2a: attrezzoDi dice ora «corpo» per l’elastico (prima «macchine»: stabile per errore); l’attributo dice 1 (si tira da fermi, nessun equilibrio) e il vecchio stabile() lo vede solo se è una macchina'],
@@ -429,6 +431,34 @@ test('confronto con tipoCarico, stabile, attrezzoDi, RISCHIO e STRESS_ZONA: le d
   assert.ok(DIFFERENZE.some(r => r[0] === 'tipoCarico' && r[1] === 'Rematore Presa Inversa (Yates)'));
 });
 
+/* INT-2a (M4 della revisione dell onda 1): i crediti devono essere coerenti PRIMA del motore del volume per muscolo (W2-T1): prima lo Stacco Rumeno dava 1 ai glutei e 0,5 ai
+   femorali e il Good Morning l inverso (stesso movimento), gli Affondi Bulgari e al Multipower 1 ai glutei contro 1 ai quadricipiti di tutti gli altri affondi, l Extrarotazione
+   al Cavo 1 al deltoide posteriore (e cuffia). Gonfiavano i glutei (VOL-02:glutei) e sgonfiavano femorali e quadricipiti (VOL-01) */
+test('crediti coerenti: cerniera dell anca, affondi, cuffia e stress dello swing (M4, INT-2a)', () => {
+  const m = n => ATTR[n].muscoli;
+  const cerniera = ['Stacco Rumeno', 'Stacco Rumeno con Manubri', 'Stacco Rumeno a una Gamba', 'Good Morning'];
+  cerniera.forEach(n => { assert.strictEqual(m(n).femorali, 1, n + ': femorali'); assert.strictEqual(m(n).grande_gluteo, 0.5, n + ': grande gluteo'); });
+  /* nessun esercizio dello schema hinge ha il credito pieno ai glutei con i femorali a 0,5: i glutei sono 1 solo dove il movimento e di spinta o di estensione (pull-through, hyperextension per glutei, swing, stacco sumo) */
+  const hingeConGlutei1 = Object.keys(ATTR).filter(n => ATTR[n].schema === 'hinge' && m(n).grande_gluteo === 1 && m(n).femorali === 0.5).sort();
+  assert.deepStrictEqual(hingeConGlutei1, ['Kettlebell Swing', 'Stacco Sumo'], 'lo swing (balistico, gluteo) e il sumo (gluteo e adduttori) restano a gluteo 1: gli altri hinge no');
+  const affondi = Object.keys(ATTR).filter(n => ATTR[n].schema === 'affondo').sort();
+  assert.deepStrictEqual(affondi, ['Affondi Bulgari', 'Affondi Inversi', 'Affondi Manubri', 'Affondi al Multipower (Piede Rialzato)', 'Affondi in Camminata', 'Step-up Basso', 'Step-up su Panca']);
+  affondi.forEach(n => { assert.strictEqual(m(n).quadricipiti, 1, n + ': quadricipiti'); assert.strictEqual(m(n).grande_gluteo, 0.5, n + ': grande gluteo'); });
+  assert.strictEqual(m('Extrarotazione al Cavo').deltoide_posteriore, 0.5, 'la cuffia non e il deltoide posteriore: 0,5');
+  assert.strictEqual(m('Face Pull').deltoide_posteriore, 1);
+  /* lo swing con la schiena dolente e controindicato come lo stacco rumeno coi manubri; l elenco del collaudo (STRESS_ZONA) e RISCHIO.schiena lo sanno */
+  assert.strictEqual(ATTR['Kettlebell Swing'].stress.schiena, 2);
+  assert.strictEqual(ATTR['Kettlebell Swing'].stress.schiena, ATTR['Stacco Rumeno con Manubri'].stress.schiena);
+  assert.ok(J('STRESS_ZONA.schiena').indexOf('Kettlebell Swing') !== -1);
+  assert.ok(g('RISCHIO.schiena').test('Kettlebell Swing'));
+  /* quanto cambia il conto di una settimana a casa con i manubri (donna principiante, 3 sedute): rumeno 3 + bulgari 3 + goblet 3 */
+  const sedute = [{ giorno: 'Lunedì', tipo: 'fullbody', titolo: 'Full', esercizi: [{ name: 'Stacco Rumeno con Manubri', sets: 3 }, { name: 'Affondi Bulgari', sets: 3 }, { name: 'Goblet Squat', sets: 3 }] }];
+  const v = J('contaVolume(' + JSON.stringify(sedute) + ')');
+  assert.strictEqual(v.grande_gluteo.frazionarie, 4.5, 'prima 3 + 3 + 1,5 = 7,5 (14 in una settimana di tre sedute)');
+  assert.strictEqual(v.femorali.frazionarie, 3, 'prima 1,5');
+  assert.strictEqual(v.quadricipiti.frazionarie, 6, 'prima 3 + 1,5 = 4,5');
+});
+
 /* ---------------------------------------------------------------------------------------------------------------- funzioni e conteggio del volume */
 test('creditoMuscoli e classeTecnica rispondono dai dati', () => {
   assert.deepStrictEqual(J('creditoMuscoli("🦵 Leg Press")'), { quadricipiti: 1, grande_gluteo: 0.5, adduttori: 0, femorali: 0 });
@@ -458,8 +488,8 @@ test('contaVolume: serie frazionarie, dirette e sedute per unita, con conti fatt
   assert.deepStrictEqual(att('bicipiti'), { frazionarie: 5, dirette: 2, sedute: 2 });   /* lat 1,5 + pulley 1,5 + curl 2; il lunedi 1,5 e il venerdi 3,5 */
   assert.deepStrictEqual(att('deltoide_laterale'), { frazionarie: 3, dirette: 3, sedute: 1 });
   assert.deepStrictEqual(att('quadricipiti'), { frazionarie: 4, dirette: 4, sedute: 1 });   /* i femorali dello squat non contano, il rumeno non da quadricipiti */
-  assert.deepStrictEqual(att('femorali'), { frazionarie: 3 + 1.5, dirette: 3, sedute: 1 });
-  assert.deepStrictEqual(att('grande_gluteo'), { frazionarie: 2 + 3, dirette: 3, sedute: 1 });   /* squat 4 x 0,5 + rumeno 3 */
+  assert.deepStrictEqual(att('femorali'), { frazionarie: 3 + 3, dirette: 3 + 3, sedute: 1 });   /* INT-2a (M4): leg curl 3 + rumeno 3 (credito pieno ai femorali come il Good Morning); prima 3 + 1,5 */
+  assert.deepStrictEqual(att('grande_gluteo'), { frazionarie: 2 + 1.5, dirette: 0, sedute: 1 });   /* squat 4 x 0,5 + rumeno 3 x 0,5; prima 2 + 3 con 3 dirette */
   assert.deepStrictEqual(att('adduttori'), { frazionarie: 2, dirette: 0, sedute: 1 });
   /* una serie sola dell'indiretto non fa «allenare» l'unita (soglia 1,5 serie frazionarie) */
   assert.strictEqual(J('contaVolume([[{ name: "Leg Press", sets: 3 }]], { minSerie: 1 })').grande_gluteo.sedute, 1);

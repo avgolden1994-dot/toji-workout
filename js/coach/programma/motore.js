@@ -38,7 +38,7 @@ function attrezzoDi(nome) {
 const RISCHIO = {
   spalle: /military|lento avanti|arnold|tirate al mento|dip|panca piana bilanciere|panca con pausa|pullover|shoulder press|pike|piegamenti declinati/i,   /* i piegamenti declinati (piedi rialzati) caricano la spalla come la panca inclinata (STRESS_ZONA.spalla): a casa restano quelli a terra e inclinati */
   ginocchia: /squat|affondi|step-up|hack|bulgar|jump|salti|pistol/i,
-  schiena: /stacco|good morning|rematore con bilanciere|squat con bilanciere|squat con pausa|hyperextension|t-bar|front squat|rematore presa inversa|yates|sit-up|russian twist|crunch a terra/i
+  schiena: /stacco|good morning|kettlebell swing|rematore con bilanciere|squat con bilanciere|squat con pausa|hyperextension|t-bar|front squat|rematore presa inversa|yates|sit-up|russian twist|crunch a terra/i
 };
 /* B33 (REC-04 ponte): con le ginocchia dolenti resta almeno un esercizio per i quadricipiti. Con le macchine c e la leg press; senza
    (a casa, o in una palestra con solo pesi liberi) lo squat a corpo libero, ad ampiezza senza dolore (la nota e in SCALE_DOLORE), passa
