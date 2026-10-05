@@ -4,6 +4,7 @@
    "perche" all'utente o per spegnere una regola).
    npm run catalogo            scrive (non scrive nulla se trova errori)
    npm run catalogo -- --check controlla che sia aggiornato e senza errori
+   --radice <cartella>         lavora su un'altra copia del repo (serve alle prove)
 
    Dal coach v2 (W1-T1, piano B.4 e registro docs/coach-v2-decisioni.md):
    - capitolo 0 «La squadra del coach»: la tabella `| id | Nome | Missione | Codici | File |` diventa COACH_SQUADRA e ogni regola
@@ -201,14 +202,16 @@ function leggiRepo(radice) {
 }
 
 function main(argv) {
-  const c = costruisciCatalogo(leggiRepo());
+  const i = argv.indexOf('--radice');
+  const radice = i !== -1 && argv[i + 1] ? path.resolve(argv[i + 1]) : R;
+  const c = costruisciCatalogo(leggiRepo(radice));
   c.avvisi.forEach(a => console.error('avviso: ' + a));
   if (c.errori.length) {
     c.errori.forEach(e => console.error('ERRORE: ' + e));
     console.error('catalogo NON scritto: ' + c.errori.length + ' errori nella mappa (docs/coach-mappa-regole.md) o nel registro');
     return 1;
   }
-  const dest = path.join(R, FILE_CATALOGO);
+  const dest = path.join(radice, FILE_CATALOGO);
   const quanti = c.voci.length + ' regole, ' + c.squadra.length + ' sotto-coach, ' + c.voci.filter(v => v.spegnibile).length + ' spegnibili, ' + c.voci.filter(v => v.bloccata).length + ' bloccate';
   if (argv.includes('--check')) {
     if (!fs.existsSync(dest) || fs.readFileSync(dest, 'utf8') !== c.testo) { console.error('catalogo-regole.js non e aggiornato: lancia npm run catalogo'); return 1; }

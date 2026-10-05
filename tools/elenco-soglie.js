@@ -4,6 +4,7 @@
    ogni numero con la sua forza e la sua fonte.
    node tools/elenco-soglie.js            scrive docs/soglie-coach.md (non scrive nulla se una voce non va)
    node tools/elenco-soglie.js --check    controlla le voci e che il documento sia aggiornato (esce 1 se no)
+   --radice <cartella>                    lavora su un'altra copia del repo (serve alle prove)
    Dall'integrazione INT-1: `npm run soglie` e `npm run soglie -- --check` dentro `npm run controlla`.
    Controlli su ogni voce: `v` presente, `forza` tra quelle ammesse, `fonte` scritta, `regole` (se c'e) elenco di codici XXX-NN.
    Il modulo esporta le funzioni (tests/soglie.test.js). */
@@ -35,8 +36,10 @@ function caricaSoglie(file, testo) {
   catch (e) { errori.push(file + ': non si esegue da solo (' + e.message + '): una tabella di soglie contiene solo dati'); return { file, tabelle, errori }; }
   nomi.forEach(n => {
     const voci = vm.runInContext('typeof ' + n + ' === "undefined" ? undefined : ' + n, ctx);
-    if (!voci || typeof voci !== 'object' || Array.isArray(voci)) { errori.push(file + ': ' + n + ' deve essere un oggetto { nome: { v, forza, fonte } }'); return; }
-    tabelle.push({ nome: n, voci });
+    if (!voci || typeof voci !== 'object' || vm.runInContext('Array.isArray(' + n + ')', ctx)) { errori.push(file + ': ' + n + ' deve essere un oggetto { nome: { v, forza, fonte } }'); return; }
+    /* copia nel mondo di node (gli oggetti del contesto vm hanno altri prototipi); una funzione non e un dato */
+    try { tabelle.push({ nome: n, voci: structuredClone(voci) }); }
+    catch (e) { errori.push(file + ': ' + n + ' contiene qualcosa che non e un dato (' + e.message + ')'); }
   });
   return { file, tabelle, errori };
 }
@@ -102,13 +105,15 @@ function generaElenco(radice) {
 }
 
 function main(argv) {
-  const g = generaElenco();
+  const i = argv.indexOf('--radice');
+  const radice = i !== -1 && argv[i + 1] ? path.resolve(argv[i + 1]) : R;
+  const g = generaElenco(radice);
   if (g.errori.length) {
     g.errori.forEach(e => console.error('ERRORE: ' + e));
     console.error(FILE_DOC + ' NON scritto: ' + g.errori.length + ' voci da sistemare');
     return 1;
   }
-  const dest = path.join(R, FILE_DOC);
+  const dest = path.join(radice, FILE_DOC);
   const quante = g.tabelle.reduce((n, t) => n + Object.keys(t.voci).length, 0) + ' soglie in ' + g.tabelle.length + ' tabelle';
   if (argv.includes('--check')) {
     if (!fs.existsSync(dest) || fs.readFileSync(dest, 'utf8') !== g.testo) { console.error(FILE_DOC + ' non e aggiornato: lancia npm run soglie (node tools/elenco-soglie.js)'); return 1; }
