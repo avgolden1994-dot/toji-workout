@@ -30,6 +30,13 @@ html[data-theme="light"] .recovery-overlay { background: var(--primary); border-
    usavano l accento, che nel vecchio chiaro era rosso e ora e il lampone dell intensita */
 :where(html[data-theme="light"]) .set-row-btn.danger, :where(html[data-theme="light"]) .plan-tool-btn.danger { color: var(--danger); border-color: var(--danger); }
 :where(html[data-theme="light"]) .plan-icon-btn.danger, :where(html[data-theme="light"]) .wm-x { color: var(--danger); }
+/* avvisi (referto BIA non letto, "Errori da evitare" della scheda, problemi di YouTube/Spotify):
+   stessa famiglia del pericolo. Testo --danger-text (>= 5,6:1 su ogni superficie del chiaro),
+   la velatura rossa di .web-warning diventa la tinta dedicata; il filo resta neutro come prima.
+   .web-warning vive solo su #web-status, il cui id (allenamento.css) imponeva il grigio --muted
+   e copriva l accento: per il rosso serve lo stesso id */
+:where(html[data-theme="light"]) .bia-status.warn, :where(html[data-theme="light"]) .ex-block-title.warn { color: var(--danger-text); }
+:where(html[data-theme="light"]) #web-status.web-warning { color: var(--danger-text); background: var(--danger-tint); }
 
 /* barra in basso: attiva e inattive piu distanti */
 :where(html[data-theme="light"]) .nav-btn { color: var(--text-dim); font-weight: 600; }
