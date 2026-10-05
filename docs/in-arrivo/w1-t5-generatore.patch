@@ -1,0 +1,83 @@
+--- a/js/coach/regole-ricerca.js
++++ b/js/coach/regole-ricerca.js
+@@ -54,7 +54,7 @@
+   return { livello: p.level || 'intermedio', eta: Number(p.age) || 0, prudente: !!p.parq,
+            sonnoMale: !!(p.prefs && p.prefs.sonno === 'male') };
+ }
+-const BIL_PESANTI = /Squat con Bilanciere|Front Squat|Stacco|Panca Piana Bilanciere|Panca Inclinata Bilanciere|Panca Declinata|Military Press|Rematore con Bilanciere|T-Bar Row|Good Morning/;
++const BIL_PESANTI = /Squat con Bilanciere|Squat con Pausa|Front Squat|Stacco(?! Rumeno (?:con Manubri|a una Gamba))|Panca con Pausa|Panca Piana Bilanciere|Panca Inclinata Bilanciere|Panca Declinata|Military Press|Rematore con Bilanciere|T-Bar Row|Good Morning/;
+ function tipoCarico(nome) {
+   const m = findExercise(nome) || findExercise(nomeInLibreria(senzaEmoji(nome)) || '');
+   if (!m || m.type !== 'compound') return 'isolamento';
+--- a/js/coach/programma/motore.js
++++ b/js/coach/programma/motore.js
+@@ -34,11 +34,13 @@
+ /* ---- Attrezzatura e fastidi: esercizi da evitare e con cosa sostituirli ---- */
+ function attrezzoDi(nome) {
+   const n = nome.toLowerCase();
++  if (/asciugamano/.test(n)) return 'corpo';   /* W1-T5: il leg curl con l asciugamano non e alla macchina */
++  if (/seal row|suitcase/.test(n)) return 'manubri';   /* W1-T5: il nome non lo dice */
+   if (/piegamenti|mani rialzate/.test(n)) return 'corpo';   /* anche con le mani su una panca: niente manubri ("ri-alzate" non e "alzate") */
+   if (/un piede|corpo libero|sissy|pike|sit-up|sedia romana|diamante/.test(n)) return 'corpo';
+   if (/manubri|concentrazione/.test(n) && !/cavi|cavo|macchin/.test(n)) return 'manubri';   /* "Lento Avanti Manubri" non e da bilanciere */
+-  if (/macchin|leg press|leg extension|leg curl|hack|pectoral|chest press|shoulder press|lat machine|pulley|cavi|cavo|abductor|adductor|smith|t-bar|multipower|pendulum|pec deck|pallof|pushdown|face pull|pulldown|woodchop|calf raise/.test(n)) return 'macchine';   /* il calf raise e alla macchina o al multipower: a corpo libero c e solo quello a un piede */
+-  if (/bilanciere|stacco|good morning|squat con|front squat|rematore con b|military|lento avanti|french press|panca presa stretta|panca declinata|trap bar|landmine|hip thrust|tirate al mento|panca scott|yates/.test(n)) return 'bilanciere';
++  if (/macchin|leg press|leg extension|leg curl|hack|pectoral|chest press|shoulder press|lat machine|pulley|cavi|cavo|abductor|adductor|smith|t-bar|multipower|pendulum|pec deck|pallof|pushdown|face pull|pulldown|woodchop|calf raise|belt squat/.test(n)) return 'macchine';   /* il calf raise e alla macchina o al multipower: a corpo libero c e solo quello a un piede */
++  if (/bilanciere|stacco|good morning|squat con|front squat|rematore con b|military|lento avanti|french press|panca presa stretta|panca declinata|trap bar|landmine|hip thrust|tirate al mento|panca scott|yates|panca con pausa/.test(n)) return 'bilanciere';
+   if (/manubri|goblet|squat sumo|arnold|hammer|croci|alzate|scrollate|kickback|pullover|concentrat|panca inclinata|petto appoggiato|farmer|y-raise|spider|zottman/.test(n)) return 'manubri';
+   return 'corpo';
+ }
+@@ -50,9 +52,9 @@
+    ampiezza senza dolore): il ginocchio dolente si modifica, non si toglie ogni lavoro per i quadricipiti. Resta fuori il resto
+    dello squat e degli affondi (vedi ECCEZIONI_RISCHIO per il solo squat a corpo libero). */
+ const RISCHIO = {
+-  spalle: /military|lento avanti|arnold|tirate al mento|dip|panca piana bilanciere|pullover|shoulder press|pike|piegamenti declinati/i,   /* i piegamenti declinati (piedi rialzati) caricano la spalla come la panca inclinata (STRESS_ZONA.spalla): a casa restano quelli a terra e inclinati */
++  spalle: /military|lento avanti|arnold|tirate al mento|dip|panca piana bilanciere|panca con pausa|pullover|shoulder press|pike|piegamenti declinati/i,   /* i piegamenti declinati (piedi rialzati) caricano la spalla come la panca inclinata (STRESS_ZONA.spalla): a casa restano quelli a terra e inclinati */
+   ginocchia: /squat|affondi|step-up|hack|bulgar|jump|salti|pistol/i,
+-  schiena: /stacco|good morning|rematore con bilanciere|squat con bilanciere|hyperextension|t-bar|front squat|rematore presa inversa|yates|sit-up|russian twist|crunch a terra/i
++  schiena: /stacco|good morning|rematore con bilanciere|squat con bilanciere|squat con pausa|hyperextension|t-bar|front squat|rematore presa inversa|yates|sit-up|russian twist|crunch a terra/i
+ };
+ /* B33 (REC-04 ponte): con le ginocchia dolenti resta almeno un esercizio per i quadricipiti. Con le macchine c e la leg press; senza
+    (a casa, o in una palestra con solo pesi liberi) lo squat a corpo libero, ad ampiezza senza dolore (la nota e in SCALE_DOLORE), passa
+@@ -67,7 +69,7 @@
+    L attrezzo vero e il campo di DETTAGLI (dettaglioEsercizio().att); finche l utente non lo dichiara (W2-T5) quegli esercizi non entrano.
+    La sbarra bassa o gli anelli (rematore inverso) restano a corpo libero: e l unica tirata orizzontale senza manubri, senza di lui
+    la schiena non si allena per niente (collaudo MIS-01:schiena, sev 4 contro SAF-04, sev 2); con i manubri c e il rematore. */
+-const ATTREZZI_NON_DI_CASA = /^(sbarra|parallele|sedia romana|panca per lombari|panca a 45°|ruota addominale)$/i;
++const ATTREZZI_NON_DI_CASA = /^(sbarra|parallele|sedia romana|panca per lombari|panca a 45°|ruota addominale|elastico|kettlebell|anelli)$/i;   /* W1-T5, D-P3: elastici, kettlebell e anelli finche W2-T5 non li fa dichiarare */
+ const ATTREZZI_NON_CON_I_MANUBRI = /^(sbarra bassa o anelli)$/i;
+ function attrezzoFisicoDi(nome) { const d = dettaglioEsercizio(nome); return d ? d.att : ''; }
+ function attrezzoDiCasaMancante(nome, luogo) {
+--- a/js/coach/programma/schemi.js
++++ b/js/coach/programma/schemi.js
+@@ -49,7 +49,7 @@
+ function scambiAllungamento() { return regolaAttiva('RIC-03') ? SCAMBI_ALLUNGAMENTO.concat(SCAMBI_ALLUNGAMENTO_NUOVI) : SCAMBI_ALLUNGAMENTO; }
+ const SCAMBI_ALLUNGAMENTO = [['Pushdown Tricipiti ai Cavi', 'Estensione Tricipiti sopra la Testa ai Cavi'], ['Leg Curl Sdraiato', 'Leg Curl Seduto'], ['French Press', 'Estensione Tricipiti sopra la Testa con Manubrio']];
+ /* stimolo/fatica: al massimo uno di questi per seduta */
+-const SCHIENA_PESANTE = /Stacco da Terra|Squat con Bilanciere|Rematore con Bilanciere|Good Morning|T-Bar Row|Stacco Sumo/;
++const SCHIENA_PESANTE = /Stacco da Terra|Stacco in Deficit|Squat con Bilanciere|Squat con Pausa|Rematore con Bilanciere|Good Morning|T-Bar Row|Stacco Sumo/;
+ const GLUTEI_FAMIGLIE = [
+   ['spinta', /hip thrust|ponte glutei/i, 'Hip Thrust'], ['squat', /squat|affondi|leg press/i, 'Affondi Bulgari'],
+   ['stacco', /stacco|hyperextension|good morning/i, 'Stacco Rumeno'], ['abduzione', /abductor|slanci|kickback ai cavi/i, 'Abductor Machine']
+--- a/js/coach/questionario-decisioni.js
++++ b/js/coach/questionario-decisioni.js
+@@ -43,13 +43,13 @@
+ /* quali esercizi caricano di piu ogni articolazione (conoscenza del coach, Convenzione: matrice di docs/ricerca-recupero-infortuni-popolazioni.md 3;
+    gomito e polso con dip e piegamenti a diamante o declinati: il peso del corpo sui polsi estesi e sui gomiti) */
+ const STRESS_ZONA = {
+-  spalla: ['Panca Piana Bilanciere', 'Panca Inclinata Bilanciere', 'Panca Declinata', 'Dip alle Parallele', 'Military Press', 'Lento Avanti Manubri', 'Arnold Press', 'Tirate al Mento (Upright Row)', 'Croci su Panca Manubri', 'Trazioni alla Sbarra (Pull-ups)', 'Dip su Panca', 'Pullover con Manubrio', 'Alzate Frontali', 'Piegamenti Declinati (Piedi Rialzati)'],
++  spalla: ['Panca Piana Bilanciere', 'Panca Inclinata Bilanciere', 'Panca Declinata', 'Dip alle Parallele', 'Military Press', 'Lento Avanti Manubri', 'Arnold Press', 'Tirate al Mento (Upright Row)', 'Croci su Panca Manubri', 'Trazioni alla Sbarra (Pull-ups)', 'Dip su Panca', 'Pullover con Manubrio', 'Alzate Frontali', 'Piegamenti Declinati (Piedi Rialzati)', 'Panca con Pausa', 'Trazioni Negative'],
+   gomito: ['French Press', 'Curl Bilanciere Bicipiti', 'Panca Presa Stretta', 'Dip su Panca', 'Trazioni Presa Inversa (Chin-up)', 'Curl su Panca Scott', 'Dip alle Parallele', 'Piegamenti a Diamante'],
+-  polso: ['Curl Bilanciere Bicipiti', 'Front Squat', 'Panca Piana Bilanciere', 'Panca Presa Stretta', 'Piegamenti a Terra (Push-up)', 'Dip su Panca', 'Dip alle Parallele', 'Piegamenti a Diamante', 'Piegamenti Declinati (Piedi Rialzati)'],
+-  schiena: ['Stacco da Terra (Deadlift)', 'Rematore con Bilanciere', 'Good Morning', 'Squat con Bilanciere', 'T-Bar Row', 'Stacco Rumeno', 'Military Press', 'Stacco Sumo', 'Hyperextension (Lombari)'],
+-  anca: ['Squat con Bilanciere', 'Affondi Bulgari', 'Stacco Sumo', 'Affondi in Camminata', 'Hip Thrust', 'Leg Press', 'Squat Sumo'],
+-  ginocchio: ['Squat con Bilanciere', 'Front Squat', 'Hack Squat', 'Affondi Manubri', 'Affondi in Camminata', 'Affondi Bulgari', 'Step-up su Panca', 'Leg Extension', 'Leg Press', 'Goblet Squat', 'Squat Sumo'],
+-  caviglia: ['Calf Raise in Piedi', 'Affondi in Camminata', 'Step-up su Panca', 'Mountain Climber', 'Squat con Bilanciere']
++  polso: ['Curl Bilanciere Bicipiti', 'Front Squat', 'Panca Piana Bilanciere', 'Panca Presa Stretta', 'Piegamenti a Terra (Push-up)', 'Dip su Panca', 'Dip alle Parallele', 'Piegamenti a Diamante', 'Piegamenti Declinati (Piedi Rialzati)', 'Panca con Pausa'],
++  schiena: ['Stacco da Terra (Deadlift)', 'Rematore con Bilanciere', 'Good Morning', 'Squat con Bilanciere', 'T-Bar Row', 'Stacco Rumeno', 'Military Press', 'Stacco Sumo', 'Hyperextension (Lombari)', 'Stacco in Deficit', 'Squat con Pausa', 'Stacco Rumeno con Manubri', 'Stacco Rumeno a una Gamba'],
++  anca: ['Squat con Bilanciere', 'Affondi Bulgari', 'Stacco Sumo', 'Affondi in Camminata', 'Hip Thrust', 'Leg Press', 'Squat Sumo', 'Squat con Pausa', 'Cossack Squat', 'Belt Squat', 'Squat su Scatola', 'Copenhagen Plank', 'Hip Thrust con Manubrio'],
++  ginocchio: ['Squat con Bilanciere', 'Front Squat', 'Hack Squat', 'Affondi Manubri', 'Affondi in Camminata', 'Affondi Bulgari', 'Step-up su Panca', 'Leg Extension', 'Leg Press', 'Goblet Squat', 'Squat Sumo', 'Squat con Pausa', 'Cossack Squat', 'Belt Squat', 'Squat su Scatola', 'Step-up Basso', 'Sit-to-Stand dalla Panca'],
++  caviglia: ['Calf Raise in Piedi', 'Affondi in Camminata', 'Step-up su Panca', 'Mountain Climber', 'Squat con Bilanciere', 'Calf Raise con Manubrio sul Gradino', 'Step-up Basso', 'Squat con Pausa', 'Belt Squat']
+ };
+ const senzaEmoji = (n) => String(n).replace(EMOJI_TESTA, '');
+ function nomeInLibreria(pulito) {

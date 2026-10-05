@@ -9,8 +9,8 @@ const p=await (await b.newContext({serviceWorkers:'block'})).newPage(); const er
 await p.addInitScript(()=>{localStorage.setItem('tz_mode','toji');localStorage.setItem('tz_consenso','no');localStorage.setItem('tz_onb','1');localStorage.setItem('tz_guida_vista','1');localStorage.setItem('tz_lingua','it');});
 await p.goto(require('url').pathToFileURL(require('path').join(__dirname,'..','..','index.html')).href);await p.waitForTimeout(800);
 /* W1-T5: esercizi nuovi il cui nome la regex di attrezzoDi (js/coach/programma/motore.js) legge male: la sezione dice la verita (come ATTRIBUTI.attrezzo), attrezzoDi no
-   (chiave = esercizio, valore = cosa risponde oggi attrezzoDi). Li corregge W2-T6, quando la scelta degli esercizi leggera gli attributi; se attrezzoDi li legge giusto
-   la voce va tolta da qui (la prova lo dice). Stessa lista nella nota di docs/in-arrivo/w1-t5.json */
+   (chiave = esercizio, valore = cosa risponde attrezzoDi oggi). Li corregge la patch di integrazione (docs/in-arrivo/w1-t5.json, nota) o W2-T6, quando la scelta degli esercizi
+   leggera gli attributi; dopo, attrezzoDi li legge giusto e le voci si possono togliere (la prova passa anche con le voci in piu). Stessa lista nella nota del JSON */
 const ATTREZZO_DI_DA_CORREGGERE = { 'Panca con Pausa': 'corpo', 'Seal Row': 'corpo', 'Leg Curl con Asciugamano': 'macchine', 'Belt Squat': 'corpo', 'Kettlebell Swing': 'corpo', 'Suitcase Carry': 'corpo' };
 const r = await p.evaluate((DA_CORREGGERE) => {
   const puliti = EXERCISE_LIBRARY.map(e => e.name.replace(EMOJI_TESTA, ''));
@@ -31,7 +31,7 @@ const r = await p.evaluate((DA_CORREGGERE) => {
         /* la sezione e giusta secondo gli attributi (dopo l integrazione di W1-T2 il file e caricato; prima no) */
         if (typeof attributi === 'function' && attributi(e.name) && (SEZ_PER_ATTREZZO[attributi(e.name).attrezzo] || []).indexOf(d.sez) === -1) eccezioniMalScritte.push(n + ': sezione ' + d.sez + ' ma attrezzo ' + attributi(e.name).attrezzo);
       } else discordi.push(n + ': sezione ' + d.sez + ' ma attrezzoDi dice ' + a);
-    } else if (DA_CORREGGERE[n]) eccezioniInutili.push(n);
+    }   /* se attrezzoDi li legge gia giusto (dopo la patch di integrazione) la voce non serve piu ma non fa male: la prova vale prima e dopo */
   });
   Object.keys(DA_CORREGGERE).forEach(n => { if (puliti.indexOf(n) === -1) eccezioniInutili.push(n + ' (non e piu in libreria)'); });
   const orfani = Object.keys(DETTAGLI).filter(k => puliti.indexOf(k) === -1);
@@ -52,7 +52,7 @@ ok(r.subFuori.length===0, 'ogni sottogruppo e uno di quelli del suo gruppo '+r.s
 ok(r.senzaScheda.length===0, 'tutti hanno la scheda tecnica completa '+r.senzaScheda.join(' | '));
 ok(r.noteMancanti.length===0, 'tutte le note citate esistono '+r.noteMancanti.join(' | '));
 ok(r.discordi.length===0, 'la sezione combacia con attrezzoDi: '+r.discordi.join(' || '));
-ok(r.eccezioniInutili.length===0, 'nessuna voce di ATTREZZO_DI_DA_CORREGGERE e rimasta senza motivo (attrezzoDi ora li legge giusto: toglierle) '+r.eccezioniInutili.join(' | '));
+ok(r.eccezioniInutili.length===0, 'ogni voce di ATTREZZO_DI_DA_CORREGGERE e ancora un esercizio della libreria '+r.eccezioniInutili.join(' | '));
 ok(r.eccezioniMalScritte.length===0, 'dove attrezzoDi sbaglia, la sezione combacia con ATTRIBUTI.attrezzo '+r.eccezioniMalScritte.join(' | '));
 console.log('  ('+r.eccezioniVere.length+' esercizi nuovi che attrezzoDi legge male: '+r.eccezioniVere.join(', ')+')');
 ok(r.conteggio===r.n && r.doppi===0, 'organizzaEsercizi mette ogni esercizio una volta sola ('+r.conteggio+'/'+r.n+') '+r.sezioni.join(' '));
