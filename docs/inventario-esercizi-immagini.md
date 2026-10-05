@@ -10,8 +10,8 @@ Generato con uno script node che legge `EXERCISE_LIBRARY` (`js/dati/libreria-ese
 | Con immagine (campo presente e file esistente) | 19 |
 | Senza immagine (mancanti) | 121 su 140 (120 nel branch + 1 da altro branch) |
 | Di cui non ancora presenti in questo branch | 1 (n. 140 Squat Sumo, da `claude/hopeful-thompson-uthd8f`) |
-| File in `esercizi/` | 20 (tutti SVG) |
-| File orfani (non referenziati) | 1 (`ex-02-panca-inclinata-su-a.svg`) |
+| File in `esercizi/` | 19 (tutti SVG; erano 20 prima dello spostamento dell'orfano) |
+| File orfani (non referenziati) | 0 (il fotogramma `ex-02-panca-inclinata-su-a.svg` e in `esercizi-bozze/` dal 2026-10-05) |
 | Peso totale `esercizi/` | 679.8 KB |
 | Peso medio per file | 34.0 KB |
 
@@ -328,12 +328,12 @@ Controlli: file referenziati ma assenti = 0; voci di mappa non presenti in libre
 
 | File | Peso | Note |
 |---|---|---|
-| `esercizi/ex-02-panca-inclinata-su-a.svg` | 30.9 KB | Non referenziato da `IMMAGINI_ESERCIZI`. E' il fotogramma "su" (posa alta) usato per costruire `ex-02-panca-inclinata.svg` (vedi commento SVG: "giu-a spostata di 13px per combaciare con su-a"). Unico SVG senza animazione ne' metadati C2PA, con sfondo `rect` bianco. Resta nel precache. |
+| `esercizi-bozze/ex-02-panca-inclinata-su-a.svg` | 30.9 KB | Non referenziato da `IMMAGINI_ESERCIZI`. E' il fotogramma "su" (posa alta) usato per costruire `ex-02-panca-inclinata.svg` (vedi commento SVG: "giu-a spostata di 13px per combaciare con su-a"). Unico SVG senza animazione ne' metadati C2PA, con sfondo `rect` bianco. Non è nel precache: spostato in `esercizi-bozze/` il 2026-10-05. |
 
 ## 5. Precache sw.js
 
 - Cache: `CACHE_NAME = '3in-v10'` (cambiare il nome butta le copie vecchie).
-- Le immagini SONO nel precache: elenco **statico** tra i marcatori `/*INIZIO-ASSET*/ ... /*FINE-ASSET*/`, con 20 righe `./esercizi/*.svg` (compreso l'orfano).
+- Le immagini SONO nel precache: elenco **statico** tra i marcatori `/*INIZIO-ASSET*/ ... /*FINE-ASSET*/`, con 19 righe `./esercizi/*.svg` (l'orfano è stato spostato in `esercizi-bozze/`, fuori dal precache).
 - L'elenco e' rigenerato da `tools/genera-sw.js` (`npm run sw`, `-- --check` per verificarlo): fa un glob di `esercizi/*.svg` (solo `.svg`, ordinato), piu' index, manifest, icone e i riferimenti di `index.html`. Quindi un nuovo SVG in `esercizi/` entra nel precache dopo `npm run sw`; PNG/WebP no (andrebbe esteso il filtro).
 - Install: `Promise.allSettled(ASSETS.map(cache.add))`, un file mancante non blocca gli altri.
 - Fetch: network-first con fallback alla cache, e le risposte vengono messe in cache a runtime (`cache.put`). Per immagini non trovate (png/jpg/jpeg/webp/svg) risponde 404 pulito, cosi si vede il segnaposto.

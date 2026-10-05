@@ -138,7 +138,6 @@ const ASSETS = [
   './js/ui/esporta-ics.js',
   './js/avvio.js',
   './esercizi/ex-01-panca-piana.svg',
-  './esercizi/ex-02-panca-inclinata-su-a.svg',
   './esercizi/ex-02-panca-inclinata.svg',
   './esercizi/ex-03-panca-inclinata-manubri.svg',
   './esercizi/ex-04-panca-declinata.svg',
