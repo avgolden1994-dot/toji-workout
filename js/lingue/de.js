@@ -3954,5 +3954,18 @@ window.I18N["de"] = {
 "Secondari: erettori spinali, medio gluteo, core": "Sekundär: Rückenstrecker, mittlerer Gesäßmuskel, Rumpf",
 "Secondari: erettori spinali, core": "Sekundär: Rückenstrecker, Rumpf",
 "Primari: extrarotatori della cuffia (sottospinato, piccolo rotondo)": "Primär: Außenrotatoren der Rotatorenmanschette (Untergrätenmuskel, kleiner Rundmuskel)",
-"Secondari: deltoide posteriore": "Sekundär: hintere Schulter"
+"Secondari: deltoide posteriore": "Sekundär: hintere Schulter",
+"Oggi si parte leggeri apposta: non è un test. L’obiettivo è finire con #-# ripetizioni in più": "Heute startest du mit Absicht leicht: Das ist kein Test. Ziel ist es, am Ende noch #-# Wiederholungen in Reserve zu haben",
+"Partenza bassa voluta: impari il movimento, poi si sale in fretta": "Bewusst niedriger Start: Du lernst die Bewegung, danach geht es schnell nach oben",
+"Carico di partenza prudente per chi inizia: non conosco il tuo peso, si regola nelle prime sedute": "Vorsichtiges Startgewicht für Einsteigerinnen und Einsteiger: Ich kenne dein Gewicht nicht, es passt sich in den ersten Einheiten an",
+"Carichi di partenza prudenti per chi inizia: non conosco il tuo peso, si regolano nelle prime sedute.": "Vorsichtige Startgewichte für Einsteigerinnen und Einsteiger: Ich kenne dein Gewicht nicht, sie passen sich in den ersten Einheiten an.",
+"Carichi di partenza bassi di proposito: le prime sedute servono a imparare il movimento, poi il coach sale in fretta.": "Die Startgewichte sind bewusst niedrig: Die ersten Einheiten dienen dazu, die Bewegung zu lernen, danach steigert der Coach schnell.",
+"Per ora basta il bilanciere vuoto: poche ripetizioni, tecnica pulita": "Für den Anfang reicht die leere Stange: wenige Wiederholungen, saubere Technik",
+"Il bilanciere vuoto pesa # kg: per iniziare lo stesso movimento con i manubri o con la macchina": "Die leere Stange wiegt # kg: Starte dieselbe Bewegung mit Kurzhanteln oder an der Maschine",
+"Versione facilitata per partire: si passa alla completa a #-# ripetizioni pulite": "Erleichterte Variante zum Einstieg: Zur vollen Variante geht es bei #-# sauberen Wiederholungen",
+"Calibrazione: RPE # contro # previsto, si sale a # kg (+#%)": "Kalibrierung: RPE # statt der erwarteten #, weiter auf # kg (+#%)",
+"Calibrazione: serie complete, +# kg": "Kalibrierung: Sätze geschafft, +# kg",
+"Segna quanto è stata dura la prima serie (RPE): con il dato il carico sale più in fretta": "Trage ein, wie hart der erste Satz war (RPE): Mit dieser Angabe steigt das Gewicht schneller",
+"Carico tarato: da qui la progressione normale": "Gewicht eingestellt: ab hier die normale Progression",
+"Il salto era troppo grande: si torna a # kg, da qui la progressione normale": "Der Sprung war zu groß: zurück auf # kg, ab hier die normale Progression"
 };

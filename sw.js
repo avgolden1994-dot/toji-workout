@@ -2,7 +2,7 @@
    il segnale spesso manca). Strategia: network-first con fallback alla cache,
    così vedi sempre l'ultima versione se sei online, ma l'app parte comunque offline. */
 
-const CACHE_NAME = '3in-v14';   /* cambiando il nome, le copie vecchie vengono buttate */
+const CACHE_NAME = '3in-v15';   /* cambiando il nome, le copie vecchie vengono buttate */
 const ASSETS = [
   './',
   /* Elenco generato da tools/genera-sw.js (npm run sw): non si modifica a mano.
@@ -99,7 +99,9 @@ const ASSETS = [
   './js/ui/statistiche-grafico.js',
   './js/coach/carichi/progressivo.js',
   './js/coach/carichi/e1rm.js',
+  './js/coach/carichi/soglie-partenza.js',
   './js/coach/carichi/partenza.js',
+  './js/coach/carichi/calibrazione.js',
   './js/coach/carichi/taratura.js',
   './js/coach/sicurezza/scarico.js',
   './js/coach/questionario-decisioni.js',

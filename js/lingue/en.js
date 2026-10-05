@@ -3954,5 +3954,18 @@ window.I18N["en"] = {
 "Secondari: erettori spinali, medio gluteo, core": "Secondary: spinal erectors, gluteus medius, core",
 "Secondari: erettori spinali, core": "Secondary: spinal erectors, core",
 "Primari: extrarotatori della cuffia (sottospinato, piccolo rotondo)": "Primary: rotator cuff external rotators (infraspinatus, teres minor)",
-"Secondari: deltoide posteriore": "Secondary: rear deltoid"
+"Secondari: deltoide posteriore": "Secondary: rear deltoid",
+"Oggi si parte leggeri apposta: non è un test. L’obiettivo è finire con #-# ripetizioni in più": "Today you start light on purpose: it’s not a test. The goal is to finish with #-# reps to spare",
+"Partenza bassa voluta: impari il movimento, poi si sale in fretta": "Low start on purpose: you learn the movement, then you move up fast",
+"Carico di partenza prudente per chi inizia: non conosco il tuo peso, si regola nelle prime sedute": "Cautious starting load for beginners: I don’t know your weight, it adjusts over the first sessions",
+"Carichi di partenza prudenti per chi inizia: non conosco il tuo peso, si regolano nelle prime sedute.": "Cautious starting loads for beginners: I don’t know your weight, they adjust over the first sessions.",
+"Carichi di partenza bassi di proposito: le prime sedute servono a imparare il movimento, poi il coach sale in fretta.": "Starting loads are low on purpose: the first sessions are for learning the movement, then the coach moves up fast.",
+"Per ora basta il bilanciere vuoto: poche ripetizioni, tecnica pulita": "For now the empty barbell is enough: few reps, clean technique",
+"Il bilanciere vuoto pesa # kg: per iniziare lo stesso movimento con i manubri o con la macchina": "The empty barbell weighs # kg: to start, do the same movement with dumbbells or on the machine",
+"Versione facilitata per partire: si passa alla completa a #-# ripetizioni pulite": "Easier version to start with: you move on to the full one at #-# clean reps",
+"Calibrazione: RPE # contro # previsto, si sale a # kg (+#%)": "Calibration: RPE # against # expected, going up to # kg (+#%)",
+"Calibrazione: serie complete, +# kg": "Calibration: sets completed, +# kg",
+"Segna quanto è stata dura la prima serie (RPE): con il dato il carico sale più in fretta": "Log how hard the first set was (RPE): with that number the load goes up faster",
+"Carico tarato: da qui la progressione normale": "Load calibrated: from here on, normal progression",
+"Il salto era troppo grande: si torna a # kg, da qui la progressione normale": "That jump was too big: going back to # kg, from here on normal progression"
 };

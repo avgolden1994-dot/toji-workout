@@ -3954,5 +3954,18 @@ window.I18N["es"] = {
 "Secondari: erettori spinali, medio gluteo, core": "Secundarios: erectores espinales, glúteo medio, core",
 "Secondari: erettori spinali, core": "Secundarios: erectores espinales, core",
 "Primari: extrarotatori della cuffia (sottospinato, piccolo rotondo)": "Principales: rotadores externos del manguito (infraespinoso, redondo menor)",
-"Secondari: deltoide posteriore": "Secundarios: deltoides posterior"
+"Secondari: deltoide posteriore": "Secundarios: deltoides posterior",
+"Oggi si parte leggeri apposta: non è un test. L’obiettivo è finire con #-# ripetizioni in più": "Hoy empiezas ligero a propósito: no es una prueba. El objetivo es terminar con #-# repeticiones de reserva",
+"Partenza bassa voluta: impari il movimento, poi si sale in fretta": "Inicio bajo a propósito: aprendes el movimiento y luego se sube rápido",
+"Carico di partenza prudente per chi inizia: non conosco il tuo peso, si regola nelle prime sedute": "Carga de partida prudente para quien empieza: no conozco tu peso, se ajusta en las primeras sesiones",
+"Carichi di partenza prudenti per chi inizia: non conosco il tuo peso, si regolano nelle prime sedute.": "Cargas de partida prudentes para quien empieza: no conozco tu peso, se ajustan en las primeras sesiones.",
+"Carichi di partenza bassi di proposito: le prime sedute servono a imparare il movimento, poi il coach sale in fretta.": "Las cargas de partida son bajas a propósito: las primeras sesiones sirven para aprender el movimiento, luego el coach sube rápido.",
+"Per ora basta il bilanciere vuoto: poche ripetizioni, tecnica pulita": "Por ahora basta la barra vacía: pocas repeticiones, técnica limpia",
+"Il bilanciere vuoto pesa # kg: per iniziare lo stesso movimento con i manubri o con la macchina": "La barra vacía pesa # kg: para empezar, haz el mismo movimiento con mancuernas o en la máquina",
+"Versione facilitata per partire: si passa alla completa a #-# ripetizioni pulite": "Versión facilitada para empezar: se pasa a la completa con #-# repeticiones limpias",
+"Calibrazione: RPE # contro # previsto, si sale a # kg (+#%)": "Calibración: RPE # frente a # previsto, se sube a # kg (+#%)",
+"Calibrazione: serie complete, +# kg": "Calibración: series completas, +# kg",
+"Segna quanto è stata dura la prima serie (RPE): con il dato il carico sale più in fretta": "Anota lo dura que fue la primera serie (RPE): con ese dato la carga sube más rápido",
+"Carico tarato: da qui la progressione normale": "Carga calibrada: a partir de aquí, la progresión normal",
+"Il salto era troppo grande: si torna a # kg, da qui la progressione normale": "El salto fue demasiado grande: se vuelve a # kg, a partir de aquí la progresión normal"
 };
