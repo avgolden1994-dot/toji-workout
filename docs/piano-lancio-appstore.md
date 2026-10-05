@@ -123,14 +123,14 @@ Legenda responsabile: **U** = Utente, **C** = Claude, **U+C** = entrambi.
 
 ### 1.3 Nome "3in", bundle id e cosa va rinominato
 
-- **Stato attuale (verificato con grep, 2026-10-05):** il nome visibile è già "3in" in `manifest.json` (`name`, `short_name`, `description`), `index.html` (`<title>`, `apple-mobile-web-app-title`) e `js/core/costanti.js` (`title: '3in'`); il service worker usa la cache `3in-v10`. "Toji" resta solo come identificativo interno (vedi sotto). In `js/core/modalita.js` un commento dice che le modalità Toji e Maki furono tolte perché nomi di personaggi protetti.
+- **Stato attuale (verificato con grep, 2026-10-05):** il nome visibile è già "3in" in `manifest.json` (`name`, `short_name`, `description`) e `index.html` (`<title>`, `apple-mobile-web-app-title`); il service worker usa la cache `3in-v10`. "Toji" resta solo come identificativo interno (vedi sotto). Le modalità Toji e Maki furono tolte perché nomi di personaggi protetti; il commento di `js/core/modalita.js` spiega che oggi `currentMode` è solo l'id dello spazio dei dati.
 - **Da fare per il nome:** (1) controllare in ASC che "3in" sia libero (i nomi sono unici); un nome di 3 caratteri è probabilmente già preso o difficile da cercare: preparare una variante (es. "3in: Allenamento", max 30 caratteri) (da verificare); (2) ricerca marchi su "3in" in EUIPO/TMview e USPTO (da fare, con consulto legale se serve); (3) sottotitolo (max 30 caratteri) e parole chiave; (4) niente marchi altrui nelle keyword (2.3.7).
 - **Bundle id** (immutabile dopo la pubblicazione): scegliere una forma che inizi con una lettera in ogni segmento, perché un segmento che inizia con una cifra può dare problemi in alcuni contesti (da verificare, consultato 2026-10-05). Proposte: `com.<cognome>.trein` oppure, se si ha un dominio, `it.<dominio>.trein` o `app.<dominio>.trein` (le cifre non nel primo carattere; il trattino è ammesso ma si evita). Evitare di mettere "toji".
 - **Rinominare "Toji" → "3in" dove visibile all'utente (lavoro futuro sul codice, NON eseguito ora):**
   - repository e cartella `toji-workout` (compare nell'URL di GitHub Pages della privacy policy: scegliere il nome PRIMA di pubblicare l'URL, perché finisce in ASC; il comportamento dei redirect di Pages dopo un rinomina è da verificare);
   - `js/ui/esporta-ics.js:50`: UID degli eventi `@tojiworkout` (invisibile; cambiarlo duplicherebbe gli eventi già importati nel calendario: decidere se lasciarlo);
   - titoli e testi nei `docs/` (PIANO.md, ARCHITETTURA.md, ecc.) e nel README.
-- **NON rinominare:** l'id di modalità `'toji'` (`js/core/costanti.js:15`, `js/core/modalita.js`, `js/core/storage.js:115-119`, `js/core/backup.js:60`, `js/avvio.js:18`) e tutte le chiavi `localStorage` con suffisso `_toji`, oltre a `coach_plus_*` e `tz_*` (ne dipendono i dati degli utenti esistenti).
+- **NON rinominare:** l'id dello spazio dati `'toji'` (e `'maki'`, per chi lo scelse a settembre 2026) in `currentMode` (`js/core/costanti.js:9`, `js/core/modalita.js`, `js/core/storage.js:115-119`, `js/core/backup.js:60`, `js/avvio.js:18`) e tutte le chiavi `localStorage` con suffisso `_toji`, oltre a `coach_plus_*` e `tz_*` (ne dipendono i dati degli utenti esistenti).
 
 ---
 

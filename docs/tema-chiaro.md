@@ -13,7 +13,7 @@ Diagnosi della palette precedente:
 
 ## Dove vive
 
-- **Token** in `css/base.css`: blocco scuro `:root, html[data-theme="dark"], body[data-theme="dark"]` e blocco `html[data-theme="light"], body[data-theme="light"]` (`applyTheme` mette `data-theme` su `<html>` e su `<body>`). Maki ha ancora i suoi blocchi, ma `data-mode` vale sempre `toji` (`js/core/modalita.js`): sono codice morto.
+- **Token** in `css/base.css`: blocco scuro `:root, html[data-theme="dark"], body[data-theme="dark"]` e blocco `html[data-theme="light"], body[data-theme="light"]` (`applyTheme` mette `data-theme` su `<html>` e su `<body>`).
 - **Compatibilità nello scuro**: i token nuovi esistono anche lì con i valori che prima erano scritti a mano (`--*-text` = colore pieno, `--*-tint` = velatura 15% sulla card, `--field-*` = fondo e filo del tema, `--shadow-1: none`, `--disco-bordo: transparent`), così lo scuro resta identico per costruzione.
 - **`css/chiaro.css`**: solo override del chiaro, caricato per ULTIMO in `index.html`. Prefisso `:where(html[data-theme="light"])` (peso zero: la regola ha la forza del selettore che corregge e vince solo a parità); prefisso pieno solo dove si batte una regola già scritta col prefisso pieno (elevazione, timer di recupero, `.og-day.today`).
 - **Elevazione** (fine di `base.css`): una regola sola, ombre tinte di terra bruciata `--ombra` (`#4a3426`, mai nero) in `--shadow-1/2/3/brand`. Livello 1 card e riquadri (`--shadow-1` + filo), 2 flottanti (`.music-dock`, `.snackbar`, `.busy-panel`), 3 finestre dal basso (`--shadow-3` + velo caldo). Dentro una card niente ombre: il riquadro annidato scende a `--surface-2`.
@@ -68,9 +68,8 @@ Playwright (Chromium, 390x844 @2x, orologio fissato a giovedì 8 ottobre 2026, d
 - `docs/piano-lancio-appstore.md` indica il launch screen `#08080a`: da allineare a `#0e0e12`. Nell'app nativa: `@capacitor/status-bar` con stile per tema dentro `applyTheme` (via `Nativo.plugin('StatusBar')`) e/o prova su iPhone reale con `default` + `theme-color`.
 - `@keyframes cedimento-boom` (`css/allenamento.css`) dà ancora un alone arancio di 36 px nel chiaro.
 - Variante non fatta: arancio più vivo `#ea580c` con testo scuro come nello scuro; richiederebbe un `--primary-text` separato per ~240 usi di `var(--primary)`.
-- `applyTheme` per chi ha `currentMode` = `maki` nello scuro mette ancora `theme-color` `#052e13` (`MODE_META`), anche se l'aspetto Maki non esiste più.
 - `tests/browser/intensita-bia.js` fallisce già da prima: non è una regressione di questo lavoro.
 
 ## Commit di riferimento
 
-Ramo `claude/ecstatic-edison-r8qf3d`: `d7bdf03` (palette, `CACHE_NAME` 3in-v12), `03e5d16` (avvisi in rosso), `5718890` (tema prima del primo paint, v13), `eb8794d` (CLAUDE.md) più i commit «Aggiorna il grafo del codice…» (`8efcbd0`, `2d3f1c4`, `65ad234`).
+Ramo `claude/ecstatic-edison-r8qf3d`: `d7bdf03` (palette, `CACHE_NAME` 3in-v12), `03e5d16` (avvisi in rosso), `5718890` (tema prima del primo paint, v13), `eb8794d` (CLAUDE.md) `9a10b27` (rimozione del codice Maki: via i blocchi `data-mode="maki"` di `css/base.css` e `MODE_META`, la barra del browser nello scuro è sempre `#08080a`, `CACHE_NAME` 3in-v14) più i commit «Aggiorna il grafo del codice…» (`8efcbd0`, `2d3f1c4`, `65ad234`).

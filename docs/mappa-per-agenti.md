@@ -55,7 +55,7 @@ Avvio: `js/avvio.js` (IIFE `boot`) → `chooseMode()` (js/core/modalita.js) → 
 
 **Carichi.** Prossimo carico `caricoProssimo()` (dolore-mattina.js, poi avvolto) e `applicaCaricoProgressivo()` (regole-ricerca.js); partenza da dati del corpo js/coach/carichi/partenza.js; evoluzione js/coach/carichi/progressivo.js; intensità/RIR js/coach/intensita.js, esigenza.js.
 
-**Dati e salvataggio.** `loadData()`/`saveData()`, `loadHistory()`/`saveHistory()`, chiavi `dataKey()`/`historyKey()` in js/core/storage.js (localStorage `coach_plus_*` e `tz_*`, per modalità: js/core/modalita.js). Backup/ripristino js/core/backup.js; importazioni js/ui/importa-csv.js, importa-progressi.js; MP3 e foto in IndexedDB (mp3-locale.js, progressi/foto.js). Una chiave nuova va anche nel backup.
+**Dati e salvataggio.** `loadData()`/`saveData()`, `loadHistory()`/`saveHistory()`, chiavi `dataKey()`/`historyKey()` in js/core/storage.js (localStorage `coach_plus_*` e `tz_*`, per spazio dati: js/core/modalita.js). Backup/ripristino js/core/backup.js; importazioni js/ui/importa-csv.js, importa-progressi.js; MP3 e foto in IndexedDB (mp3-locale.js, progressi/foto.js). Una chiave nuova va anche nel backup.
 
 **Lingue.** Testo italiano nel codice; `tr()` e il traduttore automatico in js/lingue/traduttore.js cercano la frase nei dizionari js/lingue/en|es|de.js (una frase nuova va in tutti e tre: lo controlla `npm test`).
 
