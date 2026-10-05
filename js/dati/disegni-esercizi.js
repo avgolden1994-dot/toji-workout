@@ -41,7 +41,8 @@ const IMMAGINI_ESERCIZI = {
   'Rematore con Manubrio': 'esercizi/ex-18-rematore-manubrio.svg',
   'T-Bar Row': 'esercizi/ex-19-t-bar-row.svg',
   'Pulley Basso': 'esercizi/ex-20-pulley-basso.svg',
-  'Pullover ai Cavi': 'esercizi/ex-21-pullover-ai-cavi.svg'
+  'Pullover ai Cavi': 'esercizi/ex-21-pullover-ai-cavi.svg',
+  'Hyperextension (Lombari)': 'esercizi/ex-22-hyperextension-lombari.svg'
 };
 window.immagineEsercizio = function(nome) {
   const pulito = String(nome).replace(EMOJI_TESTA, '');
