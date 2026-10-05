@@ -43,7 +43,8 @@ const IMMAGINI_ESERCIZI = {
   'Pulley Basso': 'esercizi/ex-20-pulley-basso.svg',
   'Pullover ai Cavi': 'esercizi/ex-21-pullover-ai-cavi.svg',
   'Hyperextension (Lombari)': 'esercizi/ex-22-hyperextension-lombari.svg',
-  'Squat con Bilanciere': 'esercizi/ex-23-squat-bilanciere.svg'
+  'Squat con Bilanciere': 'esercizi/ex-23-squat-bilanciere.svg',
+  'Front Squat': 'esercizi/ex-24-front-squat.svg'
 };
 window.immagineEsercizio = function(nome) {
   const pulito = String(nome).replace(EMOJI_TESTA, '');
