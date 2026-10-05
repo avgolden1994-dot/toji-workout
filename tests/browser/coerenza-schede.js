@@ -91,11 +91,16 @@ chiavi.forEach(k => r.esempi[k].forEach(x => console.log('     ' + k + ' -> ' + 
 /* una scheda letta per intero: intermedio, 3 giorni, massa, palestra, 60 minuti */
 const s = await p.evaluate(() => {
   const prog = buildProgram({ sex: 'M', age: 30, seme: 'audit', fastidi: [], sonno: 'bene', attrezzi: 'indifferente', usaProfilo: false, level: 'intermedio', days: 3, goals: ['massa'], luogo: 'palestra', minutes: 60 });
-  return { split: prog.split.nome, titoli: prog.sedute.map(sd => sd.titolo), note: prog.note };
+  const nomi = [].concat.apply([], prog.sedute.map(sd => sd.esercizi.map(e => e.name.replace(EMOJI_TESTA, ''))));
+  return { split: prog.split.nome, titoli: prog.sedute.map(sd => sd.titolo), note: prog.note, nomi: nomi, core: [].concat.apply([], prog.sedute.map(sd => sd.esercizi)).some(e => (findExercise(e.name) || {}).group === 'core') };
 });
 ok(s.split === 'Upper / Lower / Full Body', 'intermedio, 3 giorni: Upper / Lower / Full Body (' + s.split + ')');
 ok(/forza/.test(s.titoli[0]) && /forza/.test(s.titoli[1]) && /ipertrofia/.test(s.titoli[2]), 'upper e lower forza, full body ipertrofia: ' + s.titoli.join(' | '));
-ok(['Polpacci', 'Deltoidi posteriori', 'Core'].every(w => s.note.some(x => x.indexOf(w) === 0)), 'le aggiunte della settimana hanno la loro nota');
+/* ABB-03 (aggiornata in INT-0): polpacci, deltoidi posteriori e core ci sono in ogni settimana, e se li ha AGGIUNTI strCopri la nota lo dice. Dall'onda 0 (W0-T2: tempo e femorali)
+   alcuni stanno gia nella ricetta o nel riempimento del tempo: allora non c'e nessuna aggiunta e quindi nessuna nota (prima la prova pretendeva una nota per tutti e tre). */
+const presente = { 'Polpacci': s.nomi.some(n => /calf/i.test(n)), 'Deltoidi posteriori': s.nomi.some(n => /face pull|reverse|alzate posteriori|y-raise/i.test(n)), 'Core': s.core };
+ok(Object.keys(presente).every(w => presente[w]), 'polpacci, deltoidi posteriori e core ci sono nella settimana: ' + JSON.stringify(presente));
+ok(Object.keys(presente).every(w => !s.note.some(x => x.indexOf(w + ':') === 0) || presente[w]), 'se una nota dice che ha aggiunto polpacci, deltoidi posteriori o core, l esercizio c e davvero');
 
 /* la priorita dell utente porta il suo gruppo davanti a parita di tipo (ABB-10) */
 const pr = await p.evaluate(() => {

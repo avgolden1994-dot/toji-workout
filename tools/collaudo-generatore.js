@@ -25,7 +25,15 @@ const R = path.join(__dirname, '..');
    docs/ricerca-struttura-e-intensita.md). "Convenzione" = pratica comune dei coach, senza prova diretta.
    Cambiare una soglia = alzare VERSIONE_CRITERI: i confronti prima/dopo valgono solo a pari versione.
    ===================================================================================================== */
-const VERSIONE_CRITERI = '1.0';
+const VERSIONE_CRITERI = '1.1';
+/* 1.1 (INT-0, onda 0 del coach v2): criteri aggiornati dalle decisioni del registro docs/coach-v2-decisioni.md, non per far passare l'onda:
+   - SAF-01/SAF-02/MOD-03: la leg extension e lo squat a corpo libero con le ginocchia dolenti stanno in CAUTELA, non tra i controindicati
+     (B13, B33, REC-04: si modifica prima di escludere; il generatore li lascia con la nota di SCALE_DOLORE e un esercizio per i quadricipiti resta sempre);
+   - SAF-04: il gradino non e attrezzatura «non garantita» (B28 elenca solo sbarra, parallele, sedia romana, panca per i lombari);
+   - DEL-01: il principiante non prudente ha lo scarico solo all'8a settimana (D-P5, B21); il prudente (over 65, PAR-Q, minorenne) resta a blocchi 3+1 (B4);
+   - TEC-01: le tecniche al cedimento valgono anche per i minorenni (ETA-02, MAV-03), oltre a principianti, over 65 e PAR-Q;
+   - PAT-01/EQ-01/EQ-02: il Pullover con Manubrio (bersaglio dorsali, D-P11) conta come tirata verticale: era gia cosi nel modello (`mov` dal bersaglio), ora lo dice
+     un autotest. L'hip thrust e il ponte glutei restano contati come hinge nel modello della settimana (spinta d'anca): vedi la nota di PAT-01. */
 
 /* --- volume --- */
 /* Una serie vale 1 per il muscolo bersaglio e 0,5 per i sinergisti (Pelland 2025, Sports Medicine, 67 studi: Moderata) */
@@ -137,6 +145,8 @@ const PRIORITA_DELTA_MIN_SERIE = 1;
 /* --- mesociclo, RIR, scarico --- */
 /* Uno scarico ogni 4-8 settimane (strutturaProgramma, "dalla ricerca": Moderata/Convenzione) */
 const SCARICO_OGNI_MAX = 8;
+/* D-P5, B21 (INT-0): il principiante non prudente ha 8 settimane con un solo scarico, all'8a; il prudente (over 65, PAR-Q, minorenne) resta a blocchi 3+1 (B4) (Moderata/Convenzione) */
+const SCARICO_PRINCIPIANTE = 8;
 /* Sui fondamentali pesanti col bilanciere non si arriva al cedimento tecnico: RIR minimo 1 (Convenzione; ACSM 2026: il cedimento non serve, Solida) */
 const RIR_MIN_PESANTE = 1;
 /* RIR bersaglio minimo alla settimana 1 per livello: principiante 3, intermedio 2, avanzato 2 (docs/ricerca-ipertrofia-programmazione.md 3.5: Convenzione + Moderata;
@@ -171,8 +181,8 @@ const CONTROINDICAZIONI = {
     cautela: /panca (piana|inclinata) bilanciere|croci su panca|alzate frontali|piegamenti declinati|landmine/i
   },
   ginocchia: {
-    forte: /squat|affondi|leg extension|step-up|hack|bulgar|jump|salti|pistol|sissy/i,
-    cautela: /leg press|nordic|wall sit|stacco con trap bar/i
+    forte: /squat(?! a corpo libero)|affondi|step-up|hack|bulgar|jump|salti|pistol|sissy/i,   /* B13/B33/REC-04: leg extension e squat a corpo libero restano in programma con la nota di modifica (cautela) */
+    cautela: /leg press|nordic|wall sit|stacco con trap bar|leg extension|squat a corpo libero/i
   },
   schiena: {
     forte: /stacco|good morning|rematore con bilanciere|rematore presa inversa|t-bar|squat con bilanciere|front squat|hyperextension/i,
@@ -185,11 +195,11 @@ const TECNICI_PRUDENTE = /stacco da terra|stacco sumo|stacco con trap bar|good m
 /* Attrezzatura che si da per certa per luogo (per DETTAGLI: attrezzo). "quasi" = non garantita: casa con manubri e panca; corpo libero "o quasi" */
 const ATTREZZI_OK = {
   manubri: ['Manubri', 'Corpo libero', 'Corpo libero o manubri', 'Panca', 'Gradino'],
-  corpo: ['Corpo libero', 'Corpo libero o manubri']
+  corpo: ['Corpo libero', 'Corpo libero o manubri', 'Gradino']   /* il gradino (una scala, un bordo robusto) c'e in ogni casa: B28 non lo elenca tra gli attrezzi da dichiarare */
 };
 const ATTREZZI_QUASI = {
   manubri: ['Sbarra', 'Parallele', 'Sbarra bassa o anelli', 'Sedia romana', 'Panca per lombari', 'Panca a 45°', 'Ruota addominale'],
-  corpo: ['Sbarra', 'Parallele', 'Sbarra bassa o anelli', 'Sedia romana', 'Panca per lombari', 'Panca a 45°', 'Ruota addominale', 'Panca', 'Gradino']
+  corpo: ['Sbarra', 'Parallele', 'Sbarra bassa o anelli', 'Sedia romana', 'Panca per lombari', 'Panca a 45°', 'Ruota addominale', 'Panca']
 };
 /* attrezzo di DETTAGLI -> categoria di "Attrezzi della tua palestra" (Opzioni > Il coach) */
 const CATEGORIA_ATTREZZO = { 'Bilanciere': 'bilanciere', 'Trap bar': 'bilanciere', 'Manubri': 'manubri', 'Macchina': 'macchine', 'Cavo': 'macchine', 'Multipower': 'macchine', 'Sbarra': 'sbarra', 'Sbarra bassa o anelli': 'sbarra' };
@@ -406,7 +416,8 @@ const CRITERI = [
     dove: [RICETTE_JS + ': buildProgram (schemi mancanti, PRG-21)', MOTORE_JS + ': consentito / RISCHIO (fastidi tolgono schemi interi)'],
     check: (m, c) => {
       if (c.days < 3) return [];
-      return ['squat', 'hinge', 'spintaO', 'tirataO', 'spintaV', 'tirataV'].filter(p => m.mov[p] === 0 && c.fattibile[p]).map(p => ({ sub: p, msg: 'nessun esercizio del tipo ' + p + ' pur essendo disponibile', gravita: 2 })); } },
+      /* INT-0: hinge = cerniera vera (B15, l'hip thrust non conta); tirata verticale = trazioni, lat machine o pullover coi manubri (D-P11) */
+      return ['squat', 'hinge', 'spintaO', 'tirataO', 'spintaV', 'tirataV'].filter(p => (p === 'hinge' ? m.hingeVero === 0 && c.fattibile.hingeVero : m.mov[p] === 0 && c.fattibile[p])).map(p => ({ sub: p, msg: 'nessun esercizio del tipo ' + p + ' pur essendo disponibile', gravita: 2 })); } },
 
   /* ---------------- recupero e calendario ---------------- */
   { id: 'REC-01', nome: 'Stesso grande muscolo allenato in due giorni consecutivi (meno di 48 ore)', sev: 3, forza: 'Moderata', fonte: 'ACSM 2009: 48 ore tra sedute dello stesso gruppo (Convenzione per la soglia di serie)',
@@ -497,8 +508,8 @@ const CRITERI = [
     dove: [RICETTE_JS + ': buildProgram (tecniche: poco tempo = drop set per tutti i livelli; avanzati: parziali)', 'js/coach/compone.js: TOCCHI'],
     check: (m, c) => {
       const out = [];
-      if (c.level !== 'principiante' && !c.cauto) return out;
-      m.sedute.forEach(s => s.es.forEach(e => { if (['drop', 'parziali', 'amrap', 'backoff'].indexOf(e.tecnica) !== -1) out.push({ sub: e.tecnica, msg: s.titolo + ': ' + e.pulito + ' con tecnica ' + e.tecnica + (c.cauto ? ' (modalita prudente)' : ' (principiante)'), tag: e.pulito, gravita: 2 }); }));
+      if (c.level !== 'principiante' && !c.cauto && !c.minore) return out;   /* INT-0: anche i minorenni (ETA-02, MAV-03) */
+      m.sedute.forEach(s => s.es.forEach(e => { if (['drop', 'parziali', 'amrap', 'backoff'].indexOf(e.tecnica) !== -1) out.push({ sub: e.tecnica, msg: s.titolo + ': ' + e.pulito + ' con tecnica ' + e.tecnica + (c.cauto ? ' (modalita prudente)' : (c.minore ? ' (minorenne)' : ' (principiante)')), tag: e.pulito, gravita: 2 }); }));
       return out; } },
   { id: 'PRI-01', nome: 'Muscolo prioritario dichiarato ma senza serie in piu rispetto al programma senza priorita', sev: 2, forza: 'Convenzione', fonte: 'ABB-10, PRG-29 ("qualche serie in piu")',
     dove: [RICETTE_JS + ': buildProgram (prio / specializza nel blocco "volume per muscolo")'],
@@ -514,6 +525,7 @@ const CRITERI = [
     check: (m, c) => {
       const f = c.prog.fasi || [], primo = f.indexOf('scarico') + 1;
       if (!f.length || primo === 0 || primo > SCARICO_OGNI_MAX) return [{ msg: 'fasi: ' + f.slice(0, 12).join(',') + ' (primo scarico: ' + (primo || 'nessuno') + ')', gravita: 3 }];
+      if (c.level === 'principiante' && !c.cauto && !c.minore && primo !== SCARICO_PRINCIPIANTE) return [{ sub: 'principiante', sev: 2, msg: 'principiante: primo scarico alla settimana ' + primo + ', la decisione D-P5 e all\'' + SCARICO_PRINCIPIANTE + 'a (fasi: ' + f.slice(0, 12).join(',') + ')', gravita: 1 }];
       return []; } },
   { id: 'RIR-01', nome: 'Nessun andamento settimanale del RIR per intermedi (rirSett solo agli avanzati)', sev: 2, forza: 'Convenzione', fonte: 'periodizzazione per RIR (Helms, Israetel); il coach lo applica solo agli avanzati (PRG-38)',
     dove: [RICETTE_JS + ': buildProgram (rirSett solo se level === avanzato)', 'js/coach/regole-ricerca.js: rirBersaglioBase / RIR_TIPO'],
@@ -668,7 +680,10 @@ function infoEs(nome) {
     else if (schema === 'squat') mov = 'squat';
     else if (schema === 'hinge' || ['erettori', 'grande_gluteo', 'femorali'].indexOf(bers) !== -1) mov = 'hinge';
   } else if (tipo === 'isolation' && bers === 'deltoide_posteriore') mov = 'deltPost';
-  c = { nome, pulito, meta, det, tipo, bers, sec, schema, mov, carico: G.tipoCarico(nome), tempo: !!(meta && G.isTimeBased(nome)), att: det ? det.att : '', gruppoLib: meta ? meta.group : '' };
+  else if (tipo === 'isolation' && bers === 'dorsali' && /pullover con manubrio/i.test(pulito)) mov = 'tirataV';   /* D-P11 (INT-0): il pullover coi manubri (dorsali) e la tirata verticale di riserva a casa */
+  /* B15 (INT-0): l'hip thrust e il ponte glutei sono spinte d'anca da supini, non hinge: PAT-01 chiede almeno uno stacco, un good morning, un pull-through (cerniera vera) */
+  const hingeVero = mov === 'hinge' && !/hip thrust|ponte glutei/i.test(pulito);
+  c = { nome, pulito, meta, det, tipo, bers, sec, schema, mov, hingeVero, carico: G.tipoCarico(nome), tempo: !!(meta && G.isTimeBased(nome)), att: det ? det.att : '', gruppoLib: meta ? meta.group : '' };
   cacheEs.set(nome, c);
   return c;
 }
@@ -684,13 +699,14 @@ function modello(prog, c) {
     return { i, giorno: sd.giorno, gi: DAYS.indexOf(sd.giorno), tipo: sd.tipo, titolo: sd.titolo, es, grp, dir, minuti: stimaMinuti(es) };
   });
   const vol = {}, dirette = {}, mov = { spintaO: 0, spintaV: 0, tirataO: 0, tirataV: 0, squat: 0, hinge: 0, deltPost: 0 };
+  let hingeVero = 0;
   sedute.forEach(s => {
     Object.keys(s.grp).forEach(g => { vol[g] = (vol[g] || 0) + s.grp[g]; });
     Object.keys(s.dir).forEach(g => { dirette[g] = (dirette[g] || 0) + s.dir[g]; });
-    s.es.forEach(e => { if (e.inf.mov && mov[e.inf.mov] !== undefined && !e.inf.tempo) mov[e.inf.mov] += e.sets; });
+    s.es.forEach(e => { if (e.inf.mov && mov[e.inf.mov] !== undefined && !e.inf.tempo) mov[e.inf.mov] += e.sets; if (e.inf.hingeVero && !e.inf.tempo) hingeVero += e.sets; });
   });
   const flessione = sedute.reduce((t, s) => t + s.es.filter(e => /leg curl|nordic/i.test(e.pulito)).reduce((a, e) => a + e.sets, 0), 0);
-  return { sedute, vol, dir: dirette, mov, flessioneGinocchio: flessione, errori: [] };
+  return { sedute, vol, dir: dirette, mov, hingeVero, flessioneGinocchio: flessione, errori: [] };
 }
 function contaSerie(e, grp, dir) {
   if (!(e.sets > 0)) return;
@@ -790,6 +806,9 @@ function tipoObiettivo(goals) { const g = goals[0]; return g === 'forza' ? 'forz
 
 /* RIR pianificato per settimana, chiamando le funzioni vere con getProgramma/settimanaProgramma/getProfile finti */
 function rirPianificato(prog, p) {
+  /* autotest: dall'onda 0 il generatore non scrive piu un RIR 0 sui fondamentali ne alla settimana 1 (MES-02, W0-T4): per provare che RIR-02 e RIR-03 SANNO scattare
+     la fixture porta il RIR pianificato "come lo scriveva la v1" (rirProva), invece di chiederlo a rirBersaglioBase */
+  if (prog.rirProva) return { pesante: prog.rirProva.pesante.slice(), nov: Object.assign({}, prog.rirProva.nov) };
   const ctx = ENV.ctx, out = { pesante: [], nov: {} };
   const salvati = { getProgramma: ctx.getProgramma, settimanaProgramma: ctx.settimanaProgramma, getProfile: ctx.getProfile };
   try {
@@ -807,7 +826,7 @@ function rirPianificato(prog, p) {
 
 function contesto(p) {
   return { prof: p, goals: p.goals, level: p.level, days: p.days, minutes: p.minutes, luogo: p.luogo, fastidi: p.fastidi, priorita: p.priorita, tipoObiettivo: tipoObiettivo(p.goals),
-    attrezziPalestra: p.attrezziPalestra, cauto: p.age >= 65 || p.parq === 'si', rischio: G.RISCHIO };
+    attrezziPalestra: p.attrezziPalestra, cauto: p.age >= 65 || p.parq === 'si', minore: p.age > 0 && p.age < 18, rischio: G.RISCHIO };
 }
 function analizza(p, filtro) {
   const c = contesto(p);
@@ -823,8 +842,8 @@ function valuta(p, c, prog, filtro, volSenzaPriorita) {
   if (!Array.isArray(prog.sedute) || !prog.sedute.length) m.errori.push('nessuna seduta generata');
   /* fattibilita: esiste un esercizio dello schema consentito dal luogo e non controindicato dai fastidi dichiarati? */
   c.fattibile = {};
-  ['squat', 'hinge', 'spintaO', 'tirataO', 'spintaV', 'tirataV'].forEach(k => {
-    c.fattibile[k] = G.EXERCISE_LIBRARY.some(x => { const i = infoEs(x.name); return i.mov === k && G.consentito(x.name, prog.prefs) && !p.fastidi.some(f => CONTROINDICAZIONI[f] && CONTROINDICAZIONI[f].forte.test(i.pulito)) && !violaAttrezzatura({ inf: i }, c); });
+  ['squat', 'hinge', 'hingeVero', 'spintaO', 'tirataO', 'spintaV', 'tirataV'].forEach(k => {
+    c.fattibile[k] = G.EXERCISE_LIBRARY.some(x => { const i = infoEs(x.name); return (k === 'hingeVero' ? i.hingeVero : i.mov === k) && G.consentito(x.name, prog.prefs) && !p.fastidi.some(f => CONTROINDICAZIONI[f] && CONTROINDICAZIONI[f].forte.test(i.pulito)) && !violaAttrezzatura({ inf: i }, c); });
   });
   const r = rirPianificato(prog, p); m.rirPesante = r.pesante; m.rir1 = r.nov;
   if (volSenzaPriorita) m.volSenzaPriorita = typeof volSenzaPriorita === 'function' ? volSenzaPriorita() : volSenzaPriorita;
@@ -1119,6 +1138,18 @@ const FIXTURES = [
   fixture('palestra senza macchine con una macchina', { attrezziPalestra: ['bilanciere', 'manubri', 'sbarra'] }, [['Lunedì', 'upper', [E('Chest Press Machine', 3, 10, 90)]]], {}, ['SAF-03']),
   fixture('principiante con stacco da terra', { level: 'principiante' }, [['Lunedì', 'fullbody', [E('Stacco da Terra (Deadlift)', 3, 8, 120)]]], {}, ['SAF-05']),
   fixture('principiante con un drop set', { level: 'principiante' }, [['Lunedì', 'fullbody', [E('Curl ai Cavi', 3, 12, 60, { tecnica: 'drop' })]]], {}, ['TEC-01']),
+  fixture('minorenne con un drop set (INT-0)', { level: 'intermedio', age: 16 }, [['Lunedì', 'fullbody', [E('Curl ai Cavi', 3, 12, 60, { tecnica: 'drop' })]]], {}, ['TEC-01']),
+  fixture('over 65 con un drop set', { level: 'intermedio', age: 70 }, [['Lunedì', 'fullbody', [E('Curl ai Cavi', 3, 12, 60, { tecnica: 'drop' })]]], {}, ['TEC-01']),
+  fixture('adulto intermedio con un drop set: nessun fallimento', { level: 'intermedio', age: 30 }, [['Lunedì', 'fullbody', [E('Curl ai Cavi', 3, 12, 60, { tecnica: 'drop' })]]], {}, [], ['TEC-01']),
+  fixture('ginocchia dolenti con leg extension e squat a corpo libero: cautela, non controindicazione (INT-0)', { fastidi: ['ginocchia'] }, [['Lunedì', 'lower', [E('Squat a Corpo Libero', 3, 10, 90), E('Leg Extension', 3, 12, 60)]]], {}, ['SAF-02'], ['SAF-01']),
+  fixture('ginocchia dolenti con l affondo bulgaro: controindicato', { fastidi: ['ginocchia'] }, [['Lunedì', 'lower', [E('Affondi Bulgari', 3, 10, 90)]]], {}, ['SAF-01']),
+  fixture('corpo libero con il calf raise a un piede: il gradino c e in ogni casa (INT-0)', { luogo: 'corpo' }, [['Lunedì', 'lower', [E('Calf Raise a un Piede (Corpo Libero)', 3, 15, 60)]]], {}, [], ['SAF-04', 'SAF-03']),
+  fixture('casa senza sbarra: il pullover coi manubri e la tirata verticale (D-P11, INT-0)', { luogo: 'manubri', days: 3 }, [['Lunedì', 'fullbody', [E('Goblet Squat', 3, 10, 90), E('Panca Piana Manubri', 3, 10, 90), E('Rematore con Petto Appoggiato', 3, 10, 90), E('Lento Avanti Manubri', 3, 10, 90), E('Pullover con Manubrio', 3, 12, 75)]]], {}, [], ['PAT-01', 'SAF-03']),
+  fixture('casa senza sbarra e senza pullover: manca la tirata verticale', { luogo: 'manubri', days: 3 }, [['Lunedì', 'fullbody', [E('Goblet Squat', 3, 10, 90), E('Panca Piana Manubri', 3, 10, 90), E('Rematore con Petto Appoggiato', 3, 10, 90), E('Lento Avanti Manubri', 3, 10, 90)]]], {}, ['PAT-01']),
+  fixture('palestra con l hip thrust come unica cerniera: non e un hinge (B15, INT-0)', { luogo: 'palestra', days: 3 }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 120), E('Hip Thrust', 3, 10, 90), E('Panca Piana Bilanciere', 3, 8, 120), E('Rematore con Bilanciere', 3, 8, 120), E('Military Press', 3, 8, 120), E('Lat Machine', 3, 10, 90)]]], {}, ['PAT-01']),
+  fixture('principiante con scarico alla 4a settimana (D-P5, INT-0)', { level: 'principiante' }, [['Lunedì', 'fullbody', [E('Goblet Squat', 3, 10, 90)]]], { fasi: ['carico', 'carico', 'carico', 'scarico', 'carico', 'carico', 'carico', 'scarico'] }, ['DEL-01']),
+  fixture('principiante con scarico solo all 8a settimana: va bene', { level: 'principiante' }, [['Lunedì', 'fullbody', [E('Goblet Squat', 3, 10, 90)]]], { fasi: ['carico', 'carico', 'carico', 'carico', 'carico', 'carico', 'carico', 'scarico'] }, [], ['DEL-01']),
+  fixture('principiante prudente (over 65) a blocchi 3+1: va bene', { level: 'principiante', age: 70 }, [['Lunedì', 'fullbody', [E('Goblet Squat', 3, 10, 90)]]], { fasi: ['carico', 'carico', 'carico', 'scarico', 'carico', 'carico', 'carico', 'scarico'] }, [], ['DEL-01']),
   fixture('tre giorni push, pull, legs', { days: 3 }, [['Lunedì', 'push', [E('Panca Piana Bilanciere', 3, 8, 120)]], ['Mercoledì', 'pull', [E('Lat Machine', 3, 10, 90)]], ['Venerdì', 'legs', [E('Squat con Bilanciere', 3, 8, 120)]]], {}, ['SPL-02', 'FRQ-01']),
   fixture('cinque giorni dichiarati, tre sedute', { days: 5 }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 120)]], ['Mercoledì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 120)]], ['Venerdì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 120)]]], {}, ['SPL-01']),
   fixture('esercizio doppio nella stessa seduta', {}, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 120), E('Squat con Bilanciere', 3, 8, 120)]]], {}, ['SAN-01']),
@@ -1132,7 +1163,7 @@ const FIXTURES = [
   fixture('stacchi pesanti due giorni di fila', {}, [['Lunedì', 'lower', [E('Stacco da Terra (Deadlift)', 3, 5, 180)]], ['Martedì', 'lower', [E('Stacco Sumo', 3, 5, 180)]]], {}, ['REC-02']),
   fixture('spinte molto piu delle tirate', {}, [['Lunedì', 'push', [E('Panca Piana Bilanciere', 4, 8, 120), E('Military Press', 4, 8, 120), E('Panca Inclinata Manubri', 4, 10, 90)]], ['Giovedì', 'pull', [E('Lat Machine', 3, 10, 90)]]], {}, ['EQ-01']),
   fixture('forza senza lavoro pesante', { goals: ['forza'] }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 12, 150), E('Panca Piana Bilanciere', 3, 12, 150)]]], {}, ['GOA-01', 'RX-01']),
-  fixture('avanzato con RIR 0 sul fondamentale', { level: 'avanzato' }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 6, 180)]]], { rirSett: [3, 2, 1, 4, 3, 2, 0, 4, 3, 2, 1, 4] }, ['RIR-02'], ['RIR-01']),
+  fixture('avanzato con RIR 0 sul fondamentale', { level: 'avanzato' }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 6, 180)]]], { rirSett: [3, 2, 1, 4, 3, 2, 0, 4, 3, 2, 1, 4], rirProva: { pesante: [3, 2, 1, 4, 3, 2, 0, 4, 3, 2, 1, 4], nov: { pesante: 3, macchina: 2, isolamento: 2 } } }, ['RIR-02'], ['RIR-01']),
   fixture('intermedio senza andamento del RIR', { level: 'intermedio' }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 120)]]], {}, ['RIR-01']),
   fixture('quadricipiti e femorali sbilanciati, nessun leg curl', { days: 4 }, [['Lunedì', 'lower', [E('Squat con Bilanciere', 4, 8, 150), E('Leg Press', 4, 10, 120), E('Leg Extension', 3, 12, 60)]], ['Giovedì', 'lower', [E('Hack Squat', 4, 10, 120), E('Leg Extension', 3, 12, 60)]]], {}, ['EQ-03']),
   fixture('polpacci assenti nell ipertrofia', { days: 4 }, [['Lunedì', 'lower', [E('Squat con Bilanciere', 4, 8, 150)]], ['Giovedì', 'lower', [E('Leg Press', 4, 10, 120)]]], {}, ['MIS-01']),
@@ -1143,7 +1174,7 @@ const FIXTURES = [
   fixture('polpacci in una sola seduta', { days: 4 }, [['Lunedì', 'lower', [E('Squat con Bilanciere', 4, 8, 150), E('Calf Raise in Piedi', 4, 15, 45), E('Calf Raise Seduto', 3, 15, 45)]], ['Giovedì', 'lower', [E('Leg Press', 4, 10, 120)]]], {}, ['FRQ-02']),
   fixture('tirate solo verticali', {}, [['Lunedì', 'upper', [E('Lat Machine', 4, 10, 90), E('Trazioni alla Sbarra (Pull-ups)', 4, 8, 120)]], ['Giovedì', 'upper', [E('Lat Machine Presa Inversa', 4, 10, 90)]]], {}, ['EQ-02']),
   fixture('nessun hinge in tre giorni', { days: 3 }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 150), E('Panca Piana Bilanciere', 3, 8, 120)]], ['Mercoledì', 'fullbody', [E('Leg Press', 3, 10, 120), E('Lat Machine', 3, 10, 90)]], ['Venerdì', 'fullbody', [E('Hack Squat', 3, 10, 120), E('Military Press', 3, 8, 120)]]], {}, ['PAT-01']),
-  fixture('intermedio con isolamenti a RIR 0 dalla settimana 1', { level: 'intermedio' }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 120)]]], {}, ['RIR-03']),
+  fixture('intermedio con isolamenti a RIR 0 dalla settimana 1', { level: 'intermedio' }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 120)]]], { rirProva: { pesante: [2, 2, 1, 3, 2, 2, 1, 3, 2, 2, 1, 3], nov: { pesante: 2, macchina: 1, isolamento: 0 } } }, ['RIR-03']),
   fixture('panca col bilanciere con la spalla dolente (cautela)', { fastidi: ['spalle'] }, [['Lunedì', 'upper', [E('Panca Piana Bilanciere', 3, 8, 120)]]], {}, ['SAF-02']),
   fixture('programma ben fatto (controllo)', { days: 3, minutes: 60 }, [
     ['Lunedì', 'fullbody', [E('Squat con Bilanciere', 4, 8, 150), E('Panca Piana Bilanciere', 3, 8, 120), E('Rematore con Bilanciere', 3, 8, 120), E('Alzate Laterali', 2, 15, 60)]],
@@ -1157,7 +1188,7 @@ function autotest() {
     Object.assign(p, { freq: 'auto', parq: 'no', sonno: 'bene', priorita: [], fastidi: [], attrezziPalestra: null, psico: 'nessuno' }, f.over);
     const c = contesto(p);
     const prog = { sedute: f.sedute.map(([giorno, tipo, es]) => ({ giorno, tipo, titolo: tipo + ' ' + giorno, esercizi: es.map(e => ({ name: G.nomeInLibreria(e.n) || ('?' + e.n), sets: e.sets, reps: e.reps, rest: e.rest, weight: 0, superset: e.superset, tecnica: e.tecnica })) })),
-      fasi: f.extra.fasi || FASI12, rirSett: f.extra.rirSett || null, settimane: 12, blocco: 4, scheme: { settimane: 12 }, split: { nome: 'prova', giorni: [] }, prefs: { luogo: p.luogo, fastidi: p.fastidi, attrezziPalestra: p.attrezziPalestra, graditi: [], odiati: [], priorita: p.priorita }, note: [], metodo: null };
+      fasi: f.extra.fasi || FASI12, rirSett: f.extra.rirSett || null, rirProva: f.extra.rirProva || null, settimane: 12, blocco: 4, scheme: { settimane: 12 }, split: { nome: 'prova', giorni: [] }, prefs: { luogo: p.luogo, fastidi: p.fastidi, attrezziPalestra: p.attrezziPalestra, graditi: [], odiati: [], priorita: p.priorita }, note: [], metodo: null };
     const a = valuta(p, c, prog, null, f.extra.volSenzaPriorita || null);
     const trovati = new Set(a.trovati.map(t => t.crit.id));
     const manca = f.attese.filter(x => !trovati.has(x)), troppi = f.assenti.filter(x => trovati.has(x));

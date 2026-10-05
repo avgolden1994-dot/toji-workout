@@ -323,7 +323,7 @@ function autotest() {
     eq(esegui(istantaneaBuona(cfg, 'onda-0'), 'onda-2a').falliti >= 3, true, 'a onda-2a servono VOL-02, DIR-01...');
     eq(esegui(istantaneaBuona(cfg, 'onda-2a'), 'onda-2a').falliti, 0, 'buona a onda-2a');
     eq(esegui(istantaneaBuona(cfg, 'onda-2'), 'onda-2').falliti, 0, 'buona a onda-2');
-    eq(risolvi(cfg.criteri['DUR-02'].soglie, cfg.ordineOnde, 'onda-1'), 41, 'DUR-02 a onda-1');
+    eq(risolvi(cfg.criteri['DUR-02'].soglie, cfg.ordineOnde, 'onda-1'), 64, 'DUR-02 a onda-1 (INT-0: alzata da 41 a 64, D-P10)');
     eq(risolvi(cfg.criteri['DUR-02'].soglie, cfg.ordineOnde, 'onda-2'), 3, 'DUR-02 a onda-2');
   });
   prova('le soglie per luogo contano i programmi in palestra (SES-03, PAT-01)', () => {
