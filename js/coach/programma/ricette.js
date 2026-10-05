@@ -747,6 +747,17 @@ window.buildProgram = function(d) {
   /* ABB-08 e ABB-09: a tempo sistemato, il fondamentale ha le sue serie e gli stacchi da terra restano a 3 al massimo */
   strFinale({ sedute: sedute, level: level, over65: over65, metodoAttivo: metodoAttivo });
   strBilancia({ sedute: sedute, level: level, over65: over65, note: note, metodoAttivo: metodoAttivo, prefs: prefs }, true);   /* il tempo e le serie spostate possono aver rotto l equilibrio: niente serie in piu */
+  /* DUR-01 (W0-T7): strFinale sposta serie sul fondamentale (le pause lunghe pesano di piu) e dopo il taglio la seduta puo tornare sopra i minuti dichiarati: ultimo giro, solo serie
+     (mai esercizi: la struttura e finita), dagli esercizi non fissi e non prioritari con piu serie */
+  sedute.forEach(sd => {
+    const isPrio = (e) => prio.indexOf((findExercise(e.name) || {}).group) !== -1, compound = (e) => (findExercise(e.name) || {}).type === 'compound';
+    const fondamentale = sd.esercizi.find(e => compound(e) && !isTimeBased(e.name));   /* resta com e: ABB-08 */
+    for (let g = 0; g < 12 && minutiDi(sd) > (Number(d.minutes) || 60) * (1 + PARAM_TEMPO.tolleranzaSforamento); g++) {
+      const cand = sd.esercizi.filter(e => e.sets > 2 && !e.fisso && e !== fondamentale).sort((a, b) => isPrio(a) - isPrio(b) || compound(a) - compound(b) || b.sets - a.sets)[0];
+      if (!cand) break;
+      cand.sets--;
+    }
+  });
   /* ORD-03 (ponte di W0-T2): i grandi gruppi prima dei piccoli (ACSM 2009). Un multiarticolare di spalle o braccia non sta prima di uno squat o di uno stacco,
      salvo il muscolo che l utente ha messo in priorita (ABB-10). Le ricette full body hanno la spinta verticale prima dello squat */
   if (!metodoAttivo) sedute.forEach(sd => {
