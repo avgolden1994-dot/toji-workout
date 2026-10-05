@@ -7,10 +7,10 @@ Generato con uno script node che legge `EXERCISE_LIBRARY` (`js/dati/libreria-ese
 | Voce | Valore |
 |---|---|
 | Esercizi nel catalogo (`EXERCISE_LIBRARY`) | 140 totali (139 nel branch + 1 da altro branch) |
-| Con immagine (campo presente e file esistente) | 37 (di cui 1 con immagine condivisa: ex-29 usa il file di ex-28) |
-| Senza immagine (mancanti) | 103 su 140 (102 nel branch + 1 da altro branch) |
+| Con immagine (campo presente e file esistente) | 38 (di cui 1 con immagine condivisa: ex-29 usa il file di ex-28) |
+| Senza immagine (mancanti) | 102 su 140 (101 nel branch + 1 da altro branch) |
 | Di cui non ancora presenti in questo branch | 1 (n. 140 Squat Sumo, da `claude/hopeful-thompson-uthd8f`) |
-| File in `esercizi/` | 37 (tutti SVG) |
+| File in `esercizi/` | 38 (tutti SVG) |
 | File orfani (non referenziati) | 1 (`ex-02-panca-inclinata-su-a.svg`) |
 | Peso totale `esercizi/` | 942.9 KB |
 | Peso medio per file | 25.5 KB |
@@ -22,7 +22,7 @@ Copertura per gruppo muscolare:
 | Petto | 17 | 11 | 6 |
 | Schiena | 23 | 11 | 12 |
 | Gambe | 25 (24 nel branch + 1 da altro branch) | 13 | 12 (11 nel branch + 1 da altro branch) |
-| Glutei | 15 | 2 | 13 |
+| Glutei | 15 | 3 | 12 |
 | Spalle | 16 | 0 | 16 |
 | Braccia | 26 | 0 | 26 |
 | Core | 18 | 0 | 18 |
@@ -74,7 +74,7 @@ Il nome e' mostrato senza emoji iniziale. Percorso `img/<slug>.png` e' il ripieg
 | 35 | Calf Raise Seduto | Gambe | `esercizi/ex-35-calf-raise-seduto.svg` |
 | 36 | Hip Thrust | Glutei | `esercizi/ex-36-hip-thrust.svg` |
 | 37 | Stacco Rumeno | Glutei | `esercizi/ex-37-stacco-rumeno.svg` |
-| 38 | Stacco Sumo | Glutei | nessuna (ripiego inesistente `img/stacco-sumo.png`) |
+| 38 | Stacco Sumo | Glutei | `esercizi/ex-38-stacco-sumo.svg` |
 | 39 | Affondi Bulgari | Glutei | nessuna (ripiego inesistente `img/affondi-bulgari.png`) |
 | 40 | Good Morning | Glutei | nessuna (ripiego inesistente `img/good-morning.png`) |
 | 41 | Ponte Glutei | Glutei | nessuna (ripiego inesistente `img/ponte-glutei.png`) |
@@ -184,7 +184,6 @@ Il nome e' mostrato senza emoji iniziale. Percorso `img/<slug>.png` e' il ripieg
 
 | Gruppo | Esercizio | Motivo | File atteso dal ripiego |
 |---|---|---|---|
-| Glutei | Stacco Sumo | nessun campo nella mappa | `img/stacco-sumo.png` |
 | Glutei | Affondi Bulgari | nessun campo nella mappa | `img/affondi-bulgari.png` |
 | Glutei | Good Morning | nessun campo nella mappa | `img/good-morning.png` |
 | Glutei | Ponte Glutei | nessun campo nella mappa | `img/ponte-glutei.png` |
@@ -372,8 +371,9 @@ Controlli: file referenziati ma assenti = 0; voci di mappa non presenti in libre
 | `ex-35-calf-raise-seduto.svg` | 9.3 | 193.32 42.72 267.7 200.8 |
 | `ex-36-hip-thrust.svg` | 10.2 | 249.89 95.55 148.40 111.30 |
 | `ex-37-stacco-rumeno.svg` | 12.1 | 172.02 23.48 325.40 244.05 |
+| `ex-38-stacco-sumo.svg` | 32.9 | 150.8 10.3 363.6 272.7 (come ex-12, copia modificata) |
 
-Formato SVG vettoriale (nessun PNG/WebP); peso medio 25.5 KB, totale 942.9 KB (37 file con l'orfano). Il viewBox base e' 400x300 (rapporto 4:3); gli altri sono ritagli sulla figura (rapporti diversi, da 40x30 a 388x291). Nessun attributo width/height (tranne l'orfano 400x300): scalano al riquadro CSS `.ex-img` (`object-fit: contain`, rapporto 300/165).
+Formato SVG vettoriale (nessun PNG/WebP); peso medio 25.7 KB, totale 975.8 KB (38 file con l'orfano). Il viewBox base e' 400x300 (rapporto 4:3); gli altri sono ritagli sulla figura (rapporti diversi, da 40x30 a 388x291). Nessun attributo width/height (tranne l'orfano 400x300): scalano al riquadro CSS `.ex-img` (`object-fit: contain`, rapporto 300/165).
 
 ### Convenzione nome file
 
@@ -423,3 +423,4 @@ Elenco delle illustrazioni da rivedere o rifare a fine lavoro. La lista si aggio
 | 35 - Calf Raise Seduto | `esercizi/ex-35-calf-raise-seduto.svg` | Bozza b, la migliore (atleta uomo a torso nudo; a: macchina diversa tra i frame con gradino basso in START e alto in END; c: pelle grigia, cuscino ridisegnato a macchia in END; d: pelle tutta arancione, tratti vaganti e cerchio di sfondo). In tutte le bozze START ed END differivano di poco (testa su di 1-3 unita' su 157) e c'erano le etichette START/END. Alzata allargata a mano (senza Quiver): testa su di circa 14.5 unita' su 157 (~9.2%), cuscino/ginocchia circa 14 (~8.9%), bacino circa 4, leva del cuscino ricalcolata; in START tallone appena sotto il bordo della pedana (scarpa ruotata di circa 8 gradi), in END punta sul bordo con tallone ben alzato (scarpa ruotata di altri 12 gradi, piede molto inclinato); coscia inclinata, stinco e polpacci allungati di circa 10% per raccordare ginocchio e caviglia. Difetti lievi: bacino staccato dal sedile di circa 4 unita' in END e pantaloncini un po' allungati; coscia visibilmente inclinata; piccola fessura bianca tra stinco e scarpa e striscia chiara sul collo (gia' nella bozza); piede quasi verticale in END. Rimosse le etichette START/END (8 path di lettere), rect di sfondo, 2 ombre (ne resta una statica); pelle uniformata a #DBC0A8. | Difetto lieve, da valutare |
 | 36 - Hip Thrust | `esercizi/ex-36-hip-thrust.svg` | Bozza b, la migliore (atleta donna, panca, bilanciere con un disco nero). Tutte e 4 le bozze mostrano una vera differenza di posa START/END; nessuna ha etichette di testo START/END (verificato: 0 elementi `<text>` e nessun path a forma di lettera, il divieto rafforzato ha funzionato). a: decine di tratti decorativi grigi e piccoli segni di movimento; c: due scarpe sovrapposte, tratti vaganti e segni di movimento; d: disco grigio invece che nero, ~30 strisce di sfondo. Rimossi rect di sfondo, 2 ombre (ne resta una statica), panca statica da START; pelle uniformata a #DBC0A8, glutei #fb8b3c, quadricipiti/femorali #fdba8c. Difetti lievi: scarpa in END circa 1,5 unita' piu' a sinistra che in START (offset 152.5); testa/busto in END circa 6 unita' piu' a sinistra rispetto alla panca; striscia di tonalita' diversa sul busto/avambraccio in END; glutei a forma di cerchio; in START gomito e mano in parte coperti dal disco. | Difetto lieve, da valutare |
 | 37 - Stacco Rumeno | `esercizi/ex-37-stacco-rumeno.svg` | Bozza b, la migliore (atleta uomo, bilanciere con un disco nero). Tutte e 4 le bozze mostrano una vera cerniera dell'anca (busto START verticale, END circa 20-30 gradi sopra l'orizzontale, anche indietro, ginocchia quasi tese, braccia verticali); nessuna ha etichette di testo (0 elementi `<text>`, il divieto rafforzato ha funzionato). a: puntini e tratti grigi vaganti, vuoto bianco sul torso in START, mani sul disco poco chiare; c: in END due dischi sovrapposti (disegno doppio) e pelle grigia scura; d: pelle chiara ma disco piu' alto da terra e ritocchi arancio meno leggibili. Rimossi rect di sfondo, 2 ombre (ne resta una statica), ~20 tratti vaganti; scarpe statiche da START; pelle uniformata a #DBC0A8, glutei/femorali #fb8b3c, erettori/adduttori #fdba8c. Difetti lievi: in END il disco resta circa 0,6 diametri sopra il pavimento (non proprio "appena sopra"); in START il disco copre le mani; in END i femorali sono resi con una larga striscia #fdba8c; ciuffo di capelli un po' frastagliato. | Difetto lieve, da valutare |
+| 38 - Stacco Sumo | `esercizi/ex-38-stacco-sumo.svg` | Derivata da ex-12 (Stacco da Terra) con gambe e busto modificati a mano, senza Quiver: atleta donna come in ex-12. START: busto ruotato di 17 gradi attorno alla spalla (piu' verticale, circa 42 gradi dalla verticale), bacino abbassato di circa 10 e avanzato di circa 12 unita', coscia vicina accorciata del 5% e ruotata, tibia lontana accorciata del 14% e spostata di 12 unita' avanti, piede lontano accorciato in larghezza (x0.72, punta in fuori) e distanza tra i talloni di circa 29 unita', scarpa vicina x0.9; aggiunti a mano tibia vicina e coscia lontana ruotata/ingrandita 15%. END: gambe quasi tese con tibie inclinate di 4-6 gradi (talloni piu' distanti), scarpe x0.9 e x0.72. Difetti residui: stance larga solo suggerita (in profilo puro non si vede), punta di scarpa vicina poco ruotata, ginocchio lontano con piccola punta della pelle in START, tibia vicina un po' lunga e pallida, spigoli originali del ginocchio in END, muscoli quadricipiti lontani semplificati. | Difetto lieve, da valutare |

@@ -57,7 +57,8 @@ const IMMAGINI_ESERCIZI = {
   'Calf Raise in Piedi': 'esercizi/ex-34-calf-raise-in-piedi.svg',
   'Calf Raise Seduto': 'esercizi/ex-35-calf-raise-seduto.svg',
   'Hip Thrust': 'esercizi/ex-36-hip-thrust.svg',
-  'Stacco Rumeno': 'esercizi/ex-37-stacco-rumeno.svg'
+  'Stacco Rumeno': 'esercizi/ex-37-stacco-rumeno.svg',
+  'Stacco Sumo': 'esercizi/ex-38-stacco-sumo.svg'
 };
 window.immagineEsercizio = function(nome) {
   const pulito = String(nome).replace(EMOJI_TESTA, '');

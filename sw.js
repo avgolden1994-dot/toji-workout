@@ -172,6 +172,7 @@ const ASSETS = [
   './esercizi/ex-35-calf-raise-seduto.svg',
   './esercizi/ex-36-hip-thrust.svg',
   './esercizi/ex-37-stacco-rumeno.svg',
+  './esercizi/ex-38-stacco-sumo.svg',
   /*FINE-ASSET*/
 
 ];
