@@ -3693,5 +3693,8 @@ window.I18N["es"] = {
 "ampiezza senza dolore, discesa in # s": "recorrido sin dolor, bajada en # s",
 "Dolore segnalato: carico ridotto (#%)": "Dolor indicado: carga reducida (#%)",
 "Secondari: adduttori": "Secundarios: aductores",
-"Secondari: adduttori, erettori spinali": "Secundarios: aductores, erectores espinales"
+"Secondari: adduttori, erettori spinali": "Secundarios: aductores, erectores espinales",
+"Rematore inverso: fallo sotto un tavolo robusto o con una sbarra bassa, dopo aver controllato che regga il tuo peso.": "Remo invertido: hazlo bajo una mesa robusta o con una barra baja, después de comprobar que aguanta tu peso.",
+"Femorali: senza leg curl restano meno allenati, il ponte glutei li aiuta.": "Isquiotibiales: sin curl femoral se entrenan menos, el puente de glúteos los ayuda.",
+"Hai indicato il livello avanzato, e nei sollevamenti di base i carichi che usi sono ancora bassi: se ti va, puoi rivedere il livello o il peso di partenza. Decidi tu.": "Indicaste el nivel avanzado y en los levantamientos básicos las cargas que usas siguen siendo bajas: si quieres, puedes revisar el nivel o el peso de partida. Tú decides."
 };

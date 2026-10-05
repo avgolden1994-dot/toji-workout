@@ -104,9 +104,11 @@ test('B1 (DUR-02): le sedute non restano mezze vuote come prima (stima del tempo
     if (m < 0.75 * p.minutes) sotto++;
     if (m > 1.05 * p.minutes) sopra++;
   }));
-  /* collaudo ufficiale (matrici rapida e standard, pesate): DUR-02 83% -> circa 62% (l obiettivo del piano, meta, non e raggiunto: il tempo e un tetto, D-P10, e piu serie
-     romperebbero i tetti di volume). Su questo campione, non pesato e con piu sedute corte, la quota e circa il 44%: la soglia 55% protegge dal ritorno alle sedute mezze vuote */
-  assert.ok(sotto / sedute <= 0.55, 'DUR-02: ' + (100 * sotto / sedute).toFixed(1) + '% delle sedute sotto il 75% dei minuti');
+  /* collaudo ufficiale (matrici rapida e standard, pesate): DUR-02 83% -> circa 74% (l obiettivo del piano, meta, non e raggiunto: il tempo e un tetto, D-P10, e piu serie
+     romperebbero i tetti di volume). W0-T7 (revisione dell onda 0, M2): il riempimento non allunga piu le pause per arrivare ai minuti dichiarati (il calo a 63% era in gran parte
+     imbottitura: core a 120 s, Goblet Squat a 225 s), quindi su questo campione, non pesato e con piu sedute corte, la quota sale dal 44% a circa il 57%: la soglia 65% protegge dal
+     ritorno alle sedute vuote per colpa delle serie, e la prova che conta davvero e sotto, lo sforamento (DUR-01) */
+  assert.ok(sotto / sedute <= 0.65, 'DUR-02: ' + (100 * sotto / sedute).toFixed(1) + '% delle sedute sotto il 75% dei minuti');
   assert.ok(sopra / sedute <= 0.04, 'DUR-01: ' + (100 * sopra / sedute).toFixed(1) + '% delle sedute oltre il 105% dei minuti');
 });
 
