@@ -1,0 +1,305 @@
+/* Attributi degli esercizi: classe, schema, crediti per muscolo, stress per zona, attrezzo (SEL-01, SEL-03, SEL-06, MOD-01, MOD-04)
+   (3in, parte di dati; ordine di caricamento: vedi index.html) */
+
+/* ============================================================
+   ATTRIBUTI DEGLI ESERCIZI (coach v2, W1-T2)
+   Una riga per esercizio della libreria (140) con quello che serve a scegliere, contare e fermare un esercizio senza
+   riconoscerlo dal nome con una regex. Per ora è solo dato: nessun consumatore lo legge ancora (lo leggeranno W2-T1 per il
+   volume, W2-T2 per i tempi, W2-T6 per la scelta, W3 per la prescrizione, W4-T1 per i fastidi e INT-1 per il collaudo
+   SAF-01/SAF-02). Il generatore non cambia. Chiave = nome senza emoji, come DETTAGLI. Dopo W1-T5 le righe nuove si aggiungono qui.
+   Campi di ogni riga:
+     classe       A-F (ricerca-metodi-avanzati §3.1): A bilanciere libero pesante, B multiarticolare libero non pesante, C multiarticolare
+                  guidato, D isolamento a macchina o cavo, E isolamento libero, F core, tenute e corpo libero a zero kg (il Pallof è F).
+     schema       squat, hinge (cerniera vera: l’hip thrust no, B15), spintaAnca, spintaO, spintaV, tirataO, tirataV, affondo,
+                  isolamento, core, trasporto.
+     muscoli      crediti di una serie, per unità di volume (UNITA_VOLUME, registro B6): 1 al bersaglio (bersaglioDi, DETTAGLI), 0,5 a
+                  ogni secondario che è un vero motore, 0 con motivo scritto in `zeri` (MOTIVI_ZERO). Nessun peso intermedio.
+                  Il credito pieno manca solo dove il bersaglio non ha un’unità (erettori, trapezio) o per il Farmer Walk: sono le
+                  righe con `eccezione`. Un secondario conta 0,5 se è in DETTAGLI e il suo peso in ricerca-specializzazione §3.2 è
+                  almeno 0,4 (senza peso: 0,5 nei multiarticolari, 0,25 negli isolamenti, cioè 0); stabilizzatori e presa non contano
+                  (SEL-01); i femorali valgono 0 in squat e leg press (Kubo 2019).
+     profilo      allungato, medio, accorciato, piatto: dove cade la tensione (ricerca-biomeccanica §3, colonna «profilo di resistenza»;
+                  dove la nota tace, meccanica di base [FIS] o «medio»; macchine e cavi senza indicazione: piatto).
+     stabilita    1 cedimento accettabile (macchina, cavo, appoggio, corpo libero stabile), 2 pesi liberi o equilibrio: almeno 1-2
+                  ripetizioni in riserva, 3 bilanciere sulla schiena, sul petto o sopra la testa: almeno 2 in riserva e protezioni
+                  (ricerca-casa §4.4, BIO-03). «stabile» = stabilita 1.
+     fatica       costo di recupero 1-3 (ricerca-metodi-avanzati §1.2; 3 = stacchi, squat e rematori col bilanciere: SCHIENA_PESANTE, ABB-09).
+     abilita      1-3 (SEL-06): 1 prima scelta per chi comincia, 2 serve tecnica o forza (dopo qualche settimana), 3 non per principianti
+                  (ricerca-principianti-12-settimane §3.4; tutto ciò che il collaudo vieta ai principianti è 3).
+     unilaterale  un lato alla volta (come `lato` della libreria).
+     stress       0 nessuno, 1 cautela, 2 controindicato, per 8 zone (ZONE_STRESS). Spalla, ginocchio e schiena seguono l’elenco esperto del
+                  collaudo (CONTROINDICAZIONI: forte = 2, cautela = 1); le altre zone vengono da ricerca-recupero §3 e da bio §4, con 2
+                  solo dove le due note concordano. Qui solo le zone diverse da 0.
+     attrezzo     bilanciere, manubri, macchina, cavo, corpo, kettlebell, elastico, anelli (da DETTAGLI: una barra esagonale è «bilanciere»).
+     serve        cosa deve avere chi si allena, oltre a pavimento, muro, una sedia robusta e un gradino (D-P3, ricerca-casa §4.1-4.2):
+                  sbarra, panca, parallele, ancoraggio, ruota, sedia romana, anelli, elastico, kettlebell. «a|b» vuol dire a oppure b.
+     setup        secondi per sistemare l’attrezzo (cambio X, ricerca-casa §5.1: classe A 60, multi 30, uni 40, isolamento 20, tenuta 15).
+     fonte        riferimenti nei capitoli 3-5 di ricerca-biomeccanica-esercizi.md (bio §3 matrice, §4 classi EQ-, §5.3 problemi P1-P17, §5.4 tag sospetti).
+     nota         decisione o scelta non ovvia (registro D-P8, D-P11, B13, B15...).
+   Fonti uguali per tutte le righe: classe = metodi §3.1; muscoli = ipertrofia §3 e specializzazione §3.2 (solo le eccezioni); stabilita =
+   casa §4.4; fatica = metodi §1.2; abilita = principianti §3.4; stress = collaudo e recupero §3; attrezzo e serve = DETTAGLI e casa §4.
+   ============================================================ */
+
+/* le 15 unità di volume del registro B6 (stesse righe della tabella VOLUME_UNITA), nell’ordine della tabella */
+const UNITA_VOLUME = ['petto', 'dorsali', 'schiena_spessore', 'quadricipiti', 'femorali', 'grande_gluteo', 'adduttori', 'abduttori', 'polpacci',
+  'deltoide_anteriore', 'deltoide_laterale', 'deltoide_posteriore', 'bicipiti', 'tricipiti', 'addome'];
+/* da ogni muscolo di MUSCOLI (dettagli-esercizi.js) alla sua unità; null = nessuna unità (lombari, trapezio, presa, flessori d’anca: B6 non li conta).
+   Il brachioradiale conta con i bicipiti (i flessori del gomito sono un’unità sola); obliqui e stabilità con l’addome (unità «core») */
+const UNITA_DI_MUSCOLO = {
+  petto_alto: 'petto', petto_medio: 'petto', petto_basso: 'petto', dorsali: 'dorsali', schiena_spessore: 'schiena_spessore', erettori: null,
+  quadricipiti: 'quadricipiti', femorali: 'femorali', adduttori: 'adduttori', polpacci: 'polpacci', grande_gluteo: 'grande_gluteo', abduttori: 'abduttori',
+  deltoide_anteriore: 'deltoide_anteriore', deltoide_laterale: 'deltoide_laterale', deltoide_posteriore: 'deltoide_posteriore', trapezio: null,
+  bicipiti: 'bicipiti', brachioradiale: 'bicipiti', tricipiti: 'tricipiti', addome: 'addome', addome_basso: 'addome', obliqui: 'addome', stabilita: 'addome',
+  avambracci: null, flessori_anca: null
+};
+const ZONE_STRESS = ['spalla', 'gomito', 'polso', 'schiena', 'anca', 'ginocchio', 'caviglia', 'collo'];
+/* il questionario scrive «spalle», «ginocchia»: stressArticolare accetta anche il plurale */
+const ZONE_ALIAS = { spalle: 'spalla', gomiti: 'gomito', polsi: 'polso', anche: 'anca', ginocchia: 'ginocchio', caviglie: 'caviglia' };
+const CLASSI_TECNICA = { A: 'Bilanciere libero multiarticolare pesante', B: 'Multiarticolare libero non pesante', C: 'Multiarticolare guidato',
+  D: 'Isolamento a macchina o cavo', E: 'Isolamento libero', F: 'Core, tenute e corpo libero a zero kg' };
+const SCHEMI_ESERCIZIO = ['squat', 'hinge', 'spintaAnca', 'spintaO', 'spintaV', 'tirataO', 'tirataV', 'affondo', 'isolamento', 'core', 'trasporto'];
+const PROFILI_RESISTENZA = ['allungato', 'medio', 'accorciato', 'piatto'];
+const ATTREZZI_ESERCIZIO = ['bilanciere', 'manubri', 'macchina', 'cavo', 'corpo', 'kettlebell', 'elastico', 'anelli'];
+const SERVE_AMMESSI = ['sbarra', 'panca', 'parallele', 'ancoraggio', 'ruota', 'sedia romana', 'anelli', 'elastico', 'kettlebell'];
+/* perché un secondario vale 0 (le chiavi di `zeri`) */
+const MOTIVI_ZERO = {
+  kubo: 'I femorali lavorano quasi nulla nello squat e nella leg press (Kubo 2019; ricerca-specializzazione §3.2: peso 0).',
+  debole: 'Contributo minore: il peso in ricerca-specializzazione §3.2 è sotto 0,4, non è un vero motore (registro B6: 0,5 solo ai motori).',
+  isolamento: 'Secondario di un isolamento: nessun credito indiretto (0,25 in ricerca-specializzazione §3.2 non esiste nel modello 0 / 0,5 / 1).',
+  stabilizza: 'Stabilizzatore o isometrico: non conta come serie (SEL-01).'
+};
+/* una seduta conta come «allenante» per un’unità da 1,5 serie frazionarie (come il collaudo FRQ-01: Convenzione) */
+const SERIE_MIN_PER_SEDUTA = 1.5;
+
+const ATTRIBUTI = {
+  /* ---------------- PETTO ---------------- */
+  'Panca Piana Bilanciere': { classe: 'A', schema: 'spintaO', muscoli: { petto: 1, deltoide_anteriore: 0.5, tricipiti: 0.5 }, profilo: 'medio', stabilita: 3, fatica: 2, abilita: 2, unilaterale: false, stress: { spalla: 1, polso: 1 }, attrezzo: 'bilanciere', serve: ['panca'], setup: 60, fonte: 'bio §3.1 · §4 EQ-PETTO-SPINTA' },
+  'Panca Inclinata Bilanciere': { classe: 'A', schema: 'spintaO', muscoli: { petto: 1, deltoide_anteriore: 0.5, tricipiti: 0.5 }, profilo: 'medio', stabilita: 3, fatica: 2, abilita: 2, unilaterale: false, stress: { spalla: 1 }, attrezzo: 'bilanciere', serve: ['panca'], setup: 60, fonte: 'bio §3.1 · §4 EQ-PETTO-SPINTA' },
+  'Panca Inclinata Manubri': { classe: 'B', schema: 'spintaO', muscoli: { petto: 1, deltoide_anteriore: 0.5, tricipiti: 0.5 }, profilo: 'allungato', stabilita: 2, fatica: 2, abilita: 2, unilaterale: false, stress: {}, attrezzo: 'manubri', serve: ['panca'], setup: 30, fonte: 'bio §3.1 · §4 EQ-PETTO-SPINTA' },
+  'Panca Declinata': { classe: 'A', schema: 'spintaO', muscoli: { petto: 1, tricipiti: 0.5, deltoide_anteriore: 0.5 }, profilo: 'medio', stabilita: 3, fatica: 2, abilita: 3, unilaterale: false, stress: { spalla: 1 }, attrezzo: 'bilanciere', serve: ['panca'], setup: 60, fonte: 'bio §3.1 · §4 EQ-PETTO-SPINTA', nota: 'spalla 1 dalla matrice rec §3 (STRESS_ZONA già la elencava); il collaudo non la cita' },
+  'Chest Press Machine': { classe: 'C', schema: 'spintaO', muscoli: { petto: 1, deltoide_anteriore: 0.5, tricipiti: 0.5 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'macchina', serve: [], setup: 30, fonte: 'bio §3.1 · §4 EQ-PETTO-SPINTA' },
+  'Dip alle Parallele': { classe: 'B', schema: 'spintaO', muscoli: { petto: 1, tricipiti: 0.5, deltoide_anteriore: 0.5 }, profilo: 'allungato', stabilita: 2, fatica: 2, abilita: 3, unilaterale: false, stress: { spalla: 2, gomito: 1, polso: 1 }, attrezzo: 'corpo', serve: ['parallele'], setup: 30, fonte: 'bio §3.1 · §4 EQ-PETTO-SPINTA' },
+  'Piegamenti a Terra (Push-up)': { classe: 'B', schema: 'spintaO', muscoli: { petto: 1, deltoide_anteriore: 0.5, tricipiti: 0.5, addome: 0 }, zeri: { addome: 'stabilizza' }, profilo: 'medio', stabilita: 1, fatica: 2, abilita: 2, unilaterale: false, stress: { polso: 1 }, attrezzo: 'corpo', serve: [], setup: 30, fonte: 'bio §3.1 · §4 EQ-PETTO-SPINTA' },
+  'Croci ai Cavi': { classe: 'D', schema: 'isolamento', muscoli: { petto: 1, deltoide_anteriore: 0 }, zeri: { deltoide_anteriore: 'debole' }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'cavo', serve: [], setup: 20, fonte: 'bio §3.1 · §4 EQ-PETTO-APERTURA', nota: 'D-P8: cavi e manubri alla pari; il profilo descrive la tensione, non dà punti in più' },
+  'Croci su Panca Manubri': { classe: 'E', schema: 'isolamento', muscoli: { petto: 1, deltoide_anteriore: 0 }, zeri: { deltoide_anteriore: 'debole' }, profilo: 'allungato', stabilita: 2, fatica: 1, abilita: 2, unilaterale: false, stress: { spalla: 1 }, attrezzo: 'manubri', serve: ['panca'], setup: 20, fonte: 'bio §3.1 · §4 EQ-PETTO-APERTURA', nota: 'D-P8: cavi e manubri alla pari; il profilo descrive la tensione («massimo in basso», bio §3.1), non dà punti in più' },
+  'Pectoral Machine (Butterfly)': { classe: 'D', schema: 'isolamento', muscoli: { petto: 1, deltoide_anteriore: 0 }, zeri: { deltoide_anteriore: 'debole' }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'macchina', serve: [], setup: 20, fonte: 'bio §3.1 · §4 EQ-PETTO-APERTURA' },
+  'Panca Piana Manubri': { classe: 'B', schema: 'spintaO', muscoli: { petto: 1, deltoide_anteriore: 0.5, tricipiti: 0.5 }, profilo: 'allungato', stabilita: 2, fatica: 2, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'manubri', serve: ['panca'], setup: 30, fonte: 'bio §3.1 · §4 EQ-PETTO-SPINTA' },
+  'Croci ai Cavi dal Basso': { classe: 'D', schema: 'isolamento', muscoli: { petto: 1, deltoide_anteriore: 0 }, zeri: { deltoide_anteriore: 'debole' }, profilo: 'accorciato', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'cavo', serve: [], setup: 20, fonte: 'bio §3.1 · §4 EQ-PETTO-APERTURA' },
+  'Piegamenti Inclinati (Mani Rialzate)': { classe: 'B', schema: 'spintaO', muscoli: { petto: 1, deltoide_anteriore: 0.5, tricipiti: 0.5 }, profilo: 'medio', stabilita: 1, fatica: 2, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'corpo', serve: [], setup: 30, fonte: 'bio §3.1 · §4 EQ-PETTO-SPINTA · §5.4', nota: 'mani su una panca o un rialzo qualsiasi' },
+  'Croci ai Cavi da Seduto': { classe: 'D', schema: 'isolamento', muscoli: { petto: 1, deltoide_anteriore: 0 }, zeri: { deltoide_anteriore: 'debole' }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'cavo', serve: [], setup: 20, fonte: 'bio §3.1 · §4 EQ-PETTO-APERTURA' },
+  'Croci ai Cavi Alti (Parte Bassa)': { classe: 'D', schema: 'isolamento', muscoli: { petto: 1, deltoide_anteriore: 0 }, zeri: { deltoide_anteriore: 'debole' }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'cavo', serve: [], setup: 20, fonte: 'bio §3.1 · §4 EQ-PETTO-APERTURA' },
+  'Piegamenti Declinati (Piedi Rialzati)': { classe: 'B', schema: 'spintaO', muscoli: { petto: 1, deltoide_anteriore: 0.5, tricipiti: 0.5, addome: 0 }, zeri: { addome: 'stabilizza' }, profilo: 'medio', stabilita: 2, fatica: 2, abilita: 3, unilaterale: false, stress: { spalla: 1, polso: 1 }, attrezzo: 'corpo', serve: [], setup: 30, fonte: 'bio §3.1 · §4 EQ-PETTO-SPINTA', nota: 'piedi su un rialzo qualsiasi' },
+
+  /* ---------------- SCHIENA ---------------- */
+  'Stacco da Terra (Deadlift)': { classe: 'A', schema: 'hinge', muscoli: { grande_gluteo: 0.5, femorali: 0.5, quadricipiti: 0.5, dorsali: 0 }, zeri: { dorsali: 'debole' }, profilo: 'medio', stabilita: 3, fatica: 3, abilita: 3, unilaterale: false, stress: { schiena: 2 }, attrezzo: 'bilanciere', serve: [], setup: 60, fonte: 'bio §3.2 · §4 EQ-STACCO-TOTALE', eccezione: 'il bersaglio (erettori) non ha un’unità di volume: nessun credito pieno; gluteo, femorali e quadricipiti 0,5 (spe §3.2: 0,7 al gluteo, 0,5 agli altri)' },
+  'Trazioni alla Sbarra (Pull-ups)': { classe: 'B', schema: 'tirataV', muscoli: { dorsali: 1, bicipiti: 0.5, schiena_spessore: 0 }, zeri: { schiena_spessore: 'debole' }, profilo: 'allungato', stabilita: 2, fatica: 2, abilita: 3, unilaterale: false, stress: { spalla: 1 }, attrezzo: 'corpo', serve: ['sbarra'], setup: 30, fonte: 'bio §3.2 · §4 EQ-DORSALI-VERT' },
+  'Trazioni Presa Inversa (Chin-up)': { classe: 'B', schema: 'tirataV', muscoli: { dorsali: 1, bicipiti: 0.5, schiena_spessore: 0 }, zeri: { schiena_spessore: 'debole' }, profilo: 'allungato', stabilita: 2, fatica: 2, abilita: 3, unilaterale: false, stress: { gomito: 1 }, attrezzo: 'corpo', serve: ['sbarra'], setup: 30, fonte: 'bio §3.2 · §4 EQ-DORSALI-VERT' },
+  'Lat Machine': { classe: 'C', schema: 'tirataV', muscoli: { dorsali: 1, bicipiti: 0.5 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'cavo', serve: [], setup: 30, fonte: 'bio §3.2 · §4 EQ-DORSALI-VERT' },
+  'Lat Machine Presa Inversa': { classe: 'C', schema: 'tirataV', muscoli: { dorsali: 1, bicipiti: 0.5 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'cavo', serve: [], setup: 30, fonte: 'bio §3.2 · §4 EQ-DORSALI-VERT' },
+  'Rematore con Bilanciere': { classe: 'A', schema: 'tirataO', muscoli: { schiena_spessore: 1, bicipiti: 0.5, deltoide_posteriore: 0.5 }, profilo: 'medio', stabilita: 3, fatica: 3, abilita: 2, unilaterale: false, stress: { schiena: 2 }, attrezzo: 'bilanciere', serve: [], setup: 60, fonte: 'bio §3.2 · §4 EQ-SPESSORE' },
+  'Rematore con Manubrio': { classe: 'B', schema: 'tirataO', muscoli: { schiena_spessore: 1, bicipiti: 0.5, deltoide_posteriore: 0.5 }, profilo: 'medio', stabilita: 2, fatica: 2, abilita: 1, unilaterale: true, stress: {}, attrezzo: 'manubri', serve: [], setup: 40, fonte: 'bio §3.2 · §4 EQ-SPESSORE' },
+  'T-Bar Row': { classe: 'A', schema: 'tirataO', muscoli: { schiena_spessore: 1, bicipiti: 0.5 }, profilo: 'medio', stabilita: 2, fatica: 3, abilita: 3, unilaterale: false, stress: { schiena: 2 }, attrezzo: 'macchina', serve: [], setup: 60, fonte: 'bio §3.2 · §4 EQ-SPESSORE', nota: 'DETTAGLI la dice «Macchina», ricerca-metodi §3.1 la mette in classe A (T-bar): vale la nota, come già tipoCarico (pesante)' },
+  'Pulley Basso': { classe: 'C', schema: 'tirataO', muscoli: { schiena_spessore: 1, bicipiti: 0.5, deltoide_posteriore: 0.5 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'cavo', serve: [], setup: 30, fonte: 'bio §3.2 · §4 EQ-SPESSORE' },
+  'Pullover ai Cavi': { classe: 'D', schema: 'isolamento', muscoli: { dorsali: 1, tricipiti: 0 }, zeri: { tricipiti: 'debole' }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: { spalla: 2 }, attrezzo: 'cavo', serve: [], setup: 20, fonte: 'bio §3.2 · §4 EQ-DORSALI-VERT · §5.3 P6', nota: 'isolamento dei dorsali: ripiego, non sostituisce una tirata pesante (bio §4 EQ-DORSALI-VERT)' },
+  'Hyperextension (Lombari)': { classe: 'F', schema: 'hinge', muscoli: { grande_gluteo: 0.5, femorali: 0.5 }, profilo: 'medio', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: { schiena: 2 }, attrezzo: 'corpo', serve: ['sedia romana'], setup: 20, fonte: 'bio §3.2 · §4 EQ-HINGE-ANCA', eccezione: 'il bersaglio (erettori) non ha un’unità di volume: nessun credito pieno; gluteo e femorali 0,5 come per il Good Morning leggero', nota: 'sedia romana = panca per lombari (W0-T5)' },
+  'Rematore alla Macchina': { classe: 'C', schema: 'tirataO', muscoli: { schiena_spessore: 1, bicipiti: 0.5, deltoide_posteriore: 0.5 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'macchina', serve: [], setup: 30, fonte: 'bio §3.2 · §4 EQ-SPESSORE' },
+  'Pulldown a Braccia Tese': { classe: 'D', schema: 'isolamento', muscoli: { dorsali: 1, tricipiti: 0 }, zeri: { tricipiti: 'isolamento' }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'cavo', serve: [], setup: 20, fonte: 'bio §3.2 · §4 EQ-DORSALI-VERT', nota: 'isolamento dei dorsali: ripiego, non sostituisce una tirata pesante' },
+  'Trazioni Assistite (Macchina)': { classe: 'C', schema: 'tirataV', muscoli: { dorsali: 1, bicipiti: 0.5, schiena_spessore: 0 }, zeri: { schiena_spessore: 'debole' }, profilo: 'allungato', stabilita: 1, fatica: 1, abilita: 2, unilaterale: false, stress: {}, attrezzo: 'macchina', serve: [], setup: 30, fonte: 'bio §3.2 · §4 EQ-DORSALI-VERT' },
+  'Rematore Inverso (Corpo Libero)': { classe: 'B', schema: 'tirataO', muscoli: { schiena_spessore: 1, bicipiti: 0.5, deltoide_posteriore: 0.5, addome: 0 }, zeri: { addome: 'stabilizza' }, profilo: 'medio', stabilita: 1, fatica: 2, abilita: 2, unilaterale: false, stress: {}, attrezzo: 'corpo', serve: ['sbarra|anelli'], setup: 30, fonte: 'bio §3.2 · §4 EQ-SPESSORE', nota: 'in alternativa un tavolo robusto: la deroga di casa (NOTA_REMATORE_INVERSO) resta al filtro di W2-T6' },
+  'Rematore con Petto Appoggiato': { classe: 'B', schema: 'tirataO', muscoli: { schiena_spessore: 1, bicipiti: 0.5, deltoide_posteriore: 0.5 }, profilo: 'medio', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'manubri', serve: ['panca'], setup: 30, fonte: 'bio §3.2 · §4 EQ-SPESSORE', nota: 'petto appoggiato: meno fatica sui lombari (bio §3.2)' },
+  'Lat Machine a un Braccio': { classe: 'C', schema: 'tirataV', muscoli: { dorsali: 1, bicipiti: 0.5 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: true, stress: {}, attrezzo: 'cavo', serve: [], setup: 40, fonte: 'bio §3.2 · §4 EQ-DORSALI-VERT' },
+  'Pulley Basso Barra Larga (Presa Prona)': { classe: 'C', schema: 'tirataO', muscoli: { schiena_spessore: 1, deltoide_posteriore: 0.5, dorsali: 0.5, bicipiti: 0.5 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'cavo', serve: [], setup: 30, fonte: 'bio §3.2 · §4 EQ-SPESSORE' },
+  'Pulley Basso Presa Inversa': { classe: 'C', schema: 'tirataO', muscoli: { schiena_spessore: 1, bicipiti: 0.5 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'cavo', serve: [], setup: 30, fonte: 'bio §3.2 · §4 EQ-SPESSORE' },
+  'Pulley Basso a un Braccio': { classe: 'C', schema: 'tirataO', muscoli: { schiena_spessore: 1, bicipiti: 0.5, addome: 0 }, zeri: { addome: 'stabilizza' }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: true, stress: {}, attrezzo: 'cavo', serve: [], setup: 40, fonte: 'bio §3.2 · §4 EQ-SPESSORE' },
+  'Lat Machine Triangolo (Presa Neutra)': { classe: 'C', schema: 'tirataV', muscoli: { dorsali: 1, bicipiti: 0.5 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'cavo', serve: [], setup: 30, fonte: 'bio §3.2 · §4 EQ-DORSALI-VERT' },
+  'Rematore Presa Inversa (Yates)': { classe: 'A', schema: 'tirataO', muscoli: { schiena_spessore: 1, bicipiti: 0.5 }, profilo: 'medio', stabilita: 3, fatica: 3, abilita: 3, unilaterale: false, stress: { schiena: 2 }, attrezzo: 'bilanciere', serve: [], setup: 60, fonte: 'bio §3.2 · §4 EQ-SPESSORE', nota: 'classe A: barra libera pesante (tipoCarico la dava «macchina»)' },
+  'Trazioni Presa Neutra': { classe: 'B', schema: 'tirataV', muscoli: { dorsali: 1, bicipiti: 0.5 }, profilo: 'allungato', stabilita: 2, fatica: 2, abilita: 3, unilaterale: false, stress: {}, attrezzo: 'corpo', serve: ['sbarra'], setup: 30, fonte: 'bio §3.2 · §4 EQ-DORSALI-VERT' },
+  'Pullover con Manubrio': { classe: 'E', schema: 'tirataV', muscoli: { dorsali: 1, petto: 0.5, tricipiti: 0 }, zeri: { tricipiti: 'debole' }, profilo: 'allungato', stabilita: 2, fatica: 1, abilita: 2, unilaterale: false, stress: { spalla: 2 }, attrezzo: 'manubri', serve: [], setup: 20, fonte: 'bio §3.2 · §4 EQ-DORSALI-VERT · §5.3 P6', nota: 'D-P11: bersaglio dorsali; tirata verticale di riserva (dopo trazioni e lat machine, CAS-14); su una panca o sul pavimento: non serve dichiarare una panca' },
+
+  /* ---------------- GAMBE ---------------- */
+  'Squat con Bilanciere': { classe: 'A', schema: 'squat', muscoli: { quadricipiti: 1, grande_gluteo: 0.5, adduttori: 0.5, femorali: 0 }, zeri: { femorali: 'kubo' }, profilo: 'medio', stabilita: 3, fatica: 3, abilita: 2, unilaterale: false, stress: { schiena: 2, anca: 1, ginocchio: 2, caviglia: 1 }, attrezzo: 'bilanciere', serve: [], setup: 60, fonte: 'bio §3.5 · §4 EQ-SQUAT-BILAT · §5.3 P12' },
+  'Front Squat': { classe: 'A', schema: 'squat', muscoli: { quadricipiti: 1, grande_gluteo: 0.5, addome: 0, femorali: 0 }, zeri: { addome: 'stabilizza', femorali: 'kubo' }, profilo: 'medio', stabilita: 3, fatica: 3, abilita: 3, unilaterale: false, stress: { polso: 2, schiena: 2, ginocchio: 2 }, attrezzo: 'bilanciere', serve: [], setup: 60, fonte: 'bio §3.5 · §4 EQ-SQUAT-BILAT', nota: 'polso 2: il rack frontale piega il polso (rec §3 «Evita» + bio §4)' },
+  'Goblet Squat': { classe: 'B', schema: 'squat', muscoli: { quadricipiti: 1, grande_gluteo: 0.5, addome: 0, femorali: 0 }, zeri: { addome: 'stabilizza', femorali: 'kubo' }, profilo: 'medio', stabilita: 2, fatica: 2, abilita: 1, unilaterale: false, stress: { ginocchio: 2 }, attrezzo: 'manubri', serve: [], setup: 30, fonte: 'bio §3.5 · §4 EQ-SQUAT-BILAT', nota: 'ginocchio 2 dall’elenco del collaudo (regex «squat»); rec §3 lo darebbe «tieni, a una scatola»' },
+  'Hack Squat': { classe: 'C', schema: 'squat', muscoli: { quadricipiti: 1, grande_gluteo: 0.5, adduttori: 0.5, femorali: 0 }, zeri: { femorali: 'kubo' }, profilo: 'allungato', stabilita: 1, fatica: 2, abilita: 1, unilaterale: false, stress: { ginocchio: 2 }, attrezzo: 'macchina', serve: [], setup: 30, fonte: 'bio §3.5 · §4 EQ-SQUAT-BILAT' },
+  'Leg Press': { classe: 'C', schema: 'squat', muscoli: { quadricipiti: 1, grande_gluteo: 0.5, adduttori: 0, femorali: 0 }, zeri: { adduttori: 'debole', femorali: 'kubo' }, profilo: 'medio', stabilita: 1, fatica: 2, abilita: 1, unilaterale: false, stress: { anca: 1, ginocchio: 1 }, attrezzo: 'macchina', serve: [], setup: 30, fonte: 'bio §3.5 · §4 EQ-SQUAT-BILAT · §5.3 P12' },
+  'Affondi Manubri': { classe: 'B', schema: 'affondo', muscoli: { quadricipiti: 1, grande_gluteo: 0.5, adduttori: 0.5, femorali: 0 }, zeri: { femorali: 'debole' }, profilo: 'medio', stabilita: 2, fatica: 2, abilita: 2, unilaterale: true, stress: { schiena: 1, ginocchio: 2 }, attrezzo: 'manubri', serve: [], setup: 40, fonte: 'bio §3.5 · §4 EQ-AFFONDO-UNILAT' },
+  'Affondi in Camminata': { classe: 'B', schema: 'affondo', muscoli: { quadricipiti: 1, grande_gluteo: 0.5, adduttori: 0.5, femorali: 0 }, zeri: { femorali: 'debole' }, profilo: 'medio', stabilita: 2, fatica: 2, abilita: 2, unilaterale: true, stress: { schiena: 1, anca: 1, ginocchio: 2, caviglia: 1 }, attrezzo: 'corpo', serve: [], setup: 40, fonte: 'bio §3.5 · §4 EQ-AFFONDO-UNILAT', nota: 'corpo libero o con manubri facoltativi' },
+  'Step-up su Panca': { classe: 'B', schema: 'affondo', muscoli: { quadricipiti: 1, grande_gluteo: 0.5, femorali: 0 }, zeri: { femorali: 'debole' }, profilo: 'medio', stabilita: 2, fatica: 2, abilita: 1, unilaterale: true, stress: { ginocchio: 2, caviglia: 1 }, attrezzo: 'corpo', serve: [], setup: 40, fonte: 'bio §3.5 · §4 EQ-AFFONDO-UNILAT', nota: 'un gradino o una scatola: non serve dichiarare una panca (B28)' },
+  'Leg Extension': { classe: 'D', schema: 'isolamento', muscoli: { quadricipiti: 1 }, profilo: 'accorciato', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: { ginocchio: 1 }, attrezzo: 'macchina', serve: [], setup: 20, fonte: 'bio §3.5 · §4 EQ-QUAD-ISO' },
+  'Leg Curl Sdraiato': { classe: 'D', schema: 'isolamento', muscoli: { femorali: 1, polpacci: 0 }, zeri: { polpacci: 'isolamento' }, profilo: 'medio', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'macchina', serve: [], setup: 20, fonte: 'bio §3.5 · §4 EQ-FEM-GINOCCHIO' },
+  'Leg Curl Seduto': { classe: 'D', schema: 'isolamento', muscoli: { femorali: 1, polpacci: 0 }, zeri: { polpacci: 'isolamento' }, profilo: 'allungato', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'macchina', serve: [], setup: 20, fonte: 'bio §3.5 · §4 EQ-FEM-GINOCCHIO' },
+  'Calf Raise in Piedi': { classe: 'D', schema: 'isolamento', muscoli: { polpacci: 1 }, profilo: 'allungato', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: { caviglia: 1 }, attrezzo: 'macchina', serve: [], setup: 20, fonte: 'bio §3.5 · §4 EQ-POLP-TESI' },
+  'Calf Raise Seduto': { classe: 'D', schema: 'isolamento', muscoli: { polpacci: 1 }, profilo: 'medio', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'macchina', serve: [], setup: 20, fonte: 'bio §3.5 · §4 EQ-POLP-PIEGATE · §5.3 P7' },
+  'Squat a Corpo Libero': { classe: 'B', schema: 'squat', muscoli: { quadricipiti: 1, grande_gluteo: 0.5, adduttori: 0.5, addome: 0, femorali: 0 }, zeri: { addome: 'stabilizza', femorali: 'kubo' }, profilo: 'medio', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: { ginocchio: 1 }, attrezzo: 'corpo', serve: [], setup: 30, fonte: 'bio §3.5 · §4 EQ-SQUAT-BILAT', nota: 'B13/B33: ginocchio in cautela (1), non divieto' },
+  'Affondi Inversi': { classe: 'B', schema: 'affondo', muscoli: { quadricipiti: 1, grande_gluteo: 0.5, femorali: 0 }, zeri: { femorali: 'debole' }, profilo: 'medio', stabilita: 2, fatica: 2, abilita: 1, unilaterale: true, stress: { schiena: 1, ginocchio: 2 }, attrezzo: 'corpo', serve: [], setup: 40, fonte: 'bio §3.5 · §4 EQ-AFFONDO-UNILAT', nota: 'corpo libero o con manubri facoltativi' },
+  'Nordic Curl': { classe: 'F', schema: 'isolamento', muscoli: { femorali: 1, polpacci: 0, grande_gluteo: 0 }, zeri: { polpacci: 'isolamento', grande_gluteo: 'isolamento' }, profilo: 'allungato', stabilita: 2, fatica: 2, abilita: 3, unilaterale: false, stress: { ginocchio: 1 }, attrezzo: 'corpo', serve: ['ancoraggio'], setup: 20, fonte: 'bio §3.5 · §4 EQ-FEM-GINOCCHIO', nota: 'caviglie bloccate (partner, divano, macchina); profilo allungato per meccanica [FIS]' },
+  'Wall Sit': { classe: 'F', schema: 'isolamento', muscoli: { quadricipiti: 1, grande_gluteo: 0 }, zeri: { grande_gluteo: 'isolamento' }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: { ginocchio: 1 }, attrezzo: 'corpo', serve: [], setup: 15, fonte: 'bio §3.5 · §4 EQ-QUAD-ISO · §5.4', nota: 'isometrico a tempo' },
+  'Pendulum Squat': { classe: 'C', schema: 'squat', muscoli: { quadricipiti: 1, grande_gluteo: 0.5, adduttori: 0.5, femorali: 0 }, zeri: { femorali: 'kubo' }, profilo: 'allungato', stabilita: 1, fatica: 2, abilita: 1, unilaterale: false, stress: { ginocchio: 2 }, attrezzo: 'macchina', serve: [], setup: 30, fonte: 'bio §3.5 · §4 EQ-SQUAT-BILAT' },
+  'Squat al Multipower': { classe: 'C', schema: 'squat', muscoli: { quadricipiti: 1, grande_gluteo: 0.5, adduttori: 0.5, femorali: 0 }, zeri: { femorali: 'kubo' }, profilo: 'medio', stabilita: 2, fatica: 2, abilita: 3, unilaterale: false, stress: { schiena: 1, ginocchio: 2 }, attrezzo: 'macchina', serve: [], setup: 30, fonte: 'bio §3.5 · §4 EQ-SQUAT-BILAT', nota: 'guidato ma con carico sulla schiena: serve il gancio di sicurezza (stabilità 2)' },
+  'Calf Raise alla Leg Press': { classe: 'D', schema: 'isolamento', muscoli: { polpacci: 1 }, profilo: 'allungato', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: { caviglia: 1 }, attrezzo: 'macchina', serve: [], setup: 20, fonte: 'bio §3.5 · §4 EQ-POLP-TESI', nota: 'ginocchio 0: la regex «leg press» del collaudo lo prende per nome, ma a ginocchia ferme non le carica' },
+  'Stacco con Trap Bar': { classe: 'A', schema: 'hinge', muscoli: { grande_gluteo: 0.5, quadricipiti: 0.5, femorali: 0.5 }, profilo: 'medio', stabilita: 3, fatica: 3, abilita: 2, unilaterale: false, stress: { schiena: 2, ginocchio: 1 }, attrezzo: 'bilanciere', serve: [], setup: 60, fonte: 'bio §3.2 · §4 EQ-STACCO-TOTALE · §5.3 P2', eccezione: 'il bersaglio (erettori) non ha un’unità di volume: nessun credito pieno; gluteo, quadricipiti e femorali 0,5', nota: 'barra esagonale (famiglia «bilanciere»)' },
+  'Adductor Machine': { classe: 'D', schema: 'isolamento', muscoli: { adduttori: 1 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'macchina', serve: [], setup: 20, fonte: 'bio §3.5 · §4 EQ-ADDUTTORI' },
+  'Calf Raise a un Piede (Corpo Libero)': { classe: 'F', schema: 'isolamento', muscoli: { polpacci: 1 }, profilo: 'allungato', stabilita: 2, fatica: 1, abilita: 1, unilaterale: true, stress: {}, attrezzo: 'corpo', serve: [], setup: 20, fonte: 'bio §3.5 · §4 EQ-POLP-TESI', nota: 'un gradino (B28: non serve dichiararlo)' },
+  'Sissy Squat': { classe: 'F', schema: 'isolamento', muscoli: { quadricipiti: 1 }, profilo: 'allungato', stabilita: 2, fatica: 2, abilita: 3, unilaterale: false, stress: { ginocchio: 2 }, attrezzo: 'corpo', serve: [], setup: 20, fonte: 'bio §3.5 · §4 EQ-QUAD-ISO', nota: 'profilo allungato per meccanica [FIS]: opzione in allungamento per il retto femorale (bio §5.5)' },
+  'Squat Sumo': { classe: 'B', schema: 'squat', muscoli: { adduttori: 1, grande_gluteo: 0.5, quadricipiti: 0.5, femorali: 0 }, zeri: { femorali: 'kubo' }, profilo: 'medio', stabilita: 2, fatica: 2, abilita: 1, unilaterale: false, stress: { anca: 1, ginocchio: 2 }, attrezzo: 'manubri', serve: [], setup: 30, fonte: 'bio §3.5 · §4 EQ-ADDUTTORI' },
+
+  /* ---------------- GLUTEI ---------------- */
+  'Hip Thrust': { classe: 'B', schema: 'spintaAnca', muscoli: { grande_gluteo: 1, femorali: 0, adduttori: 0 }, zeri: { femorali: 'debole', adduttori: 'debole' }, profilo: 'accorciato', stabilita: 2, fatica: 2, abilita: 2, unilaterale: false, stress: { anca: 1 }, attrezzo: 'bilanciere', serve: ['panca'], setup: 30, fonte: 'bio §3.5 · §4 EQ-GLUTEO-SPINTA', nota: 'B15: spinta d’anca da supini, non hinge' },
+  'Stacco Rumeno': { classe: 'A', schema: 'hinge', muscoli: { grande_gluteo: 1, femorali: 0.5 }, profilo: 'allungato', stabilita: 3, fatica: 2, abilita: 2, unilaterale: false, stress: { schiena: 2 }, attrezzo: 'bilanciere', serve: [], setup: 60, fonte: 'bio §3.5 · §4 EQ-HINGE-ANCA · §5.4' },
+  'Stacco Sumo': { classe: 'A', schema: 'hinge', muscoli: { grande_gluteo: 1, adduttori: 0.5, quadricipiti: 0.5, femorali: 0.5 }, profilo: 'medio', stabilita: 3, fatica: 3, abilita: 3, unilaterale: false, stress: { schiena: 2, anca: 1 }, attrezzo: 'bilanciere', serve: [], setup: 60, fonte: 'bio §3.5 · §4 EQ-HINGE-ANCA' },
+  'Affondi Bulgari': { classe: 'B', schema: 'affondo', muscoli: { grande_gluteo: 1, quadricipiti: 0.5, adduttori: 0.5, femorali: 0 }, zeri: { femorali: 'debole' }, profilo: 'allungato', stabilita: 2, fatica: 2, abilita: 3, unilaterale: true, stress: { schiena: 1, anca: 1, ginocchio: 2 }, attrezzo: 'corpo', serve: [], setup: 40, fonte: 'bio §3.5 · §4 EQ-AFFONDO-UNILAT', nota: 'piede posteriore su un rialzo (sedia o panca)' },
+  'Good Morning': { classe: 'A', schema: 'hinge', muscoli: { femorali: 1, grande_gluteo: 0.5 }, profilo: 'allungato', stabilita: 3, fatica: 3, abilita: 3, unilaterale: false, stress: { schiena: 2 }, attrezzo: 'bilanciere', serve: [], setup: 60, fonte: 'bio §3.5 · §4 EQ-HINGE-ANCA · §5.4' },
+  'Ponte Glutei': { classe: 'F', schema: 'spintaAnca', muscoli: { grande_gluteo: 1, femorali: 0 }, zeri: { femorali: 'debole' }, profilo: 'accorciato', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'corpo', serve: [], setup: 20, fonte: 'bio §3.5 · §4 EQ-GLUTEO-SPINTA', nota: 'B15: spinta d’anca, non hinge' },
+  'Abductor Machine': { classe: 'D', schema: 'isolamento', muscoli: { abduttori: 1, grande_gluteo: 0 }, zeri: { grande_gluteo: 'debole' }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'macchina', serve: [], setup: 20, fonte: 'bio §3.5 · §4 EQ-ABDUTTORI · §5.4' },
+  'Kickback ai Cavi': { classe: 'D', schema: 'isolamento', muscoli: { grande_gluteo: 1, femorali: 0 }, zeri: { femorali: 'isolamento' }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: true, stress: {}, attrezzo: 'cavo', serve: [], setup: 40, fonte: 'bio §3.5' },
+  'Slanci Laterali a Terra': { classe: 'F', schema: 'isolamento', muscoli: { abduttori: 1 }, profilo: 'medio', stabilita: 1, fatica: 1, abilita: 1, unilaterale: true, stress: {}, attrezzo: 'corpo', serve: [], setup: 20, fonte: 'bio §3.5 · §4 EQ-ABDUTTORI' },
+  'Pull-Through ai Cavi': { classe: 'C', schema: 'hinge', muscoli: { grande_gluteo: 1, femorali: 0 }, zeri: { femorali: 'debole' }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'cavo', serve: [], setup: 30, fonte: 'bio §3.5 · §4 EQ-HINGE-ANCA', nota: 'cerniera d’anca col cavo (prima senza schema)' },
+  'Ponte Glutei a una Gamba': { classe: 'F', schema: 'spintaAnca', muscoli: { grande_gluteo: 1, femorali: 0, addome: 0 }, zeri: { femorali: 'debole', addome: 'stabilizza' }, profilo: 'accorciato', stabilita: 2, fatica: 1, abilita: 2, unilaterale: true, stress: {}, attrezzo: 'corpo', serve: [], setup: 20, fonte: 'bio §3.5 · §4 EQ-GLUTEO-SPINTA', nota: 'B15: spinta d’anca, non hinge' },
+  'Abduzioni ai Cavi': { classe: 'D', schema: 'isolamento', muscoli: { abduttori: 1 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: true, stress: {}, attrezzo: 'cavo', serve: [], setup: 40, fonte: 'bio §3.5 · §4 EQ-ABDUTTORI' },
+  'Hip Thrust alla Macchina': { classe: 'C', schema: 'spintaAnca', muscoli: { grande_gluteo: 1, femorali: 0, adduttori: 0 }, zeri: { femorali: 'debole', adduttori: 'debole' }, profilo: 'accorciato', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'macchina', serve: [], setup: 30, fonte: 'bio §3.5 · §4 EQ-GLUTEO-SPINTA', nota: 'B15: spinta d’anca, non hinge' },
+  'Hyperextension a 45° per Glutei': { classe: 'F', schema: 'hinge', muscoli: { grande_gluteo: 1, femorali: 0 }, zeri: { femorali: 'debole' }, profilo: 'medio', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: { schiena: 2 }, attrezzo: 'corpo', serve: ['sedia romana'], setup: 20, fonte: 'bio §3.5 · §4 EQ-HINGE-ANCA', nota: 'panca a 45° = sedia romana (W0-T5)' },
+  'Affondi al Multipower (Piede Rialzato)': { classe: 'C', schema: 'affondo', muscoli: { grande_gluteo: 1, quadricipiti: 0.5, adduttori: 0.5 }, profilo: 'allungato', stabilita: 2, fatica: 2, abilita: 2, unilaterale: true, stress: { schiena: 1, ginocchio: 2 }, attrezzo: 'macchina', serve: [], setup: 40, fonte: 'bio §3.5 · §4 EQ-AFFONDO-UNILAT' },
+
+  /* ---------------- SPALLE ---------------- */
+  'Military Press': { classe: 'A', schema: 'spintaV', muscoli: { deltoide_anteriore: 1, deltoide_laterale: 0.5, tricipiti: 0.5 }, profilo: 'medio', stabilita: 3, fatica: 2, abilita: 2, unilaterale: false, stress: { spalla: 2, schiena: 1 }, attrezzo: 'bilanciere', serve: [], setup: 60, fonte: 'bio §3.3 · §4 EQ-SPINTA-VERT' },
+  'Lento Avanti Manubri': { classe: 'B', schema: 'spintaV', muscoli: { deltoide_anteriore: 1, deltoide_laterale: 0.5, tricipiti: 0.5 }, profilo: 'medio', stabilita: 2, fatica: 2, abilita: 1, unilaterale: false, stress: { spalla: 2 }, attrezzo: 'manubri', serve: [], setup: 30, fonte: 'bio §3.3 · §4 EQ-SPINTA-VERT' },
+  'Arnold Press': { classe: 'B', schema: 'spintaV', muscoli: { deltoide_anteriore: 1, deltoide_laterale: 0.5, tricipiti: 0.5 }, profilo: 'medio', stabilita: 2, fatica: 2, abilita: 3, unilaterale: false, stress: { spalla: 2 }, attrezzo: 'manubri', serve: [], setup: 30, fonte: 'bio §3.3 · §4 EQ-SPINTA-VERT' },
+  'Shoulder Press Machine': { classe: 'C', schema: 'spintaV', muscoli: { deltoide_anteriore: 1, deltoide_laterale: 0.5, tricipiti: 0.5 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: { spalla: 2 }, attrezzo: 'macchina', serve: [], setup: 30, fonte: 'bio §3.3 · §4 EQ-SPINTA-VERT', nota: 'spalla 2 dall’elenco del collaudo (regex «shoulder press»); rec §3 la darebbe come ripiego con ampiezza ridotta' },
+  'Tirate al Mento (Upright Row)': { classe: 'B', schema: 'isolamento', muscoli: { deltoide_laterale: 1, bicipiti: 0 }, zeri: { bicipiti: 'isolamento' }, profilo: 'medio', stabilita: 2, fatica: 2, abilita: 3, unilaterale: false, stress: { spalla: 2 }, attrezzo: 'bilanciere', serve: [], setup: 30, fonte: 'bio §3.3 · §4 EQ-DELT-LAT · §5.3 P9', nota: 'D9/SEL-15: in fondo alla classifica, mai come ripiego automatico' },
+  'Alzate Laterali': { classe: 'E', schema: 'isolamento', muscoli: { deltoide_laterale: 1 }, profilo: 'accorciato', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'manubri', serve: [], setup: 20, fonte: 'bio §3.3 · §4 EQ-DELT-LAT' },
+  'Alzate Frontali': { classe: 'E', schema: 'isolamento', muscoli: { deltoide_anteriore: 1, petto: 0 }, zeri: { petto: 'isolamento' }, profilo: 'accorciato', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: { spalla: 1 }, attrezzo: 'manubri', serve: [], setup: 20, fonte: 'bio §3.3', nota: 'ridondante per chi spinge (bio §1.2)' },
+  'Alzate Posteriori (Reverse Fly)': { classe: 'E', schema: 'isolamento', muscoli: { deltoide_posteriore: 1, schiena_spessore: 0.5 }, profilo: 'accorciato', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'manubri', serve: [], setup: 20, fonte: 'bio §3.3 · §4 EQ-DELT-POST' },
+  'Face Pull': { classe: 'D', schema: 'isolamento', muscoli: { deltoide_posteriore: 1, schiena_spessore: 0.5 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'cavo', serve: [], setup: 20, fonte: 'bio §3.3 · §4 EQ-DELT-POST' },
+  'Scrollate (Shrug)': { classe: 'E', schema: 'isolamento', muscoli: {}, profilo: 'medio', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: { collo: 1 }, attrezzo: 'bilanciere', serve: [], setup: 20, fonte: 'bio §3.2 · §5.3 P13', eccezione: 'il bersaglio (trapezio) non ha un’unità di volume (B6 non fissa una fascia): nessun credito', nota: 'P13: DETTAGLI dice bilanciere (attrezzoDi dice manubri); la versione coi manubri arriva con W1-T5' },
+  'Landmine Press': { classe: 'B', schema: 'spintaV', muscoli: { deltoide_anteriore: 1, petto: 0, tricipiti: 0.5 }, zeri: { petto: 'debole' }, profilo: 'medio', stabilita: 2, fatica: 2, abilita: 1, unilaterale: true, stress: { spalla: 1 }, attrezzo: 'bilanciere', serve: [], setup: 40, fonte: 'bio §3.3 · §4 EQ-SPINTA-VERT · §5.4', nota: 'bio §4: amico della spalla; l’elenco del collaudo lo tiene in cautela (1)' },
+  'Y-Raise su Panca Inclinata': { classe: 'E', schema: 'isolamento', muscoli: { deltoide_posteriore: 1, schiena_spessore: 0.5 }, profilo: 'accorciato', stabilita: 1, fatica: 1, abilita: 2, unilaterale: false, stress: {}, attrezzo: 'manubri', serve: ['panca'], setup: 20, fonte: 'bio §3.3 · §4 EQ-DELT-POST · §5.4' },
+  'Alzate Laterali ai Cavi': { classe: 'D', schema: 'isolamento', muscoli: { deltoide_laterale: 1 }, profilo: 'allungato', stabilita: 1, fatica: 1, abilita: 1, unilaterale: true, stress: {}, attrezzo: 'cavo', serve: [], setup: 40, fonte: 'bio §3.3 · §4 EQ-DELT-LAT' },
+  'Reverse Pec Deck': { classe: 'D', schema: 'isolamento', muscoli: { deltoide_posteriore: 1, schiena_spessore: 0.5 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'macchina', serve: [], setup: 20, fonte: 'bio §3.3 · §4 EQ-DELT-POST' },
+  'Alzate Laterali alla Macchina': { classe: 'D', schema: 'isolamento', muscoli: { deltoide_laterale: 1 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'macchina', serve: [], setup: 20, fonte: 'bio §3.3 · §4 EQ-DELT-LAT' },
+  'Pike Push-up': { classe: 'B', schema: 'spintaV', muscoli: { deltoide_anteriore: 1, deltoide_laterale: 0.5, tricipiti: 0.5 }, profilo: 'medio', stabilita: 2, fatica: 2, abilita: 3, unilaterale: false, stress: { spalla: 2 }, attrezzo: 'corpo', serve: [], setup: 30, fonte: 'bio §3.3 · §4 EQ-SPINTA-VERT' },
+
+  /* ---------------- BRACCIA ---------------- */
+  'Curl Bilanciere Bicipiti': { classe: 'E', schema: 'isolamento', muscoli: { bicipiti: 1 }, profilo: 'medio', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: { gomito: 1, polso: 1 }, attrezzo: 'bilanciere', serve: [], setup: 20, fonte: 'bio §3.4 · §4 EQ-BICIPITE-GENERALE' },
+  'Curl Manubri Alternato': { classe: 'E', schema: 'isolamento', muscoli: { bicipiti: 1 }, profilo: 'medio', stabilita: 1, fatica: 1, abilita: 1, unilaterale: true, stress: {}, attrezzo: 'manubri', serve: [], setup: 40, fonte: 'bio §3.4 · §4 EQ-BICIPITE-GENERALE' },
+  'Hammer Curl': { classe: 'E', schema: 'isolamento', muscoli: { bicipiti: 1 }, profilo: 'medio', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'manubri', serve: [], setup: 20, fonte: 'bio §3.4 · §4 EQ-FLESSORI-GOMITO · §5.4' },
+  'Curl su Panca Scott': { classe: 'E', schema: 'isolamento', muscoli: { bicipiti: 1 }, profilo: 'accorciato', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: { gomito: 1 }, attrezzo: 'bilanciere', serve: ['panca'], setup: 20, fonte: 'bio §3.4 · §4 EQ-BICIPITE-GENERALE', nota: 'D-P8: profilo accorciato (bio §1.2), secondo curl della settimana' },
+  'Curl ai Cavi': { classe: 'D', schema: 'isolamento', muscoli: { bicipiti: 1 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'cavo', serve: [], setup: 20, fonte: 'bio §3.4 · §4 EQ-BICIPITE-GENERALE' },
+  'Curl di Concentrazione': { classe: 'E', schema: 'isolamento', muscoli: { bicipiti: 1 }, profilo: 'medio', stabilita: 1, fatica: 1, abilita: 1, unilaterale: true, stress: {}, attrezzo: 'manubri', serve: [], setup: 40, fonte: 'bio §3.4 · §4 EQ-BICIPITE-GENERALE' },
+  'Pushdown Tricipiti ai Cavi': { classe: 'D', schema: 'isolamento', muscoli: { tricipiti: 1 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'cavo', serve: [], setup: 20, fonte: 'bio §3.4 · §4 EQ-TRI-GENERALE' },
+  'French Press': { classe: 'E', schema: 'isolamento', muscoli: { tricipiti: 1 }, profilo: 'medio', stabilita: 2, fatica: 1, abilita: 2, unilaterale: false, stress: { gomito: 2 }, attrezzo: 'bilanciere', serve: ['panca'], setup: 20, fonte: 'bio §3.4 · §4 EQ-TRI-GENERALE', nota: 'gomito 2: bio §4 EQ-TRI-GENERALE («no French Press») e rec §3 gomito' },
+  'Panca Presa Stretta': { classe: 'A', schema: 'spintaO', muscoli: { tricipiti: 1, petto: 0.5, deltoide_anteriore: 0.5 }, profilo: 'medio', stabilita: 3, fatica: 2, abilita: 2, unilaterale: false, stress: { gomito: 2, polso: 1 }, attrezzo: 'bilanciere', serve: ['panca'], setup: 60, fonte: 'bio §3.4 · §4 EQ-TRI-GENERALE · §5.3 P1', nota: 'classe A: panca col bilanciere (tipoCarico la dava «macchina»); gomito 2 come il French Press' },
+  'Dip su Panca': { classe: 'B', schema: 'spintaO', muscoli: { tricipiti: 1, deltoide_anteriore: 0.5, petto: 0.5 }, profilo: 'medio', stabilita: 2, fatica: 2, abilita: 2, unilaterale: false, stress: { spalla: 2, gomito: 1, polso: 1 }, attrezzo: 'corpo', serve: ['panca'], setup: 30, fonte: 'bio §3.4 · §4 EQ-TRI-GENERALE · §5.3 P1', nota: 'una sedia robusta fa lo stesso' },
+  'Kickback Tricipiti': { classe: 'E', schema: 'isolamento', muscoli: { tricipiti: 1 }, profilo: 'accorciato', stabilita: 1, fatica: 1, abilita: 2, unilaterale: true, stress: {}, attrezzo: 'manubri', serve: [], setup: 40, fonte: 'bio §3.4 · §4 EQ-TRI-GENERALE' },
+  'Curl con Bilanciere EZ': { classe: 'E', schema: 'isolamento', muscoli: { bicipiti: 1 }, profilo: 'medio', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'bilanciere', serve: [], setup: 20, fonte: 'bio §3.4 · §4 EQ-BICIPITE-GENERALE' },
+  'Spider Curl': { classe: 'E', schema: 'isolamento', muscoli: { bicipiti: 1 }, profilo: 'accorciato', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'manubri', serve: ['panca'], setup: 20, fonte: 'bio §3.4 · §4 EQ-BICIPITE-GENERALE', nota: 'D-P8: profilo accorciato, secondo curl della settimana' },
+  'Pushdown con Corda': { classe: 'D', schema: 'isolamento', muscoli: { tricipiti: 1 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'cavo', serve: [], setup: 20, fonte: 'bio §3.4 · §4 EQ-TRI-GENERALE' },
+  'Estensione Tricipiti sopra la Testa ai Cavi': { classe: 'D', schema: 'isolamento', muscoli: { tricipiti: 1 }, profilo: 'allungato', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'cavo', serve: [], setup: 20, fonte: 'bio §3.4 · §4 EQ-TRI-ALTO' },
+  'Estensione Tricipiti sopra la Testa con Manubrio': { classe: 'E', schema: 'isolamento', muscoli: { tricipiti: 1 }, profilo: 'allungato', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'manubri', serve: [], setup: 20, fonte: 'bio §3.4 · §4 EQ-TRI-ALTO' },
+  'Curl su Panca Inclinata': { classe: 'E', schema: 'isolamento', muscoli: { bicipiti: 1 }, profilo: 'allungato', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'manubri', serve: ['panca'], setup: 20, fonte: 'bio §3.4 · §4 EQ-BICIPITE-ALLUNGATO', nota: 'D-P8: primo curl della settimana (allungato)' },
+  'Curl Bayesiano ai Cavi': { classe: 'D', schema: 'isolamento', muscoli: { bicipiti: 1 }, profilo: 'allungato', stabilita: 1, fatica: 1, abilita: 1, unilaterale: true, stress: {}, attrezzo: 'cavo', serve: [], setup: 40, fonte: 'bio §3.4 · §4 EQ-BICIPITE-ALLUNGATO', nota: 'D-P8: primo curl della settimana (allungato)' },
+  'Piegamenti a Diamante': { classe: 'B', schema: 'spintaO', muscoli: { tricipiti: 1, petto: 0.5, deltoide_anteriore: 0.5 }, profilo: 'medio', stabilita: 1, fatica: 2, abilita: 2, unilaterale: false, stress: { gomito: 1, polso: 1 }, attrezzo: 'corpo', serve: [], setup: 30, fonte: 'bio §3.4 · §4 EQ-TRI-GENERALE · §5.3 P1' },
+  'Curl ai Cavi con Corda (Presa Martello)': { classe: 'D', schema: 'isolamento', muscoli: { bicipiti: 1 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'cavo', serve: [], setup: 20, fonte: 'bio §3.4 · §4 EQ-FLESSORI-GOMITO · §5.4' },
+  'Curl Inverso con Bilanciere EZ': { classe: 'E', schema: 'isolamento', muscoli: { bicipiti: 1 }, profilo: 'medio', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'bilanciere', serve: [], setup: 20, fonte: 'bio §3.4 · §4 EQ-FLESSORI-GOMITO · §5.4' },
+  'Curl alla Macchina (Scott)': { classe: 'D', schema: 'isolamento', muscoli: { bicipiti: 1 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'macchina', serve: [], setup: 20, fonte: 'bio §3.4 · §4 EQ-BICIPITE-GENERALE', nota: 'la camma appiattisce la resistenza: piatto' },
+  'Curl Zottman': { classe: 'E', schema: 'isolamento', muscoli: { bicipiti: 1 }, profilo: 'medio', stabilita: 1, fatica: 1, abilita: 2, unilaterale: false, stress: {}, attrezzo: 'manubri', serve: [], setup: 20, fonte: 'bio §3.4 · §4 EQ-BICIPITE-GENERALE' },
+  'Pushdown Presa Inversa': { classe: 'D', schema: 'isolamento', muscoli: { tricipiti: 1 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'cavo', serve: [], setup: 20, fonte: 'bio §3.4 · §4 EQ-TRI-GENERALE' },
+  'Pushdown con Barra V': { classe: 'D', schema: 'isolamento', muscoli: { tricipiti: 1 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'cavo', serve: [], setup: 20, fonte: 'bio §3.4 · §4 EQ-TRI-GENERALE' },
+  'Dip alla Macchina (Tricipiti)': { classe: 'C', schema: 'spintaO', muscoli: { tricipiti: 1, petto: 0.5, deltoide_anteriore: 0.5 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: { spalla: 2 }, attrezzo: 'macchina', serve: [], setup: 30, fonte: 'bio §3.4 · §4 EQ-TRI-GENERALE · §5.3 P1' },
+
+  /* ---------------- CORE ---------------- */
+  'Pallof Press': { classe: 'F', schema: 'core', muscoli: { addome: 1 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: true, stress: {}, attrezzo: 'cavo', serve: [], setup: 25, fonte: 'bio §3.6 · §4 EQ-CORE-ANTI', nota: 'ricerca-metodi §3.1: è classe F (core) anche se usa il cavo' },
+  'Dead Bug': { classe: 'F', schema: 'core', muscoli: { addome: 1 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'corpo', serve: [], setup: 15, fonte: 'bio §3.6 · §4 EQ-CORE-ANTI' },
+  'Bird Dog': { classe: 'F', schema: 'core', muscoli: { addome: 1, grande_gluteo: 0 }, zeri: { grande_gluteo: 'stabilizza' }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'corpo', serve: [], setup: 15, fonte: 'bio §3.6 · §4 EQ-CORE-ANTI' },
+  'Farmer Walk': { classe: 'F', schema: 'trasporto', muscoli: { addome: 0.5 }, profilo: 'piatto', stabilita: 2, fatica: 2, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'manubri', serve: [], setup: 15, fonte: 'bio §3.6 · §4 EQ-CORE-ANTI', eccezione: 'trasporto: la serie vale 0,5 all’addome (spe §3.2: stabilità 0,5) e non 1: non è una serie diretta di addome', nota: 'trasporto: il core lavora in isometria, ma non conta come una serie diretta di addome (spe §3.2: stabilità 0,5)' },
+  'Plank': { classe: 'F', schema: 'core', muscoli: { addome: 1 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: {}, attrezzo: 'corpo', serve: [], setup: 15, fonte: 'bio §3.6 · §4 EQ-CORE-ANTI' },
+  'Plank Laterale': { classe: 'F', schema: 'core', muscoli: { addome: 1, abduttori: 0 }, zeri: { abduttori: 'stabilizza' }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 2, unilaterale: true, stress: {}, attrezzo: 'corpo', serve: [], setup: 25, fonte: 'bio §3.6 · §4 EQ-CORE-ANTI' },
+  'Crunch a Terra': { classe: 'F', schema: 'core', muscoli: { addome: 1 }, profilo: 'medio', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: { schiena: 1 }, attrezzo: 'corpo', serve: [], setup: 15, fonte: 'bio §3.6 · §4 EQ-CORE-FLESSIONE' },
+  'Crunch al Cavo': { classe: 'F', schema: 'core', muscoli: { addome: 1 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: { schiena: 1 }, attrezzo: 'cavo', serve: [], setup: 15, fonte: 'bio §3.6 · §4 EQ-CORE-FLESSIONE' },
+  'Leg Raise alla Sbarra': { classe: 'F', schema: 'core', muscoli: { addome: 1 }, profilo: 'medio', stabilita: 2, fatica: 2, abilita: 3, unilaterale: false, stress: { schiena: 1 }, attrezzo: 'corpo', serve: ['sbarra'], setup: 15, fonte: 'bio §3.6 · §4 EQ-CORE-FLESSIONE' },
+  'Leg Raise a Terra': { classe: 'F', schema: 'core', muscoli: { addome: 1 }, profilo: 'medio', stabilita: 1, fatica: 1, abilita: 2, unilaterale: false, stress: { schiena: 1 }, attrezzo: 'corpo', serve: [], setup: 15, fonte: 'bio §3.6 · §4 EQ-CORE-FLESSIONE' },
+  'Russian Twist': { classe: 'F', schema: 'core', muscoli: { addome: 1 }, profilo: 'medio', stabilita: 1, fatica: 1, abilita: 3, unilaterale: false, stress: { schiena: 1 }, attrezzo: 'corpo', serve: [], setup: 15, fonte: 'bio §3.6 · §4 EQ-CORE-ANTI' },
+  'Mountain Climber': { classe: 'F', schema: 'core', muscoli: { addome: 1 }, profilo: 'medio', stabilita: 1, fatica: 2, abilita: 3, unilaterale: false, stress: { schiena: 1, ginocchio: 1, caviglia: 1 }, attrezzo: 'corpo', serve: [], setup: 15, fonte: 'bio §3.6 · §4 EQ-CORE-ANTI' },
+  'Hollow Hold': { classe: 'F', schema: 'core', muscoli: { addome: 1 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 3, unilaterale: false, stress: {}, attrezzo: 'corpo', serve: [], setup: 15, fonte: 'bio §3.6 · §4 EQ-CORE-FLESSIONE' },
+  'Ab Wheel': { classe: 'F', schema: 'core', muscoli: { addome: 1, dorsali: 0, deltoide_anteriore: 0 }, zeri: { dorsali: 'stabilizza', deltoide_anteriore: 'stabilizza' }, profilo: 'allungato', stabilita: 2, fatica: 2, abilita: 3, unilaterale: false, stress: { schiena: 1 }, attrezzo: 'corpo', serve: ['ruota'], setup: 15, fonte: 'bio §3.6 · §4 EQ-CORE-FLESSIONE', nota: 'profilo allungato per meccanica [FIS]: il punto più duro è la posizione più estesa' },
+  'Crunch alla Macchina': { classe: 'F', schema: 'core', muscoli: { addome: 1 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: { schiena: 1 }, attrezzo: 'macchina', serve: [], setup: 15, fonte: 'bio §3.6 · §4 EQ-CORE-FLESSIONE' },
+  'Woodchop ai Cavi (Rotazioni)': { classe: 'F', schema: 'core', muscoli: { addome: 1 }, profilo: 'piatto', stabilita: 1, fatica: 1, abilita: 2, unilaterale: true, stress: { schiena: 1 }, attrezzo: 'cavo', serve: [], setup: 25, fonte: 'bio §3.6 · §4 EQ-CORE-ANTI' },
+  'Leg Raise alla Sedia Romana': { classe: 'F', schema: 'core', muscoli: { addome: 1 }, profilo: 'medio', stabilita: 1, fatica: 1, abilita: 2, unilaterale: false, stress: { schiena: 1 }, attrezzo: 'corpo', serve: ['sedia romana'], setup: 15, fonte: 'bio §3.6 · §4 EQ-CORE-FLESSIONE' },
+  'Sit-up a Ginocchia Piegate': { classe: 'F', schema: 'core', muscoli: { addome: 1 }, profilo: 'medio', stabilita: 1, fatica: 1, abilita: 1, unilaterale: false, stress: { schiena: 1 }, attrezzo: 'corpo', serve: [], setup: 15, fonte: 'bio §3.6 · §4 EQ-CORE-FLESSIONE' }
+};
+
+let _attributiCache = null;
+/* le righe di ATTRIBUTI con tutte le zone di stress (0 dove manca), congelate: si costruiscono alla prima chiamata */
+function _attributiEspansi() {
+  if (_attributiCache) return _attributiCache;
+  const t = {};
+  Object.keys(ATTRIBUTI).forEach(nome => {
+    const r = ATTRIBUTI[nome], stress = {};
+    ZONE_STRESS.forEach(z => { stress[z] = (r.stress && r.stress[z]) || 0; });
+    t[nome] = Object.freeze(Object.assign({ nome: nome }, r, {
+      muscoli: Object.freeze(Object.assign({}, r.muscoli)), zeri: Object.freeze(Object.assign({}, r.zeri)),
+      stress: Object.freeze(stress), serve: Object.freeze(r.serve.slice())
+    }));
+  });
+  _attributiCache = t;
+  return t;
+}
+/* la riga di un esercizio (con o senza emoji), o null se non è della libreria */
+window.attributi = function(nome) {
+  if (!nome) return null;
+  return _attributiEspansi()[_nomePulito(nome)] || null;
+};
+/* crediti di una serie per unità: { quadricipiti: 1, grande_gluteo: 0.5, femorali: 0 }; null se l’esercizio non c’è */
+window.creditoMuscoli = function(nome) {
+  const a = window.attributi(nome);
+  return a ? Object.assign({}, a.muscoli) : null;
+};
+/* l’unità di volume di un muscolo di MUSCOLI, o null se B6 non lo conta */
+window.unitaDiMuscolo = function(idMuscolo) {
+  return UNITA_DI_MUSCOLO[idMuscolo] || null;
+};
+/* Volume di una settimana: `sedute` come prog.sedute ([{ esercizi: [{ name, sets }] }]) o liste di esercizi. Ritorna, per ogni unità
+   di UNITA_VOLUME, { frazionarie, dirette, sedute }: frazionarie = serie × credito; dirette = serie dove l’unità è il bersaglio (credito 1);
+   sedute = quante sedute le danno almeno opz.minSerie serie frazionarie (default SERIE_MIN_PER_SEDUTA). Gli esercizi fuori libreria si saltano. */
+window.contaVolume = function(sedute, opz) {
+  const minSerie = opz && opz.minSerie !== undefined ? opz.minSerie : SERIE_MIN_PER_SEDUTA;
+  const out = {};
+  UNITA_VOLUME.forEach(u => { out[u] = { frazionarie: 0, dirette: 0, sedute: 0 }; });
+  (sedute || []).forEach(s => {
+    const lista = Array.isArray(s) ? s : ((s && (s.esercizi || s.es)) || []);
+    const inSeduta = {};
+    lista.forEach(e => {
+      const a = window.attributi(e && (e.name || e.nome)), serie = Number(e && (e.sets !== undefined ? e.sets : e.serie));
+      if (!a || !(serie > 0)) return;
+      Object.keys(a.muscoli).forEach(u => {
+        const c = a.muscoli[u];
+        if (!(c > 0) || !out[u]) return;
+        inSeduta[u] = (inSeduta[u] || 0) + serie * c;
+        out[u].frazionarie += serie * c;
+        if (c === 1) out[u].dirette += serie;
+      });
+    });
+    Object.keys(inSeduta).forEach(u => { if (inSeduta[u] >= minSerie) out[u].sedute += 1; });
+  });
+  return out;
+};
+/* classe A-F (ricerca-metodi §3.1), o null */
+window.classeTecnica = function(nome) {
+  const a = window.attributi(nome);
+  return a ? a.classe : null;
+};
+/* abilità 1-3 (SEL-06), o null */
+window.livelloAbilita = function(nome) {
+  const a = window.attributi(nome);
+  return a ? a.abilita : null;
+};
+/* stress dell’esercizio su una zona (0 nessuno, 1 cautela, 2 controindicato); null se l’esercizio o la zona non esistono */
+window.stressArticolare = function(nome, zona) {
+  const a = window.attributi(nome), z = ZONE_ALIAS[zona] || zona;
+  if (!a || ZONE_STRESS.indexOf(z) === -1) return null;
+  return a.stress[z];
+};
+/* cosa serve per farlo (SERVE_AMMESSI; «a|b» = a oppure b); [] se basta il pavimento; null se l’esercizio non c’è */
+window.serveAttrezzo = function(nome) {
+  const a = window.attributi(nome);
+  return a ? a.serve.slice() : null;
+};
