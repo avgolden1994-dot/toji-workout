@@ -35,7 +35,8 @@ const IMMAGINI_ESERCIZI = {
   'Stacco da Terra (Deadlift)': 'esercizi/ex-12-stacco-da-terra.svg',
   'Trazioni alla Sbarra (Pull-ups)': 'esercizi/ex-13-trazioni-sbarra.svg',
   'Trazioni Presa Inversa (Chin-up)': 'esercizi/ex-14-trazioni-presa-inversa.svg',
-  'Lat Machine': 'esercizi/ex-15-lat-machine.svg'
+  'Lat Machine': 'esercizi/ex-15-lat-machine.svg',
+  'Lat Machine Presa Inversa': 'esercizi/ex-16-lat-machine-presa-inversa.svg'
 };
 window.immagineEsercizio = function(nome) {
   const pulito = String(nome).replace(EMOJI_TESTA, '');

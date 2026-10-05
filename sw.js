@@ -151,6 +151,7 @@ const ASSETS = [
   './esercizi/ex-13-trazioni-sbarra.svg',
   './esercizi/ex-14-trazioni-presa-inversa.svg',
   './esercizi/ex-15-lat-machine.svg',
+  './esercizi/ex-16-lat-machine-presa-inversa.svg',
   /*FINE-ASSET*/
 
 ];
