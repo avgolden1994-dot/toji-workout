@@ -29,16 +29,27 @@ test('nessuna traccia del Worker o del vecchio file coach-ia in index.html, sw.j
   assert.deepStrictEqual(trovati, []);
 });
 
-test('la CSP non ammette origini di rete oltre a cdnjs (pdf.js) e il resto resta com era', () => {
+test('la CSP e esattamente questa: nessuna origine di rete oltre a cdnjs (pdf.js), tutte le direttive come prima', () => {
   const html = fs.readFileSync(path.join(radice, 'index.html'), 'utf8');
   const csp = (html.match(/http-equiv="Content-Security-Policy" content="([^"]+)"/) || [])[1];
   assert.ok(csp, 'meta CSP presente');
-  const direttiva = nome => ((csp.split(';').map(s => s.trim()).find(s => s.startsWith(nome + ' ')) || '').split(/\s+/).slice(1));
-  assert.deepStrictEqual(direttiva('connect-src'), ["'self'", 'blob:', 'data:', 'https://cdnjs.cloudflare.com']);
-  assert.deepStrictEqual(direttiva('script-src'), ["'self'", "'unsafe-inline'", 'https://cdnjs.cloudflare.com', 'https://www.youtube.com', 'https://open.spotify.com']);
-  assert.deepStrictEqual(direttiva('frame-src'), ['https://www.youtube.com', 'https://www.youtube-nocookie.com', 'https://open.spotify.com', 'blob:', 'about:']);
-  assert.deepStrictEqual(direttiva('worker-src'), ["'self'", 'blob:', 'https://cdnjs.cloudflare.com']);
-  assert.deepStrictEqual(direttiva('object-src'), ["'none'"]);
+  const trovate = {};
+  csp.split(';').map(s => s.trim()).filter(Boolean).forEach(d => { const [nome, ...valori] = d.split(/\s+/); trovate[nome] = valori; });
+  const CDNJS = 'https://cdnjs.cloudflare.com', YT = 'https://www.youtube.com', SPOTIFY = 'https://open.spotify.com';
+  assert.deepStrictEqual(trovate, {
+    'default-src': ["'self'"],
+    'script-src': ["'self'", "'unsafe-inline'", CDNJS, YT, SPOTIFY],
+    'style-src': ["'self'", "'unsafe-inline'"],
+    'img-src': ["'self'", 'data:', 'blob:'],
+    'media-src': ["'self'", 'data:', 'blob:'],
+    'font-src': ["'self'", 'data:'],
+    'connect-src': ["'self'", 'blob:', 'data:', CDNJS],
+    'frame-src': [YT, 'https://www.youtube-nocookie.com', SPOTIFY, 'blob:', 'about:'],
+    'worker-src': ["'self'", 'blob:', CDNJS],
+    'object-src': ["'none'"],
+    'base-uri': ["'none'"],
+    'form-action': ["'none'"]
+  });
 });
 
 test('i nomi del Coach IA non esistono piu; quelli spostati restano funzioni', () => {
@@ -50,11 +61,14 @@ test('i nomi del Coach IA non esistono piu; quelli spostati restano funzioni', (
 });
 
 test('le chiavi orfane del Coach IA seminate prima dell avvio spariscono; le altre restano intatte', () => {
+  /* consenso: null = aiuto-app non riscrive tz_consenso dopo il caricamento (di solito lo mette a 'si'): cosi il valore seminato e quello
+     che la pulizia lascia davvero, e la prova fallisce se ripulisciChiaviCoachIA tocca il consenso generale o un'altra chiave */
   const altre = { tz_consenso: 'si', tz_consenso_data: '01/09/2026, 10:00', tz_consenso_versione: '1.1', tz_theme: 'dark', tz_onb: '1', coach_plus_history_toji: JSON.stringify([seduta()]), coach_plus_titles_toji: '{"Lunedì":"Spinta"}' };
-  const app = caricaApp({ chiaviIniziali: Object.assign({}, SEMINA_ORFANE, altre) });
+  const app = caricaApp({ consenso: null, chiaviIniziali: Object.assign({}, SEMINA_ORFANE, altre) });
   assert.deepStrictEqual(app.erroriCaricamento, []);
   ORFANE.forEach(k => assert.strictEqual(app.store[k], undefined, k + ' doveva sparire'));
   Object.keys(altre).forEach(k => assert.strictEqual(app.store[k], altre[k], k + ' non va toccata'));
+  assert.strictEqual(app.store.tz_consenso, 'si', 'il consenso generale seminato resta (non lo riscrive aiuto-app)');
   assert.strictEqual(app.g('coachAttivo()'), true, 'il consenso generale resta quello di prima');
   assert.deepStrictEqual(Object.keys(app.json('fotografia()')).filter(k => ORFANE.includes(k)), [], 'nemmeno un backup nuovo le contiene');
   assert.deepStrictEqual(app.errori, [], 'nessun errore e nessun messaggio');

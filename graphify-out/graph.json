@@ -5911,7 +5911,7 @@
       "file_type": "code",
       "norm_label": "elencofixture()",
       "source_file": "tests/aiuto-app.js",
-      "source_location": "L162"
+      "source_location": "L163"
     },
     {
       "id": "tests_aiuto_app_leggifixture",
@@ -5923,7 +5923,7 @@
       "file_type": "code",
       "norm_label": "leggifixture()",
       "source_file": "tests/aiuto-app.js",
-      "source_location": "L165"
+      "source_location": "L166"
     },
     {
       "id": "tests_aiuto_app_sorgenti",
@@ -24436,7 +24436,7 @@
       "file_type": "code",
       "norm_label": "vettori_carichi",
       "source_file": "tests/aiuto-app.js",
-      "source_location": "L140"
+      "source_location": "L141"
     },
     {
       "id": "tests_aiuto_app_vm",
@@ -35714,7 +35714,7 @@
       "confidence_score": 1,
       "context": "call",
       "source_file": "tests/aiuto-app.js",
-      "source_location": "L119",
+      "source_location": "L120",
       "weight": 1
     },
     {
@@ -56083,7 +56083,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1,
       "source_file": "tests/aiuto-app.js",
-      "source_location": "L140",
+      "source_location": "L141",
       "weight": 1
     },
     {
@@ -59910,7 +59910,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "tests/aiuto-app.js",
-      "source_location": "L169",
+      "source_location": "L170",
       "weight": 1
     },
     {
@@ -59922,7 +59922,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "tests/aiuto-app.js",
-      "source_location": "L169",
+      "source_location": "L170",
       "weight": 1
     },
     {
@@ -59934,7 +59934,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "tests/aiuto-app.js",
-      "source_location": "L169",
+      "source_location": "L170",
       "weight": 1
     },
     {
@@ -121499,5 +121499,5 @@
       "source_file": "docs/coach-mappa-regole.md"
     }
   ],
-  "built_at_commit": "e4673131fd758c8fd45198e24f60d01a10427627"
+  "built_at_commit": "fcbc05213387e899dc6e05e0c5adcb5764957f55"
 }

@@ -55,7 +55,7 @@ await p.evaluate(()=>document.querySelector('.hs-row').click()); await p.waitFor
 f = await foglio();
 ok(!f.nascosto, 'il tocco su una riga dello Storico deve aprire il dettaglio');
 /* la lista e ordinata dalla piu recente: la prima riga e la seduta di oggi; si controlla comunque il contenuto vero della seduta aperta */
-ok(/Spinta di prova|Martedì/.test(f.titolo), 'titolo del dettaglio inatteso: '+f.titolo);
+ok(f.titolo==='Spinta di prova', 'titolo atteso "Spinta di prova" (la prima riga e la seduta piu recente), trovato "'+f.titolo+'"');
 
 /* 2. openHistoryDetail(i) diretto, sulla seduta con il dettaglio (indice 0 dello storico salvato) */
 await p.evaluate(()=>closeDoneView()); f = await foglio();
@@ -66,7 +66,7 @@ ok(!f.nascosto, 'openHistoryDetail(0) deve aprire il foglio');
 ok(f.titolo==='Spinta di prova', 'titolo atteso "Spinta di prova", trovato "'+f.titolo+'"');
 ok(/2 di 3 serie/.test(f.sotto) && /con cedimento/.test(f.sotto), 'riepilogo atteso "2 di 3 serie • con cedimento", trovato "'+f.sotto+'"');
 ok(/Completato/.test(f.corpo) && /Panca Piana/.test(f.corpo), 'nel corpo mancano "Completato" o il nome dell esercizio');
-ok(/Volume totale\s*960 kg/.test(f.corpo.replace(/\s+/g,' ')) || /960/.test(f.corpo), 'volume totale atteso 960 kg nel corpo: '+f.corpo.replace(/\s+/g,' ').slice(0,200));
+ok(/Volume totale 960 kg/.test(f.corpo.replace(/\s+/g,' ')), 'volume totale atteso 960 kg nel corpo: '+f.corpo.replace(/\s+/g,' ').slice(0,200));
 ok(f.righe===3, 'attese 3 righe di serie, trovate '+f.righe);
 ok(/05\/10\/2026/.test(f.corpo), 'nel corpo manca la data della seduta');
 
