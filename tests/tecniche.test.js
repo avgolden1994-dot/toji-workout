@@ -454,8 +454,11 @@ test('MES-02 (aggancio): rirBersaglioBase legge rirPianoSettimana se c e, e senz
   assert.deepStrictEqual(rir('Curl ai Cavi', 3), [2, 4], 'il RIR non supera mai 4');
   a.g('window.rirPianoSettimana = function () { return null; }'); a.profilo({ level: 'intermedio' });
   assert.deepStrictEqual(rir('Curl ai Cavi', 3), a.json('rirBersaglioPerLivello(' + JSON.stringify(a.chiama('nomeInLibreria', 'Curl ai Cavi')) + ', 3)'), 'la tabella che non risponde: i valori di prima');
-  a.g('delete window.rirPianoSettimana');
+  /* INT-2b: dopo la fusione con W2-T4 rirPianoSettimana e una dichiarazione di funzione (non si cancella da window): «assente» si simula con undefined, che e quello che
+     controlla rirDalPiano (typeof !== 'function'). L aspettativa e la stessa di W2-T3: senza la tabella valgono i valori di prima. */
+  a.g('window.rirPianoSettimana = undefined'); a.profilo({ level: 'intermedio' });
   assert.strictEqual(a.g('typeof rirPianoSettimana'), 'undefined');
+  assert.deepStrictEqual(rir('Curl ai Cavi', 3), a.json('rirBersaglioPerLivello(' + JSON.stringify(a.chiama('nomeInLibreria', 'Curl ai Cavi')) + ', 3)'), 'senza la funzione: i valori di prima');
   assert.deepStrictEqual(a.errori, []);
 });
 

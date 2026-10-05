@@ -66,3 +66,38 @@ test('rirPianoSettimana: nessun programma, programma della v1, settimana oltre i
   assert.deepStrictEqual(a.json('rirBersaglioBase(' + nome + ', 3)'), a.json('pavimentoRirMinorenni(rirBersaglioPerLivello(' + nome + ', 3))'));
   assert.deepStrictEqual(a.errori, []);
 });
+
+/* ---------------------------------------------------------------- 2) la nota delle donne (PRG-20, W2-T2) ---------------------------------------------------------------- */
+const NOTA_PAUSE_DONNE = 'Pause un po piu corte: le donne recuperano piu in fretta tra una serie e l altra.';
+/* le pause per «seduta + esercizio»: con la regola spenta il tempo cambia anche quali esercizi entrano, quindi si confrontano solo quelli che ci sono in tutte e due le schede */
+const pause = p => { const m = {}; p.sedute.forEach((sd, i) => sd.esercizi.forEach(e => { m[i + ':' + e.name] = e.rest; })); return m; };
+
+test('PRG-20: la nota «Pause un po piu corte» c e solo se almeno una pausa e davvero scesa (brief.lavoro.pauseDonneAccorciate), mai per gli uomini, il PAR-Q positivo o con la regola spenta', () => {
+  const a = conSoglieStruttura(caricaApp({ ora: ORA }));
+  const costruisci = d => a.dati(a.chiama('buildProgram', Object.assign({}, BASE, d)));
+  const ha = p => p.note.indexOf(NOTA_PAUSE_DONNE) !== -1;
+  let conNota = 0, senzaNota = 0;
+  [['massa', 'intermedio', 4], ['forza', 'intermedio', 3], ['salute', 'principiante', 3], ['dimagrimento', 'avanzato', 5], ['forza', 'avanzato', 4], ['massa', 'principiante', 2]].forEach(([g, level, days]) => ['palestra', 'manubri'].forEach(luogo => {
+    const d = { goals: [g], level, days, luogo, sex: 'F', seme: 'donne-' + g + level + days };
+    a.riaccendi();
+    const donna = costruisci(d);
+    a.spegni(['PRG-20']);
+    const donnaSenzaRegola = costruisci(d);
+    a.riaccendi();
+    const uomo = costruisci(Object.assign({}, d, { sex: 'M' }));
+    const prudente = costruisci(Object.assign({}, d, { parq: 'si' }));
+    const pd = pause(donna), ps = pause(donnaSenzaRegola);
+    const comuni = Object.keys(pd).filter(k => k in ps);
+    assert.ok(comuni.length >= 4, d.seme + ': esercizi in comune ' + comuni.length);
+    const sceso = comuni.some(k => pd[k] < ps[k]);
+    /* se la nota c e, una pausa e scesa davvero (sugli esercizi in comune, o su uno che la scheda senza regola non ha); se non c e, nessuna pausa in comune e scesa */
+    if (ha(donna)) assert.ok(sceso || Object.keys(pd).some(k => !(k in ps)), d.seme + ': la nota c e ma nessuna pausa e scesa (' + g + ' ' + level + ' ' + luogo + ')');
+    else assert.strictEqual(sceso, false, d.seme + ': una pausa e scesa ma la nota non c e (' + g + ' ' + level + ' ' + luogo + ')');
+    assert.strictEqual(ha(donnaSenzaRegola), false, d.seme + ': regola spenta, niente nota');
+    assert.strictEqual(ha(uomo), false, d.seme + ': gli uomini non l hanno');
+    assert.strictEqual(ha(prudente), false, d.seme + ': PAR-Q positivo, niente pause accorciate');
+    if (ha(donna)) conNota++; else senzaNota++;
+  }));
+  assert.ok(conNota > 0 && senzaNota > 0, 'il campione ha donne con e senza pause accorciate: con ' + conNota + ', senza ' + senzaNota);
+  assert.deepStrictEqual(a.errori, []);
+});
