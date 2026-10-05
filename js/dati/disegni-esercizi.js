@@ -38,7 +38,8 @@ const IMMAGINI_ESERCIZI = {
   'Lat Machine': 'esercizi/ex-15-lat-machine.svg',
   'Lat Machine Presa Inversa': 'esercizi/ex-16-lat-machine-presa-inversa.svg',
   'Rematore con Bilanciere': 'esercizi/ex-17-rematore-bilanciere.svg',
-  'Rematore con Manubrio': 'esercizi/ex-18-rematore-manubrio.svg'
+  'Rematore con Manubrio': 'esercizi/ex-18-rematore-manubrio.svg',
+  'T-Bar Row': 'esercizi/ex-19-t-bar-row.svg'
 };
 window.immagineEsercizio = function(nome) {
   const pulito = String(nome).replace(EMOJI_TESTA, '');
