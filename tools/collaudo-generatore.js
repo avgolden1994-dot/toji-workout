@@ -25,7 +25,7 @@ const R = path.join(__dirname, '..');
    docs/ricerca-struttura-e-intensita.md). "Convenzione" = pratica comune dei coach, senza prova diretta.
    Cambiare una soglia = alzare VERSIONE_CRITERI: i confronti prima/dopo valgono solo a pari versione.
    ===================================================================================================== */
-const VERSIONE_CRITERI = '1.2';
+const VERSIONE_CRITERI = '1.3';
 /* 1.1 (INT-0, onda 0 del coach v2): criteri aggiornati dalle decisioni del registro docs/coach-v2-decisioni.md, non per far passare l'onda:
    - SAF-01/SAF-02/MOD-03: la leg extension e lo squat a corpo libero con le ginocchia dolenti stanno in CAUTELA, non tra i controindicati
      (B13, B33, REC-04: si modifica prima di escludere; il generatore li lascia con la nota di SCALE_DOLORE e un esercizio per i quadricipiti resta sempre);
@@ -42,6 +42,13 @@ const VERSIONE_CRITERI = '1.2';
    coach-v2-onda-0-prima) si rigenera con questo file: il codice vecchio non scrive la nota, quindi il suo SAF-04:corpo non cambia.
    - RX-01/RX-04: il Nordic Curl (eccentrico, 3-6 ripetizioni per sicurezza: B1 della revisione dell onda 0) non e un isolamento fuori fascia (ECCENTRICO_A_BASSE_RIPETIZIONI).
    - EQ-03:flessione: non scatta dove non esiste una flessione del ginocchio sicura (casa, o palestra senza macchine, con chi inizia, i prudenti o le ginocchia dolenti: il Nordic Curl e escluso). */
+
+/* 1.3 (INT-1, onda 1 del coach v2): le etichette di controindicazione per zona sono ora un DATO dell'app (`stress` per 8 zone in js/dati/attributi-esercizi.js, W1-T2: 2 = controindicato,
+   1 = cautela): SAF-01 e SAF-02 leggono quello (stressZona), non piu una regex del collaudo; lo stesso per la fattibilita degli schemi e la copertura della libreria; MOD-01 diventa
+   «ok» (il dato c'e). L'elenco CONTROINDICAZIONI resta come SECONDO PARERE indipendente: lo leggono MOD-03 (buchi di RISCHIO), tests/attributi.test.js (i dati non si allontanano dal parere)
+   e, in un albero senza attributi (i tag di prima di W1-T2: il «prima» si rigenera in un worktree copiandovi questo file), SAF-01/SAF-02 al posto del dato. Il dato e il parere
+   coincidono sulle controindicazioni (stress 2); sulle cautele il dato aggiunge Panca Declinata e Trazioni (spalla) e Mountain Climber (ginocchio) e toglie Calf Raise alla Leg Press
+   (ginocchio: non lo carica): le righe e i motivi sono in DIFFERENZE e CORREZIONI_CAUTELA di tests/attributi.test.js. L'esito sui programmi di coach-v2-onda-0 e nelle note del registro della skill. */
 
 /* --- volume --- */
 /* Una serie vale 1 per il muscolo bersaglio e 0,5 per i sinergisti (Pelland 2025, Sports Medicine, 67 studi: Moderata) */
@@ -197,6 +204,17 @@ const CONTROINDICAZIONI = {
     cautela: /military|squat al multipower|sit-up|russian twist|ab wheel|leg raise|mountain climber|affondi|crunch|woodchop/i
   }
 };
+/* INT-1 (criteri 1.3): stress dell'esercizio sulla zona del fastidio (0 nessuno, 1 cautela, 2 controindicato) dal dato di W1-T2 (G.stressArticolare); senza il dato (albero di prima
+   di W1-T2) dal secondo parere CONTROINDICAZIONI, cosi il «prima» dei tag si rigenera con questo stesso file */
+function stressZona(nome, fastidio) {
+  let dato = null;
+  try { dato = G.stressArticolare; } catch (e) { dato = null; }   /* G legge i nomi dal mondo dell'app: un nome che non c'e lancia ReferenceError */
+  if (typeof dato === 'function') { const s = dato(nome, fastidio); return typeof s === 'number' ? s : 0; }
+  const c = CONTROINDICAZIONI[fastidio], n = G.senzaEmoji(nome);
+  return !c ? 0 : (c.forte.test(n) ? 2 : (c.cautela.test(n) ? 1 : 0));
+}
+const controindicato = (fastidio, nome) => stressZona(nome, fastidio) === 2;
+const dacautela = (fastidio, nome) => stressZona(nome, fastidio) === 1;
 /* Esercizi tecnicamente impegnativi o ad alto carico assiale: per principianti e per chi e in modalita prudente (over 65, PAR-Q) (Convenzione) */
 const TECNICI_PRINCIPIANTE = /stacco da terra|stacco sumo|good morning|front squat|nordic|ab wheel|tirate al mento|pike push/i;
 const TECNICI_PRUDENTE = /stacco da terra|stacco sumo|stacco con trap bar|good morning|front squat|nordic|ab wheel|tirate al mento|pike push|military/i;
@@ -259,15 +277,18 @@ const PRIORITA_GRUPPI = { petto: ['petto'], schiena: ['schiena'], spalle: ['delt
 const PESO_SEV = { 1: 1, 2: 2, 3: 4, 4: 8, 5: 16 };
 const NOME_SEV = { 1: 'bassa', 2: 'media-bassa', 3: 'media', 4: 'alta', 5: 'critica' };
 const RICETTE_JS = 'js/coach/programma/ricette.js', STRUTTURA_JS = 'js/coach/programma/struttura-pro.js', MOTORE_JS = 'js/coach/programma/motore.js', ONB_JS = 'js/ui/onboarding.js';
+/* INT-1: dopo W1-T4 buildProgram e a stadi (regia/genera.js) e le sue parti vivono in file propri; i puntatori `dove` dei criteri dicono dove correggere */
+const GENERA_JS = 'js/coach/regia/genera.js', COMPLETAMENTI_JS = 'js/coach/programma/completamenti.js', VOLUME_JS = 'js/coach/volume/volume.js', TEMPO_JS = 'js/coach/volume/tempo.js',
+  SERIE_JS = 'js/coach/volume/serie-ripetizioni.js', TECNICHE_JS = 'js/coach/volume/tecniche.js', MESOCICLO_JS = 'js/coach/programma/mesociclo.js', VINCOLI_JS = 'js/coach/sicurezza/vincoli.js';
 
 const r1 = (x) => Math.round(x * 10) / 10;
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 const CRITERI = [
   { id: 'ERR-01', nome: 'Il generatore fallisce o produce una scheda malformata', sev: 5, forza: 'Convenzione', fonte: 'robustezza',
-    dove: [RICETTE_JS + ': buildProgram'], check: (m) => (m.errori || []).map(e => ({ msg: e, gravita: 10 })) },
+    dove: [GENERA_JS + ': buildProgram (a stadi: briefCoach, componiSedute, completaSettimana, assegnaVolume, adattaAlTempo, prescriviSerie, assegnaTecniche, verificaProgramma)'], check: (m) => (m.errori || []).map(e => ({ msg: e, gravita: 10 })) },
   { id: 'SAN-01', nome: 'Dati della scheda incoerenti (esercizio doppio nella seduta, serie o ripetizioni non valide, esercizio fuori libreria)', sev: 4, forza: 'Convenzione', fonte: 'robustezza',
-    dove: [RICETTE_JS + ': buildProgram', STRUTTURA_JS + ': strCopri'],
+    dove: [GENERA_JS + ': buildProgram', COMPLETAMENTI_JS + ': completaSettimana', STRUTTURA_JS + ': strCopri'],
     check: (m) => {
       const out = [];
       m.sedute.forEach(s => {
@@ -284,31 +305,31 @@ const CRITERI = [
 
   /* ---------------- volume ---------------- */
   { id: 'MIS-01', nome: 'Muscolo di fatto non allenato nella settimana (meno di 2 serie frazionarie)', sev: 4, forza: 'Moderata', fonte: 'Pelland 2025; Convenzione per i muscoli piccoli',
-    dove: [STRUTTURA_JS + ': strCopri (aggiunge polpacci, deltoidi posteriori, bicipiti, tricipiti, core solo a certe condizioni)', RICETTE_JS + ': buildProgram (aggiungiRegione)', ONB_JS + ': exerciseCountFor (minimo 3 esercizi)'],
+    dove: [STRUTTURA_JS + ': strCopri (aggiunge polpacci, deltoidi posteriori, bicipiti, tricipiti, core solo a certe condizioni)', COMPLETAMENTI_JS + ': completaSettimana (aggiungiRegione)', TEMPO_JS + ': stimaEsercizi (minimo 3 esercizi; exerciseCountFor in onboarding.js e un alias)'],
     check: (m, c) => volumeGruppi(m, c).filter(x => x.tipo === 'mis').map(x => ({ sub: x.g, sev: x.classe === 'grande' ? 4 : (x.classe === 'core' ? 2 : 3), msg: x.g + ': ' + r1(x.v) + ' serie frazionarie a settimana (dirette ' + r1(x.d) + ')', gravita: 3 - x.v / 2 + (x.classe === 'grande' ? 2 : 0) })) },
   { id: 'VOL-01', nome: 'Volume settimanale sotto il minimo del livello (serie frazionarie)', sev: 3, forza: 'Moderata', fonte: 'Pelland 2025; VOLUME_LIVELLO del coach (Convenzione per i numeri)',
-    dove: [RICETTE_JS + ': buildProgram (blocco "volume per muscolo": conta per gruppo, non per muscolo; tetto di 5 serie per esercizio)', ONB_JS + ': exerciseCountFor (esercizi per seduta dai minuti)', RICETTE_JS + ': buildProgram (taglio per il tempo, minutiDi)'],
+    dove: [VOLUME_JS + ': assegnaVolume / limitaVolumePerMuscolo (conta per gruppo, non per muscolo; tetto di 5 serie per esercizio)', TEMPO_JS + ': stimaEsercizi (esercizi per seduta dai minuti)', TEMPO_JS + ': adattaAlTempo / durataSeduta (taglio per il tempo)'],
     check: (m, c) => volumeGruppi(m, c).filter(x => x.tipo === 'sotto').map(x => ({ sub: x.g, sev: 3, msg: x.g + ': ' + r1(x.v) + ' serie frazionarie a settimana, minimo ' + x.min + ' (' + c.tipoObiettivo + ', ' + c.level + ')', gravita: (x.min - x.v) / x.min * 10 })) },
   { id: 'VOL-02', nome: 'Volume settimanale sopra il massimo del livello (serie frazionarie)', sev: 3, forza: 'Moderata', fonte: 'Pelland 2025 (rendimenti decrescenti oltre 12); Convenzione per i tetti',
-    dove: [RICETTE_JS + ': buildProgram (blocco "volume per muscolo": le sinergie sono per gruppo, non per muscolo; bonus priorita)', STRUTTURA_JS + ': strCopri / strBilancia (serie aggiunte dopo il tetto)'],
+    dove: [VOLUME_JS + ': assegnaVolume (le sinergie sono per gruppo, non per muscolo; bonus priorita)', STRUTTURA_JS + ': strCopri / strBilancia (serie aggiunte dopo il tetto)'],
     check: (m, c) => volumeGruppi(m, c).filter(x => x.tipo === 'sopra').map(x => ({ sub: x.g, sev: x.classe === 'grande' ? 3 : 2, msg: x.g + ': ' + r1(x.v) + ' serie frazionarie a settimana, massimo ' + x.max + ' (' + c.tipoObiettivo + ', ' + c.level + ')', gravita: (x.v - x.max) / x.max * 10 })) },
   { id: 'DIR-01', nome: 'Poche serie dirette per tricipiti, bicipiti, deltoidi (laterali, posteriori), polpacci o avambracci nell ipertrofia', sev: 3, forza: 'Convenzione', fonte: 'docs/ricerca-ipertrofia-programmazione.md 3.2 (Maeo 2023, Baz-Valle 2022: Moderata; deltoidi e polpacci: Convenzione)',
-    dove: [STRUTTURA_JS + ': strCopri (aggiunge solo con 3+ giorni e non principianti)', RICETTE_JS + ': buildProgram (aggiungiRegione per le alzate laterali)'],
+    dove: [STRUTTURA_JS + ': strCopri (aggiunge solo con 3+ giorni e non principianti)', COMPLETAMENTI_JS + ': completaSettimana (aggiungiRegione per le alzate laterali)'],
     check: (m, c) => volumeGruppi(m, c).filter(x => x.tipo === 'diretto').map(x => ({ sub: x.g, sev: x.g === 'avambracci' ? 1 : (['bicipiti', 'tricipiti'].indexOf(x.g) !== -1 ? 2 : 3), msg: x.g + ': ' + r1(x.d) + ' serie dirette a settimana, minimo ' + x.min + ' (frazionarie ' + r1(x.v) + ')', gravita: (x.min - x.d) / x.min * 10 })) },
   { id: 'FRQ-01', nome: 'Grande gruppo allenato meno di 2 volte a settimana', sev: 4, forza: 'Solida', fonte: 'ACSM 2026 (137 revisioni): ogni grande gruppo almeno 2 sedute a settimana',
-    dove: [ONB_JS + ': splitFor / splitPerFrequenza', RICETTE_JS + ': RICETTE (ricette per tipo di giorno) e buildProgram (nEs: pochi esercizi per seduta)', 'js/coach/metodi-momenti.js: METODI (split dei metodi famosi)'],
+    dove: [ONB_JS + ': splitFor / splitPerFrequenza', RICETTE_JS + ': RICETTE (ricette per tipo di giorno)', TEMPO_JS + ': numeroEsercizi (pochi esercizi per seduta)', 'js/coach/metodi-momenti.js: METODI (split dei metodi famosi)'],
     check: (m, c) => {
       if (c.prof.freq === '1') return [];   /* scelta esplicita dell utente: il coach la rispetta */
       return Object.keys(GRUPPI_FREQUENZA).map(g => ({ g, n: m.sedute.filter(s => GRUPPI_FREQUENZA[g].reduce((t, x) => t + (s.grp[x] || 0), 0) >= FREQ_SERIE_MIN_SEDUTA).length }))
         .filter(x => x.n < FREQ_MIN_SETTIMANA && c.days >= 2).map(x => ({ sub: x.g, sev: ['bicipiti', 'tricipiti'].indexOf(x.g) !== -1 ? 2 : (['spalle', 'femorali'].indexOf(x.g) !== -1 ? 3 : 4), msg: x.g + ' in ' + x.n + ' sedute su ' + m.sedute.length + (c.metodo ? ' (metodo ' + c.metodo + ')' : ''), gravita: 3 - x.n })); } },
   { id: 'FRQ-02', nome: 'Muscolo piccolo (deltoidi, braccia, polpacci) con serie dirette in una sola seduta', sev: 2, forza: 'Convenzione', fonte: 'docs/ricerca-ipertrofia-programmazione.md 3.3',
-    dove: [STRUTTURA_JS + ': strCopri (le aggiunte vanno nella seduta con meno esercizi: una sola)', RICETTE_JS + ': buildProgram (aggiungiRegione)'],
+    dove: [STRUTTURA_JS + ': strCopri (le aggiunte vanno nella seduta con meno esercizi: una sola)', COMPLETAMENTI_JS + ': completaSettimana (aggiungiRegione)'],
     check: (m, c) => {
       if (c.tipoObiettivo !== 'ipertrofia' || c.level === 'principiante' || c.days < 3 || c.minutes < PICCOLI_MINUTI_MIN || c.prof.freq === '1') return [];
       return ['deltoidi_laterali', 'deltoidi_posteriori', 'bicipiti', 'tricipiti', 'polpacci'].map(g => ({ g, tot: m.dir[g] || 0, n: m.sedute.filter(s => (s.dir[g] || 0) >= 1).length }))
         .filter(x => x.tot >= 1 && x.n < SEDUTE_DIRETTE_PICCOLI_MIN).map(x => ({ sub: x.g, msg: x.g + ': ' + r1(x.tot) + ' serie dirette, in ' + x.n + ' seduta su ' + m.sedute.length, gravita: 1 })); } },
   { id: 'SES-03', nome: 'Seduta senza uno schema di base per il suo tipo (full body senza squat/hinge, spinta o tirata; upper senza spinta o tirata; lower senza squat o hinge)', sev: 3, forza: 'Moderata', fonte: 'docs/ricerca-ipertrofia-programmazione.md 3.3 (un multiarticolare di ogni schema: Iversen 2021); piramide di Helms',
-    dove: [RICETTE_JS + ': buildProgram (taglio per il tempo toglie posti dalla ricetta; RICETTE fullbody a 7 posti)', ONB_JS + ': exerciseCountFor'],
+    dove: [TEMPO_JS + ': adattaAlTempo (taglio per il tempo toglie posti dalla ricetta)', RICETTE_JS + ': RICETTE (fullbody a 7 posti)', TEMPO_JS + ': stimaEsercizi'],
     check: (m, c) => {
       const attesi = { fullbody: ['spinta', 'tirata', 'basso'], upper: ['spinta', 'tirata'], lower: ['squat', 'hinge'], legs: ['squat', 'hinge'], push: ['spinta'], pull: ['tirata'] };
       const ha = (s, k) => s.es.some(e => (k === 'spinta' ? (e.inf.mov === 'spintaO' || e.inf.mov === 'spintaV') : (k === 'tirata' ? (e.inf.mov === 'tirataO' || e.inf.mov === 'tirataV') : (k === 'basso' ? (e.inf.mov === 'squat' || e.inf.mov === 'hinge') : e.inf.mov === k))));
@@ -316,7 +337,7 @@ const CRITERI = [
       m.sedute.forEach(s => (attesi[s.tipo] || []).forEach(k => { if (!ha(s, k)) out.push({ sub: s.tipo + '/' + k, msg: s.titolo + ' (' + s.giorno + '): manca ' + k + ' (' + s.es.length + ' esercizi)' + (c.metodo ? ' metodo ' + c.metodo : ''), gravita: 2 }); }));
       return out; } },
   { id: 'SES-01', nome: 'Oltre 11 serie frazionarie per muscolo in una sola seduta', sev: 3, forza: 'Moderata', fonte: 'Pelland, meta-regressione sul volume per seduta (preprint 2025)',
-    dove: [RICETTE_JS + ': buildProgram (tetto serieMaxMuscoloSeduta: conta le serie dirette per gruppo, senza sinergisti)', 'js/coach/parametri.js: COACH_PARAMETRI.serieMaxMuscoloSeduta'],
+    dove: [VOLUME_JS + ': limitaVolumePerMuscolo (tetto serieMaxMuscoloSeduta: conta le serie dirette per gruppo, senza sinergisti)', 'js/coach/parametri.js: COACH_PARAMETRI.serieMaxMuscoloSeduta'],
     check: (m, c) => {
       const out = [];
       m.sedute.forEach(s => Object.keys(GRUPPI).forEach(g => { if ((s.grp[g] || 0) > TETTO_FRAZ_SEDUTA) out.push({ sub: g, msg: s.titolo + ' (' + s.giorno + '): ' + g + ' ' + r1(s.grp[g]) + ' serie frazionarie in una seduta', gravita: s.grp[g] - TETTO_FRAZ_SEDUTA }); }));
@@ -324,16 +345,16 @@ const CRITERI = [
 
   /* ---------------- tempo ---------------- */
   { id: 'DUR-01', nome: 'La seduta non sta nei minuti dichiarati (durata stimata oltre il 10%)', sev: 4, forza: 'Convenzione', fonte: 'modello del collaudo: serie x (tempo sotto tensione + recupero) + transizioni + riscaldamento',
-    dove: [RICETTE_JS + ': buildProgram (minutiDi: 8 + serie x (35 s + recupero), nessun tempo per transizioni, riscaldamento e unilaterali)', ONB_JS + ': exerciseCountFor'],
+    dove: [TEMPO_JS + ': durataSeduta (8 + serie x (35 s + recupero), nessun tempo per transizioni, riscaldamento e unilaterali)', TEMPO_JS + ': stimaEsercizi'],
     check: (m, c) => m.sedute.filter(s => s.minuti > c.minutes * (1 + TOLLERANZA_SFORAMENTO)).map(s => ({ msg: s.titolo + ' (' + s.giorno + '): circa ' + Math.round(s.minuti) + ' min stimati su ' + c.minutes + ' dichiarati (+' + Math.round((s.minuti / c.minutes - 1) * 100) + '%)', gravita: (s.minuti / c.minutes - 1) * 10 })) },
   { id: 'DUR-02', nome: 'La seduta spreca oltre il 25% del tempo dichiarato', sev: 2, forza: 'Convenzione', fonte: 'richiesta del collaudo; stesso modello di durata',
-    dove: [ONB_JS + ': exerciseCountFor (massimo 7 esercizi)', RICETTE_JS + ': RICETTE (ricette da 6-7 posti) e buildProgram (nEs)'],
+    dove: [TEMPO_JS + ': stimaEsercizi (massimo 7 esercizi)', RICETTE_JS + ': RICETTE (ricette da 6-7 posti)', TEMPO_JS + ': numeroEsercizi'],
     check: (m, c) => m.sedute.filter(s => s.minuti < c.minutes * (1 - QUOTA_SPRECO_MAX)).map(s => ({ msg: s.titolo + ' (' + s.giorno + '): circa ' + Math.round(s.minuti) + ' min stimati su ' + c.minutes + ' dichiarati (spreca ' + Math.round((1 - s.minuti / c.minutes) * 100) + '%)', gravita: (1 - s.minuti / c.minutes) * 10 })) },
   { id: 'EXN-01', nome: 'Troppo pochi esercizi in una seduta (meno di 3)', sev: 3, forza: 'Convenzione', fonte: 'pratica dei coach',
-    dove: [RICETTE_JS + ': buildProgram (taglio per il tempo)', ONB_JS + ': exerciseCountFor'],
+    dove: [TEMPO_JS + ': adattaAlTempo (taglio per il tempo)', TEMPO_JS + ': stimaEsercizi'],
     check: (m) => m.sedute.filter(s => s.es.length < ES_MIN_SEDUTA).map(s => ({ msg: s.titolo + ': solo ' + s.es.length + ' esercizi', gravita: 3 - s.es.length })) },
   { id: 'EXN-02', nome: 'Troppi esercizi in una seduta (oltre 8, oltre 6 per un principiante)', sev: 2, forza: 'Convenzione', fonte: 'pratica dei coach',
-    dove: [STRUTTURA_JS + ': strCopri (aggiunge fino a +2 esercizi sopra nEs)', RICETTE_JS + ': buildProgram (aggiungi schemi mancanti, regioni)'],
+    dove: [STRUTTURA_JS + ': strCopri (aggiunge fino a +2 esercizi sopra nEs)', COMPLETAMENTI_JS + ': completaSettimana (aggiungi schemi mancanti, regioni)'],
     check: (m, c) => m.sedute.filter(s => s.es.length > (c.level === 'principiante' ? ES_MAX_PRINCIPIANTE : ES_MAX_SEDUTA)).map(s => ({ msg: s.titolo + ': ' + s.es.length + ' esercizi', gravita: s.es.length - ES_MAX_SEDUTA })) },
 
   /* ---------------- ordine, superserie, ridondanza ---------------- */
@@ -377,19 +398,19 @@ const CRITERI = [
     dove: [STRUTTURA_JS + ': strTier / strOrdina'],
     check: (m) => m.sedute.filter(s => s.es.some((e, i) => e.inf.gruppoLib === 'core' && s.es.slice(i + 1).some(x => x.inf.gruppoLib !== 'core'))).map(s => ({ msg: s.titolo + ': il core non e in fondo', gravita: 1 })) },
   { id: 'SS-01', nome: 'Superserie tra muscoli non antagonisti', sev: 3, forza: 'Solida', fonte: 'Meta-analisi 2025 (19 studi); Paz 2017: stessa crescita in un terzo di tempo in meno, solo tra antagonisti',
-    dove: [STRUTTURA_JS + ': strSuperserie / strAntagonisti', RICETTE_JS + ': buildProgram (coppie del metodo "rr": trazione + squat, dip + hinge)'],
+    dove: [STRUTTURA_JS + ': strSuperserie / strAntagonisti', GENERA_JS + ': applicaMetodo (coppie del metodo "rr": trazione + squat, dip + hinge)'],
     check: (m, c) => {
       const out = [];
       m.sedute.forEach(s => s.es.forEach((e, i) => { if (e.superset && i > 0 && !antagonisti(s.es[i - 1], e)) out.push({ msg: s.titolo + ': ' + s.es[i - 1].pulito + ' + ' + e.pulito + (c.metodo ? ' (metodo ' + c.metodo + ')' : ''), tag: s.es[i - 1].pulito + ' + ' + e.pulito, gravita: 2 }); }));
       return out; } },
   { id: 'SS-02', nome: 'Superserie con un multiarticolare pesante o con un esercizio a tempo o di core', sev: 3, forza: 'Moderata', fonte: 'Paz 2017: le coppie fanno calare il carico; ABB-06',
-    dove: [STRUTTURA_JS + ': strPuoSuperserie', RICETTE_JS + ': buildProgram (metodi con superserie imposta)'],
+    dove: [STRUTTURA_JS + ': strPuoSuperserie', GENERA_JS + ': applicaMetodo (metodi con superserie imposta)'],
     check: (m, c) => {
       const out = [];
       m.sedute.forEach(s => s.es.forEach((e, i) => { if (e.superset && i > 0) { const a = s.es[i - 1]; if (a.inf.carico === 'pesante' || e.inf.carico === 'pesante' || a.inf.tempo || e.inf.tempo || a.inf.gruppoLib === 'core' || e.inf.gruppoLib === 'core') out.push({ msg: s.titolo + ': ' + a.pulito + ' + ' + e.pulito + (c.metodo ? ' (metodo ' + c.metodo + ')' : ''), gravita: 2 }); } }));
       return out; } },
   { id: 'RID-01', nome: 'Due esercizi per lo stesso muscolo e lo stesso tipo nella stessa seduta', sev: 2, forza: 'Convenzione', fonte: 'ABB-02; pratica dei coach (eccezioni: curl/estensioni, squat+macchina, glutei)',
-    dove: [STRUTTURA_JS + ': strRidondante / strChiave (la chiave usa il sottogruppo, non il bersaglio) e ricette.js: buildProgram (penalita -4, non un divieto)', STRUTTURA_JS + ': strBilancia (converte spinte doppie in tirate)'],
+    dove: [STRUTTURA_JS + ': strRidondante / strChiave (la chiave usa il sottogruppo, non il bersaglio) e ricette.js: componiSedute (penalita -4, non un divieto)', STRUTTURA_JS + ': strBilancia (converte spinte doppie in tirate)'],
     check: (m) => {
       const out = [];
       m.sedute.forEach(s => {
@@ -403,7 +424,7 @@ const CRITERI = [
       });
       return out; } },
   { id: 'RID-02', nome: 'Lo stesso esercizio in 3 o piu sedute della settimana', sev: 2, forza: 'Convenzione', fonte: 'pratica dei coach: varia l esercizio o la fascia di ripetizioni (i metodi con "ripeti" sono per scelta)',
-    dove: [RICETTE_JS + ': buildProgram (usatiSett: penalita -4 / -1 solo a punteggio)', 'js/coach/metodi-momenti.js: METODI'],
+    dove: [RICETTE_JS + ': componiSedute (usatiSett: penalita -4 / -1 solo a punteggio)', 'js/coach/metodi-momenti.js: METODI'],
     check: (m, c) => {
       const conta = {};
       m.sedute.forEach(s => s.es.forEach(e => { if (!e.inf.tempo && e.inf.gruppoLib !== 'core') conta[e.pulito] = (conta[e.pulito] || 0) + 1; }));
@@ -416,7 +437,7 @@ const CRITERI = [
       const push = m.mov.spintaO + m.mov.spintaV, pull = m.mov.tirataO + m.mov.tirataV + m.mov.deltPost;
       return push + pull >= SERIE_BILANCIO_MIN && pull < push * RAPPORTO_TIRATE_SPINTE_MIN ? [{ msg: 'spinte ' + push + ' serie, tirate ' + pull + ' (rapporto ' + (pull / push).toFixed(2) + ')', gravita: (push - pull) / Math.max(1, push) * 10 }] : []; } },
   { id: 'EQ-02', nome: 'Tirate solo verticali o solo orizzontali (manca uno dei due piani)', sev: 2, forza: 'Convenzione', fonte: 'pratica dei coach: dorsali (larghezza) e spessore (romboidi, trapezio medio)',
-    dove: [RICETTE_JS + ': RICETTE (tirataV e tirataO nei posti), buildProgram (schemi mancanti)', STRUTTURA_JS + ': strBilancia'],
+    dove: [RICETTE_JS + ': RICETTE (tirataV e tirataO nei posti)', COMPLETAMENTI_JS + ': completaSettimana (schemi mancanti)', STRUTTURA_JS + ': strBilancia'],
     check: (m, c) => {
       const v = m.mov.tirataV, o = m.mov.tirataO, tot = v + o;
       if (tot < SERIE_TIRATA_MIN) return [];
@@ -424,7 +445,7 @@ const CRITERI = [
       if (!sub || !c.fattibile[sub === 'verticale' ? 'tirataV' : 'tirataO']) return [];
       return [{ sub, msg: 'tirate verticali ' + v + ' serie, orizzontali ' + o, gravita: 2 }]; } },
   { id: 'EQ-03', nome: 'Femorali in ritardo sui quadricipiti, o nessuna flessione del ginocchio', sev: 3, forza: 'Moderata', fonte: 'Maeo 2021 (leg curl da seduto, lunghezza muscolare); pratica dei coach (rapporto 0,5-1)',
-    dove: [RICETTE_JS + ': buildProgram (aggiungiRegione per il leg curl: solo 3+ giorni, 2 serie, non con goals[0] salute)', RICETTE_JS + ': SLOT_DEF isoFem'],
+    dove: [COMPLETAMENTI_JS + ': completaSettimana / rinforzaFemorali (aggiungiRegione per il leg curl: solo 3+ giorni, 2 serie, non con goals[0] salute)', RICETTE_JS + ': SLOT_DEF isoFem'],
     check: (m, c) => {
       const out = [];
       const q = m.vol.quadricipiti || 0, f = m.vol.femorali || 0;
@@ -432,7 +453,7 @@ const CRITERI = [
       if (c.tipoObiettivo === 'ipertrofia' && c.days >= 3 && m.flessioneGinocchio === 0 && m.vol.quadricipiti >= 6 && flessioneSicuraDisponibile(c)) out.push({ sub: 'flessione', msg: 'nessun leg curl o nordic curl: i femorali lavorano solo in estensione d anca', gravita: 2 });
       return out; } },
   { id: 'PAT-01', nome: 'Schema di movimento fondamentale assente nella settimana (squat, hinge, spinte e tirate orizzontali e verticali)', sev: 3, forza: 'Convenzione', fonte: 'piramide di Helms (SCHEMI_MOV), pratica dei coach',
-    dove: [RICETTE_JS + ': buildProgram (schemi mancanti, PRG-21)', MOTORE_JS + ': consentito / RISCHIO (fastidi tolgono schemi interi)'],
+    dove: [COMPLETAMENTI_JS + ': completaSettimana (schemi mancanti, PRG-21)', MOTORE_JS + ': consentito / RISCHIO (fastidi tolgono schemi interi)'],
     check: (m, c) => {
       if (c.days < 3) return [];
       /* INT-0: hinge = cerniera vera (B15, l'hip thrust non conta); tirata verticale = trazioni, lat machine o pullover coi manubri (D-P11) */
@@ -440,7 +461,7 @@ const CRITERI = [
 
   /* ---------------- recupero e calendario ---------------- */
   { id: 'REC-01', nome: 'Stesso grande muscolo allenato in due giorni consecutivi (meno di 48 ore)', sev: 3, forza: 'Moderata', fonte: 'ACSM 2009: 48 ore tra sedute dello stesso gruppo (Convenzione per la soglia di serie)',
-    dove: [ONB_JS + ': splitPerFrequenza (full body + upper/lower con frequenza 3)', RICETTE_JS + ': mappaGiorni (giorni fissi lun-mar-gio-ven...)'],
+    dove: [ONB_JS + ': splitPerFrequenza (full body + upper/lower con frequenza 3)', GENERA_JS + ': giorniSettimana (GIORNI_PER_SEDUTE: giorni fissi lun-mar-gio-ven...)'],
     check: (m) => {
       const out = [];
       const grandi = ['petto', 'schiena', 'quadricipiti', 'femorali', 'glutei', 'spalle'];
@@ -451,17 +472,17 @@ const CRITERI = [
       }
       return out; } },
   { id: 'REC-02', nome: 'Carico pesante sui lombari in due giorni consecutivi', sev: 3, forza: 'Convenzione', fonte: 'ABB-07',
-    dove: [RICETTE_JS + ': buildProgram (vietaSchiena: -5 punti, non un divieto; poi strBilancia e le aggiunte)'],
+    dove: [RICETTE_JS + ': componiSedute (vietaSchiena: -5 punti, non un divieto; poi strBilancia e le aggiunte)'],
     check: (m) => {
       const out = [];
       const punti = (s) => s.es.reduce((t, e) => t + (/stacco|good morning/i.test(e.pulito) ? e.sets : (/squat con bilanciere|front squat|rematore con bilanciere|t-bar|rematore presa inversa/i.test(e.pulito) ? e.sets * 0.5 : 0)), 0);
       for (let i = 0; i < m.sedute.length; i++) for (let j = i + 1; j < m.sedute.length; j++) if (Math.abs(m.sedute[i].gi - m.sedute[j].gi) === 1 && punti(m.sedute[i]) >= LOMBARE_SERIE_PESANTI && punti(m.sedute[j]) >= LOMBARE_SERIE_PESANTI) out.push({ msg: m.sedute[i].giorno + ' e ' + m.sedute[j].giorno + ': ' + m.sedute[i].titolo + ' / ' + m.sedute[j].titolo, gravita: 2 });
       return out; } },
   { id: 'REC-03', nome: 'Troppi giorni di allenamento di fila (oltre 4)', sev: 2, forza: 'Convenzione', fonte: 'pratica dei coach',
-    dove: [RICETTE_JS + ': buildProgram (mappaGiorni: 6 giorni = lun-sab di fila)'],
+    dove: [GENERA_JS + ': giorniSettimana (6 giorni = lun-sab di fila)'],
     check: (m, c) => { const mx = giorniDiFila(m.sedute.map(s => s.gi)); return mx > GIORNI_CONSECUTIVI_MAX ? [{ msg: mx + ' giorni di fila (' + m.sedute.map(s => s.giorno.slice(0, 3)).join(' ') + ')', gravita: mx - GIORNI_CONSECUTIVI_MAX }] : []; } },
   { id: 'SPL-01', nome: 'Numero di sedute diverso dai giorni dichiarati', sev: 4, forza: 'Convenzione', fonte: 'coerenza con la richiesta',
-    dove: [ONB_JS + ': splitFor (principianti con 5-6 giorni: solo 4 sedute)', RICETTE_JS + ': buildProgram (split.giorni.slice(0, d.days))'],
+    dove: [ONB_JS + ': splitFor (principianti con 5-6 giorni: solo 4 sedute)', RICETTE_JS + ': componiSedute (split.giorni.slice(0, giorni))'],
     check: (m, c) => m.sedute.length !== c.days ? [{ sub: c.level === 'principiante' && c.days >= 5 ? 'principiante-limitato' : 'altri', sev: c.level === 'principiante' && c.days >= 5 ? 2 : 4, msg: c.days + ' giorni dichiarati, ' + m.sedute.length + ' sedute generate (split ' + c.splitNome + ')' + (c.prog.note.some(n => /giorni/i.test(String(n))) ? '' : ', senza una nota che lo spieghi'), gravita: Math.abs(c.days - m.sedute.length) }] : [] },
   { id: 'SPL-02', nome: 'Divisione non adatta al numero di giorni (muscolo singolo con pochi giorni, upper/lower con 2 giorni, full body con 5-6)', sev: 3, forza: 'Solida', fonte: 'ACSM 2026 (frequenza 2); ABB-05',
     dove: [ONB_JS + ': splitFor / splitPerFrequenza', 'js/coach/metodi-momenti.js: METODI (split)'],
@@ -476,7 +497,7 @@ const CRITERI = [
 
   /* ---------------- prescrizione ---------------- */
   { id: 'RX-01', nome: 'Ripetizioni fuori dalla fascia dell obiettivo e del tipo di esercizio', sev: 3, forza: 'Convenzione', fonte: 'ACSM 2009 e 2026 (forza 1-6 oltre l 80%); prassi per ipertrofia 6-12 / 12-20',
-    dove: [RICETTE_JS + ': buildProgram (blocco ripetizioni per tipo; PRG-14 forzaSulPrimo 5x5 su qualunque multiarticolare; blocco "schemi mancanti" PRG-21: reps = max(8, schema) e recupero da macchina anche su un isolamento)', ONB_JS + ': schemeFor', 'js/coach/compone.js: TOCCHI', 'js/coach/metodi-momenti.js: METODI (schema)'],
+    dove: [SERIE_JS + ': prescriviSeduta (ripetizioni per tipo; PRG-14 forzaSulPrimo 5x5 su qualunque multiarticolare)', COMPLETAMENTI_JS + ': completaSettimana (schemi mancanti PRG-21: reps = max(8, schema) e recupero da macchina anche su un isolamento)', ONB_JS + ': schemeFor', 'js/coach/compone.js: TOCCHI', 'js/coach/metodi-momenti.js: METODI (schema)'],
     check: (m, c) => {
       const out = [];
       m.sedute.forEach(s => s.es.forEach(e => {
@@ -486,7 +507,7 @@ const CRITERI = [
       }));
       return out; } },
   { id: 'RX-02', nome: 'Recupero tra le serie fuori dalla fascia dell obiettivo e del tipo di esercizio', sev: 3, forza: 'Moderata', fonte: 'Singer 2024, Schoenfeld 2016, ACSM 2009 (2-3 minuti sui fondamentali per la forza)',
-    dove: [RICETTE_JS + ': buildProgram (rest per tipo, donne -15% min 60 s, arrotondamento a 15 s; il blocco "schemi mancanti" PRG-21 salta tutto questo)', ONB_JS + ': schemeFor (restCompound / restIso)'],
+    dove: [SERIE_JS + ': prescriviSeduta (rest per tipo, donne -15% min 60 s, arrotondamento a 15 s; gli "schemi mancanti" PRG-21 di completaSettimana saltano tutto questo)', ONB_JS + ': schemeFor (restCompound / restIso)'],
     check: (m, c) => {
       const out = [];
       m.sedute.forEach(s => s.es.forEach(e => {
@@ -496,7 +517,7 @@ const CRITERI = [
       }));
       return out; } },
   { id: 'RX-03', nome: 'Una sola serie su un esercizio, o oltre 6 serie', sev: 3, forza: 'Solida', fonte: 'Krieger 2010, Ralston 2017 (2-3 serie battono 1); Amirthalingam 2017 (oltre 5-6 non rende di piu)',
-    dove: [RICETTE_JS + ': buildProgram (tetti di serie, taglio per il tempo, sonno male: -1 serie)', 'js/coach/metodi-momenti.js: METODI (stronglifts: stacco 1x5)'],
+    dove: [VOLUME_JS + ': limitaVolume (tetti di serie, sonno male: -1 serie)', TEMPO_JS + ': adattaAlTempo (taglio per il tempo)', 'js/coach/metodi-momenti.js: METODI (stronglifts: stacco 1x5)'],
     check: (m, c) => {
       const out = [];
       m.sedute.forEach(s => s.es.forEach(e => {
@@ -506,7 +527,7 @@ const CRITERI = [
       }));
       return out; } },
   { id: 'RX-04', nome: 'Isolamento con meno ripetizioni del multiarticolare della stessa seduta', sev: 2, forza: 'Convenzione', fonte: 'pratica dei coach: l isolamento sale di ripetizioni',
-    dove: [RICETTE_JS + ': buildProgram (reps per tipo: Math.max(10, reps) sugli isolamenti)', 'js/coach/metodi-momenti.js: METODI (hit: gambe 15, parte alta 8)'],
+    dove: [SERIE_JS + ': prescriviSeduta (reps per tipo: Math.max(10, reps) sugli isolamenti)', 'js/coach/metodi-momenti.js: METODI (hit: gambe 15, parte alta 8)'],
     check: (m) => {
       const out = [];
       m.sedute.forEach(s => {
@@ -517,21 +538,21 @@ const CRITERI = [
       });
       return out; } },
   { id: 'GOA-01', nome: 'Obiettivo forza con poco lavoro pesante (serie sui multiarticolari a 6 ripetizioni o meno)', sev: 3, forza: 'Convenzione', fonte: 'ACSM 2026 (carichi alti, 2-3 serie per esercizio); numeri per livello Convenzione',
-    dove: [RICETTE_JS + ': buildProgram (reps per tipo: le macchine e gli accessori restano a 8-12; principianti max 3 serie)', ONB_JS + ': schemeFor'],
+    dove: [SERIE_JS + ': prescriviSeduta (reps per tipo: le macchine e gli accessori restano a 8-12; principianti max 3 serie)', ONB_JS + ': schemeFor'],
     check: (m, c) => {
       if (c.goals[0] !== 'forza') return [];
       const n = m.sedute.reduce((t, s) => t + s.es.filter(e => e.inf.tipo === 'compound' && !e.inf.tempo && e.reps <= 6).reduce((a, e) => a + e.sets, 0), 0);
       const min = SERIE_FORZA_MIN_SETT[c.level];
       return n < min ? [{ msg: n + ' serie a settimana sui multiarticolari con 6 ripetizioni o meno, minimo ' + min + (c.metodo ? ' (metodo ' + c.metodo + ')' : ''), gravita: min - n }] : []; } },
   { id: 'TEC-01', nome: 'Tecniche al cedimento (drop set, parziali, AMRAP, back-off) a principianti o in modalita prudente', sev: 3, forza: 'Convenzione', fonte: 'docs/ricerca-struttura-e-intensita.md cap. 2 (Gironda, Mentzer: "non adatto a chi e alle prime armi"); ACSM 2026',
-    dove: [RICETTE_JS + ': buildProgram (tecniche: poco tempo = drop set per tutti i livelli; avanzati: parziali)', 'js/coach/compone.js: TOCCHI'],
+    dove: [TECNICHE_JS + ': assegnaTecniche (poco tempo = drop set per tutti i livelli; avanzati: parziali)', 'js/coach/compone.js: TOCCHI'],
     check: (m, c) => {
       const out = [];
       if (c.level !== 'principiante' && !c.cauto && !c.minore) return out;   /* INT-0: anche i minorenni (ETA-02, MAV-03) */
       m.sedute.forEach(s => s.es.forEach(e => { if (['drop', 'parziali', 'amrap', 'backoff'].indexOf(e.tecnica) !== -1) out.push({ sub: e.tecnica, msg: s.titolo + ': ' + e.pulito + ' con tecnica ' + e.tecnica + (c.cauto ? ' (modalita prudente)' : (c.minore ? ' (minorenne)' : ' (principiante)')), tag: e.pulito, gravita: 2 }); }));
       return out; } },
   { id: 'PRI-01', nome: 'Muscolo prioritario dichiarato ma senza serie in piu rispetto al programma senza priorita', sev: 2, forza: 'Convenzione', fonte: 'ABB-10, PRG-29 ("qualche serie in piu")',
-    dove: [RICETTE_JS + ': buildProgram (prio / specializza nel blocco "volume per muscolo")'],
+    dove: [VOLUME_JS + ': assegnaVolume (specializza), ' + RICETTE_JS + ': componiSedute (prio)'],
     check: (m, c) => {
       if (!c.priorita.length || !m.volSenzaPriorita) return [];
       const out = [];
@@ -540,17 +561,17 @@ const CRITERI = [
 
   /* ---------------- mesociclo ---------------- */
   { id: 'DEL-01', nome: 'Scarico assente o troppo lontano nel programma', sev: 4, forza: 'Moderata', fonte: 'strutturaProgramma ("dalla ricerca": scarico ogni 4-8 settimane, serie -30-50%)',
-    dove: [MOTORE_JS + ': strutturaProgramma / fasiProgramma'],
+    dove: [MESOCICLO_JS + ': strutturaProgramma / fasiProgramma'],
     check: (m, c) => {
       const f = c.prog.fasi || [], primo = f.indexOf('scarico') + 1;
       if (!f.length || primo === 0 || primo > SCARICO_OGNI_MAX) return [{ msg: 'fasi: ' + f.slice(0, 12).join(',') + ' (primo scarico: ' + (primo || 'nessuno') + ')', gravita: 3 }];
       if (c.level === 'principiante' && !c.cauto && !c.minore && primo !== SCARICO_PRINCIPIANTE) return [{ sub: 'principiante', sev: 2, msg: 'principiante: primo scarico alla settimana ' + primo + ', la decisione D-P5 e all\'' + SCARICO_PRINCIPIANTE + 'a (fasi: ' + f.slice(0, 12).join(',') + ')', gravita: 1 }];
       return []; } },
   { id: 'RIR-01', nome: 'Nessun andamento settimanale del RIR per intermedi (rirSett solo agli avanzati)', sev: 2, forza: 'Convenzione', fonte: 'periodizzazione per RIR (Helms, Israetel); il coach lo applica solo agli avanzati (PRG-38)',
-    dove: [RICETTE_JS + ': buildProgram (rirSett solo se level === avanzato)', 'js/coach/regole-ricerca.js: rirBersaglioBase / RIR_TIPO'],
+    dove: [MESOCICLO_JS + ': pianoMesociclo (rirSett solo se level === avanzato)', 'js/coach/regole-ricerca.js: rirBersaglioBase / RIR_TIPO'],
     check: (m, c) => c.level === 'intermedio' && !c.prog.rirSett ? [{ msg: 'programma di ' + c.prog.settimane + ' settimane con RIR fisso per tipo di esercizio', gravita: 1 }] : [] },
   { id: 'RIR-02', nome: 'RIR 0 pianificato anche sui fondamentali pesanti col bilanciere', sev: 3, forza: 'Convenzione', fonte: 'ACSM 2026: il cedimento non serve; Helms: niente cedimento tecnico su squat, stacco, panca',
-    dove: ['js/coach/regole-ricerca.js: rirBersaglioBase (con rirSett ignora il tipo di esercizio e RIR_TIPO)', RICETTE_JS + ': buildProgram (rirSett: 3,2,2,1,0)'],
+    dove: ['js/coach/regole-ricerca.js: rirBersaglioBase (con rirSett ignora il tipo di esercizio e RIR_TIPO)', MESOCICLO_JS + ': pianoMesociclo (rirSett: 3,2,2,1,0)'],
     check: (m, c) => { const w = m.rirPesante.map((r, i) => ({ r, i })).filter(x => x.r < RIR_MIN_PESANTE && c.prog.fasi[x.i] !== 'scarico'); return w.length ? [{ msg: 'RIR bersaglio sui fondamentali pesanti: settimane ' + w.map(x => (x.i + 1) + '=' + x.r).join(', '), gravita: 2 }] : []; } },
   { id: 'RIR-03', nome: 'RIR della prima settimana troppo basso per il livello (cedimento sugli isolamenti e sulle macchine dal primo giorno)', sev: 3, forza: 'Moderata', fonte: 'docs/ricerca-ipertrofia-programmazione.md 3.5; Halperin 2022, Refalo 2023 (stime del RIR sbagliate di circa 1 ripetizione); INT-04/05',
     dove: ['js/coach/regole-ricerca.js: RIR_TIPO (isolamento [0,1], macchina [0,2]) e rirBersaglioBase', 'js/coach/intensita.js: rirExtraIntensita (+1 solo alla prima volta con un esercizio e solo con il consenso)'],
@@ -559,17 +580,17 @@ const CRITERI = [
       return bassi.length ? [{ sub: c.level, sev: c.level === 'principiante' ? 3 : 2, msg: 'RIR bersaglio alla settimana 1: ' + Object.keys(m.rir1).map(k => k + '=' + m.rir1[k]).join(', ') + ' (minimo ' + min + ' per ' + c.level + ')', gravita: min - Math.min.apply(null, bassi.map(k => m.rir1[k])) }] : []; } },
 
   /* ---------------- sicurezza ---------------- */
-  { id: 'SAF-01', nome: 'Esercizio in conflitto con un fastidio dichiarato (controindicato)', sev: 5, forza: 'Convenzione', fonte: 'pratica clinica e dei coach (non consulenza medica); elenco del collaudo in CONTROINDICAZIONI',
+  { id: 'SAF-01', nome: 'Esercizio in conflitto con un fastidio dichiarato (controindicato)', sev: 5, forza: 'Convenzione', fonte: 'pratica clinica e dei coach (non consulenza medica); dato `stress` = 2 di js/dati/attributi-esercizi.js (W1-T2), con il parere del collaudo in CONTROINDICAZIONI',
     dove: [MOTORE_JS + ': RISCHIO / consentito (tre regioni, regex sul nome; nessun dato nella libreria)', 'js/coach/biomeccanica.js: bonusBiomecc'],
     check: (m, c) => {
       const out = [];
-      c.fastidi.forEach(f => m.sedute.forEach(s => s.es.forEach(e => { if (CONTROINDICAZIONI[f] && CONTROINDICAZIONI[f].forte.test(e.pulito)) out.push({ sub: f, msg: s.titolo + ': ' + e.pulito + ' con fastidio a ' + f + (c.rischio[f] && c.rischio[f].test(e.nome) ? ' (RISCHIO lo vieta ma e entrato lo stesso)' : ' (RISCHIO non lo copre)'), tag: e.pulito, gravita: 3 }); })));
+      c.fastidi.forEach(f => m.sedute.forEach(s => s.es.forEach(e => { if (CONTROINDICAZIONI[f] && controindicato(f, e.nome)) out.push({ sub: f, msg: s.titolo + ': ' + e.pulito + ' con fastidio a ' + f + (c.rischio[f] && c.rischio[f].test(e.nome) ? ' (RISCHIO lo vieta ma e entrato lo stesso)' : ' (RISCHIO non lo copre)'), tag: e.pulito, gravita: 3 }); })));
       return out; } },
-  { id: 'SAF-02', nome: 'Esercizio da usare con cautela per un fastidio dichiarato', sev: CAUTELA_SEV, forza: 'Convenzione', fonte: 'pratica clinica e dei coach; elenco del collaudo in CONTROINDICAZIONI',
+  { id: 'SAF-02', nome: 'Esercizio da usare con cautela per un fastidio dichiarato', sev: CAUTELA_SEV, forza: 'Convenzione', fonte: 'pratica clinica e dei coach; dato `stress` = 1 di js/dati/attributi-esercizi.js (W1-T2), con il parere del collaudo in CONTROINDICAZIONI',
     dove: [MOTORE_JS + ': RISCHIO / consentito', 'js/coach/biomeccanica.js: SCALE_DOLORE'],
     check: (m, c) => {
       const out = [];
-      c.fastidi.forEach(f => m.sedute.forEach(s => s.es.forEach(e => { if (CONTROINDICAZIONI[f] && CONTROINDICAZIONI[f].cautela.test(e.pulito)) out.push({ sub: f, msg: s.titolo + ': ' + e.pulito + ' con fastidio a ' + f, tag: e.pulito, gravita: 1 }); })));
+      c.fastidi.forEach(f => m.sedute.forEach(s => s.es.forEach(e => { if (CONTROINDICAZIONI[f] && dacautela(f, e.nome)) out.push({ sub: f, msg: s.titolo + ': ' + e.pulito + ' con fastidio a ' + f, tag: e.pulito, gravita: 1 }); })));
       return out; } },
   { id: 'SAF-03', nome: 'Attrezzatura non disponibile per il luogo dichiarato', sev: 4, forza: 'Convenzione', fonte: 'coerenza con la risposta ("A casa con manubri: manubri e una panca"; "Corpo libero: senza attrezzi"; attrezzi della palestra)',
     dove: [MOTORE_JS + ': attrezzoDi (regex sul nome, non legge DETTAGLI) / consentito'],
@@ -586,7 +607,7 @@ const CRITERI = [
       m.sedute.forEach(s => s.es.forEach(e => { if (violaAttrezzatura(e, c) === 'quasi' && !conNota(e)) out.push({ sub: c.luogo, msg: s.titolo + ': ' + e.pulito + ' richiede ' + e.inf.att + ' (luogo: ' + c.luogo + ')', tag: e.pulito + ' [' + e.inf.att + ']', gravita: 1 }); }));
       return out; } },
   { id: 'SAF-05', nome: 'Esercizio tecnicamente impegnativo a un principiante o in modalita prudente (over 65, PAR-Q)', sev: 2, forza: 'Convenzione', fonte: 'pratica dei coach: il principiante parte da macchine, manubri e regressioni; ACSM 2026 per over 65 e pressione',
-    dove: [RICETTE_JS + ': buildProgram (prio: +3 ai pesanti se !cauto, anche ai principianti; cauto toglie solo 3 punti)', MOTORE_JS + ': consentito'],
+    dove: [RICETTE_JS + ': componiSedute (prio: +3 ai pesanti se !cauto, anche ai principianti; cauto toglie solo 3 punti)', MOTORE_JS + ': consentito'],
     check: (m, c) => {
       const out = [];
       const rx = c.cauto ? TECNICI_PRUDENTE : (c.level === 'principiante' ? TECNICI_PRINCIPIANTE : null);
@@ -864,7 +885,7 @@ function valuta(p, c, prog, filtro, volSenzaPriorita) {
   /* fattibilita: esiste un esercizio dello schema consentito dal luogo e non controindicato dai fastidi dichiarati? */
   c.fattibile = {};
   ['squat', 'hinge', 'hingeVero', 'spintaO', 'tirataO', 'spintaV', 'tirataV'].forEach(k => {
-    c.fattibile[k] = G.EXERCISE_LIBRARY.some(x => { const i = infoEs(x.name); return (k === 'hingeVero' ? i.hingeVero : i.mov === k) && G.consentito(x.name, prog.prefs) && !p.fastidi.some(f => CONTROINDICAZIONI[f] && CONTROINDICAZIONI[f].forte.test(i.pulito)) && !violaAttrezzatura({ inf: i }, c); });
+    c.fattibile[k] = G.EXERCISE_LIBRARY.some(x => { const i = infoEs(x.name); return (k === 'hingeVero' ? i.hingeVero : i.mov === k) && G.consentito(x.name, prog.prefs) && !p.fastidi.some(f => CONTROINDICAZIONI[f] && controindicato(f, x.name)) && !violaAttrezzatura({ inf: i }, c); });
   });
   const r = rirPianificato(prog, p); m.rirPesante = r.pesante; m.rir1 = r.nov;
   if (volSenzaPriorita) m.volSenzaPriorita = typeof volSenzaPriorita === 'function' ? volSenzaPriorita() : volSenzaPriorita;
@@ -972,7 +993,7 @@ function coperturaLibreria() {
   return SCHEMI_COPERTURA.map(([nome, test]) => ({ schema: nome, celle: colonne.map(([col, prefs]) => {
     const ok = G.EXERCISE_LIBRARY.filter(x => { const i = infoEs(x.name); return test(i) && G.consentito(x.name, prefs); });
     const fastidi = prefs.fastidi.concat(col === 'palestra' || col === 'manubri' || col === 'corpo' ? [] : []);
-    const senza = ok.filter(x => !fastidi.some(f => CONTROINDICAZIONI[f] && CONTROINDICAZIONI[f].forte.test(G.senzaEmoji(x.name))));
+    const senza = ok.filter(x => !fastidi.some(f => CONTROINDICAZIONI[f] && controindicato(f, x.name)));
     return { colonna: col, n: ok.length, nSenzaControindicazioni: senza.length, esercizi: ok.map(x => G.senzaEmoji(x.name)) };
   }) }));
 }
@@ -982,8 +1003,11 @@ function verificheModello(risultato) {
   const lib = G.EXERCISE_LIBRARY;
   /* 1. controindicazioni: dati o regex? */
   const campi = Object.keys(lib[0]);
-  const ha = campi.some(k => /contro|fastid|rischio|limit/i.test(k));
-  v.push({ id: 'MOD-01', esito: ha ? 'ok' : 'manca', titolo: 'Controindicazioni come dato della libreria', nota: ha ? 'presenti' : 'Nessun esercizio porta una etichetta di controindicazione (campi della libreria: ' + campi.join(', ') + '). Il rischio sta in una regex per tre regioni (RISCHIO in js/coach/programma/motore.js: ' + Object.keys(G.RISCHIO).join(', ') + ') applicata al NOME.' });
+  /* INT-1 (1.3): il dato c'e quando ogni esercizio della libreria ha le sue 8 zone di stress (js/dati/attributi-esercizi.js, W1-T2); prima bastava un campo della libreria */
+  let attributiApp = null; try { attributiApp = G.attributi; } catch (e) { attributiApp = null; }
+  const conStress = typeof attributiApp === 'function' ? lib.filter(x => { const a = attributiApp(x.name); return a && a.stress && typeof a.stress === 'object' && Object.keys(a.stress).length >= 8; }).length : 0;
+  const ha = conStress === lib.length || campi.some(k => /contro|fastid|rischio|limit/i.test(k));
+  v.push({ id: 'MOD-01', esito: ha ? 'ok' : 'manca', titolo: 'Controindicazioni come dato della libreria', nota: ha ? (conStress === lib.length ? 'presenti: `stress` per 8 zone (0 nessuno, 1 cautela, 2 controindicato) in tutti i ' + lib.length + ' esercizi (js/dati/attributi-esercizi.js)' : 'presenti') : 'Nessun esercizio porta una etichetta di controindicazione (campi della libreria: ' + campi.join(', ') + '). Il rischio sta in una regex per tre regioni (RISCHIO in js/coach/programma/motore.js: ' + Object.keys(G.RISCHIO).join(', ') + ') applicata al NOME.' });
   /* 2. regioni coperte dal questionario */
   v.push({ id: 'MOD-02', esito: 'manca', titolo: 'Regioni di dolore selezionabili', nota: 'Il questionario offre solo spalle, ginocchia, schiena bassa (ONB_FASTIDI). Mancano gomiti, polsi, anche, collo, che nelle schede di un preparatore cambiano la scelta di curl, french press, panca, squat profondo e stacchi.' });
   /* 3. buchi di RISCHIO rispetto all elenco esperto */
