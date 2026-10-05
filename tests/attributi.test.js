@@ -321,6 +321,7 @@ const DIFFERENZE = [
   ['stabile', 'Pullover con Manubrio', 'true → stabilita 2', 'manubrio sopra il viso a braccia quasi tese'],
   ['attrezzoDi', 'Scrollate (Shrug)', 'manubri → bilanciere', 'P13: DETTAGLI dice bilanciere; la versione coi manubri arriva con W1-T5'],
   ['RISCHIO', 'Panca Piana Bilanciere', 'spalla: lo toglie → stress 1', 'cautela, non divieto: l’elenco del collaudo la tiene in cautela per la spalla'],
+  ['RISCHIO', 'Piegamenti Declinati (Piedi Rialzati)', 'spalla: lo toglie → stress 1', 'W0-T7 (dopo la base di W1-T2): RISCHIO lo toglie con la spalla dolente perché a casa restano i piegamenti a terra e inclinati; l’elenco del collaudo lo tiene in cautela, come la panca piana (SAF-01 legge stress: la cautela non è un divieto)'],
   ['RISCHIO', 'Squat a Corpo Libero', 'ginocchio: lo toglie → stress 1', 'B13/B33: il ginocchio dolente si modifica, non si toglie (restano le eccezioni di RISCHIO)'],
   ['RISCHIO', 'Crunch a Terra', 'schiena: lo toglie → stress 1', 'SEL-11: preferenza prudente, non divieto (ricerca-recupero §3 schiena: D1); il collaudo lo tiene in cautela'],
   ['RISCHIO', 'Russian Twist', 'schiena: lo toglie → stress 1', 'SEL-11: preferenza prudente, non divieto; il collaudo lo tiene in cautela'],
