@@ -1122,11 +1122,19 @@ const FIXTURES = [
   fixture('stacchi pesanti due giorni di fila', {}, [['Lunedì', 'lower', [E('Stacco da Terra (Deadlift)', 3, 5, 180)]], ['Martedì', 'lower', [E('Stacco Sumo', 3, 5, 180)]]], {}, ['REC-02']),
   fixture('spinte molto piu delle tirate', {}, [['Lunedì', 'push', [E('Panca Piana Bilanciere', 4, 8, 120), E('Military Press', 4, 8, 120), E('Panca Inclinata Manubri', 4, 10, 90)]], ['Giovedì', 'pull', [E('Lat Machine', 3, 10, 90)]]], {}, ['EQ-01']),
   fixture('forza senza lavoro pesante', { goals: ['forza'] }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 12, 150), E('Panca Piana Bilanciere', 3, 12, 150)]]], {}, ['GOA-01', 'RX-01']),
-  fixture('avanzato con RIR 0 sul fondamentale', { level: 'avanzato' }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 6, 180)]]], { rirSett: [3, 2, 1, 0, 3, 2, 1, 0, 3, 2, 1, 4] }, ['RIR-02'], ['RIR-01']),
+  fixture('avanzato con RIR 0 sul fondamentale', { level: 'avanzato' }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 6, 180)]]], { rirSett: [3, 2, 1, 4, 3, 2, 0, 4, 3, 2, 1, 4] }, ['RIR-02'], ['RIR-01']),
   fixture('intermedio senza andamento del RIR', { level: 'intermedio' }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 120)]]], {}, ['RIR-01']),
   fixture('quadricipiti e femorali sbilanciati, nessun leg curl', { days: 4 }, [['Lunedì', 'lower', [E('Squat con Bilanciere', 4, 8, 150), E('Leg Press', 4, 10, 120), E('Leg Extension', 3, 12, 60)]], ['Giovedì', 'lower', [E('Hack Squat', 4, 10, 120), E('Leg Extension', 3, 12, 60)]]], {}, ['EQ-03']),
   fixture('polpacci assenti nell ipertrofia', { days: 4 }, [['Lunedì', 'lower', [E('Squat con Bilanciere', 4, 8, 150)]], ['Giovedì', 'lower', [E('Leg Press', 4, 10, 120)]]], {}, ['MIS-01']),
   fixture('priorita senza serie in piu', { priorita: ['petto'] }, [['Lunedì', 'fullbody', [E('Panca Piana Bilanciere', 3, 8, 120)]]], { volSenzaPriorita: { petto: 3 } }, ['PRI-01']),
+  fixture('volume di petto sotto il minimo', {}, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 120), E('Panca Piana Bilanciere', 2, 8, 120)]], ['Mercoledì', 'fullbody', [E('Stacco Rumeno', 3, 8, 120), E('Panca Inclinata Manubri', 2, 10, 90)]], ['Venerdì', 'fullbody', [E('Leg Press', 3, 10, 120), E('Chest Press Machine', 2, 10, 90)]]], {}, ['VOL-01']),
+  fixture('volume di petto sopra il massimo', { days: 4 }, [['Lunedì', 'push', [E('Panca Piana Bilanciere', 5, 8, 120), E('Panca Inclinata Manubri', 5, 10, 90)]], ['Martedì', 'upper', [E('Chest Press Machine', 5, 10, 90), E('Croci ai Cavi', 5, 12, 60)]], ['Giovedì', 'push', [E('Panca Declinata', 5, 10, 90), E('Piegamenti a Terra (Push-up)', 5, 15, 60)]]], {}, ['VOL-02']),
+  fixture('nessun lavoro diretto per le braccia', { days: 4 }, [['Lunedì', 'upper', [E('Panca Piana Bilanciere', 3, 8, 120), E('Lat Machine', 3, 10, 90)]], ['Giovedì', 'upper', [E('Panca Inclinata Manubri', 3, 10, 90), E('Rematore con Bilanciere', 3, 8, 120)]]], {}, ['DIR-01']),
+  fixture('polpacci in una sola seduta', { days: 4 }, [['Lunedì', 'lower', [E('Squat con Bilanciere', 4, 8, 150), E('Calf Raise in Piedi', 4, 15, 45), E('Calf Raise Seduto', 3, 15, 45)]], ['Giovedì', 'lower', [E('Leg Press', 4, 10, 120)]]], {}, ['FRQ-02']),
+  fixture('tirate solo verticali', {}, [['Lunedì', 'upper', [E('Lat Machine', 4, 10, 90), E('Trazioni alla Sbarra (Pull-ups)', 4, 8, 120)]], ['Giovedì', 'upper', [E('Lat Machine Presa Inversa', 4, 10, 90)]]], {}, ['EQ-02']),
+  fixture('nessun hinge in tre giorni', { days: 3 }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 150), E('Panca Piana Bilanciere', 3, 8, 120)]], ['Mercoledì', 'fullbody', [E('Leg Press', 3, 10, 120), E('Lat Machine', 3, 10, 90)]], ['Venerdì', 'fullbody', [E('Hack Squat', 3, 10, 120), E('Military Press', 3, 8, 120)]]], {}, ['PAT-01']),
+  fixture('intermedio con isolamenti a RIR 0 dalla settimana 1', { level: 'intermedio' }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 120)]]], {}, ['RIR-03']),
+  fixture('panca col bilanciere con la spalla dolente (cautela)', { fastidi: ['spalle'] }, [['Lunedì', 'upper', [E('Panca Piana Bilanciere', 3, 8, 120)]]], {}, ['SAF-02']),
   fixture('programma ben fatto (controllo)', { days: 3, minutes: 60 }, [
     ['Lunedì', 'fullbody', [E('Squat con Bilanciere', 4, 8, 150), E('Panca Piana Bilanciere', 3, 8, 120), E('Rematore con Bilanciere', 3, 8, 120), E('Alzate Laterali', 2, 15, 60)]],
     ['Mercoledì', 'fullbody', [E('Stacco Rumeno', 3, 8, 120), E('Lat Machine', 3, 10, 90), E('Panca Inclinata Manubri', 3, 10, 90), E('Leg Curl Seduto', 3, 12, 60)]],
@@ -1136,8 +1144,7 @@ function autotest() {
   let ok = 0, ko = 0;
   FIXTURES.forEach(f => {
     const p = profilo(['massa'], 'intermedio', 3, 60, 'palestra', [], 'M', ['adulto', 35], 'autotest');
-    Object.assign(p, f.over);
-    p.priorita = f.over.priorita || [];
+    Object.assign(p, { freq: 'auto', parq: 'no', sonno: 'bene', priorita: [], fastidi: [], attrezziPalestra: null, psico: 'nessuno' }, f.over);
     const c = contesto(p);
     const prog = { sedute: f.sedute.map(([giorno, tipo, es]) => ({ giorno, tipo, titolo: tipo + ' ' + giorno, esercizi: es.map(e => ({ name: G.nomeInLibreria(e.n) || ('?' + e.n), sets: e.sets, reps: e.reps, rest: e.rest, weight: 0, superset: e.superset, tecnica: e.tecnica })) })),
       fasi: f.extra.fasi || FASI12, rirSett: f.extra.rirSett || null, settimane: 12, blocco: 4, scheme: { settimane: 12 }, split: { nome: 'prova', giorni: [] }, prefs: { luogo: p.luogo, fastidi: p.fastidi, attrezziPalestra: p.attrezziPalestra, graditi: [], odiati: [], priorita: p.priorita }, note: [], metodo: null };
@@ -1149,7 +1156,9 @@ function autotest() {
     bene ? ok++ : ko++;
     console.log((bene ? '  ok   ' : '  MALE ') + f.nome + (manca.length ? '  [non scatta: ' + manca.join(', ') + ']' : '') + (troppi.length ? '  [scatta a torto: ' + troppi.join(', ') + ']' : '') + (nomiMancanti.length ? '  [esercizio non in libreria: ' + nomiMancanti.join(', ') + ']' : '') + (a.erroriCriteri.length ? '  [criteri in errore: ' + a.erroriCriteri.join(' | ') + ']' : ''));
   });
-  const coperti = new Set(); FIXTURES.forEach(f => f.attese.forEach(x => coperti.add(x)));
+  const err = CRITERI[0].check({ errori: ['x'] });
+  (err.length === 1 ? ok++ : ko++); console.log((err.length === 1 ? '  ok   ' : '  MALE ') + 'ERR-01 segnala un errore del generatore');
+  const coperti = new Set(['ERR-01']); FIXTURES.forEach(f => f.attese.forEach(x => coperti.add(x)));
   const senza = CRITERI.filter(cr => !coperti.has(cr.id)).map(cr => cr.id);
   console.log('Autotest: ' + ok + ' ok, ' + ko + ' falliti. Criteri senza una prova che li faccia scattare: ' + (senza.join(', ') || 'nessuno'));
 }
