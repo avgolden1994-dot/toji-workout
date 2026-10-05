@@ -847,8 +847,9 @@ function tabellaSettimana(m) {
   righe.push('', 'Serie frazionarie a settimana: ' + vol + '.');
   return righe.join('\n');
 }
+/* il profilo nel formato di --profilo (si copia e incolla), con i nomi dei campi di buildProgram */
 function profiloCompatto(p) {
-  return '`' + JSON.stringify({ obiettivi: p.goals, livello: p.level, giorni: p.days, minuti: p.minutes, luogo: p.luogo, fastidi: p.fastidi, sesso: p.sex, eta: p.age, sonno: p.sonno, attrezzi: p.attrezzi, frequenza: p.freq, parq: p.parq, priorita: p.priorita, psico: p.psico, attrezziPalestra: p.attrezziPalestra, seme: p.seme }) + '`';
+  return '`' + JSON.stringify({ goals: p.goals, level: p.level, days: p.days, minutes: p.minutes, luogo: p.luogo, fastidi: p.fastidi, sex: p.sex, age: p.age, sonno: p.sonno, attrezzi: p.attrezzi, freq: p.freq, parq: p.parq, priorita: p.priorita, psico: p.psico, attrezziPalestra: p.attrezziPalestra, seme: p.seme }) + '`';
 }
 
 function eseguiMatrice(profili, opz) {
@@ -1216,9 +1217,13 @@ function main() {
   if (!o.quiet && ENV.erroriCaricamento.length) process.stderr.write('Avviso: errori nel caricamento degli script: ' + ENV.erroriCaricamento.join(' | ') + '\n');
   if (o.autotest) { autotest(); return; }
   if (o.profilo) {
-    const base = JSON.parse(o.profilo);
-    const p = profilo(base.goals || (base.goal ? [base.goal] : ['massa']), base.level || 'intermedio', base.days || 3, base.minutes || 60, base.luogo || 'palestra', base.fastidi || [], base.sex || 'M', [base.fasciaEta || 'adulto', base.age || 30], 'singolo');
-    Object.keys(base).forEach(k => { if (k !== 'goal') p[k] = base[k]; });
+    /* campi di buildProgram (goals, level, days, minutes, luogo, fastidi, sex, age, sonno, attrezzi, freq, parq, priorita, psico, attrezziPalestra, seme); le dimensioni minori non dette restano neutre */
+    const IT = { obiettivi: 'goals', livello: 'level', giorni: 'days', minuti: 'minutes', sesso: 'sex', eta: 'age', frequenza: 'freq', goal: 'goals' };
+    const base = {}; const grezzo = JSON.parse(o.profilo);
+    Object.keys(grezzo).forEach(k => { base[IT[k] || k] = k === 'goal' ? [grezzo[k]] : grezzo[k]; });
+    const eta = Number(base.age) || 30;
+    const p = profilo(base.goals || ['massa'], base.level || 'intermedio', base.days || 3, base.minutes || 60, base.luogo || 'palestra', base.fastidi || [], base.sex || 'M', [eta >= 65 ? 'senior' : (eta < 35 ? 'giovane' : 'adulto'), eta], 'singolo');
+    Object.assign(p, { freq: 'auto', parq: 'no', sonno: 'bene', attrezzi: 'indifferente', priorita: [], attrezziPalestra: null, psico: 'nessuno', seme: 'profilo' }, base);
     const a = analizza(p, o.solo);
     console.log(profiloCompatto(p));
     if (a.prog) console.log('\n' + tabellaSettimana(a.m));
