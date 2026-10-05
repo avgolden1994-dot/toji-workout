@@ -60,4 +60,4 @@ Avvio: `js/avvio.js` (IIFE `boot`) → `chooseMode()` (js/core/modalita.js) → 
 
 ## Stile
 
-`css/` un file per area, nell'ordine di `index.html` (l'ultimo vince): base, shell, calendario, componenti-coach, oggi-e-lettore, piano, scheda-esercizio, impostazioni, onboarding, componenti, figura-e-gruppi, allenamento, navigazione-e-fire.
+`css/` un file per area, nell'ordine di `index.html` (l'ultimo vince): base, shell, calendario, componenti-coach, oggi-e-lettore, piano, scheda-esercizio, impostazioni, onboarding, componenti, figura-e-gruppi, allenamento, navigazione-e-fire, chiaro (solo i ritocchi del tema chiaro: i token stanno in `base.css`).

@@ -55,6 +55,7 @@ body.fire-mode .fire-text { animation: text-burn 0.7s infinite; }
 .mc-sg-row span { display: inline-flex; align-items: center; gap: 4px; }
 .mc-sett-gruppi p { margin: 0; }
 .stop-male { margin-left: auto; align-self: center; background: color-mix(in srgb, var(--danger) 14%, transparent); color: var(--danger); border: 1px solid color-mix(in srgb, var(--danger) 45%, transparent); border-radius: 999px; padding: 6px 10px; font-weight: 800; font-size: 0.72rem; display: inline-flex; gap: 5px; align-items: center; white-space: nowrap; flex-shrink: 0; }
+:where(html[data-theme="light"]) .stop-male { background: var(--danger-tint); color: var(--danger-text); }
 .session-bar { display: flex; align-items: center; gap: 10px; }
 .male-t { color: var(--danger); }
 .male-list { padding-left: 18px; margin: 0 0 10px; line-height: 1.45; font-size: 0.9rem; }

@@ -24,8 +24,8 @@
 .bm-sil { fill: color-mix(in srgb, var(--text) 16%, var(--surface-1)); }
 .bm-dark { fill: color-mix(in srgb, var(--text) 8%, var(--surface-1)); }
 .bm-ln { fill: none; stroke: color-mix(in srgb, var(--text) 40%, transparent); stroke-width: 0.5; stroke-linecap: round; }
-html[data-theme="light"] .bm-sil { fill: color-mix(in srgb, var(--text) 13%, var(--surface-1)); }
-html[data-theme="light"] .bm-dark { fill: color-mix(in srgb, var(--text) 26%, var(--surface-1)); }
+html[data-theme="light"] .bm-sil { fill: var(--map-sil); }
+html[data-theme="light"] .bm-dark { fill: color-mix(in srgb, var(--text) 18%, var(--surface-1)); }
 html[data-theme="light"] .bm-ln { stroke: var(--surface-1); stroke-width: 0.6; }
 .bm-muscle {
   fill: color-mix(in srgb, var(--text) 22%, var(--surface-1));
@@ -54,6 +54,11 @@ html[data-theme="light"] .bm-ln { stroke: var(--surface-1); stroke-width: 0.6; }
 @keyframes bm-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.68; } }
 .bm-fill { fill: color-mix(in srgb, var(--text) 5%, var(--surface-1)); stroke: none; }
 .bm-muscle.active { fill: var(--primary); stroke: var(--surface-1); animation: bm-pulse 2.2s ease-in-out infinite; }
+/* sagoma e muscoli nel chiaro: toni piatti e separazioni bianche (token --map-sil / --map-muscle in base.css).
+   :where() non pesa: stessa forza dei selettori di sopra, quindi .active e .load-* continuano a vincere. */
+:where(html[data-theme="light"]) .bm-base { fill: var(--map-sil); stroke: color-mix(in srgb, var(--text) 22%, var(--surface-1)); }
+:where(html[data-theme="light"]) .bm-fill { fill: var(--map-sil); }
+:where(html[data-theme="light"]) .bm-muscle { fill: var(--map-muscle); stroke: var(--surface-1); }
 .bm-label { fill: var(--muted); font-size: 8px; font-weight: 800; letter-spacing: 0.6px; text-anchor: middle; }
 .group-day-current { font-size: 0.74rem; line-height: var(--lh-tight); color: var(--accent); font-weight: 800; margin-top: var(--sp-1); }
 

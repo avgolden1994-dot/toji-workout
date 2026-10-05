@@ -46,6 +46,10 @@
 .res-tag.good { background: color-mix(in srgb, var(--success) 18%, transparent); color: var(--success); border: 1px solid var(--success); }
 .res-tag.mid { background: color-mix(in srgb, var(--warning) 15%, transparent); color: var(--warning); border: 1px solid var(--warning); }
 .res-tag.att { background: color-mix(in srgb, var(--danger) 15%, transparent); color: var(--accent); border: 1px solid var(--accent); }
+/* nel chiaro: tinta pulita e testo dedicato; "att" passa al rosso del pericolo (l accent e ora il lampone) */
+:where(html[data-theme="light"]) .res-tag.good { background: var(--success-tint); color: var(--success-text); }
+:where(html[data-theme="light"]) .res-tag.mid { background: var(--warning-tint); color: var(--warning-text); }
+:where(html[data-theme="light"]) .res-tag.att { background: var(--danger-tint); color: var(--danger-text); border-color: var(--danger); }
 
 /* ======= Righe proposta: si tocca tutta la riga, l icona si illumina ======= */
 .pick-row {

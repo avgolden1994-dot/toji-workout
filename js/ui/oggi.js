@@ -10,7 +10,7 @@
    ============================================================ */
 const CATEGORIE = {
   spinta: { nome: 'Spinta', gruppi: ['petto', 'spalle'], colore: 'var(--primary)' },
-  tirata: { nome: 'Tirata', gruppi: ['schiena', 'braccia'], colore: '#6ea8ff' },
+  tirata: { nome: 'Tirata', gruppi: ['schiena', 'braccia'], colore: 'var(--tirata)' },
   gambe:  { nome: 'Gambe', gruppi: ['gambe', 'glutei'], colore: 'var(--success)' }
 };
 

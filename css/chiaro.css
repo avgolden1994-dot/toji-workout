@@ -1,0 +1,87 @@
+/* ============================================================
+   RITOCCHI SOLO DEL TEMA CHIARO ("braci su pietra")
+   Caricato per ULTIMO in index.html. Qui stanno gli override del chiaro che
+   non appartengono a una sola area: i token sono in css/base.css; le regole dei
+   campi, dell'interruttore, della mappa del corpo e dei dischi (valgono in entrambi
+   i temi, con i token al posto dei colori) e quelle dei chip colorati (solo chiaro)
+   stanno nei file delle loro aree.
+   Il prefisso :where(...) non pesa: ogni regola ha la stessa forza del
+   selettore che corregge e, caricata per ultima, vince solo a parita.
+   Gli stati piu specifici (.active, .done, .oggi...) continuano a vincere
+   come prima. Il prefisso pieno html[data-theme="light"] e usato solo dove
+   si batte una regola gia scritta col prefisso pieno (elevazione, timer).
+   ============================================================ */
+
+/* marchio piatto: braci piene, niente sfumatura verso il marrone (piano.css .btn-start-workout) */
+:where(html[data-theme="light"]) .btn-start-workout { background: var(--primary); color: var(--on-primary); box-shadow: var(--shadow-brand); }
+:where(html[data-theme="light"]) .btn-start-workout:active { background: var(--primary-glow); }
+/* "Avanti" spento: grigio pieno, non salmone slavato */
+:where(html[data-theme="light"]) .btn-start-workout:disabled { opacity: 1; background: var(--surface-3); color: var(--text-dim); box-shadow: none; }
+
+/* timer di recupero pieno e piatto, "Chiudi" bianco (allenamento.css .recovery-*) */
+html[data-theme="light"] .recovery-overlay { background: var(--primary); border-top: 0; box-shadow: var(--shadow-3); }
+:where(html[data-theme="light"]) .recovery-close-btn { background: #fff; color: var(--primary); }
+/* pulsanti tonali sul timer: velo bianco all 8% + filo, il testo bianco resta >= 4.5:1 */
+:where(html[data-theme="light"]) .recovery-pill, :where(html[data-theme="light"]) .recovery-icon-btn { background: rgba(255,255,255,0.08); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.3); }
+
+/* azioni distruttive: rosso del pericolo, non il marrone del marchio */
+:where(html[data-theme="light"]) .stop-btn.danger, :where(html[data-theme="light"]) .bulk-btn.danger { background: var(--danger); border-color: var(--danger); }
+/* idem "Svuota" (giorno e settimana) e le X di eliminazione (esercizio, giorno del menu settimana):
+   usavano l accento, che nel vecchio chiaro era rosso e ora e il lampone dell intensita */
+:where(html[data-theme="light"]) .set-row-btn.danger, :where(html[data-theme="light"]) .plan-tool-btn.danger { color: var(--danger); border-color: var(--danger); }
+:where(html[data-theme="light"]) .plan-icon-btn.danger, :where(html[data-theme="light"]) .wm-x { color: var(--danger); }
+
+/* barra in basso: attiva e inattive piu distanti */
+:where(html[data-theme="light"]) .nav-btn { color: var(--text-dim); font-weight: 600; }
+:where(html[data-theme="light"]) .nav-btn.active { color: var(--primary); font-weight: 800; }
+
+/* Oggi: giorno corrente con anello pieno e tinta pulita (prefisso pieno: la regola di
+   elevazione di base.css copre .og-day) */
+html[data-theme="light"] .og-day.today { background: var(--primary-tint); border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary) inset, var(--shadow-1); }
+
+/* Seduta: scelte "Come stai oggi?" piatte; nota del coach con gerarchia (etichetta colorata, testo normale) */
+:where(html[data-theme="light"]) .pz-opt:not(.on) { background: var(--surface-2); border-color: transparent; }
+:where(html[data-theme="light"]) .coach-badge-set, :where(html[data-theme="light"]) .coach-badge-set:is(.su, .giu, .scarico) { color: var(--text); font-weight: 500; }
+:where(html[data-theme="light"]) .coach-badge-set b { color: var(--muted); font-weight: 800; }
+:where(html[data-theme="light"]) .coach-badge-set.su b { color: var(--success); }
+:where(html[data-theme="light"]) .coach-badge-set.giu b { color: var(--danger); }
+:where(html[data-theme="light"]) .coach-badge-set.scarico b { color: var(--primary); }
+:where(html[data-theme="light"]) .last-time { font-weight: 600; }
+
+/* Piano: celle della settimana piatte, giorno pieno in tinta pulita */
+:where(html[data-theme="light"]) .cal-day { background: var(--surface-2); border-color: transparent; }
+:where(html[data-theme="light"]) .cal-day.pieno { background: var(--primary-tint); }
+:where(html[data-theme="light"]) .pl-days button, :where(html[data-theme="light"]) .mc-nav { background: var(--surface-2); border-color: transparent; }
+
+/* Calendario: celle piatte, "fatto" resta menta con bordo verde, oggi con anello pieno */
+:where(html[data-theme="light"]) .mc-cell { background: var(--surface-2); border-color: transparent; }
+:where(html[data-theme="light"]) .mc-cell.rest { background: var(--surface-1); border-color: var(--border); }
+:where(html[data-theme="light"]) .mc-cell.plan { background: var(--primary-tint); }
+:where(html[data-theme="light"]) .mc-cell.done { background: var(--success-tint); border-color: var(--success); }
+:where(html[data-theme="light"]) .mc-cell.oggi { box-shadow: 0 0 0 1.5px var(--primary) inset; }
+:where(html[data-theme="light"]) .mc-cell.oggi .mc-n { color: var(--primary); }
+
+/* "+" delle righe da scegliere: contorno dei comandi a 3:1 (era color var(--border)) */
+:where(html[data-theme="light"]) .pick-check { color: var(--border-strong); }
+
+/* Progressi, recupero muscolare: tinte pulite e testo dedicato */
+:where(html[data-theme="light"]) .fat-cell.mid { background: var(--warning-tint); }
+:where(html[data-theme="light"]) .fat-cell.mid small { color: var(--warning-text); }
+:where(html[data-theme="light"]) .fat-cell.hi { background: var(--danger-tint); }
+:where(html[data-theme="light"]) .fat-cell.hi small { color: var(--danger-text); }
+
+/* niente bagliori al neon sul bianco: contorno al posto del drop-shadow */
+:where(html[data-theme="light"]) .bm-muscle.sel { animation: bm-pulse 2.2s ease-in-out infinite; filter: none; stroke: var(--primary-glow); stroke-width: 1.2px; }
+:where(html[data-theme="light"]) .pl-map .bm-muscle.sel { animation: none; filter: none; }
+:where(html[data-theme="light"]) .group-card:is(.vol-start, .vol-ok, .vol-high) .group-emoji { filter: none; animation: none; }
+:where(html[data-theme="light"]) .flame-tag { filter: none; }
+:where(html[data-theme="light"]) .berserk-score { text-shadow: none; }
+:where(html[data-theme="light"]) .day-chip.active { box-shadow: none; }
+:where(html[data-theme="light"]) .pick-row.on .pick-icon { box-shadow: none; }
+:where(html[data-theme="light"]) body.fire-mode .fire-text { animation: none; color: var(--primary); text-shadow: none; }
+/* sfondo della modalita fuoco: alone tenue al posto del bagliore pieno */
+@keyframes fire-glow-bg-chiaro {
+  0%, 100% { background: radial-gradient(ellipse at 50% 15%, color-mix(in srgb, var(--danger) 12%, transparent), var(--bg) 62%); }
+  50% { background: radial-gradient(ellipse at 50% 15%, color-mix(in srgb, var(--primary) 16%, transparent), var(--bg) 62%); }
+}
+:where(html[data-theme="light"]) body.fire-mode { animation-name: fire-glow-bg-chiaro; }

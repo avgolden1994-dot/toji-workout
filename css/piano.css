@@ -213,9 +213,11 @@
 /* ======= Form Piano ======= */
 .grid-form { display: flex; flex-direction: column; gap: 8px; }
 input, select {
-  background: var(--bg); border: 1px solid var(--border); color: var(--text);
+  background: var(--field-bg); border: 1px solid var(--field-border); color: var(--text);
   padding: 10px; border-radius: 8px; font-size: 0.9rem; width: 100%; outline: none;
 }
+/* i cursori non sono campi: nel chiaro tengono il filo sottile, non il contorno dei comandi */
+html[data-theme="light"] input[type="range"] { border-color: var(--border); }
 input:focus, select:focus { border-color: var(--primary); }
 /* focus da tastiera: un contorno sempre visibile su ogni comando. Con il tocco
    non compare (:focus-visible), quindi sul telefono non cambia niente. */
@@ -225,7 +227,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 .stepper-label { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; font-weight: 800; margin-bottom: 3px; display: block; }
 .stepper { display: flex; align-items: stretch; }
 .stepper input { text-align: center; border-radius: 0; border-left: none; border-right: none; padding: 10px 2px; }
-.stepper-btn { background: var(--surface-2); border: 1px solid var(--border); color: var(--text); width: 34px; font-size: 1.1rem; font-weight: 800; cursor: pointer; flex-shrink: 0; }
+.stepper-btn { background: var(--surface-2); border: 1px solid var(--field-border); color: var(--text); width: 34px; font-size: 1.1rem; font-weight: 800; cursor: pointer; flex-shrink: 0; }
 .stepper-btn.minus { border-radius: 8px 0 0 8px; }
 .stepper-btn.plus { border-radius: 0 8px 8px 0; }
 

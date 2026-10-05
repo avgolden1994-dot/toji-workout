@@ -50,18 +50,18 @@
 .pl-days button { background: var(--surface-2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 4px 8px; font-size: 0.7rem; font-weight: 800; cursor: pointer; }
 .pl-legend { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 600; color: var(--text); }
 .pl-l { display: inline-block; width: 12px; height: 12px; border-radius: 4px; vertical-align: -1px; margin-right: 6px; }
-.pl-l.start { background: var(--low); }
-.pl-l.ok { background: var(--success); }
-.pl-l.high { background: var(--warning); }
+.pl-l.start { background: var(--map-low); }
+.pl-l.ok { background: var(--map-ok); }
+.pl-l.high { background: var(--map-high); }
 .pl-week { margin-top: var(--sp-3); }
 .pl-week .cal-day { padding: 6px 0; min-height: 0; }
 .pl-moon { display: flex; justify-content: center; color: var(--muted); }
 .pl-hint { font-size: 0.68rem; color: var(--muted); text-align: center; margin: 6px 0 0; }
 .pl-card .aw-open-btn { margin-top: var(--sp-3); }
 .mc-tools.pl-tools { grid-template-columns: repeat(3, 1fr); margin-top: var(--sp-2); }
-.pl-map .bm-muscle.load-start { fill: var(--low); animation: none; }
-.pl-map .bm-muscle.load-ok { fill: var(--success); animation: none; }
-.pl-map .bm-muscle.load-high { fill: var(--warning); animation: none; }
+.pl-map .bm-muscle.load-start { fill: var(--map-low); animation: none; }
+.pl-map .bm-muscle.load-ok { fill: var(--map-ok); animation: none; }
+.pl-map .bm-muscle.load-high { fill: var(--map-high); animation: none; }
 .pl-map .bm-muscle.sel { stroke: var(--text); stroke-width: 1.2px; animation: pl-sel 2.2s ease-in-out infinite; }
 @keyframes pl-sel { 0%, 100% { filter: drop-shadow(0 0 4px color-mix(in srgb, var(--text) 70%, transparent)); } 50% { filter: drop-shadow(0 0 1px color-mix(in srgb, var(--text) 20%, transparent)); } }
 @media (prefers-reduced-motion: reduce) { .pl-map .bm-muscle.sel { animation: none; } }

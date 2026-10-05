@@ -31,7 +31,8 @@ window.applyTheme = function() {
   document.body.dataset.theme = tema;
   document.documentElement.dataset.theme = tema;
   const meta = document.getElementById('theme-color-meta');
-  if (meta) meta.setAttribute('content', tema === 'light' ? '#f2f2f7' : (MODE_META[currentMode] ? MODE_META[currentMode].themeColor : '#08080a'));
+  /* barra del browser: nel chiaro e lo stesso colore di --bg (css/base.css) */
+  if (meta) meta.setAttribute('content', tema === 'light' ? '#f6f5f3' : (MODE_META[currentMode] ? MODE_META[currentMode].themeColor : '#08080a'));
 };
 
 window.setTheme = function(v) {

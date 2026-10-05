@@ -7,7 +7,8 @@
    sotto, la legenda dei gruppi del mese e il riepilogo della
    settimana: quante volte ogni gruppo, e chi manca.
    ============================================================ */
-const GRUPPO_COLORE = { petto: '#fb7185', schiena: '#60a5fa', spalle: '#fbbf24', braccia: '#2dd4bf', gambe: '#a78bfa', glutei: '#f472b6', core: '#94a3b8' };
+/* token CSS (--g-* in css/base.css): seguono il tema chiaro/scuro senza ridisegnare */
+const GRUPPO_COLORE = { petto: 'var(--g-petto)', schiena: 'var(--g-schiena)', spalle: 'var(--g-spalle)', braccia: 'var(--g-braccia)', gambe: 'var(--g-gambe)', glutei: 'var(--g-glutei)', core: 'var(--g-core)' };
 const GRUPPI_ORDINE = ['petto', 'schiena', 'spalle', 'braccia', 'gambe', 'glutei', 'core'];
 let _mcStorico = null;
 function gruppiDelGiorno(v) {

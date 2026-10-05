@@ -50,7 +50,7 @@
 .ex-fig .bm-muscle.active { animation: none; }
 .rpe-hint { font-size: 0.72rem; color: var(--muted); line-height: 1.4; margin: 6px 2px 0; }
 .rpe-hint b { color: var(--text); }
-.set-check { margin-left: auto; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: var(--surface-2); border: 1px solid var(--border); color: transparent; font-weight: 900; cursor: pointer; }
+.set-check { margin-left: auto; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: var(--surface-2); border: 1px solid var(--field-border); color: transparent; font-weight: 900; cursor: pointer; }
 .set-check.checked { background: var(--success); border-color: var(--success); color: var(--on-status); }
 .edit-btn { background: transparent; border: none; color: var(--accent); font-size: 0.95rem; cursor: pointer; padding: 0 2px; }
 .piano-item-actions { display: flex; align-items: center; gap: 10px; }

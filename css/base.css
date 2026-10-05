@@ -55,67 +55,134 @@
      di prima si confondeva con lo sfondo e con il verde di "volume giusto" */
   --low: #8ea2dc;
 
+  /* chip colorati: testo e tinta per famiglia. Nello scuro il testo e il colore
+     pieno e i chip mantengono le loro velature; i valori dedicati (sotto) li
+     usano solo le regole :where(html[data-theme="light"]) dei chip, che stanno
+     accanto a ciascun chip nel file della sua area */
+  --primary-text: var(--primary);  --primary-tint: color-mix(in srgb, var(--primary) 15%, var(--surface-1));
+  --accent-text: var(--accent);    --accent-tint: color-mix(in srgb, var(--accent) 15%, var(--surface-1));
+  --success-text: var(--success);  --success-tint: color-mix(in srgb, var(--success) 15%, var(--surface-1));
+  --warning-text: var(--warning);  --warning-tint: color-mix(in srgb, var(--warning) 15%, var(--surface-1));
+  --danger-text: var(--danger);    --danger-tint: color-mix(in srgb, var(--danger) 15%, var(--surface-1));
+  --low-text: var(--low);          --low-tint: color-mix(in srgb, var(--low) 30%, transparent);
+
+  /* campi e comandi: nello scuro sfondo e filo del tema, come prima */
+  --field-bg: var(--bg);  --field-border: var(--border);
+  --switch-off: var(--text-dim);  --switch-edge: transparent;  --switch-knob-off: #fff;
+
+  /* riempimenti dei dati (mappa del corpo, legende): non sono testo */
+  --map-low: var(--low);  --map-ok: var(--success);  --map-high: var(--warning);
+  --map-sil: color-mix(in srgb, var(--text) 16%, var(--surface-1));  --map-muscle: color-mix(in srgb, var(--text) 22%, var(--surface-1));
+
+  /* ombre: nello scuro l altezza si dice schiarendo, quindi le card non ne hanno;
+     servono solo ai pezzi che galleggiano (usate dal chiaro, qui per completezza) */
+  --ombra: #000000;
+  --shadow-1: none;
+  --shadow-2: 0 8px 24px color-mix(in srgb, var(--ombra) 35%, transparent);
+  --shadow-3: 0 -8px 32px color-mix(in srgb, var(--ombra) 40%, transparent);
+  --shadow-brand: 0 4px 14px var(--primary-shadow);
+
+  /* palette dei dati, prima fisse nel JS (gruppi del calendario, dischi, "Tirata") */
+  --tirata: #6ea8ff;
+  --g-petto: #fb7185; --g-schiena: #60a5fa; --g-spalle: #fbbf24; --g-braccia: #2dd4bf; --g-gambe: #a78bfa; --g-glutei: #f472b6; --g-core: #94a3b8;
+  --disco-25: #e5484d; --disco-20: #3b82f6; --disco-15: #eab308; --disco-10: #22c55e; --disco-5: #f3f3f6; --disco-2-5: #a8a8b6; --disco-1-25: #6b6b78;
+  --disco-bordo: transparent;  /* contorno del disco da 5 kg: serve solo sul bianco */
+
   --card: var(--surface-1);
 }
 
 html[data-theme="light"], body[data-theme="light"] {
-  --yr-fatto: #5cc38a; --yr-saltato: #f08a86; --yr-riposo: #a9bde0; --yr-vuoto: #ecedf2; --yr-bordo: #d6d8e2;
-  /* Tema chiaro rifatto sul modello delle Impostazioni di iPhone e delle
-     app di allenamento piu curate (Hevy, Strong):
-     - fondo grigio freddo appena percettibile (#f2f2f7, lo stesso di iOS)
-       e card bianche che si staccano con un ombra leggera, non con bordi
-       pesanti;
-     - testo nero pieno (richiesto dall utente) ma secondario grigio medio,
-       non quasi nero: prima tutto aveva lo stesso peso e la pagina era
-       "pesante";
-     - arancio del marchio VIVO (arancio 700) invece del marrone ruggine:
-       resta leggibile (5,2:1 sul bianco) ma si riconosce come arancio;
-     - verde, ambra e rosso di stato alla stessa luminosita, cosi nessuno
-       grida piu degli altri. Tutti verificati col calcolo WCAG. */
-  --bg: #f2f2f7;
-  --surface-1: #ffffff;
-  --surface-2: #f2f2f7;
-  --surface-3: #ffffff;
-  --border: #d1d1d6;
-  --border-strong: #aeaeb2;
+  color-scheme: light;
+  --yr-fatto: #4fb77d; --yr-saltato: #ec8580; --yr-riposo: #a9bde0; --yr-vuoto: #ebe7e2; --yr-bordo: #ddd8d2;
+  /* Tema chiaro "braci su pietra". Quattro livelli davvero distinti: nel chiaro
+     l altezza si dice con l ombra, quindi la card e la piu chiara e sale, mentre
+     cio che sta DENTRO la card scende di un grado (come i contenitori di
+     Material 3). Principi:
+     - neutri caldi appena accennati (pietra): il grigio freddo spegneva l arancio
+       verso il ruggine, la pietra lo tiene vivo senza scivolare nel beige;
+     - testo quasi nero caldo, con secondario e terziario ben distinti;
+     - arancio del marchio pieno e piatto, niente sfumatura verso il marrone;
+     - quattro famiglie di stato separate per tinta, non solo per nome: il rosso
+       cremisi e riservato al pericolo, il lampone all intensita e al coach.
+     Tutto verificato col calcolo WCAG (4,5:1 testo, 3:1 comandi e grafici). */
+  --bg: #f6f5f3;          /* sfondo pietra */
+  --surface-1: #ffffff;   /* card (sale con --shadow-1) */
+  --surface-2: #f1efec;   /* dentro una card: annidati, chip, comandi */
+  --surface-3: #e3dfda;   /* riempimenti e binari (anello, barre, celle vuote); le finestre usano surface-1 + --shadow-3 */
+  --border: #e5e1dc;      /* filo sottile: separa solo, l ombra fa il resto */
+  --border-strong: #8b857e; /* contorno dei comandi: 3,6:1 sulla card */
 
-  --text: #000000;        /* nero definito */
-  --muted: #5c5c63;       /* secondario: si legge, ma fa un passo indietro */
-  --text-dim: #6e6e74;
+  --text: #1c1917;        /* quasi nero caldo */
+  --muted: #57534e;       /* secondario: si legge, ma fa un passo indietro */
+  --text-dim: #6f6a64;
 
-  --primary: #c2410c;
-  --primary-glow: #9a3412;
-  --primary-shadow: color-mix(in srgb, var(--primary) 20%, transparent);
-  --accent: #c62828;
+  --primary: #c43c0a;
+  --primary-glow: #a3310a;      /* solo stato premuto */
+  --primary-shadow: color-mix(in srgb, var(--primary) 22%, transparent);
+  --accent: #a3166e;            /* lampone: intensita, coach, superserie. Non e piu il rosso del pericolo */
   --on-primary: #ffffff;
   --on-accent: #ffffff;
 
-  --success: #157f3c;
-  --warning: #b25209;
-  --danger: #c62828;
+  --success: #137a3a;
+  --warning: #946200;           /* ambra-ocra: lontana dall arancio del marchio */
+  --danger: #bf1d32;            /* rosso cremisi, riservato al pericolo */
   --on-status: #ffffff;
   --low: #4a63ad;
+
+  /* chip: tinte pulite e testo dedicato, sempre >= 5,8:1 */
+  --primary-text: #a73301;  --primary-tint: #fcebe2;
+  --accent-text: #8f135f;   --accent-tint: #fbe9f2;
+  --success-text: #0f6a31;  --success-tint: #e6f4ea;
+  --warning-text: #7a5000;  --warning-tint: #fbf0d6;
+  --danger-text: #a51d2b;   --danger-tint: #fdeaea;
+  --low-text: #3b539a;      --low-tint: #eaeffb;
+
+  /* comandi: campo bianco con contorno a 3:1, interruttore spento chiaro */
+  --field-bg: var(--surface-1);  --field-border: var(--border-strong);
+  --switch-off: var(--surface-3);  --switch-edge: var(--border-strong);  --switch-knob-off: var(--border-strong);
+
+  /* una sola regola di elevazione: ombra tinta di terra bruciata, mai nera */
+  --ombra: #4a3426;
+  --shadow-1: 0 1px 2px color-mix(in srgb, var(--ombra) 8%, transparent), 0 2px 10px color-mix(in srgb, var(--ombra) 6%, transparent);
+  --shadow-2: 0 2px 6px color-mix(in srgb, var(--ombra) 8%, transparent), 0 12px 32px color-mix(in srgb, var(--ombra) 14%, transparent);
+  --shadow-3: 0 -2px 8px color-mix(in srgb, var(--ombra) 5%, transparent), 0 -12px 40px color-mix(in srgb, var(--ombra) 14%, transparent);
+  --shadow-brand: 0 4px 14px color-mix(in srgb, var(--primary) 24%, transparent);
+
+  /* dati: toni medi su sagoma chiara, tutti >= 3:1 sul bianco */
+  --map-low: #6a87dc;  --map-ok: #2f9d5a;  --map-high: #c48600;
+  --map-sil: #e6e1db;  --map-muscle: #d6d0c9;
+
+  --tirata: #3d6fd1;
+  --g-petto: #e5484d; --g-schiena: #2f6fd6; --g-spalle: #b07a00; --g-braccia: #0e9384; --g-gambe: #7c5ce6; --g-glutei: #d63f97; --g-core: #6b7280;
+  --disco-25: #e5484d; --disco-20: #2f6fd6; --disco-15: #e2a900; --disco-10: #1f9d55; --disco-5: #ffffff; --disco-2-5: #57534e; --disco-1-25: #a8a29e;
+  --disco-bordo: color-mix(in srgb, var(--text) 52%, transparent);  /* bordo in ombra: sul disco bianco 3,4:1, sui colorati scurisce solo il filo */
 }
 
-/* Nel chiaro la profondita si esprime con l ombra, come su iOS: il bordo
-   si alleggerisce e card e riquadri prendono un ombra morbida. */
-html[data-theme="light"] .card, html[data-theme="light"] .sr-list, html[data-theme="light"] .sr-profile,
-html[data-theme="light"] .og-tile, html[data-theme="light"] .og-day, html[data-theme="light"] .mg-card,
-html[data-theme="light"] .pg-kpi, html[data-theme="light"] .entry-btn, html[data-theme="light"] .hs-row,
-html[data-theme="light"] .st-table, html[data-theme="light"] .pick-row {
-  border-color: color-mix(in srgb, var(--border) 60%, transparent);
-  box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 6%, transparent), 0 2px 8px color-mix(in srgb, var(--text) 4%, transparent);
+/* Nel chiaro la profondita si esprime con l ombra, come su iOS: livelli
+   0 sfondo (niente ombra), 1 card e riquadri sul fondo (--shadow-1 + filo
+   --border), 2 flottanti (--shadow-2), 3 finestre dal basso (--shadow-3 + velo
+   caldo). Dentro una card niente ombre: il riquadro annidato scende a surface-2. */
+html[data-theme="light"] :is(.card, .sr-list, .sr-profile, .og-tile, .og-day, .mg-card, .pg-kpi, .entry-btn, .hs-row, .st-table, .pick-row, .mc-tool, .session-bar) {
+  border-color: var(--border); box-shadow: var(--shadow-1);
 }
-/* Il pannello del recupero ha testo bianco: nel chiaro la sfumatura verso
-   il bianco della card lo rendeva illeggibile. Qui resta un pieno arancio. */
-html[data-theme="light"] .recovery-overlay { background: linear-gradient(160deg, var(--primary), var(--primary-glow)); }
 /* i pulsanti secondari: niente bordo rosso urlato, un grigio con testo del marchio */
 html[data-theme="light"] .btn-archive { background: var(--surface-1); color: var(--primary); border-color: var(--border); }
 html[data-theme="light"] .card .btn-archive { background: var(--surface-2); border-color: transparent; }
 /* dentro una card bianca i riquadri annidati sono grigi e piatti */
-html[data-theme="light"] .card .pg-kpi, html[data-theme="light"] .card .entry-btn, html[data-theme="light"] .card .hs-row,
-html[data-theme="light"] .card .og-ex { box-shadow: none; background: var(--surface-2); border-color: transparent; }
+html[data-theme="light"] .card :is(.pg-kpi, .entry-btn, .hs-row, .og-ex) { box-shadow: none; background: var(--surface-2); border-color: transparent; }
 html[data-theme="light"] .mg-card:not(.on), html[data-theme="light"] .pick-row:not(.on) { background: var(--surface-1); }
+/* Opzioni: elenchi bianchi sul fondo pietra, come le Impostazioni di iPhone (prima grigio su grigio) */
+html[data-theme="light"] :is(.sr-list, .sr-profile) { background: var(--surface-1); }
+/* flottanti: ombra tinta di livello 2 al posto del nero al 35-50%. Il lettore dentro il
+   cedimento (.sessione) resta senza ombra, come in .music-dock.sessione */
+html[data-theme="light"] .music-dock:not(.sessione) { border-color: var(--border); box-shadow: var(--shadow-2); }
+html[data-theme="light"] .music-dock.chiama:not(.sessione) { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-shadow), var(--shadow-2); }
+html[data-theme="light"] .snackbar { background: var(--surface-1); border-color: var(--border); box-shadow: var(--shadow-2); }
+html[data-theme="light"] .busy-panel { background: var(--surface-1); border-color: var(--border); box-shadow: var(--shadow-2); }
+html[data-theme="light"] :is(.mc-ghost, .g-bub) { box-shadow: var(--shadow-2); }
+/* finestre dal basso: ombra verso l alto e velo caldo invece del nero al 60-72% */
+html[data-theme="light"] :is(.template-sheet, .wheel-sheet) { box-shadow: var(--shadow-3); }
+html[data-theme="light"] :is(.template-overlay, .wheel-overlay) { background: color-mix(in srgb, var(--text) 40%, transparent); }
 
 /* marchio Maki: giada e viola, freddo e tagliente */
 html[data-mode="maki"], body[data-mode="maki"] {
@@ -137,6 +204,9 @@ html[data-theme="light"][data-mode="maki"], body[data-theme="light"][data-mode="
   --accent: #5b21b6;
   --on-primary: #ffffff;
   --on-accent: #ffffff;
+  /* i token dei chip seguono il suo verde-acqua */
+  --primary-text: var(--primary); --primary-tint: #e2f0ee;
+  --accent-text: var(--accent);   --accent-tint: #efe8fb;
 }
 
 :root {

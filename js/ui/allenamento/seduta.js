@@ -96,7 +96,8 @@ window.toggleWarmup = function(idx, wi) {
 
 /* ---- calcolatore dischi ---- */
 const DISCHI = [25, 20, 15, 10, 5, 2.5, 1.25];
-const COLORE_DISCO = { 25: '#e5484d', 20: '#3b82f6', 15: '#eab308', 10: '#22c55e', 5: '#f3f3f6', 2.5: '#a8a8b6', 1.25: '#6b6b78' };
+/* token CSS (--disco-* in css/base.css): il bordo del disco bianco e in `.pl-disc` (--disco-bordo) */
+const COLORE_DISCO = { 25: 'var(--disco-25)', 20: 'var(--disco-20)', 15: 'var(--disco-15)', 10: 'var(--disco-10)', 5: 'var(--disco-5)', 2.5: 'var(--disco-2-5)', 1.25: 'var(--disco-1-25)' };
 
 window.dischiPerLato = function(totale, bilanciere) {
   let lato = (Number(totale) - Number(bilanciere)) / 2;
