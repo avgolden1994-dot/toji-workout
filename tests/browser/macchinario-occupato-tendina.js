@@ -29,6 +29,7 @@ console.log('1) il pulsante apre e chiude la tendina');
 const btn=p.locator('.busy-btn[data-busy="0"]');
 assert(await btn.getAttribute('aria-expanded')==='false' && await btn.getAttribute('aria-haspopup')==='true','chiusa: aria-expanded=false, aria-haspopup');
 assert(await aperta()===0 && await delta()===0,'chiusa: nessun pannello e nessun listener del documento');
+await btn.evaluate(e=>e.scrollIntoView({block:'start'})); await p.waitForTimeout(100);   /* in alto c e posto sotto: la tendina si apre verso il basso */
 await btn.click(); await p.waitForTimeout(350);
 assert(await aperta()===1 && await btn.getAttribute('aria-expanded')==='true','si apre: aria-expanded=true');
 assert(await delta()===2,'aperta: i listener (pointerdown, keydown) ci sono ('+await delta()+')');

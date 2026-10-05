@@ -13,6 +13,7 @@ function avvisaTelefonoRecupero() {
 
 window.openRecoveryPanel = function(label, seconds) {
   if (sedutaPassataAttiva()) return;   /* seduta passata: niente recupero da aspettare */
+  preparaAudio();   /* il contesto audio si sblocca dentro questo tocco: i bip arrivano dopo */
   recoveryTotal = Math.max(1, Number(seconds) || 90);
   recoveryEndAt = Date.now() + recoveryTotal * 1000;
   recoveryRemaining = recoveryTotal;
@@ -52,6 +53,7 @@ window.adjustRecoveryTimer = function(delta) {
     if (secondiRimasti() > 5) panel.classList.remove('ending');
   } else if (delta > 0 && panel.classList.contains('visible')) {
     /* timer esaurito ma pannello aperto: +10 riparte da 10 secondi */
+    preparaAudio();
     recoveryTotal = Math.max(recoveryTotal, delta);
     recoveryEndAt = Date.now() + delta * 1000;
     recoveryLastShown = delta;

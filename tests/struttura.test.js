@@ -65,3 +65,31 @@ test('il consenso del Coach IA e tradotto in ogni lingua', () => {
   assert.ok(frasi.length >= 6);
   ['en', 'es', 'de'].forEach(l => frasi.forEach(f => assert.ok(window.I18N[l][f], l + ' non traduce: ' + f.slice(0, 50))));
 });
+test('l audio degli altri non si blocca: niente sblocco al primo tocco, niente playback fuori dal cedimento', () => {
+  const js = scripts.filter(f => !f.includes('lingue/'));
+  const CED = 'js/ui/allenamento/cedimento.js', MUS = 'js/core/musica-altre-app.js';
+  const senzaCommenti = t => t.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+  js.forEach(f => {
+    const src = senzaCommenti(leggi(f));
+    assert.ok(!/unlockAudio/.test(src), f + ': sblocco audio globale al primo tocco');
+    /* nessun ascoltatore globale di tocchi che crei il contesto audio o accenda la traccia silenziosa */
+    [...src.matchAll(/addEventListener\(\s*['"](?:pointerdown|touchstart|touchend|mousedown|click)['"][^;]*;/g)].forEach(m =>
+      assert.ok(!/getAudioCtx|avviaCanaleMultimediale|audioSession|tipoSessione/.test(m[0]), f + ': ascoltatore di tocchi che prende l audio'));
+    /* i tipi di sessione che interrompono gli altri stanno solo nel percorso del cedimento */
+    if (/['"](?:playback|transient-solo)['"]/.test(src)) assert.ok([CED, MUS].includes(f), f + ': playback/transient-solo fuori dal cedimento');
+    /* il contesto audio si crea solo dentro il tocco che avvia timer o prova suono (musica-altre-app.js) */
+    if (/getAudioCtx\(\s*true\s*\)/.test(src)) assert.strictEqual(f, MUS, f + ': crea il contesto audio');
+    /* la traccia silenziosa la accende solo il cedimento */
+    if (f !== MUS && /avviaCanaleMultimediale\s*\(/.test(src)) assert.strictEqual(f, CED, f + ' accende la traccia silenziosa');
+  });
+  /* in musica-altre-app.js "playback" vive solo dentro avviaCanaleMultimediale */
+  const mus = leggi(MUS);
+  const fn = acorn.parse(mus, { ecmaVersion: 'latest', ranges: true }).body.find(n => n.type === 'FunctionDeclaration' && n.id.name === 'avviaCanaleMultimediale');
+  assert.ok(fn, 'avviaCanaleMultimediale non trovata');
+  assert.ok(!/['"]playback['"]/.test(senzaCommenti(mus.slice(0, fn.start) + mus.slice(fn.end))), '"playback" fuori da avviaCanaleMultimediale');
+  /* a fine cedimento niente bip */
+  const ced = leggi(CED);
+  const fin = acorn.parse(ced, { ecmaVersion: 'latest', ranges: true }).body.find(n => n.type === 'FunctionDeclaration' && n.id.name === 'finishDropSet');
+  assert.ok(fin, 'finishDropSet non trovata');
+  assert.ok(!/play(?:Beep|Tone|Tick|End)\s*\(/.test(senzaCommenti(ced.slice(fin.start, fin.end))), 'finishDropSet suona un bip');
+});

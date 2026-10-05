@@ -39,21 +39,29 @@ function formatNow() {
 function handleSelectExercise(val) {
   if (val) document.getElementById('exercise-name').value = val;
 }
-/* Un SOLO contesto audio per tutta l'app.
-   Prima se ne creava uno nuovo a ogni bip: i browser ne consentono pochi
+/* Un SOLO contesto audio per tutta l'app, creato solo quando serve.
+   Prima se ne creava uno a ogni bip: i browser ne consentono pochi
    contemporaneamente (Chrome circa sei) e dopo qualche timer il suono
-   spariva del tutto. In piu sul telefono il contesto nasce "sospeso" e va
-   risvegliato da un gesto dell'utente, altrimenti resta muto per sempre. */
+   spariva. In piu un contesto sempre acceso occupa il canale audio del
+   telefono: ora nasce SOLO dentro il tocco che avvia un timer con suoni
+   (getAudioCtx(true), vedi preparaAudio) e si sospende subito dopo
+   l ultimo bip (sospendiAudioCtx). Senza tocco non si crea nulla. */
 let audioCtx = null;
 
-function getAudioCtx() {
+function getAudioCtx(crea) {
   try {
     if (!audioCtx) {
+      if (!crea) return null;
       const AC = window.AudioContext || window.webkitAudioContext;
       if (!AC) return null;
       audioCtx = new AC();
     }
-    if (audioCtx.state === 'suspended' && audioCtx.resume) audioCtx.resume();
+    if (audioCtx.state === 'suspended' && audioCtx.resume) { const p = audioCtx.resume(); if (p && p.catch) p.catch(() => {}); }
     return audioCtx;
   } catch (e) { return null; }
+}
+function sospendiAudioCtx() {
+  try {
+    if (audioCtx && audioCtx.state !== 'closed' && audioCtx.suspend) { const p = audioCtx.suspend(); if (p && p.catch) p.catch(() => {}); }
+  } catch (e) {}
 }

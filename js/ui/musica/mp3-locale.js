@@ -148,7 +148,6 @@ window.selectTrack = function(id, silenzioso) {
   updateMp3SegmentLabel(track);
   stopDropSet();
   renderFailureTracks();
-  refreshDropButtonState();
   if (!silenzioso) salvaMusica();
 };
 
@@ -182,5 +181,4 @@ window.deleteTrack = async function(id) {
     stopDropSet();
   }
   await refreshFailureTracks();
-  refreshDropButtonState();
 };

@@ -54,8 +54,9 @@ function aggiornaRiassuntoMusica() {
   if (s) s.innerText = n || 'Nessuna canzone scelta';
 }
 
-/* Ripristino: la traccia locale subito; il link web solo quando serve,
-   per non scaricare il lettore YouTube a ogni apertura dell app. */
+/* Ripristino: la traccia locale subito; il link web solo quando serve
+   (schermata della canzone o cedimento), mai all apertura dell app o
+   della seduta: il lettore YouTube non si scarica prima del tempo. */
 window.ripristinaMusica = function(conWeb) {
   const m = leggiMusica();
   if (!m) { aggiornaRiassuntoMusica(); return; }
@@ -69,7 +70,7 @@ window.ripristinaMusica = function(conWeb) {
   }
   const input = document.getElementById('web-link-input');
   if (input && m.url && !input.value) input.value = m.url;
-  if (conWeb && m.tab === 'web' && m.url && m.webOk && !currentWebMode) {
+  if (conWeb && m.tab === 'web' && m.url && m.webOk && (!currentWebMode || !playerWebCaricato())) {
     handleWebLinkSubmit(true);
   }
   musicaRipristinata = true;
@@ -82,17 +83,15 @@ window.clearCedimentoAudio = function() {
   const input = document.getElementById('web-link-input');
   if (input) input.value = '';
   try { localStorage.removeItem(MUSIC_KEY); } catch (e) {}
+  liberaPlayerWeb();
   renderFailureTracks();
-  refreshDropButtonState();
   aggiornaRiassuntoMusica();
   /* la scelta e fatta: si torna indietro, come ci si aspetta da un pulsante
      di conferma (prima restava sulla schermata e sembrava non succedere nulla) */
   const sheet = document.getElementById('music-sheet');
   if (sheet && !sheet.classList.contains('hidden')) {
     sheet.classList.add('hidden');
-    const inSeduta = document.getElementById('tab-allenamento').classList.contains('active') &&
-      document.getElementById('workout-session').style.display !== 'none';
-    dockStato(inSeduta ? 'sessione' : 'nascosto');
+    dockStato('nascosto');
     if (currentTab === 'impostazioni') renderSettings();
   }
   showUndo('Nessuna canzone: durante il cedimento continua la tua musica');
@@ -101,14 +100,21 @@ window.clearCedimentoAudio = function() {
 window.openMusicSheet = function() {
   document.getElementById('music-sheet').classList.remove('hidden');
   ripristinaMusica(true);
+  /* finito un cedimento la sorgente e scaricata: per l ascolto di prova si rimette (solo metadati, non suona) */
+  const prova = document.getElementById('failure-audio');
+  if (prova && selectedTrackUrl && !prova.getAttribute('src')) {
+    prova.preload = 'metadata';
+    prova.src = selectedTrackUrl;
+    try { prova.load(); } catch (e) {}
+  }
   dockStato('anteprima');
 };
 window.closeMusicSheet = function() {
   document.getElementById('music-sheet').classList.add('hidden');
   salvaMusica();
-  const inSeduta = document.getElementById('tab-allenamento').classList.contains('active') &&
-    document.getElementById('workout-session').style.display !== 'none';
-  dockStato(inSeduta ? 'sessione' : 'nascosto');
+  /* l ascolto di prova finisce qui: il lettore web si scarica, la canzone resta scelta */
+  liberaPlayerWeb();
+  dockStato('nascosto');
 };
 
 window.switchAudioSourceTab = function(tab, silenzioso) {
@@ -123,4 +129,15 @@ function getResolvedAudioMode() {
   if (activeSourceTab === 'mp3') return selectedTrackId ? 'mp3' : null;
   if (activeSourceTab === 'web') return currentWebMode;
   return null;
+}
+/* La canzone scelta per il cedimento ('mp3' | 'youtube' | 'spotify' | null),
+   anche se il lettore web non e ancora stato caricato: viene dal salvataggio.
+   null = nessuna canzone, e allora il cedimento non tocca l audio. */
+function modoCanzone() {
+  const m = getResolvedAudioMode();
+  if (m) return m;
+  if (activeSourceTab !== 'web') return null;
+  const sal = leggiMusica();
+  const p = sal && sal.tab === 'web' && sal.webOk ? parseWebAudioUrl(sal.url || '') : null;
+  return p ? p.type : null;
 }

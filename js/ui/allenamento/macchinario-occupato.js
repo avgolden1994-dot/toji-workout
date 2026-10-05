@@ -270,34 +270,3 @@ window.annullaCedimento = function(exIdx, setIdx) {
     if (s2) { s2.wasBerserk = true; saveData(d2); renderAllenamento(); }
   });
 };
-
-/* Arma una SERIE specifica (non l'intero esercizio) per il modulo Cedimento */
-window.armDropTarget = function(exIdx, setIdx) {
-  if (armedSet && armedSet.exIdx === exIdx && armedSet.setIdx === setIdx) {
-    armedSet = null;
-  } else {
-    armedSet = { exIdx, setIdx };
-  }
-  stopDropSet();
-  renderAllenamento();
-};
-
-function refreshDropButtonState() {
-  const btn = document.getElementById('start-drop-btn');
-  const hint = document.getElementById('drop-hint');
-  if (!btn || !hint) return;
-  if (!armedSet) {
-    btn.disabled = true;
-    hint.innerText = 'Tocca l\'icona 🔥 accanto a una serie per portarla a cedimento.';
-  } else {
-    const data = loadData();
-    const ex = (data[currentDay] || [])[armedSet.exIdx];
-    if (!ex || !ex.completedSets[armedSet.setIdx]) {
-      btn.disabled = true;
-      hint.innerText = 'Tocca l\'icona 🔥 accanto a una serie per portarla a cedimento.';
-      return;
-    }
-    btn.disabled = false;
-    hint.innerText = `Pronto per: ${ex.name} — Serie ${armedSet.setIdx + 1}`;
-  }
-}

@@ -26,7 +26,9 @@ function configureWebSegment(durationSec) {
   const usable = webDuration > FAILURE_SET_SECONDS;
   range.disabled = !usable;
   range.max = usable ? Math.floor(webDuration - FAILURE_SET_SECONDS) : 0;
-  range.value = 0;
+  /* il punto di partenza scelto si ricorda: prima ogni caricamento lo azzerava */
+  const m = typeof leggiMusica === 'function' ? leggiMusica() : null;
+  range.value = usable && m && m.tab === 'web' ? Math.max(0, Math.min(Number(range.max), Number(m.webStart) || 0)) : 0;
   document.querySelectorAll('.nudge-btn').forEach(b => { b.disabled = !usable; });
   document.getElementById('web-preview-btn').disabled = !currentWebMode;
   updateWebSegmentLabel();
@@ -81,9 +83,28 @@ window.handleWebLinkSubmit = function(silenzioso) {
     currentWebMode = 'spotify';
     loadSpotifyPlayer(parsed.id, parsed.kind);
   }
-  refreshDropButtonState();
   if (silenzioso !== true) salvaMusica();
 };
+
+/* Scarica del tutto il lettore: video fermato (non solo in pausa), iframe
+   rimosso. Il link scelto resta salvato; al prossimo cedimento il lettore
+   si ricrea. Cosi finito il cedimento nessun lettore tiene occupato l audio. */
+let webToken = 0;   /* ogni caricamento ha il suo numero: uno scaricato nel frattempo non ricrea nulla */
+window.liberaPlayerWeb = function() {
+  webToken++;
+  if (ytPlayer) {
+    try { ytPlayer.stopVideo(); } catch (e) {}
+    try { ytPlayer.destroy(); } catch (e) {}
+  }
+  ytPlayer = null; ytPlayerReady = false;
+  if (spotifyController) {
+    try { spotifyController.pause(); } catch (e) {}
+    try { if (typeof spotifyController.destroy === 'function') spotifyController.destroy(); } catch (e) {}
+  }
+  spotifyController = null; spotifyReady = false;
+  ['youtube-player-host', 'spotify-player-host'].forEach(id => { const h = document.getElementById(id); if (h) h.innerHTML = ''; });
+};
+function playerWebCaricato() { return !!(ytPlayer || spotifyController); }
 
 /* ---- YouTube ---- */
 function ensureYouTubeApi() {
@@ -119,6 +140,7 @@ function loadYouTubePlayer(videoId) {
   document.getElementById('spotify-embed-wrap').style.display = 'none';
   document.getElementById('youtube-embed-wrap').style.display = 'block';
   ytPlayerReady = false;
+  ytSbloccato = false;   /* ogni lettore nuovo e un video nuovo: su iPhone serve di nuovo il suo tocco */
   configureWebSegment(0);
 
   /* YouTube rifiuta l'IFrame API da pagine aperte come file locale (file://). */
@@ -129,7 +151,9 @@ function loadYouTubePlayer(videoId) {
 
   setWebStatus('Caricamento player YouTube...', false);
 
+  const tk = ++webToken;
   ensureYouTubeApi().then(() => {
+    if (tk !== webToken) return;
     if (ytPlayer && typeof ytPlayer.destroy === 'function') { try { ytPlayer.destroy(); } catch (e) {} }
     /* BUG FIX IMPORTANTE: YT.Player SOSTITUISCE il div con un iframe, e destroy()
        lo rimuove del tutto. Senza ricrearlo, dal secondo video in poi il
@@ -144,14 +168,21 @@ function loadYouTubePlayer(videoId) {
         controls: 1,
         playsinline: 1,        /* su iPhone evita il passaggio forzato a schermo intero */
         rel: 0,
+        start: Math.floor(inizioSegmento()),   /* il primo avvio parte gia dal punto scelto */
         origin: window.location.origin
       },
       events: {
         onReady: () => {
+          if (tk !== webToken) return;
           ytPlayerReady = true;
           readYouTubeDuration(0);
-          /* pronto al punto giusto: un tocco parte gia dal segmento scelto */
-          try { ytPlayer.seekTo(inizioSegmento(), true); ytPlayer.pauseVideo(); } catch (err) {}
+          if (dropActive) {
+            /* il cedimento e gia partito mentre il lettore si caricava: ora suona */
+            avviaWebPronto();
+          } else {
+            /* pronto al punto giusto: un tocco parte gia dal segmento scelto */
+            try { ytPlayer.seekTo(inizioSegmento(), true); ytPlayer.pauseVideo(); } catch (err) {}
+          }
           aggiornaAvvisoDock();
         },
         onStateChange: (e) => ytStatoCambiato(e),
@@ -216,18 +247,23 @@ function loadSpotifyPlayer(id, kind) {
   configureWebSegment(0);
   setWebStatus('Caricamento player Spotify...', false);
 
+  const tk = ++webToken;
   ensureSpotifyApi().then((IFrameAPI) => {
+    if (tk !== webToken) return;
     const host = document.getElementById('spotify-player-host');
     host.innerHTML = '<div id="spotify-embed-el"></div>';
     const element = document.getElementById('spotify-embed-el');
 
     IFrameAPI.createController(element, { uri: 'spotify:' + kind + ':' + id, width: '100%', height: 152 }, (EmbedController) => {
+      if (tk !== webToken) { try { if (typeof EmbedController.destroy === 'function') EmbedController.destroy(); } catch (e) {} return; }
       spotifyController = EmbedController;
       EmbedController.addListener('ready', () => {
+        if (tk !== webToken) return;
         spotifyReady = true;
         /* LIMITE DI SPOTIFY, non dell'app: quando la riproduzione viene avviata
            via codice, Spotify serve un'anteprima di ~30 secondi anche agli utenti
            Premium. I 90 secondi pieni si ottengono solo con MP3 o YouTube. */
+        if (dropActive) avviaWebPronto();
         setWebStatus('\u26A0\uFE0F Spotify limita a ~30 secondi la riproduzione avviata da un\'app esterna, anche con Premium. Per i 90 secondi pieni usa un MP3 locale o YouTube. Puoi comunque scegliere il punto di partenza.', true);
       });
       EmbedController.addListener('playback_update', (e) => {
