@@ -18,7 +18,7 @@
      3. l'esercizio, con gli ATTRIBUTI (js/dati/attributi-esercizi.js: classe A-F, schema, abilita, profilo, stress per zona), mai con il nome: il core, le tenute e
         il corpo libero a zero kg (classe F) non hanno tecniche; i cedimenti non vanno su stacchi (cerniera), spinte sopra la testa, abilita 3 o sull'esercizio che carica
         la zona del fastidio dichiarato; le parziali solo dove il muscolo e allungato (profilo allungato, classi D ed E).
-   Non c'e nessuna tecnica con la restrizione del flusso (BFR): regola bloccata dalla verifica (registro C.2 n. 14), ne qui ne come testo.
+   MAV-14 e bloccata dalla verifica (registro C.2 n. 14): non c'e, ne come tecnica ne come testo. Una tecnica fuori da GRUPPO_TECNICA non passa mai.
    Fonti dei numeri: sicurezza/soglie-tecniche.js. Il resto e la matrice della nota (Convenzione, prudenza).
    ============================================================ */
 
@@ -78,6 +78,10 @@ function vincoliDelBrief(brief) {
   const b = brief || {};
   return (b.sicurezza && b.sicurezza.vincoli) || b.vincoli || null;
 }
+/* il nome di libreria dell'esercizio (con l'emoji): un nome gia completo resta com'e, uno senza emoji si ritrova (come tipoCarico) */
+function nomeCompletoTecnica(nome) {
+  return findExercise(nome) ? nome : (nomeInLibreria(senzaEmoji(nome)) || nome);
+}
 /* il fastidio dichiarato carica questo esercizio? (stress 1 = cautela, 2 = controindicato: attributo `stress`, non il nome) */
 function esercizioCaricaIlFastidio(nome, fastidi) {
   return (fastidi || []).some(f => f && f !== 'nessuno' && (stressArticolare(nome, f) || 0) >= 1);
@@ -86,6 +90,7 @@ function esercizioCaricaIlFastidio(nome, fastidi) {
 /* MAV-02: niente cedimento sul core, sulle tenute, a peso zero (togliere il 20% non ha senso) e sulle cerniere (stacchi: rapporto stimolo/fatica, ABB-09).
    Dall'attributo, non dal nome: classe F, gruppo core, esercizio a tempo, peso di libreria zero, schema hinge. */
 function esercizioSenzaCedimento(nome) {
+  nome = nomeCompletoTecnica(nome);
   const a = attributi(nome), m = findExercise(nome) || {};
   if (!a) return true;
   return a.classe === 'F' || m.group === 'core' || isTimeBased(nome) || !(m.weight > 0) || a.schema === 'hinge';
@@ -180,7 +185,7 @@ function budgetTecniche(brief, settimana, ctx) {
 
 /* le condizioni delle celle «C» della matrice (3.2) */
 function condizioneClasse(tecnica, classe, a, P, nome) {
-  if (tecnica === 'superserie' && classe === 'F') return (findExercise(nome) || {}).group !== 'core' && !isTimeBased(nome);   /* corpo libero a zero kg si, core e tenute no (SS-02) */
+  if (tecnica === 'superserie' && classe === 'F') return (findExercise(nomeCompletoTecnica(nome)) || {}).group !== 'core' && !isTimeBased(nomeCompletoTecnica(nome));   /* corpo libero a zero kg si, core e tenute no (SS-02) */
   if (tecnica === 'drop') {
     if (classe === 'B') return a.attrezzo === 'manubri' && a.serve.indexOf('panca') !== -1 && !P.principiante;   /* manubri su panca, ultima serie, intermedio e oltre */
     if (classe === 'C') return P.livello === 'avanzato' || (a.schema !== 'squat' && a.schema !== 'affondo');   /* niente leg press e hack se non avanzato */

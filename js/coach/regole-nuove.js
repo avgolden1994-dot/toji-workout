@@ -74,7 +74,7 @@ function regoleRicAlCarico(r, c) {
       r.sets = Math.max(2, Math.round(r.sets * 0.75));
       r.motivo += ' • rientro dopo ' + rientro + ' giorni: meno serie su tutto il piano, poi si torna al solito';
       /* MAV-11: dopo una pausa si scende piano (2-3 secondi), senza fretta */
-      aggiungiPerche(r, 'MAV-11', 'Scendi piano: ' + SOGLIE_TECNICHE.discesaSecondi.v[0] + '-' + SOGLIE_TECNICHE.discesaSecondi.v[1] + ' secondi in discesa.');
+      if (regolaAttiva('MAV-11')) aggiungiPerche(r, 'MAV-11', 'Scendi piano: ' + SOGLIE_TECNICHE.discesaSecondi.v[0] + '-' + SOGLIE_TECNICHE.discesaSecondi.v[1] + ' secondi in discesa.');
     }
     return r;
   }

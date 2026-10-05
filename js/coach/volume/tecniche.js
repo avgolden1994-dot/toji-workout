@@ -121,7 +121,7 @@ function assegnaTecniche(brief, sedute) {
   scelte.forEach((lista, s) => lista.forEach(c => {
     let t = c.tecnica;
     if (c.slot === 'poco') {   /* MAV-13: il drop set e i myo-reps si alternano tra le sedute della settimana (una tecnica sullo stesso esercizio al massimo una volta) */
-      const ordine = nPoco % 2 === 0 ? ['drop', 'myo'] : ['myo', 'drop'];
+      const ordine = !regolaAttiva('MAV-13') ? ['drop'] : (nPoco % 2 === 0 ? ['drop', 'myo'] : ['myo', 'drop']);   /* MAV-13 spenta: solo il drop set, come prima */
       t = ordine.find(x => !usate[c.e.name + '|' + x] && adatta(x, c.e.name) && entraNelTetto(sedute[s].esercizi, c.e, x));
       if (!t) return;
       nPoco++;
@@ -139,7 +139,7 @@ function assegnaTecniche(brief, sedute) {
   /* MAV-16: l'onesta sulle tecniche: fanno risparmiare tempo, non fanno crescere di piu */
   if (dropAssegnato) { const t = 'Il drop set e i myo-reps servono a risparmiare tempo: non fanno crescere di più.'; note.push(t); aggiungiPerche(brief, 'MAV-16', t); }
   /* MAV-11: chi inizia, i minorenni e gli over 65 scendono piano (2-3 secondi), senza tecniche */
-  if (chi.principiante || over65 || minore) { const t = 'Scendi piano: ' + S.discesaSecondi.v[0] + '-' + S.discesaSecondi.v[1] + ' secondi in discesa.'; note.push(t); aggiungiPerche(brief, 'MAV-11', t); }
+  if ((chi.principiante || over65 || minore) && regolaAttiva('MAV-11')) { const t = 'Scendi piano: ' + S.discesaSecondi.v[0] + '-' + S.discesaSecondi.v[1] + ' secondi in discesa.'; note.push(t); aggiungiPerche(brief, 'MAV-11', t); }
   brief.lavoro.dropAssegnato = dropAssegnato;
   brief.lavoro.potenzaAssegnata = potenzaAssegnata;
   return sedute;
