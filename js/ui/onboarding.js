@@ -115,7 +115,7 @@ function schemeFor(goal) {
    stanno in js/coach/volume/tempo.js dal generatore a stadi (W1-T4): il tempo e un tetto e li decide il Dosatore. */
 
 /* ETA-01 (D-P9, ponte di W0-T2; assorbe REC-11): l eta e obbligatoria prima del programma; sotto 13 anni nessun programma;
-   13-17 anni profilo minorenne (ETA-02, ETA-03: ricette.js). Una sola funzione per l onboarding, per Opzioni e per buildProgram.
+   13-17 anni profilo minorenne (ETA-02, ETA-03: brief.js e prescriviSerie). Una sola funzione per l onboarding, per Opzioni e per buildProgram.
    Soglia 13 = decisione dell utente; la soglia legale dei dati (14 in Italia) e un tema separato (registro G.1). */
 const PARAM_ETA = { min: 13, max: 99, maggiorenne: 18 };
 const MSG_ETA_SOTTO_MINIMO = 'Sotto i 13 anni il coach non crea programmi: allenati con un adulto esperto.';

@@ -22,8 +22,8 @@ function vincoliSicurezza(brief) {
   /* B1 (revisione dell onda 0): il Nordic Curl non entra per chi inizia, per i prudenti e per le ginocchia dolenti (esclusi: motivi di sicurezza, non di gusto) */
   const nordic = nomeInLibreria('Nordic Curl');
   if (nordic && (chi.principiante || chi.cauto || fastidi.indexOf('ginocchia') !== -1)) {
-    vincoli.vietati[nordic] = 'discesa eccentrica sovramassimale: non per chi inizia, i prudenti e le ginocchia dolenti';
-    vincoli.motivi.push({ codice: 'B1', testo: 'Il Nordic Curl non entra: e una discesa eccentrica sovramassimale, non adatta a chi inizia, ai prudenti e alle ginocchia dolenti.' });
+    vincoli.vietati[nordic] = 'discesa eccentrica sovramassimale: non per chi inizia, per i prudenti e per le ginocchia dolenti';
+    vincoli.motivi.push({ codice: 'B1', testo: 'Il Nordic Curl non entra: è una discesa eccentrica sovramassimale, non adatta a chi inizia, ai prudenti e alle ginocchia dolenti.' });
   }
   if (chi.principiante || chi.cauto) vincoli.serieMaxEsercizio = COACH_PARAMETRI.serieMaxPrudente;   /* 2-3 serie impegnative (Barbell Medicine); CAS-14, femorali, riempimento */
   /* MAV-03: niente tecniche al cedimento a chi inizia, ai minorenni, agli over 65 e in modalita prudente */
