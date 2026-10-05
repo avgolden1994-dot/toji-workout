@@ -4,10 +4,10 @@
 /* ============================================================
    MACCHINARIO OCCUPATO
    In palestra l attrezzo che ti serve e spesso preso. Dal pulsante scegli,
-   SOLO PER OGGI, un esercizio che allena gli stessi muscoli (stesso gruppo)
-   con un attrezzo diverso da quello occupato. Il piano non cambia: a fine
-   seduta l esercizio previsto torna al suo posto, mentre quello che hai fatto
-   resta nello storico col nome dell esercizio fatto davvero.
+   SOLO PER OGGI, un esercizio che allena lo stesso muscolo bersaglio
+   (vedi MUSCOLI in dati/dettagli-esercizi.js), di preferenza con un attrezzo
+   diverso da quello occupato. Il piano non cambia: a fine seduta l esercizio
+   previsto torna al suo posto, mentre quello che hai fatto resta nello storico col nome dell esercizio fatto davvero.
    ============================================================ */
 const ETICHETTA_ATTREZZO = { macchine: 'Macchina', bilanciere: 'Bilanciere', manubri: 'Manubri', corpo: 'Corpo libero' };
 const ICONA_SCAMBIO = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 4l3 3-3 3"/><path d="M4 7h16"/><path d="M7 20l-3-3 3-3"/><path d="M20 17H4"/></svg>';
@@ -21,28 +21,14 @@ function prefsOccupato() {
   return { luogo: p.luogo || 'palestra', fastidi: (p.fastidi || []).filter(f => f !== 'nessuno'),
     attrezziPalestra: p.attrezziPalestra || null, graditi: p.graditi || [], odiati: p.odiati || [] };
 }
-/* Stesso gruppo muscolare. In ordine: stesso movimento, stesso tipo (multiarticolare o isolamento),
-   attrezzo DIVERSO da quello occupato, classifica degli esperti. Mai uno gia in scheda oggi. */
+/* Stesso muscolo bersaglio (non solo stesso gruppo: un curl non diventa un pushdown).
+   In ordine: stesso movimento, stesso tipo (multiarticolare o isolamento), attrezzo DIVERSO
+   da quello occupato, classifica degli esperti. Mai uno gia in scheda oggi. Al massimo 6:
+   se ne restano meno, o nessuna, se ne mostrano meno (mai un esercizio per un altro muscolo). */
 function alternativeOggi(e, list) {
   const m = findExercise(e.name);
   if (!m) return [];
-  const prefs = prefsOccupato();
-  const presenti = list.map(x => senzaEmoji(x.name));
-  const sch = schemaDi(m.name), att = attrezzoDi(m.name);
-  const cand = EXERCISE_LIBRARY
-    .filter(x => x.group === m.group && x.name !== m.name && presenti.indexOf(senzaEmoji(x.name)) === -1 && consentito(x.name, prefs))
-    .map(x => {
-      const stessoMov = !!sch && schemaDi(x.name) === sch;
-      const punti = (stessoMov ? 10 : 0) + (x.type === m.type ? 5 : 0) + (attrezzoDi(x.name) !== att ? 4 : 0) +
-        (PRIORI[senzaEmoji(x.name)] || 1) + ((prefs.graditi || []).indexOf(x.name) !== -1 ? 2 : 0);
-      return { ex: x, stessoMov: stessoMov, punti: punti };
-    })
-    .sort((a, b) => b.punti - a.punti);
-  const top = cand.slice(0, 6);
-  /* tra tante spinte, anche un isolamento: se il bilanciere e occupato, a volte basta far lavorare il muscolo */
-  const iso = cand.slice(6).find(c => c.ex.type === 'isolation');
-  if (iso && !top.some(c => c.ex.type === 'isolation')) top.push(iso);
-  return top;
+  return alternativeStessoMuscolo(m.name, prefsOccupato(), list.map(x => x.name), { attrezzoDiverso: true, max: 6 });
 }
 function copiaRecord(r) { return JSON.parse(JSON.stringify(r)); }
 

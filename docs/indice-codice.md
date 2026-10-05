@@ -46,7 +46,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 12. `js/dati/dettagli-esercizi.js` — Dettagli per esercizio: attrezzo, presa o attacco, sottogruppo e focus muscolare
 
-`SEZIONI_ESERCIZI` · `SOTTOGRUPPI` · `NOTE_ATTACCO` · `DETTAGLI` · `_nomePulito()` · `window.dettaglioEsercizio()` · `window.sezioneEsercizio()` · `window.etichettaAttrezzo()` · `window.focusEsercizio()` · `window.focusConTipo()` · `window.ordineEsercizi()` · `window.organizzaEsercizi()` · `window.variantiEsercizio()`
+`SEZIONI_ESERCIZI` · `SOTTOGRUPPI` · `MUSCOLI` · `NOTE_ATTACCO` · `DETTAGLI` · `_nomePulito()` · `window.dettaglioEsercizio()` · `window.bersaglioDi()` · `window.muscoloBersaglio()` · `window.sezioneEsercizio()` · `window.etichettaAttrezzo()` · `window.focusEsercizio()` · `window.focusConTipo()` · `window.ordineEsercizi()` · `window.organizzaEsercizi()` · `window.variantiEsercizio()`
 
 ## js/coach
 
@@ -222,7 +222,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 50. `js/coach/programma/motore.js` — Coach engine: costruzione del programma
 
-`strutturaProgramma()` · `fasiProgramma()` · `attrezzoDi()` · `RISCHIO` · `consentito()` · `sostituto()` · `schemaMisto()`
+`strutturaProgramma()` · `fasiProgramma()` · `attrezzoDi()` · `RISCHIO` · `consentito()` · `sostituto()` · `alternativeStessoMuscolo()` · `schemaMisto()`
 
 ### 51. `js/coach/programma/schemi.js` — Schemi di movimento e regole di costruzione
 

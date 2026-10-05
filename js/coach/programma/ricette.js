@@ -154,7 +154,9 @@ window.buildProgram = function(d) {
         if (vietaSchiena && strSchiena(x.name)) v -= 5;   /* ABB-07: due giorni di fila, schiena pesante una volta sola */
         return v;
       };
-      const scelta = ok.slice().sort((x, y) => punteggio(y) - punteggio(x))[0];
+      /* ABB-02 come regola: il migliore che non fa lo stesso lavoro di uno gia scelto, se c e (stesso ordine, stessa casualita) */
+      const ordinati = ok.slice().sort((x, y) => punteggio(y) - punteggio(x));
+      const scelta = ordinati.find(x => !strRidondante(x, base)) || ordinati[0];
       if (migliore && scelta.name !== migliore.name && !consentito(migliore.name, prefs)) sostituzioni.push({ da: migliore.name, a: scelta.name });
       if (SCHIENA_PESANTE.test(scelta.name)) pesantiSchiena++;
       if (strSchiena(scelta.name)) schienaQui = true;

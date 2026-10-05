@@ -70,6 +70,30 @@ function sostituto(nome, prefs, usati) {
   return candidati[0] || null;
 }
 
+/* Alternative con lo STESSO muscolo bersaglio (bersaglioDi, da DETTAGLI): mai un altro muscolo,
+   anche a costo di proporne poche o nessuna. Movimento, tipo e attrezzo servono solo a ordinare.
+   prefs: come per consentito() (attrezzi, fastidi, odiati, graditi); esclusi: nomi da non proporre
+   (es. quelli gia in seduta); opz.attrezzoDiverso: prima gli attrezzi diversi da quello dell esercizio
+   (macchinario occupato); opz.bonus(x): punti in piu decisi da chi chiama; opz.max: quante al massimo (6).
+   Ritorna [{ ex, stessoMov, punti }] dalla migliore. */
+function alternativeStessoMuscolo(nome, prefs, esclusi, opz) {
+  const m = findExercise(nome), b = bersaglioDi(nome);
+  if (!m || !b) return [];
+  const o = opz || {}, p = prefs || {};
+  const fuori = (esclusi || []).map(senzaEmoji);
+  const sch = schemaDi(m.name), att = attrezzoDi(m.name), graditi = p.graditi || [];
+  return EXERCISE_LIBRARY
+    .filter(x => x.name !== m.name && bersaglioDi(x.name) === b && fuori.indexOf(senzaEmoji(x.name)) === -1 && consentito(x.name, p))
+    .map(x => {
+      const stessoMov = !!sch && schemaDi(x.name) === sch;
+      const punti = (stessoMov ? 10 : 0) + (x.type === m.type ? 5 : 0) + (o.attrezzoDiverso && attrezzoDi(x.name) !== att ? 4 : 0) +
+        (PRIORI[senzaEmoji(x.name)] || 1) + (graditi.indexOf(x.name) !== -1 ? 2 : 0) + (o.bonus ? o.bonus(x) : 0);
+      return { ex: x, stessoMov: stessoMov, punti: punti };
+    })
+    .sort((a, c) => c.punti - a.punti)
+    .slice(0, o.max || 6);
+}
+
 /* ---- Mescolare fino a tre obiettivi ----
    Il primo decide lo schema. Gli altri correggono singoli aspetti:
    forza -> il primo multiarticolare della seduta diventa pesante (5x5)

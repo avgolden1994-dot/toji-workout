@@ -4,7 +4,7 @@
   "private": true,
   "description": "3in: allenamenti, calendario e coach (PWA)",
   "scripts": {
-    "test": "node --test tests/struttura.test.js tests/avvio.test.js",
+    "test": "node --test tests/struttura.test.js tests/muscoli.test.js tests/avvio.test.js",
     "test:browser": "for f in tests/browser/*.js; do echo \"== $f\"; node $f || exit 1; done",
     "sw": "node tools/genera-sw.js",
     "indice": "node tools/indice.js",
