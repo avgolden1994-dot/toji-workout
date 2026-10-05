@@ -375,6 +375,7 @@ function volumeMotore(brief, sedute, b, opz) {
       const a = typeof attributi === 'function' ? attributi(x.name) : null;
       if (a && (a.soloAvvio || (prudente && a.abilita === 3))) return false;
       if (schienaLombare(x.name) || SCHIENA_PESANTE.test(x.name)) return false;   /* ABB-07: i carichi pesanti per la schiena li decide la composizione, non il volume */
+      if (/Pullover con Manubrio/i.test(senzaEmoji(x.name))) return false;   /* D-P11: il pullover è la riserva della tirata verticale, lo mette la composizione solo dove non c è altro; il volume non lo aggiunge */
       /* a casa non si da per certo un attrezzo che il questionario non chiede: a corpo libero niente di ciò che serve qualcosa; con i manubri al massimo la panca (CAS-01) */
       const sv = typeof serveAttrezzo === 'function' ? serveAttrezzo(x.name) : null;
       if (sv && sv.length && (prefs.luogo === 'corpo' || (prefs.luogo === 'manubri' && sv.some(q => q !== 'panca')))) return false;
@@ -752,7 +753,7 @@ function assegnaVolume(brief, sedute) {
   brief.obiettivi.prioritaUnita = b.prioritarie.slice();
   if (b.esigenza >= 1.15) note.push('Coach esigente: volume verso la parte alta del range, un po’ più vicino al cedimento su macchine e isolamenti.');
   volumeMotore(brief, sedute, b, { aggiunti: aggiunti }).risolvi();
-  aggiunti.forEach(a => note.push('Aggiunto: ' + senzaEmoji(a.nome) + ' — il muscolo restava sotto il volume minimo.'));
+  aggiunti.filter(a => sedute.some(sd => sd.esercizi.some(e => e.name === a.nome))).forEach(a => note.push('Aggiunto: ' + senzaEmoji(a.nome) + ' — il muscolo restava sotto il volume minimo.'));   /* solo quelli rimasti nella scheda */
   return sedute;
 }
 
@@ -821,6 +822,12 @@ function validaVolume(brief, sedute) {
   const b = (brief.lavoro && brief.lavoro.volumeBersagli) || bersagliVolume(brief);
   const m = volumeMotore(brief, sedute, b, { senzaCrescita: true });
   m.risolvi();
+  /* le note «Aggiunto: X» valgono per la scheda finale: se la verifica ha tolto X, la nota non c e piu */
+  const noteL = brief.lavoro && brief.lavoro.note;
+  if (Array.isArray(noteL)) for (let k = noteL.length - 1; k >= 0; k--) {
+    const mm = /^Aggiunto: (.+?) — il muscolo restava sotto il volume minimo\.$/.exec(String(noteL[k]));
+    if (mm && !sedute.some(sd => sd.esercizi.some(e => senzaEmoji(e.name) === mm[1]))) noteL.splice(k, 1);
+  }
   const note = [];
   const mancano = m.sotto();
   const nTesto = (v) => { const r = Math.round(v * 2) / 2; return String(r).replace('.', ','); };
