@@ -81,6 +81,15 @@ function adattoAlCincoPerCinque(nome) {
   const m = findExercise(nome) || {};
   return m.type === 'compound' && !isTimeBased(nome) && m.weight > 0 && tipoCarico(nome) === 'pesante';
 }
+/* MAV-02 (revisione dell onda 0): niente cedimento neppure sul front squat e sulle spinte sopra la testa (Military, Lento avanti, Arnold, Shoulder press), ne sugli esercizi che caricano di piu
+   la zona del fastidio dichiarato (STRESS_ZONA: l AMRAP sul Military con la schiena dolente, sul panca bilanciere con la spalla) */
+const ZONA_DEL_FASTIDIO = { spalle: 'spalla', schiena: 'schiena', ginocchia: 'ginocchio' };
+function senzaCedimentoPer(nome, fastidi) {
+  if (senzaCedimento(nome)) return true;
+  const n = senzaEmoji(nome);
+  if (/front squat|military|lento avanti|arnold|shoulder press/i.test(n)) return true;
+  return (fastidi || []).some(f => (STRESS_ZONA[ZONA_DEL_FASTIDIO[f]] || []).indexOf(n) !== -1);
+}
 const SCHEMI_ATTESI = { fullbody: ['spinta', 'tirata', 'basso'], upper: ['spinta', 'tirata'], lower: ['squat', 'hinge'], legs: ['squat', 'hinge'], push: ['spinta'], pull: ['tirata'] };
 const SLOT_PER_SCHEMA = { spinta: ['spintaO', 'spintaV'], tirata: ['tirataO', 'tirataV'], basso: ['squat', 'hinge', 'glutSpinta'], squat: ['squat'], hinge: ['hinge', 'glutSpinta'] };
 /* un esercizio e adatto a una seduta di quel tipo se allena i suoi muscoli: nelle sedute di tirata solo il bicipite delle braccia e i deltoidi posteriori, in quelle di spinta solo il tricipite e i deltoidi anteriori e laterali */
@@ -94,7 +103,16 @@ function adattoAllaSeduta(x, tipo) {
   if (tipo === 'push') return x.group === 'petto' || (x.group === 'braccia' && sub === 'Tricipiti') || (x.group === 'spalle' && !dietro);
   return true;
 }
+const NOTA_REMATORE_INVERSO = 'Rematore inverso: fallo sotto un tavolo robusto o con una sbarra bassa, dopo aver controllato che regga il tuo peso.';
 const RIPETIZIONI_SETTIMANA_MAX = 2;   /* lo stesso esercizio al massimo in 2 sedute a settimana (collaudo RID-02, Convenzione) */
+/* Nordic Curl (revisione dell onda 0, B1): e una discesa eccentrica sovramassimale, ci si inginocchia e si cade in avanti sulle mani. Non e per chi inizia, per i prudenti
+   (over 65, PAR-Q, minorenni) ne per chi ha le ginocchia dolenti; per gli altri al massimo 3 serie da 3-6 ripetizioni, in una seduta a settimana (la libreria lo da a 3x6).
+   Dove manca, a casa i femorali restano sotto il minimo (con la nota): le flessioni vere (elastico, slider) sono di W1-T5. */
+const PARAM_NORDIC = { serieMax: 3, ripetizioniMax: 6, sedutePerSettimana: 1 };
+const RX_NORDIC = /nordic/i;
+function maxSettimana(nome) { return RX_NORDIC.test(senzaEmoji(nome)) ? PARAM_NORDIC.sedutePerSettimana : RIPETIZIONI_SETTIMANA_MAX; }
+function ripetizioniFlessione(nome) { const m = findExercise(nome) || {}; return RX_NORDIC.test(senzaEmoji(nome)) ? Math.min(m.reps || PARAM_NORDIC.ripetizioniMax, PARAM_NORDIC.ripetizioniMax) : (m.reps && m.reps > 8 ? m.reps : 12); }
+const NOTA_FEMORALI_SENZA_LEG_CURL = 'Femorali: senza leg curl restano meno allenati, il ponte glutei li aiuta.';
 /* i gruppi che allena ogni tipo di seduta: servono a riempire una seduta rimasta con meno di 3 esercizi (EXN-01) e a scegliere un esercizio in piu (riempiTempo); i full body e i punti deboli: tutti */
 const GRUPPI_DELLA_SEDUTA = { push: ['petto', 'spalle', 'braccia'], pull: ['schiena', 'braccia', 'spalle'], legs: ['gambe', 'glutei'], lower: ['gambe', 'glutei'],
   upper: ['petto', 'schiena', 'spalle', 'braccia'], 'petto-schiena': ['petto', 'schiena'], 'spalle-braccia': ['spalle', 'braccia'] };
@@ -105,13 +123,15 @@ const PARAM_TEMPO = { secRipetizione: 3.5, secSetup: 10, secCambio: 60, secCambi
   tolleranzaSforamento: 0.05,   /* il taglio per il tempo lascia una seduta fino al 5% oltre i minuti dichiarati */
   quotaMinima: 0.82,   /* sotto questa quota dei minuti dichiarati la seduta si allunga (la soglia di spreco del collaudo e 0,75) */
   direteMax: 10,       /* serie dirette a settimana per muscolo: sopra, l isolamento non prende altre serie per riempire il tempo (fascia piccoli del collaudo: massimo 14) */
+  serieMinRecupero: 4, /* REC-01 (W0-T7): un grande muscolo con almeno 4 serie frazionarie in una seduta aspetta 48 ore (nessun altro lavoro dello stesso muscolo nella seduta del giorno prima o dopo; ACSM 2009: Convenzione per la soglia di serie) */
   /* massimo di serie frazionarie a settimana per muscolo [grande, piccolo] oltre il quale il riempimento non aggiunge serie (1 al bersaglio, 0,5 ai secondari: Pelland 2025;
      numeri: docs/ricerca-ipertrofia-programmazione.md 3.2, Convenzione). E il conteggio per muscolo che W2-T1 porta in tutto il generatore: qui serve solo a non sforare. */
   volumeMax: { ipertrofia: { principiante: [10, 10], intermedio: [16, 14], avanzato: [20, 18] }, forza: { principiante: [10, 8], intermedio: [14, 10], avanzato: [18, 12] },
     generale: { principiante: [8, 8], intermedio: [10, 10], avanzato: [12, 10] } },
   volumeMin: { ipertrofia: { principiante: [6, 4], intermedio: [10, 6], avanzato: [12, 8] }, forza: { principiante: [4, 2], intermedio: [6, 3], avanzato: [8, 4] },
     generale: { principiante: [4, 2], intermedio: [6, 3], avanzato: [8, 3] } },   /* il minimo corrispondente: un esercizio nuovo si sceglie dove il muscolo e piu sotto */
-  /* pausa massima per tipo di esercizio e di obiettivo: dentro le fasce del collaudo (RX-02: ACSM 2009, Singer 2024, Schoenfeld 2016) */
+  /* pausa massima per tipo di esercizio e di obiettivo: dentro le fasce del collaudo (RX-02: ACSM 2009, Singer 2024, Schoenfeld 2016). Dal W0-T7 il riempimento non allunga piu le pause
+     (D-P10): resta come riferimento per W2-T2, che riscrive le pause per tipo (tabella B8) */
   pausaMax: { forza: { pesante: 300, macchina: 240, isolamento: 150 }, ipertrofia: { pesante: 180, macchina: 150, isolamento: 120 }, generale: { pesante: 150, macchina: 120, isolamento: 90 } } };
 /* l obiettivo del programma per le fasce di volume e di pausa: forza, generale (salute, dimagrimento) o ipertrofia (come il collaudo) */
 function tipoObiettivoDi(goals) { const g = goals[0]; return g === 'forza' ? 'forza' : ((g === 'salute' || g === 'dimagrimento') ? 'generale' : 'ipertrofia'); }
@@ -155,6 +175,21 @@ function frazionarieSettimana(sedute) {
   sedute.forEach(sd => sd.esercizi.forEach(e => { const cr = creditoSerie(e.name); Object.keys(cr).forEach(g => { tot[g] = (tot[g] || 0) + e.sets * cr[g]; }); }));
   return tot;
 }
+/* REC-01 e SES-01 (W0-T7): le aggiunte (ponte dei femorali, riempimento del tempo, seduta di tirata a corpo libero) rispettano le 48 ore tra due sedute dello stesso grande muscolo e il tetto di
+   serie frazionarie per muscolo in una seduta. Prima mettevano un leg curl il giorno dopo un altra seduta di femorali o portavano il petto oltre le 11 serie. Il conteggio e quello del collaudo:
+   1 serie per il bersaglio, 0,5 per i secondari (creditoSerie). `sedute` sono tutte le sedute della settimana, `sd` quella dove si aggiunge (anche non ancora dentro la lista). */
+const GRUPPI_RECUPERO = ['petto', 'schiena', 'quadricipiti', 'femorali', 'glutei'];   /* i grandi muscoli del collaudo REC-01 (le spalle hanno la loro storia: i deltoidi posteriori stanno anche nei giorni di tirata) */
+function frazGruppoSeduta(sd, g) { return sd.esercizi.reduce((t, e) => t + e.sets * (creditoSerie(e.name)[g] || 0), 0); }
+function giornoSeduta(sd) { return DAYS.indexOf(sd.giorno); }
+function recuperoOk(sd, sedute, nome, sets) {
+  const cr = creditoSerie(nome);
+  return Object.keys(cr).every(g => {
+    const dopo = frazGruppoSeduta(sd, g) + cr[g] * sets;
+    if (dopo > COACH_PARAMETRI.serieMaxMuscoloSeduta) return false;   /* SES-01 */
+    if (GRUPPI_RECUPERO.indexOf(g) === -1 || dopo < PARAM_TEMPO.serieMinRecupero) return true;
+    return !sedute.some(o => o !== sd && giornoSeduta(o) >= 0 && Math.abs(giornoSeduta(o) - giornoSeduta(sd)) === 1 && frazGruppoSeduta(o, g) >= PARAM_TEMPO.serieMinRecupero);   /* REC-01 */
+  });
+}
 /* VOL-02 (ponte di W0-T2; il motore del volume per muscolo e di W2-T1): il volume per gruppo del generatore conta le sinergie per GRUPPO (la spalla vale mezza serie
    per il petto) e non per muscolo, e con piu esercizi per seduta supera il massimo di qualche muscolo (glutei, schiena). Qui, per ogni muscolo sopra il suo massimo
    settimanale, si toglie una serie alla volta all esercizio che lo carica di piu (minimo 2 serie, mai un posto fisso, mai se un altro muscolo che quell esercizio
@@ -165,9 +200,12 @@ function limitaVolumePerMuscolo(sedute, c) {
     const sopra = Object.keys(sett).filter(g => sett[g] > c.volumeMax[GRUPPI_FRAZIONARI[g].classe]).sort((a, b) => (sett[b] - c.volumeMax[GRUPPI_FRAZIONARI[b].classe]) - (sett[a] - c.volumeMax[GRUPPI_FRAZIONARI[a].classe]));
     if (!sopra.length) return;
     const g = sopra[0];
-    const cand = [].concat.apply([], sedute.map(sd => sd.esercizi.filter(e => e.sets > 2 && !e.fisso && !isTimeBased(e.name) && creditoSerie(e.name)[g]).map(e => e)))
+    /* revisione dell onda 0 (M4): il fondamentale della seduta (il primo multiarticolare) si taglia per ultimo e non scende sotto 3 serie (Front Squat 2x5 nel giorno di forza,
+       Military 2x3: il lavoro pesante e quello che conta); si toglie dagli altri esercizi, quello che porta piu serie al muscolo */
+    const fondamentale = (e) => sedute.some(sd => sd.esercizi.find(x => (findExercise(x.name) || {}).type === 'compound' && !isTimeBased(x.name)) === e);
+    const cand = [].concat.apply([], sedute.map(sd => sd.esercizi.filter(e => e.sets > 2 && !e.fisso && !isTimeBased(e.name) && creditoSerie(e.name)[g] && !(fondamentale(e) && e.sets <= 3)).map(e => e)))
       .filter(e => { const cr = creditoSerie(e.name); return Object.keys(cr).every(h => h === g || (sett[h] || 0) - cr[h] >= c.volumeMin[GRUPPI_FRAZIONARI[h].classe]); })
-      .sort((a, b) => creditoSerie(b.name)[g] * b.sets - creditoSerie(a.name)[g] * a.sets)[0];
+      .sort((a, b) => (fondamentale(a) - fondamentale(b)) || (creditoSerie(b.name)[g] * b.sets - creditoSerie(a.name)[g] * a.sets))[0];
     if (!cand) return;
     /* ABB-04: le tirate non meno del 90% delle spinte. Se la serie tolta e di una tirata e rompe il rapporto, se ne toglie una anche a una spinta (collaudo EQ-01) */
     if (strEtirata(cand)) {
@@ -195,46 +233,40 @@ function rinforzaFemorali(c) {
      a settimana (ACSM 2026). Dove manca, una serie in piu al leg curl che c e o un leg curl nuovo (collaudo FRQ-01) */
   const femSeduta = (sd) => sd.esercizi.reduce((t, e) => t + e.sets * (creditoSerie(e.name).femorali || 0), 0);
   const gambe = c.sedute.filter(sd => /lower|legs|fullbody/.test(sd.tipo));
-  for (let giri = 0; giri < 6 && gambe.filter(sd => femSeduta(sd) >= 1.5).length < Math.min(2, gambe.length); giri++) {
-    const sd = gambe.filter(x => femSeduta(x) < 1.5).sort((a, b) => femSeduta(b) - femSeduta(a))[0];
-    const f = sd.esercizi.find(e => flex(e) && e.sets < tetto(e) && !e.fisso);
-    if (f) { f.sets++; if (!dentro(sd)) { f.sets--; break; } continue; }
-    const nome = sd.esercizi.length < c.maxEsercizi && !sd.esercizi.some(flex) ? nomiFlessione().filter(n => usoFlessione(n) < RIPETIZIONI_SETTIMANA_MAX).sort((a, b) => usoFlessione(a) - usoFlessione(b))[0] : null;
-    if (!nome) break;
+  const nuova = (sd) => {   /* un leg curl nuovo nella seduta, solo se c e posto, non sfora il tempo e rispetta le 48 ore e il tetto di serie (W0-T7: REC-01, SES-01) */
+    if (sd.esercizi.length >= c.maxEsercizi || sd.esercizi.some(flex)) return false;
+    const nome = nomiFlessione().filter(n => usoFlessione(n) < maxSettimana(n) && recuperoOk(sd, c.sedute, n, c.setsNuovo)).sort((a, b) => usoFlessione(a) - usoFlessione(b))[0];
+    if (!nome) return false;
     const m = findExercise(nome) || {};
-    sd.esercizi.push({ name: nome, sets: c.setsNuovo, reps: m.reps && m.reps > 8 ? m.reps : 12, weight: m.weight || 0, rest: 75 });
-    if (!dentro(sd)) { sd.esercizi.pop(); break; }
-    strOrdina(sd.esercizi, sd.tipo, c.prefs.priorita);
+    sd.esercizi.push({ name: nome, sets: Math.min(c.setsNuovo, RX_NORDIC.test(senzaEmoji(nome)) ? PARAM_NORDIC.serieMax : 99), reps: ripetizioniFlessione(nome), weight: m.weight || 0, rest: 75 });
+    if (!dentro(sd)) { sd.esercizi.pop(); return false; }
+    strOrdina(sd.esercizi, sd.tipo, c.prefs.priorita);   /* ABB-01: il core resta in fondo */
+    return true;
+  };
+  const piuSerie = (sd, f) => {   /* una serie in piu al leg curl che c e: tetto, tempo e recupero */
+    if (!(f.sets < tetto(f)) || f.fisso || !recuperoOk(sd, c.sedute, f.name, 1)) return false;
+    f.sets++;
+    if (!dentro(sd)) { f.sets--; return false; }
+    return true;
+  };
+  for (let giri = 0; giri < 6 && gambe.filter(sd => femSeduta(sd) >= 1.5).length < Math.min(2, gambe.length); giri++) {
+    const poveri = gambe.filter(x => femSeduta(x) < 1.5).sort((a, b) => femSeduta(b) - femSeduta(a));
+    if (!poveri.some(sd => { const f = sd.esercizi.find(e => flex(e) && e.sets < tetto(e) && !e.fisso); return f ? piuSerie(sd, f) : nuova(sd); })) break;
   }
   for (let giri = 0; giri < 10 && (frazionarieSettimana(c.sedute).femorali || 0) < target; giri++) {
     const su = [].concat.apply([], c.sedute.map(sd => sd.esercizi.filter(e => flex(e) && e.sets < tetto(e) && !e.fisso && dentro(sd)).map(e => ({ sd: sd, e: e }))))
-      .sort((a, b) => a.e.sets - b.e.sets)[0];
-    if (su) { su.e.sets++; if (!dentro(su.sd)) { su.e.sets--; break; } continue; }
+      .sort((a, b) => a.e.sets - b.e.sets);
+    if (su.some(x => piuSerie(x.sd, x.e))) continue;
     /* nessun leg curl da rinforzare: ne entra un secondo in un altra seduta di gambe (non lo stesso esercizio in piu di 2 sedute) */
-    const sd = gambe.filter(x => !x.esercizi.some(flex) && x.esercizi.length < c.maxEsercizi).sort((a, b) => a.esercizi.length - b.esercizi.length)[0];
-    const nome = sd ? nomiFlessione().filter(n => usoFlessione(n) < RIPETIZIONI_SETTIMANA_MAX).sort((a, b) => usoFlessione(a) - usoFlessione(b))[0] : null;
-    if (!nome) break;
-    const m = findExercise(nome) || {};
-    sd.esercizi.push({ name: nome, sets: c.setsNuovo, reps: m.reps && m.reps > 8 ? m.reps : 12, weight: m.weight || 0, rest: 75 });
-    if (!dentro(sd)) { sd.esercizi.pop(); break; }
-    strOrdina(sd.esercizi, sd.tipo, c.prefs.priorita);   /* ABB-01: il core resta in fondo */
+    if (!gambe.filter(x => !x.esercizi.some(flex)).sort((a, b) => a.esercizi.length - b.esercizi.length).some(nuova)) break;
   }
 }
 function riempiTempo(sd, c) {
   const bersaglio = c.minuti * PARAM_TEMPO.quotaMinima;
-  const tipoObiettivo = tipoObiettivoDi([c.obiettivo]);
   const gruppoDi = (e) => (findExercise(e.name) || {}).group;
   const inCoppia = (e, i) => e.superset || (sd.esercizi[i + 1] && sd.esercizi[i + 1].superset);
-  /* 1) pause: 15 secondi alla volta, fino al massimo del tipo (le donne: -15%, come nel resto del programma) */
-  for (let giri = 0; giri < 24 && stimaMinutiSeduta(sd.esercizi) < bersaglio; giri++) {
-    let mosso = false;
-    sd.esercizi.forEach((e, i) => {
-      if (isTimeBased(e.name) || inCoppia(e, i)) return;
-      const tetto = Math.round(PARAM_TEMPO.pausaMax[tipoObiettivo][tipoCarico(e.name)] * (c.donna ? 0.85 : 1) / 15) * 15;
-      if (e.rest < tetto) { e.rest = Math.min(tetto, e.rest + 15); mosso = true; }
-    });
-    if (!mosso) break;
-  }
+  /* 1) (tolto in W0-T7, D-P10: il tempo e un tetto, non un obiettivo) le pause non si allungano per riempire i minuti: restano quelle per tipo di esercizio e di obiettivo
+     (revisione dell onda 0: core a 90-120 s, Goblet Squat a 225 s nel giorno di ipertrofia). Se avanza tempo con il volume al suo posto, la seduta resta piu corta. */
   /* 2) una serie in piu agli isolamenti: i multiarticolari no (ogni serie di panca o di rematore conta anche per spalle, braccia e schiena, e il volume per muscolo e
      gia al massimo), le spalle e il core nemmeno. L isolamento a 2 serie e il primo a poter crescere, finche le serie dirette di quel muscolo restano sotto il tetto,
      nessun muscolo supera il suo massimo settimanale e la seduta resta sotto il tetto di serie per muscolo */
@@ -246,7 +278,7 @@ function riempiTempo(sd, c) {
     const sett = frazionarieSettimana(c.sedute);
     const entro = (e) => { const cr = creditoSerie(e.name); return Object.keys(cr).every(g => (sett[g] || 0) + cr[g] <= c.volumeMax[GRUPPI_FRAZIONARI[g].classe]); };
     const cand = sd.esercizi.filter((e, i) => (findExercise(e.name) || {}).type !== 'compound' && !e.fisso && !isTimeBased(e.name) && !inCoppia(e, i) && e.sets < c.maxSerie &&
-      gruppoDi(e) && gruppoDi(e) !== 'core' && gruppoDi(e) !== 'spalle' && conta[gruppoDi(e)] < COACH_PARAMETRI.serieMaxMuscoloSeduta && entro(e) && diretteSett(e) < PARAM_TEMPO.direteMax)
+      gruppoDi(e) && gruppoDi(e) !== 'core' && gruppoDi(e) !== 'spalle' && conta[gruppoDi(e)] < COACH_PARAMETRI.serieMaxMuscoloSeduta && entro(e) && diretteSett(e) < PARAM_TEMPO.direteMax && recuperoOk(sd, c.sedute, e.name, 1))
       .sort((a, b) => a.sets - b.sets);
     if (!cand.length) break;
     cand[0].sets++;
@@ -259,18 +291,18 @@ function riempiTempo(sd, c) {
     const uso = (n) => c.sedute.filter(x => x.esercizi.some(e => e.name === n)).length;
     /* con le ginocchia dolenti il riempimento non sceglie lui la leg extension (che il regex di RISCHIO lascia passare, REC-04): se serve la mette la copertura per regioni */
     const ginocchia = c.prefs.fastidi.indexOf('ginocchia') !== -1;
-    const punti = EXERCISE_LIBRARY.filter(x => consentito(x.name, c.prefs) && !sd.esercizi.some(e => e.name === x.name) && uso(x.name) < RIPETIZIONI_SETTIMANA_MAX && !isTimeBased(x.name) &&
+    const punti = EXERCISE_LIBRARY.filter(x => consentito(x.name, c.prefs) && !sd.esercizi.some(e => e.name === x.name) && uso(x.name) < maxSettimana(x.name) && !isTimeBased(x.name) &&
       x.group !== 'core' && x.group !== 'spalle' && (!gruppi || adattoAllaSeduta(x, sd.tipo)) && x.type !== 'compound' && !strRidondante(x, sd.esercizi) &&
       !(ginocchia && /leg extension|sissy/i.test(senzaEmoji(x.name))))
       .map(x => {
         const cr = creditoSerie(x.name), sets = c.maxSerie >= 3 ? 3 : 2;
         const dentro = Object.keys(cr).every(g => (sett[g] || 0) + cr[g] * sets <= c.volumeMax[GRUPPI_FRAZIONARI[g].classe]);
         const mancano = Object.keys(cr).reduce((t, g) => t + Math.max(0, c.volumeMin[GRUPPI_FRAZIONARI[g].classe] - (sett[g] || 0)) * cr[g], 0);
-        return { x: x, ok: dentro && mancano > 0, mancano: mancano };
+        return { x: x, ok: dentro && mancano > 0 && recuperoOk(sd, c.sedute, x.name, sets), mancano: mancano };   /* W0-T7: 48 ore e tetto di serie per muscolo in una seduta (REC-01, SES-01) */
       }).filter(y => y.ok).sort((a, b) => b.mancano - a.mancano || (PRIORI[senzaEmoji(b.x.name)] || 0) - (PRIORI[senzaEmoji(a.x.name)] || 0));
     if (!punti.length) break;
     const x = punti[0].x, tipo = tipoCarico(x.name);
-    sd.esercizi.push({ name: x.name, sets: c.maxSerie >= 3 ? 3 : 2, reps: tipo === 'macchina' ? Math.max(8, c.reps) : Math.max(10, c.reps), weight: x.weight || 0, rest: tipo === 'macchina' ? c.restMacchina : c.restIso });
+    sd.esercizi.push({ name: x.name, sets: c.maxSerie >= 3 ? 3 : 2, reps: RX_NORDIC.test(senzaEmoji(x.name)) ? ripetizioniFlessione(x.name) : (tipo === 'macchina' ? Math.max(8, c.reps) : Math.max(10, c.reps)), weight: x.weight || 0, rest: tipo === 'macchina' ? c.restMacchina : c.restIso });
     strOrdina(sd.esercizi, sd.tipo, c.prefs.priorita);
     if (sd.tipo === 'punti') sd.esercizi.sort((a, b) => ((findExercise(a.name) || {}).group === 'core') - ((findExercise(b.name) || {}).group === 'core'));   /* nei punti deboli il core resta in fondo */
   }
@@ -297,6 +329,9 @@ window.buildProgram = function(d) {
   const prefs = { luogo: d.luogo || 'palestra', fastidi: (d.fastidi || []).filter(f => f !== 'nessuno'), sonno: d.sonno || 'bene', attrezzi: d.attrezzi || 'indifferente',
     attrezziPalestra: d.attrezziPalestra !== undefined ? d.attrezziPalestra : (prof0.attrezziPalestra || null), graditi: d.graditi || prof0.graditi || [], odiati: d.odiati || prof0.odiati || [],
     priorita: (d.priorita || prof0.priorita || []).slice(0, 3) };
+  /* B1 (revisione dell onda 0): il Nordic Curl non entra per chi inizia, per i prudenti e per le ginocchia dolenti (esclusi: motivi di sicurezza, non di gusto) */
+  const nordicLib = nomeInLibreria('Nordic Curl');
+  prefs.esclusi = nordicLib && (level === 'principiante' || cauto || prefs.fastidi.indexOf('ginocchia') !== -1) ? [nordicLib] : [];
   const sostituzioni = [];
   const note = [];
   const poco = (Number(d.minutes) || 60) <= 45;
@@ -335,6 +370,7 @@ window.buildProgram = function(d) {
   let senzaSbarra = false;           /* CAS-14: almeno un posto della tirata verticale e stato riempito con il pullover o con una serie in piu di rematore */
   let pulloverMesso = false;         /* CAS-14: almeno un posto e stato riempito con il pullover (lo dice anche la nota dello schema aggiunto, come PRG-21) */
   const senzaSbarraSerieInPiu = [];  /* CAS-14: gli indici delle sedute dove il posto e rimasto vuoto: il rematore prende una serie in piu */
+  const costruite = [];   /* le sedute gia fatte (giorni precedenti): servono alle 48 ore dei riempimenti (W0-T7, REC-01) */
   const sedute = split.giorni.slice(0, d.days).map((tplId, i) => {
     const tpl = WORKOUT_TEMPLATES.find(t => t.id === tplId);
     const usati = [];
@@ -350,7 +386,6 @@ window.buildProgram = function(d) {
     const RIC = (metodoAttivo && metodoAttivo.ricette && metodoAttivo.ricette[tplId]) ? metodoAttivo.ricette : RICETTE;
     const ricetta = tplId === 'punti' ? ricettaPunti(prefs.priorita) : (RIC[tplId] ? RIC[tplId](occ[tplId] || 0) : []);
     occ[tplId] = (occ[tplId] || 0) + 1;
-    let tirataVVuota = false;   /* CAS-14: il posto della tirata verticale non ha esercizi possibili (senza sbarra ne macchine) */
     ricetta.forEach((slot, pos) => {
       if (base.length >= nEs) return;
       const def = SLOT_DEF[slot.replace(/\d$/, '')];
@@ -364,7 +399,7 @@ window.buildProgram = function(d) {
       const prio = (x) => (PRIORI[x.name.replace(EMOJI_TESTA, '')] || 0) + (pesante && tipoCarico(x.name) === 'pesante' ? 3 : 0) - (cauto && tipoCarico(x.name) === 'pesante' ? 3 : 0);
       const migliore = tutti.slice().sort((x, y) => prio(y) - prio(x))[0];
       /* ABB-07: una sola schiena pesante per seduta; non nei metodi essenziali (Starting Strength, StrongLifts, GreySkull: squat e stacco insieme sono il metodo) */
-      const ok = tutti.filter(x => consentito(x.name, prefs) && !(SCHIENA_PESANTE.test(x.name) && pesantiSchiena >= 1 && !(metodoAttivo && metodoAttivo.essenziale)) && !(metodoAttivo && metodoAttivo.leggeri && tipoCarico(x.name) === 'pesante'));
+      const ok = tutti.filter(x => consentito(x.name, prefs) && !(RX_NORDIC.test(senzaEmoji(x.name)) && (usatiSett[x.name] || 0) >= PARAM_NORDIC.sedutePerSettimana) && !(SCHIENA_PESANTE.test(x.name) && pesantiSchiena >= 1 && !(metodoAttivo && metodoAttivo.essenziale)) && !(metodoAttivo && metodoAttivo.leggeri && tipoCarico(x.name) === 'pesante'));
       if (!ok.length) {
         /* SES-03 (ponte di W0-T2): senza stacchi (schiena dolente, niente bilanciere ne cavi) il posto dell hinge lo prende la spinta d anca con carico (hip thrust):
            e il movimento di cerniera dell anca che resta, e la seduta di gambe non ne e priva */
@@ -372,9 +407,14 @@ window.buildProgram = function(d) {
           const hip = EXERCISE_LIBRARY.filter(x => SLOT_DEF.glutSpinta(x) && x.type === 'compound' && consentito(x.name, prefs) && !base.some(y => y.name === x.name)).sort((a, b) => (PRIORI[senzaEmoji(b.name)] || 0) - (PRIORI[senzaEmoji(a.name)] || 0))[0];
           if (hip) { usatiSett[hip.name] = (usatiSett[hip.name] || 0) + 1; base.push({ name: hip.name, weight: hip.weight || 0 }); }
         }
-        /* CAS-14 (ponte di W0-T2, B28): senza sbarra ne macchine il posto della tirata verticale prende il Pullover con Manubrio (dorsali);
-           se non c e nemmeno quello, il rematore della seduta ha una serie in piu (sotto) */
-        if (slot.replace(/\d$/, '') === 'tirataV' && regolaAttiva('CAS-14')) tirataVVuota = true;
+        /* CAS-14 (ponte di W0-T2, B28; W0-T7): senza sbarra ne macchine il posto della tirata verticale prende il Pullover con Manubrio (dorsali, D-P11) SUBITO, al suo posto
+           nella ricetta: conta come uno dei nEs esercizi (sostituisce l ultimo posto, non si aggiunge) ed e protetto dai tagli. Se non c e nemmeno quello (corpo libero, o la spalla
+           dolente), il rematore della seduta ha una serie in piu (sotto) */
+        if (slot.replace(/\d$/, '') === 'tirataV' && regolaAttiva('CAS-14')) {
+          const pull = nomeInLibreria('Pullover con Manubrio');
+          if (pull && consentito(pull, prefs) && !base.some(y => y.name === pull)) { usatiSett[pull] = (usatiSett[pull] || 0) + 1; base.push({ name: pull, weight: (findExercise(pull) || {}).weight || 0, riservaTirataV: true, protetto: true }); senzaSbarra = true; pulloverMesso = true; }
+          else senzaSbarraSerieInPiu.push(i);
+        }
         return;
       }
       const punteggio = (x) => {
@@ -397,13 +437,6 @@ window.buildProgram = function(d) {
       usatiSett[scelta.name] = (usatiSett[scelta.name] || 0) + 1;
       base.push({ name: scelta.name, weight: scelta.weight || 0 });
     });
-    /* CAS-14 (ponte di W0-T2, B28): senza sbarra ne macchine il posto della tirata verticale prende il Pullover con Manubrio (dorsali), in piu degli altri posti
-       della ricetta (il posto vuoto non ne consumava); se non c e nemmeno quello, il rematore della seduta ha una serie in piu (sotto) */
-    if (tirataVVuota) {
-      const pull = nomeInLibreria('Pullover con Manubrio');
-      if (pull && consentito(pull, prefs) && !base.some(y => y.name === pull)) { usatiSett[pull] = (usatiSett[pull] || 0) + 1; base.push({ name: pull, weight: (findExercise(pull) || {}).weight || 0, riservaTirataV: true }); senzaSbarra = true; pulloverMesso = true; }
-      else senzaSbarraSerieInPiu.push(i);
-    }
     /* SES-03 (ponte di W0-T2): ogni seduta ha un multiarticolare di ogni schema del suo tipo (full body: spinta, tirata, squat o hinge; upper: spinta e tirata; lower:
        squat e hinge; push: spinta; pull: tirata). Se i fastidi, gli attrezzi o il taglio dei posti ne hanno tolto uno, entra il migliore possibile, anche oltre nEs */
     if (!metodoAttivo) (SCHEMI_ATTESI[tplId] || []).forEach(k => {
@@ -411,7 +444,7 @@ window.buildProgram = function(d) {
       const e1 = (x) => slots.some(sl => SLOT_DEF[sl](x) && (sl !== 'glutSpinta' || x.type === 'compound'));
       if (base.some(b => { const x = findExercise(b.name); return x && e1(x); })) return;
       const cand = EXERCISE_LIBRARY.filter(x => e1(x) && consentito(x.name, prefs) && !base.some(y => y.name === x.name) && !(SCHIENA_PESANTE.test(x.name) && pesantiSchiena >= 1)).sort((a, b) =>
-        (strRidondante(a, base) - strRidondante(b, base)) || (((usatiSett[a.name] || 0) >= RIPETIZIONI_SETTIMANA_MAX) - ((usatiSett[b.name] || 0) >= RIPETIZIONI_SETTIMANA_MAX)) || ((PRIORI[senzaEmoji(b.name)] || 0) - (cauto && tipoCarico(b.name) === 'pesante' ? 3 : 0)) - ((PRIORI[senzaEmoji(a.name)] || 0) - (cauto && tipoCarico(a.name) === 'pesante' ? 3 : 0)))[0];
+        (strRidondante(a, base) - strRidondante(b, base)) || (((usatiSett[a.name] || 0) >= maxSettimana(a.name)) - ((usatiSett[b.name] || 0) >= maxSettimana(b.name))) || ((PRIORI[senzaEmoji(b.name)] || 0) - (cauto && tipoCarico(b.name) === 'pesante' ? 3 : 0)) - ((PRIORI[senzaEmoji(a.name)] || 0) - (cauto && tipoCarico(a.name) === 'pesante' ? 3 : 0)))[0];
       if (!cand) return;
       if (SCHIENA_PESANTE.test(cand.name)) pesantiSchiena++;
       usatiSett[cand.name] = (usatiSett[cand.name] || 0) + 1;
@@ -421,12 +454,17 @@ window.buildProgram = function(d) {
        (corpo libero con le ginocchia dolenti, per esempio) si riempie con i muscoli della seduta, poi con il core */
     for (let g = 0; base.length < PARAM_NUMERO_ESERCIZI.min && g < 4; g++) {
       const gruppi = GRUPPI_DELLA_SEDUTA[tplId] || null;
-      const libero = (x) => consentito(x.name, prefs) && !base.some(y => y.name === x.name) && (usatiSett[x.name] || 0) < RIPETIZIONI_SETTIMANA_MAX && !(SCHIENA_PESANTE.test(x.name) && pesantiSchiena >= 1) && !(metodoAttivo && metodoAttivo.leggeri && tipoCarico(x.name) === 'pesante');
+      const libero = (x) => consentito(x.name, prefs) && !base.some(y => y.name === x.name) && (usatiSett[x.name] || 0) < maxSettimana(x.name) && !(SCHIENA_PESANTE.test(x.name) && pesantiSchiena >= 1) && !(metodoAttivo && metodoAttivo.leggeri && tipoCarico(x.name) === 'pesante');
       const punto = (x) => (PRIORI[x.name.replace(EMOJI_TESTA, '')] || 0) - (usatiSett[x.name] ? 2 : 0) - (isTimeBased(x.name) ? 1 : 0) + (x.type === 'compound' && tplId !== 'punti' ? 1 : 0);
       const migliore = (lista) => lista.sort((a, b) => punto(b) - punto(a))[0];
-      /* prima un esercizio dei muscoli della seduta che non faccia lo stesso lavoro di uno gia scelto (ABB-02), poi il core, poi anche uno ridondante */
+      /* prima un esercizio dei muscoli della seduta che non faccia lo stesso lavoro di uno gia scelto (ABB-02), poi, nella seduta di tirata, la catena posteriore (femorali e glutei
+         in isolamento: la tirata della schiena a corpo libero e una sola, W0-T7), poi il core (UNO solo per seduta: Dead Bug e Plank insieme non sono lavoro per la schiena), poi anche uno ridondante */
       const dei = EXERCISE_LIBRARY.filter(x => libero(x) && x.group !== 'core' && (!gruppi || adattoAllaSeduta(x, tplId)) && (tplId !== 'punti' || x.type !== 'compound'));
-      const scelto = migliore(dei.filter(x => !strRidondante(x, base))) || migliore(EXERCISE_LIBRARY.filter(x => libero(x) && x.group === 'core')) || migliore(dei);
+      const sdAttuale = { giorno: DAYS[indiciGiorni[i]], esercizi: base.map(y => ({ name: y.name, sets: 3 })) };
+      const affini = tplId === 'pull' ? EXERCISE_LIBRARY.filter(x => libero(x) && x.type !== 'compound' && x.group !== 'core' && ['femorali', 'grande_gluteo'].indexOf(bersaglioDi(x.name)) !== -1 && !isTimeBased(x.name) &&
+        recuperoOk(sdAttuale, costruite, x.name, 3)) : [];
+      const core = base.some(y => (findExercise(y.name) || {}).group === 'core') ? null : migliore(EXERCISE_LIBRARY.filter(x => libero(x) && x.group === 'core'));
+      const scelto = migliore(dei.filter(x => !strRidondante(x, base))) || migliore(affini.filter(x => !strRidondante(x, base))) || core || migliore(dei);
       if (!scelto) break;
       if (SCHIENA_PESANTE.test(scelto.name)) pesantiSchiena++;
       usatiSett[scelto.name] = (usatiSett[scelto.name] || 0) + 1;
@@ -445,7 +483,7 @@ window.buildProgram = function(d) {
     schienaPrima = { idx: indiciGiorni[i], pesa: schienaQui };
 
     let primoComp = true;
-    return {
+    const seduta = {
       giorno: DAYS[indiciGiorni[i]],
       tipo: tplId,
       titolo: tplId === 'punti' ? 'Punti deboli' : (tpl ? tpl.title.split(' — ')[0] : 'Seduta ' + (i + 1)) + (tipoGiorno ? ' ' + tipoGiorno : ''),
@@ -481,10 +519,13 @@ window.buildProgram = function(d) {
         if ((d.parq === 'si' || d.parq === true) && isComp) reps = Math.max(8, Math.min(12, reps));   /* pressione: 60-80%, niente apnea (ACSM) */
         if (donna) rest = Math.max(60, Math.round(rest * 0.85));   /* recupero piu rapido tra le serie (PeerJ 2025) */
         if (isTimeBased(e.name)) reps = meta ? meta.reps : 30;
+        if (RX_NORDIC.test(senzaEmoji(e.name))) { sets = Math.min(sets, PARAM_NORDIC.serieMax); reps = ripetizioniFlessione(e.name); }   /* B1: al massimo 3 serie da 3-6 ripetizioni */
         rest = Math.round(rest / 15) * 15;
-        return { name: e.name, sets: sets, reps: reps, weight: e.weight, rest: rest, fisso: fisso || undefined, riservaTirataV: e.riservaTirataV };
+        return { name: e.name, sets: sets, reps: reps, weight: e.weight, rest: rest, fisso: fisso || undefined, riservaTirataV: e.riservaTirataV, protetto: e.protetto };   /* protetto (W0-T7): il pullover di CAS-14 passa dalla base alle sedute, come le aggiunte di strCopri e del ponte dei femorali */
       })
     };
+    costruite.push(seduta);
+    return seduta;
   });
 
   /* CAS-14 (ponte di W0-T2): dove la tirata verticale non c e e non c e nemmeno il pullover, il rematore ha una serie in piu (al massimo 4, 3 per chi inizia) */
@@ -510,7 +551,7 @@ window.buildProgram = function(d) {
     const ex = cand.find(x => !dove.esercizi.some(y => y.name === x.name)) || cand[0];
     const tipo = tipoCarico(ex.name);
     dove.esercizi.push({ name: ex.name, sets: Math.min(scheme.sets, 3), reps: tipo === 'pesante' ? Math.min(scheme.reps, 8) : Math.max(8, scheme.reps), weight: ex.weight || 0,
-      rest: tipo === 'pesante' ? scheme.restCompound : Math.max(90, Math.round(scheme.restCompound * 0.75)) });
+      rest: tipo === 'pesante' ? scheme.restCompound : Math.max(90, Math.round(scheme.restCompound * 0.75)), protetto: true });   /* W0-T7: la nota dice che e stato aggiunto, EXN-02 e il tempo non lo tolgono */
     presenti[k] = 1;
     note.push('Aggiunto: ' + senzaEmoji(ex.name) + ' \u2014 ogni settimana servono tutti e sei gli schemi di movimento.');
   });
@@ -548,28 +589,39 @@ window.buildProgram = function(d) {
   if (!(metodoAttivo && metodoAttivo.essenziale) && d.days >= 2 && conGambe) {
     const flessioni = ['Leg Curl Seduto', 'Leg Curl Sdraiato', 'Nordic Curl'].map(nomeInLibreria).filter(n => n && consentito(n, prefs));
     const usi = (n) => sedute.filter(sd => sd.esercizi.some(e => e.name === n)).length;
-    let aggiunti = 0;
+    let aggiunti = 0, aggiuntiPonte = 0;
+    const setsFlessione = level === 'principiante' ? 2 : 3;
+    const eFlessione = (e) => /leg curl|nordic/i.test(senzaEmoji(e.name)), ePonte = (e) => /ponte glutei/i.test(senzaEmoji(e.name));
+    /* B1 (revisione dell onda 0): senza macchine ne Nordic Curl (chi inizia, i prudenti, le ginocchia dolenti) non c e una flessione del ginocchio sicura da dare a casa: i femorali restano
+       meno allenati e prendono il ponte glutei (credito 0,5: il ponte a una gamba per chi puo, quello a due gambe per chi inizia o e prudente) dove non c e gia. Le flessioni vere sono di W1-T5 */
+    const ponte = !['Leg Curl Seduto', 'Leg Curl Sdraiato'].some(n => nomeInLibreria(n) && consentito(nomeInLibreria(n), prefs))
+      ? ((level === 'principiante' || cauto) ? ['Ponte Glutei', 'Ponte Glutei a una Gamba'] : ['Ponte Glutei a una Gamba', 'Ponte Glutei']).map(nomeInLibreria).filter(n => n && consentito(n, prefs))[0] : null;
     sedute.filter(sd => /lower|legs|fullbody/.test(sd.tipo)).forEach(sd => {
-      if (sd.esercizi.some(e => SLOT_DEF.hinge(e) || /leg curl|nordic/i.test(senzaEmoji(e.name))) || sd.esercizi.length > nEs + 1) return;
-      const nome = flessioni.filter(n => !sd.esercizi.some(e => e.name === n) && usi(n) < RIPETIZIONI_SETTIMANA_MAX).sort((a, b) => usi(a) - usi(b))[0];
-      if (!nome) return;
-      const m = findExercise(nome) || {};
-      sd.esercizi.push({ name: nome, sets: level === 'principiante' ? 2 : 3, reps: m.reps && m.reps > 8 ? m.reps : 12, weight: m.weight || 0, rest: 75, protetto: true });
-      aggiunti++;
+      if (sd.esercizi.some(e => SLOT_DEF.hinge(e) || eFlessione(e)) || sd.esercizi.length > nEs + 1) return;
+      /* W0-T7: non il giorno dopo un altra seduta dello stesso grande muscolo, e non oltre il tetto di serie per muscolo in una seduta (REC-01, SES-01) */
+      const nome = flessioni.filter(n => !sd.esercizi.some(e => e.name === n) && usi(n) < maxSettimana(n) && recuperoOk(sd, sedute, n, setsFlessione)).sort((a, b) => usi(a) - usi(b))[0];
+      if (nome) {
+        const m = findExercise(nome) || {};
+        sd.esercizi.push({ name: nome, sets: Math.min(setsFlessione, RX_NORDIC.test(senzaEmoji(nome)) ? PARAM_NORDIC.serieMax : 99), reps: ripetizioniFlessione(nome), weight: m.weight || 0, rest: 75, protetto: true });
+        aggiunti++;
+      } else if (ponte && !sd.esercizi.some(ePonte) && usi(ponte) < RIPETIZIONI_SETTIMANA_MAX && recuperoOk(sd, sedute, ponte, COACH_PARAMETRI.serieMaxPrudente)) {
+        const m = findExercise(ponte) || {};
+        sd.esercizi.push({ name: ponte, sets: COACH_PARAMETRI.serieMaxPrudente, reps: Math.min(m.reps || 12, 15), weight: m.weight || 0, rest: 75 });   /* 3 serie anche a chi inizia: 1,5 serie frazionarie di femorali per seduta, la soglia della frequenza (FRQ-01). Non protetto: se la seduta ha troppi esercizi (EXN-02) o i minuti non bastano, e il primo a saltare */
+        aggiuntiPonte++;
+      }
     });
     /* e almeno una flessione del ginocchio nella settimana, anche se ogni seduta ha gia il suo stacco (aggiungiRegione dava 2 serie e solo con 3+ giorni) */
     if (flessioni.length && !settimanaNomi().some(n => /leg curl|nordic/i.test(n))) {
-      const sd = sedute.filter(x => /lower|legs|fullbody/.test(x.tipo) && x.esercizi.length <= nEs + 1).sort((a, b) => a.esercizi.length - b.esercizi.length)[0];
+      const sd = sedute.filter(x => /lower|legs|fullbody/.test(x.tipo) && x.esercizi.length <= nEs + 1 && recuperoOk(x, sedute, flessioni[0], setsFlessione)).sort((a, b) => a.esercizi.length - b.esercizi.length)[0];
       const nome = sd ? flessioni[0] : null;
       if (nome) {
         const m = findExercise(nome) || {};
-        sd.esercizi.push({ name: nome, sets: level === 'principiante' ? 2 : 3, reps: m.reps && m.reps > 8 ? m.reps : 12, weight: m.weight || 0, rest: 75, protetto: true });
+        sd.esercizi.push({ name: nome, sets: Math.min(setsFlessione, RX_NORDIC.test(senzaEmoji(nome)) ? PARAM_NORDIC.serieMax : 99), reps: ripetizioniFlessione(nome), weight: m.weight || 0, rest: 75, protetto: true });
         aggiunti++;
       }
     }
     if (aggiunti) note.push('Femorali: squat e hip thrust non li fanno crescere, serve la flessione del ginocchio (leg curl).');
-    /* con le ginocchia dolenti a casa il Nordic Curl e l unica flessione che c e: si fa piano, e se fa male si salta (la modifica per zona e di W4-T1) */
-    if (aggiunti && prefs.fastidi.indexOf('ginocchia') !== -1 && sedute.some(sd => sd.esercizi.some(e => /nordic/i.test(e.name)))) note.push('Con le ginocchia delicate il Nordic Curl si fa con un cuscino sotto le ginocchia e una discesa lenta: se fa male, salta la serie e passa al ponte glutei.');
+    else if (aggiuntiPonte) note.push(NOTA_FEMORALI_SENZA_LEG_CURL);
   }
   if (regioni && conGambe) {
     if (goals.indexOf('massa') !== -1 || goals.indexOf('glutei') !== -1) aggiungiRegione(/leg extension/i, ['Leg Extension'], sd => /lower|legs|fullbody/.test(sd.tipo),
@@ -678,6 +730,12 @@ window.buildProgram = function(d) {
       const senzaCore = iso.filter(e => (findExercise(e.name) || {}).group !== 'core');   /* il core in fondo si toglie per ultimo (collaudo MIS-01:core) */
       const via = senzaCore.length ? senzaCore[senzaCore.length - 1] : iso[iso.length - 1];
       if (via && sd.esercizi.length > 3) { sd.esercizi.splice(sd.esercizi.lastIndexOf(via), 1); continue; }
+      /* ultima risorsa (collaudo DUR-01, W0-T7): tutto a 2 serie e restano solo aggiunte protette (femorali, polpacci...): se la seduta sfora ancora di oltre il 10% dei minuti
+         dichiarati, l ultima aggiunta protetta che non e core lascia il posto (meglio una copertura in meno che una seduta che non sta nel tempo) */
+      if (minutiDi(sd) > (Number(d.minutes) || 60) * 1.10 && sd.esercizi.length > 3) {
+        const protette = sd.esercizi.filter(e => (findExercise(e.name) || {}).type !== 'compound' && e.protetto && (findExercise(e.name) || {}).group !== 'core');
+        if (protette.length) { sd.esercizi.splice(sd.esercizi.lastIndexOf(protette[protette.length - 1]), 1); continue; }
+      }
       break;
     }
   });
@@ -696,6 +754,17 @@ window.buildProgram = function(d) {
   /* ABB-08 e ABB-09: a tempo sistemato, il fondamentale ha le sue serie e gli stacchi da terra restano a 3 al massimo */
   strFinale({ sedute: sedute, level: level, over65: over65, metodoAttivo: metodoAttivo });
   strBilancia({ sedute: sedute, level: level, over65: over65, note: note, metodoAttivo: metodoAttivo, prefs: prefs }, true);   /* il tempo e le serie spostate possono aver rotto l equilibrio: niente serie in piu */
+  /* DUR-01 (W0-T7): strFinale sposta serie sul fondamentale (le pause lunghe pesano di piu) e dopo il taglio la seduta puo tornare sopra i minuti dichiarati: ultimo giro, solo serie
+     (mai esercizi: la struttura e finita), dagli esercizi non fissi e non prioritari con piu serie */
+  sedute.forEach(sd => {
+    const isPrio = (e) => prio.indexOf((findExercise(e.name) || {}).group) !== -1, compound = (e) => (findExercise(e.name) || {}).type === 'compound';
+    const fondamentale = sd.esercizi.find(e => compound(e) && !isTimeBased(e.name));   /* resta com e: ABB-08 */
+    for (let g = 0; g < 12 && minutiDi(sd) > (Number(d.minutes) || 60) * (1 + PARAM_TEMPO.tolleranzaSforamento); g++) {
+      const cand = sd.esercizi.filter(e => e.sets > 2 && !e.fisso && e !== fondamentale).sort((a, b) => isPrio(a) - isPrio(b) || compound(a) - compound(b) || b.sets - a.sets)[0];
+      if (!cand) break;
+      cand.sets--;
+    }
+  });
   /* ORD-03 (ponte di W0-T2): i grandi gruppi prima dei piccoli (ACSM 2009). Un multiarticolare di spalle o braccia non sta prima di uno squat o di uno stacco,
      salvo il muscolo che l utente ha messo in priorita (ABB-10). Le ricette full body hanno la spinta verticale prima dello squat */
   if (!metodoAttivo) sedute.forEach(sd => {
@@ -717,9 +786,10 @@ window.buildProgram = function(d) {
       strSuperserie(sd);   /* ABB-06: solo antagonisti, mai con un fondamentale pesante */
       /* MAV-02 e MAV-03: il drop set per fare prima solo a chi puo andare vicino al cedimento e mai sul core, a tempo, a peso zero, sugli stacchi */
       if (tecnicheOk) {
-        const iso = es.filter(e => tipoCarico(e.name) === 'isolamento' && !senzaCedimento(e.name));
-        const leggeri = iso.length ? iso : es.filter(e => tipoCarico(e.name) === 'macchina' && !e.tecnica && !senzaCedimento(e.name));
-        if (leggeri.length && ps.intensita !== 'bassa') { leggeri[leggeri.length - 1].tecnica = 'drop'; dropAssegnato = true; }
+        const iso = es.filter(e => tipoCarico(e.name) === 'isolamento' && !senzaCedimentoPer(e.name, prefs.fastidi));
+        const leggeri = iso.length ? iso : es.filter(e => tipoCarico(e.name) === 'macchina' && !e.tecnica && !senzaCedimentoPer(e.name, prefs.fastidi));
+        /* W0-T7 (collaudo DUR-01): il drop set costa tempo (secDrop) e arriva dopo il taglio per il tempo: solo se la seduta ci sta ancora */
+        if (leggeri.length && ps.intensita !== 'bassa' && stimaMinutiSeduta(es) + PARAM_TEMPO.secDrop / 60 <= (Number(d.minutes) || 60) * (1 + PARAM_TEMPO.tolleranzaSforamento)) { leggeri[leggeri.length - 1].tecnica = 'drop'; dropAssegnato = true; }
       }
     }
     const primo = es.find(e => (findExercise(e.name) || {}).type === 'compound');
@@ -727,17 +797,22 @@ window.buildProgram = function(d) {
     const primoGuidato = over65 ? es.find(e => (findExercise(e.name) || {}).type === 'compound' && attrezzoDi(senzaEmoji(e.name)) === 'macchine') : null;
     if (primoGuidato) { primoGuidato.tecnica = 'potenza'; potenzaAssegnata = true; }
     else if (!minore && (parqSi || over65)) es.forEach(e => { if (tipoCarico(e.name) === 'pesante') e.tecnica = 'cluster'; });   /* il cluster non e per i minorenni (matrice MAV 3.3, G1c) */
-    else if (tecnicheOk && primo && tipoCarico(primo.name) === 'pesante' && ps.intensita !== 'bassa' && !senzaCedimento(primo.name)) primo.tecnica = level === 'avanzato' ? 'backoff' : 'amrap';
-    if ((level === 'avanzato' || (level === 'intermedio' && ps.intensita === 'alta')) && !poco && ps.intensita !== 'bassa' && tecnicheOk) { const iso = es.filter(e => tipoCarico(e.name) === 'isolamento' && !senzaCedimento(e.name) && !e.tecnica); if (iso.length) iso[iso.length - 1].tecnica = 'parziali'; }
+    else if (tecnicheOk && primo && tipoCarico(primo.name) === 'pesante' && ps.intensita !== 'bassa' && !senzaCedimentoPer(primo.name, prefs.fastidi)) primo.tecnica = level === 'avanzato' ? 'backoff' : 'amrap';
+    if ((level === 'avanzato' || (level === 'intermedio' && ps.intensita === 'alta')) && !poco && ps.intensita !== 'bassa' && tecnicheOk) { const iso = es.filter(e => tipoCarico(e.name) === 'isolamento' && !senzaCedimentoPer(e.name, prefs.fastidi) && !e.tecnica); if (iso.length) iso[iso.length - 1].tecnica = 'parziali'; }
   });
   /* il metodo scelto decide serie, ripetizioni e pause */
   if (metodoAttivo && metodoAttivo.schema) sedute.forEach(sd => sd.esercizi.forEach((e, i) => {
     delete e.tecnica; metodoAttivo.schema(e, i, sd);
     if (isTimeBased(e.name)) e.reps = (findExercise(e.name) || {}).reps || e.reps;
+    /* i tetti di sicurezza valgono anche col metodo (revisione dell onda 0): il Nordic Curl al massimo 3 serie da 3-6 ripetizioni; minorenni e over 65 al massimo 3 serie (ETA-02, over 65: 8-12 ripetizioni) */
+    if (RX_NORDIC.test(senzaEmoji(e.name))) { e.sets = Math.min(e.sets, PARAM_NORDIC.serieMax); e.reps = ripetizioniFlessione(e.name); }
+    if (over65 || minore) { e.sets = Math.min(e.sets, COACH_PARAMETRI.serieMaxPrudente); if (!isTimeBased(e.name) && !RX_NORDIC.test(senzaEmoji(e.name))) e.reps = over65 ? Math.max(8, Math.min(12, e.reps)) : Math.max(8, Math.min(15, e.reps)); }
     /* MAV-02 e MAV-03 anche per i metodi famosi: l AMRAP di GreySkull, GZCLP e Reddit PPL non e per chi inizia, ne per minorenni, over 65 e modalita prudente, ne per core, tempo, peso zero e stacchi */
-    if (TECNICHE_AL_CEDIMENTO.indexOf(e.tecnica) !== -1 && (!tecnicheOk || senzaCedimento(e.name))) delete e.tecnica;
+    if (TECNICHE_AL_CEDIMENTO.indexOf(e.tecnica) !== -1 && (!tecnicheOk || senzaCedimentoPer(e.name, prefs.fastidi))) delete e.tecnica;
   }));
-  if (tocco) sedute.forEach(sd => TOCCHI[tocco.m.tocco].fa(sd, ps, { tecnicheOk: tecnicheOk, senzaCedimento: senzaCedimento }));
+  /* la Recommended Routine mette 3 serie a tutti (schema): l equilibrio tra spinte e tirate si rifa dopo, a casa dove la tirata e il solo rematore inverso (W0-T7) */
+  if (metodoAttivo && metodoAttivo.id === 'rr') strBilancia({ sedute: sedute, level: level, over65: over65, note: note, metodoAttivo: metodoAttivo, prefs: prefs }, true);
+  if (tocco) sedute.forEach(sd => TOCCHI[tocco.m.tocco].fa(sd, ps, { tecnicheOk: tecnicheOk, senzaCedimento: (n) => senzaCedimentoPer(n, prefs.fastidi) }));
   if (metodoAttivo && metodoAttivo.superserie) sedute.forEach(sd => {
     if (metodoAttivo.id !== 'rr') { strSuperserie(sd); return; }   /* ABB-06; la Recommended Routine ha le sue coppie (trazione + squat, dip + hinge...) */
     const es = sd.esercizi; const accoppiabile = (x) => !isTimeBased(x.name) && (findExercise(x.name) || {}).group !== 'core';   /* SS-02: ne il core ne i tempi in coppia */
@@ -798,7 +873,11 @@ window.buildProgram = function(d) {
       storico: 'Carichi di partenza stimati da quello che sollevi già: si regolano nelle prime sedute.' }[fonteStima]);
   }
 
+  /* B1 (revisione dell onda 0): il tetto del Nordic Curl vale alla fine, qualunque passo abbia aggiunto serie (volume per muscolo, riempimento del tempo, metodo): 3 serie da 3-6 ripetizioni */
+  sedute.forEach(sd => sd.esercizi.forEach(e => { if (RX_NORDIC.test(senzaEmoji(e.name))) { e.sets = Math.min(e.sets, PARAM_NORDIC.serieMax); e.reps = Math.min(e.reps, PARAM_NORDIC.ripetizioniMax); } }));
   sedute.forEach(sd => sd.esercizi.forEach(e => { delete e.protetto; delete e.riservaTirataV; }));   /* ABB-03: serviva solo a non tagliare le aggiunte per il tempo */
+  /* W0-T7 (decisione del committente, SAF-04): il rematore inverso e l unica tirata orizzontale senza attrezzi e resta anche a casa, con la nota che dice dove farlo e la prudenza sul tavolo */
+  if (sedute.some(sd => sd.esercizi.some(e => /rematore inverso/i.test(senzaEmoji(e.name))))) note.push(NOTA_REMATORE_INVERSO);
   /* carico ridotto richiesto dal metodo (es. 8x8 col 70% del carico delle 8 ripetizioni), dopo la stima dai dati del corpo */
   sedute.forEach(sd => sd.esercizi.forEach(e => {
     if (!e.fattoreCarico) return;
