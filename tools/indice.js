@@ -10,6 +10,7 @@ const scripts = [...html.matchAll(/<script src="([^"]+)"/g)].map(m => m[1]);
 const righe = ['# Indice del codice', '',
   'File generato da `tools/indice.js` (`npm run indice`): non si modifica a mano.',
   'Prima di leggere il codice consulta `graphify-out/GRAPH_REPORT.md`, poi il grafo (`graphify-out/graph.json`).',
+  'Chi usa un nome e cosa usa: `npm run -s trova -- nome` (o `docs/mappa-simboli.md`).',
   'Gli script si caricano **in questo ordine** (lo stesso di `index.html`).', ''];
 let cartella = '';
 scripts.forEach((f, i) => {
