@@ -18,6 +18,7 @@
    - ETA-04 sotto i 18 anni nessun giudizio sulla BIA (i valori di riferimento sono da adulti): niente bandiere di prudenza ne testi.
    - MES-06 la prima seduta con un esercizio dopo lo scarico lascia una ripetizione in riserva in piu (rirExtraIntensita).
    - MES-11 il bilancio confronta lo sforzo con il RIR bersaglio che valeva in quella seduta (rpeBersaglioSeduta).
+   W1-T3: nessun involucro. INT-04 e la fase 70 della catena 'carico', INT-05 la fase 30 di 'dopoSeduta' (regia/fasi.js, piano B.3).
    Le prove, con la loro forza, stanno in docs/ricerca-struttura-e-intensita.md.
    ============================================================ */
 const PARAM_INTENSITA = {
@@ -85,17 +86,17 @@ window.rirExtraIntensita = function(nome) {
   return piu;
 };
 
-/* INT-04: prima volta con un esercizio, una serie in meno (min 2) */
-const _caricoProssimoPrimaInt = window.caricoProssimo;
-window.caricoProssimo = function(nome, base, repsTarget, setsBase) {
-  const r = _caricoProssimoPrimaInt(nome, base, repsTarget, setsBase);
-  if (!r || r.tipo !== 'nuovo' || isTimeBased(nome) || !regolaAttiva('INT-04')) return r;
+/* INT-04: prima volta con un esercizio, una serie in meno (min 2). Fase 70 INT della catena 'carico' (regia/fasi.js, W1-T3): l ultima,
+   dopo i carichi (10), gli aggiusti (50) e RIC (60); prima era un involucro di caricoProssimo. */
+function primaVoltaUnaSerieInMeno(r, c) {
+  if (!r || r.tipo !== 'nuovo' || isTimeBased(c.nome) || !regolaAttiva('INT-04')) return r;
   if (r.sets > 2) {
     r.sets = Math.max(2, r.sets - 1);
     r.motivo += ' • prima volta: una serie in meno, le prime sedute fanno più indolenzimento';
   }
   return r;
-};
+}
+registraFase('carico', 70, 'INT', primaVoltaUnaSerieInMeno);
 
 /* INT-05: bilancio delle prime due sedute del programma */
 function sedutePrimeDelProgramma() {
@@ -140,13 +141,12 @@ window.bilancioPrimeSedute = function() {
   localStorage.setItem(PROFILE_KEY(), JSON.stringify(p));
   return p.calibrazione;
 };
-const _imparaDallaSedutaPrimaInt = imparaDallaSeduta;
-imparaDallaSeduta = function(list) {
-  _imparaDallaSedutaPrimaInt(list);
+/* INT-05 dopo la seduta: fase 30 INT-05 del punto 'dopoSeduta' (dopo gli stalli, 10, e la taratura del RIR, 20); prima era un involucro di imparaDallaSeduta */
+registraFase('dopoSeduta', 30, 'INT-05', () => {
   let r = null;
   try { r = bilancioPrimeSedute(); } catch (err) {}
   if (r && typeof showUndo === 'function') {
     const e = (getProfile() || {}).esigenza || {};
     showUndo(trP({ alta: 'Prime due sedute: era tosta, abbasso un po’ l’intensità (ora %s%).', bassa: 'Prime due sedute: eri sotto il bersaglio, alzo un po’ l’intensità (ora %s%).', giusta: 'Prime due sedute: intensità giusta, resto al %s%.' }[r.esito], Math.round((e.valore || 1) * 100)), null, 6000);
   }
-};
+});

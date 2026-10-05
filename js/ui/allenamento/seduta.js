@@ -23,19 +23,15 @@ function ultimaVoltaTesto(nome) {
   return 'Ultima volta: ' + fatte.map(x => x.weight + '\u00D7' + x.reps).join(' \u00B7 ');
 }
 
-/* 1RM stimato con la formula di Epley: affidabile fino a circa 12 ripetizioni */
-function unoRM(peso, reps) {
-  peso = Number(peso) || 0; reps = Number(reps) || 0;
-  if (peso <= 0 || reps <= 0) return 0;
-  if (reps === 1) return peso;
-  return Math.round(peso * (1 + Math.min(reps, 12) / 30) * 10) / 10;
-}
+/* 1RM stimato con la formula di Epley: il calcolo e di e1rm (carichi/e1rm.js, W1-T3; stessi numeri). unoRM resta solo per scheda-quattro-sezioni.js,
+   che la chiama ancora (da togliere quando si tocca quel file) */
+function unoRM(peso, reps) { return e1rm(peso, reps); }
 
 function migliorUnoRM(nome) {
   let best = 0;
   loadHistory().forEach(h0 => (h0.sessione || []).forEach(e => {
     if (e.name !== nome) return;
-    e.sets.forEach(s => { if (s.done) best = Math.max(best, unoRM(s.weight, s.reps)); });
+    e.sets.forEach(s => { if (s.done) best = Math.max(best, e1rm(s.weight, s.reps)); });
   }));
   return best;
 }
@@ -44,7 +40,7 @@ function migliorUnoRM(nome) {
 function controllaRecord(ex, set) {
   if (!set.done || isTimeBased(ex.name)) return;
   const prima = migliorUnoRM(ex.name);
-  const ora = unoRM(set.weight, set.reps);
+  const ora = e1rm(set.weight, set.reps);
   if (prima > 0 && ora > prima && ora > (ex.recordSeduta || 0)) {
     ex.recordSeduta = ora;
     showUndo('\u{1F3C6} Nuovo record: ' + set.weight + ' kg \u00D7 ' + set.reps + ' (1RM stimato ' + ora + ' kg)');
