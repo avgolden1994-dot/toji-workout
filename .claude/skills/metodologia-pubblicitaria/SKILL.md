@@ -168,7 +168,11 @@ Esclude imposte sul reddito e commercialista.
 
 **Controllo dei numeri**: i prezzi suggeriti non cambiano, ma i conti mostrano che sotto circa 10.000 di pubblico il rientro di 485 € con le vendite dirette è molto improbabile (servono 70+ pagatori; il modello ne prevede una manciata). Dillo chiaramente all'utente: sotto quella soglia 3in è un progetto personale, non un investimento, e il motivo per pubblicare resta il valore dell'app, non il rientro. I rinnovi annuali aggiungono ricavi dal secondo anno (retention annuale 23-36%, VIA TERZI). Le conversioni con prova Pro di 2 settimane possono differire dai benchmark (trial più lunghi convertono meglio: 17-32 giorni 42,5% contro <4 giorni 25,5%, blog RC via estratto; trial → pagante 35-37,7%, sintesi discordanti).
 
-**Modello DECISO (2026-10-05)**: Pro con prova gratuita di alcune settimane (valore operativo: 2 settimane, durata da rivedere; RevenueCat via terzi indica che i trial di 17-32 giorni convertono meglio dei <4 giorni, fonte non letta direttamente) più codice promozionale con sconto -80% (offer code Apple, tipo Pay as you go o Pay up front, per canale).
+**Modello DECISO (2026-10-05)**: Pro con **abbonamento annuale + lifetime** (entrambi), prova gratuita come introductory offer di Apple (2 settimane se App Store Connect la consente, DA CONFERMARE; alternative 1 settimana o 1 mese; RevenueCat via terzi indica che i trial di 17-32 giorni convertono meglio dei <4 giorni, fonte non letta direttamente) più codice promozionale con sconto -80% (offer code Apple, tipo Pay as you go o Pay up front, per canale). Tip jar tolta dalla v1; nessuna analisi: metriche da App Store Connect e riscatto dei codici. Scheda completa: `docs/marketing/decisioni-modello-pro.md`.
+
+**Perimetro gratis/Pro (decisione dell'utente)**: GRATIS = registrazione sedute, timer, Live Activity, notifiche, libreria esercizi, programma base, export e cancellazione dati (mai a pagamento), funzioni native (devono restare gratuite: guideline 4.2) e fino a 2 allenamenti/piani generati. PRO = generazione illimitata, calendario, uso del calendario BIA, progressione dei carichi, statistiche avanzate e nuove funzioni Pro continue (valore ricorrente, contro il rischio 3.1.2(a)). La PWA web resta per ora tutta gratuita: nei testi distinguere «versione iOS» e «web». Da chiarire: cosa significa «2 allenamenti» e cosa succede ai dati calendario/BIA a fine prova (raccomandato: sola lettura ed esportabili).
+
+**Sequenza: spesa zero fino al segnale.** Non scrivere il codice di acquisto né pagare i 99 $ prima del segnale dei 30 giorni (150 iscritti in lista d'attesa o 300 utenti PWA con buon ritorno a 7 giorni). Lavoro stimato dopo il segnale: 15-25 h di sviluppo + circa 4 h in App Store Connect (stima).
 
 **Netti con sconto -80%** (stessa formula, prezzo × 0,2; la prima annualità/periodo scontato):
 
@@ -214,7 +218,9 @@ Uno sconto -80% abbassa molto il netto e allunga il rientro dei ~485 €: va ris
 | Recensori | RECENSORI | Free | Riscatti; nessuna richiesta di recensione positiva |
 | Lancio | LANCIO | Pay up front (sconto -80%, decisione 2026-10-05) | Riscatti nel primo mese |
 
-Lo sconto -80% è limitato a lancio, recensori, palestre e trainer, a durata limitata; i canali social usano Free (prolungamento prova) o nessun codice. Netti scontati in sez. 6.
+Lo sconto -80% è limitato a lancio, recensori, palestre e trainer, a durata limitata; i canali social usano Free (prolungamento prova) o nessun codice. Netti scontati in sez. 6. Dal 29/10/2025 gli offer code valgono anche per il lifetime (non consumabile); il riscatto in app richiede iOS 16.3 e il plugin non apre il foglio di riscatto (passa da App Store/URL, poi `getPurchases` all'avvio: da provare in sandbox).
+
+**Caso famiglia, solo OPZIONE NON DECISA**: un codice -90% (netti: 6,99 -> 0,49; 9,99 -> 0,70; 14,99 -> 1,04; 19,99 -> 1,39) limitato a 3 riscatti (limite da verificare in ASC) si sovrappone a Family Sharing di Apple (fino a 5 persone senza pagare di nuovo). Opzioni A/B/C e raccomandazione (A: Family Sharing solo sul lifetime, nessun codice famiglia) in `docs/marketing/decisioni-modello-pro.md` sez. 4.
 
 **Regole**:
 - Nessun incentivo condizionato a una recensione positiva (5.6.3). Il codice si dà senza condizioni sul contenuto del giudizio.
@@ -285,14 +291,16 @@ Data della verifica: 2026-10-05. Da riverificare prima di decisioni di prezzo.
 | 4 | Tempo | «Il necessario», nessun tetto; 3 ore/settimana solo come ritmo minimo di partenza (sez. 3) |
 | 5 | Volto | NO: app + testo, video delle funzionalità con hook di suspense (sez. 3) |
 | 6 | Tono | Mix di 4 pilastri, voce coerente, marchio resiliente (sez. 2) |
-| - | Modello | Pro con prova di alcune settimane (operativo 2, rivedibile) + offer code -80% riservato (sez. 6-7) |
+| - | Modello | Pro: annuale + lifetime; prova come introductory offer Apple (2 settimane se consentito, da confermare); offer code -80% riservato; tip jar tolta; nessun analytics; StoreKit 2 senza RevenueCat; PWA gratuita per ora (sez. 6-7, scheda `docs/marketing/decisioni-modello-pro.md`) |
+| - | Sequenza | Spesa zero fino al segnale dei 30 giorni: niente codice di acquisto e niente 99 $ prima (sez. 6) |
 | - | Ordine delle skill | Delegato all'agente: vedi `docs/marketing/ROADMAP-SKILL.md` |
 
 ### Decisioni aperte (chiedi all'utente, una alla volta)
 
 | # | Domanda | Perché conta |
 |---|---|---|
-| 1 | **DIVERGENZA da riconciliare, PRIMA COSA DA DECIDERE prima del TestFlight pubblico**: i docs del repo (`piano-lancio-appstore.md` sez. 8, checklist 08) dicono "gratis + tip jar, niente Pro, niente analytics". La scelta di modello dell'utente è Pro con prova + offer code, ma la riconciliazione con i docs non è stata chiusa esplicitamente | Va aggiornato il piano, la checklist 08, la privacy "Data Not Collected" (analytics solo anonimi), le note per il revisore, e vanno previsti abbonamento, lifetime e offer code in App Store Connect. Finché non è fatto, non promettere il Pro in pubblico |
+| 1 | **Modello Pro DECISO; restano da aggiornare i docs del repo** (`piano-lancio-appstore.md` sez. 8 e le altre, checklist 08...), che dicono ancora "gratis + tip jar": elenco puntuale in `docs/marketing/decisioni-modello-pro.md` sez. 6 (modifiche non ancora eseguite) | Finché i docs non sono allineati, non promettere il Pro in pubblico |
+| 1b | Aperte sul Pro: significato di «2 allenamenti»; dati calendario/BIA a fine prova; durata della prova; scelta famiglia A/B/C (raccomandata A); coerenza testi PWA vs iOS | Vedi scheda sez. 2 e 4 |
 | 7 | Soglie a gradini (sez. 5): approvi 50/100/10%? | Sono mie stime |
 | 8 | Strumento di analytics anonimo | Verifica del fornitore, "Data Not Collected" |
 | 9 | Livello di inglese dell'utente (revisione en); revisione madrelingua de | Pubblicazione in en senza revisione |
@@ -300,7 +308,7 @@ Data della verifica: 2026-10-05. Da riverificare prima di decisioni di prezzo.
 ### Come usare questa skill
 
 Ordine dei passi:
-1. Leggi le decisioni prese e quelle aperte; chiedi ciò che manca; non procedere con prezzi finché la divergenza (n. 1) non è almeno annotata.
+1. Leggi le decisioni prese e quelle aperte; chiedi ciò che manca; non procedere con prezzi finché i docs non sono allineati al modello Pro (n. 1) e ricorda la sequenza «spesa zero fino al segnale».
 2. Imposta il test di 30 giorni (sez. 5): strumenti di misura, link per canale, pagina lista d'attesa.
 3. Produci i contenuti (sez. 3): un video verticale a settimana, riusato sui 3 canali, in bozza.
 4. Per ogni bozza applica la checklist (sez. 8); riporta all'utente l'esito riga per riga.
