@@ -85,7 +85,8 @@ function normalizeHistoryEntry(session) {
     date: session.date,
     berserk: !!session.berserk,
     feedback: session.feedback || undefined,
-    commentoIA: session.commentoIA && session.commentoIA.testo ? { testo: String(session.commentoIA.testo), data: session.commentoIA.data || '' } : undefined,
+    /* commentoIA: conservato per le sedute salvate con il vecchio Coach IA (rimosso); non viene più mostrato */
+    commentoIA: session.commentoIA &&session.commentoIA.testo ? { testo: String(session.commentoIA.testo), data: session.commentoIA.data || '' } : undefined,
     minuti: Number(session.minuti) || undefined,
     prontezza: session.prontezza !== undefined && session.prontezza !== null ? session.prontezza : undefined,
     interrotta: session.interrotta ? true : undefined,

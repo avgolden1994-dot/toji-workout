@@ -477,20 +477,12 @@ _solo istruzioni, nessun nome pubblico_
 
 `mostraSessione()` · `window.openDoneView()` · `window.openHistoryDetail()` · `window.closeDoneView()`
 
-## js/coach
-
-### 107. `js/coach/coach-ia.js` — Coach IA
-
-`COACH_IA_URL` · `IA_CONSENT_KEY` · `IA_DEVICE_KEY` · `TESTI_IA` · `window.coachIAAttivo()` · `window.setCoachIA()` · `htmlPrivacyIA()` · `deviceIA()` · `serieCompatte()` · `nomePulito()` · `contestoSeduta()` · `chiamaCoachIA()` · `iaInCorso` · `window.iaErrore()` · `window.commentaSeduta()` · `aggiornaBoxIA()` · `window.htmlCommentoIA()`
-
-## js/ui
-
-### 108. `js/ui/esporta-ics.js` — Esportazione verso calendari (.ics)
+### 107. `js/ui/esporta-ics.js` — Esportazione verso calendari (.ics)
 
 `icsEscape()` · `icsFold()` · `icsData()` · `window.buildIcs()` · `window.exportIcs()` · `linkGoogle()` · `aggiornaAiutoIcs()`
 
 ## js
 
-### 109. `js/avvio.js` — Avvio: ultimo file caricato
+### 108. `js/avvio.js` — Avvio: ultimo file caricato
 
 _solo istruzioni, nessun nome pubblico_

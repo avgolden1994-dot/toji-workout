@@ -22,7 +22,6 @@ function mostraSessione(s) {
   let html = '<div class="mc-done-box"><div class="mc-done-t">\u2713 Completato</div>' +
     '<div class="dv-meta">' + escapeHtml(s.doneAt || '') + '</div>' +
     (vol > 0 ? '<div class="dv2-tot">Volume totale <b>' + fmt(vol) + ' kg</b></div>' : '') + '</div>';
-  html += '<div id="ia-box">' + htmlCommentoIA(s.id) + '</div>';
 
   if (conDettaglio) {
 

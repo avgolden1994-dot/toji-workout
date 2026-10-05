@@ -349,7 +349,6 @@ window.setConsenso = function(si, primoAvvio) {
 window.revocaConsenso = function() {
   const cancella = confirm('Consenso revocato: il coach smette di usare i tuoi dati.\n\nVuoi anche cancellare il profilo e i referti BIA salvati?');
   setConsenso(false, false);
-  try { localStorage.setItem('tz_consenso_ia', 'no'); } catch (e) {}
   if (cancella) {
     try {
       localStorage.removeItem(PROFILE_KEY());
