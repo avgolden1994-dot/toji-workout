@@ -30,6 +30,10 @@ Da fare più avanti, in ordine: privacy e dichiarazioni dei dati, guscio Capacit
 
 Piano dettagliato e checklist: [`piano-lancio-appstore.md`](piano-lancio-appstore.md).
 
+## Fase 6 — Coach v2 (piano a ondate, in corso)
+Piano: [`piano-coach-v2.md`](piano-coach-v2.md); decisioni, che valgono dove i due documenti non coincidono: [`coach-v2-decisioni.md`](coach-v2-decisioni.md); soglie del collaudo per onda: `tools/cancello-collaudo.json` (`npm run cancello`).
+- **Onda 0 — strumenti e bug netti** (integrata il 2026-10-05, etichetta `coach-v2-onda-0`, `CACHE_NAME` `3in-v12`; criteri del collaudo 1.1). Collaudo, matrice standard (10.800 profili): programmi con almeno un fallimento grave (`gravi_pesata`) **35,8% → 2,2%**; a zero SAF-01, RIR-02, RIR-03, EXN-01, MIS-01 (quadricipiti, femorali), TEC-01; VOL-01:femorali 57,4 → 20,1; FRQ-01:femorali 31,4 → 5,3; EQ-03:rapporto 38,2 → 5,5; DUR-02 82,8 → 63,2 (soglia dell'onda 64: il tempo è un tetto, D-P10). Prove: `npm run controlla` verde, `npm run test:browser` 20 file su 21. **Aperti**: il cancello non passa (SAF-04:corpo 14,9%, il rematore inverso senza sbarra; a casa e a corpo libero peggiorano EQ-01 11,5 → 16,9, RID-02 13,8 → 19,0, VOL-01:schiena, EQ-02:verticale; in `tests/browser/coerenza-schede.js` ABB-02, ABB-03 e ABB-04; e 6 classi per 0,5-1,5 punti). Cause e correzioni proposte (task W0-T7, con W1-T5 per la libreria) nel report di INT-0.
+
 ## Regole di lavoro
 - Una PR = un argomento. La ristrutturazione non si mescola con le modifiche al coach.
 - Prima di aprire una PR: `npm run controlla`.

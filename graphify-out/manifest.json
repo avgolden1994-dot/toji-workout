@@ -24,10 +24,10 @@
     "semantic_hash": "1ed12c3f07f081e96eda6ba806325c6f"
   },
   "js/coach/biomeccanica.js": {
-    "mtime": 1791160530.8492632,
-    "seen": 1791187849.9967318,
-    "ast_hash": "cafa286c65c8c897c2987fc87359cc44",
-    "semantic_hash": "cafa286c65c8c897c2987fc87359cc44"
+    "mtime": 1791192399.2956238,
+    "seen": 1791200553.1602573,
+    "ast_hash": "eca7a48caba97c3d7dd8f7c93a22916f",
+    "semantic_hash": ""
   },
   "js/coach/carichi/partenza.js": {
     "mtime": 1791160530.8492632,
@@ -36,16 +36,16 @@
     "semantic_hash": "59081f7a2ec93563f8b20e9e836514f2"
   },
   "js/coach/carichi/progressivo.js": {
-    "mtime": 1791160530.8496146,
-    "seen": 1791187849.9967344,
-    "ast_hash": "a84eb0937a412b8700b92af93daf4a8b",
-    "semantic_hash": "a84eb0937a412b8700b92af93daf4a8b"
+    "mtime": 1791193685.4477003,
+    "seen": 1791200553.1602626,
+    "ast_hash": "9fe8b6aed8d88150d52a1252075eed0b",
+    "semantic_hash": ""
   },
   "js/coach/catalogo-regole.js": {
-    "mtime": 1791160530.8496146,
-    "seen": 1791187849.9967358,
-    "ast_hash": "6bbe5b6f4de1e1d00ddc930f9b3530ab",
-    "semantic_hash": "6bbe5b6f4de1e1d00ddc930f9b3530ab"
+    "mtime": 1791200488.096305,
+    "seen": 1791200553.160265,
+    "ast_hash": "6a977ef4d250f7c7f4e1d5ec63b93e9e",
+    "semantic_hash": ""
   },
   "js/coach/coach-ia.js": {
     "mtime": 1791160530.8496146,
@@ -54,28 +54,28 @@
     "semantic_hash": "518c03d7101ada6a3fd2b4b0b11ed1bf"
   },
   "js/coach/compone.js": {
-    "mtime": 1791160530.8496146,
-    "seen": 1791187849.9967387,
-    "ast_hash": "224ac92cf091c92cbc244aa7a6b7e536",
-    "semantic_hash": "224ac92cf091c92cbc244aa7a6b7e536"
+    "mtime": 1791195171.9117885,
+    "seen": 1791200553.1602707,
+    "ast_hash": "15b791e37e5943b3179884e5e75b8b4b",
+    "semantic_hash": ""
   },
   "js/coach/dolore-mattina.js": {
-    "mtime": 1791160530.8496146,
-    "seen": 1791187849.9967396,
-    "ast_hash": "21012868bf526a08779b0dc9f2f88949",
-    "semantic_hash": "21012868bf526a08779b0dc9f2f88949"
+    "mtime": 1791193685.4477003,
+    "seen": 1791200553.1602726,
+    "ast_hash": "cfa399dbe4b419c74d4a3e37430358d5",
+    "semantic_hash": ""
   },
   "js/coach/esigenza.js": {
-    "mtime": 1791160530.8496146,
-    "seen": 1791187849.9967406,
-    "ast_hash": "ce875efc9f4744c1c770bd0c8e369816",
-    "semantic_hash": "ce875efc9f4744c1c770bd0c8e369816"
+    "mtime": 1791192399.1836238,
+    "seen": 1791200553.1602747,
+    "ast_hash": "271b6198685d6975317394b0e3e8521c",
+    "semantic_hash": ""
   },
   "js/coach/intensita.js": {
-    "mtime": 1791160530.8496146,
-    "seen": 1791187849.9967418,
-    "ast_hash": "ed69550ce2da6e399f535413565e530b",
-    "semantic_hash": "ed69550ce2da6e399f535413565e530b"
+    "mtime": 1791192399.1836238,
+    "seen": 1791200553.1602764,
+    "ast_hash": "132d564c2a2b82696725eac7f28d139c",
+    "semantic_hash": ""
   },
   "js/coach/metodi-epoca-oro.js": {
     "mtime": 1791160530.8496146,
@@ -84,10 +84,10 @@
     "semantic_hash": "ed0b8148f0aaf0ee48af571d201240eb"
   },
   "js/coach/metodi-momenti.js": {
-    "mtime": 1791160530.8496146,
-    "seen": 1791187849.9967437,
-    "ast_hash": "d4baa82e1054aeefe72e2f0722f9de27",
-    "semantic_hash": "d4baa82e1054aeefe72e2f0722f9de27"
+    "mtime": 1791195171.9117885,
+    "seen": 1791200553.160281,
+    "ast_hash": "c5561c161f6e795b603ddbb3a1e97f97",
+    "semantic_hash": ""
   },
   "js/coach/mi-sento-male.js": {
     "mtime": 1791160530.8496146,
@@ -102,10 +102,10 @@
     "semantic_hash": "cf7d9491ce0a608b30d341d0382c493d"
   },
   "js/coach/parametri.js": {
-    "mtime": 1791160530.8496146,
-    "seen": 1791187849.9967463,
-    "ast_hash": "57d120db84df023892356a30287f27d9",
-    "semantic_hash": "57d120db84df023892356a30287f27d9"
+    "mtime": 1791199346.0058544,
+    "seen": 1791200553.1602886,
+    "ast_hash": "451d0d87ecd4ed1b3366d7c4fda49592",
+    "semantic_hash": ""
   },
   "js/coach/programma/alternative.js": {
     "mtime": 1791180122.9200084,
@@ -120,21 +120,21 @@
     "semantic_hash": "224f3a23363d5ea13e2b9d9f11d95fe5"
   },
   "js/coach/programma/motore.js": {
-    "mtime": 1791180122.9200084,
-    "seen": 1791187849.9967494,
-    "ast_hash": "7ca3e815e2f093eda2e0102e7ca22bb0",
+    "mtime": 1791192399.2996237,
+    "seen": 1791200553.1602952,
+    "ast_hash": "b9df745efeac81a6be8268a0da379d55",
     "semantic_hash": ""
   },
   "js/coach/programma/ricette.js": {
-    "mtime": 1791180122.9200084,
-    "seen": 1791187849.99675,
-    "ast_hash": "b4eb8ea38c72a4d383a8d1fd7097a9e0",
+    "mtime": 1791199346.008104,
+    "seen": 1791200553.160297,
+    "ast_hash": "952513e0fe1af9ed2555181ada05df73",
     "semantic_hash": ""
   },
   "js/coach/programma/schemi.js": {
-    "mtime": 1791180122.9240084,
-    "seen": 1791187849.996751,
-    "ast_hash": "41c28a02e4ec72540490abf58e0f4648",
+    "mtime": 1791192399.4596238,
+    "seen": 1791200553.1602986,
+    "ast_hash": "88149b5a715a9da2d4fcdd2b5d69e71e",
     "semantic_hash": ""
   },
   "js/coach/programma/struttura-pro.js": {
@@ -144,10 +144,10 @@
     "semantic_hash": "ca843df7289cc50fd604e84669cef4c4"
   },
   "js/coach/prontezza.js": {
-    "mtime": 1791160530.8518329,
-    "seen": 1791187849.9967535,
-    "ast_hash": "d0911f37a11c8ce71c0cbc6333512ae7",
-    "semantic_hash": "d0911f37a11c8ce71c0cbc6333512ae7"
+    "mtime": 1791192399.1836238,
+    "seen": 1791200553.1603038,
+    "ast_hash": "1328229cb3ef116d24ffadc9ec0fedbb",
+    "semantic_hash": ""
   },
   "js/coach/psicologia.js": {
     "mtime": 1791180122.9240084,
@@ -156,9 +156,9 @@
     "semantic_hash": ""
   },
   "js/coach/questionario-decisioni.js": {
-    "mtime": 1791180122.9240084,
-    "seen": 1791187849.9967554,
-    "ast_hash": "b8f37b1269064d6699609de74f30d961",
+    "mtime": 1791192399.2996237,
+    "seen": 1791200553.1603084,
+    "ast_hash": "b6a86fa1573ee8f0a546d1d59d86e270",
     "semantic_hash": ""
   },
   "js/coach/regole-nuove.js": {
@@ -168,15 +168,15 @@
     "semantic_hash": "353b7abd2bbda42a50c8977178baf278"
   },
   "js/coach/regole-ricerca.js": {
-    "mtime": 1791160530.8518329,
-    "seen": 1791187849.9967575,
-    "ast_hash": "ca79e24c7e12dcf0b048d9864c586fb1",
-    "semantic_hash": "ca79e24c7e12dcf0b048d9864c586fb1"
+    "mtime": 1791199360.9244592,
+    "seen": 1791200553.1603131,
+    "ast_hash": "ed8e0704dcf06b65954831bed500a9a0",
+    "semantic_hash": ""
   },
   "js/coach/repertorio.js": {
-    "mtime": 1791180122.9240084,
-    "seen": 1791187849.9967582,
-    "ast_hash": "4e3a8babb145a6d19eb50c87551009cf",
+    "mtime": 1791199360.920238,
+    "seen": 1791200553.1603153,
+    "ast_hash": "696129e71872ba998fd0f424b0b53e13",
     "semantic_hash": ""
   },
   "js/coach/stato.js": {
@@ -264,10 +264,10 @@
     "semantic_hash": ""
   },
   "js/core/storage.js": {
-    "mtime": 1791160530.8544357,
-    "seen": 1791187849.9967735,
-    "ast_hash": "93e4bc2800a894ca949aa39297813123",
-    "semantic_hash": "93e4bc2800a894ca949aa39297813123"
+    "mtime": 1791193685.4517002,
+    "seen": 1791200553.1603491,
+    "ast_hash": "a2188c7643b1e9f9a49f77607c66c294",
+    "semantic_hash": ""
   },
   "js/core/utility.js": {
     "mtime": 1791180122.9240084,
@@ -276,9 +276,9 @@
     "semantic_hash": ""
   },
   "js/dati/dettagli-esercizi.js": {
-    "mtime": 1791180122.9240084,
-    "seen": 1791187849.9967752,
-    "ast_hash": "2a92b29631c77e74567dd27006302b64",
+    "mtime": 1791192399.4596238,
+    "seen": 1791200553.160354,
+    "ast_hash": "0807f32a5378f48be7707dde3d677141",
     "semantic_hash": ""
   },
   "js/dati/disegni-esercizi.js": {
@@ -288,9 +288,9 @@
     "semantic_hash": ""
   },
   "js/dati/libreria-esercizi.js": {
-    "mtime": 1791180122.9280086,
-    "seen": 1791187849.996778,
-    "ast_hash": "19489ffdff86780586c2c7bb61ac3b98",
+    "mtime": 1791192399.4596238,
+    "seen": 1791200553.1603582,
+    "ast_hash": "cdb6bbfbd242c8ca7410005f382d399c",
     "semantic_hash": ""
   },
   "js/dati/scheda-unica.js": {
@@ -312,9 +312,9 @@
     "semantic_hash": "75d20cdc3fc03a9d5b489b3a77ad487e"
   },
   "js/dati/schede-tecniche.js": {
-    "mtime": 1791180122.9280086,
-    "seen": 1791187849.9967818,
-    "ast_hash": "9685eb98f65d11baee890669b691e538",
+    "mtime": 1791199379.6902282,
+    "seen": 1791200553.160366,
+    "ast_hash": "09ddb4ae070a5fdeeb0cd4171c190cab",
     "semantic_hash": ""
   },
   "js/dati/schede-varianti.js": {
@@ -330,21 +330,21 @@
     "semantic_hash": "472603cb0f41a1e3705f568e81731a10"
   },
   "js/lingue/de.js": {
-    "mtime": 1791180122.9320085,
-    "seen": 1791187849.996785,
-    "ast_hash": "d7507f5a64fbdc69282c185a98508822",
+    "mtime": 1791199379.6893604,
+    "seen": 1791200553.1603732,
+    "ast_hash": "89aebe62816d2764d5b43f2c6360dd3c",
     "semantic_hash": ""
   },
   "js/lingue/en.js": {
-    "mtime": 1791180122.9360085,
-    "seen": 1791187849.9967864,
-    "ast_hash": "9650e0913ccc246003c5a9a41225af39",
+    "mtime": 1791199379.676239,
+    "seen": 1791200553.1603756,
+    "ast_hash": "56c8be68b5b9c463d1aea6df1f916a83",
     "semantic_hash": ""
   },
   "js/lingue/es.js": {
-    "mtime": 1791180122.9440086,
-    "seen": 1791187849.9967875,
-    "ast_hash": "d5b035fed586ffb4b6383fc16d06fc82",
+    "mtime": 1791199379.6867597,
+    "seen": 1791200553.1603775,
+    "ast_hash": "b07837eae03dc1d647eda0169b4d642a",
     "semantic_hash": ""
   },
   "js/lingue/traduttore.js": {
@@ -384,9 +384,9 @@
     "semantic_hash": ""
   },
   "js/ui/allenamento/termina-e-cardio.js": {
-    "mtime": 1791180122.9480085,
-    "seen": 1791187849.9967952,
-    "ast_hash": "b2722a213081de16f324016c0ffa1a6a",
+    "mtime": 1791193685.4517002,
+    "seen": 1791200553.1603916,
+    "ast_hash": "eb86de4969112c0b39349c63b87a06e9",
     "semantic_hash": ""
   },
   "js/ui/allenamento/timer-pannello.js": {
@@ -528,16 +528,16 @@
     "semantic_hash": ""
   },
   "js/ui/onboarding.js": {
-    "mtime": 1791160530.877604,
-    "seen": 1791187849.9968538,
-    "ast_hash": "3d30268cc6714d2e3503c78cfca945b4",
-    "semantic_hash": "3d30268cc6714d2e3503c78cfca945b4"
+    "mtime": 1791195171.9157884,
+    "seen": 1791200553.160488,
+    "ast_hash": "6d4f574164f6f0ea0f525cbc132e548c",
+    "semantic_hash": ""
   },
   "js/ui/opzioni/il-coach.js": {
-    "mtime": 1791160530.877604,
-    "seen": 1791187849.996948,
-    "ast_hash": "d88b68bf068d0b4bc1e00b1f9309ac51",
-    "semantic_hash": "d88b68bf068d0b4bc1e00b1f9309ac51"
+    "mtime": 1791195171.9157884,
+    "seen": 1791200553.16049,
+    "ast_hash": "6a4527734f71a71232d2c463449c0729",
+    "semantic_hash": ""
   },
   "js/ui/opzioni/impostazioni.js": {
     "mtime": 1791180122.9520085,
@@ -666,9 +666,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1791180122.9520085,
-    "seen": 1791187849.9969878,
-    "ast_hash": "d50a5f36a52d285f418e6bfdb3985f8e",
+    "mtime": 1791199384.6442394,
+    "seen": 1791200553.1605365,
+    "ast_hash": "828ad01575b55716273ec8f74e842c02",
     "semantic_hash": ""
   },
   "tests/avvio.test.js": {
@@ -708,15 +708,15 @@
     "semantic_hash": ""
   },
   "docs/ARCHITETTURA.md": {
-    "mtime": 1791180122.8360085,
-    "seen": 1791187849.9970226,
-    "ast_hash": "31e643f8c3faf4f53d6efe0346a4d4d5",
+    "mtime": 1791200076.9594226,
+    "seen": 1791200553.1606011,
+    "ast_hash": "606bb099acca955cb19055569bb206ad",
     "semantic_hash": ""
   },
   "docs/PIANO.md": {
-    "mtime": 1791180122.8360085,
-    "seen": 1791187849.997024,
-    "ast_hash": "c03dd9682f9ad7955d0a8fb41398e2bd",
+    "mtime": 1791200482.0019474,
+    "seen": 1791200553.1606028,
+    "ast_hash": "8bb00f4ca8a077e15d0254b4da7f6485",
     "semantic_hash": ""
   },
   "docs/SICUREZZA.md": {
@@ -726,10 +726,10 @@
     "semantic_hash": "ae814b4a9122707503dff18cb9f19a6c"
   },
   "docs/coach-mappa-regole.md": {
-    "mtime": 1791160530.8415916,
-    "seen": 1791187849.9970372,
-    "ast_hash": "00fc06333f9e05fd409a170cca34a637",
-    "semantic_hash": "00fc06333f9e05fd409a170cca34a637"
+    "mtime": 1791199971.5803626,
+    "seen": 1791200553.1606257,
+    "ast_hash": "bcc600916aafe38f290f388530d97d7a",
+    "semantic_hash": ""
   },
   "docs/ricerca-struttura-e-intensita.md": {
     "mtime": 1791160530.8415916,
@@ -750,15 +750,15 @@
     "semantic_hash": ""
   },
   "tests/muscoli.test.js": {
-    "mtime": 1791180122.9520085,
-    "seen": 1791187849.997004,
-    "ast_hash": "41741ac0ad8c334417c86e4a916eb215",
+    "mtime": 1791192399.4596238,
+    "seen": 1791200553.1605718,
+    "ast_hash": "b7e00475020d9ae692a685be65b24c00",
     "semantic_hash": ""
   },
   "CLAUDE.md": {
-    "mtime": 1791180122.8320084,
-    "seen": 1791187849.99702,
-    "ast_hash": "f225298a1208243c7d3fea2bf132fdf2",
+    "mtime": 1791200335.5905552,
+    "seen": 1791200553.1605968,
+    "ast_hash": "325d8dbe6ffa706416eddaf8d372da15",
     "semantic_hash": ""
   },
   "toji.html": {
@@ -786,9 +786,9 @@
     "semantic_hash": ""
   },
   "docs/mappa-per-agenti.md": {
-    "mtime": 1791180122.8400085,
-    "seen": 1791187849.9970403,
-    "ast_hash": "24e77a2c37f0a8c22b4c12164de03460",
+    "mtime": 1791199971.5803626,
+    "seen": 1791200553.1606312,
+    "ast_hash": "0fa1590776043f1a6a3b0e91fb56a468",
     "semantic_hash": ""
   },
   "tests/aiuto-app.js": {
@@ -840,21 +840,21 @@
     "semantic_hash": ""
   },
   "tools/cancello-collaudo.js": {
-    "mtime": 1791187136.828805,
-    "seen": 1791187849.9970064,
-    "ast_hash": "edc195dfb8ac79920d9682435c64d7c5",
+    "mtime": 1791200529.806732,
+    "seen": 1791200553.1605775,
+    "ast_hash": "2896cffb5e73b4cc6a393b83b967353c",
     "semantic_hash": ""
   },
   "tools/cancello-collaudo.json": {
-    "mtime": 1791187612.3524537,
-    "seen": 1791187849.9970074,
-    "ast_hash": "eb4a2b969d7050aa17a9f4bc6c66e9a5",
+    "mtime": 1791200286.9449928,
+    "seen": 1791200553.1605797,
+    "ast_hash": "c3d87d6a63a79c7c38ccb67160dd4b33",
     "semantic_hash": ""
   },
   "tools/collaudo-generatore.js": {
-    "mtime": 1791183315.3025203,
-    "seen": 1791187849.9970083,
-    "ast_hash": "bd1a72588da851c2c87a50cb62cb8c8c",
+    "mtime": 1791200290.920559,
+    "seen": 1791200553.1605816,
+    "ast_hash": "0ef791623778afe83e9c017111cbfefe",
     "semantic_hash": ""
   },
   "tools/integra-onda.js": {
@@ -1293,6 +1293,36 @@
     "mtime": 1791180122.8520086,
     "seen": 1791187849.997117,
     "ast_hash": "11664ae1f1cab2a1a0fea85a69b07538",
+    "semantic_hash": ""
+  },
+  "tests/carichi-onda0.test.js": {
+    "mtime": 1791193685.4517002,
+    "seen": 1791200553.1605449,
+    "ast_hash": "8969e6c7997c76ad20111df0616a205e",
+    "semantic_hash": ""
+  },
+  "tests/generatore-onda0.test.js": {
+    "mtime": 1791195171.9157884,
+    "seen": 1791200553.160564,
+    "ast_hash": "5cf6c3a85134b102db9973d5687b2b25",
+    "semantic_hash": ""
+  },
+  "tests/integrazione-onda0.test.js": {
+    "mtime": 1791200379.2621148,
+    "seen": 1791200553.1605656,
+    "ast_hash": "3f30ea3b3a97e3905286aa7eee383d9a",
+    "semantic_hash": ""
+  },
+  "tests/intensita-onda0.test.js": {
+    "mtime": 1791193685.4517002,
+    "seen": 1791200553.1605673,
+    "ast_hash": "49d927502370b213814aa928a03179a8",
+    "semantic_hash": ""
+  },
+  "tests/sicurezza-onda0.test.js": {
+    "mtime": 1791192399.2996237,
+    "seen": 1791200553.1605737,
+    "ast_hash": "5cd474ae2b87522c8700888816e87c4b",
     "semantic_hash": ""
   }
 }

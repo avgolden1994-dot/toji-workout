@@ -24,6 +24,10 @@ Ogni regola ha un **codice** (tre lettere e un numero): il codice indica l'area,
 | PSI | Psicologia: chi ha davanti il coach | in tutto il resto | `psicoCoach`, `ritrattoCoach` |
 | MOM | Momenti di vita | in tutto il resto | `MOMENTI`, `setMomento` |
 | IA | Coach IA (commenti scritti) | fine seduta | `commentaSeduta` |
+| ABB, INT, EPO, TEC, RIC | Struttura professionale, intensità dal corpo, epoca d'oro, tecniche, regole dalla ricerca | creazione del programma e seduta | `struttura-pro.js`, `intensita.js`, `metodi-epoca-oro.js`, `regole-nuove.js` |
+| ALG, MES, PRN, STD | Carico di riferimento e ripresa dopo lo scarico (ALG-02, MES-06, MES-09), RIR di partenza e scarico fuori dalle analisi (MES-02, MES-10..12), principiante (PRN-01), tabelle di forza (STD-01) | onda 0 del coach v2 | `caricoRiferimento`, `rirBersaglioBase`, `inScarico`, `livelloStandardForza` |
+| MAV, ETA, CAS | Tecniche al cedimento vietate a chi non può (MAV-02, MAV-03), età e minorenni (ETA-01..04, ETA-18), casa senza sbarra (CAS-14) | creazione del programma, onboarding, corpo | `senzaCedimento`, `etaPerProgramma`, `corpoCoach` |
+| SEL | Selezione degli esercizi: un esercizio non si propone al posto di uno di un altro muscolo | scelta e alternative | `alternativeStessoMuscolo`, `SCHEMI_MOV`, `DETTAGLI` |
 
 ## 2. Panoramica: il percorso di un allenamento
 
@@ -266,7 +270,7 @@ Ordine di valutazione in caricoProssimoBase:
 
 - **CAR-01** esercizi a tempo (plank ecc.): tenuta completata = +5 secondi; altrimenti stessa durata.
 - **CAR-02** mai fatto: carico del programma, che dal 1 ottobre e una stima dai dati del corpo (vedi PAR); in scarico x0,9.
-- **CAR-03** settimana di scarico del programma: serie = serie base x dose, carico = ultimo x dose; la dose dipende dalla fatica (livelloFatica, Bell 2024): bassa (RPE medio <7 e prontezza >=70) volume -35% (carico x0,95); media volume -50% e carico -10%; alta (RPE >=9 o prontezza <50) volume -70% e carico -10%. "Mai stop totale: la forza calerebbe".
+- **CAR-03** settimana di scarico del programma: serie = serie base x dose, carico = ultimo x dose; la dose dipende dalla fatica (livelloFatica, Bell 2024): bassa (RPE medio <7 e prontezza >=70) volume -35% (carico x0,95); media volume -50% e carico -10%; alta (RPE medio >=9,5, cioè quasi sempre «Al limite», o prontezza <50: MES-08) volume -70% e carico -10%. "Mai stop totale: la forza calerebbe".
 - **CAR-04** rientro dopo una pausa su QUELL'esercizio (detraining, SBS): 10-20 giorni -10%; 21-28 giorni -20%; fino a 90 giorni -30%; oltre -50%. I giorni sono quelli veri per tutti, anche sopra i 65 anni (prima contavano il doppio: 5 giorni davano «Rientro dopo 5 giorni: -10%»; chi ha più di 65 anni resta protetto da RIR 3-4, aumenti dimezzati e ripresa al 95%). Con "3 ripetizioni in riserva". Dopo uno scarico riuscito il calo si applica al carico di riferimento (MES-06). (storica, corretta nell'onda 0)
 - **CAR-05** corpo libero (carico 0): tutte le serie complete = +1 ripetizione; altrimenti stesse ripetizioni.
 - **CAR-06** tutte le serie complete ("ok"): 
@@ -338,7 +342,7 @@ Il questionario (4 domande): fatica della seduta (Facile RPE 1-4 / Giusta 5-7 / 
 - **DEC-09** applicazione (applicaDecisioni): scrive gli "aggiusti" per esercizio (fattore, sedute, motivo con l'eventuale nota "ampiezza senza dolore, discesa in 3 s"), lo scarico, e per la sostituzione cambia il nome in TUTTI i giorni del piano (peso della libreria, serie non fatte, nota "Variante scelta dal coach"; se si passa da ripetizioni a tempo, o viceversa, anche il bersaglio e quello della libreria). Tutto annullabile (ripristina dati, aggiusti, giorni di riposo). (storica: sempre accesa, e una correzione di sicurezza o di calcolo)
 - **DEC-10** riduciFrequenza: se i giorni di allenamento sono piu di 2, il giorno con meno serie diventa riposo (annullabile); se sono 2 o meno: "meglio ridurre le serie che i giorni".
 
-Tabelle di conoscenza di questa sezione: ZONE_DOLORE (spalla, gomito, polso, schiena bassa, anca, ginocchio, caviglia), STRESS_ZONA (quali esercizi caricano ogni zona), SOSTITUZIONI (variante per zona).
+Tabelle di conoscenza di questa sezione: ZONE_DOLORE (spalla, gomito, polso, schiena bassa, anca, ginocchio, caviglia), STRESS_ZONA (quali esercizi caricano ogni zona; dall'onda 0 anche i dip e i piegamenti a diamante o declinati per gomito e polso, i declinati per la spalla). La tabella SOSTITUZIONI non c'è più (cambiava il muscolo): la variante la sceglie `varianteStessoMuscolo` con `alternativeStessoMuscolo` (DEC-03).
 
 
 ## 11. Controlli periodici, corpo, costanza e fine ciclo
@@ -471,7 +475,8 @@ Elenco dei 10 periodi (volume = fattore sulle serie di TUTTO il piano; RIR = rip
 
 Dove il coach si ferma, rallenta o invia dal medico (utile per una revisione di sicurezza):
 
-- **Modalita prudente** (PAR-Q positivo) e **over 65**: niente cedimento, 3-4 ripetizioni in riserva, tecniche "cluster"/"potenza", 8-12 ripetizioni, esigenza al 100%, aumenti dei carichi dimezzati (PRG-19/34, CAR-06, BIO-02, ESI-03).
+- **Modalita prudente** (PAR-Q positivo) e **over 65**: niente cedimento, 3-4 ripetizioni in riserva, tecniche "cluster"/"potenza", 8-12 ripetizioni, esigenza al 100%, aumenti dei carichi dimezzati (PRG-19/34, CAR-06, BIO-02, ESI-03, ETA-18, MAV-03).
+- **Minorenni (13-17 anni)**: età obbligatoria, sotto i 13 anni nessun programma; al massimo 3 serie, 8-15 ripetizioni, nessuna tecnica, almeno 2 ripetizioni in riserva, nota «allenati con un adulto o un istruttore»; niente numeri su peso, cibo e integratori (ETA-01..04). Le salvaguardie MAV-02, MAV-03 ed ETA-01..03 sono sempre accese.
 - **Dolore** durante la seduta: 4-5/10 riduce il carico, >=6/10 sostituisce l'esercizio e invita a vedere medico o fisioterapista; dolore in crescita su tre sedute: "fatti vedere da un fisioterapista" (DEC-01..04); controllo la mattina dopo (DOL-01).
 - **"Mi sento male"**: ferma tutto e chiude la seduta come interrotta, che non conta per i carichi (PRZ-05).
 - **Momenti di vita** con "guardia" (troppi allenamenti in 7 giorni) e "aiuto" (invito a parlare con medico o psicologo) (MOM-04/05).
@@ -499,7 +504,7 @@ Le regole non leggono una scheda unica per esercizio: la stessa conoscenza ("qua
 
 | Tabella | Riga | Cosa contiene |
 |---|---|---|
-| `EXERCISE_LIBRARY` | 3338 | 139 esercizi: gruppo, tipo, serie/ripetizioni/peso/recupero di partenza |
+| `EXERCISE_LIBRARY` | 3338 | 140 esercizi: gruppo, tipo, serie/ripetizioni/peso/recupero di partenza |
 | `DETTAGLI` (js/dati/dettagli-esercizi.js) | — | una riga per esercizio: sezione (macchinari e cavi, pesi liberi, corpo libero), attrezzo, presa o attacco, sottogruppo, focus, muscoli secondari e la nota sul perche l'attacco conta (con la fonte). La sezione deve combaciare con `attrezzoDi`: lo controlla `tests/browser/dettagli-esercizi.js` |
 | `SOTTOGRUPPI` | — | le parti di ogni gruppo muscolare (per esempio schiena: dorsali larghezza, spessore, lombari): ordinano gli elenchi e dicono cosa copre una seduta |
 | `NOTE_ATTACCO` | — | 13 note su presa e attacco (rematore seduto, pulldown, pushdown, curl ai cavi, croci, leg extension, pressa, calf, leg curl...), con le prove EMG e la loro forza |
@@ -517,11 +522,10 @@ Le regole non leggono una scheda unica per esercizio: la stessa conoscenza ("qua
 | `SCHIENA_PESANTE` | 8890 | esercizi pesanti per la schiena (max 1 a seduta) |
 | `GLUTEI_FAMIGLIE` | 8891 | 4 famiglie per l'obiettivo glutei |
 | `BIL_PESANTI` | 10866 | esercizi "pesanti" col bilanciere (tipoCarico) |
-| `ALZATE_BASE` | 10344 | 4 fondamentali (NON USATA) |
-| `STANDARD_FORZA` | 10340 | standard di forza come multipli del peso corporeo (NON USATA) |
+| `ALZATE_BASE` | 10344 | 4 fondamentali (letta da STD-01, `livelloStandardForza`) |
+| `STANDARD_FORZA` | 10340 | standard di forza come multipli del peso corporeo (letta da STD-01, `livelloStandardForza`) |
 | `ZONE_DOLORE` | 9961 | 7 zone del dolore |
-| `STRESS_ZONA` | 9970 | esercizi che caricano ogni zona |
-| `SOSTITUZIONI` | 9981 | variante per zona di dolore |
+| `STRESS_ZONA` | 9970 | esercizi che caricano ogni zona (dall'onda 0 anche dip, piegamenti a diamante e declinati) |
 | `SCALE_DOLORE` | 13923 | modifiche per fastidio dichiarato (spalle, ginocchia, schiena) |
 | `CUE_SCHEMA` | 13826 | suggerimenti esterni per schema |
 | `TECNICA` | 14832 | scheda tecnica con muscoli primari/secondari (usata solo dalla scheda esercizio) |
@@ -533,17 +537,20 @@ Tassonomie diverse per le zone del corpo: i **fastidi** del questionario sono 3 
 Elenco in ordine di importanza. Sono fatti letti nel codice, non ancora corretti.
 
 1. ~~Consenso del Coach IA incompleto~~ — risolto: il testo elenca tutto ciò che esce dal telefono (`TESTI_IA` in `js/coach/coach-ia.js`) e un test controlla che sia tradotto. Resta da verificare lato Worker se i dati vengono conservati.
-2. **Conoscenza degli esercizi ripetuta** in 14 tabelle (capitolo 16), e due tabelle mai usate: `STANDARD_FORZA` e `ALZATE_BASE` (pensate per il livello "dai numeri", ma `livelloStimato` non le legge). La scheda tecnica con muscoli primari e secondari (`TECNICA`) e usata solo per mostrare la scheda dell'esercizio, non dalle regole.
+2. **Conoscenza degli esercizi ripetuta** in 14 tabelle (capitolo 16). ~~Due tabelle mai usate, `STANDARD_FORZA` e `ALZATE_BASE`~~ — risolto nell'onda 0: le legge STD-01 (`livelloStandardForza`) come controllo di coerenza del livello. In parte risolta anche la ripetizione: hip thrust e ponte glutei non sono più nell'hinge, i femorali non sono più tra i secondari di squat e leg press (dati e scheda tecnica), il Pullover con Manubrio ha bersaglio dorsali (SEL-02). La scheda tecnica con muscoli primari e secondari (`TECNICA`) e usata solo per mostrare la scheda dell'esercizio, non dalle regole.
 3. **Soglie diverse per lo stesso concetto.**
    - Massa grassa alta nelle donne: 30% e 35% in `analyzeBia`, 32% in `fattoreFisico` e nella ricomposizione (BIA, MET-03, COR-02).
    - Massa magra in calo: -0,5 kg riduce il volume del 15% (`fattoreFisico`), -1 kg ferma gli aumenti (`frenoBia`).
-   - Due definizioni di scarico: il "reattivo" (da questionario, prontezza o strain) usa serie x0,6 e carico x0,9; quello di programma usa una dose per fatica (volume -35%, -50% o -70%; carico x0,95 o x0,9) (CAR-03/10, DEC-06).
-4. **Commenti che non corrispondono al codice.** L'intestazione del suggeritore elenca 5 regole, il codice ne applica 8 (SUG). L'intestazione di `schemaMisto` dice che col dimagrimento "i recuperi sono piu brevi", un commento nel codice dice che "le pause NON si accorciano" (PRG-04). Il commento del motore dei carichi dice "-10% dopo due mancate", ma per i principianti il codice applica -5% (CAR-07).
+   - Due definizioni di scarico: il "reattivo" (da questionario, prontezza o strain) usa serie x0,6 e carico x0,9; quello di programma usa una dose per fatica (volume -35%, -50% o -70%; carico x0,95 o x0,9) (CAR-03/10, DEC-06). Onda 0: la definizione di «seduta di scarico» nello storico è una sola (`esercizioInScarico`, usata da MES-06, MES-10 e dalle analisi); le due dosi restano.
+4. **Commenti che non corrispondono al codice.** L'intestazione del suggeritore elenca 5 regole, il codice ne applica 8 (SUG). L'intestazione di `schemaMisto` dice che col dimagrimento "i recuperi sono piu brevi", un commento nel codice dice che "le pause NON si accorciano" (PRG-04). ~~Il commento del motore dei carichi dice "-10% dopo due mancate", ma per i principianti il codice applica -5% (CAR-07)~~ — risolto nell'onda 0 (il commento e la riga CAR-07 dicono -5% per il principiante e -10% per gli altri).
 5. **Regole di progressione dei metodi famosi solo descritte.** Starting Strength, StrongLifts, GZCLP e altri dichiarano le loro regole di progressione; nel motore dei carichi non ho trovato diramazioni per metodo: vale sempre la progressione unica (MET-06). Da verificare con una prova.
 6. **Sostituzioni "per sempre" e continuita dei progressi.** Le sostituzioni del coach (dolore, azione "cambia variante", rotazione accessori) cambiano il nome dell'esercizio in tutti i giorni e usano il carico di partenza stimato dai dati del corpo (dal 1 ottobre; prima il valore di default della libreria); lo storico e i massimali restano legati al nome vecchio, quindi per il nuovo esercizio la progressione riparte da quella stima ("prima volta"). Il nuovo "Macchinario occupato" e invece temporaneo.
 7. ~~Regola ripetuta~~ — risolto: il limite di 3 serie usa un solo parametro (`serieMaxPrudente`).
 8. ~~Numeri magici sparsi~~ — in parte risolto: i principali sono in `js/coach/parametri.js`; restano soglie minori dentro le funzioni.
 9. ~~Il codice del coach era mescolato al resto~~ — risolto: ora sta in `js/coach/` (una cartella, un file per argomento).
+10. **Giorni doppi sopra i 65 anni solo in RIC-05.** Dall'onda 0 CAR-04 (rientro dopo una pausa su un esercizio) conta i giorni veri per tutti; RIC-05 (rientro del piano intero, `rientroPiano` in `regole-nuove.js`: 14 giorni, 7 oltre i 65) e il testo del registro (B20) li contano ancora doppi. Da allineare in W4-T2 (CST-01, CST-02, MES-15).
+11. **Salvaguardie e interruttori.** MAV-02, MAV-03 ed ETA-01..03 sono salvaguardie sempre accese; ETA-04 (niente numeri su peso e cibo ai minorenni) è invece in `REGOLE_SPEGNIBILI` per scelta di W0-T4. Da uniformare quando W1-T1 legge «(spegnibile)» dalla riga della mappa.
+12. **Età minima.** La logica del coach usa 13 anni (decisione dell'utente, D-P9); la soglia legale per i dati personali (14 in Italia) è da verificare con un legale prima del rilascio (registro G.1).
 
 ## 18. Come usare questa mappa
 
@@ -553,7 +560,7 @@ Elenco in ordine di importanza. Sono fatti letti nel codice, non ancora corretti
 
 ## 19. Regole aggiunte dalla ricerca (RIC)
 
-Cinque regole nuove, ognuna spegnibile (`regolaAttiva`, vedi `js/coach/parametri.js`; spegnibili anche INT-04 e INT-05), con il motivo scritto nella nota dell'esercizio. Non toccano le salvaguardie: modalità prudente, over 65, principianti, dolore e scarico hanno la precedenza (le regole RIC-01 e RIC-02 non scattano per loro). Codice in `js/coach/regole-nuove.js` e, per RIC-03, in `js/coach/programma/schemi.js`.
+Cinque regole nuove, ognuna spegnibile (`regolaAttiva`, vedi `js/coach/parametri.js`; spegnibili anche INT-04, INT-05, ALG-02, MES-02, MES-06, MES-09..12, PRN-01, STD-01, ETA-04 e CAS-14). In fondo al capitolo ci sono le regole dell'onda 0 del coach v2: sono «spegnibili» solo quelle segnate così; MAV-02, MAV-03 ed ETA-01..03 sono salvaguardie (tolgono o riducono) e restano sempre accese, con il motivo scritto nella nota dell'esercizio. Non toccano le salvaguardie: modalità prudente, over 65, principianti, dolore e scarico hanno la precedenza (le regole RIC-01 e RIC-02 non scattano per loro). Codice in `js/coach/regole-nuove.js` e, per RIC-03, in `js/coach/programma/schemi.js`.
 
 - **RIC-01** serie in più nelle settimane centrali del blocco (Pelland 2025, Bell 2024): in una settimana di carico che non è né la prima né l'ultima prima dello scarico, +1 serie (massimo 5) sugli esercizi dei muscoli prioritari, se la prontezza media delle ultime due sedute registrate è almeno 70 (o non c'è alcun dato). Con lo scarico si torna alle serie del programma.
 - **RIC-02** pausa prima di abbassare il carico (Singer 2024): se nell'ultima seduta tutte le serie tranne l'ultima erano complete (almeno 3 serie) e il carico resta fermo, +45 secondi di pausa. Prima lo faceva solo il principiante (+30).
@@ -589,6 +596,9 @@ Cinque regole nuove, ognuna spegnibile (`regolaAttiva`, vedi `js/coach/parametri
 | Prontezza, «mi sento male», dolore (PAR, LIV, DOL) | `js/coach/prontezza.js`, `mi-sento-male.js`, `dolore-mattina.js` |
 | Repertorio e regole dalla ricerca | `js/coach/repertorio.js`, `regole-ricerca.js`, `regole-nuove.js` (RIC) |
 | Parametri e catalogo | `js/coach/parametri.js`, `catalogo-regole.js` (generato dalla mappa) |
+| Selezione degli esercizi (SEL) e dati degli esercizi | `js/dati/dettagli-esercizi.js`, `libreria-esercizi.js`, `js/coach/programma/schemi.js` (`SCHEMI_MOV`, `SCHEMI_RISERVA`), `alternative.js` |
+| Età, tecniche al cedimento e tetti del generatore (ETA, MAV, CAS) | `js/ui/onboarding.js` (`etaPerProgramma`), `js/coach/programma/ricette.js` (`senzaCedimento`, `SCHEMI_ATTESI`), `js/coach/compone.js` (`TOCCHI`) |
+| Carico di riferimento e storico per fase (ALG, MES) | `js/coach/carichi/progressivo.js` (`caricoRiferimento`, `esercizioInScarico`), `js/coach/regole-ricerca.js` (`caricoProssimoBase`, `inScarico`) |
 | Consigli e agente | `js/coach/agente-consigli.js` |
 | Dati del corpo (BIA) | `js/coach/bia/lettore.js`, `opzioni.js` |
 | Biomeccanica, esigenza, psicologia, metodi e momenti | `js/coach/biomeccanica.js`, `esigenza.js`, `psicologia.js`, `metodi-momenti.js`, `compone.js` |

@@ -29,12 +29,13 @@ graphify-out/       grafo del codice per gli agenti (generato da npm run grafo)
 ## Regole del gioco
 
 1. **Script classici, scope globale.** Ogni file è uno script normale: le funzioni e le costanti sono globali (molte anche `window.nome`, perché l'HTML usa `onclick="nome()"`). Non ci sono moduli ES né bundler: aggiungere un file = aggiungere una riga in `index.html` e lanciare `npm run sw`.
-2. **L'ordine in `index.html` conta, ma poco.** Quasi tutto si chiama solo a schermata aperta, quando ogni file è già caricato. Al caricamento servono: `js/core/ripristino-guida.js` prima di `js/core/storage.js` (ripristina i dati veri prima che qualcuno li legga), `js/core/costanti.js` prima di `js/core/stato-condiviso.js` (`FAILURE_SET_SECONDS`), `js/avvio.js` per ultimo, e i file che **avvolgono** una funzione di un altro file (`const prima = window.f; window.f = function…`): `js/coach/regole-nuove.js` dopo `prontezza.js`, `dolore-mattina.js` e `regole-ricerca.js`; `js/coach/intensita.js` dopo `regole-nuove.js` (avvolge di nuovo `caricoProssimo`, la versione attiva è l'ultima caricata). L'elenco completo, ricavato dal codice, è in testa a `docs/mappa-simboli.md`. `npm test` controlla ripristino-guida e avvio; `npm run simboli -- --check` (dentro `npm run controlla`) fallisce se un file usa al caricamento un nome definito più avanti.
+2. **L'ordine in `index.html` conta, ma poco.** Quasi tutto si chiama solo a schermata aperta, quando ogni file è già caricato. Al caricamento servono: `js/core/ripristino-guida.js` prima di `js/core/storage.js` (ripristina i dati veri prima che qualcuno li legga), `js/core/costanti.js` prima di `js/core/stato-condiviso.js` (`FAILURE_SET_SECONDS`), `js/avvio.js` per ultimo, e i file che **avvolgono** una funzione di un altro file (`const prima = window.f; window.f = function…`): `js/coach/regole-nuove.js` dopo `prontezza.js`, `dolore-mattina.js` e `regole-ricerca.js`; `js/coach/intensita.js` dopo `regole-nuove.js` (avvolge di nuovo `caricoProssimo`, la versione attiva è l'ultima caricata). Dall'onda 0 il calcolo vero (progressione, scarico, ripresa dopo lo scarico) è in `caricoProssimoBase` di `regole-ricerca.js`; nessun wrapper nuovo: i correttivi nuovi vanno come rami della funzione che già decide. L'elenco completo, ricavato dal codice, è in testa a `docs/mappa-simboli.md`. `npm test` controlla ripristino-guida e avvio; `npm run simboli -- --check` (dentro `npm run controlla`) fallisce se un file usa al caricamento un nome definito più avanti.
 3. **Un nome, un file.** Nessuna funzione o costante globale può essere definita in due file (lo controlla `npm test`).
 4. **I dati sono in localStorage**, con chiavi `coach_plus_*` e `tz_*`. Il suffisso `_toji` delle chiavi è l'identificatore interno storico della modalità: **non va rinominato** senza una migrazione, altrimenti gli utenti perdono schede e storico. Anche l'UID `@tojiworkout` dei file calendario resta (cambiarlo duplicherebbe gli eventi già importati).
 5. **Il coach è un motore a regole**, non un'IA. Il Coach IA (`js/coach/coach-ia.js`) è separato, ha il suo consenso e può solo commentare.
 6. **Lingue.** Il testo nel codice è italiano. Le altre lingue si traducono con `tr()` e con il traduttore automatico che cerca la frase italiana nei dizionari `js/lingue/*.js`. Ogni frase nuova va aggiunta in en, es e de (lo controlla `npm test`). I numeri nelle frasi si scrivono `#`.
-7. **Cache.** Cambiando i file cambia il nome in `CACHE_NAME` di `sw.js` (oggi `3in-v10` → `3in-v11`) così i telefoni scartano le copie vecchie.
+7. **Regole spegnibili e salvaguardie.** Una regola nuova del coach si spegne (`regolaAttiva(codice)`, elenco `REGOLE_SPEGNIBILI` in `js/coach/parametri.js`, riga della mappa con «(spegnibile)»): in produzione si spegne la regola, non si torna indietro di un'onda. Le **salvaguardie** (tolgono, riducono o rinviano a un professionista: niente cedimento a chi non può, profilo minorenne, età obbligatoria) restano sempre accese e si marcano «(storica: sempre accesa)» nella mappa.
+8. **Cache.** Cambiando i file cambia il nome in `CACHE_NAME` di `sw.js` (oggi `3in-v12`: l'onda 0 del coach v2 l'ha alzato da `3in-v11`, una volta sola per integrazione) così i telefoni scartano le copie vecchie.
 
 ## Dove mettere una cosa nuova
 
@@ -51,14 +52,17 @@ graphify-out/       grafo del codice per gli agenti (generato da npm run grafo)
 ```
 npm install          una volta
 npm test             controlli di struttura, muscoli, avvio e cedimento in browser (~30 s)
-npm run test:browser prove lunghe con tocchi veri (guida, macchinario occupato, carichi, statistiche…)
+npm run test:browser prove lunghe con tocchi veri (guida, macchinario occupato, carichi, statistiche…): le esegue tutte e riassume (21 file, circa 3 minuti)
 npm run sw           rigenera l'elenco dei file di sw.js
 npm run catalogo     rigenera js/coach/catalogo-regole.js da docs/coach-mappa-regole.md
 npm run indice       rigenera docs/indice-codice.md
 npm run simboli      rigenera docs/mappa-simboli.md (nomi globali: dove sono e chi li usa)
 npm run trova -- n   dice dove è definito il nome n, chi lo usa e cosa usa
 npm run grafo        rigenera graphify-out/ (serve graphify, vedi CLAUDE.md)
-npm run controlla    tutto insieme (sw, catalogo, indice e mappa aggiornati, test)
+npm run controlla    tutto insieme (sw, catalogo, indice e mappa aggiornati, test, prove del cancello e dell'integrazione)
+npm run collaudo:schede   collaudo del generatore di schede (criteri da preparatore, ~100 s sulla matrice standard); i report restano FUORI dal repo
+npm run cancello -- <json> onda-N [--contro <json>]   soglie dell'onda (tools/cancello-collaudo.json): fallisce se un criterio le supera o peggiora
+npm run integra      applica i docs/in-arrivo/*.json dei task (index.html, dizionari, mappa delle regole) nell'integrazione di fine onda (INT-N)
 ```
 
 Le prove lunghe usano Chromium: `CHROMIUM=/percorso/chrome npm run test:browser` se non è in `/opt/pw-browsers/chromium`. La guida passa senza segnalazioni a 390×844 e a 360×640 (`tests/browser/guida.js`, `guida-tocchi.js`).

@@ -38,7 +38,12 @@ Avvio: `js/avvio.js` (IIFE `boot`) → `chooseMode()` (js/core/modalita.js) → 
 | `getProfile()` | js/coach/bia/opzioni.js | profilo utente, usato da ~70 punti |
 | `ymd()` | js/ui/calendario/mese.js | data `AAAA-MM-GG`, usata ovunque |
 | `alert()`, `confirm()`, `tr()` | js/lingue/traduttore.js | `alert`/`confirm` sostituiti per tradurre i testi |
-| `caricoProssimo()` | js/coach/dolore-mattina.js | **avvolto** da regole-nuove.js e poi da intensita.js: vale l'ultima versione |
+| `caricoProssimo()` | js/coach/dolore-mattina.js | **avvolto** da regole-nuove.js e poi da intensita.js: vale l'ultima versione. Dall'onda 0 il wrapper di dolore-mattina.js tiene solo gli aggiusti (CAR-10, ALG-02, dolore) e la frase del RIR; scarico e ripresa (MES-06) stanno in `caricoProssimoBase` (regole-ricerca.js) |
+| `caricoRiferimento()`, `esercizioInScarico()`, `pesoUltimoDi()`, `faseSedutaSalvata()`, `ultimeSessioni()`, `sedutePerEsercizio()`, `obiettivoSeduta()` | js/coach/carichi/progressivo.js | carico di riferimento (ultima seduta non di scarico, entro 28 giorni) e storico per fase: `esercizioInScarico` è l'unica definizione di «seduta di scarico»; non ridefinirli altrove |
+| `inScarico()`, `faseDelGiorno()`, `settimanaDellaSeduta()`, `ripresaDopoScarico()`, `rirBersaglioBase()`, `MES_RIR`, `livelloFatica()` | js/coach/regole-ricerca.js | scarico fuori dalle analisi (MES-10), ripresa dopo lo scarico (MES-06), RIR di partenza per livello (MES-02), dose dello scarico (MES-08) |
+| `etaPerProgramma()`, `PARAM_ETA`, `exerciseCountFor()` | js/ui/onboarding.js | età obbligatoria e minorenni (ETA-01), numero di esercizi per seduta; lo usano anche `buildProgram` (ricette.js), `setCoach('age')` (opzioni/il-coach.js) e `nuovoCiclo` (repertorio.js) |
+| `senzaCedimento()`, `adattoAlCincoPerCinque()`, `SCHEMI_ATTESI` | js/coach/programma/ricette.js | tecniche al cedimento vietate (MAV-02, MAV-03) e tetti del generatore (SES-03, EXN-01) |
+| `REGOLE_SPEGNIBILI`, `regolaAttiva()` | js/coach/parametri.js | le regole dell'onda 0 spegnibili: ALG-02, MES-02/06/09/10/11/12, PRN-01, STD-01, ETA-04, CAS-14; le salvaguardie MAV-02, MAV-03, ETA-01..03 non lo sono |
 | `applicaCaricoProgressivo()`, `imparaDallaSeduta()` | js/coach/regole-ricerca.js | avvolti da regole-nuove.js / intensita.js |
 | `applicaProntezza()` | js/coach/prontezza.js | avvolto da regole-nuove.js |
 
@@ -52,7 +57,7 @@ Avvio: `js/avvio.js` (IIFE `boot`) → `chooseMode()` (js/core/modalita.js) → 
 
 **Alternative per muscolo bersaglio.** `alternativeStessoMuscolo()` (js/coach/programma/motore.js) filtra `EXERCISE_LIBRARY` (js/dati/libreria-esercizi.js) con `bersaglioDi()`, `famigliaTotaleDi()` (js/dati/dettagli-esercizi.js, dove stanno anche `muscoloBersaglio()` e `MUSCOLI`). Chiamata da: macchinario occupato `alternativeOggi()` (js/ui/allenamento/macchinario-occupato.js, menu a tendina), `alternativeDi()` (coach/programma/alternative.js), `sostituto()` (motore.js; usato da repertorio.js e dati/schede-tecniche.js). Test: tests/muscoli.test.js, tests/browser/macchinario-occupato*.js.
 
-**Carichi.** Prossimo carico `caricoProssimo()` (dolore-mattina.js, poi avvolto) e `applicaCaricoProgressivo()` (regole-ricerca.js); partenza da dati del corpo js/coach/carichi/partenza.js; evoluzione js/coach/carichi/progressivo.js; intensità/RIR js/coach/intensita.js, esigenza.js.
+**Carichi.** Prossimo carico `caricoProssimo()` (dolore-mattina.js, poi avvolto; il calcolo è `caricoProssimoBase` in regole-ricerca.js, sul `caricoRiferimento()` di progressivo.js) e `applicaCaricoProgressivo()` (regole-ricerca.js); partenza da dati del corpo js/coach/carichi/partenza.js; evoluzione js/coach/carichi/progressivo.js; intensità/RIR js/coach/intensita.js, esigenza.js.
 
 **Dati e salvataggio.** `loadData()`/`saveData()`, `loadHistory()`/`saveHistory()`, chiavi `dataKey()`/`historyKey()` in js/core/storage.js (localStorage `coach_plus_*` e `tz_*`, per modalità: js/core/modalita.js). Backup/ripristino js/core/backup.js; importazioni js/ui/importa-csv.js, importa-progressi.js; MP3 e foto in IndexedDB (mp3-locale.js, progressi/foto.js). Una chiave nuova va anche nel backup.
 
@@ -60,7 +65,7 @@ Avvio: `js/avvio.js` (IIFE `boot`) → `chooseMode()` (js/core/modalita.js) → 
 
 ## Novità del coach v2
 
-Righe arrivate dai task dell'ondata (docs/in-arrivo): in INT-N vanno riordinate nelle sezioni sopra (sotto-coach → file, nomi in posti inattesi).
+Righe arrivate dai task dell'onda 0 (W0-T2..W0-T6), applicate in INT-0; i nomi più importanti sono anche nella tabella «Nomi in posti inattesi». Il capitolo 0 della mappa delle regole (squadra, sotto-coach → file) arriva con W1-T1.
 - numero di esercizi, età e tempo di creazione: `PARAM_NUMERO_ESERCIZI`, `serieEffettive`, `pausaMediaPerTipo`, `exerciseCountFor`, `PARAM_ETA`, `etaPerProgramma` (messaggi `MSG_ETA_SOTTO_MINIMO`, `MSG_ETA_MANCANTE`) in js/ui/onboarding.js; l'età si chiede nel passo 4 dell'onboarding (`onbSetEta`, campo `#onb-age`) e si controlla in Opzioni (`setCoach('age')` in js/ui/opzioni/il-coach.js) (W0-T2)
 - tecniche al cedimento e tetti del generatore: `TECNICHE_AL_CEDIMENTO`, `senzaCedimento`, `adattoAlCincoPerCinque`, `SCHEMI_ATTESI`, `adattoAllaSeduta`, `SLOT_DEF.staccoTerra` in js/coach/programma/ricette.js; `ATTENZIONE_AMRAP` e le ricette di Starting Strength (A/B con `staccoTerra`, schema 3×5 e stacco 1×5) in js/coach/metodi-momenti.js; `TOCCHI` con `alCedimento` e `fa(sd, ps, { tecnicheOk, senzaCedimento })` in js/coach/compone.js (W0-T2)
 - tempo, volume e femorali dopo l'assemblaggio della settimana (ponte di W2-T2 e W2-T1): `PARAM_TEMPO`, `stimaMinutiSeduta`, `creditoSerie`, `frazionarieSettimana`, `limitaVolumePerMuscolo`, `rinforzaFemorali`, `riempiTempo` in js/coach/programma/ricette.js; il profilo minorenne (13-17) e l'età obbligatoria passano da `buildProgram` (`eta`, `minore`, `cauto`, `tecnicheOk`) (W0-T2)
@@ -71,7 +76,7 @@ Righe arrivate dai task dell'ondata (docs/in-arrivo): in INT-N vanno riordinate 
 - RIR di partenza per livello (MES-02, PRN-01): `MES_RIR`, `rirBersaglioBase(nome, sett)`, `rirBersaglio(nome, sett)`, `rpeBersaglio(nome, sett)` in js/coach/regole-ricerca.js; l'esigenza del principiante in `esigenzaEsclusa`, `tettoEsigenza` (esigenza.js) e `esigenzaIniziale` (intensita.js) (W0-T4)
 - livello e tabelle di forza (STD-01): `livelloStandardForza`, `proposteLivello`, `livelloStimato` (campi `salita`, `revisione`, `standard`) e le azioni `livello`, `rivediLivello`, `livelloOk` di `azioneCoach` in js/coach/repertorio.js (W0-T4)
 - sicurezza e segnali: RISCHIO, ECCEZIONI_RISCHIO e consentito (con la guardia degli attrezzi di casa, CAS-01, e senzaMacchine) e strutturaProgramma(livello, prudente) in js/coach/programma/motore.js; la tabella SOSTITUZIONI non c'e piu: varianteStessoMuscolo in js/coach/questionario-decisioni.js usa alternativeStessoMuscolo (DEC-03, B14) (W0-T5)
-- pesante = RPE "Al limite" o "Dura" da stanchi (MES-08): sedutaPesante e PARAM_FATICA_SEDUTA in js/coach/questionario-decisioni.js; livelloFatica (js/coach/regole-ricerca.js) legge ancora srpe con soglie 9 e 7 e va riallineato (W0-T4 o W3-T5) (W0-T5)
+- pesante = RPE "Al limite" o "Dura" da stanchi (MES-08): sedutaPesante e PARAM_FATICA_SEDUTA in js/coach/questionario-decisioni.js; livelloFatica (js/coach/regole-ricerca.js) dà fatica «alta» con sRPE medio >= 9,5 (`SOGLIA_SRPE_ALTA`, riallineato in INT-0 alle risposte 3/6/8/10) (W0-T5)
 - respiroPer (js/coach/biomeccanica.js): niente apnea anche per eta >= 65 (REC-06 parte a); bonusBiomecc senza il +0,5 delle croci ai cavi (D-P8) (W0-T5)
 - riserve degli schemi: `SCHEMI_RISERVA` in js/coach/programma/schemi.js. Il pullover coi manubri (dorsali) sta nell'elenco della tirata verticale ma `schemaDi` non lo conta come tirata verticale: lo pesca per ultimo il blocco «schemi mancanti» di `buildProgram` (casa senza sbarra, palestra senza sbarra né macchine). Hip thrust e ponte glutei non sono più nell'hinge (B15) (W0-T6)
 
