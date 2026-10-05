@@ -237,6 +237,7 @@ function volumeMotore(brief, sedute, b, opz) {
   const serieMax = sogliaVolume('serieMaxEsercizio'), seduteMin = sogliaVolume('seduteMinimeUnita'), serieMinSeduta = sogliaVolume('serieMinSeduta');
   const maxEs = chi.principiante ? sogliaVolume('eserciziMaxSeduta').principiante : sogliaVolume('eserciziMaxSeduta').adulto;
   const minRec = (typeof PARAM_TEMPO !== 'undefined' && PARAM_TEMPO.serieMinRecupero) || 4;
+  const tettoGruppo = sogliaVolume('tettoSeduta').duro;   /* il tetto duro per seduta vale anche per i grandi gruppi del collaudo (petto, schiena, quadricipiti, femorali, glutei) */
   const rapportoTirate = typeof STR_PESI !== 'undefined' ? STR_PESI.tirateSuSpinte : 0.9, minBilancio = typeof STR_PESI !== 'undefined' ? STR_PESI.minSerieBilancio : 8;
   const PS = VOLUME_PESI;
   const minuti = opz.minuti || brief.agenda.minuti;
@@ -330,6 +331,7 @@ function volumeMotore(brief, sedute, b, opz) {
     for (let k = 0; k < freqU.length; k++) { const i = freqU[k], g = freqG[k]; let n = 0; for (let s = 0; s < nS; s++) n += Math.min(1, Math.min(S[s][i], g ? (GL[s][g] || 0) : 99) / serieMinSeduta); r += PS.frequenza * Math.min(seduteMin, n); }
     for (let k = 0; k < dirU.length; k++) { const i = dirU[k]; let n = 0; for (let s = 0; s < nS; s++) n += Math.min(1, SD[s][i]); r += PS.frequenza * Math.min(seduteMin, n); }
     if (PUSH + PULL >= minBilancio && PULL < rapportoTirate * PUSH) r -= (rapportoTirate * PUSH - PULL) * PS.equilibrio;
+    for (let s = 0; s < nS; s++) for (let h = 0; h < GR.length; h++) if (VOLUME_GRUPPI_SOMMA.indexOf(GR[h]) === -1 && G[s][GR[h]] > tettoGruppo) r -= (G[s][GR[h]] - tettoGruppo) * PS.duroSeduta;
     for (let k = 0; k < consecutive.length; k++) for (let h = 0; h < GR.length; h++) {   /* REC-01: due sedute in giorni consecutivi non hanno entrambe 4 serie frazionarie dello stesso grande muscolo */
       const m = Math.min(G[consecutive[k][0]][GR[h]], G[consecutive[k][1]][GR[h]]);
       if (m >= minRec) r -= (m - minRec + 1) * PS.recupero;
@@ -348,6 +350,7 @@ function volumeMotore(brief, sedute, b, opz) {
       if (e.sets + d > r.cap) return false;
       for (let k = 0; k < r.cr.length; k++) { const i = r.cr[k][0]; if (S[r.s][i] + r.cr[k][1] * d > P[i].capDuro + 1e-9) return false; }   /* SES-01, IPE-06 */
       if (r.sch > 0 && SCHIENA_S[r.s] + r.sch * d > Math.min(P[iU.dorsali].capDuro, P[iU.schiena_spessore].capDuro) + 1e-9) return false;
+      for (let k = 0; k < r.gr.length; k++) if (VOLUME_GRUPPI_SOMMA.indexOf(r.gr[k][0]) === -1 && G[r.s][r.gr[k][0]] + r.gr[k][1] * d > tettoGruppo + 1e-9) return false;   /* SES-01 col conteggio di prima e degli attributi */
       for (let k = 0; k < r.gr.length; k++) {   /* REC-01: 48 ore */
         const g = r.gr[k][0], dopo = G[r.s][g] + r.gr[k][1] * d;
         if (dopo < minRec) continue;
