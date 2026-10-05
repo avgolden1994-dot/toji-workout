@@ -24,7 +24,7 @@ const STR_PESI = { tettoSerieSeduta: 5, tettoSerieBilancio: 4, tirateSuSpinte: 0
 
 function strMeta(e) { return findExercise(e.name) || {}; }
 function strSub(e) { const d = dettaglioEsercizio(e.name); return d ? d.sub : ''; }
-function strSchiena(nome) { return SCHIENA_PESANTE.test(nome) || /Stacco Rumeno/.test(nome); }
+function strSchiena(nome) { return schienaLombare(nome); }   /* ABB-07 / REC-02: il dato dell esercizio, non due espressioni sul nome (W1-T6) */
 
 /* ABB-01: 0 multiarticolari (prima i pesanti), 1 isolamenti dei grandi muscoli, 2 dei piccoli, 3 core */
 function strTier(e) {
@@ -56,6 +56,14 @@ window.strRidondante = function(x, base) {
   const k = strChiave(x);
   const ammessi = /^gambe\|Multiarticolari\|compound\|squat$/.test(k) || /^glutei\|Glutei\|compound\|/.test(k) || /^braccia\|(Bicipiti|Tricipiti)\|isolation\|$/.test(k) ? 2 : 1;
   return base.filter(y => strChiave(y) === k).length >= ammessi;
+};
+
+/* RID-01 (W1-T6): un terzo esercizio con la stessa chiave di due gia scelti (stesso gruppo, parte, tipo e schema). strRidondante e un punteggio e ammette gia uno squat doppio e due glutei;
+   il terzo non lo ammette nessuno: lo usa la composizione per lasciare vuoto il secondo posto di un tipo (squat2) quando non resta altro che un doppione */
+window.strTerzoUguale = function(x, base) {
+  if (!dettaglioEsercizio(x.name)) return false;
+  const k = strChiave(x);
+  return base.filter(y => strChiave(y) === k).length >= 2;
 };
 
 /* contare le serie di spinta e di tirata della settimana */

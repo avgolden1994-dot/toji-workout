@@ -37,7 +37,8 @@ const r = await p.evaluate(() => {
       const chiavi = {};
       es.forEach(e => { const k = [meta(e).group, sub(e), meta(e).type, schemaDi(e.name) || ''].join('|'); (chiavi[k] = chiavi[k] || []).push(e.name.replace(EMOJI_TESTA, '')); });
       Object.keys(chiavi).forEach(k => {
-        const ammessi = /^gambe\|Multiarticolari\|compound/.test(k) ? 3 : (/^glutei\|Glutei\|compound|^braccia\|(Bicipiti|Tricipiti)\|isolation/.test(k) ? 2 : 1);
+        /* RID-01 (W1-T6): niente terzo multiarticolare per i quadricipiti nella stessa seduta (a corpo libero: squat, affondi e squat su scatola): al massimo due, come dice ABB-02 */
+        const ammessi = /^gambe\|Multiarticolari\|compound|^glutei\|Glutei\|compound|^braccia\|(Bicipiti|Tricipiti)\|isolation/.test(k) ? 2 : 1;
         if (chiavi[k].length > ammessi) segna('ABB-02 esercizi doppi', prof, sd.titolo + ': ' + chiavi[k].join(' + '));
       });
       /* ABB-06 */
@@ -59,6 +60,12 @@ const r = await p.evaluate(() => {
     if (prog.metodo) return;
     const tutti = [].concat.apply([], sed.map(sd => sd.esercizi));
     const ha = (rx) => tutti.some(e => rx.test(e.name.replace(EMOJI_TESTA, '')));
+    /* ABB-07 / REC-02 (W1-T6): due giorni di fila non hanno due sedute con almeno 3 punti lombari (stacchi di ogni tipo, anche il rumeno coi manubri, il trap bar e il good morning una serie ciascuno;
+       squat e rematori col bilanciere, front squat compreso, mezzo punto a serie: lo stesso conto del collaudo REC-02) */
+    const lombari = (sd) => sd.esercizi.reduce((t, e) => t + (schienaLombare(e.name) ? e.sets * (schemaDi(e.name) === 'hinge' ? 1 : 0.5) : 0), 0);
+    for (let i = 0; i < sed.length; i++) for (let j = i + 1; j < sed.length; j++) {
+      if (Math.abs(DAYS.indexOf(sed[i].giorno) - DAYS.indexOf(sed[j].giorno)) === 1 && lombari(sed[i]) >= 3 && lombari(sed[j]) >= 3) segna('ABB-07 schiena pesante due giorni di fila', prof, sed[i].giorno + ' (' + lombari(sed[i]) + ') e ' + sed[j].giorno + ' (' + lombari(sed[j]) + ')');
+    }
     /* ABB-03 */
     if (ipert && l !== 'principiante' && g >= 3 && o[0] !== 'salute') {
       if (sed.some(sd => /lower|legs|fullbody/.test(sd.tipo)) && !ha(/calf/i)) segna('ABB-03 polpacci assenti', prof, '');

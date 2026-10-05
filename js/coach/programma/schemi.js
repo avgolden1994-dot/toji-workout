@@ -50,6 +50,15 @@ function scambiAllungamento() { return regolaAttiva('RIC-03') ? SCAMBI_ALLUNGAME
 const SCAMBI_ALLUNGAMENTO = [['Pushdown Tricipiti ai Cavi', 'Estensione Tricipiti sopra la Testa ai Cavi'], ['Leg Curl Sdraiato', 'Leg Curl Seduto'], ['French Press', 'Estensione Tricipiti sopra la Testa con Manubrio']];
 /* stimolo/fatica: al massimo uno di questi per seduta */
 const SCHIENA_PESANTE = /Stacco da Terra|Stacco in Deficit|Squat con Bilanciere|Squat con Pausa|Rematore con Bilanciere|Good Morning|T-Bar Row|Stacco Sumo/;
+/* ABB-07 / REC-02 (W1-T6): carico pesante sui lombari per i giorni di fila. SCHIENA_PESANTE resta il «uno solo per seduta» (stimolo/fatica) e non conta lo stacco rumeno,
+   il trap bar, il front squat ne il rematore Yates: il collaudo REC-02 si': contava ogni stacco (anche lo stacco rumeno coi manubri a casa, W1-T5). Qui vale il DATO
+   dell esercizio (attributi-esercizi.js, W1-T2): controindicato per la schiena (stress 2) e multiarticolare (classi A, B, C: l hyperextension e classe F, niente lombare pesante).
+   Senza attributi (un esercizio fuori libreria, un albero di prima) ricade sull elenco di prima. */
+function schienaLombare(nome) {
+  const a = typeof attributi === 'function' ? attributi(nome) : null;
+  if (!a) return SCHIENA_PESANTE.test(nome) || /Stacco Rumeno/.test(nome);
+  return a.stress.schiena === 2 && 'ABC'.indexOf(a.classe) !== -1;
+}
 const GLUTEI_FAMIGLIE = [
   ['spinta', /hip thrust|ponte glutei/i, 'Hip Thrust'], ['squat', /squat|affondi|leg press/i, 'Affondi Bulgari'],
   ['stacco', /stacco|hyperextension|good morning/i, 'Stacco Rumeno'], ['abduzione', /abductor|slanci|kickback ai cavi/i, 'Abductor Machine']
