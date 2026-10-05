@@ -59,6 +59,9 @@ function attrezzoDiCasaMancante(nome, luogo) {
   const att = attrezzoFisicoDi(nome);
   return ATTREZZI_NON_DI_CASA.test(att) || (luogo === 'manubri' && ATTREZZI_NON_CON_I_MANUBRI.test(att));
 }
+/* INT-1 (completa la patch di W1-T5, D-P3): con un elenco di attrezzi della palestra dichiarato (Opzioni, onboarding) elastici, kettlebell e anelli non ci sono: l utente non puo ancora
+   dichiararli (lo fa W2-T5), quindi il coach non li propone (a casa li toglie ATTREZZI_NON_DI_CASA). Senza elenco la palestra e completa e valgono come prima. */
+const ATTREZZI_NON_DICHIARABILI_IN_PALESTRA = /^(elastico|kettlebell|anelli)$/i;
 function eccezioneRischio(f, nome, prefs) {
   const e = ECCEZIONI_RISCHIO[f];
   return !!(e && e.nome.test(senzaEmoji(nome).trim()) && e.quando(prefs));
@@ -71,6 +74,7 @@ function consentito(nome, prefs) {
   /* attrezzi della TUA palestra: il coach propone solo cio che trovi */
   if (prefs.attrezziPalestra && prefs.attrezziPalestra.length && a !== 'corpo' && prefs.attrezziPalestra.indexOf(a) === -1) return false;
   if (/sbarra|trazioni/i.test(nome) && prefs.attrezziPalestra && prefs.attrezziPalestra.length && prefs.attrezziPalestra.indexOf('sbarra') === -1) return false;
+  if (prefs.luogo === 'palestra' && prefs.attrezziPalestra && prefs.attrezziPalestra.length && ATTREZZI_NON_DICHIARABILI_IN_PALESTRA.test(attrezzoFisicoDi(nome))) return false;   /* INT-1, D-P3 */
   if (prefs.luogo === 'manubri' && (a === 'macchine' || a === 'bilanciere')) return false;
   if (prefs.luogo === 'corpo' && a !== 'corpo') return false;
   if (attrezzoDiCasaMancante(nome, prefs.luogo)) return false;   /* CAS-01 */

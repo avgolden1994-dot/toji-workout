@@ -310,6 +310,23 @@ test('M4 (revisione onda 0): limitaVolumePerMuscolo taglia gli altri esercizi e 
   assert.deepStrictEqual(soloGambe, [], 'il fondamentale sotto 3 serie solo nelle sedute di gambe');
 });
 
+/* ---------- D-P3 (INT-1): elastici, kettlebell e anelli finche non si possono dichiarare ---------- */
+test('D-P3 (INT-1): con gli attrezzi della palestra dichiarati niente elastici, kettlebell e anelli (non si possono ancora dichiarare); senza elenco la palestra e completa; a casa restano esclusi', () => {
+  const a = app();
+  const nuovi = ['Kettlebell Swing', 'Face Pull con Elastico', 'Lat Pulldown con Elastico', 'Alzate Laterali con Elastico', 'Rematore agli Anelli'].map(n => a.g('nomeInLibreria')(n));
+  nuovi.forEach(n => assert.ok(n, 'l esercizio nuovo e in libreria'));
+  const prefs = (extra) => IN_VM(a, Object.assign({ luogo: 'palestra', fastidi: [] }, extra));
+  nuovi.forEach(n => {
+    assert.strictEqual(a.g('consentito')(n, prefs({ attrezziPalestra: ['bilanciere', 'manubri', 'sbarra'] })), false, pulito(n) + ': con elenco dichiarato no');
+    assert.strictEqual(a.g('consentito')(n, prefs({ attrezziPalestra: null })), true, pulito(n) + ': palestra senza elenco si');
+    assert.strictEqual(a.g('consentito')(n, prefs({ luogo: 'manubri' })), false, pulito(n) + ': a casa con i manubri no (CAS-01 / D-P3)');
+    assert.strictEqual(a.g('consentito')(n, prefs({ luogo: 'corpo' })), false, pulito(n) + ': a corpo libero no');
+  });
+  /* gli esercizi di sempre non cambiano: il rematore inverso (sbarra bassa o anelli) resta com era con un elenco dichiarato */
+  const inverso = a.g('nomeInLibreria')('Rematore Inverso (Corpo Libero)');
+  assert.strictEqual(a.g('consentito')(inverso, prefs({ attrezziPalestra: ['bilanciere', 'manubri', 'sbarra'] })), true);
+});
+
 /* ---------- SAF-04: la nota del rematore inverso ---------- */
 test('SAF-04 (decisione del committente): il rematore inverso resta a casa e ha sempre la nota del tavolo robusto o della sbarra bassa; i programmi senza non l hanno', () => {
   const nota = 'Rematore inverso: fallo sotto un tavolo robusto o con una sbarra bassa, dopo aver controllato che regga il tuo peso.';
