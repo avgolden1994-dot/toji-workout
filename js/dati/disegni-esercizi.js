@@ -52,7 +52,8 @@ const IMMAGINI_ESERCIZI = {
   'Affondi in Camminata': 'esercizi/ex-28-affondi-manubri.svg',
   'Step-up su Panca': 'esercizi/ex-30-step-up-su-panca.svg',
   'Leg Extension': 'esercizi/ex-31-leg-extension.svg',
-  'Leg Curl Sdraiato': 'esercizi/ex-32-leg-curl-sdraiato.svg'
+  'Leg Curl Sdraiato': 'esercizi/ex-32-leg-curl-sdraiato.svg',
+  'Leg Curl Seduto': 'esercizi/ex-33-leg-curl-seduto.svg'
 };
 window.immagineEsercizio = function(nome) {
   const pulito = String(nome).replace(EMOJI_TESTA, '');

@@ -7,13 +7,13 @@ Generato con uno script node che legge `EXERCISE_LIBRARY` (`js/dati/libreria-ese
 | Voce | Valore |
 |---|---|
 | Esercizi nel catalogo (`EXERCISE_LIBRARY`) | 140 totali (139 nel branch + 1 da altro branch) |
-| Con immagine (campo presente e file esistente) | 32 (di cui 1 con immagine condivisa: ex-29 usa il file di ex-28) |
-| Senza immagine (mancanti) | 108 su 140 (107 nel branch + 1 da altro branch) |
+| Con immagine (campo presente e file esistente) | 33 (di cui 1 con immagine condivisa: ex-29 usa il file di ex-28) |
+| Senza immagine (mancanti) | 107 su 140 (106 nel branch + 1 da altro branch) |
 | Di cui non ancora presenti in questo branch | 1 (n. 140 Squat Sumo, da `claude/hopeful-thompson-uthd8f`) |
-| File in `esercizi/` | 32 (tutti SVG) |
+| File in `esercizi/` | 33 (tutti SVG) |
 | File orfani (non referenziati) | 1 (`ex-02-panca-inclinata-su-a.svg`) |
-| Peso totale `esercizi/` | 887.3 KB |
-| Peso medio per file | 28.6 KB |
+| Peso totale `esercizi/` | 897.9 KB |
+| Peso medio per file | 27.2 KB |
 
 Copertura per gruppo muscolare:
 
@@ -21,7 +21,7 @@ Copertura per gruppo muscolare:
 |---|---|---|---|
 | Petto | 17 | 11 | 6 |
 | Schiena | 23 | 11 | 12 |
-| Gambe | 25 (24 nel branch + 1 da altro branch) | 10 | 15 (14 nel branch + 1 da altro branch) |
+| Gambe | 25 (24 nel branch + 1 da altro branch) | 11 | 14 (13 nel branch + 1 da altro branch) |
 | Glutei | 15 | 0 | 15 |
 | Spalle | 16 | 0 | 16 |
 | Braccia | 26 | 0 | 26 |
@@ -29,7 +29,7 @@ Copertura per gruppo muscolare:
 
 Note: gli esercizi usati in `schede-*.js` e le chiavi di `DETTAGLI` (139) coincidono con la libreria: nessun esercizio fuori catalogo. `tools/genera-catalogo.js` NON riguarda gli esercizi: genera il catalogo delle regole del coach da `docs/coach-mappa-regole.md`.
 
-Le bozze Quiver non finali (varianti a-d degli esercizi 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27 e 28, 30, 31 e 32, di cui la b per il 10, la d per l'11, la d per il 13, la a per il 14, la a per il 15, identica alla d, la d per il 16 e la c per il 17 e la d per il 18 e la d per il 19 e la c per il 20 e la d per il 21 e la d per il 22 e la a per il 23 e la a per il 24 e la c per il 25 e la a per il 26 e la d per il 27 e la a per il 28 e la c per il 30 e la a per il 31 e la a per il 32, sono state usate per il finale) stanno in `esercizi-bozze/`, fuori da `esercizi/` e dalla cache del service worker.
+Le bozze Quiver non finali (varianti a-d degli esercizi 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27 e 28, 30, 31, 32 e 33, di cui la b per il 10, la d per l'11, la d per il 13, la a per il 14, la a per il 15, identica alla d, la d per il 16 e la c per il 17 e la d per il 18 e la d per il 19 e la c per il 20 e la d per il 21 e la d per il 22 e la a per il 23 e la a per il 24 e la c per il 25 e la a per il 26 e la d per il 27 e la a per il 28 e la c per il 30 e la a per il 31 e la a per il 32 e la b per il 33, sono state usate per il finale) stanno in `esercizi-bozze/`, fuori da `esercizi/` e dalla cache del service worker.
 
 ## 2. Tabella completa
 
@@ -69,7 +69,7 @@ Il nome e' mostrato senza emoji iniziale. Percorso `img/<slug>.png` e' il ripieg
 | 30 | Step-up su Panca | Gambe | `esercizi/ex-30-step-up-su-panca.svg` |
 | 31 | Leg Extension | Gambe | `esercizi/ex-31-leg-extension.svg` |
 | 32 | Leg Curl Sdraiato | Gambe | `esercizi/ex-32-leg-curl-sdraiato.svg` |
-| 33 | Leg Curl Seduto | Gambe | nessuna (ripiego inesistente `img/leg-curl-seduto.png`) |
+| 33 | Leg Curl Seduto | Gambe | `esercizi/ex-33-leg-curl-seduto.svg` |
 | 34 | Calf Raise in Piedi | Gambe | nessuna (ripiego inesistente `img/calf-raise-in-piedi.png`) |
 | 35 | Calf Raise Seduto | Gambe | nessuna (ripiego inesistente `img/calf-raise-seduto.png`) |
 | 36 | Hip Thrust | Glutei | nessuna (ripiego inesistente `img/hip-thrust.png`) |
@@ -180,11 +180,10 @@ Il nome e' mostrato senza emoji iniziale. Percorso `img/<slug>.png` e' il ripieg
 
 ## 3. Esercizi senza immagine
 
-110 esercizi (109 nel branch + 1 da altro branch, l'ultimo in coda con nota). Motivo per tutti: **nessun campo** in `IMMAGINI_ESERCIZI`, quindi l'app prova `img/<slug>.png`, il file non esiste e compare il segnaposto "Immagine in arrivo". Nessun file referenziato risulta assente su disco e non ci sono placeholder file.
+109 esercizi (108 nel branch + 1 da altro branch, l'ultimo in coda con nota). Motivo per tutti: **nessun campo** in `IMMAGINI_ESERCIZI`, quindi l'app prova `img/<slug>.png`, il file non esiste e compare il segnaposto "Immagine in arrivo". Nessun file referenziato risulta assente su disco e non ci sono placeholder file.
 
 | Gruppo | Esercizio | Motivo | File atteso dal ripiego |
 |---|---|---|---|
-| Gambe | Leg Curl Seduto | nessun campo nella mappa | `img/leg-curl-seduto.png` |
 | Gambe | Calf Raise in Piedi | nessun campo nella mappa | `img/calf-raise-in-piedi.png` |
 | Gambe | Calf Raise Seduto | nessun campo nella mappa | `img/calf-raise-seduto.png` |
 | Glutei | Hip Thrust | nessun campo nella mappa | `img/hip-thrust.png` |
@@ -372,8 +371,9 @@ Controlli: file referenziati ma assenti = 0; voci di mappa non presenti in libre
 | `ex-30-step-up-su-panca.svg` | 10.8 | 153.28 13.12 363.44 272.58 |
 | `ex-31-leg-extension.svg` | 9.4 | 66.18 -0.50 399.33 299.50 |
 | `ex-32-leg-curl-sdraiato.svg` | 9.5 | 246.53 73.91 157.43 118.07 |
+| `ex-33-leg-curl-seduto.svg` | 10.6 | 211.29 57.82 234.77 176.08 |
 
-Formato SVG vettoriale (nessun PNG/WebP); peso medio 28.6 KB, totale 887.3 KB (32 file con l'orfano). Il viewBox base e' 400x300 (rapporto 4:3); gli altri sono ritagli sulla figura (rapporti diversi, da 40x30 a 388x291). Nessun attributo width/height (tranne l'orfano 400x300): scalano al riquadro CSS `.ex-img` (`object-fit: contain`, rapporto 300/165).
+Formato SVG vettoriale (nessun PNG/WebP); peso medio 27.2 KB, totale 897.9 KB (33 file con l'orfano). Il viewBox base e' 400x300 (rapporto 4:3); gli altri sono ritagli sulla figura (rapporti diversi, da 40x30 a 388x291). Nessun attributo width/height (tranne l'orfano 400x300): scalano al riquadro CSS `.ex-img` (`object-fit: contain`, rapporto 300/165).
 
 ### Convenzione nome file
 
@@ -403,6 +403,7 @@ Elenco delle illustrazioni da rivedere o rifare a fine lavoro. La lista si aggio
 | 19 - T-Bar Row | `esercizi/ex-19-t-bar-row.svg` | Segnato dall'utente come "non convince del tutto"; da rivedere/rifare alla fine con gli altri. Difetti noti: pelle grigio-beige scura, in END il disco sfiora la maniglia, romboidi non distinti dal trapezio. Alternative: bozze a, b, c, d in `esercizi-bozze/` (usata la d; la c e' buona ma ha la barra curva in END). | Da rivedere |
 | 27 - Leg Press | `esercizi/ex-27-leg-press.svg` | Bozza d, la migliore ma non impeccabile: macchina completa (base, gamba posteriore, guida, schienale, impugnature) quasi identica nei due frame, START con gambe quasi tese e slitta in alto, END con ginocchia circa 90 gradi e slitta vicina al sedile, mani sulle maniglie, quadricipiti #fb8b3c esatti e secondari chiari. Difetti lievi: in START 6 dischi sulla barra e in END 5; in END la guida e' circa 8 unita' piu' corta che in START (traslazione END 151,-1, pavimento e gamba posteriore allineati); la barra della slitta in END non e' esattamente allineata a quella di START; secondari poco estesi. Rimossi rect bianco, 2 ombre ellittiche (ne resta una statica sotto la macchina) e le etichette START/END (2 path). Alternative: bozze a, b, c, d in `esercizi-bozze/` (la a ha 8 path di testo, guida diversa tra i frame e macchina senza gamba posteriore; la b ha 2 path di testo, in END guida molto piu' corta (circa 28 unita') e base diversa, e 2 pezzi di slitta START con centro x oltre 400 che la regola di divisione sbaglia; la c ha 2 pillole arancioni (rect rx) piu' 2 path di testo, macchina diversa tra i frame e l'atleta con gambe poco leggibili). | Difetto lieve, da valutare |
 | 28 - Affondi Manubri | `esercizi/ex-28-affondi-manubri.svg` | Bozza a, la migliore: START in piedi con manubri lungo i fianchi, END affondo con ginocchio anteriore circa 90 gradi, ginocchio posteriore vicino al pavimento, busto verticale, piede posteriore sulla punta, mani sui manubri in entrambi i frame, quadricipiti #fb8b3c esatti, stesso abbigliamento nei due frame, suolo allineato (traslazione END 160,1.5, nessun salto verticale). Difetti lievi: in START si vede un solo disco dei manubri davanti all'altro; secondari della gamba in END color pelle (#eabe9d) e non #fdba8c; ginocchio anteriore leggermente oltre la caviglia; pantaloncini grigi con cucitura poco leggibili. Rimosse 2 ombre ellittiche (ne resta una statica comune sotto i piedi). Alternative: bozze a, b, c, d in `esercizi-bozze/` (la b ha wrapper matrix da appiattire, pelle grigio-beige, manubrio START a 3 pezzi e gambe con tagli neri; la c ha busto vertical ma END con ginocchio anteriore oltre la caviglia e pelle scura; la d ha START con polpacci neri ma END con polpaccio anteriore arancione, abbigliamento incoerente, tratti marroni vaganti). | Difetto lieve, da valutare |
+| 33 - Leg Curl Seduto | `esercizi/ex-33-leg-curl-seduto.svg` | Bozza b, la migliore (atleta uomo; nessuna e' impeccabile). START seduto con schiena contro lo schienale, cosce orizzontali sotto il rullo cosce, ginocchia circa 170 gradi con tibia in avanti, rullo caviglie dietro il polpaccio, leva visibile, mani sull'impugnatura; END ginocchia circa 90 gradi, tibia verticale, piede a terra sotto il ginocchio, rullo caviglie spostato in basso e indietro, cosce e busto invariati; femorali #fb8b3c, polpacci #fdba8c. Difetti lievi: la leva del rullo caviglie non e' collegata al rullo in modo realistico (in START il rullo galleggia sulla punta della leva, in END la leva e' un tratto grigio verticale davanti allo stinco e il rullo e' staccato); in END il rullo cosce e' circa 2 unita' fuori allineamento rispetto alla coscia; il pacco pesi non sale (statico); sotto il sedile resta un varco bianco tra i montanti; tono ombra #D6794C sotto il ginocchio non in palette. Macchina, busto, testa e sedile statici presi da START (identici tra i frame con scarto circa 2 unita'), nei gruppi animati solo gamba, leva, rullo caviglie e scarpa, END traslato di 157.8; rimossi rect di sfondo, 2 ombre (ne resta una statica) e circa 32 tratti decorativi vaganti #C4C4C4/#E5E5E5 (alcuni tratteggiati). Alternative: bozze a, b, c, d in `esercizi-bozze/` (la a ha START con ginocchio circa 150 gradi invece di 170 e tratti decorativi #F2F2F2, ma in END ha il braccio della leva visibile; la c ha START con ginocchio circa 150 gradi, rullo caviglie senza leva in entrambi i frame, due path nere opacity .15 come ombre extra, rect grigio di fondo e piede START che sconfina nell'altra meta'; la d ha pose corrette (ginocchio circa 155 gradi in START) e disegno pulito ma in END la leva sparisce e il rullo galleggia, piu' rect #F5F6FA di fondo). | Difetto lieve, da valutare |
 | 32 - Leg Curl Sdraiato | `esercizi/ex-32-leg-curl-sdraiato.svg` | Bozza a, la migliore (atleta donna; nessuna e' impeccabile). START prona sulla panca con gambe quasi tese (circa 172 gradi), cosce sulla panca, leva bassa e rullo sul tallone/tendine d'Achille, mani sull'impugnatura; END ginocchio circa 90 gradi, stinco quasi verticale, cosce e bacino sulla panca, leva ruotata in alto, mani sull'impugnatura; femorali #fb8b3c, polpacci #fdba8c. Difetti lievi: si vede una sola gamba (l'altra e' coperta); in END il rullo sta sulla parte alta dello stinco, vicino alla caviglia, non proprio sul tallone; il perno della leva in END e' circa 5 unita' piu' in alto che in START e il blocco del perno cambia forma; il pacco pesi non sale (statico); la panca/pad e il busto sono ridisegnati in ciascun frame (identici ma nel crossfade c'e' un leggero calo di opacita'). Macchina statica presa da START, END traslato di 148.8; rimossi rect di sfondo, 2 ombre (ne resta una statica) e la macchina duplicata di END. Alternative: bozze a, b, c, d in `esercizi-bozze/` (la b ha pose corrette e macchina uguale ma panca curva con leva poco leggibile e mani su un'impugnatura strana; la c ha sfondo grigio opaco, macchina diversa tra START ed END (pacco pesi in posizioni diverse), artefatti rosa vicino al viso e leva con perno spostato; la d ha polpaccio grigio-beige con strisce chiare, leggings neri che coprono tutta la gamba e pacco pesi dietro la panca che copre la coscia). | Difetto lieve, da valutare |
 | 31 - Leg Extension | `esercizi/ex-31-leg-extension.svg` | Bozza a, la migliore (nessuna e' impeccabile). START seduto con schiena contro lo schienale, cosce sul sedile, ginocchio circa 90 gradi, tibia quasi verticale, rullo sulla tibia sopra la caviglia, mani sull'impugnatura; END gamba tesa quasi orizzontale (circa 175 gradi), cosce sul sedile, leva e rullo saliti con la gamba, mani sull'impugnatura; quadricipiti #fb8b3c esatti, nessun secondario. Difetti lievi: in START la leva curva parte dal perno sul bordo del sedile e passa dietro al ginocchio (non e' una leva fissata al rullo in modo realistico); in END il rullo e' un po' sopra la linea della gamba, vicino alla caviglia; il pacco pesi non sale col rullo (statico). Macchina statica presa da START (la bozza ha il pacco pesi leggermente diverso nei due frame, circa 0,5 unita'), END traslato di 263.6; rimossi 2 ombre (ne resta una statica) e 2 cerchi duplicati. Alternative: bozze a, b, c, d in `esercizi-bozze/` (la b ha il perno leva e la gamba coerenti ma pantaloncini/pelle grigio-beige scuro, il pacco pesi con blocchi diversi tra i frame e il rullo molto in basso in START; la c ha il perno della leva che si sposta di circa 95 unita' tra START ed END, gamba sottile e canotta nera; la d ha busto molto reclinato, pelle arancione vicina al colore dei quadricipiti con doppio strato arancione e ombra chiara tagliata). | Difetto lieve, da valutare |
 | 30 - Step-up su Panca | `esercizi/ex-30-step-up-su-panca.svg` | Bozza c, la migliore e l'unica con panca identica nei due frame (le altre hanno panca di dimensioni/altezza diverse tra START e END). Pose corrette: START piede destro sulla panca con ginocchio circa 90 gradi, sinistro a terra dietro, busto leggermente inclinato; END in piedi sulla panca sulla gamba destra tesa, ginocchio sinistro circa 90 gradi con coscia orizzontale; braccia rilassate, nessun manubrio. Difetti lievi: in END la mano destra e' scura (guanto/ombra) davanti alla coscia; il femorale chiaro e' poco visibile in START; atleta in END molto piu' alta, quindi viewBox ampio con margini laterali. Panca e ombra statiche prese da START, END traslato di 131.5 unita' per allinearle. | Difetto lieve, da valutare |
