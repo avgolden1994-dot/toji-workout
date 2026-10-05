@@ -112,3 +112,17 @@ test('un backup vecchio con le chiavi del Coach IA e il consenso non le ripristi
     assert.deepStrictEqual(app.errori, []);
   });
 });
+
+test('l informativa in app (it/en/es/de) non ha piu l eccezione del Coach IA e ha ancora le sezioni 1-7', () => {
+  const riga = fs.readFileSync(path.join(radice, 'js', 'ui', 'guida-interattiva.js'), 'utf8').split('\n').find(l => l.startsWith('const INFORMATIVA = '));
+  assert.ok(riga, 'const INFORMATIVA trovata');
+  const inf = JSON.parse(riga.slice('const INFORMATIVA = '.length).replace(/;\s*$/, ''));
+  assert.deepStrictEqual(Object.keys(inf), ['it', 'en', 'es', 'de']);
+  const vera = { it: /Nessun server li riceve/, en: /No server receives it/, es: /Ningún servidor los recibe/, de: /Kein Server erhält sie/ };
+  Object.keys(inf).forEach(l => {
+    assert.deepStrictEqual((inf[l].match(/<h3>\d\./g) || []).map(x => x.slice(4, -1)), ['1', '2', '3', '4', '5', '6', '7'], l + ': sezioni 1-7');
+    assert.ok(!/Coach IA|AI Coach|KI-Coach|Unica eccezione|only exception|Única excepción|Einzige Ausnahme|a un server|to a server|a un servidor|an einen Server/.test(inf[l]), l + ': niente piu Coach IA ne invio a un server');
+    assert.ok(vera[l].test(inf[l]), l + ': resta la frase vera (nessun server riceve i dati)');
+    assert.ok(/consent-foot/.test(inf[l]), l + ': resta la riga della versione');
+  });
+});
