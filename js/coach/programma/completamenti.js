@@ -12,6 +12,13 @@
    ============================================================ */
 const NOTA_REMATORE_INVERSO = 'Rematore inverso: fallo sotto un tavolo robusto o con una sbarra bassa, dopo aver controllato che regga il tuo peso.';
 const NOTA_FEMORALI_SENZA_LEG_CURL = 'Femorali: senza leg curl restano meno allenati, il ponte glutei li aiuta.';
+/* W1-T6: una cerniera dell anca che allena i femorali (credito > 0 negli attributi: stacco rumeno, a una gamba, good morning, stacchi; non l hyperextension, che e classe F, ne l hip thrust, che e
+   una spinta d anca). Senza attributi ricade sul nome. */
+function eCernieraFemorali(e) {
+  const a = typeof attributi === 'function' ? attributi(e.name) : null;
+  if (!a) return /stacco|good morning/i.test(senzaEmoji(e.name));
+  return a.schema === 'hinge' && 'ABC'.indexOf(a.classe) !== -1 && (a.muscoli.femorali || 0) > 0;
+}
 
 /* completaSettimana(brief, sedute): vedi sopra. Scrive le note nell ordine in cui le scrivevano i passi di buildProgram (brief.lavoro.note). */
 function completaSettimana(brief, sedute) {
@@ -53,7 +60,11 @@ function completaSettimana(brief, sedute) {
       if (sedute.some(sd => sd.esercizi.some(e => rx.test(senzaEmoji(e.name)) && findExercise(e.name) && ['glutei', 'gambe'].indexOf(findExercise(e.name).group) !== -1))) return;
       const nome = nomeInLibreria(predef);
       if (!nome || !consentito(nome, prefs)) return;
-      const dove = sedute.filter(sd => /lower|legs|fullbody/.test(sd.tipo)).sort((a, b) => a.esercizi.length - b.esercizi.length)[0] || sedute[0];
+      /* RID-01 (W1-T6): una famiglia multiarticolare dei glutei (spinta d anca, affondo, stacco) non va in una seduta che ha gia due multiarticolari per il grande gluteo (ABB-02 ne ammette due):
+         prima la seduta di gambe che ne ha meno, poi quella con meno esercizi (prima finiva dove c era piu posto: stacco rumeno, affondi bulgari e hip thrust nella stessa seduta) */
+      const gluteiMulti = (sd) => sd.esercizi.filter(e => bersaglioDi(e.name) === 'grande_gluteo' && (findExercise(e.name) || {}).type === 'compound').length;
+      const multi = bersaglioDi(nome) === 'grande_gluteo' && (findExercise(nome) || {}).type === 'compound';
+      const dove = sedute.filter(sd => /lower|legs|fullbody/.test(sd.tipo)).sort((a, b) => (multi ? (gluteiMulti(a) >= 2) - (gluteiMulti(b) >= 2) : 0) || a.esercizi.length - b.esercizi.length)[0] || sedute[0];
       if (dove) dove.esercizi.push({ name: nome, sets: 3, reps: 12, weight: (findExercise(nome) || {}).weight || 0, rest: 75 });
     });
     note.push('Glutei: spinta d anca, squat o affondi, stacchi e abduzioni ogni settimana.');
@@ -111,8 +122,10 @@ function completaSettimana(brief, sedute) {
         aggiunti++;
       }
     }
+    /* W1-T6: la nota «senza leg curl restano meno allenati» non c e dove i femorali hanno gia una cerniera dell anca vera (stacco rumeno coi manubri o col bilanciere, a una gamba,
+       good morning, stacchi): rinforzaFemorali e il ponte guardavano solo le flessioni e la nota compariva anche con lo stacco rumeno in scheda (mappa, cap. 17 n. 15) */
     if (aggiunti) note.push('Femorali: squat e hip thrust non li fanno crescere, serve la flessione del ginocchio (leg curl).');
-    else if (aggiuntiPonte) note.push(NOTA_FEMORALI_SENZA_LEG_CURL);
+    else if (aggiuntiPonte && !sedute.some(sd => sd.esercizi.some(eCernieraFemorali))) note.push(NOTA_FEMORALI_SENZA_LEG_CURL);
   }
   if (regioni && conGambe) {
     if (goals.indexOf('massa') !== -1 || goals.indexOf('glutei') !== -1) aggiungiRegione(/leg extension/i, ['Leg Extension'], sd => /lower|legs|fullbody/.test(sd.tipo),
@@ -190,7 +203,8 @@ function ordinaSedute(brief, sedute) {
   if (!metodoAttivo) sedute.forEach(sd => {
     if (sd.tipo === 'punti') return;
     const piccolo = (e) => { const m = findExercise(e.name) || {}; return m.type === 'compound' && !isTimeBased(e.name) && (m.group === 'spalle' || m.group === 'braccia') && prefs.priorita.indexOf(m.group) === -1; };
-    const basso = (e) => { const m = findExercise(e.name) || {}; return m.type === 'compound' && !isTimeBased(e.name) && (schemaDi(e.name) === 'squat' || schemaDi(e.name) === 'hinge'); };
+    /* W1-T6: anche la spinta d anca (hip thrust, ponte con carico) e un multiarticolare del gluteo, le gambe: una famiglia dei glutei aggiunta a una seduta full body non resta dopo la military */
+    const basso = (e) => { const m = findExercise(e.name) || {}; return m.type === 'compound' && !isTimeBased(e.name) && (schemaDi(e.name) === 'squat' || schemaDi(e.name) === 'hinge' || SLOT_DEF.glutSpinta(m)); };
     sd.esercizi.slice().filter(piccolo).forEach(a => {
       let ultimo = -1;
       sd.esercizi.forEach((x, i) => { if (basso(x)) ultimo = i; });

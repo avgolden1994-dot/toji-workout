@@ -139,6 +139,9 @@ function componiSedute(brief, split) {
       if (!def) return;
       /* RID-01: la spinta d anca non e il terzo esercizio per il grande gluteo (stacco, affondo e hip thrust fanno lo stesso lavoro: ABB-02 ne ammette due) */
       if (slot === 'glutSpinta' && base.filter(y => bersaglioDi(y.name) === 'grande_gluteo' && (findExercise(y.name) || {}).type === 'compound').length >= 2) return;
+      /* W1-T6: e una sola spinta d anca per seduta: se il posto dell hinge l ha gia preso (la schiena dolente o il giorno dopo un carico lombare pesante: senzaCandidati) il posto della spinta
+         d anca non ne mette una seconda (Hip Thrust e Hip Thrust con Manubrio nella stessa seduta) */
+      if (slot === 'glutSpinta' && base.some(y => SLOT_DEF.glutSpinta(y))) return;
       const tutti = EXERCISE_LIBRARY.filter(x => def(x) && !base.some(y => y.name === x.name));
       if (!tutti.length) return;
       const pesante = (pos === 0 || (metodoAttivo && metodoAttivo.pesanti)) && !cauto && !(metodoAttivo && metodoAttivo.leggeri);   /* leggeri: Gironda, 8x8 con macchine e pesi moderati */
@@ -147,7 +150,8 @@ function componiSedute(brief, split) {
       const migliore = tutti.slice().sort((x, y) => prio(y) - prio(x))[0];
       /* ABB-07: una sola schiena pesante per seduta; non nei metodi essenziali (Starting Strength, StrongLifts, GreySkull: squat e stacco insieme sono il metodo) */
       const ok = tutti.filter(x => consentito(x.name, prefs) && !(RX_NORDIC.test(senzaEmoji(x.name)) && (usatiSett[x.name] || 0) >= PARAM_NORDIC.sedutePerSettimana) && !(SCHIENA_PESANTE.test(x.name) && pesantiSchiena >= 1 && !(metodoAttivo && metodoAttivo.essenziale)) && !(metodoAttivo && metodoAttivo.leggeri && tipoCarico(x.name) === 'pesante'));
-      if (!ok.length) {
+      /* il posto resta senza candidati (fastidi, attrezzi, una schiena pesante gia nella seduta, o il giorno dopo un carico lombare pesante: sotto) */
+      const senzaCandidati = () => {
         /* SES-03 (ponte di W0-T2): senza stacchi (schiena dolente, niente bilanciere ne cavi) il posto dell hinge lo prende la spinta d anca con carico (hip thrust):
            e il movimento di cerniera dell anca che resta, e la seduta di gambe non ne e priva */
         if (slot.replace(/\d$/, '') === 'hinge') {
@@ -162,8 +166,8 @@ function componiSedute(brief, split) {
           if (pull && consentito(pull, prefs) && !base.some(y => y.name === pull)) { usatiSett[pull] = (usatiSett[pull] || 0) + 1; base.push({ name: pull, weight: (findExercise(pull) || {}).weight || 0, riservaTirataV: true, protetto: true }); senzaSbarra = true; pulloverMesso = true; }
           else senzaSbarraSerieInPiu.push(i);
         }
-        return;
-      }
+      };
+      if (!ok.length) { senzaCandidati(); return; }
       const punteggio = (x) => {
         let v = prio(x) + bonusBiomecc(x, slot.replace(/\d$/, ''), testFisici, prefs.fastidi);
         if ((prefs.graditi || []).indexOf(x.name) !== -1) v += 3;
@@ -176,8 +180,22 @@ function componiSedute(brief, split) {
         return v;
       };
       /* ABB-02 come regola: il migliore che non fa lo stesso lavoro di uno gia scelto, se c e (stesso ordine, stessa casualita) */
-      const ordinati = ok.slice().sort((x, y) => punteggio(y) - punteggio(x));
+      let ordinati = ok.slice().sort((x, y) => punteggio(y) - punteggio(x));
+      /* ABB-07 / REC-02 (W1-T6): il giorno dopo un carico pesante sui lombari il posto non prende un altro esercizio pesante per la schiena se ne esiste uno che non lo e (prima era solo una
+         penalita di 5 punti, e il trap bar, lo stacco rumeno coi manubri o il front squat passavano). Il posto dell hinge, dove c e solo lo stacco, resta vuoto: lo prende la spinta d anca
+         (senzaCandidati, SES-03). Si filtra DOPO l ordinamento: la casualita (rng) si consuma come prima e le altre sedute non cambiano per questo */
+      if (vietaSchiena) {
+        const leggeri = ordinati.filter(x => !strSchiena(x.name));
+        if (slot.replace(/\d$/, '') === 'hinge' && tplId === 'fullbody') return;   /* il full body ha il suo squat per le gambe (SES-03 «basso»): il giorno dopo uno stacco niente cerniera, ne il pull-through ne la spinta d anca (carico solo sui glutei, REC-01) */
+        if (leggeri.length) ordinati = leggeri;
+        else if (slot.replace(/\d$/, '') === 'hinge') { senzaCandidati(); return; }
+        else if (slot === 'unilaterale') return;   /* lo stacco rumeno a una gamba (le ginocchia dolenti tolgono gli affondi): il posto non e un fondamentale, resta vuoto */
+      }
       const scelta = ordinati.find(x => !strRidondante(x, base)) || ordinati[0];
+      /* RID-01 (W1-T6): il secondo posto dello stesso tipo (squat2, spintaO2, isoBic2) non diventa un TERZO esercizio che fa lo stesso lavoro di due gia scelti (nemmeno l eccezione dello
+         squat o dei glutei ne ammette tre): a corpo libero lo squat, gli affondi e lo squat su scatola finivano nella stessa seduta, tre esercizi solo per i quadricipiti. Il posto resta
+         vuoto: lo riempie il tempo (riempiTempo: un isolamento) o l EXN-01 (almeno 3 esercizi) */
+      if (/\d$/.test(slot) && strTerzoUguale(scelta, base)) return;
       if (migliore && scelta.name !== migliore.name && !consentito(migliore.name, prefs)) sostituzioni.push({ da: migliore.name, a: scelta.name });
       if (SCHIENA_PESANTE.test(scelta.name)) pesantiSchiena++;
       if (strSchiena(scelta.name)) schienaQui = true;
@@ -191,9 +209,10 @@ function componiSedute(brief, split) {
       const e1 = (x) => slots.some(sl => SLOT_DEF[sl](x) && (sl !== 'glutSpinta' || x.type === 'compound'));
       if (base.some(b => { const x = findExercise(b.name); return x && e1(x); })) return;
       const cand = EXERCISE_LIBRARY.filter(x => e1(x) && consentito(x.name, prefs) && !base.some(y => y.name === x.name) && !(SCHIENA_PESANTE.test(x.name) && pesantiSchiena >= 1)).sort((a, b) =>
-        (strRidondante(a, base) - strRidondante(b, base)) || (((usatiSett[a.name] || 0) >= maxSettimana(a.name)) - ((usatiSett[b.name] || 0) >= maxSettimana(b.name))) || ((PRIORI[senzaEmoji(b.name)] || 0) - (cauto && tipoCarico(b.name) === 'pesante' ? 3 : 0)) - ((PRIORI[senzaEmoji(a.name)] || 0) - (cauto && tipoCarico(a.name) === 'pesante' ? 3 : 0)))[0];
+        ((vietaSchiena && strSchiena(a.name)) - (vietaSchiena && strSchiena(b.name))) || (strRidondante(a, base) - strRidondante(b, base)) || (((usatiSett[a.name] || 0) >= maxSettimana(a.name)) - ((usatiSett[b.name] || 0) >= maxSettimana(b.name))) || ((PRIORI[senzaEmoji(b.name)] || 0) - (cauto && tipoCarico(b.name) === 'pesante' ? 3 : 0)) - ((PRIORI[senzaEmoji(a.name)] || 0) - (cauto && tipoCarico(a.name) === 'pesante' ? 3 : 0)))[0];
       if (!cand) return;
       if (SCHIENA_PESANTE.test(cand.name)) pesantiSchiena++;
+      if (strSchiena(cand.name)) schienaQui = true;
       usatiSett[cand.name] = (usatiSett[cand.name] || 0) + 1;
       base.push({ name: cand.name, weight: cand.weight || 0 });
     });
@@ -201,7 +220,7 @@ function componiSedute(brief, split) {
        (corpo libero con le ginocchia dolenti, per esempio) si riempie con i muscoli della seduta, poi con il core */
     for (let g = 0; base.length < PARAM_NUMERO_ESERCIZI.min && g < 4; g++) {
       const gruppi = GRUPPI_DELLA_SEDUTA[tplId] || null;
-      const libero = (x) => consentito(x.name, prefs) && !base.some(y => y.name === x.name) && (usatiSett[x.name] || 0) < maxSettimana(x.name) && !(SCHIENA_PESANTE.test(x.name) && pesantiSchiena >= 1) && !(metodoAttivo && metodoAttivo.leggeri && tipoCarico(x.name) === 'pesante');
+      const libero = (x) => consentito(x.name, prefs) && !base.some(y => y.name === x.name) && (usatiSett[x.name] || 0) < maxSettimana(x.name) && !(SCHIENA_PESANTE.test(x.name) && pesantiSchiena >= 1) && !(vietaSchiena && strSchiena(x.name)) && !(metodoAttivo && metodoAttivo.leggeri && tipoCarico(x.name) === 'pesante');
       const punto = (x) => (PRIORI[x.name.replace(EMOJI_TESTA, '')] || 0) - (usatiSett[x.name] ? 2 : 0) - (isTimeBased(x.name) ? 1 : 0) + (x.type === 'compound' && tplId !== 'punti' ? 1 : 0);
       const migliore = (lista) => lista.sort((a, b) => punto(b) - punto(a))[0];
       /* prima un esercizio dei muscoli della seduta che non faccia lo stesso lavoro di uno gia scelto (ABB-02), poi, nella seduta di tirata, la catena posteriore (femorali e glutei
@@ -214,6 +233,7 @@ function componiSedute(brief, split) {
       const scelto = migliore(dei.filter(x => !strRidondante(x, base))) || migliore(affini.filter(x => !strRidondante(x, base))) || core || migliore(dei);
       if (!scelto) break;
       if (SCHIENA_PESANTE.test(scelto.name)) pesantiSchiena++;
+      if (strSchiena(scelto.name)) schienaQui = true;
       usatiSett[scelto.name] = (usatiSett[scelto.name] || 0) + 1;
       base.push({ name: scelto.name, weight: scelto.weight || 0 });
     }
