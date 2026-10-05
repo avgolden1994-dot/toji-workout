@@ -259,8 +259,11 @@ test('stimaEsercizi e durataSeduta sono le funzioni di prima (exerciseCountFor e
 test('verificaProgramma: chiama i valida* che esistono e mette in nota il testo che ritornano; senza valida* non cambia niente', () => {
   const a = caricaApp({ ora: ORA });
   const d = Object.assign({}, BASE);
-  const prog0 = a.dati(a.chiama('buildProgram', d));
   assert.strictEqual(typeof a.g('validaVolume'), 'function');
+  /* W2-T2: validaTempo esiste (le note oneste del tempo): per provare il meccanismo la si sostituisce, prima con una che non scrive niente e poi con quella di prova */
+  assert.strictEqual(typeof a.g('validaTempo'), 'function');
+  a.g("globalThis.validaTempo = () => []");
+  const prog0 = a.dati(a.chiama('buildProgram', d));
   a.g("globalThis.validaTempo = (brief, sedute) => ['Prova: la seduta di ' + sedute.length + ' giorni non entra nei minuti']");
   const prog1 = a.dati(a.chiama('buildProgram', d));
   assert.deepStrictEqual(prog1.note, prog0.note.concat(['Prova: la seduta di ' + prog0.sedute.length + ' giorni non entra nei minuti']));

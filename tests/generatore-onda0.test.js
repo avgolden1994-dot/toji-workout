@@ -48,32 +48,27 @@ const TECNICHE_CED = () => app().json('TECNICHE_AL_CEDIMENTO');
 const tecnicheAmmesse = p => p.level !== 'principiante' && p.age >= 18 && p.age < 65 && p.parq !== 'si';   /* MAV-03, ETA-02, REC-11 */
 
 /* ---------- B1 / PRG-03 ponte: quanti esercizi per seduta ---------- */
-test('B1 (PRG-03): exerciseCountFor conta le serie vere (tetto 3 ai principianti) e la pausa media dei tre tipi, non solo del fondamentale', () => {
+test('B1 (PRG-03, riscritta da W2-T2 come CAS-06): stimaEsercizi conta le serie vere e il modello dei tempi: da 4 a 8 esercizi, da 4 a 6 per chi inizia', () => {
   const a = app();
   const massa = a.g("schemeFor('massa')"), forza = a.g("schemeFor('forza')");
-  const vecchia = (min, s) => Math.max(3, Math.min(7, Math.floor((min - 10) / (s.sets * (35 + s.restCompound) / 60))));   /* la formula di prima dell onda 0 */
   const sM = a.dati(massa), sF = a.dati(forza);
   /* serie effettive: chi inizia, il prudente (minorenne, over 65, PAR-Q) al massimo 3 (COACH_PARAMETRI.serieMaxPrudente); la forza ne fa in media 3,5 */
   assert.strictEqual(a.chiama('serieEffettive', sM, { level: 'principiante' }), 3);
   assert.strictEqual(a.chiama('serieEffettive', sM, { prudente: true }), 3);
   assert.ok(a.chiama('serieEffettive', sF, { level: 'intermedio' }) > a.chiama('serieEffettive', sM, { level: 'intermedio' }) - 1e-9, 'la forza conta almeno le serie della massa');
   assert.ok(a.chiama('serieEffettive', sF, {}) <= sF.sets, 'mai oltre le serie dello schema');
-  /* la pausa media pesa i tre tipi: sta tra l isolamento e il fondamentale */
-  const media = a.chiama('pausaMediaPerTipo', sM);
-  assert.ok(media < sM.restCompound && media > Math.max(60, sM.restIso) - 1, 'pausa media ' + media + ' tra isolamento (' + sM.restIso + ') e fondamentale (' + sM.restCompound + ')');
-  /* limiti: 3-7 esercizi, 3-5 per chi inizia, e mai meno di prima */
-  [30, 45, 60, 75, 90].forEach(min => {
+  /* limiti di CAS-06: 4-8 esercizi (i quattro schemi base, il tetto di EXN-02), 4-6 per chi inizia; la forza, con le pause lunghe, ne tiene meno della massa */
+  [20, 30, 45, 60, 75, 90].forEach(min => {
     ['massa', 'forza', 'salute', 'dimagrimento'].forEach(goal => {
       const s = a.dati(a.g("schemeFor('" + goal + "')"));
       const n = a.chiama('exerciseCountFor', min, s, { level: 'intermedio' }), nP = a.chiama('exerciseCountFor', min, s, { level: 'principiante' });
-      assert.ok(n >= 3 && n <= 7, goal + ' ' + min + ' min: ' + n + ' esercizi, fuori da 3-7');
-      assert.ok(nP >= 3 && nP <= 5, goal + ' ' + min + ' min principiante: ' + nP + ' esercizi, fuori da 3-5');
-      assert.ok(n >= vecchia(min, s), goal + ' ' + min + ' min: ' + n + ' esercizi, meno di prima (' + vecchia(min, s) + ')');
+      assert.ok(n >= 4 && n <= 8, goal + ' ' + min + ' min: ' + n + ' esercizi, fuori da 4-8');
+      assert.ok(nP >= 4 && nP <= 6, goal + ' ' + min + ' min principiante: ' + nP + ' esercizi, fuori da 4-6');
     });
   });
-  /* il caso che riempiva male le sedute: 60 minuti di massa erano 4 esercizi, adesso 6-7 */
+  /* il caso che riempiva male le sedute: 60 minuti di massa erano 4 esercizi, adesso 6-8 */
   assert.ok(a.chiama('exerciseCountFor', 60, sM, { level: 'intermedio' }) >= 6);
-  assert.strictEqual(a.chiama('exerciseCountFor', 30, sM, { level: 'intermedio' }), 3);
+  assert.strictEqual(a.chiama('exerciseCountFor', 30, sM, { level: 'intermedio' }), 4);
   assert.strictEqual(a.chiama('exerciseCountFor', 90, sM, { level: 'principiante' }), 5);
   assert.deepStrictEqual(app().errori, []);
 });
@@ -95,21 +90,22 @@ test('B1: sui 300 profili ogni seduta ha almeno 3 esercizi (EXN-01 = 0), al mass
   assert.deepStrictEqual(serie, [], 'PRN-02: principianti con piu di 3 serie');
 });
 
-test('B1 (DUR-02): le sedute non restano mezze vuote come prima (stima del tempo sui 300 profili) e non sforano (DUR-01)', () => {
+test('B1 (CAS-05, DUR-01): sui 300 profili le sedute non sforano i minuti dichiarati col modello dei tempi di W2-T2 e il tempo non si riempie (D-P10)', () => {
   const a = app();
   let sotto = 0, sopra = 0, sedute = 0;
   tutti().forEach(({ p, prog }) => prog.sedute.forEach(sd => {
-    const m = a.chiama('stimaMinutiSeduta', sd.esercizi);
+    /* le stesse opzioni del generatore (il profilo non e salvato in questa prova): il modello e quello di durataSeduta, senza fattore personale; chi inizia sta in 50 minuti al massimo (PRI-08) */
+    const m = a.chiama('durataSeduta', sd.esercizi, { minuti: p.minutes, eta: p.age, prudente: p.age >= 65 || p.parq === 'si', livello: p.level, fastidi: p.fastidi.length > 0, fattore: 1 });
+    const limite = p.level === 'principiante' ? Math.min(p.minutes, 50) : p.minutes;
     sedute++;
     if (m < 0.75 * p.minutes) sotto++;
-    if (m > 1.05 * p.minutes) sopra++;
+    if (m > 1.10 * limite) sopra++;
   }));
-  /* collaudo ufficiale (matrici rapida e standard, pesate): DUR-02 83% -> circa 74% (l obiettivo del piano, meta, non e raggiunto: il tempo e un tetto, D-P10, e piu serie
-     romperebbero i tetti di volume). W0-T7 (revisione dell onda 0, M2): il riempimento non allunga piu le pause per arrivare ai minuti dichiarati (il calo a 63% era in gran parte
-     imbottitura: core a 120 s, Goblet Squat a 225 s), quindi su questo campione, non pesato e con piu sedute corte, la quota sale dal 44% a circa il 57%: la soglia 65% protegge dal
-     ritorno alle sedute vuote per colpa delle serie, e la prova che conta davvero e sotto, lo sforamento (DUR-01) */
-  assert.ok(sotto / sedute <= 0.65, 'DUR-02: ' + (100 * sotto / sedute).toFixed(1) + '% delle sedute sotto il 75% dei minuti');
-  assert.ok(sopra / sedute <= 0.04, 'DUR-01: ' + (100 * sopra / sedute).toFixed(1) + '% delle sedute oltre il 105% dei minuti');
+  /* W2-T2 (CAS-07, D-P10): il tempo e un tetto, non un obiettivo: la seduta non si allunga per riempire i minuti (il riempimento di prima, riempiTempo, non c e piu) e quasi meta delle sedute
+     resta sotto il 75% dei minuti dichiarati (misurato: 47%; a 90 minuti il 59% in media): il volume utile sta in meno tempo. Lo sforamento oltre il 10% resta solo dove i pavimenti (4 schemi base
+     per 2 serie, 4 serie frazionarie per i grandi muscoli) non lasciano tagliare: a 30 minuti, circa 1 seduta su 20 */
+  assert.ok(sotto / sedute >= 0.30, 'il tempo e un tetto: ' + (100 * sotto / sedute).toFixed(1) + '% delle sedute sotto il 75% dei minuti');
+  assert.ok(sopra / sedute <= 0.02, 'DUR-01: ' + (100 * sopra / sedute).toFixed(1) + '% delle sedute oltre il 110% dei minuti');
 });
 
 /* ---------- B3 / MAV-02, MAV-03 ponte: tecniche al cedimento ---------- */
@@ -197,7 +193,8 @@ test('B2 (RX-01): giorno di ipertrofia (PHUL e intermedi): torna allo schema del
       assert.ok(!(e.reps === 8 && e.rest >= 180 && e.sets >= 5), seme + ' ' + e.name + ': 5x8 a 180 s');
       if (!e.fisso && !a_tempo(e.name)) assert.ok(e.reps >= 6 && e.reps <= 15, seme + ' ' + e.name + ': ' + e.reps + ' ripetizioni fuori da 6-15');
     }));
-    forza.forEach(sd => sd.esercizi.filter(e => e.reps <= 5).forEach(e => assert.ok(e.rest >= 150, seme + ' ' + e.name + ': il giorno di forza tiene le pause lunghe (' + e.rest + ' s)')));
+    /* W2-T2 (B8): il giorno di forza tiene le pause lunghe (fino a 180 s) e, solo se la seduta non sta nei minuti, la classe A scende al suo minimo di 120 s (il taglio per il tempo, CAS-07) */
+    forza.forEach(sd => sd.esercizi.filter(e => e.reps <= 5).forEach(e => assert.ok(e.rest >= 120, seme + ' ' + e.name + ': il giorno di forza tiene le pause lunghe (' + e.rest + ' s)')));
     assert.ok(!iper.some(sd => sd.esercizi.some(e => e.fisso)), seme + ': nessun 5x5 fisso nel giorno di ipertrofia');
   });
 });
