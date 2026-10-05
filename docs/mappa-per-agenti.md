@@ -104,6 +104,8 @@ Righe arrivate dai task dell'onda 0 (W0-T2..W0-T6), applicate in INT-0; i nomi p
 - partenza bassa per le donne e carichi stimati: js/coach/carichi/partenza.js (PAR-01, PAR-05..09, penalitaPartenza; numeri e forza in js/coach/carichi/soglie-partenza.js) (W2-T8)
 - calibrazione rapida del carico stimato: js/coach/carichi/calibrazione.js (fase 'carico' 15, CAR-18/19; calibrazioneNellaSeduta serve a INT-05 in intensita.js e a ESI-02 in esigenza.js) (W2-T8)
 - atleta virtuale per le prove dei carichi: tests/aiuto-atleta.js (capacità dalle àncore delle note di ricerca; simulaNellApp lo porta dentro l'app vera) (W2-T8)
+- correzioni della revisione dell'onda 1 (INT-2a): RIR dei minorenni `pavimentoRirMinorenni(r)` (`MES_RIR.pisoMinorenni`) e `rirBersaglioPerLivello` (il corpo di prima di `rirBersaglioBase`, che ora è il solo ingresso con il pavimento) in js/coach/regole-ricerca.js, campo `minorenne` di `profiloCoach`, minorenni in `esigenzaEsclusa` (js/coach/esigenza.js); esercizi di avvio: attributo `soloAvvio` (js/dati/attributi-esercizi.js), divieto in `vincoliSicurezza` (js/coach/sicurezza/vincoli.js, con lo Stacco Rumeno a una Gamba per prudenti e principianti) e `strSquatDoppio(x, base)` in js/coach/programma/struttura-pro.js (usata da `componiSedute`); `livelloConosciuto` (js/coach/regia/brief.js: un livello sconosciuto vale il più vicino); `attrezzoDi` legge anche «stacco rumeno a una gamba» (manubri) e gli elastici (corpo); regressioni ammesse del cancello con `risolve` e `scade` (tools/cancello-collaudo.js, registro E.1)
+- prove della revisione: tests/revisione-onda1.test.js (M1, M3, M5, m8, m9 con i numeri di prima e dopo), tests/attributi.test.js (M4 e il confronto con le vecchie tabelle per tutti i 169 esercizi)
 
 ## Stile
 

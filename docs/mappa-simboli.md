@@ -59,7 +59,7 @@ Quasi tutto il codice gira solo dopo l avvio, quando ogni file e caricato. Quest
 - `traduciPagina()` js/lingue/traduttore.js:214 funzione window ← nessun altro file — nel file: avviaTraduttore
 - `I18N_ATTIVO` js/lingue/traduttore.js:216 variabile ← nessun altro file — nel file: avviaTraduttore
 - `avviaTraduttore()` js/lingue/traduttore.js:217 funzione ← js/lingue/avvio-traduttore.js:2 — nel file: setLingua
-- `alert()` js/lingue/traduttore.js:223 funzione window ← js/ui/piano/aggiungi-allenamento.js:302 openWeekSheet · js/ui/piano/selezione-multipla.js:67 clearDay, 84 copyDayTo, 147 toggleSuperset, 162 startWorkoutFromPlan · js/ui/allenamento/sessione.js:80 openWorkoutDay · js/ui/musica/mp3-locale.js:78 handleAudioUpload · js/ui/musica/player-web.js:67 previewWebSegment, 76 handleWebLinkSubmit · js/ui/riposo-settimane.js:52 saveWeekSnapshot · js/ui/allenamento/termina-e-cardio.js:93 endWorkout · js/coach/bia/opzioni.js:128 salvaBiaAgente, 138 restartOnboarding · js/ui/calendario/scambio.js:83 mcSwapDays · js/ui/calendario/copia-settimana.js:34 mcSelectWeek, 169 mcPlaceTemplate, 182 mcFillMonth · js/ui/menu-settimana.js:144 mcPlanDay · js/ui/esporta-ics.js:66 exportIcs — nel file: avviaTraduttore
+- `alert()` js/lingue/traduttore.js:223 funzione window ← js/ui/piano/aggiungi-allenamento.js:302 openWeekSheet · js/ui/piano/selezione-multipla.js:67 clearDay, 84 copyDayTo, 147 toggleSuperset, 162 startWorkoutFromPlan · js/ui/allenamento/sessione.js:80 openWorkoutDay · js/ui/musica/mp3-locale.js:78 handleAudioUpload · js/ui/musica/player-web.js:67 previewWebSegment, 76 handleWebLinkSubmit · js/ui/riposo-settimane.js:52 saveWeekSnapshot · js/ui/allenamento/termina-e-cardio.js:93 endWorkout · js/coach/bia/opzioni.js:128 salvaBiaAgente, 138 restartOnboarding · js/ui/calendario/scambio.js:83 mcSwapDays · js/ui/calendario/copia-settimana.js:34 mcSelectWeek, 169 mcPlaceTemplate, 182 mcFillMonth · js/ui/menu-settimana.js:144 mcPlanDay · js/ui/esporta-ics.js:66 exportIcs · tests/revisione-onda1.test.js:166 (html), 169 (html) — nel file: avviaTraduttore
 - `confirm()` js/lingue/traduttore.js:224 funzione window ← js/ui/piano/schede-pronte.js:48 applyTemplate · js/ui/piano/selezione-multipla.js:94 copyDayTo · js/ui/allenamento/sessione.js:77 openWorkoutDay · js/ui/musica/mp3-locale.js:174 deleteTrack · js/ui/riposo-settimane.js:16 toggleRestDay, 68 saveWeekSnapshot, 81 restoreWeek · js/ui/allenamento/termina-e-cardio.js:105 endWorkout · js/ui/storico.js:104 clearHistory · js/coach/bia/opzioni.js:142 restartOnboarding · js/ui/guida-interattiva.js:350 revocaConsenso — nel file: avviaTraduttore
 - `prompt()` js/lingue/traduttore.js:225 funzione window ← js/ui/piano/schede-pronte.js:76 renameDayTitle · js/ui/piano/selezione-multipla.js:85 copyDayTo — nel file: avviaTraduttore
 - `DOW_IT` js/lingue/traduttore.js:240 costante ← nessun altro file — nel file: applicaGiorniSettimana
@@ -102,7 +102,7 @@ _nessun nome globale_
 ### `js/dati/libreria-esercizi.js`
 
 - `MUSCLE_GROUPS` js/dati/libreria-esercizi.js:10 costante ← js/dati/dettagli-esercizi.js ×1 · js/coach/suggeritore.js ×2 · js/ui/piano/giorno.js ×4 · js/ui/piano/aggiungi-allenamento.js ×2 · js/ui/allenamento/macchinario-occupato.js ×1 · js/ui/gruppi-muscolari.js ×4 · js/ui/elenco-esercizi.js ×1 · js/ui/figura-anatomica.js ×5 · js/coach/pannello.js ×1 · js/ui/onboarding.js ×1 · js/coach/volume/volume.js ×3 · js/ui/opzioni/il-coach.js ×1 · js/ui/seduta-libera.js ×1 · js/ui/progressi/riepilogo.js ×3 · js/dati/schede-tecniche.js ×1 · js/ui/calendario/gruppi.js ×4 — nel file: buildExerciseSelect
-- `EXERCISE_LIBRARY` js/dati/libreria-esercizi.js:20 costante ← js/dati/schede-epoca-oro.js ×1 · js/dati/dettagli-esercizi.js ×1 · js/coach/suggeritore.js ×1 · js/ui/piano/aggiungi-allenamento.js ×1 · js/ui/gruppi-muscolari.js ×2 · js/ui/figura-anatomica.js ×2 · js/coach/programma/motore.js ×1 · js/coach/programma/ricette.js ×6 · js/coach/programma/struttura-pro.js ×2 · js/coach/programma/completamenti.js ×1 · js/coach/volume/tempo.js ×1 · js/coach/carichi/partenza.js ×1 · js/coach/questionario-decisioni.js ×1 · js/ui/importa-progressi.js ×1 · js/ui/seduta-libera.js ×2 · js/dati/scheda-unica.js ×1 · tests/browser/carichi-partenza.js ×1 · tests/browser/dettagli-esercizi.js ×4 · tests/browser/disegni-mancanti.js ×1 · tests/browser/elenco-esercizi.js ×2 · tests/browser/ripetizioni.js ×2 · tests/browser/scheda-unica.js ×2 · tests/browser/traduzioni-esercizi.js ×1 — nel file: buildExerciseSelect, findExercise
+- `EXERCISE_LIBRARY` js/dati/libreria-esercizi.js:20 costante ← js/dati/schede-epoca-oro.js ×1 · js/dati/dettagli-esercizi.js ×1 · js/coach/suggeritore.js ×1 · js/ui/piano/aggiungi-allenamento.js ×1 · js/ui/gruppi-muscolari.js ×2 · js/ui/figura-anatomica.js ×2 · js/coach/programma/motore.js ×1 · js/coach/programma/ricette.js ×6 · js/coach/programma/struttura-pro.js ×2 · js/coach/programma/completamenti.js ×1 · js/coach/volume/tempo.js ×1 · js/coach/sicurezza/vincoli.js ×1 · js/coach/carichi/partenza.js ×1 · js/coach/questionario-decisioni.js ×1 · js/ui/importa-progressi.js ×1 · js/ui/seduta-libera.js ×2 · js/dati/scheda-unica.js ×1 · tests/browser/carichi-partenza.js ×1 · tests/browser/dettagli-esercizi.js ×4 · tests/browser/disegni-mancanti.js ×1 · tests/browser/elenco-esercizi.js ×2 · tests/browser/ripetizioni.js ×2 · tests/browser/scheda-unica.js ×2 · tests/browser/traduzioni-esercizi.js ×1 — nel file: buildExerciseSelect, findExercise
 - `buildExerciseSelect()` js/dati/libreria-esercizi.js:212 funzione ← js/avvio.js:13
 - `findExercise()` js/dati/libreria-esercizi.js:229 funzione ← js/dati/dettagli-esercizi.js ×2 · js/coach/suggeritore.js ×3 · js/ui/oggi.js ×3 · js/ui/piano/giorno.js ×2 · js/ui/piano/aggiungi-allenamento.js ×3 · js/ui/allenamento/seduta.js ×2 · js/ui/allenamento/macchinario-occupato.js ×4 · js/ui/gruppi-muscolari.js ×1 · js/ui/figura-anatomica.js ×7 · js/coach/programma/motore.js ×1 · js/coach/programma/ricette.js ×8 · js/coach/programma/struttura-pro.js ×3 · js/coach/programma/completamenti.js ×14 · js/coach/volume/serie-ripetizioni.js ×2 · js/coach/volume/volume.js ×7 · js/coach/volume/tempo.js ×19 · js/coach/volume/tecniche.js ×3 · js/coach/regia/genera.js ×4 · js/coach/carichi/progressivo.js ×1 · js/coach/carichi/partenza.js ×3 · js/coach/carichi/calibrazione.js ×1 · js/coach/carichi/taratura.js ×1 · js/coach/questionario-decisioni.js ×1 · js/coach/prontezza.js ×1 · js/coach/repertorio.js ×1 · js/coach/regole-ricerca.js ×3 · js/coach/regole-nuove.js ×1 · js/ui/importa-csv.js ×1 · js/ui/importa-progressi.js ×3 · js/ui/seduta-libera.js ×2 · js/ui/progressi/riepilogo.js ×1 · js/coach/metodi-momenti.js ×5 · js/coach/metodi-epoca-oro.js ×2 · js/coach/compone.js ×1 · js/coach/biomeccanica.js ×4 · js/coach/psicologia.js ×2 · js/dati/schede-tecniche.js ×3 · js/dati/scheda-unica.js ×1 · js/ui/calendario/gruppi.js ×1 · tests/aiuto-atleta.js ×1 · tests/generatore-onda0b.test.js ×2 · tests/generatore-onda1.test.js ×1 · tests/partenza-donne.test.js ×1 · tests/browser/carichi-evoluzione.js ×1 · tests/browser/carichi-partenza.js ×1 · tests/browser/coerenza-schede.js ×3 · tests/browser/metodi-epoca-oro.js ×4
 
@@ -118,11 +118,11 @@ _nessun nome globale_
 - `MULTIARTICOLARI_TOTALI` js/dati/dettagli-esercizi.js:83 costante ← nessun altro file — nel file: famigliaTotaleDi, lavoroDaSostituire
 - `NOTE_ATTACCO` js/dati/dettagli-esercizi.js:90 costante ← tests/browser/dettagli-esercizi.js:38 · tests/browser/traduzioni-esercizi.js:20 — nel file: dettaglioEsercizio
 - `DETTAGLI` js/dati/dettagli-esercizi.js:106 costante ← tests/browser/dettagli-esercizi.js:37, 38 — nel file: dettaglioEsercizio, bersaglioDi
-- `_nomePulito()` js/dati/dettagli-esercizi.js:301 funzione ← js/dati/attributi-esercizi.js:286 attributi — nel file: dettaglioEsercizio, bersaglioDi, famigliaTotaleDi, sezioneEsercizio, ordineEsercizi
+- `_nomePulito()` js/dati/dettagli-esercizi.js:301 funzione ← js/dati/attributi-esercizi.js:290 attributi — nel file: dettaglioEsercizio, bersaglioDi, famigliaTotaleDi, sezioneEsercizio, ordineEsercizi
 - `dettaglioEsercizio()` js/dati/dettagli-esercizi.js:304 funzione window ← js/ui/piano/aggiungi-allenamento.js ×1 · js/ui/allenamento/seduta.js ×1 · js/ui/elenco-esercizi.js ×1 · js/coach/programma/motore.js ×1 · js/coach/programma/ricette.js ×1 · js/coach/programma/struttura-pro.js ×4 · js/coach/volume/volume.js ×1 · js/coach/volume/tempo.js ×1 · js/ui/seduta-libera.js ×1 · js/ui/schede-esercizio.js ×2 · js/dati/schede-tecniche.js ×1 · tests/sicurezza-onda0.test.js ×2 · tests/browser/coerenza-schede.js ×1 · tests/browser/dettagli-esercizi.js ×1 · tests/browser/traduzioni-esercizi.js ×1 — nel file: sezioneEsercizio, etichettaAttrezzo, focusEsercizio, focusConTipo, organizzaEsercizi, variantiEsercizio
-- `bersaglioDi()` js/dati/dettagli-esercizi.js:311 funzione window ← js/coach/programma/motore.js:108 alternativeStessoMuscolo · js/coach/programma/ricette.js:141 componiSedute · js/coach/programma/completamenti.js:65 completaSettimana · tests/partenza-donne.test.js:224 (html), 233 (html) · tests/browser/macchinario-occupato-tendina.js:112 — nel file: muscoloBersaglio
+- `bersaglioDi()` js/dati/dettagli-esercizi.js:311 funzione window ← js/coach/programma/motore.js:110 alternativeStessoMuscolo · js/coach/programma/ricette.js:141 componiSedute · js/coach/programma/completamenti.js:65 completaSettimana · tests/partenza-donne.test.js:224 (html), 233 (html) · tests/browser/macchinario-occupato-tendina.js:112 — nel file: muscoloBersaglio
 - `muscoloBersaglio()` js/dati/dettagli-esercizi.js:316 funzione window ← tests/browser/macchinario-occupato-tendina.js:41 — nel file: lavoroDaSostituire
-- `famigliaTotaleDi()` js/dati/dettagli-esercizi.js:321 funzione window ← js/coach/programma/motore.js:108 alternativeStessoMuscolo · js/coach/questionario-decisioni.js:78 varianteStessoMuscolo — nel file: lavoroDaSostituire
+- `famigliaTotaleDi()` js/dati/dettagli-esercizi.js:321 funzione window ← js/coach/programma/motore.js:110 alternativeStessoMuscolo · js/coach/questionario-decisioni.js:78 varianteStessoMuscolo — nel file: lavoroDaSostituire
 - `lavoroDaSostituire()` js/dati/dettagli-esercizi.js:327 funzione window ← js/ui/allenamento/macchinario-occupato.js:97 htmlOccupato
 - `sezioneEsercizio()` js/dati/dettagli-esercizi.js:334 funzione window ← nessun altro file — nel file: organizzaEsercizi
 - `etichettaAttrezzo()` js/dati/dettagli-esercizi.js:341 funzione window ← js/ui/piano/aggiungi-allenamento.js:416 renderPiano · js/ui/allenamento/seduta.js:163 renderAllenamento · js/ui/seduta-libera.js:95 htmlListaLibera
@@ -134,44 +134,44 @@ _nessun nome globale_
 
 ### `js/dati/attributi-esercizi.js`
 
-- `UNITA_VOLUME` js/dati/attributi-esercizi.js:44 costante ← nessun altro file — nel file: contaVolume
-- `UNITA_DI_MUSCOLO` js/dati/attributi-esercizi.js:48 costante ← nessun altro file — nel file: unitaDiMuscolo
-- `ZONE_STRESS` js/dati/attributi-esercizi.js:55 costante ← nessun altro file — nel file: _attributiEspansi, stressArticolare
-- `ZONE_ALIAS` js/dati/attributi-esercizi.js:57 costante ← nessun altro file — nel file: stressArticolare
-- `CLASSI_TECNICA` js/dati/attributi-esercizi.js:58 costante ← nessun altro file
-- `SCHEMI_ESERCIZIO` js/dati/attributi-esercizi.js:60 costante ← nessun altro file
-- `PROFILI_RESISTENZA` js/dati/attributi-esercizi.js:61 costante ← nessun altro file
-- `ATTREZZI_ESERCIZIO` js/dati/attributi-esercizi.js:62 costante ← nessun altro file
-- `SERVE_AMMESSI` js/dati/attributi-esercizi.js:63 costante ← nessun altro file
-- `MOTIVI_ZERO` js/dati/attributi-esercizi.js:65 costante ← nessun altro file
-- `SERIE_MIN_PER_SEDUTA` js/dati/attributi-esercizi.js:72 costante ← nessun altro file — nel file: contaVolume
-- `ATTRIBUTI` js/dati/attributi-esercizi.js:74 costante ← nessun altro file — nel file: _attributiEspansi
-- `_attributiCache` js/dati/attributi-esercizi.js:267 variabile ← nessun altro file — nel file: _attributiEspansi
-- `_attributiEspansi()` js/dati/attributi-esercizi.js:269 funzione ← nessun altro file — nel file: attributi
-- `attributi()` js/dati/attributi-esercizi.js:284 funzione window ← js/coach/programma/schemi.js:58 schienaLombare · js/coach/programma/completamenti.js:18 eCernieraFemorali · js/coach/carichi/partenza.js:104 classePartenza · tests/attributi.test.js:18 attr (html), 94 (html), 428 (html) · tests/generatore-onda1.test.js:71 (html), 124 (html) · tests/browser/dettagli-esercizi.js:32 — nel file: creditoMuscoli, contaVolume, classeTecnica, livelloAbilita, stressArticolare, serveAttrezzo
-- `creditoMuscoli()` js/dati/attributi-esercizi.js:289 funzione window ← tests/attributi.test.js:422 (html), 426 (html), 427 (html)
-- `unitaDiMuscolo()` js/dati/attributi-esercizi.js:294 funzione window ← tests/attributi.test.js:182 (html), 183 (html)
-- `contaVolume()` js/dati/attributi-esercizi.js:300 funzione window ← tests/attributi.test.js:438 (html), 453 (html), 454 (html), 455 (html), 456 (html), 457 (html), …
-- `classeTecnica()` js/dati/attributi-esercizi.js:323 funzione window ← tests/attributi.test.js:423 (html), 424 (html)
-- `livelloAbilita()` js/dati/attributi-esercizi.js:328 funzione window ← js/coach/carichi/partenza.js:263 varianteSenzaBilanciere · tests/attributi.test.js:140 (html), 141 (html)
-- `stressArticolare()` js/dati/attributi-esercizi.js:333 funzione window ← tests/attributi.test.js:93 (html), 259 (html), 260 (html), 261 (html), 274 (html), 278 (html), …
-- `serveAttrezzo()` js/dati/attributi-esercizi.js:339 funzione window ← tests/attributi.test.js:298 (html), 299 (html), 300 (html), 301 (html), 302 (html), 303 (html)
+- `UNITA_VOLUME` js/dati/attributi-esercizi.js:48 costante ← nessun altro file — nel file: contaVolume
+- `UNITA_DI_MUSCOLO` js/dati/attributi-esercizi.js:52 costante ← nessun altro file — nel file: unitaDiMuscolo
+- `ZONE_STRESS` js/dati/attributi-esercizi.js:59 costante ← nessun altro file — nel file: _attributiEspansi, stressArticolare
+- `ZONE_ALIAS` js/dati/attributi-esercizi.js:61 costante ← nessun altro file — nel file: stressArticolare
+- `CLASSI_TECNICA` js/dati/attributi-esercizi.js:62 costante ← nessun altro file
+- `SCHEMI_ESERCIZIO` js/dati/attributi-esercizi.js:64 costante ← nessun altro file
+- `PROFILI_RESISTENZA` js/dati/attributi-esercizi.js:65 costante ← nessun altro file
+- `ATTREZZI_ESERCIZIO` js/dati/attributi-esercizi.js:66 costante ← nessun altro file
+- `SERVE_AMMESSI` js/dati/attributi-esercizi.js:67 costante ← nessun altro file
+- `MOTIVI_ZERO` js/dati/attributi-esercizi.js:69 costante ← nessun altro file
+- `SERIE_MIN_PER_SEDUTA` js/dati/attributi-esercizi.js:76 costante ← nessun altro file — nel file: contaVolume
+- `ATTRIBUTI` js/dati/attributi-esercizi.js:78 costante ← nessun altro file — nel file: _attributiEspansi
+- `_attributiCache` js/dati/attributi-esercizi.js:271 variabile ← nessun altro file — nel file: _attributiEspansi
+- `_attributiEspansi()` js/dati/attributi-esercizi.js:273 funzione ← nessun altro file — nel file: attributi
+- `attributi()` js/dati/attributi-esercizi.js:288 funzione window ← js/coach/programma/schemi.js:58 schienaLombare · js/coach/programma/struttura-pro.js:73 strSquatDoppio · js/coach/programma/completamenti.js:18 eCernieraFemorali · js/coach/sicurezza/vincoli.js:37 vincoliSicurezza · js/coach/carichi/partenza.js:104 classePartenza · tests/attributi.test.js:18 attr (html), 94 (html), 469 (html) · tests/generatore-onda1.test.js:71 (html), 124 (html) · tests/browser/dettagli-esercizi.js:32 — nel file: creditoMuscoli, contaVolume, classeTecnica, livelloAbilita, stressArticolare, serveAttrezzo
+- `creditoMuscoli()` js/dati/attributi-esercizi.js:293 funzione window ← tests/attributi.test.js:463 (html), 467 (html), 468 (html)
+- `unitaDiMuscolo()` js/dati/attributi-esercizi.js:298 funzione window ← tests/attributi.test.js:184 (html), 185 (html)
+- `contaVolume()` js/dati/attributi-esercizi.js:304 funzione window ← tests/attributi.test.js:455 (html), 479 (html), 494 (html), 495 (html), 496 (html), 497 (html), …
+- `classeTecnica()` js/dati/attributi-esercizi.js:327 funzione window ← tests/attributi.test.js:464 (html), 465 (html)
+- `livelloAbilita()` js/dati/attributi-esercizi.js:332 funzione window ← js/coach/carichi/partenza.js:263 varianteSenzaBilanciere · tests/attributi.test.js:140 (html), 141 (html)
+- `stressArticolare()` js/dati/attributi-esercizi.js:337 funzione window ← tests/attributi.test.js:93 (html), 262 (html), 263 (html), 264 (html), 277 (html), 281 (html), …
+- `serveAttrezzo()` js/dati/attributi-esercizi.js:343 funzione window ← tests/attributi.test.js:301 (html), 302 (html), 303 (html), 304 (html), 305 (html), 306 (html)
 
 ## js/coach
 
 ### `js/coach/parametri.js`
 
-- `COACH_PARAMETRI` js/coach/parametri.js:13 costante ← js/coach/programma/struttura-pro.js:142 strBilancia, 217 strFinale · js/coach/programma/completamenti.js:32 completaSettimana · js/coach/volume/serie-ripetizioni.js:55 prescriviSeduta · js/coach/volume/volume.js:50 recuperoOk, 93 assegnaVolume, 150 limitaVolume · js/coach/volume/tempo.js:29 serieEffettive, 96 riempiTempo · js/coach/sicurezza/vincoli.js:28 vincoliSicurezza · js/coach/regia/genera.js:61 applicaMetodo · js/coach/carichi/calibrazione.js:192 faseCalibrazione · js/coach/prontezza.js:67 prontezzaDiOggi · js/coach/repertorio.js:424 htmlAderenza, 491 verdettoCiclo · js/coach/dolore-mattina.js:70 aggiustiAlCarico · js/coach/regole-ricerca.js:214 caricoProssimoBase · js/coach/regole-nuove.js:80 regoleRicAlCarico, 100 limitaTecnicheIntense · js/coach/esigenza.js:55 aggiornaEsigenza
+- `COACH_PARAMETRI` js/coach/parametri.js:13 costante ← js/coach/programma/struttura-pro.js:152 strBilancia, 227 strFinale · js/coach/programma/completamenti.js:32 completaSettimana · js/coach/volume/serie-ripetizioni.js:55 prescriviSeduta · js/coach/volume/volume.js:50 recuperoOk, 93 assegnaVolume, 150 limitaVolume · js/coach/volume/tempo.js:29 serieEffettive, 96 riempiTempo · js/coach/sicurezza/vincoli.js:41 vincoliSicurezza · js/coach/regia/genera.js:61 applicaMetodo · js/coach/carichi/calibrazione.js:192 faseCalibrazione · js/coach/prontezza.js:67 prontezzaDiOggi · js/coach/repertorio.js:424 htmlAderenza, 491 verdettoCiclo · js/coach/dolore-mattina.js:70 aggiustiAlCarico · js/coach/regole-ricerca.js:223 caricoProssimoBase · js/coach/regole-nuove.js:80 regoleRicAlCarico, 100 limitaTecnicheIntense · js/coach/esigenza.js:57 aggiornaEsigenza
 - `REGOLE_SPEGNIBILI` js/coach/parametri.js:38 costante ← nessun altro file — nel file: regolaAttiva
 - `REGOLE_SPENTE_KEY` js/coach/parametri.js:46 costante ← tests/browser/intensita-bia.js:54 · tests/browser/regole-nuove.js:25 — nel file: regolaAttiva
-- `regolaAttiva()` js/coach/parametri.js:47 funzione window ← js/ui/allenamento/termina-e-cardio.js:154 endWorkout · js/coach/programma/schemi.js:48 inAllungamento, 49 scambiAllungamento · js/coach/programma/ricette.js:164 componiSedute · js/coach/carichi/partenza.js:89 contestoCarichi, 210 stimaCaricoIniziale, 242 penalitaPartenza, 295 applicaPartenze · js/coach/carichi/calibrazione.js:110 storiaCalibrazione, 201 faseCalibrazione · js/coach/repertorio.js:67 proposteLivello, 299 corpoCoach, 471 verdettoCiclo · js/coach/dolore-mattina.js:67 aggiustiAlCarico · js/coach/regole-ricerca.js:85 pisoRirEsigenza, 110 rirBersaglioBase, 147 faseDelGiorno, 160 inScarico, 165 sessioniConData, 179 ripresaDopoScarico, … · js/coach/regole-nuove.js:71 regoleRicAlCarico, 95 limitaTecnicheIntense · js/coach/intensita.js:57 statoBia, 79 esigenzaIniziale, 85 rirExtraIntensita, 93 primaVoltaUnaSerieInMeno, 109 bilancioPrimeSedute · js/coach/esigenza.js:23 esigenzaEsclusa, 27 tettoEsigenza, 31 rpeBersaglioSeduta · tests/catalogo.test.js:59 contesto (html) · tests/partenza-donne.test.js:555 (html), 557 (html)
+- `regolaAttiva()` js/coach/parametri.js:47 funzione window ← js/ui/allenamento/termina-e-cardio.js:154 endWorkout · js/coach/programma/schemi.js:48 inAllungamento, 49 scambiAllungamento · js/coach/programma/ricette.js:164 componiSedute · js/coach/carichi/partenza.js:89 contestoCarichi, 210 stimaCaricoIniziale, 242 penalitaPartenza, 295 applicaPartenze · js/coach/carichi/calibrazione.js:110 storiaCalibrazione, 201 faseCalibrazione · js/coach/repertorio.js:67 proposteLivello, 299 corpoCoach, 471 verdettoCiclo · js/coach/dolore-mattina.js:67 aggiustiAlCarico · js/coach/regole-ricerca.js:87 pisoRirEsigenza, 119 rirBersaglioPerLivello, 156 faseDelGiorno, 169 inScarico, 174 sessioniConData, 188 ripresaDopoScarico, … · js/coach/regole-nuove.js:71 regoleRicAlCarico, 95 limitaTecnicheIntense · js/coach/intensita.js:57 statoBia, 79 esigenzaIniziale, 85 rirExtraIntensita, 93 primaVoltaUnaSerieInMeno, 109 bilancioPrimeSedute · js/coach/esigenza.js:23 esigenzaEsclusa, 29 tettoEsigenza, 33 rpeBersaglioSeduta · tests/catalogo.test.js:59 contesto (html) · tests/partenza-donne.test.js:555 (html), 557 (html)
 
 ### `js/coach/regia/fasi.js`
 
 - `FASI_PUNTI` js/coach/regia/fasi.js:37 costante ← nessun altro file — nel file: registraFase, fasiRegistrate, eseguiFasi
-- `registraFase()` js/coach/regia/fasi.js:39 funzione ← js/coach/regia/perche.js:102 · js/coach/carichi/calibrazione.js:216 · js/coach/carichi/taratura.js:39 · js/coach/prontezza.js:98 · js/coach/dolore-mattina.js:96 · js/coach/regole-ricerca.js:368, 405, 420 · js/coach/regole-nuove.js:90, 112, 113 · js/coach/intensita.js:100, 150 · tests/carichi-golden.test.js:373 (html), 374 (html), 375 (html), 384 (html), 386 (html), 387 (html), … · tests/catalogo.test.js:251 (html)
+- `registraFase()` js/coach/regia/fasi.js:39 funzione ← js/coach/regia/perche.js:102 · js/coach/carichi/calibrazione.js:216 · js/coach/carichi/taratura.js:39 · js/coach/prontezza.js:98 · js/coach/dolore-mattina.js:96 · js/coach/regole-ricerca.js:377, 414, 429 · js/coach/regole-nuove.js:90, 112, 113 · js/coach/intensita.js:100, 150 · tests/carichi-golden.test.js:373 (html), 374 (html), 375 (html), 384 (html), 386 (html), 387 (html), … · tests/catalogo.test.js:251 (html)
 - `fasiRegistrate()` js/coach/regia/fasi.js:52 funzione ← tests/carichi-golden.test.js:361 (html), 368 (html), 377 (html), 378 (html), 392 (html)
-- `eseguiFasi()` js/coach/regia/fasi.js:61 funzione ← js/coach/prontezza.js:63 applicaProntezza · js/coach/regole-ricerca.js:366 caricoProssimo, 374 applicaCaricoProgressivo, 410 imparaDallaSeduta · tests/carichi-golden.test.js:376 (html), 379 (html)
+- `eseguiFasi()` js/coach/regia/fasi.js:61 funzione ← js/coach/prontezza.js:63 applicaProntezza · js/coach/regole-ricerca.js:375 caricoProssimo, 383 applicaCaricoProgressivo, 419 imparaDallaSeduta · tests/carichi-golden.test.js:376 (html), 379 (html)
 
 ### `js/coach/catalogo-regole.js`
 
@@ -289,7 +289,7 @@ _nessun nome globale_
 
 ### `js/core/utility.js`
 
-- `escapeHtml()` js/core/utility.js:7 funzione ← js/dati/libreria-esercizi.js ×2 · js/ui/piano/schede-pronte.js ×3 · js/ui/oggi.js ×6 · js/ui/piano/giorno.js ×7 · js/ui/piano/aggiungi-allenamento.js ×9 · js/ui/allenamento/seduta.js ×9 · js/ui/allenamento/macchinario-occupato.js ×14 · js/ui/allenamento/sessione.js ×3 · js/ui/musica/mp3-locale.js ×1 · js/ui/riposo-settimane.js ×2 · js/ui/gruppi-muscolari.js ×1 · js/ui/elenco-esercizi.js ×3 · js/ui/figura-anatomica.js ×3 · js/coach/pannello.js ×2 · js/ui/storico.js ×2 · js/ui/onboarding-risultato.js ×4 · js/coach/programma/alternative.js ×7 · js/ui/statistiche.js ×8 · js/ui/statistiche-grafico.js ×1 · js/coach/questionario-decisioni.js ×2 · js/coach/repertorio.js ×3 · js/coach/agente-consigli.js ×7 · js/ui/opzioni/il-coach.js ×2 · js/ui/importa-csv.js ×4 · js/ui/importa-progressi.js ×4 · js/ui/seduta-libera.js ×7 · js/ui/progressi/riepilogo.js ×2 · js/ui/stampa-scheda.js ×1 · js/coach/compone.js ×1 · js/coach/psicologia.js ×10 · js/dati/disegni-esercizi.js ×2 · js/dati/schede-tecniche.js ×16 · js/ui/menu-settimana.js ×4 · js/ui/sessione-completata.js ×3 — nel file: jsArg
+- `escapeHtml()` js/core/utility.js:7 funzione ← js/dati/libreria-esercizi.js ×2 · js/ui/piano/schede-pronte.js ×3 · js/ui/oggi.js ×6 · js/ui/piano/giorno.js ×7 · js/ui/piano/aggiungi-allenamento.js ×9 · js/ui/allenamento/seduta.js ×9 · js/ui/allenamento/macchinario-occupato.js ×14 · js/ui/allenamento/sessione.js ×3 · js/ui/musica/mp3-locale.js ×1 · js/ui/riposo-settimane.js ×2 · js/ui/gruppi-muscolari.js ×1 · js/ui/elenco-esercizi.js ×3 · js/ui/figura-anatomica.js ×3 · js/coach/pannello.js ×2 · js/ui/storico.js ×2 · js/ui/onboarding-risultato.js ×5 · js/coach/programma/alternative.js ×7 · js/ui/statistiche.js ×8 · js/ui/statistiche-grafico.js ×1 · js/coach/questionario-decisioni.js ×2 · js/coach/repertorio.js ×3 · js/coach/agente-consigli.js ×7 · js/ui/opzioni/il-coach.js ×2 · js/ui/importa-csv.js ×4 · js/ui/importa-progressi.js ×4 · js/ui/seduta-libera.js ×7 · js/ui/progressi/riepilogo.js ×2 · js/ui/stampa-scheda.js ×1 · js/coach/compone.js ×1 · js/coach/psicologia.js ×10 · js/dati/disegni-esercizi.js ×2 · js/dati/schede-tecniche.js ×16 · js/ui/menu-settimana.js ×4 · js/ui/sessione-completata.js ×3 — nel file: jsArg
 - `nomeSicuro()` js/core/utility.js:12 funzione ← js/ui/importa-csv.js:158 nomeDaEstero, 205 sedutaImportata · js/ui/importa-progressi.js:195 confermaImportProgressi
 - `pulisciDeep()` js/core/utility.js:16 funzione ← js/core/backup.js:14 valorePulito
 - `jsArg()` js/core/utility.js:28 funzione ← js/ui/piano/giorno.js:113 renderDayView · js/ui/piano/aggiungi-allenamento.js:159 renderAddWeek, 426 renderPiano · js/ui/allenamento/seduta.js:172 renderAllenamento · js/ui/gruppi-muscolari.js:99 renderSuggested, 159 renderSheetExercises · js/coach/pannello.js:37 renderCoach · js/dati/schede-tecniche.js:187 htmlDettaglioScheda
@@ -729,9 +729,9 @@ _nessun nome globale_
 - `scegliSplit()` js/ui/onboarding.js:87 funzione ← js/coach/regia/genera.js:156 buildProgram
 - `SLOT_PRIORITA` js/ui/onboarding.js:91 costante ← nessun altro file — nel file: ricettaPunti
 - `ricettaPunti()` js/ui/onboarding.js:93 funzione ← js/coach/programma/ricette.js:134 componiSedute
-- `schemeFor()` js/ui/onboarding.js:101 funzione ← js/coach/catalogo-regole.js:39 COACH_REGOLE (html) · js/coach/programma/motore.js:133 schemaMisto · js/coach/volume/serie-ripetizioni.js:48 prescriviSeduta · tests/genera-stadi.test.js:242 (html) · tests/generatore-onda0.test.js:53 (html), 67 (html)
-- `PARAM_ETA` js/ui/onboarding.js:120 costante ← js/coach/regia/brief.js:60 chiDa, 77 briefCoach · js/coach/carichi/calibrazione.js:49 personaCalibrazione · js/coach/regole-nuove.js:69 regoleRicAlCarico · js/ui/opzioni/il-coach.js:20 paginaCoach · js/coach/compone.js:50 sceltaMetodo — nel file: etaPerProgramma, renderOnb
-- `MSG_ETA_SOTTO_MINIMO` js/ui/onboarding.js:121 costante ← js/coach/regia/brief.js:77 briefCoach — nel file: etaPerProgramma
+- `schemeFor()` js/ui/onboarding.js:101 funzione ← js/coach/catalogo-regole.js:39 COACH_REGOLE (html) · js/coach/programma/motore.js:135 schemaMisto · js/coach/volume/serie-ripetizioni.js:48 prescriviSeduta · tests/genera-stadi.test.js:247 (html) · tests/generatore-onda0.test.js:53 (html), 67 (html)
+- `PARAM_ETA` js/ui/onboarding.js:120 costante ← js/coach/regia/brief.js:71 chiDa, 88 briefCoach · js/coach/carichi/calibrazione.js:49 personaCalibrazione · js/coach/regole-ricerca.js:61 profiloCoach · js/coach/regole-nuove.js:69 regoleRicAlCarico · js/ui/opzioni/il-coach.js:20 paginaCoach · js/coach/compone.js:50 sceltaMetodo · js/coach/esigenza.js:25 esigenzaEsclusa — nel file: etaPerProgramma, renderOnb
+- `MSG_ETA_SOTTO_MINIMO` js/ui/onboarding.js:121 costante ← js/coach/regia/brief.js:88 briefCoach — nel file: etaPerProgramma
 - `MSG_ETA_MANCANTE` js/ui/onboarding.js:122 costante ← nessun altro file — nel file: etaPerProgramma
 - `etaPerProgramma()` js/ui/onboarding.js:123 funzione ← js/coach/repertorio.js:509 nuovoCiclo · js/ui/opzioni/il-coach.js:70 setCoach — nel file: onbNext, onbStepValid, onbSetEta, renderOnb
 - `startOnboarding()` js/ui/onboarding.js:131 funzione window ← js/core/modalita.js:14 chooseMode · js/coach/bia/opzioni.js:143 restartOnboarding · js/ui/guida-interattiva.js:343 setConsenso
@@ -778,31 +778,31 @@ _nessun nome globale_
 ### `js/coach/programma/motore.js`
 
 - `attrezzoDi()` js/coach/programma/motore.js:17 funzione ← js/dati/dettagli-esercizi.js:337 sezioneEsercizio · js/ui/allenamento/seduta.js:205 renderAllenamento · js/ui/allenamento/macchinario-occupato.js:107 htmlOccupato · js/ui/figura-anatomica.js:100 corpoLibero · js/coach/programma/ricette.js:177 componiSedute · js/coach/volume/tecniche.js:51 assegnaTecniche · js/coach/carichi/partenza.js:173 arrotondaPartenza, 183 passoCarico, 216 stimaCaricoIniziale, 244 penalitaPartenza, 263 varianteSenzaBilanciere · js/coach/questionario-decisioni.js:74 varianteStessoMuscolo · js/ui/seduta-libera.js:66 renderSedutaLibera, 110 renderListaLibera, 184 arrotondaCarico · js/coach/biomeccanica.js:44 stabile · js/dati/scheda-unica.js:23 schedaUnica · tests/browser/dettagli-esercizi.js:26 · tests/browser/macchinario-occupato-profilo.js:13 — nel file: consentito, sostituto, alternativeStessoMuscolo
-- `RISCHIO` js/coach/programma/motore.js:36 costante ← nessun altro file — nel file: consentito
-- `ECCEZIONI_RISCHIO` js/coach/programma/motore.js:45 costante ← nessun altro file — nel file: eccezioneRischio
-- `senzaMacchine()` js/coach/programma/motore.js:46 funzione ← nessun altro file — nel file: ECCEZIONI_RISCHIO
-- `ATTREZZI_NON_DI_CASA` js/coach/programma/motore.js:54 costante ← nessun altro file — nel file: attrezzoDiCasaMancante
-- `ATTREZZI_NON_CON_I_MANUBRI` js/coach/programma/motore.js:55 costante ← nessun altro file — nel file: attrezzoDiCasaMancante
-- `attrezzoFisicoDi()` js/coach/programma/motore.js:56 funzione ← nessun altro file — nel file: attrezzoDiCasaMancante, consentito
-- `attrezzoDiCasaMancante()` js/coach/programma/motore.js:57 funzione ← nessun altro file — nel file: consentito
-- `ATTREZZI_NON_DICHIARABILI_IN_PALESTRA` js/coach/programma/motore.js:64 costante ← nessun altro file — nel file: consentito
-- `eccezioneRischio()` js/coach/programma/motore.js:65 funzione ← nessun altro file — nel file: consentito
-- `consentito()` js/coach/programma/motore.js:70 funzione ← js/coach/catalogo-regole.js:32 COACH_REGOLE (html) · js/coach/programma/ricette.js:152 componiSedute · js/coach/programma/struttura-pro.js:88 strCopri, 170 strBilancia, 207 strCoreNuovo · js/coach/programma/completamenti.js:43 completaSettimana, 163 rinforzaFemorali · js/coach/volume/tempo.js:109 riempiTempo · js/coach/carichi/partenza.js:276 versioneFacilitata — nel file: alternativeStessoMuscolo
-- `sostituto()` js/coach/programma/motore.js:89 funzione ← js/coach/repertorio.js:153 azioneCoach · js/dati/schede-tecniche.js:216 preferisci
-- `alternativeStessoMuscolo()` js/coach/programma/motore.js:107 funzione ← js/ui/allenamento/macchinario-occupato.js:75 alternativeOggi · js/coach/programma/alternative.js:16 alternativeDi · js/coach/carichi/partenza.js:262 varianteSenzaBilanciere · js/coach/questionario-decisioni.js:79 varianteStessoMuscolo · tests/aiuto-genera.js:75 conScelte (html) — nel file: sostituto
-- `schemaMisto()` js/coach/programma/motore.js:132 funzione ← js/coach/regia/brief.js:90 briefCoach
+- `RISCHIO` js/coach/programma/motore.js:38 costante ← nessun altro file — nel file: consentito
+- `ECCEZIONI_RISCHIO` js/coach/programma/motore.js:47 costante ← nessun altro file — nel file: eccezioneRischio
+- `senzaMacchine()` js/coach/programma/motore.js:48 funzione ← nessun altro file — nel file: ECCEZIONI_RISCHIO
+- `ATTREZZI_NON_DI_CASA` js/coach/programma/motore.js:56 costante ← nessun altro file — nel file: attrezzoDiCasaMancante
+- `ATTREZZI_NON_CON_I_MANUBRI` js/coach/programma/motore.js:57 costante ← nessun altro file — nel file: attrezzoDiCasaMancante
+- `attrezzoFisicoDi()` js/coach/programma/motore.js:58 funzione ← nessun altro file — nel file: attrezzoDiCasaMancante, consentito
+- `attrezzoDiCasaMancante()` js/coach/programma/motore.js:59 funzione ← nessun altro file — nel file: consentito
+- `ATTREZZI_NON_DICHIARABILI_IN_PALESTRA` js/coach/programma/motore.js:66 costante ← nessun altro file — nel file: consentito
+- `eccezioneRischio()` js/coach/programma/motore.js:67 funzione ← nessun altro file — nel file: consentito
+- `consentito()` js/coach/programma/motore.js:72 funzione ← js/coach/catalogo-regole.js:32 COACH_REGOLE (html) · js/coach/programma/ricette.js:152 componiSedute · js/coach/programma/struttura-pro.js:98 strCopri, 180 strBilancia, 217 strCoreNuovo · js/coach/programma/completamenti.js:43 completaSettimana, 163 rinforzaFemorali · js/coach/volume/tempo.js:109 riempiTempo · js/coach/carichi/partenza.js:276 versioneFacilitata — nel file: alternativeStessoMuscolo
+- `sostituto()` js/coach/programma/motore.js:91 funzione ← js/coach/repertorio.js:153 azioneCoach · js/dati/schede-tecniche.js:216 preferisci
+- `alternativeStessoMuscolo()` js/coach/programma/motore.js:109 funzione ← js/ui/allenamento/macchinario-occupato.js:75 alternativeOggi · js/coach/programma/alternative.js:16 alternativeDi · js/coach/carichi/partenza.js:262 varianteSenzaBilanciere · js/coach/questionario-decisioni.js:79 varianteStessoMuscolo · tests/aiuto-genera.js:75 conScelte (html) — nel file: sostituto
+- `schemaMisto()` js/coach/programma/motore.js:134 funzione ← js/coach/regia/brief.js:101 briefCoach
 
 ### `js/coach/programma/schemi.js`
 
 - `SCHEMI_MOV` js/coach/programma/schemi.js:20 costante ← js/coach/programma/completamenti.js:40 completaSettimana · js/coach/repertorio.js:253 controlloSchemi · js/dati/schede-tecniche.js:192 preferenzaEsercizio — nel file: schemaDi
-- `SCHEMI_RISERVA` js/coach/programma/schemi.js:28 costante ← js/coach/programma/struttura-pro.js:78 strEtirata — nel file: schemaDi
-- `schemaDi()` js/coach/programma/schemi.js:31 funzione ← js/coach/programma/motore.js:112 alternativeStessoMuscolo · js/coach/programma/ricette.js:20 SLOT_DEF · js/coach/programma/struttura-pro.js:52 strChiave, 76 strEspinta, 78 strEtirata, 150 strBilancia, 234 strAntagonisti · js/coach/programma/completamenti.js:31 completaSettimana, 207 ordinaSedute · js/coach/volume/volume.js:29 creditoSerie · js/coach/volume/tempo.js:154 adattaAlTempo · js/coach/repertorio.js:252 controlloSchemi · js/coach/biomeccanica.js:23 cueEsercizio · js/dati/schede-tecniche.js:192 preferenzaEsercizio · js/dati/scheda-unica.js:27 schedaUnica · tests/browser/coerenza-schede.js:38, 47, 65, 73, 80
+- `SCHEMI_RISERVA` js/coach/programma/schemi.js:28 costante ← js/coach/programma/struttura-pro.js:88 strEtirata — nel file: schemaDi
+- `schemaDi()` js/coach/programma/schemi.js:31 funzione ← js/coach/programma/motore.js:114 alternativeStessoMuscolo · js/coach/programma/ricette.js:20 SLOT_DEF · js/coach/programma/struttura-pro.js:52 strChiave, 86 strEspinta, 88 strEtirata, 160 strBilancia, 244 strAntagonisti · js/coach/programma/completamenti.js:31 completaSettimana, 207 ordinaSedute · js/coach/volume/volume.js:29 creditoSerie · js/coach/volume/tempo.js:154 adattaAlTempo · js/coach/repertorio.js:252 controlloSchemi · js/coach/biomeccanica.js:23 cueEsercizio · js/dati/schede-tecniche.js:192 preferenzaEsercizio · js/dati/scheda-unica.js:27 schedaUnica · tests/browser/coerenza-schede.js:38, 47, 65, 73, 80
 - `ISOLAMENTI` js/coach/programma/schemi.js:32 costante ← nessun altro file — nel file: isolamentoDi
 - `isolamentoDi()` js/coach/programma/schemi.js:37 funzione ← js/dati/scheda-unica.js:28 schedaUnica
 - `IN_ALLUNGAMENTO` js/coach/programma/schemi.js:41 costante ← nessun altro file — nel file: inAllungamento
 - `IN_ALLUNGAMENTO_NUOVI` js/coach/programma/schemi.js:44 costante ← nessun altro file — nel file: inAllungamento
 - `SCAMBI_ALLUNGAMENTO_NUOVI` js/coach/programma/schemi.js:47 costante ← nessun altro file — nel file: scambiAllungamento
-- `inAllungamento()` js/coach/programma/schemi.js:48 funzione ← js/coach/programma/motore.js:90 sostituto · js/coach/programma/ricette.js:174 componiSedute · js/dati/scheda-unica.js:29 schedaUnica · tests/browser/regole-nuove.js:42
+- `inAllungamento()` js/coach/programma/schemi.js:48 funzione ← js/coach/programma/motore.js:92 sostituto · js/coach/programma/ricette.js:174 componiSedute · js/dati/scheda-unica.js:29 schedaUnica · tests/browser/regole-nuove.js:42
 - `scambiAllungamento()` js/coach/programma/schemi.js:49 funzione ← js/coach/programma/ricette.js:243 componiSedute
 - `SCAMBI_ALLUNGAMENTO` js/coach/programma/schemi.js:50 costante ← nessun altro file — nel file: scambiAllungamento
 - `SCHIENA_PESANTE` js/coach/programma/schemi.js:52 costante ← js/coach/programma/ricette.js:152 componiSedute — nel file: schienaLombare
@@ -816,9 +816,9 @@ _nessun nome globale_
 
 - `rngDa()` js/coach/programma/ricette.js:13 funzione ← nessun altro file — nel file: componiSedute
 - `_n()` js/coach/programma/ricette.js:18 funzione ← nessun altro file — nel file: SLOT_DEF
-- `SLOT_DEF` js/coach/programma/ricette.js:19 costante ← js/coach/programma/struttura-pro.js:170 strBilancia · js/coach/programma/completamenti.js:102 completaSettimana, 207 ordinaSedute — nel file: componiSedute
+- `SLOT_DEF` js/coach/programma/ricette.js:19 costante ← js/coach/programma/struttura-pro.js:180 strBilancia · js/coach/programma/completamenti.js:102 completaSettimana, 207 ordinaSedute — nel file: componiSedute
 - `RICETTE` js/coach/programma/ricette.js:40 costante ← nessun altro file — nel file: componiSedute
-- `PRIORI` js/coach/programma/ricette.js:53 costante ← js/dati/dettagli-esercizi.js:359 ordineEsercizi · js/coach/programma/motore.js:119 alternativeStessoMuscolo · js/coach/programma/struttura-pro.js:172 strBilancia, 207 strCoreNuovo · js/coach/volume/tempo.js:117 riempiTempo · js/ui/importa-progressi.js:41 riconosciEsercizio — nel file: componiSedute
+- `PRIORI` js/coach/programma/ricette.js:53 costante ← js/dati/dettagli-esercizi.js:359 ordineEsercizi · js/coach/programma/motore.js:121 alternativeStessoMuscolo · js/coach/programma/struttura-pro.js:182 strBilancia, 217 strCoreNuovo · js/coach/volume/tempo.js:117 riempiTempo · js/ui/importa-progressi.js:41 riconosciEsercizio — nel file: componiSedute
 - `SCHEMI_ATTESI` js/coach/programma/ricette.js:70 costante ← nessun altro file — nel file: componiSedute
 - `SLOT_PER_SCHEMA` js/coach/programma/ricette.js:71 costante ← nessun altro file — nel file: componiSedute
 - `adattoAllaSeduta()` js/coach/programma/ricette.js:73 funzione ← js/coach/volume/tempo.js:110 riempiTempo — nel file: componiSedute
@@ -842,24 +842,25 @@ _nessun nome globale_
 - `strChiave()` js/coach/programma/struttura-pro.js:50 funzione ← nessun altro file — nel file: strRidondante, strTerzoUguale
 - `strRidondante()` js/coach/programma/struttura-pro.js:54 funzione window ← js/coach/programma/ricette.js:178 componiSedute · js/coach/volume/tempo.js:110 riempiTempo — nel file: strBilancia
 - `strTerzoUguale()` js/coach/programma/struttura-pro.js:63 funzione window ← js/coach/programma/ricette.js:198 componiSedute
-- `strSerie()` js/coach/programma/struttura-pro.js:70 funzione ← js/coach/volume/volume.js:74 limitaVolumePerMuscolo — nel file: strBilancia
-- `STR_FATICA` js/coach/programma/struttura-pro.js:74 costante ← tests/browser/coerenza-schede.js:54, 58 — nel file: strFinale
-- `STR_TIRATE_ALTE` js/coach/programma/struttura-pro.js:75 costante ← nessun altro file — nel file: strEtirata, strCopri
-- `strEspinta()` js/coach/programma/struttura-pro.js:76 funzione ← js/coach/volume/volume.js:74 limitaVolumePerMuscolo — nel file: strCopri, strBilancia
-- `strEtirata()` js/coach/programma/struttura-pro.js:78 funzione ← js/coach/volume/volume.js:73 limitaVolumePerMuscolo — nel file: strBilancia
-- `strCopri()` js/coach/programma/struttura-pro.js:81 funzione window ← js/coach/programma/completamenti.js:148 completaSettimana · tests/generatore-onda0b.test.js:140 (html) · tests/browser/coerenza-schede.js:118
-- `strBilancia()` js/coach/programma/struttura-pro.js:139 funzione window ← js/coach/regia/genera.js:66 applicaMetodo, 167 buildProgram
-- `strCoreNuovo()` js/coach/programma/struttura-pro.js:205 funzione ← nessun altro file — nel file: strBilancia
-- `STR_NOTA_TIRATE` js/coach/programma/struttura-pro.js:210 costante ← nessun altro file — nel file: strBilancia
-- `strFinale()` js/coach/programma/struttura-pro.js:215 funzione window ← js/coach/regia/genera.js:172 buildProgram
-- `strAntagonisti()` js/coach/programma/struttura-pro.js:233 funzione ← nessun altro file — nel file: strSuperserie
-- `strPuoSuperserie()` js/coach/programma/struttura-pro.js:241 funzione ← nessun altro file — nel file: strSuperserie
-- `strSuperserie()` js/coach/programma/struttura-pro.js:243 funzione window ← js/coach/volume/tecniche.js:40 assegnaTecniche · js/coach/regia/genera.js:69 applicaMetodo · js/coach/compone.js:75 TOCCHI
+- `strSquatDoppio()` js/coach/programma/struttura-pro.js:72 funzione window ← js/coach/programma/ricette.js:152 componiSedute
+- `strSerie()` js/coach/programma/struttura-pro.js:80 funzione ← js/coach/volume/volume.js:74 limitaVolumePerMuscolo — nel file: strBilancia
+- `STR_FATICA` js/coach/programma/struttura-pro.js:84 costante ← tests/browser/coerenza-schede.js:54, 58 — nel file: strFinale
+- `STR_TIRATE_ALTE` js/coach/programma/struttura-pro.js:85 costante ← nessun altro file — nel file: strEtirata, strCopri
+- `strEspinta()` js/coach/programma/struttura-pro.js:86 funzione ← js/coach/volume/volume.js:74 limitaVolumePerMuscolo — nel file: strCopri, strBilancia
+- `strEtirata()` js/coach/programma/struttura-pro.js:88 funzione ← js/coach/volume/volume.js:73 limitaVolumePerMuscolo — nel file: strBilancia
+- `strCopri()` js/coach/programma/struttura-pro.js:91 funzione window ← js/coach/programma/completamenti.js:148 completaSettimana · tests/generatore-onda0b.test.js:140 (html) · tests/browser/coerenza-schede.js:118
+- `strBilancia()` js/coach/programma/struttura-pro.js:149 funzione window ← js/coach/regia/genera.js:66 applicaMetodo, 167 buildProgram
+- `strCoreNuovo()` js/coach/programma/struttura-pro.js:215 funzione ← nessun altro file — nel file: strBilancia
+- `STR_NOTA_TIRATE` js/coach/programma/struttura-pro.js:220 costante ← nessun altro file — nel file: strBilancia
+- `strFinale()` js/coach/programma/struttura-pro.js:225 funzione window ← js/coach/regia/genera.js:172 buildProgram
+- `strAntagonisti()` js/coach/programma/struttura-pro.js:243 funzione ← nessun altro file — nel file: strSuperserie
+- `strPuoSuperserie()` js/coach/programma/struttura-pro.js:251 funzione ← nessun altro file — nel file: strSuperserie
+- `strSuperserie()` js/coach/programma/struttura-pro.js:253 funzione window ← js/coach/volume/tecniche.js:40 assegnaTecniche · js/coach/regia/genera.js:69 applicaMetodo · js/coach/compone.js:75 TOCCHI
 
 ### `js/coach/programma/mesociclo.js`
 
-- `strutturaProgramma()` js/coach/programma/mesociclo.js:20 funzione ← js/coach/catalogo-regole.js:26 COACH_REGOLE (html) · tests/genera-stadi.test.js:206 (html) · tests/sicurezza-onda0.test.js:299 (html), 300 (html), 302 (html), 303 (html), 304 (html), 305 (html) — nel file: pianoMesociclo
-- `fasiProgramma()` js/coach/programma/mesociclo.js:26 funzione ← tests/genera-stadi.test.js:206 (html) · tests/sicurezza-onda0.test.js:300 (html), 303 (html) — nel file: pianoMesociclo
+- `strutturaProgramma()` js/coach/programma/mesociclo.js:20 funzione ← js/coach/catalogo-regole.js:26 COACH_REGOLE (html) · tests/genera-stadi.test.js:211 (html) · tests/sicurezza-onda0.test.js:299 (html), 300 (html), 302 (html), 303 (html), 304 (html), 305 (html) — nel file: pianoMesociclo
+- `fasiProgramma()` js/coach/programma/mesociclo.js:26 funzione ← tests/genera-stadi.test.js:211 (html) · tests/sicurezza-onda0.test.js:300 (html), 303 (html) — nel file: pianoMesociclo
 - `pianoMesociclo()` js/coach/programma/mesociclo.js:37 funzione ← js/coach/regia/genera.js:155 buildProgram
 
 ### `js/coach/programma/completamenti.js`
@@ -898,7 +899,7 @@ _nessun nome globale_
 
 ### `js/coach/volume/tempo.js`
 
-- `PARAM_NUMERO_ESERCIZI` js/coach/volume/tempo.js:17 costante ← js/coach/programma/ricette.js:221 componiSedute · js/coach/programma/struttura-pro.js:149 strBilancia — nel file: serieEffettive, pausaMediaPerTipo, stimaEsercizi, adattaAlTempo
+- `PARAM_NUMERO_ESERCIZI` js/coach/volume/tempo.js:17 costante ← js/coach/programma/ricette.js:221 componiSedute · js/coach/programma/struttura-pro.js:159 strBilancia — nel file: serieEffettive, pausaMediaPerTipo, stimaEsercizi, adattaAlTempo
 - `serieEffettive()` js/coach/volume/tempo.js:26 funzione ← nessun altro file — nel file: stimaEsercizi
 - `pausaMediaPerTipo()` js/coach/volume/tempo.js:33 funzione ← nessun altro file — nel file: stimaEsercizi
 - `stimaEsercizi()` js/coach/volume/tempo.js:37 funzione ← nessun altro file — nel file: exerciseCountFor, numeroEsercizi
@@ -922,8 +923,8 @@ _nessun nome globale_
 
 ### `js/coach/sicurezza/vincoli.js`
 
-- `vincoliSicurezza()` js/coach/sicurezza/vincoli.js:19 funzione ← js/coach/regia/brief.js:157 briefOggi · js/coach/regia/genera.js:150 buildProgram · tests/genera-stadi.test.js:122 (html)
-- `tecnicheAlCedimentoAmmesse()` js/coach/sicurezza/vincoli.js:36 funzione ← js/coach/volume/tecniche.js:35 assegnaTecniche · js/coach/regia/brief.js:119 risolviMetodo · js/coach/regia/genera.js:54 applicaMetodo, 86 noteDelProgramma
+- `vincoliSicurezza()` js/coach/sicurezza/vincoli.js:20 funzione ← js/coach/regia/brief.js:168 briefOggi · js/coach/regia/genera.js:150 buildProgram · tests/genera-stadi.test.js:122 (html)
+- `tecnicheAlCedimentoAmmesse()` js/coach/sicurezza/vincoli.js:49 funzione ← js/coach/volume/tecniche.js:35 assegnaTecniche · js/coach/regia/brief.js:130 risolviMetodo · js/coach/regia/genera.js:54 applicaMetodo, 86 noteDelProgramma
 
 ### `js/coach/regia/brief.js`
 
@@ -931,33 +932,35 @@ _nessun nome globale_
 - `obiettiviDichiarati()` js/coach/regia/brief.js:23 funzione ← nessun altro file — nel file: briefCoach, briefOggi
 - `obiettiviEffettivi()` js/coach/regia/brief.js:28 funzione ← tests/genera-stadi.test.js:30 (html) — nel file: briefCoach, briefOggi
 - `faseDaObiettivi()` js/coach/regia/brief.js:44 funzione ← js/coach/regia/genera.js:103 noteDelProgramma — nel file: faseCorpo
-- `faseCorpo()` js/coach/regia/brief.js:50 funzione ← js/coach/repertorio.js:301 corpoCoach · js/coach/regole-ricerca.js:80 inDeficitCalorico · js/ui/progressi/peso.js:30 consiglioPeso · tests/genera-stadi.test.js:67 (html), 86 (html), 93 (html) — nel file: briefCoach, briefOggi
-- `chiDa()` js/coach/regia/brief.js:57 funzione ← nessun altro file — nel file: briefCoach, briefOggi
-- `briefCoach()` js/coach/regia/brief.js:72 funzione ← js/coach/regia/genera.js:149 buildProgram · tests/genera-stadi.test.js:213 (html), 217 (html), 224 (html)
-- `risolviMetodo()` js/coach/regia/brief.js:109 funzione ← js/coach/regia/genera.js:151 buildProgram
-- `prefsDelBrief()` js/coach/regia/brief.js:130 funzione ← js/coach/regia/genera.js:153 buildProgram
-- `briefOggi()` js/coach/regia/brief.js:140 funzione ← tests/genera-stadi.test.js:151 (html), 161 (html)
+- `faseCorpo()` js/coach/regia/brief.js:50 funzione ← js/coach/repertorio.js:301 corpoCoach · js/coach/regole-ricerca.js:82 inDeficitCalorico · js/ui/progressi/peso.js:30 consiglioPeso · tests/genera-stadi.test.js:67 (html), 86 (html), 93 (html) — nel file: briefCoach, briefOggi
+- `LIVELLI_NOTI` js/coach/regia/brief.js:58 costante ← nessun altro file — nel file: livelloConosciuto
+- `livelloConosciuto()` js/coach/regia/brief.js:59 funzione ← js/coach/compone.js:83 metodiPerTe — nel file: chiDa
+- `chiDa()` js/coach/regia/brief.js:68 funzione ← nessun altro file — nel file: briefCoach, briefOggi
+- `briefCoach()` js/coach/regia/brief.js:83 funzione ← js/coach/regia/genera.js:149 buildProgram · tests/genera-stadi.test.js:218 (html), 222 (html), 229 (html)
+- `risolviMetodo()` js/coach/regia/brief.js:120 funzione ← js/coach/regia/genera.js:151 buildProgram
+- `prefsDelBrief()` js/coach/regia/brief.js:141 funzione ← js/coach/regia/genera.js:153 buildProgram
+- `briefOggi()` js/coach/regia/brief.js:151 funzione ← tests/genera-stadi.test.js:151 (html), 161 (html)
 
 ### `js/coach/regia/genera.js`
 
 - `SPECIALITA_STRUTTURA` js/coach/regia/genera.js:36 costante ← nessun altro file — nel file: registraSpecialita, specialitaStruttura
-- `registraSpecialita()` js/coach/regia/genera.js:37 funzione ← tests/genera-stadi.test.js:215 (html)
+- `registraSpecialita()` js/coach/regia/genera.js:37 funzione ← tests/genera-stadi.test.js:220 (html)
 - `specialitaStruttura()` js/coach/regia/genera.js:38 funzione ← nessun altro file — nel file: buildProgram
 - `GIORNI_PER_SEDUTE` js/coach/regia/genera.js:44 costante ← nessun altro file — nel file: giorniSettimana
-- `giorniSettimana()` js/coach/regia/genera.js:45 funzione ← tests/genera-stadi.test.js:224 (html) — nel file: buildProgram
+- `giorniSettimana()` js/coach/regia/genera.js:45 funzione ← tests/genera-stadi.test.js:229 (html) — nel file: buildProgram
 - `applicaMetodo()` js/coach/regia/genera.js:52 funzione ← nessun altro file — nel file: buildProgram
 - `regolaDelPicco()` js/coach/regia/genera.js:77 funzione ← nessun altro file — nel file: buildProgram
 - `noteDelProgramma()` js/coach/regia/genera.js:84 funzione ← nessun altro file — nel file: buildProgram
 - `applicaScelteUtente()` js/coach/regia/genera.js:107 funzione ← nessun altro file — nel file: buildProgram
 - `chiudiProgramma()` js/coach/regia/genera.js:118 funzione ← nessun altro file — nel file: buildProgram
 - `verificaProgramma()` js/coach/regia/genera.js:137 funzione ← nessun altro file — nel file: buildProgram
-- `buildProgram()` js/coach/regia/genera.js:147 funzione window ← js/ui/onboarding-risultato.js:6 renderOnbResult · js/coach/programma/alternative.js:39 renderAlternative, 58 applyGeneratedProgram · tests/aiuto-genera.js:104 costruisciConProfilo (html) · tests/attributi.test.js:467 (html) · tests/avvio.test.js:18 · tests/genera-golden.test.js:92 (html) · tests/integrazione-onda0.test.js:47 (html) · tests/browser/carichi-evoluzione.js:13, 14, 15 · tests/browser/coerenza-schede.js:24, 101, 131 · tests/browser/intensita-bia.js:29 · tests/browser/metodi-epoca-oro.js:43, 46, 51, 57, 62, 67, …
+- `buildProgram()` js/coach/regia/genera.js:147 funzione window ← js/ui/onboarding-risultato.js:6 renderOnbResult · js/coach/programma/alternative.js:39 renderAlternative, 58 applyGeneratedProgram · tests/aiuto-genera.js:104 costruisciConProfilo (html) · tests/attributi.test.js:508 (html) · tests/avvio.test.js:18 · tests/genera-golden.test.js:92 (html) · tests/integrazione-onda0.test.js:47 (html) · tests/browser/carichi-evoluzione.js:13, 14, 15 · tests/browser/coerenza-schede.js:24, 101, 131 · tests/browser/intensita-bia.js:29 · tests/browser/metodi-epoca-oro.js:43, 46, 51, 57, 62, 67, …
 
 ## js/ui
 
 ### `js/ui/onboarding-risultato.js`
 
-- `renderOnbResult()` js/ui/onboarding-risultato.js:5 funzione ← js/ui/onboarding.js:345 renderOnb
+- `renderOnbResult()` js/ui/onboarding-risultato.js:5 funzione ← js/ui/onboarding.js:345 renderOnb · tests/revisione-onda1.test.js:165 (html)
 
 ## js/coach
 
@@ -997,7 +1000,7 @@ _nessun nome globale_
 - `pesoSessione()` js/ui/statistiche.js:42 funzione ← nessun altro file — nel file: calcolaStatistiche, calcolaBlocco
 - `inizioPeriodo()` js/ui/statistiche.js:54 funzione window ← js/ui/statistiche-grafico.js:21 frequenzaSettimanale — nel file: calcolaStatistiche
 - `calcolaStatistiche()` js/ui/statistiche.js:60 funzione window ← tests/browser/statistiche.js:46 — nel file: renderStats
-- `tutteLeSedute()` js/ui/statistiche.js:118 funzione window ← js/ui/allenamento/termina-e-cardio.js:69 minutiCardioSettimana, 79 renderCardioStat · js/ui/storico.js:80 renderProgressiTop · js/ui/statistiche-grafico.js:19 frequenzaSettimanale · js/coach/repertorio.js:46 livelloStandardForza, 84 livelloStimato · js/ui/progressi/riepilogo.js:45 faticaMuscoli, 79 renderAnno, 105 annoRiassunto · js/coach/metodi-momenti.js:210 htmlMomento · js/coach/stato.js:29 htmlMomentoBreve · js/coach/esigenza.js:51 aggiornaEsigenza · js/coach/psicologia.js:109 htmlPrimiPassi · js/ui/scheda-quattro-sezioni.js:22 seduteEsercizio — nel file: calcolaStatistiche, blocchiQuattroSettimane, calcolaBlocco
+- `tutteLeSedute()` js/ui/statistiche.js:118 funzione window ← js/ui/allenamento/termina-e-cardio.js:69 minutiCardioSettimana, 79 renderCardioStat · js/ui/storico.js:80 renderProgressiTop · js/ui/statistiche-grafico.js:19 frequenzaSettimanale · js/coach/repertorio.js:46 livelloStandardForza, 84 livelloStimato · js/ui/progressi/riepilogo.js:45 faticaMuscoli, 79 renderAnno, 105 annoRiassunto · js/coach/metodi-momenti.js:210 htmlMomento · js/coach/stato.js:29 htmlMomentoBreve · js/coach/esigenza.js:53 aggiornaEsigenza · js/coach/psicologia.js:109 htmlPrimiPassi · js/ui/scheda-quattro-sezioni.js:22 seduteEsercizio — nel file: calcolaStatistiche, blocchiQuattroSettimane, calcolaBlocco
 - `volumeSeduta()` js/ui/statistiche.js:138 funzione ← nessun altro file — nel file: calcolaBlocco
 - `blocchiQuattroSettimane()` js/ui/statistiche.js:146 funzione window ← js/ui/storico.js:88 renderProgressiTop · js/ui/statistiche-grafico.js:18 frequenzaSettimanale, 115 scelteStatsPeriodo · tests/browser/statistiche.js:72 — nel file: calcolaBlocco, openStats
 - `calcolaBlocco()` js/ui/statistiche.js:164 funzione window ← js/ui/storico.js:93 renderProgressiTop — nel file: reportBloccoHtml
@@ -1024,25 +1027,25 @@ _nessun nome globale_
 
 ### `js/coach/carichi/progressivo.js`
 
-- `arrotonda()` js/coach/carichi/progressivo.js:18 funzione ← js/coach/prontezza.js:74 prontezzaDiOggi · js/coach/dolore-mattina.js:70 aggiustiAlCarico · js/coach/regole-ricerca.js:214 caricoProssimoBase, 396 carichiDelGiorno · js/dati/schede-tecniche.js:12 TECNICA (html)
-- `incrementoPer()` js/coach/carichi/progressivo.js:20 funzione ← js/coach/dolore-mattina.js:77 aggiustiAlCarico · js/coach/regole-ricerca.js:278 caricoProssimoBase · js/dati/scheda-unica.js:26 schedaUnica
+- `arrotonda()` js/coach/carichi/progressivo.js:18 funzione ← js/coach/prontezza.js:74 prontezzaDiOggi · js/coach/dolore-mattina.js:70 aggiustiAlCarico · js/coach/regole-ricerca.js:223 caricoProssimoBase, 405 carichiDelGiorno · js/dati/schede-tecniche.js:12 TECNICA (html)
+- `incrementoPer()` js/coach/carichi/progressivo.js:20 funzione ← js/coach/dolore-mattina.js:77 aggiustiAlCarico · js/coach/regole-ricerca.js:287 caricoProssimoBase · js/dati/scheda-unica.js:26 schedaUnica
 - `faseSedutaSalvata()` js/coach/carichi/progressivo.js:30 funzione ← nessun altro file — nel file: esercizioInScarico
-- `esercizioInScarico()` js/coach/carichi/progressivo.js:42 funzione ← js/coach/dolore-mattina.js:69 aggiustiAlCarico · js/coach/regole-ricerca.js:160 inScarico, 170 sessioniConData — nel file: sedutePerEsercizio
+- `esercizioInScarico()` js/coach/carichi/progressivo.js:42 funzione ← js/coach/dolore-mattina.js:69 aggiustiAlCarico · js/coach/regole-ricerca.js:169 inScarico, 179 sessioniConData — nel file: sedutePerEsercizio
 - `sedutePerEsercizio()` js/coach/carichi/progressivo.js:49 funzione ← js/coach/carichi/calibrazione.js:57 esposizioniCalibrazione, 135 storiaCalibrazione · js/coach/dolore-mattina.js:68 aggiustiAlCarico — nel file: ultimeSessioni, caricoRiferimento
-- `ultimeSessioni()` js/coach/carichi/progressivo.js:61 funzione ← js/coach/catalogo-regole.js:127 COACH_REGOLE (html) · js/ui/allenamento/seduta.js:19 ultimaVoltaTesto · js/ui/allenamento/macchinario-occupato.js:168 sostituisciOggi · js/coach/carichi/partenza.js:209 stimaCaricoIniziale · js/coach/regole-ricerca.js:204 caricoProssimoBase · js/coach/regole-nuove.js:55 mancavaSoloUltimaSerie · js/coach/intensita.js:85 rirExtraIntensita · tests/carichi-onda0.test.js:367 (html), 374 (html) — nel file: pesoUltimoDi
+- `ultimeSessioni()` js/coach/carichi/progressivo.js:61 funzione ← js/coach/catalogo-regole.js:127 COACH_REGOLE (html) · js/ui/allenamento/seduta.js:19 ultimaVoltaTesto · js/ui/allenamento/macchinario-occupato.js:168 sostituisciOggi · js/coach/carichi/partenza.js:209 stimaCaricoIniziale · js/coach/regole-ricerca.js:213 caricoProssimoBase · js/coach/regole-nuove.js:55 mancavaSoloUltimaSerie · js/coach/intensita.js:85 rirExtraIntensita · tests/carichi-onda0.test.js:367 (html), 374 (html) — nel file: pesoUltimoDi
 - `GIORNI_CARICO_RIFERIMENTO` js/coach/carichi/progressivo.js:66 costante ← nessun altro file — nel file: caricoRiferimento
-- `caricoRiferimento()` js/coach/carichi/progressivo.js:67 funzione ← js/coach/catalogo-regole.js:127 COACH_REGOLE (html) · js/coach/dolore-mattina.js:67 aggiustiAlCarico · js/coach/regole-ricerca.js:181 ripresaDopoScarico, 234 caricoProssimoBase · tests/carichi-onda0.test.js:275 (html), 343 (html), 366 (html), 429 (html), 437 (html), 459 (html) · tests/intensita-onda0.test.js:239 (html)
+- `caricoRiferimento()` js/coach/carichi/progressivo.js:67 funzione ← js/coach/catalogo-regole.js:127 COACH_REGOLE (html) · js/coach/dolore-mattina.js:67 aggiustiAlCarico · js/coach/regole-ricerca.js:190 ripresaDopoScarico, 243 caricoProssimoBase · tests/carichi-onda0.test.js:275 (html), 343 (html), 366 (html), 429 (html), 437 (html), 459 (html) · tests/intensita-onda0.test.js:239 (html)
 - `pesoUltimoDi()` js/coach/carichi/progressivo.js:78 funzione ← js/coach/dolore-mattina.js:78 aggiustiAlCarico · tests/carichi-onda0.test.js:382 (html)
-- `esito()` js/coach/carichi/progressivo.js:87 funzione ← js/coach/carichi/calibrazione.js:93 decisioneCalibrazione · js/coach/regole-ricerca.js:209 caricoProssimoBase
-- `settimanaProgramma()` js/coach/carichi/progressivo.js:96 funzione window ← js/ui/piano/giorno.js:122 aggiornaIngressoAgente · js/ui/allenamento/termina-e-cardio.js:156 endWorkout · js/coach/regia/brief.js:143 briefOggi · js/ui/onboarding-risultato.js:65 renderOnbResult · js/coach/carichi/taratura.js:18 segnaEsercizioTaratura · js/coach/repertorio.js:197 bloccoCorrente, 274 azioniCoach, 495 htmlFineCiclo · js/coach/regole-ricerca.js:87 pisoRirEsigenza, 109 rirBersaglioBase, 181 ripresaDopoScarico, 199 caricoProssimoBase · js/coach/regole-nuove.js:43 settimanaCentraleBlocco, 98 limitaTecnicheIntense · js/coach/agente-consigli.js:89 consigliAgente, 135 renderAgent · js/coach/stato.js:13 renderPianoCoach · js/coach/psicologia.js:131 renderSettings · tests/migrazione-v1.test.js:86 (html) · tests/sicurezza-onda0.test.js:324 (html)
-- `frenoBia()` js/coach/carichi/progressivo.js:106 funzione ← js/coach/carichi/calibrazione.js:191 faseCalibrazione · js/coach/regole-ricerca.js:226 caricoProssimoBase
+- `esito()` js/coach/carichi/progressivo.js:87 funzione ← js/coach/carichi/calibrazione.js:93 decisioneCalibrazione · js/coach/regole-ricerca.js:218 caricoProssimoBase
+- `settimanaProgramma()` js/coach/carichi/progressivo.js:96 funzione window ← js/ui/piano/giorno.js:122 aggiornaIngressoAgente · js/ui/allenamento/termina-e-cardio.js:156 endWorkout · js/coach/regia/brief.js:154 briefOggi · js/ui/onboarding-risultato.js:65 renderOnbResult · js/coach/carichi/taratura.js:18 segnaEsercizioTaratura · js/coach/repertorio.js:197 bloccoCorrente, 274 azioniCoach, 495 htmlFineCiclo · js/coach/regole-ricerca.js:89 pisoRirEsigenza, 118 rirBersaglioPerLivello, 190 ripresaDopoScarico, 208 caricoProssimoBase · js/coach/regole-nuove.js:43 settimanaCentraleBlocco, 98 limitaTecnicheIntense · js/coach/agente-consigli.js:89 consigliAgente, 135 renderAgent · js/coach/stato.js:13 renderPianoCoach · js/coach/psicologia.js:131 renderSettings · tests/migrazione-v1.test.js:86 (html) · tests/sicurezza-onda0.test.js:324 (html)
+- `frenoBia()` js/coach/carichi/progressivo.js:106 funzione ← js/coach/carichi/calibrazione.js:191 faseCalibrazione · js/coach/regole-ricerca.js:235 caricoProssimoBase
 
 ### `js/coach/carichi/e1rm.js`
 
 - `e1rm()` js/coach/carichi/e1rm.js:17 funzione ← js/ui/allenamento/seduta.js:30 migliorUnoRM, 39 controllaRecord · js/ui/scheda-quattro-sezioni.js:35 seduteEsercizio, 111 paneRecord · tests/carichi-golden.test.js:465 (html), 466 (html), 467 (html), 470 (html), 471 (html), 472 (html), …
 - `caricoPer()` js/coach/carichi/e1rm.js:28 funzione ← tests/carichi-golden.test.js:469 (html), 470 (html), 471 (html)
 - `e1rmSerie()` js/coach/carichi/e1rm.js:38 funzione ← tests/carichi-golden.test.js:482 (html) — nel file: e1rmSeduta
-- `e1rmSeduta()` js/coach/carichi/e1rm.js:39 funzione ← js/coach/carichi/partenza.js:141 scalaDaStorico · js/coach/repertorio.js:48 livelloStandardForza, 204 eserciziFermi, 475 verdettoCiclo · js/coach/regole-ricerca.js:350 caricoProssimoBase · js/coach/agente-consigli.js:50 consigliCoach2 · tests/carichi-golden.test.js:485 (html), 486 (html), 487 (html)
+- `e1rmSeduta()` js/coach/carichi/e1rm.js:39 funzione ← js/coach/carichi/partenza.js:141 scalaDaStorico · js/coach/repertorio.js:48 livelloStandardForza, 204 eserciziFermi, 475 verdettoCiclo · js/coach/regole-ricerca.js:359 caricoProssimoBase · js/coach/agente-consigli.js:50 consigliCoach2 · tests/carichi-golden.test.js:485 (html), 486 (html), 487 (html)
 
 ### `js/coach/carichi/soglie-partenza.js`
 
@@ -1054,7 +1057,7 @@ _nessun nome globale_
 - `FRASE_PRIMA_ESPOSIZIONE` js/coach/carichi/partenza.js:41 costante ← nessun altro file — nel file: (primo livello)
 - `FRASE_PARTENZA_BASSA` js/coach/carichi/partenza.js:42 costante ← nessun altro file — nel file: (primo livello)
 - `FRASI_FONTE_STIMA` js/coach/carichi/partenza.js:43 costante ← nessun altro file — nel file: (primo livello)
-- `MOTIVI_STIMA` js/coach/carichi/partenza.js:50 costante ← js/coach/regole-ricerca.js:391 carichiDelGiorno — nel file: (primo livello), stimaCaricoIniziale
+- `MOTIVI_STIMA` js/coach/carichi/partenza.js:50 costante ← js/coach/regole-ricerca.js:400 carichiDelGiorno — nel file: (primo livello), stimaCaricoIniziale
 - `NOTE_PROGRAMMA_STIMA` js/coach/carichi/partenza.js:55 costante ← nessun altro file — nel file: applicaPartenze
 - `NOTA_PARTENZA_BASSA` js/coach/carichi/partenza.js:62 costante ← nessun altro file — nel file: applicaPartenze
 - `NOTA_BARRA_VUOTA` js/coach/carichi/partenza.js:63 costante ← nessun altro file — nel file: pesoPartenza, applicaPartenze
@@ -1097,33 +1100,33 @@ _nessun nome globale_
 - `decisioneCalibrazione()` js/coach/carichi/calibrazione.js:87 funzione ← nessun altro file — nel file: storiaCalibrazione
 - `storiaCalibrazione()` js/coach/carichi/calibrazione.js:109 funzione ← nessun altro file — nel file: calibrazioneChiusa, calibrazioneNellaSeduta, faseCalibrazione
 - `calibrazioneChiusa()` js/coach/carichi/calibrazione.js:146 funzione ← js/coach/carichi/partenza.js:161 esercizioAffidabilePerLoStorico
-- `calibrazioneNellaSeduta()` js/coach/carichi/calibrazione.js:152 funzione ← js/coach/intensita.js:120 bilancioPrimeSedute · js/coach/esigenza.js:66 aggiornaEsigenza
+- `calibrazioneNellaSeduta()` js/coach/carichi/calibrazione.js:152 funzione ← js/coach/intensita.js:120 bilancioPrimeSedute · js/coach/esigenza.js:68 aggiornaEsigenza
 - `faseCalibrazione()` js/coach/carichi/calibrazione.js:162 funzione ← nessun altro file — nel file: (primo livello)
 
 ### `js/coach/carichi/taratura.js`
 
-- `segnaEsercizioTaratura()` js/coach/carichi/taratura.js:17 funzione ← js/coach/regole-ricerca.js:401 carichiDelGiorno
+- `segnaEsercizioTaratura()` js/coach/carichi/taratura.js:17 funzione ← js/coach/regole-ricerca.js:410 carichiDelGiorno
 - `apprendiTaraturaRir()` js/coach/carichi/taratura.js:29 funzione ← nessun altro file — nel file: (primo livello)
 
 ### `js/coach/sicurezza/scarico.js`
 
 - `SOGLIA_SRPE_ALTA` js/coach/sicurezza/scarico.js:16 costante ← nessun altro file — nel file: livelloFatica
-- `livelloFatica()` js/coach/sicurezza/scarico.js:18 funzione ← js/coach/regole-ricerca.js:205 caricoProssimoBase
-- `DOSE_SCARICO` js/coach/sicurezza/scarico.js:30 costante ← js/coach/regole-ricerca.js:205 caricoProssimoBase
+- `livelloFatica()` js/coach/sicurezza/scarico.js:18 funzione ← js/coach/regole-ricerca.js:214 caricoProssimoBase
+- `DOSE_SCARICO` js/coach/sicurezza/scarico.js:30 costante ← js/coach/regole-ricerca.js:214 caricoProssimoBase
 - `scaricoReattivo()` js/coach/sicurezza/scarico.js:35 funzione ← js/coach/questionario-decisioni.js:243 applicaDecisioni · js/coach/prontezza.js:89 prontezzaDiOggi · js/coach/repertorio.js:180 azioneCoach · tests/carichi-golden.test.js:492 (html)
 
 ### `js/coach/questionario-decisioni.js`
 
 - `AGG_KEY()` js/coach/questionario-decisioni.js:28 funzione ← js/coach/repertorio.js:142 conAnnulla · tests/aiuto-app.js:106 caricaApp (html) · tests/migrazione-v1.test.js:176 (html) · tests/sicurezza-onda0.test.js:148 (html) — nel file: aggiustiCoach, salvaAggiusti, applicaDecisioni
-- `aggiustiCoach()` js/coach/questionario-decisioni.js:29 funzione window ← js/coach/regia/brief.js:154 briefOggi · js/coach/carichi/calibrazione.js:88 decisioneCalibrazione, 189 faseCalibrazione · js/coach/carichi/taratura.js:32 apprendiTaraturaRir · js/coach/prontezza.js:88 prontezzaDiOggi · js/coach/repertorio.js:158 azioneCoach, 275 azioniCoach, 423 htmlAderenza, 433 rispostaAderenza · js/coach/dolore-mattina.js:12 controlloDoloreDaFare, 26 rispostaDolore, 43 consumaAggiusti, 62 aggiustiAlCarico · js/coach/regole-ricerca.js:281 caricoProssimoBase, 413 contaStalli · tests/carichi-golden.test.js:212 eseguiCaso (html), 496 (html), 504 (html) · tests/intensita-onda0.test.js:331 (html), 337 (html) · tests/migrazione-v1.test.js:157 (html), 166 (html) · tests/sicurezza-onda0.test.js:166 (html) — nel file: applicaDecisioni
-- `salvaAggiusti()` js/coach/questionario-decisioni.js:33 funzione ← js/coach/carichi/taratura.js:37 apprendiTaraturaRir · js/coach/prontezza.js:89 prontezzaDiOggi · js/coach/repertorio.js:158 azioneCoach, 433 rispostaAderenza · js/coach/dolore-mattina.js:37 rispostaDolore, 49 consumaAggiusti · js/coach/regole-ricerca.js:418 contaStalli — nel file: applicaDecisioni
+- `aggiustiCoach()` js/coach/questionario-decisioni.js:29 funzione window ← js/coach/regia/brief.js:165 briefOggi · js/coach/carichi/calibrazione.js:88 decisioneCalibrazione, 189 faseCalibrazione · js/coach/carichi/taratura.js:32 apprendiTaraturaRir · js/coach/prontezza.js:88 prontezzaDiOggi · js/coach/repertorio.js:158 azioneCoach, 275 azioniCoach, 423 htmlAderenza, 433 rispostaAderenza · js/coach/dolore-mattina.js:12 controlloDoloreDaFare, 26 rispostaDolore, 43 consumaAggiusti, 62 aggiustiAlCarico · js/coach/regole-ricerca.js:290 caricoProssimoBase, 422 contaStalli · tests/carichi-golden.test.js:212 eseguiCaso (html), 496 (html), 504 (html) · tests/intensita-onda0.test.js:331 (html), 337 (html) · tests/migrazione-v1.test.js:157 (html), 166 (html) · tests/sicurezza-onda0.test.js:166 (html) — nel file: applicaDecisioni
+- `salvaAggiusti()` js/coach/questionario-decisioni.js:33 funzione ← js/coach/carichi/taratura.js:37 apprendiTaraturaRir · js/coach/prontezza.js:89 prontezzaDiOggi · js/coach/repertorio.js:158 azioneCoach, 433 rispostaAderenza · js/coach/dolore-mattina.js:37 rispostaDolore, 49 consumaAggiusti · js/coach/regole-ricerca.js:427 contaStalli — nel file: applicaDecisioni
 - `ZONE_DOLORE` js/coach/questionario-decisioni.js:35 costante ← js/coach/dolore-mattina.js:19 htmlControlloDolore — nel file: renderQuestionario, decisioniCoach
 - `ZONA_ART` js/coach/questionario-decisioni.js:40 costante ← nessun altro file — nel file: zonaA, zonaIl
 - `zonaA()` js/coach/questionario-decisioni.js:41 funzione ← nessun altro file — nel file: decisioniCoach
 - `zonaIl()` js/coach/questionario-decisioni.js:42 funzione ← nessun altro file — nel file: decisioniCoach
 - `STRESS_ZONA` js/coach/questionario-decisioni.js:45 costante ← js/coach/volume/tecniche.js:28 senzaCedimentoPer — nel file: varianteStessoMuscolo, fbZona, decisioniCoach
 - `senzaEmoji()` js/coach/questionario-decisioni.js:54 funzione ← js/lingue/traduttore.js ×1 · js/ui/piano/giorno.js ×1 · js/ui/piano/aggiungi-allenamento.js ×1 · js/coach/programma/motore.js ×4 · js/coach/programma/schemi.js ×2 · js/coach/programma/ricette.js ×11 · js/coach/programma/struttura-pro.js ×9 · js/coach/programma/completamenti.js ×18 · js/coach/volume/serie-ripetizioni.js ×1 · js/coach/volume/tempo.js ×4 · js/coach/volume/tecniche.js ×3 · js/coach/regia/genera.js ×4 · js/ui/onboarding-risultato.js ×1 · js/coach/carichi/partenza.js ×2 · js/coach/repertorio.js ×3 · js/coach/regole-ricerca.js ×2 · js/coach/agente-consigli.js ×1 · js/ui/opzioni/il-coach.js ×1 · js/ui/importa-csv.js ×1 · js/ui/importa-progressi.js ×4 · js/ui/seduta-libera.js ×4 · js/ui/progressi/riepilogo.js ×1 · js/ui/stampa-scheda.js ×1 · js/coach/biomeccanica.js ×4 · js/ui/scheda-quattro-sezioni.js ×3 · js/dati/schede-tecniche.js ×5 · tests/browser/coerenza-schede.js ×1 — nel file: nomeInLibreria, varianteStessoMuscolo, fbZona, renderQuestionario, decisioniCoach, applicaDecisioni
-- `nomeInLibreria()` js/coach/questionario-decisioni.js:55 funzione ← js/coach/programma/schemi.js:68 libNome · js/coach/programma/ricette.js:165 componiSedute · js/coach/programma/struttura-pro.js:88 strCopri · js/coach/programma/completamenti.js:35 completaSettimana, 163 rinforzaFemorali · js/coach/sicurezza/vincoli.js:23 vincoliSicurezza · js/coach/regole-ricerca.js:63 tipoCarico · js/ui/guida-interattiva.js:58 guidaDatiDemo · js/ui/importa-csv.js:155 nomeDaEstero · js/coach/biomeccanica.js:24 cueEsercizio, 43 stabile · js/coach/psicologia.js:119 sedutaPianoB · tests/genera-stadi.test.js:169 (html) · tests/generatore-onda0b.test.js:164 (html), 219 (html), 346 (html), 366 (html) · tests/browser/coerenza-schede.js:113
+- `nomeInLibreria()` js/coach/questionario-decisioni.js:55 funzione ← js/coach/programma/schemi.js:68 libNome · js/coach/programma/ricette.js:165 componiSedute · js/coach/programma/struttura-pro.js:98 strCopri · js/coach/programma/completamenti.js:35 completaSettimana, 163 rinforzaFemorali · js/coach/sicurezza/vincoli.js:24 vincoliSicurezza · js/coach/regole-ricerca.js:65 tipoCarico · js/ui/guida-interattiva.js:58 guidaDatiDemo · js/ui/importa-csv.js:155 nomeDaEstero · js/coach/biomeccanica.js:24 cueEsercizio, 43 stabile · js/coach/psicologia.js:119 sedutaPianoB · tests/genera-stadi.test.js:169 (html), 172 (html), 178 (html) · tests/generatore-onda0b.test.js:164 (html), 219 (html), 347 (html), 367 (html) · tests/browser/coerenza-schede.js:113
 - `REGIONE_RISCHIO_DOLORE` js/coach/questionario-decisioni.js:64 costante ← nessun altro file — nel file: varianteStessoMuscolo
 - `varianteStessoMuscolo()` js/coach/questionario-decisioni.js:65 funzione ← nessun altro file — nel file: decisioniCoach
 - `eserciziDeiGiorniCon()` js/coach/questionario-decisioni.js:84 funzione ← nessun altro file — nel file: decisioniCoach
@@ -1180,7 +1183,7 @@ _nessun nome globale_
 - `COACH_GIORNI_REVISIONE_LIVELLO` js/coach/repertorio.js:37 costante ← nessun altro file — nel file: azioniCoach
 - `livelloStandardForza()` js/coach/repertorio.js:38 funzione ← nessun altro file — nel file: proposteLivello
 - `proposteLivello()` js/coach/repertorio.js:61 funzione ← nessun altro file — nel file: livelloStimato
-- `livelloStimato()` js/coach/repertorio.js:83 funzione window ← js/ui/opzioni/il-coach.js:12 paginaCoach · tests/generatore-onda0b.test.js:403 (html), 406 (html), 407 (html), 408 (html) · tests/intensita-onda0.test.js:391 (html), 404 (html), 405 (html), 411 (html), 415 (html), 440 (html), … · tests/migrazione-v1.test.js:192 (html) — nel file: azioneCoach, azioniCoach, nuovoCiclo
+- `livelloStimato()` js/coach/repertorio.js:83 funzione window ← js/ui/opzioni/il-coach.js:12 paginaCoach · tests/generatore-onda0b.test.js:404 (html), 407 (html), 408 (html), 409 (html) · tests/intensita-onda0.test.js:391 (html), 404 (html), 405 (html), 411 (html), 415 (html), 440 (html), … · tests/migrazione-v1.test.js:192 (html) — nel file: azioneCoach, azioniCoach, nuovoCiclo
 - `prefsCoach()` js/coach/repertorio.js:111 funzione ← js/coach/questionario-decisioni.js:172 decisioniCoach · js/dati/schede-tecniche.js:216 preferisci — nel file: azioneCoach
 - `sostituisciNelPiano()` js/coach/repertorio.js:116 funzione ← js/dati/schede-tecniche.js:218 preferisci — nel file: azioneCoach
 - `cambiaSerieNelPiano()` js/coach/repertorio.js:129 funzione ← nessun altro file — nel file: azioneCoach
@@ -1191,7 +1194,7 @@ _nessun nome globale_
 - `strainSettimane()` js/coach/repertorio.js:220 funzione ← tests/migrazione-v1.test.js:194 (html) — nel file: azioniCoach
 - `scaricoRecente()` js/coach/repertorio.js:242 funzione ← nessun altro file — nel file: azioniCoach
 - `controlloSchemi()` js/coach/repertorio.js:249 funzione ← js/coach/agente-consigli.js:167 renderAgent
-- `azioniCoach()` js/coach/repertorio.js:261 funzione ← js/coach/agente-consigli.js:161 renderAgent · tests/generatore-onda0b.test.js:404 (html) · tests/intensita-onda0.test.js:395 (html), 406 (html), 443 (html), 444 (html), 454 (html), 457 (html), …
+- `azioniCoach()` js/coach/repertorio.js:261 funzione ← js/coach/agente-consigli.js:161 renderAgent · tests/generatore-onda0b.test.js:405 (html) · tests/intensita-onda0.test.js:395 (html), 406 (html), 443 (html), 444 (html), 454 (html), 457 (html), …
 - `corpoCoach()` js/coach/repertorio.js:295 funzione ← js/coach/agente-consigli.js:173 renderAgent · tests/genera-stadi.test.js:85 (html) · tests/intensita-onda0.test.js:493 (html), 501 (html)
 - `sedutaSaltata()` js/coach/repertorio.js:333 funzione ← nessun altro file — nel file: htmlSedutaSaltata
 - `prossimoGiornoLibero()` js/coach/repertorio.js:344 funzione ← nessun altro file — nel file: htmlSedutaSaltata, sceltaSaltata
@@ -1217,34 +1220,36 @@ _nessun nome globale_
 ### `js/coach/regole-ricerca.js`
 
 - `TECNICHE` js/coach/regole-ricerca.js:40 costante ← js/ui/allenamento/seduta.js:167 renderAllenamento · js/ui/opzioni/il-coach.js:59 paginaCoach · tests/browser/metodi-epoca-oro.js:22, 34, 36
-- `profiloCoach()` js/coach/regole-ricerca.js:56 funzione ← js/coach/carichi/calibrazione.js:48 personaCalibrazione · js/coach/carichi/taratura.js:18 segnaEsercizioTaratura · js/coach/repertorio.js:63 proposteLivello, 201 eserciziFermi · js/coach/regole-nuove.js:66 regoleRicAlCarico · js/coach/agente-consigli.js:31 consigliCoach2 — nel file: pisoRirEsigenza, rirBersaglioBase, caricoProssimoBase
-- `BIL_PESANTI` js/coach/regole-ricerca.js:61 costante ← nessun altro file — nel file: tipoCarico
-- `tipoCarico()` js/coach/regole-ricerca.js:62 funzione ← js/dati/attributi-esercizi.js ×1 · js/coach/programma/ricette.js ×6 · js/coach/programma/struttura-pro.js ×6 · js/coach/programma/completamenti.js ×3 · js/coach/volume/serie-ripetizioni.js ×2 · js/coach/volume/tempo.js ×2 · js/coach/volume/tecniche.js ×5 · js/coach/carichi/taratura.js ×1 · js/coach/repertorio.js ×5 · js/coach/metodi-momenti.js ×1 · js/coach/compone.js ×3 · js/dati/schede-tecniche.js ×2 · js/dati/scheda-unica.js ×1 · tests/browser/coerenza-schede.js ×4 · tests/browser/metodi-epoca-oro.js ×1 — nel file: rirBersaglio, rirBersaglioBase, caricoProssimoBase
-- `RIR_TIPO` js/coach/regole-ricerca.js:67 costante ← nessun altro file — nel file: rirBersaglioBase
-- `MES_RIR` js/coach/regole-ricerca.js:72 costante ← nessun altro file — nel file: pisoRirEsigenza, rirBersaglioBase
-- `primaSettimanaBlocco()` js/coach/regole-ricerca.js:74 funzione ← nessun altro file — nel file: pisoRirEsigenza, rirBersaglioBase
-- `inDeficitCalorico()` js/coach/regole-ricerca.js:79 funzione ← tests/genera-stadi.test.js:95 (html) — nel file: pisoRirEsigenza
-- `pisoRirEsigenza()` js/coach/regole-ricerca.js:84 funzione ← tests/genera-stadi.test.js:102 (html) — nel file: rirBersaglio
-- `rirBersaglio()` js/coach/regole-ricerca.js:91 funzione ← js/ui/allenamento/termina-e-cardio.js:18 obiettivoSeduta · js/dati/schede-tecniche.js:196 preferenzaEsercizio · js/dati/scheda-unica.js:26 schedaUnica · tests/aiuto-atleta.js:149 simulaNellApp (html) · tests/browser/intensita-bia.js:43, 45, 47, 49, 54 — nel file: rpeBersaglio, testoRir
-- `rirBersaglioBase()` js/coach/regole-ricerca.js:106 funzione ← js/coach/catalogo-regole.js:208 COACH_REGOLE (html) — nel file: rirBersaglio
-- `storicoProntezza()` js/coach/regole-ricerca.js:123 funzione ← js/coach/sicurezza/scarico.js:20 livelloFatica · js/coach/prontezza.js:84 prontezzaDiOggi · js/coach/repertorio.js:264 azioniCoach · js/coach/agente-consigli.js:34 consigliCoach2 · js/coach/metodi-momenti.js:203 prontezzaBassaSettimana · js/coach/esigenza.js:73 aggiornaEsigenza — nel file: caricoProssimoBase
-- `rpeBersaglio()` js/coach/regole-ricerca.js:124 funzione ← js/coach/esigenza.js:31 rpeBersaglioSeduta · js/dati/scheda-unica.js:26 schedaUnica · tests/browser/intensita-bia.js:98 — nel file: caricoProssimoBase
-- `testoRir()` js/coach/regole-ricerca.js:126 funzione ← js/coach/dolore-mattina.js:93 aggiustiAlCarico
-- `PARAM_ANALISI` js/coach/regole-ricerca.js:136 costante ← js/coach/repertorio.js:281 azioniCoach, 487 verdettoCiclo — nel file: caricoProssimoBase
-- `faseDelGiorno()` js/coach/regole-ricerca.js:145 funzione ← js/coach/repertorio.js:236 strainSettimane, 244 scaricoRecente · js/coach/esigenza.js:58 aggiornaEsigenza
-- `settimanaDellaSeduta()` js/coach/regole-ricerca.js:151 funzione ← js/coach/esigenza.js:35 rpeBersaglioSeduta
-- `inScarico()` js/coach/regole-ricerca.js:159 funzione ← js/coach/repertorio.js:47 livelloStandardForza, 204 eserciziFermi, 236 strainSettimane, 245 scaricoRecente, 476 verdettoCiclo · js/coach/esigenza.js:58 aggiornaEsigenza
-- `sessioniConData()` js/coach/regole-ricerca.js:164 funzione ← nessun altro file — nel file: ripresaDopoScarico, caricoProssimoBase
-- `ripresaDopoScarico()` js/coach/regole-ricerca.js:178 funzione ← js/coach/intensita.js:86 rirExtraIntensita — nel file: testoRir
-- `rientroDopoPausa()` js/coach/regole-ricerca.js:184 funzione ← js/coach/carichi/calibrazione.js:139 storiaCalibrazione — nel file: caricoProssimoBase
-- `fmtKg()` js/coach/regole-ricerca.js:191 funzione ← nessun altro file — nel file: caricoProssimoBase
-- `obiettivoForza()` js/coach/regole-ricerca.js:193 funzione ← nessun altro file — nel file: caricoProssimoBase
-- `caricoProssimoBase()` js/coach/regole-ricerca.js:198 funzione ← nessun altro file — nel file: (primo livello)
-- `caricoProssimo()` js/coach/regole-ricerca.js:365 funzione window ← js/ui/oggi.js:112 renderOggi · js/coach/agente-consigli.js:184 renderAgent · tests/browser/carichi-evoluzione.js:32, 35, 38, 41, 44, 48 · tests/browser/intensita-bia.js:51, 52, 53, 54, 55 · tests/browser/regole-nuove.js:19, 20, 21, 22, 23, 24, … — nel file: carichiDelGiorno
-- `applicaCaricoProgressivo()` js/coach/regole-ricerca.js:373 funzione window ← js/ui/allenamento/sessione.js:87 openWorkoutDay · tests/carichi-golden.test.js:203 eseguiCaso (html) · tests/carichi-onda0.test.js:393 chiudiSeduta (html) · tests/intensita-onda0.test.js:349 (html) · tests/migrazione-v1.test.js:97 (html), 134 (html), 136 (html), 144 (html), 153 (html)
-- `carichiDelGiorno()` js/coach/regole-ricerca.js:376 funzione ← nessun altro file — nel file: (primo livello)
-- `imparaDallaSeduta()` js/coach/regole-ricerca.js:409 funzione ← js/ui/allenamento/termina-e-cardio.js:169 endWorkout · tests/carichi-golden.test.js:232 eseguiCaso (html), 395 (html) · tests/intensita-onda0.test.js:331 (html), 336 (html)
-- `contaStalli()` js/coach/regole-ricerca.js:412 funzione ← nessun altro file — nel file: (primo livello)
+- `profiloCoach()` js/coach/regole-ricerca.js:56 funzione ← js/coach/carichi/calibrazione.js:48 personaCalibrazione · js/coach/carichi/taratura.js:18 segnaEsercizioTaratura · js/coach/repertorio.js:63 proposteLivello, 201 eserciziFermi · js/coach/regole-nuove.js:66 regoleRicAlCarico · js/coach/agente-consigli.js:31 consigliCoach2 — nel file: pisoRirEsigenza, pavimentoRirMinorenni, rirBersaglioPerLivello, caricoProssimoBase
+- `BIL_PESANTI` js/coach/regole-ricerca.js:63 costante ← nessun altro file — nel file: tipoCarico
+- `tipoCarico()` js/coach/regole-ricerca.js:64 funzione ← js/dati/attributi-esercizi.js ×1 · js/coach/programma/ricette.js ×6 · js/coach/programma/struttura-pro.js ×6 · js/coach/programma/completamenti.js ×3 · js/coach/volume/serie-ripetizioni.js ×2 · js/coach/volume/tempo.js ×2 · js/coach/volume/tecniche.js ×5 · js/coach/carichi/taratura.js ×1 · js/coach/repertorio.js ×5 · js/coach/metodi-momenti.js ×1 · js/coach/compone.js ×3 · js/dati/schede-tecniche.js ×2 · js/dati/scheda-unica.js ×1 · tests/browser/coerenza-schede.js ×4 · tests/browser/metodi-epoca-oro.js ×1 — nel file: rirBersaglio, rirBersaglioPerLivello, caricoProssimoBase
+- `RIR_TIPO` js/coach/regole-ricerca.js:69 costante ← nessun altro file — nel file: rirBersaglioPerLivello
+- `MES_RIR` js/coach/regole-ricerca.js:74 costante ← nessun altro file — nel file: pisoRirEsigenza, pavimentoRirMinorenni, rirBersaglioPerLivello
+- `primaSettimanaBlocco()` js/coach/regole-ricerca.js:76 funzione ← nessun altro file — nel file: pisoRirEsigenza, rirBersaglioPerLivello
+- `inDeficitCalorico()` js/coach/regole-ricerca.js:81 funzione ← tests/genera-stadi.test.js:95 (html) — nel file: pisoRirEsigenza
+- `pisoRirEsigenza()` js/coach/regole-ricerca.js:86 funzione ← tests/genera-stadi.test.js:102 (html) — nel file: rirBersaglio
+- `pavimentoRirMinorenni()` js/coach/regole-ricerca.js:95 funzione ← nessun altro file — nel file: rirBersaglio, rirBersaglioBase
+- `rirBersaglio()` js/coach/regole-ricerca.js:99 funzione ← js/ui/allenamento/termina-e-cardio.js:18 obiettivoSeduta · js/dati/schede-tecniche.js:196 preferenzaEsercizio · js/dati/scheda-unica.js:26 schedaUnica · tests/aiuto-atleta.js:149 simulaNellApp (html) · tests/browser/intensita-bia.js:43, 45, 47, 49, 54 — nel file: rpeBersaglio, testoRir
+- `rirBersaglioBase()` js/coach/regole-ricerca.js:114 funzione ← js/coach/catalogo-regole.js:208 COACH_REGOLE (html) — nel file: rirBersaglio
+- `rirBersaglioPerLivello()` js/coach/regole-ricerca.js:115 funzione ← nessun altro file — nel file: rirBersaglioBase
+- `storicoProntezza()` js/coach/regole-ricerca.js:132 funzione ← js/coach/sicurezza/scarico.js:20 livelloFatica · js/coach/prontezza.js:84 prontezzaDiOggi · js/coach/repertorio.js:264 azioniCoach · js/coach/agente-consigli.js:34 consigliCoach2 · js/coach/metodi-momenti.js:203 prontezzaBassaSettimana · js/coach/esigenza.js:75 aggiornaEsigenza — nel file: caricoProssimoBase
+- `rpeBersaglio()` js/coach/regole-ricerca.js:133 funzione ← js/coach/esigenza.js:33 rpeBersaglioSeduta · js/dati/scheda-unica.js:26 schedaUnica · tests/browser/intensita-bia.js:98 — nel file: caricoProssimoBase
+- `testoRir()` js/coach/regole-ricerca.js:135 funzione ← js/coach/dolore-mattina.js:93 aggiustiAlCarico
+- `PARAM_ANALISI` js/coach/regole-ricerca.js:145 costante ← js/coach/repertorio.js:281 azioniCoach, 487 verdettoCiclo — nel file: caricoProssimoBase
+- `faseDelGiorno()` js/coach/regole-ricerca.js:154 funzione ← js/coach/repertorio.js:236 strainSettimane, 244 scaricoRecente · js/coach/esigenza.js:60 aggiornaEsigenza
+- `settimanaDellaSeduta()` js/coach/regole-ricerca.js:160 funzione ← js/coach/esigenza.js:37 rpeBersaglioSeduta
+- `inScarico()` js/coach/regole-ricerca.js:168 funzione ← js/coach/repertorio.js:47 livelloStandardForza, 204 eserciziFermi, 236 strainSettimane, 245 scaricoRecente, 476 verdettoCiclo · js/coach/esigenza.js:60 aggiornaEsigenza
+- `sessioniConData()` js/coach/regole-ricerca.js:173 funzione ← nessun altro file — nel file: ripresaDopoScarico, caricoProssimoBase
+- `ripresaDopoScarico()` js/coach/regole-ricerca.js:187 funzione ← js/coach/intensita.js:86 rirExtraIntensita — nel file: testoRir
+- `rientroDopoPausa()` js/coach/regole-ricerca.js:193 funzione ← js/coach/carichi/calibrazione.js:139 storiaCalibrazione — nel file: caricoProssimoBase
+- `fmtKg()` js/coach/regole-ricerca.js:200 funzione ← nessun altro file — nel file: caricoProssimoBase
+- `obiettivoForza()` js/coach/regole-ricerca.js:202 funzione ← nessun altro file — nel file: caricoProssimoBase
+- `caricoProssimoBase()` js/coach/regole-ricerca.js:207 funzione ← nessun altro file — nel file: (primo livello)
+- `caricoProssimo()` js/coach/regole-ricerca.js:374 funzione window ← js/ui/oggi.js:112 renderOggi · js/coach/agente-consigli.js:184 renderAgent · tests/browser/carichi-evoluzione.js:32, 35, 38, 41, 44, 48 · tests/browser/intensita-bia.js:51, 52, 53, 54, 55 · tests/browser/regole-nuove.js:19, 20, 21, 22, 23, 24, … — nel file: carichiDelGiorno
+- `applicaCaricoProgressivo()` js/coach/regole-ricerca.js:382 funzione window ← js/ui/allenamento/sessione.js:87 openWorkoutDay · tests/carichi-golden.test.js:203 eseguiCaso (html) · tests/carichi-onda0.test.js:393 chiudiSeduta (html) · tests/intensita-onda0.test.js:349 (html) · tests/migrazione-v1.test.js:97 (html), 134 (html), 136 (html), 144 (html), 153 (html)
+- `carichiDelGiorno()` js/coach/regole-ricerca.js:385 funzione ← nessun altro file — nel file: (primo livello)
+- `imparaDallaSeduta()` js/coach/regole-ricerca.js:418 funzione ← js/ui/allenamento/termina-e-cardio.js:169 endWorkout · tests/carichi-golden.test.js:232 eseguiCaso (html), 395 (html) · tests/intensita-onda0.test.js:331 (html), 336 (html)
+- `contaStalli()` js/coach/regole-ricerca.js:421 funzione ← nessun altro file — nel file: (primo livello)
 
 ### `js/coach/regole-nuove.js`
 
@@ -1266,8 +1271,8 @@ _nessun nome globale_
 - `faRiferimento()` js/coach/intensita.js:39 funzione ← nessun altro file — nel file: statoBia
 - `_virg()` js/coach/intensita.js:45 funzione ← nessun altro file — nel file: statoBia
 - `statoBia()` js/coach/intensita.js:48 funzione window ← js/coach/regia/genera.js:89 noteDelProgramma · js/ui/onboarding-risultato.js:48 renderOnbResult · tests/browser/intensita-bia.js:15 — nel file: esigenzaIniziale, rirExtraIntensita
-- `esigenzaIniziale()` js/coach/intensita.js:76 funzione window ← js/coach/regia/brief.js:85 briefCoach · js/coach/esigenza.js:40 esigenzaCoach, 47 aggiornaEsigenza, 93 segnaDoloreEsigenza, 101 htmlEsigenza · tests/intensita-onda0.test.js:54 (html), 55 (html), 56 (html) · tests/browser/intensita-bia.js:15 — nel file: bilancioPrimeSedute
-- `rirExtraIntensita()` js/coach/intensita.js:82 funzione window ← js/coach/regole-ricerca.js:97 rirBersaglio
+- `esigenzaIniziale()` js/coach/intensita.js:76 funzione window ← js/coach/regia/brief.js:96 briefCoach · js/coach/esigenza.js:42 esigenzaCoach, 49 aggiornaEsigenza, 95 segnaDoloreEsigenza, 103 htmlEsigenza · tests/intensita-onda0.test.js:54 (html), 55 (html), 56 (html) · tests/browser/intensita-bia.js:15 — nel file: bilancioPrimeSedute
+- `rirExtraIntensita()` js/coach/intensita.js:82 funzione window ← js/coach/regole-ricerca.js:105 rirBersaglio
 - `primaVoltaUnaSerieInMeno()` js/coach/intensita.js:92 funzione ← nessun altro file — nel file: (primo livello)
 - `sedutePrimeDelProgramma()` js/coach/intensita.js:103 funzione ← nessun altro file — nel file: bilancioPrimeSedute
 - `bilancioPrimeSedute()` js/coach/intensita.js:108 funzione window ← tests/intensita-onda0.test.js:66 (html) · tests/migrazione-v1.test.js:194 (html) · tests/partenza-donne.test.js:486 (html) · tests/browser/intensita-bia.js:97, 108, 110, 112 — nel file: (primo livello)
@@ -1564,10 +1569,10 @@ _nessun nome globale_
 - `FB()` js/coach/metodi-momenti.js:12 funzione ← js/coach/metodi-epoca-oro.js:16, 22 — nel file: METODI
 - `UL4` js/coach/metodi-momenti.js:13 costante ← nessun altro file — nel file: METODI
 - `METODI` js/coach/metodi-momenti.js:14 costante ← js/ui/opzioni/il-coach.js:50 paginaCoach · js/coach/metodi-epoca-oro.js:12 · js/coach/compone.js:86 metodiPerTe, 126 apriTuttiMetodi · tests/browser/metodi-epoca-oro.js:38, 75 — nel file: metodoDa
-- `metodoDa()` js/coach/metodi-momenti.js:91 funzione ← js/coach/regia/brief.js:113 risolviMetodo · js/coach/compone.js:131 htmlIspirazioni · tests/browser/metodi-epoca-oro.js:31, 33, 69
+- `metodoDa()` js/coach/metodi-momenti.js:91 funzione ← js/coach/regia/brief.js:124 risolviMetodo · js/coach/compone.js:131 htmlIspirazioni · tests/browser/metodi-epoca-oro.js:31, 33, 69
 - `MOMENTI` js/coach/metodi-momenti.js:93 costante ← js/ui/opzioni/il-coach.js:42 paginaCoach · js/coach/psicologia.js:96 renderPsicoStep — nel file: momentoDa
 - `momentoDa()` js/coach/metodi-momenti.js:115 funzione ← js/coach/compone.js:47 sceltaMetodo, 82 metodiPerTe — nel file: momentoAttivo, setMomento
-- `momentoAttivo()` js/coach/metodi-momenti.js:116 funzione ← js/coach/regia/brief.js:82 briefCoach, 155 briefOggi · js/coach/regole-ricerca.js:95 rirBersaglio · js/ui/opzioni/il-coach.js:41 paginaCoach · js/coach/stato.js:23 htmlMomentoBreve, 47 momentoDaChiedere, 60 htmlDomandaMomento · js/coach/esigenza.js:22 esigenzaEsclusa — nel file: chiediMomento, htmlMomento
+- `momentoAttivo()` js/coach/metodi-momenti.js:116 funzione ← js/coach/regia/brief.js:93 briefCoach, 166 briefOggi · js/coach/regole-ricerca.js:103 rirBersaglio · js/ui/opzioni/il-coach.js:41 paginaCoach · js/coach/stato.js:23 htmlMomentoBreve, 47 momentoDaChiedere, 60 htmlDomandaMomento · js/coach/esigenza.js:22 esigenzaEsclusa — nel file: chiediMomento, htmlMomento
 - `applicaMomento()` js/coach/metodi-momenti.js:126 funzione ← nessun altro file — nel file: setMomento
 - `momentoInAttesa` js/coach/metodi-momenti.js:139 variabile ← js/ui/opzioni/il-coach.js:43 paginaCoach — nel file: chiediMomento, confermaMomento, setMomento
 - `chiediMomento()` js/coach/metodi-momenti.js:140 funzione window ← js/ui/opzioni/il-coach.js:42 paginaCoach (html)
@@ -1586,10 +1591,10 @@ _nessun nome globale_
 
 ### `js/coach/compone.js`
 
-- `fattoreFisico()` js/coach/compone.js:10 funzione ← js/coach/regia/brief.js:81 briefCoach
+- `fattoreFisico()` js/coach/compone.js:10 funzione ← js/coach/regia/brief.js:92 briefCoach
 - `metodoAmmesso()` js/coach/compone.js:34 funzione ← nessun altro file — nel file: sceltaMetodo
-- `sceltaMetodo()` js/coach/compone.js:45 funzione ← js/coach/regia/brief.js:113 risolviMetodo
-- `TOCCHI` js/coach/compone.js:70 costante ← js/coach/regia/brief.js:120 risolviMetodo · js/coach/regia/genera.js:67 applicaMetodo
+- `sceltaMetodo()` js/coach/compone.js:45 funzione ← js/coach/regia/brief.js:124 risolviMetodo
+- `TOCCHI` js/coach/compone.js:70 costante ← js/coach/regia/brief.js:131 risolviMetodo · js/coach/regia/genera.js:67 applicaMetodo
 - `metodiPerTe()` js/coach/compone.js:79 funzione ← tests/browser/metodi-epoca-oro.js:71, 73 — nel file: sceltaMetodo, htmlMetodi
 - `htmlMetodi()` js/coach/compone.js:116 funzione ← nessun altro file — nel file: apriTuttiMetodi
 - `apriTuttiMetodi()` js/coach/compone.js:125 funzione window ← js/ui/opzioni/il-coach.js:50 paginaCoach (html)
@@ -1608,7 +1613,7 @@ _nessun nome globale_
 - `CUE_SCHEMA` js/coach/biomeccanica.js:14 costante ← nessun altro file — nel file: cueEsercizio
 - `cueEsercizio()` js/coach/biomeccanica.js:22 funzione ← js/dati/schede-tecniche.js:166 schedaTecnica
 - `respiroPer()` js/coach/biomeccanica.js:36 funzione ← js/dati/schede-tecniche.js:167 schedaTecnica · tests/sicurezza-onda0.test.js:264 (html), 277 (html), 278 (html), 279 (html)
-- `stabile()` js/coach/biomeccanica.js:42 funzione ← js/coach/regole-ricerca.js:103 rirBersaglio · js/dati/schede-tecniche.js:61 (html)
+- `stabile()` js/coach/biomeccanica.js:42 funzione ← js/coach/regole-ricerca.js:111 rirBersaglio · js/dati/schede-tecniche.js:61 (html) · tests/attributi.test.js:388 DIFFERENZE (html)
 - `htmlProva()` js/coach/biomeccanica.js:49 funzione ← nessun altro file — nel file: TEST_FAI_DA_TE
 - `TEST_FAI_DA_TE` js/coach/biomeccanica.js:56 costante ← js/ui/onboarding.js:334 renderOnb — nel file: htmlTestFaiDaTe
 - `setTest()` js/coach/biomeccanica.js:88 funzione window ← nessun altro file — nel file: htmlTestFaiDaTe
@@ -1620,17 +1625,17 @@ _nessun nome globale_
 
 - `ESIGENZA_INIZIO` js/coach/esigenza.js:19 costante ← nessun altro file
 - `esigenzaEsclusa()` js/coach/esigenza.js:21 funzione ← js/coach/intensita.js:111 bilancioPrimeSedute — nel file: esigenzaCoach, htmlEsigenza
-- `tettoEsigenza()` js/coach/esigenza.js:27 funzione ← js/coach/intensita.js:139 bilancioPrimeSedute — nel file: aggiornaEsigenza
-- `rpeBersaglioSeduta()` js/coach/esigenza.js:30 funzione ← js/coach/intensita.js:125 bilancioPrimeSedute — nel file: aggiornaEsigenza
-- `esigenzaCoach()` js/coach/esigenza.js:37 funzione window ← js/coach/regole-ricerca.js:99 rirBersaglio · tests/intensita-onda0.test.js:43 (html)
-- `aggiornaEsigenza()` js/coach/esigenza.js:42 funzione window ← js/ui/oggi.js:59 renderOggi · tests/intensita-onda0.test.js:113 (html), 132 (html), 146 (html), 156 (html), 304 (html) · tests/migrazione-v1.test.js:194 (html) · tests/partenza-donne.test.js:508 (html) · tests/browser/intensita-bia.js:120
-- `segnaDoloreEsigenza()` js/coach/esigenza.js:90 funzione ← js/coach/dolore-mattina.js:33 rispostaDolore
-- `htmlEsigenza()` js/coach/esigenza.js:97 funzione ← js/ui/opzioni/il-coach.js:30 paginaCoach
+- `tettoEsigenza()` js/coach/esigenza.js:29 funzione ← js/coach/intensita.js:139 bilancioPrimeSedute — nel file: aggiornaEsigenza
+- `rpeBersaglioSeduta()` js/coach/esigenza.js:32 funzione ← js/coach/intensita.js:125 bilancioPrimeSedute — nel file: aggiornaEsigenza
+- `esigenzaCoach()` js/coach/esigenza.js:39 funzione window ← js/coach/regole-ricerca.js:107 rirBersaglio · tests/intensita-onda0.test.js:43 (html)
+- `aggiornaEsigenza()` js/coach/esigenza.js:44 funzione window ← js/ui/oggi.js:59 renderOggi · tests/intensita-onda0.test.js:113 (html), 132 (html), 146 (html), 156 (html), 304 (html) · tests/migrazione-v1.test.js:194 (html) · tests/partenza-donne.test.js:508 (html) · tests/browser/intensita-bia.js:120
+- `segnaDoloreEsigenza()` js/coach/esigenza.js:92 funzione ← js/coach/dolore-mattina.js:33 rispostaDolore
+- `htmlEsigenza()` js/coach/esigenza.js:99 funzione ← js/ui/opzioni/il-coach.js:30 paginaCoach
 
 ### `js/coach/psicologia.js`
 
 - `PSICO_DOMANDE` js/coach/psicologia.js:14 costante ← nessun altro file — nel file: htmlDomandePsico
-- `psicoCoach()` js/coach/psicologia.js:32 funzione ← js/coach/regia/brief.js:80 briefCoach · js/coach/repertorio.js:358 htmlSedutaSaltata · js/coach/regole-ricerca.js:94 rirBersaglio · js/ui/opzioni/il-coach.js:52 paginaCoach · js/coach/compone.js:81 metodiPerTe — nel file: htmlPrimiPassi
+- `psicoCoach()` js/coach/psicologia.js:32 funzione ← js/coach/regia/brief.js:91 briefCoach · js/coach/repertorio.js:358 htmlSedutaSaltata · js/coach/regole-ricerca.js:102 rirBersaglio · js/ui/opzioni/il-coach.js:52 paginaCoach · js/coach/compone.js:81 metodiPerTe — nel file: htmlPrimiPassi
 - `ritrattoCoach()` js/coach/psicologia.js:55 funzione ← js/coach/regia/genera.js:87 noteDelProgramma · js/ui/opzioni/il-coach.js:52 paginaCoach
 - `onbPsico()` js/coach/psicologia.js:74 funzione window ← nessun altro file
 - `setPsico()` js/coach/psicologia.js:79 funzione window ← nessun altro file
@@ -1655,7 +1660,7 @@ _nessun nome globale_
 - `arto()` js/ui/schede-esercizio.js:19 funzione ← nessun altro file — nel file: inPiedi, accosciato, piegato, sdraiato, PATTERN_DRAW
 - `tronco()` js/ui/schede-esercizio.js:36 funzione ← nessun altro file — nel file: inPiedi, accosciato, piegato, sdraiato, PATTERN_DRAW
 - `testa()` js/ui/schede-esercizio.js:48 funzione ← nessun altro file — nel file: inPiedi, accosciato, piegato, sdraiato, PATTERN_DRAW
-- `bilanciere()` js/ui/schede-esercizio.js:53 funzione ← js/dati/attributi-esercizi.js:173 ATTRIBUTI (html) · tests/attributi.test.js:304 (html) — nel file: PATTERN_DRAW
+- `bilanciere()` js/ui/schede-esercizio.js:53 funzione ← js/dati/attributi-esercizi.js:177 ATTRIBUTI (html) · tests/attributi.test.js:307 (html) · tests/revisione-onda1.test.js:29 (html) — nel file: PATTERN_DRAW
 - `manubrio()` js/ui/schede-esercizio.js:63 funzione ← js/dati/dettagli-esercizi.js:298 DETTAGLI (html) — nel file: PATTERN_DRAW
 - `freccia()` js/ui/schede-esercizio.js:69 funzione ← nessun altro file — nel file: PATTERN_DRAW
 - `suolo()` js/ui/schede-esercizio.js:75 funzione ← nessun altro file — nel file: wrapSvg
@@ -1731,7 +1736,7 @@ _nessun nome globale_
 - `ymd()` js/ui/calendario/mese.js:18 funzione ← js/ui/oggi.js ×6 · js/ui/allenamento/macchinario-occupato.js ×2 · js/ui/allenamento/sessione.js ×1 · js/ui/storico.js ×1 · js/coach/regia/brief.js ×1 · js/coach/programma/archivio.js ×1 · js/coach/programma/alternative.js ×3 · js/coach/carichi/calibrazione.js ×1 · js/coach/questionario-decisioni.js ×2 · js/coach/prontezza.js ×6 · js/coach/repertorio.js ×15 · js/coach/dolore-mattina.js ×1 · js/coach/intensita.js ×3 · js/ui/guida-interattiva.js ×2 · js/core/backup.js ×2 · js/ui/importa-csv.js ×2 · js/ui/importa-progressi.js ×3 · js/ui/seduta-libera.js ×2 · js/ui/progressi/riepilogo.js ×7 · js/ui/progressi/foto.js ×1 · js/ui/progressi/peso.js ×3 · js/coach/metodi-momenti.js ×9 · js/coach/stato.js ×2 · js/coach/esigenza.js ×8 · js/ui/scheda-quattro-sezioni.js ×1 · js/ui/calendario/gruppi.js ×7 · js/ui/calendario/scambio.js ×6 · js/ui/calendario/copia-settimana.js ×2 · js/ui/menu-settimana.js ×4 · js/ui/esporta-ics.js ×2 · tests/aiuto-app.js ×1 · tests/migrazione-v1.test.js ×2 · tests/browser/dettaglio-seduta.js ×1 · tests/browser/intensita-bia.js ×5 · tests/browser/regole-nuove.js ×1 — nel file: mettiSettimana, copiaSettimana
 - `daYmd()` js/ui/calendario/mese.js:21 funzione ← js/ui/statistiche.js ×4 · js/coach/carichi/progressivo.js ×2 · js/coach/prontezza.js ×1 · js/coach/repertorio.js ×10 · js/coach/regole-ricerca.js ×2 · js/coach/agente-consigli.js ×2 · js/coach/bia/opzioni.js ×2 · js/ui/progressi/pagine.js ×3 · js/ui/progressi/foto.js ×5 · js/ui/progressi/peso.js ×6 · js/coach/metodi-momenti.js ×1 · js/coach/psicologia.js ×3 · js/ui/calendario/gruppi.js ×3 · js/ui/calendario/scambio.js ×6 · js/ui/calendario/copia-settimana.js ×6 · js/ui/menu-settimana.js ×6 · js/ui/sessione-completata.js ×1 · js/ui/esporta-ics.js ×2
 - `lunediDi()` js/ui/calendario/mese.js:22 funzione ← js/ui/oggi.js ×4 · js/ui/piano/giorno.js ×1 · js/ui/allenamento/sessione.js ×1 · js/ui/allenamento/termina-e-cardio.js ×1 · js/ui/storico.js ×1 · js/ui/onboarding-risultato.js ×1 · js/coach/programma/alternative.js ×2 · js/ui/statistiche.js ×3 · js/ui/statistiche-grafico.js ×4 · js/coach/carichi/progressivo.js ×2 · js/coach/repertorio.js ×5 · js/coach/regole-ricerca.js ×2 · js/coach/intensita.js ×1 · js/coach/agente-consigli.js ×1 · js/ui/progressi/riepilogo.js ×1 · js/coach/stato.js ×2 · js/coach/esigenza.js ×4 · js/ui/calendario/gruppi.js ×3 · js/ui/calendario/scambio.js ×4 · js/ui/calendario/copia-settimana.js ×2 · tests/browser/intensita-bia.js ×1 · tests/browser/regole-nuove.js ×1 — nel file: settimaneDelMese
-- `giorniTra()` js/ui/calendario/mese.js:24 funzione ← js/ui/statistiche.js:151 blocchiQuattroSettimane · js/ui/statistiche-grafico.js:29 frequenzaSettimanale · js/coach/carichi/progressivo.js:34 faseSedutaSalvata, 71 caricoRiferimento, 99 settimanaProgramma · js/coach/carichi/calibrazione.js:139 storiaCalibrazione · js/coach/prontezza.js:86 prontezzaDiOggi · js/coach/repertorio.js:211 eserciziFermi, 233 strainSettimane, 245 scaricoRecente, 287 azioniCoach, 306 corpoCoach, 338 sedutaSaltata, … · js/coach/regole-ricerca.js:148 faseDelGiorno, 155 settimanaDellaSeduta, 249 caricoProssimoBase · js/coach/regole-nuove.js:27 giorniDallUltimaSeduta · js/coach/agente-consigli.js:40 consigliCoach2 · js/ui/progressi/pagine.js:67 htmlPesate · js/ui/progressi/foto.js:112 mostraFoto · js/ui/progressi/peso.js:20 tendenzaPeso · js/coach/psicologia.js:107 htmlPrimiPassi
+- `giorniTra()` js/ui/calendario/mese.js:24 funzione ← js/ui/statistiche.js:151 blocchiQuattroSettimane · js/ui/statistiche-grafico.js:29 frequenzaSettimanale · js/coach/carichi/progressivo.js:34 faseSedutaSalvata, 71 caricoRiferimento, 99 settimanaProgramma · js/coach/carichi/calibrazione.js:139 storiaCalibrazione · js/coach/prontezza.js:86 prontezzaDiOggi · js/coach/repertorio.js:211 eserciziFermi, 233 strainSettimane, 245 scaricoRecente, 287 azioniCoach, 306 corpoCoach, 338 sedutaSaltata, … · js/coach/regole-ricerca.js:157 faseDelGiorno, 164 settimanaDellaSeduta, 258 caricoProssimoBase · js/coach/regole-nuove.js:27 giorniDallUltimaSeduta · js/coach/agente-consigli.js:40 consigliCoach2 · js/ui/progressi/pagine.js:67 htmlPesate · js/ui/progressi/foto.js:112 mostraFoto · js/ui/progressi/peso.js:20 tendenzaPeso · js/coach/psicologia.js:107 htmlPrimiPassi
 - `piuGiorni()` js/ui/calendario/mese.js:25 funzione ← js/ui/oggi.js ×3 · js/ui/piano/giorno.js ×1 · js/ui/allenamento/sessione.js ×1 · js/ui/allenamento/termina-e-cardio.js ×3 · js/ui/onboarding-risultato.js ×1 · js/coach/programma/alternative.js ×3 · js/ui/statistiche.js ×5 · js/ui/statistiche-grafico.js ×2 · js/coach/repertorio.js ×13 · js/coach/agente-consigli.js ×3 · js/ui/progressi/riepilogo.js ×4 · js/ui/progressi/foto.js ×1 · js/ui/progressi/peso.js ×3 · js/coach/metodi-momenti.js ×5 · js/coach/stato.js ×2 · js/coach/esigenza.js ×2 · js/ui/calendario/gruppi.js ×3 · js/ui/calendario/scambio.js ×2 · js/ui/calendario/copia-settimana.js ×4 · js/ui/menu-settimana.js ×3 · js/ui/esporta-ics.js ×2 · tests/browser/intensita-bia.js ×5 · tests/browser/regole-nuove.js ×1 — nel file: mettiSettimana, copiaSettimana, settimaneDelMese
 - `giornoSettimana()` js/ui/calendario/mese.js:26 funzione ← js/ui/menu-settimana.js:117 mcOpenDay — nel file: voceDaPiano
 - `voceDaPiano()` js/ui/calendario/mese.js:29 funzione ← js/ui/menu-settimana.js:143 mcPlanDay — nel file: mettiSettimana

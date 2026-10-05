@@ -251,7 +251,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 57. `js/coach/programma/struttura-pro.js` — Struttura professionale della scheda (ABB-01..10)
 
-`STR_PESI` · `strMeta()` · `strSub()` · `strSchiena()` · `strTier()` · `strRango()` · `window.strOrdina()` · `strChiave()` · `window.strRidondante()` · `window.strTerzoUguale()` · `strSerie()` · `STR_FATICA` · `STR_TIRATE_ALTE` · `strEspinta()` · `strEtirata()` · `window.strCopri()` · `window.strBilancia()` · `strCoreNuovo()` · `STR_NOTA_TIRATE` · `window.strFinale()` · `strAntagonisti()` · `strPuoSuperserie()` · `window.strSuperserie()`
+`STR_PESI` · `strMeta()` · `strSub()` · `strSchiena()` · `strTier()` · `strRango()` · `window.strOrdina()` · `strChiave()` · `window.strRidondante()` · `window.strTerzoUguale()` · `window.strSquatDoppio()` · `strSerie()` · `STR_FATICA` · `STR_TIRATE_ALTE` · `strEspinta()` · `strEtirata()` · `window.strCopri()` · `window.strBilancia()` · `strCoreNuovo()` · `STR_NOTA_TIRATE` · `window.strFinale()` · `strAntagonisti()` · `strPuoSuperserie()` · `window.strSuperserie()`
 
 ### 58. `js/coach/programma/mesociclo.js` — Mesociclo: durata, blocchi, scarichi e RIR per settimana (PRN-03, ETA-02)
 
@@ -283,7 +283,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 65. `js/coach/regia/brief.js` — Brief del coach: chi sei, cosa vuoi, quando, con quali limiti (OBI-02, D-P6)
 
-`OBIETTIVI_NOTI` · `obiettiviDichiarati()` · `obiettiviEffettivi()` · `faseDaObiettivi()` · `faseCorpo()` · `chiDa()` · `briefCoach()` · `risolviMetodo()` · `prefsDelBrief()` · `briefOggi()`
+`OBIETTIVI_NOTI` · `obiettiviDichiarati()` · `obiettiviEffettivi()` · `faseDaObiettivi()` · `faseCorpo()` · `LIVELLI_NOTI` · `livelloConosciuto()` · `chiDa()` · `briefCoach()` · `risolviMetodo()` · `prefsDelBrief()` · `briefOggi()`
 
 ### 66. `js/coach/regia/genera.js` — Generatore a stadi: buildProgram, giorni, verifica e smistamento della specialità (REG-02, REG-05, D-P6)
 
@@ -367,7 +367,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 84. `js/coach/regole-ricerca.js` — Coach 2: regole nuove dalla ricerca
 
-`TECNICHE` · `profiloCoach()` · `BIL_PESANTI` · `tipoCarico()` · `RIR_TIPO` · `MES_RIR` · `primaSettimanaBlocco()` · `inDeficitCalorico()` · `pisoRirEsigenza()` · `rirBersaglio()` · `rirBersaglioBase()` · `storicoProntezza()` · `rpeBersaglio()` · `testoRir()` · `PARAM_ANALISI` · `faseDelGiorno()` · `settimanaDellaSeduta()` · `inScarico()` · `sessioniConData()` · `ripresaDopoScarico()` · `rientroDopoPausa()` · `fmtKg` · `obiettivoForza()` · `caricoProssimoBase()` · `window.caricoProssimo()` · `window.applicaCaricoProgressivo()` · `carichiDelGiorno()` · `imparaDallaSeduta()` · `contaStalli()`
+`TECNICHE` · `profiloCoach()` · `BIL_PESANTI` · `tipoCarico()` · `RIR_TIPO` · `MES_RIR` · `primaSettimanaBlocco()` · `inDeficitCalorico()` · `pisoRirEsigenza()` · `pavimentoRirMinorenni()` · `rirBersaglio()` · `rirBersaglioBase()` · `rirBersaglioPerLivello()` · `storicoProntezza()` · `rpeBersaglio()` · `testoRir()` · `PARAM_ANALISI` · `faseDelGiorno()` · `settimanaDellaSeduta()` · `inScarico()` · `sessioniConData()` · `ripresaDopoScarico()` · `rientroDopoPausa()` · `fmtKg` · `obiettivoForza()` · `caricoProssimoBase()` · `window.caricoProssimo()` · `window.applicaCaricoProgressivo()` · `carichiDelGiorno()` · `imparaDallaSeduta()` · `contaStalli()`
 
 ### 85. `js/coach/regole-nuove.js` — Regole del coach aggiunte dalla ricerca (RIC-01..05)
 
