@@ -178,6 +178,7 @@ const ASSETS = [
   './esercizi/ex-41-ponte-glutei.svg',
   './esercizi/ex-42-abductor-machine.svg',
   './esercizi/ex-43-kickback-ai-cavi.svg',
+  './esercizi/ex-44-slanci-laterali-a-terra.svg',
   /*FINE-ASSET*/
 
 ];
