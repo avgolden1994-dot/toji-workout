@@ -150,9 +150,9 @@
     "semantic_hash": "d0911f37a11c8ce71c0cbc6333512ae7"
   },
   "js/coach/psicologia.js": {
-    "mtime": 1791176261.7388406,
-    "seen": 1791180597.21649,
-    "ast_hash": "6d0d8c90276219d541c944c3236fb5a1",
+    "mtime": 1791205244.4547951,
+    "seen": 1791205781.74478,
+    "ast_hash": "e5c1ab161f635505bd792e587ccdc0bb",
     "semantic_hash": ""
   },
   "js/coach/questionario-decisioni.js": {
@@ -210,16 +210,16 @@
     "semantic_hash": "6b9599862c3c785cf92e49ad13ecf038"
   },
   "js/core/costanti.js": {
-    "mtime": 1791160530.8544357,
-    "seen": 1791180597.2165096,
-    "ast_hash": "cb7c9347011e0101af7d1514207a0df3",
-    "semantic_hash": "cb7c9347011e0101af7d1514207a0df3"
+    "mtime": 1791205244.452932,
+    "seen": 1791205781.7448044,
+    "ast_hash": "7499cf2cb484b6ff9bcfbe87e8f9ee4b",
+    "semantic_hash": ""
   },
   "js/core/modalita.js": {
-    "mtime": 1791160530.8544357,
-    "seen": 1791180597.216512,
-    "ast_hash": "2eefa8d4589060ecea2674e5b9570410",
-    "semantic_hash": "2eefa8d4589060ecea2674e5b9570410"
+    "mtime": 1791205244.4582844,
+    "seen": 1791205781.7448068,
+    "ast_hash": "30976e5798412e8cf24183b258f6c6fe",
+    "semantic_hash": ""
   },
   "js/core/musica-altre-app.js": {
     "mtime": 1791176261.7388406,
@@ -540,9 +540,9 @@
     "semantic_hash": "d88b68bf068d0b4bc1e00b1f9309ac51"
   },
   "js/ui/opzioni/impostazioni.js": {
-    "mtime": 1791181782.9391687,
-    "seen": 1791182361.1987057,
-    "ast_hash": "bd35444bca168da9c7042973841a7930",
+    "mtime": 1791205244.4569597,
+    "seen": 1791205781.7449796,
+    "ast_hash": "1f85914885370b210f65b149787aa732",
     "semantic_hash": ""
   },
   "js/ui/opzioni/stile-iphone.js": {
@@ -666,9 +666,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1791181819.8671708,
-    "seen": 1791182361.1987286,
-    "ast_hash": "c2af84197326c2d8ce9cb783af5eb792",
+    "mtime": 1791205257.8787298,
+    "seen": 1791205781.7450228,
+    "ast_hash": "1292b10cad1e3b6963df72b4082402b8",
     "semantic_hash": ""
   },
   "tests/avvio.test.js": {
@@ -708,9 +708,9 @@
     "semantic_hash": ""
   },
   "docs/ARCHITETTURA.md": {
-    "mtime": 1791176261.6508405,
-    "seen": 1791180597.2167432,
-    "ast_hash": "31e643f8c3faf4f53d6efe0346a4d4d5",
+    "mtime": 1791205716.505154,
+    "seen": 1791205781.7450488,
+    "ast_hash": "96eada49630fd4bc8d783385337792db",
     "semantic_hash": ""
   },
   "docs/PIANO.md": {
@@ -738,9 +738,9 @@
     "semantic_hash": "64f4a071e9f2b6291220cd3a0ff4fc14"
   },
   "index.html": {
-    "mtime": 1791181788.287169,
-    "seen": 1791182361.1987627,
-    "ast_hash": "4d2b1ba09ec92c1bc75bb9f2f6f773ee",
+    "mtime": 1791205253.777031,
+    "seen": 1791205781.7450855,
+    "ast_hash": "9bb6961215f52c73ed3d9fe7ecd2dc7d",
     "semantic_hash": ""
   },
   "tests/cedimento.test.js": {
@@ -786,9 +786,9 @@
     "semantic_hash": ""
   },
   "docs/mappa-per-agenti.md": {
-    "mtime": 1791203342.7355218,
-    "seen": 1791203462.7956111,
-    "ast_hash": "3acc9e6e494b4733da08357ca89ba607",
+    "mtime": 1791205716.5057235,
+    "seen": 1791205781.7450755,
+    "ast_hash": "e19be59aec275d97d3aa8d9c0b5953f1",
     "semantic_hash": ""
   },
   "docs/checklist-appstore/01-decisioni.md": {
@@ -858,9 +858,9 @@
     "semantic_hash": ""
   },
   "docs/piano-lancio-appstore.md": {
-    "mtime": 1791176261.6548405,
-    "seen": 1791180597.2167687,
-    "ast_hash": "d9871451134b6656fe141ae3ce27e411",
+    "mtime": 1791205716.5041976,
+    "seen": 1791205781.7450783,
+    "ast_hash": "defc5cf9499c5697619a025a95fdd76a",
     "semantic_hash": ""
   },
   "docs/privacy-policy-bozza.md": {
@@ -1116,9 +1116,9 @@
     "semantic_hash": ""
   },
   "docs/tema-chiaro.md": {
-    "mtime": 1791203333.7479777,
-    "seen": 1791203462.7956202,
-    "ast_hash": "2c12c33816183060fa372da37487f561",
+    "mtime": 1791205706.3741925,
+    "seen": 1791205781.745084,
+    "ast_hash": "045089fde790ca56aeed05a4da3d6263",
     "semantic_hash": ""
   }
 }
