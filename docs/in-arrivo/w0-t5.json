@@ -1,0 +1,68 @@
+{
+  "task": "W0-T5",
+  "frasi": {
+    "ampiezza senza dolore, discesa in # s": {
+      "en": "pain-free range, lower in # s",
+      "es": "recorrido sin dolor, bajada en # s",
+      "de": "schmerzfreier Umfang, # s absenken"
+    },
+    "Dolore segnalato: carico ridotto (#%)": {
+      "en": "Pain reported: load reduced (#%)",
+      "es": "Dolor indicado: carga reducida (#%)",
+      "de": "Schmerz gemeldet: Last reduziert (#%)"
+    }
+  },
+  "regole": [
+    {
+      "capitolo": 5,
+      "sostituisce": true,
+      "riga": "- **PRG-01** durata e blocchi per livello (strutturaProgramma(livello, prudente)): principiante 8 sett. con UN solo scarico, all'8a (PRN-03 ponte, B21, D-P5: vale solo per i programmi creati dopo l'onda 0, un programma salvato tiene le sue fasi; il v2 passera a 12 settimane); principiante prudente (over 65, PAR-Q positivo, minorenne) blocco 4 = 3+1 come prima, se chi chiama passa `prudente`; intermedio 12 sett. (blocco 4); avanzato 12 sett. (blocco 6 = 5+1). Fasi: ogni ultima settimana del blocco = 'scarico'. (storica: sempre accesa, e una correzione di sicurezza o di calcolo)"
+    },
+    {
+      "capitolo": 5,
+      "sostituisce": true,
+      "riga": "- **PRG-07** vincoli: attrezzi della palestra, luogo (casa con manubri / corpo libero), esercizi odiati, fastidi (RISCHIO: spalle, ginocchia, schiena) tramite consentito(); al massimo 1 esercizio pesante per la schiena a seduta (SCHIENA_PESANTE). Onda 0 (W0-T5): RISCHIO chiude i buchi SAF-01 (spalle: Pike Push-up; schiena: Front Squat, Rematore Presa Inversa/Yates) e SEL-11 (schiena: Sit-up, Russian Twist, Crunch a Terra); ginocchia SENZA leg extension e leg press (REC-04 ponte, B13: restano con la nota di SCALE_DOLORE), con l'eccezione dello squat a corpo libero quando non ci sono macchine (B33: i quadricipiti non restano a zero); CAS-01 guardia (B28): a casa (manubri o corpo libero) niente esercizi che per DETTAGLI richiedono sbarra, parallele, sedia romana, panca per lombari o a 45 gradi, ruota addominale (e con i soli manubri nemmeno sbarra bassa o anelli) finche l'utente non dichiara l'attrezzo (W2-T5). (storica: sempre accesa, e una correzione di sicurezza o di calcolo)"
+    },
+    {
+      "capitolo": 9,
+      "sostituisce": true,
+      "riga": "- **BIO-02** respirazione (respiroPer): con PAR-Q positivo, oppure con 65 anni o piu (REC-06 parte a, B31), sui multiarticolari \"non trattenere il fiato, 8-12 ripetizioni, carichi moderati\". La parte b (pressione alta dichiarata) e bloccata dal registro: nessun campo nuovo. (storica: sempre accesa, e una correzione di sicurezza o di calcolo)"
+    },
+    {
+      "capitolo": 9,
+      "sostituisce": true,
+      "riga": "- **BIO-05** bonus nella scelta degli esercizi (bonusBiomecc): caviglia rigida -> squat guidati (hack, leg press, pendulum, goblet, multipower) +2, squat/front squat col bilanciere -2; spalle \"no\" o fastidio alle spalle -> landmine press +3, military/lento avanti/Arnold -3; fastidio alle spalle sulle spinte orizzontali: manubri, chest press, presa stretta +1,5; calf raise in piedi +1 (gastrocnemio cresce il doppio, Kinoshita 2023). Croci: nessun punteggio (D-P8, B32, onda 0): il +0,5 delle croci ai cavi contraddiceva il +1,5 \"allungamento\" delle croci coi manubri di RIC-03; cavi e manubri alla pari, decide l'ordine di PRIORI. (storica: sempre accesa, e una correzione di sicurezza o di calcolo)"
+    },
+    {
+      "capitolo": 10,
+      "sostituisce": true,
+      "riga": "- **DEC-03** dolore >=6/10, oppure tornato nella stessa zona (>=4/10) nelle ultime 2 sedute: l'esercizio si SOSTITUISCE con una variante dello STESSO muscolo bersaglio (o della stessa famiglia per gli stacchi: alternativeStessoMuscolo), che non sia tra gli esercizi che caricano di piu quella zona (STRESS_ZONA), con attrezzi e fastidi consentiti e non gia presente in quel giorno (B14, onda 0: la vecchia tabella SOSTITUZIONI cambiava muscolo, per esempio squat -> hip thrust, ed e stata tolta). Se non c'e, resta lo stesso esercizio a -20% per 2 sedute con la nota \"ampiezza senza dolore, discesa in 3 s\" (mai un altro muscolo). Con >=6/10 anche l'avviso \"fatti vedere da un medico o fisioterapista\". (storica: sempre accesa, e una correzione di sicurezza o di calcolo)"
+    },
+    {
+      "capitolo": 10,
+      "sostituisce": true,
+      "riga": "- **DEC-05** seduta \"pesante\" = RPE di sessione \"Al limite\" (10) oppure arrivato stanco con \"Dura\" (>=8). Le risposte sono 3 / 6 / 8 / 10 (Facile, Giusta, Dura, Al limite; le vecchie risposte 9 contano 8) (MES-08, B9, Convenzione). 3 sedute su 4 pesanti (con almeno 3 feedback precedenti): propone di togliere un allenamento a settimana (Bell 2022). (storica: sempre accesa, e una correzione di sicurezza o di calcolo)"
+    },
+    {
+      "capitolo": 10,
+      "sostituisce": true,
+      "riga": "- **DEC-06** almeno 2 sedute su 3 pesanti (vedi DEC-05: una \"Dura\" da sola non conta): la prossima seduta e di SCARICO (serie -40%, carico -10%). (storica: sempre accesa, e una correzione di sicurezza o di calcolo)"
+    },
+    {
+      "capitolo": 10,
+      "sostituisce": true,
+      "riga": "- **DEC-07** altrimenti: carichi \"pesanti\" e RPE di sessione >=8 (Dura o piu; anche il vecchio 9) -> nessun aumento la prossima volta; carichi \"leggeri\" e RPE <=5 senza dolore -> un aumento extra dove hai completato tutte le serie. (storica: sempre accesa, e una correzione di sicurezza o di calcolo)"
+    },
+    {
+      "capitolo": 10,
+      "sostituisce": true,
+      "riga": "- **DEC-09** applicazione (applicaDecisioni): scrive gli \"aggiusti\" per esercizio (fattore, sedute, motivo con l'eventuale nota \"ampiezza senza dolore, discesa in 3 s\"), lo scarico, e per la sostituzione cambia il nome in TUTTI i giorni del piano (peso della libreria, serie non fatte, nota \"Variante scelta dal coach\"; se si passa da ripetizioni a tempo, o viceversa, anche il bersaglio e quello della libreria). Tutto annullabile (ripristina dati, aggiusti, giorni di riposo). (storica: sempre accesa, e una correzione di sicurezza o di calcolo)"
+    }
+  ],
+  "mappaAgenti": [
+    "sicurezza e segnali: RISCHIO, ECCEZIONI_RISCHIO e consentito (con la guardia degli attrezzi di casa, CAS-01, e senzaMacchine) e strutturaProgramma(livello, prudente) in js/coach/programma/motore.js; la tabella SOSTITUZIONI non c'e piu: varianteStessoMuscolo in js/coach/questionario-decisioni.js usa alternativeStessoMuscolo (DEC-03, B14)",
+    "pesante = RPE \"Al limite\" o \"Dura\" da stanchi (MES-08): sedutaPesante e PARAM_FATICA_SEDUTA in js/coach/questionario-decisioni.js; livelloFatica (js/coach/regole-ricerca.js) legge ancora srpe con soglie 9 e 7 e va riallineato (W0-T4 o W3-T5)",
+    "respiroPer (js/coach/biomeccanica.js): niente apnea anche per eta >= 65 (REC-06 parte a); bonusBiomecc senza il +0,5 delle croci ai cavi (D-P8)"
+  ],
+  "nota": "Per l'INTEGRAZIONE (INT-0). 1) ricette.js (W0-T2) riga 80: passare il prudente a strutturaProgramma: strutturaProgramma(level, over65 || d.parq === 'si' || d.parq === true || (eta > 0 && eta < 18)) (registro B4: i prudenti restano a 3+1; senza il passaggio un principiante prudente prende 8 settimane con lo scarico solo all'8a). 2) regole-ricerca.js livelloFatica (W0-T4/W3-T5): con le risposte 3/6/8/10 la soglia 'alta' (srpe medio >= 9) scatta solo con Al limite e 'bassa' (< 7) con tutte Giusta: riallineare (MES-08: alta se srpe medio >= 9,5). 3) mappa: nei cap. 10 (riga 'Tabelle di conoscenza') e 16 (tabella dei nomi) togliere SOSTITUZIONI (la tabella cambiava muscolo ed e stata tolta); STRESS_ZONA ha elementi nuovi (dip e piegamenti a diamante o declinati per gomito e polso, declinati per la spalla). 4) collaudo, SAF-01:ginocchia sale da 0 a circa 11% pesato (standard): CONTROINDICAZIONI.ginocchia.forte elenca leg extension e ogni squat, ma il registro (B13, B33, REC-04: modificare prima di escludere) li lascia in programma con la nota di SCALE_DOLORE (leg extension in palestra, squat a corpo libero a casa o senza macchine). Scelta: spostarli in cautela con VERSIONE_CRITERI alzata, oppure (per tenere SAF-01 a 0 e MIS-01:quadricipiti a 5,9%) rimettere 'leg extension' nel regex RISCHIO.ginocchia e togliere la voce ginocchia da ECCEZIONI_RISCHIO in motore.js. 5) SAF-04:corpo resta (rematore inverso = sbarra bassa o anelli, calf raise a un piede = gradino): sono tenuti apposta, senza il rematore inverso a corpo libero la schiena non si allena per niente (MIS-01:schiena sev 4). SAF-04:manubri = 0. 6) A casa peggiorano finche W0-T2 (tirata verticale di riserva, CAS-14) e W0-T6 (pullover ai dorsali) e W1-T5 (esercizi nuovi) non sono uniti: EQ-01, EXN-01, RID-02, VOL-01:petto, VOL-01:schiena; misurare in INT-0. In palestra con spalle dolenti e senza landmine (SES-03:fullbody/spinta, 4 programmi su 1774) il Pike Push-up non riempie piu la spinta verticale. 7) REC-06 parte b (pressione alta) e bloccata: non implementata. REC-01, REC-02, REC-05, REC-08 non sono di W0-T5 (W4-T1)."
+}

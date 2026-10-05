@@ -10,12 +10,17 @@
    - DOLORE (modello di monitoraggio del dolore, Silbernagel 2007):
      fino a 3/10 si continua e si osserva; 4-5/10 si abbassa il carico
      del 10% sugli esercizi coinvolti; se torna nella stessa zona, o se
-     e 6/10 o piu, l esercizio si SOSTITUISCE con una variante che
-     carica meno quell articolazione (presa neutra, macchina, meno leva).
+     e 6/10 o piu, l esercizio si SOSTITUISCE con una variante dello STESSO
+     muscolo che non e tra quelle che caricano di piu quell articolazione
+     (STRESS_ZONA); se non ce n e, resta lo stesso esercizio a -20% con
+     ampiezza senza dolore e discesa in 3 s: mai un esercizio per un altro
+     muscolo (B14).
    - FATICA (autoregolazione e scarico reattivo, Bell 2022): due sedute
-     su tre "al limite" o arrivando stanchi = scarico nella seduta
-     successiva (serie -40%, carico -10%). Se continua per tre sedute
-     su quattro il coach propone di togliere un giorno a settimana.
+     su tre "pesanti" = scarico nella seduta successiva (serie -40%,
+     carico -10%). Pesante = "Al limite" (RPE 10) oppure arrivato stanco
+     con "Dura" (RPE 8-9): una "Dura" da sola e la seduta che il blocco
+     prevede (MES-08, B9). Se continua per tre sedute su quattro il coach
+     propone di togliere un giorno a settimana.
    - SENSAZIONE DEI CARICHI: leggeri e seduta facile = aumento extra la
      prossima volta; pesanti e seduta al limite = niente aumenti.
    Ogni decisione ha il suo motivo scritto ed e annullabile.
@@ -35,43 +40,56 @@ const ZONE_DOLORE = [
 const ZONA_ART = { spalla: ['alla ', 'la '], gomito: ['al ', 'il '], polso: ['al ', 'il '], schiena: ['alla ', 'la '], anca: ['all’', 'l’'], ginocchio: ['al ', 'il '], caviglia: ['alla ', 'la '] };
 function zonaA(z, nome) { return (ZONA_ART[z] || ['a ', ''])[0] + nome; }
 function zonaIl(z, nome) { return (ZONA_ART[z] || ['', ''])[1] + nome; }
-/* quali esercizi caricano di piu ogni articolazione */
+/* quali esercizi caricano di piu ogni articolazione (conoscenza del coach, Convenzione: matrice di docs/ricerca-recupero-infortuni-popolazioni.md 3;
+   gomito e polso con dip e piegamenti a diamante o declinati: il peso del corpo sui polsi estesi e sui gomiti) */
 const STRESS_ZONA = {
-  spalla: ['Panca Piana Bilanciere', 'Panca Inclinata Bilanciere', 'Panca Declinata', 'Dip alle Parallele', 'Military Press', 'Lento Avanti Manubri', 'Arnold Press', 'Tirate al Mento (Upright Row)', 'Croci su Panca Manubri', 'Trazioni alla Sbarra (Pull-ups)', 'Dip su Panca', 'Pullover con Manubrio', 'Alzate Frontali'],
-  gomito: ['French Press', 'Curl Bilanciere Bicipiti', 'Panca Presa Stretta', 'Dip su Panca', 'Trazioni Presa Inversa (Chin-up)', 'Curl su Panca Scott'],
-  polso: ['Curl Bilanciere Bicipiti', 'Front Squat', 'Panca Piana Bilanciere', 'Panca Presa Stretta', 'Piegamenti a Terra (Push-up)'],
+  spalla: ['Panca Piana Bilanciere', 'Panca Inclinata Bilanciere', 'Panca Declinata', 'Dip alle Parallele', 'Military Press', 'Lento Avanti Manubri', 'Arnold Press', 'Tirate al Mento (Upright Row)', 'Croci su Panca Manubri', 'Trazioni alla Sbarra (Pull-ups)', 'Dip su Panca', 'Pullover con Manubrio', 'Alzate Frontali', 'Piegamenti Declinati (Piedi Rialzati)'],
+  gomito: ['French Press', 'Curl Bilanciere Bicipiti', 'Panca Presa Stretta', 'Dip su Panca', 'Trazioni Presa Inversa (Chin-up)', 'Curl su Panca Scott', 'Dip alle Parallele', 'Piegamenti a Diamante'],
+  polso: ['Curl Bilanciere Bicipiti', 'Front Squat', 'Panca Piana Bilanciere', 'Panca Presa Stretta', 'Piegamenti a Terra (Push-up)', 'Dip su Panca', 'Dip alle Parallele', 'Piegamenti a Diamante', 'Piegamenti Declinati (Piedi Rialzati)'],
   schiena: ['Stacco da Terra (Deadlift)', 'Rematore con Bilanciere', 'Good Morning', 'Squat con Bilanciere', 'T-Bar Row', 'Stacco Rumeno', 'Military Press', 'Stacco Sumo', 'Hyperextension (Lombari)'],
   anca: ['Squat con Bilanciere', 'Affondi Bulgari', 'Stacco Sumo', 'Affondi in Camminata', 'Hip Thrust', 'Leg Press', 'Squat Sumo'],
   ginocchio: ['Squat con Bilanciere', 'Front Squat', 'Hack Squat', 'Affondi Manubri', 'Affondi in Camminata', 'Affondi Bulgari', 'Step-up su Panca', 'Leg Extension', 'Leg Press', 'Goblet Squat', 'Squat Sumo'],
   caviglia: ['Calf Raise in Piedi', 'Affondi in Camminata', 'Step-up su Panca', 'Mountain Climber', 'Squat con Bilanciere']
-};
-/* la variante che risolve il problema: meno leva, presa neutra,
-   traiettoria guidata o carico spostato su un altra articolazione */
-const SOSTITUZIONI = {
-  spalla: { 'Panca Piana Bilanciere': 'Chest Press Machine', 'Panca Inclinata Bilanciere': 'Panca Inclinata Manubri', 'Panca Declinata': 'Chest Press Machine',
-    'Dip alle Parallele': 'Pushdown Tricipiti ai Cavi', 'Military Press': 'Shoulder Press Machine', 'Lento Avanti Manubri': 'Shoulder Press Machine',
-    'Arnold Press': 'Shoulder Press Machine', 'Tirate al Mento (Upright Row)': 'Alzate Laterali', 'Croci su Panca Manubri': 'Croci ai Cavi',
-    'Trazioni alla Sbarra (Pull-ups)': 'Lat Machine Presa Inversa', 'Dip su Panca': 'Pushdown Tricipiti ai Cavi', 'Pullover con Manubrio': 'Pullover ai Cavi', 'Alzate Frontali': 'Face Pull' },
-  gomito: { 'French Press': 'Pushdown Tricipiti ai Cavi', 'Curl Bilanciere Bicipiti': 'Hammer Curl', 'Panca Presa Stretta': 'Pushdown Tricipiti ai Cavi',
-    'Dip su Panca': 'Kickback Tricipiti', 'Trazioni Presa Inversa (Chin-up)': 'Lat Machine', 'Curl su Panca Scott': 'Curl ai Cavi' },
-  polso: { 'Curl Bilanciere Bicipiti': 'Hammer Curl', 'Front Squat': 'Goblet Squat', 'Panca Piana Bilanciere': 'Chest Press Machine',
-    'Panca Presa Stretta': 'Pushdown Tricipiti ai Cavi', 'Piegamenti a Terra (Push-up)': 'Chest Press Machine' },
-  schiena: { 'Stacco da Terra (Deadlift)': 'Hip Thrust', 'Rematore con Bilanciere': 'Pulley Basso', 'Good Morning': 'Leg Curl Sdraiato',
-    'Squat con Bilanciere': 'Leg Press', 'T-Bar Row': 'Pulley Basso', 'Stacco Rumeno': 'Leg Curl Sdraiato', 'Military Press': 'Shoulder Press Machine',
-    'Stacco Sumo': 'Hip Thrust', 'Hyperextension (Lombari)': 'Ponte Glutei' },
-  anca: { 'Squat con Bilanciere': 'Leg Press', 'Affondi Bulgari': 'Leg Press', 'Stacco Sumo': 'Stacco Rumeno', 'Affondi in Camminata': 'Leg Press',
-    'Hip Thrust': 'Ponte Glutei', 'Leg Press': 'Leg Extension', 'Squat Sumo': 'Adductor Machine' },
-  ginocchio: { 'Squat con Bilanciere': 'Hip Thrust', 'Front Squat': 'Hip Thrust', 'Hack Squat': 'Hip Thrust', 'Affondi Manubri': 'Stacco Rumeno',
-    'Affondi in Camminata': 'Stacco Rumeno', 'Affondi Bulgari': 'Hip Thrust', 'Step-up su Panca': 'Ponte Glutei', 'Leg Extension': 'Leg Curl Seduto',
-    'Leg Press': 'Hip Thrust', 'Goblet Squat': 'Stacco Rumeno', 'Squat Sumo': 'Adductor Machine' },
-  caviglia: { 'Calf Raise in Piedi': 'Calf Raise Seduto', 'Affondi in Camminata': 'Leg Press', 'Step-up su Panca': 'Leg Press',
-    'Mountain Climber': 'Plank', 'Squat con Bilanciere': 'Leg Press' }
 };
 const senzaEmoji = (n) => String(n).replace(EMOJI_TESTA, '');
 function nomeInLibreria(pulito) {
   const m = EXERCISE_LIBRARY.find(e => senzaEmoji(e.name) === pulito);
   return m ? m.name : null;
 }
+/* DEC-03 (B14): la variante per il dolore allena lo STESSO muscolo (alternativeStessoMuscolo: bersaglio o famiglia del
+   multiarticolare totale), attrezzi e fastidi consentiti, e non e tra gli esercizi che caricano di piu quella zona (STRESS_ZONA:
+   penalita, e di fatto esclusione). La vecchia tabella SOSTITUZIONI cambiava muscolo (squat -> hip thrust, stacco -> hip thrust,
+   dip -> pushdown). Se non ce n e nessuna ritorna null: chi chiama tiene lo stesso esercizio a -20% (mai un altro muscolo).
+   La zona dichiarata nel questionario vale come fastidio per consentito() (spalla -> spalle, ginocchio -> ginocchia, schiena). */
+const REGIONE_RISCHIO_DOLORE = { spalla: 'spalle', ginocchio: 'ginocchia', schiena: 'schiena' };
+function varianteStessoMuscolo(nome, zona, prefs, giaPresenti) {
+  const stress = STRESS_ZONA[zona] || [];
+  const p = Object.assign({}, prefs || {}), regione = REGIONE_RISCHIO_DOLORE[zona];
+  p.fastidi = (p.fastidi || []).slice();
+  if (regione && p.fastidi.indexOf(regione) === -1) p.fastidi.push(regione);
+  /* tra gli adatti prima la traiettoria guidata (macchina, cavo), poi i manubri (presa neutra, braccia indipendenti), il bilanciere in coda:
+     e il criterio della vecchia tabella (meno leva, presa neutra, traiettoria guidata) */
+  const punti = (e) => {
+    if (stress.indexOf(senzaEmoji(e.name)) !== -1) return -100;
+    const att = attrezzoDi(senzaEmoji(e.name));
+    return att === 'macchine' ? 4 : (att === 'manubri' ? 2 : (att === 'bilanciere' ? -2 : 0));
+  };
+  /* un esercizio che non e della famiglia dei multiarticolari totali non si sostituisce con uno di quella famiglia (squat -> stacco con trap bar) */
+  const famiglia = famigliaTotaleDi(nome);
+  const scelta = alternativeStessoMuscolo(nome, p, giaPresenti || [], { max: 6, bonus: punti })
+    .find(a => stress.indexOf(senzaEmoji(a.ex.name)) === -1 && famigliaTotaleDi(a.ex.name) === famiglia);
+  return scelta ? scelta.ex.name : null;
+}
+/* i nomi dei giorni del piano in cui compare l esercizio: la variante non deve finire due volte nello stesso giorno */
+function eserciziDeiGiorniCon(nome) {
+  try { const data = loadData(); return [].concat.apply([], DAYS.filter(g => (data[g] || []).some(e => e.name === nome)).map(g => data[g].map(e => e.name))); } catch (e) { return []; }
+}
+/* MES-08 (B9, Convenzione): le risposte della fatica di seduta sono 3 / 6 / 8 / 10 (Facile, Giusta, Dura, Al limite). Una seduta e
+   "pesante" se e Al limite, o se e Dura e si arrivava stanchi. Le vecchie risposte 9 (Dura) contano come 8. */
+const PARAM_FATICA_SEDUTA = { srpeFacile: 3, srpeGiusta: 6, srpeDura: 8, srpeAlLimite: 10, srpeFacileMax: 5 };
+/* la nota che accompagna lo stesso esercizio a -20% quando non c e una variante dello stesso muscolo (frase nei tre dizionari) */
+const NOTA_AMPIEZZA_SENZA_DOLORE = 'ampiezza senza dolore, discesa in 3 s';
+function sedutaPesante(x) { return x.srpe >= PARAM_FATICA_SEDUTA.srpeAlLimite || (x.arrivo === 'stanco' && x.srpe >= PARAM_FATICA_SEDUTA.srpeDura); }
 
 let fbState = null;
 window.apriQuestionario = function(entry) {
@@ -116,7 +134,7 @@ function renderQuestionario() {
   const f = fbState;
   let h = '<div class="fb-intro">Quattro tocchi: il coach usa le tue risposte per decidere carichi, varianti e recupero.</div>' +
     '<div class="fb-q">1. Quanto è stata dura la seduta?</div>' +
-    fbScelta('srpe', [[4, 'Facile', 'RPE 1–4'], [7, 'Giusta', 'RPE 5–7'], [9, 'Dura', 'RPE 8–9'], [10, 'Al limite', 'RPE 10']]) +
+    fbScelta('srpe', [[PARAM_FATICA_SEDUTA.srpeFacile, 'Facile', 'RPE 1–4'], [PARAM_FATICA_SEDUTA.srpeGiusta, 'Giusta', 'RPE 5–7'], [PARAM_FATICA_SEDUTA.srpeDura, 'Dura', 'RPE 8–9'], [PARAM_FATICA_SEDUTA.srpeAlLimite, 'Al limite', 'RPE 10']]) +
     '<div class="fb-q">2. Come ci sei arrivato?</div>' +
     fbScelta('arrivo', [['riposato', 'Riposato'], ['normale', 'Normale'], ['stanco', 'Stanco']]) +
     '<div class="fb-q">3. Come hai sentito i carichi?</div>' +
@@ -145,12 +163,13 @@ window.chiudiQuestionario = function() {
 
 /* Il cuore: dalle risposte alle decisioni. Funzione pura sui dati salvati,
    cosi e verificabile dai test. */
-window.decisioniCoach = function(fb, storicoFeedback) {
+window.decisioniCoach = function(fb, storicoFeedback, prefs) {
   const out = [];
   const prec = (storicoFeedback || []).filter(Boolean);   /* dal piu recente */
   const ultimi3 = [fb].concat(prec.slice(0, 2));
   const ultimi4 = [fb].concat(prec.slice(0, 3));
-  const pesante = (x) => x.srpe >= 9 || x.arrivo === 'stanco';
+  /* attrezzi, luogo e fastidi per scegliere la variante (prefs facoltativo: di norma quelli del profilo) */
+  const prefsRif = prefs || (typeof prefsCoach === 'function' ? prefsCoach() : {});
 
   /* dolore */
   if (fb.dolore && fb.zone.length) {
@@ -168,14 +187,16 @@ window.decisioniCoach = function(fb, storicoFeedback) {
         return;
       }
       coinvolti.forEach(n => {
-        const variante = (SOSTITUZIONI[z] || {})[senzaEmoji(n)];
-        const nomeV = variante ? nomeInLibreria(variante) : null;
-        if ((fb.livello >= 6 || tornato) && nomeV) {
-          out.push({ tipo: 'sostituisci', esercizio: n, variante: nomeV, zona: z,
-            testo: senzaEmoji(n) + ' → ' + variante + ': ' + (fb.livello >= 6 ? 'dolore forte' : 'il dolore ' + zonaA(z, zNome) + ' è tornato') + ', la variante carica meno ' + zonaIl(z, zNome) + '.' });
+        const forte = fb.livello >= 6 || tornato;
+        /* DEC-03 (B14): variante dello stesso muscolo; se non c e, stesso esercizio a -20% con ampiezza senza dolore e discesa lenta */
+        const variante = forte ? varianteStessoMuscolo(n, z, prefsRif, (fb.esercizi || []).concat(eserciziDeiGiorniCon(n))) : null;
+        if (variante) {
+          out.push({ tipo: 'sostituisci', esercizio: n, variante: variante, zona: z,
+            testo: senzaEmoji(n) + ' → ' + senzaEmoji(variante) + ': ' + (fb.livello >= 6 ? 'dolore forte' : 'il dolore ' + zonaA(z, zNome) + ' è tornato') + ', la variante carica meno ' + zonaIl(z, zNome) + '.' });
         } else {
-          out.push({ tipo: 'carico', esercizio: n, fattore: fb.livello >= 6 ? 0.8 : 0.9, sedute: 2, zona: z, zNome: zNome, livello: fb.livello, alteRip: z === 'gomito' || z === 'ginocchio',
-            testo: senzaEmoji(n) + ': carico ' + (fb.livello >= 6 ? '-20%' : '-10%') + ' per due sedute, per il dolore ' + zonaA(z, zNome) + '.' });
+          const fattore = forte ? 0.8 : 0.9, nota = forte ? NOTA_AMPIEZZA_SENZA_DOLORE : '';
+          out.push({ tipo: 'carico', esercizio: n, fattore: fattore, sedute: 2, zona: z, zNome: zNome, livello: fb.livello, alteRip: z === 'gomito' || z === 'ginocchio', nota: nota,
+            testo: senzaEmoji(n) + ': carico ' + (forte ? '-20%' : '-10%') + ' per due sedute, per il dolore ' + zonaA(z, zNome) + '.' + (nota ? ' • ' + nota : '') });
         }
       });
       if (fb.livello >= 6) out.push({ tipo: 'medico', testo: 'Dolore forte: se non passa in pochi giorni o peggiora, fatti vedere da un medico o da un fisioterapista.' });
@@ -183,16 +204,16 @@ window.decisioniCoach = function(fb, storicoFeedback) {
   }
 
   /* fatica e recupero */
-  const pesanti3 = ultimi3.filter(pesante).length;
-  const pesanti4 = ultimi4.filter(pesante).length;
+  const pesanti3 = ultimi3.filter(sedutaPesante).length;
+  const pesanti4 = ultimi4.filter(sedutaPesante).length;
   if (pesanti4 >= 3 && prec.length >= 3) {
     out.push({ tipo: 'frequenza', testo: 'Tre sedute su quattro al limite o arrivando stanco: il recupero non basta. Il coach propone di togliere un allenamento a settimana.' });
   }
   if (pesanti3 >= 2) {
     out.push({ tipo: 'scarico', testo: 'Fatica accumulata: la prossima seduta è di scarico (serie -40%, carico -10%) per ricaricare le energie.' });
-  } else if (fb.carichi === 'pesanti' && fb.srpe >= 9) {
+  } else if (fb.carichi === 'pesanti' && fb.srpe >= PARAM_FATICA_SEDUTA.srpeDura) {   /* anche le vecchie risposte 9 */
     out.push({ tipo: 'blocca', testo: 'Carichi pesanti e seduta al limite: la prossima volta nessun aumento, consolida prima.' });
-  } else if (fb.carichi === 'leggeri' && fb.srpe <= 5 && !fb.dolore) {
+  } else if (fb.carichi === 'leggeri' && fb.srpe <= PARAM_FATICA_SEDUTA.srpeFacileMax && !fb.dolore) {
     out.push({ tipo: 'extra', testo: 'Carichi leggeri e seduta facile: la prossima volta un aumento in più dove hai completato tutte le serie.' });
   }
   if (!out.length) out.push({ tipo: 'ok', testo: 'Seduta nella norma: il programma prosegue come previsto.' });
@@ -208,9 +229,10 @@ function applicaDecisioni(dec, fb) {
   const data = loadData();
   dec.forEach(d => {
     if (d.tipo === 'carico') {
-      ag.esercizi[d.esercizio] = { fattore: d.fattore, sedute: d.sedute, alteRip: !!d.alteRip, motivo: 'Dolore segnalato: carico ridotto (' + Math.round((1 - d.fattore) * 100) + '%)' };
-      /* dolore moderato: domattina il coach chiede se e tornato normale (Silbernagel) */
-      if (d.fattore >= 0.9 && d.zona) {
+      ag.esercizi[d.esercizio] = { fattore: d.fattore, sedute: d.sedute, alteRip: !!d.alteRip,
+        motivo: 'Dolore segnalato: carico ridotto (' + Math.round((1 - d.fattore) * 100) + '%)' + (d.nota ? ' • ' + d.nota : '') };
+      /* dolore moderato (4-5/10): domattina il coach chiede se e tornato normale (Silbernagel); vale anche se il dolore e tornato e il carico scende del 20% */
+      if (d.livello >= 4 && d.livello <= 5 && d.zona) {
         const c = ag.controlloDolore && ag.controlloDolore.dal === ymd(new Date()) ? ag.controlloDolore : { dal: ymd(new Date()), zone: {}, esercizi: [] };
         c.zone[d.zona] = d.zNome;
         if (c.esercizi.indexOf(d.esercizio) === -1) c.esercizi.push(d.esercizio);
@@ -224,7 +246,14 @@ function applicaDecisioni(dec, fb) {
       DAYS.forEach(g => (data[g] || []).forEach(e => {
         if (e.name !== d.esercizio) return;
         e.name = d.variante;
-        if (lib) { const pp = pesoPartenza(d.variante); e.weight = pp.peso; e.stimato = pp.stimato ? pp.fonte : undefined; e.completedSets = e.completedSets.map(sx => Object.assign({}, sx, { weight: pp.peso, done: false })); }
+        if (lib) {
+          const pp = pesoPartenza(d.variante);
+          /* da un esercizio a ripetizioni a uno a tempo (squat -> wall sit) o viceversa: il bersaglio vecchio non vale (8 ripetizioni = 8 secondi) */
+          const cambiaMisura = isTimeBased(d.variante) !== isTimeBased(d.esercizio);
+          if (cambiaMisura) e.reps = lib.reps;
+          e.weight = pp.peso; e.stimato = pp.stimato ? pp.fonte : undefined;
+          e.completedSets = e.completedSets.map(sx => Object.assign({}, sx, { weight: pp.peso, done: false }, cambiaMisura ? { reps: lib.reps } : {}));
+        }
         e.coachNote = 'Variante scelta dal coach: ' + senzaEmoji(d.esercizio) + ' dava dolore';
         e.coachTipo = 'scarico';
       }));
