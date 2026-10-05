@@ -1,6 +1,6 @@
 # Scheda di decisione: modello Pro di 3in
 
-Data: 2026-10-05. Stato: decisioni dell'utente registrate; punti aperti in fondo. Nessun codice scritto, nessuna spesa fatta. Nulla qui è consulenza legale o fiscale. Le cifre di lavoro sono STIME da un'analisi dell'agente, non misure.
+Data: 2026-10-05. Stato: decisioni dell'utente registrate (prezzo del lifetime chiuso il 2026-10-05); punti aperti in fondo. Nessun codice scritto, nessuna spesa fatta. Nulla qui è consulenza legale o fiscale. Le cifre di lavoro sono STIME da un'analisi dell'agente, non misure.
 
 ## 1. Decisioni prese dall'utente (2026-10-05)
 
@@ -16,7 +16,7 @@ Data: 2026-10-05. Stato: decisioni dell'utente registrate; punti aperti in fondo
 | 8 | Tecnica | StoreKit 2 con il plugin `@capgo/native-purchases` (v8.8.1 al 22/09/2026, licenza MPL-2.0, Capacitor 8 o superiore); controllo dei diritti solo sul dispositivo |
 | 9 | Terzi | **Niente RevenueCat**: è un SDK/server di terzi, rompe «Data Not Collected»; il sito non era raggiungibile, non verificato |
 | 10 | Annuale | **19,99 € prezzo pieno.** Lancio: **6,99 € il primo anno** via offer code «Pay up front», poi rinnovo a 19,99 € (netti 13,93 € pieno, 4,87 € lancio; formula prezzo/1,22*0,85). Il paywall deve dire «6,99 € il primo anno, poi 19,99 €/anno» (3.1.2). Prezzo di lancio onesto e a tempo limitato; prezzo barrato falso vietato (normativa UE sulle riduzioni di prezzo, citata a memoria, non verificata) |
-| 11 | Lifetime | Si vende **insieme all'annuale**. **Prezzo APERTO** (vedi sez. 4): i numeri 19,99 pieno / 6,99 lancio sono stati detti in modo ambiguo e, se validi anche per il lifetime, lo rendono identico all'annuale |
+| 11 | Lifetime | Si vende **insieme all'annuale**. **Prezzo CHIUSO: 39,99 € pieno**; **prezzo di lancio «25 euro» = livello Apple 24,99 €** via offer code (non-consumable: gli offer code valgono anche per acquisti una tantum dal 29/10/2025, riscatto in app da iOS 16.3), **a tempo/posti limitati e onesto**: il pieno 39,99 € deve esistere dopo il lancio; prezzo barrato falso vietato (normativa UE a memoria, non verificata). Netti 27,86 € pieno, 17,41 € lancio |
 | 12 | Famiglia | **Sì al prodotto «Lifetime Famiglia» a +30%** con Family Sharing (condivisione fino a 6 persone: limite Apple, non limitabile a 3; link di condivisione propri non ammessi, 3.1.1). Il **lifetime singolo senza Family Sharing**. Il codice famiglia -90% è **abbandonato** |
 | 13 | Codici | **-80% solo per recensori/palestre/trainer**, in numero limitato. Per il pubblico il codice di lancio è quello a 6,99 € primo anno |
 
@@ -70,23 +70,33 @@ Fonti Apple lette (analisi del 05/10/2026): App Review Guidelines 3.1.1, 3.1.2, 
 |---|---|---|
 | Annuale, pieno | 19,99 | 13,93 |
 | Annuale, lancio primo anno (Pay up front; poi 19,99) | 6,99 | 4,87 |
-| Lifetime, pieno (PROPOSTA, non decisa) | 39,99 | 27,86 |
-| Lifetime, lancio a posti limitati (PROPOSTA, non decisa) | 19,99 | 13,93 |
-| Lifetime Famiglia, +30% su 39,99 (esempio) | 51,99 | ~36,2 |
+| Lifetime, pieno (deciso) | 39,99 | 27,86 |
+| Lifetime, lancio 24,99 via offer code, a tempo/posti limitati (deciso) | 24,99 | 17,41 |
+| Lifetime Famiglia, +30% su 39,99 | 51,99 | ~36,2 |
+| Lifetime Famiglia di lancio (OPZIONE, non decisa): +30% su 24,99 | 32,49 | ~22,6 |
 | Codice -80% (recensori/palestre/trainer) su annuale 19,99 | 4,00 | 2,79 |
 
 **Annuale:** deciso. Il paywall dice chiaramente «6,99 € il primo anno, poi 19,99 €/anno». Il prezzo di lancio è onesto e a tempo limitato; il prezzo barrato falso è vietato.
 
-**PROBLEMA sul lifetime (prezzo APERTO).** L'utente ha detto «lifetime e annuale insieme» e «lifetime 19,99 con prezzo sconto lancio», poi «fa 19,99 pieno e 6,99 di lancio»: non è chiaro se i numeri valgano per l'annuale, per il lifetime o per entrambi. Se il lifetime costasse 19,99 come l'annuale, sarebbe sempre preferibile e l'annuale diventerebbe inutile. **Proposta (non decisa):** lifetime 39,99 pieno / 19,99 di lancio a posti limitati (netti 27,86 / 13,93). **La scelta è dell'utente.**
+**Lifetime (deciso 2026-10-05, prezzo CHIUSO).** Pieno 39,99 € (netto 27,86 €); lancio «25 euro» = livello Apple 24,99 € (netto 17,41 €) via offer code, a tempo o posti limitati e onesto. Il pieno 39,99 € deve esistere davvero dopo il lancio; prezzo barrato falso vietato (normativa UE citata a memoria, non verificata). Il lifetime costa chiaramente più dell'annuale (39,99 contro 19,99), quindi l'annuale ha senso.
 
-**Famiglia (deciso).** Prodotto separato **«Lifetime Famiglia»** a +30% con Family Sharing, anche se la condivisione arriva fino a 6 persone (limite Apple, non limitabile a 3; link di condivisione propri non ammessi, 3.1.1). Il lifetime singolo resta senza Family Sharing. Il codice famiglia -90% è abbandonato. Esempio: su 39,99 il +30% dà 51,99 (netto ~36,2); **da ricalcolare quando il prezzo del lifetime è deciso**. Family Sharing potrebbe essere irreversibile una volta attivato su un prodotto (DA VERIFICARE): per questo i due lifetime sono prodotti distinti.
+**Rientro dei ~485 € in vendite** (485 / netto, arrotondato per eccesso):
+
+| Prodotto | Netto | Vendite per rientrare |
+|---|---|---|
+| Annuale pieno 19,99 | 13,93 | 35 |
+| Annuale lancio 6,99 (primo anno) | 4,87 | 100 |
+| Lifetime pieno 39,99 | 27,86 | 18 |
+| Lifetime lancio 24,99 | 17,41 | 28 |
+
+**Famiglia (deciso).** Prodotto separato **«Lifetime Famiglia»** a +30% con Family Sharing, anche se la condivisione arriva fino a 6 persone (limite Apple, non limitabile a 3; link di condivisione propri non ammessi, 3.1.1). Il lifetime singolo resta senza Family Sharing. Il codice famiglia -90% è abbandonato. Su 39,99 il +30% dà 51,99 (netto ~36,2). Famiglia di lancio NON decisa: se servisse, +30% su 24,99 = 32,49 (netto ~22,6), solo come opzione. Family Sharing potrebbe essere irreversibile una volta attivato su un prodotto (DA VERIFICARE): per questo i due lifetime sono prodotti distinti.
 
 **Codici:** -80% solo per recensori, palestre e trainer, in numero limitato; per il pubblico vale il codice di lancio a 6,99 € primo anno.
 
 ## 5. Cosa si tiene dal piano precedente
 
 - Prova: 2 settimane decise; da confermare in App Store Connect le durate ammesse per la introductory offer (DA VERIFICARE); i benchmark RevenueCat (trial più lunghi convertono meglio) sono VIA TERZI, fonte non letta.
-- Prezzi: annuale deciso (19,99 pieno, 6,99 lancio primo anno); lifetime APERTO (sez. 4). La tabella per fascia di pubblico della metodologia sez. 6 resta come ordine di grandezza.
+- Prezzi: annuale deciso (19,99 pieno, 6,99 lancio primo anno); lifetime deciso (39,99 pieno, 24,99 lancio; sez. 4). La tabella per fascia di pubblico della metodologia sez. 6 resta come ordine di grandezza.
 - Obiettivo di rientro: circa 350 € nel piano di lancio contro circa 485 € nella skill (285 € costi vivi + 20 h a 10 €/h): da riconciliare in un'unica cifra.
 
 ## 6. Modifiche da fare ai docs (NON eseguite; i riferimenti sono stati verificati leggendo i file)
@@ -115,10 +125,10 @@ Fonti Apple lette (analisi del 05/10/2026): App Review Guidelines 3.1.1, 3.1.2, 
 **`privacy-policy-bozza.md`**: riga 26 («Acquisti (mance)»).
 
 ## 7. Aperti
-- **Prezzo del lifetime** (e di conseguenza del Lifetime Famiglia): proposta 39,99 / 19,99 lancio, non decisa.
 - **Durata della prova da confermare in App Store Connect** (2 settimane; alternative 1 settimana o 1 mese).
 - **Irreversibilità di Family Sharing** (da verificare).
 - **Limiti di riscatti per codice** (recensori/palestre/trainer, numero limitato) da verificare in App Store Connect.
 - **Schedule 2** della licenza (non letto).
+- **Riallineamento della sez. 6** (modifiche ai docs: ancora opzioni A/B/C e mance), da riscrivere quando si toccheranno quei file.
 
 Verifiche tecniche non legate alle decisioni (invariate): Attachment 14 UE (letto in sintesi), JWS e `Transaction.updates` nel plugin, categoria d'età, riscatto codici in sandbox.
