@@ -13,6 +13,7 @@
    npm run collaudo:schede -- --confronta prima.json dopo.json
    Opzioni: --solo COD1,COD2 (solo quei criteri)  --esempi N (default 3)  --top N (classi con esempi, default 14)  --quiet
             --pesi uniformi (ogni profilo vale uno; default: pesi plausibili della popolazione, vedi PESI_POPOLAZIONE)
+            --autotest (programmi costruiti a mano: ogni criterio deve saper scattare)
    Come si legge e come si estende: .claude/skills/collaudo-generatore-schede/SKILL.md */
 'use strict';
 const fs = require('fs'), path = require('path'), vm = require('vm'), os = require('os');
@@ -171,8 +172,8 @@ const CONTROINDICAZIONI = {
     cautela: /leg press|nordic|wall sit|stacco con trap bar/i
   },
   schiena: {
-    forte: /stacco|good morning|rematore con bilanciere|rematore presa inversa|t-bar|squat con bilanciere|front squat|squat al multipower|military|hyperextension/i,
-    cautela: /sit-up|russian twist|ab wheel|leg raise|mountain climber|affondi|crunch|woodchop/i
+    forte: /stacco|good morning|rematore con bilanciere|rematore presa inversa|t-bar|squat con bilanciere|front squat|hyperextension/i,
+    cautela: /military|squat al multipower|sit-up|russian twist|ab wheel|leg raise|mountain climber|affondi|crunch|woodchop/i
   }
 };
 /* Esercizi tecnicamente impegnativi o ad alto carico assiale: per principianti e per chi e in modalita prudente (over 65, PAR-Q) (Convenzione) */
@@ -253,9 +254,9 @@ const CRITERI = [
   { id: 'MIS-01', nome: 'Muscolo di fatto non allenato nella settimana (meno di 2 serie frazionarie)', sev: 4, forza: 'Moderata', fonte: 'Pelland 2025; Convenzione per i muscoli piccoli',
     dove: [STRUTTURA_JS + ': strCopri (aggiunge polpacci, deltoidi posteriori, bicipiti, tricipiti, core solo a certe condizioni)', RICETTE_JS + ': buildProgram (aggiungiRegione)', ONB_JS + ': exerciseCountFor (minimo 3 esercizi)'],
     check: (m, c) => volumeGruppi(m, c).filter(x => x.tipo === 'mis').map(x => ({ sub: x.g, sev: x.classe === 'grande' ? 4 : (x.classe === 'core' ? 2 : 3), msg: x.g + ': ' + r1(x.v) + ' serie frazionarie a settimana (dirette ' + r1(x.d) + ')', gravita: 3 - x.v / 2 + (x.classe === 'grande' ? 2 : 0) })) },
-  { id: 'VOL-01', nome: 'Volume settimanale sotto il minimo del livello (serie frazionarie)', sev: 4, forza: 'Moderata', fonte: 'Pelland 2025; VOLUME_LIVELLO del coach (Convenzione per i numeri)',
+  { id: 'VOL-01', nome: 'Volume settimanale sotto il minimo del livello (serie frazionarie)', sev: 3, forza: 'Moderata', fonte: 'Pelland 2025; VOLUME_LIVELLO del coach (Convenzione per i numeri)',
     dove: [RICETTE_JS + ': buildProgram (blocco "volume per muscolo": conta per gruppo, non per muscolo; tetto di 5 serie per esercizio)', ONB_JS + ': exerciseCountFor (esercizi per seduta dai minuti)', RICETTE_JS + ': buildProgram (taglio per il tempo, minutiDi)'],
-    check: (m, c) => volumeGruppi(m, c).filter(x => x.tipo === 'sotto').map(x => ({ sub: x.g, sev: x.classe === 'grande' ? 4 : 3, msg: x.g + ': ' + r1(x.v) + ' serie frazionarie a settimana, minimo ' + x.min + ' (' + c.tipoObiettivo + ', ' + c.level + ')', gravita: (x.min - x.v) / x.min * 10 })) },
+    check: (m, c) => volumeGruppi(m, c).filter(x => x.tipo === 'sotto').map(x => ({ sub: x.g, sev: 3, msg: x.g + ': ' + r1(x.v) + ' serie frazionarie a settimana, minimo ' + x.min + ' (' + c.tipoObiettivo + ', ' + c.level + ')', gravita: (x.min - x.v) / x.min * 10 })) },
   { id: 'VOL-02', nome: 'Volume settimanale sopra il massimo del livello (serie frazionarie)', sev: 3, forza: 'Moderata', fonte: 'Pelland 2025 (rendimenti decrescenti oltre 12); Convenzione per i tetti',
     dove: [RICETTE_JS + ': buildProgram (blocco "volume per muscolo": le sinergie sono per gruppo, non per muscolo; bonus priorita)', STRUTTURA_JS + ': strCopri / strBilancia (serie aggiunte dopo il tetto)'],
     check: (m, c) => volumeGruppi(m, c).filter(x => x.tipo === 'sopra').map(x => ({ sub: x.g, sev: x.classe === 'grande' ? 3 : 2, msg: x.g + ': ' + r1(x.v) + ' serie frazionarie a settimana, massimo ' + x.max + ' (' + c.tipoObiettivo + ', ' + c.level + ')', gravita: (x.v - x.max) / x.max * 10 })) },
@@ -267,7 +268,7 @@ const CRITERI = [
     check: (m, c) => {
       if (c.prof.freq === '1') return [];   /* scelta esplicita dell utente: il coach la rispetta */
       return Object.keys(GRUPPI_FREQUENZA).map(g => ({ g, n: m.sedute.filter(s => GRUPPI_FREQUENZA[g].reduce((t, x) => t + (s.grp[x] || 0), 0) >= FREQ_SERIE_MIN_SEDUTA).length }))
-        .filter(x => x.n < FREQ_MIN_SETTIMANA && c.days >= 2).map(x => ({ sub: x.g, sev: ['bicipiti', 'tricipiti'].indexOf(x.g) !== -1 ? 2 : (x.g === 'spalle' ? 3 : 4), msg: x.g + ' in ' + x.n + ' sedute su ' + m.sedute.length + (c.metodo ? ' (metodo ' + c.metodo + ')' : ''), gravita: 3 - x.n })); } },
+        .filter(x => x.n < FREQ_MIN_SETTIMANA && c.days >= 2).map(x => ({ sub: x.g, sev: ['bicipiti', 'tricipiti'].indexOf(x.g) !== -1 ? 2 : (['spalle', 'femorali'].indexOf(x.g) !== -1 ? 3 : 4), msg: x.g + ' in ' + x.n + ' sedute su ' + m.sedute.length + (c.metodo ? ' (metodo ' + c.metodo + ')' : ''), gravita: 3 - x.n })); } },
   { id: 'FRQ-02', nome: 'Muscolo piccolo (deltoidi, braccia, polpacci) con serie dirette in una sola seduta', sev: 2, forza: 'Convenzione', fonte: 'docs/ricerca-ipertrofia-programmazione.md 3.3',
     dove: [STRUTTURA_JS + ': strCopri (le aggiunte vanno nella seduta con meno esercizi: una sola)', RICETTE_JS + ': buildProgram (aggiungiRegione)'],
     check: (m, c) => {
@@ -726,6 +727,15 @@ const LUOGHI = ['palestra', 'manubri', 'corpo'];
 const FASTIDI_SET = [[], ['spalle'], ['ginocchia'], ['schiena'], ['spalle', 'schiena'], ['ginocchia', 'schiena']];
 const SESSI = ['M', 'F'];
 const FASCE_ETA = [['giovane', 25], ['adulto', 45], ['senior', 70]];
+/* Risposte psicologiche (js/coach/psicologia.js): cambiano la scelta del metodo famoso e le tecniche. "nessuno" = non ha risposto (la maggioranza) */
+const PSICO = {
+  nessuno: undefined,
+  impegnativo: { preferenza: 'durissimi', tolleranza: 'spingo', fiducia: 'alta', varieta: 'mix' },
+  tranquillo: { preferenza: 'tranquilli', tolleranza: 'mi-fermo', fiducia: 'media', varieta: 'mix' },
+  'poca-fiducia': { fiducia: 'poca', dopoPausa: 'mollo', preferenza: 'impegnativi', tolleranza: 'continuo' },
+  routine: { varieta: 'routine', preferenza: 'impegnativi', tolleranza: 'continuo' },
+  disagio: { palestra: 'disagio', fiducia: 'media' }
+};
 function hash32(s) { let h = 2166136261 >>> 0; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return h >>> 0; }
 function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 function scegli(rng, voci) { let t = voci.reduce((s, v) => s + v[1], 0) * rng(); for (const v of voci) { t -= v[1]; if (t < 0) return v[0]; } return voci[voci.length - 1][0]; }
@@ -740,6 +750,7 @@ function profilo(goals, level, days, minutes, luogo, fastidi, sex, eta, modo) {
     freq: scegli(rng, [['auto', 55], ['2', 20], ['3', 15], ['1', 10]]), parq: scegli(rng, [['no', 90], ['si', 10]]),
     priorita: scegli(rng, [[[], 70], [['petto'], 4], [['schiena'], 4], [['spalle'], 4], [['braccia'], 4], [['gambe'], 4], [['glutei'], 4], [['spalle', 'braccia'], 3], [['petto', 'gambe'], 3]]).slice(),
     attrezziPalestra: luogo === 'palestra' ? scegli(rng, [[null, 80], [['bilanciere', 'manubri', 'sbarra'], 10], [['macchine', 'manubri'], 10]]) : null,
+    psico: scegli(rng, [['nessuno', 55], ['impegnativo', 12], ['tranquillo', 12], ['poca-fiducia', 7], ['routine', 8], ['disagio', 6]]),
     seme: 'collaudo|' + id + '|' + Math.floor(rng() * 3) };
   return p;
 }
@@ -768,7 +779,7 @@ function matrice(modo) {
    ===================================================================================================== */
 function datiPerBuild(p, senzaPriorita) {
   return { sex: p.sex, age: p.age, seme: p.seme, fastidi: p.fastidi.slice(), sonno: p.sonno, attrezzi: p.attrezzi, usaProfilo: false, level: p.level, days: p.days, goals: p.goals.slice(),
-    luogo: p.luogo, minutes: p.minutes, freq: p.freq, parq: p.parq, priorita: senzaPriorita ? [] : p.priorita.slice(), attrezziPalestra: p.attrezziPalestra ? p.attrezziPalestra.slice() : undefined };
+    luogo: p.luogo, minutes: p.minutes, freq: p.freq, parq: p.parq, priorita: senzaPriorita ? [] : p.priorita.slice(), psico: PSICO[p.psico || 'nessuno'], attrezziPalestra: p.attrezziPalestra ? p.attrezziPalestra.slice() : undefined };
 }
 function costruisci(p, senzaPriorita) { return G.buildProgram(datiPerBuild(p, senzaPriorita)); }
 
@@ -791,11 +802,19 @@ function rirPianificato(prog, p) {
   return out;
 }
 
-function analizza(p, filtro) {
-  const c = { prof: p, goals: p.goals, level: p.level, days: p.days, minutes: p.minutes, luogo: p.luogo, fastidi: p.fastidi, priorita: p.priorita, tipoObiettivo: tipoObiettivo(p.goals),
+function contesto(p) {
+  return { prof: p, goals: p.goals, level: p.level, days: p.days, minutes: p.minutes, luogo: p.luogo, fastidi: p.fastidi, priorita: p.priorita, tipoObiettivo: tipoObiettivo(p.goals),
     attrezziPalestra: p.attrezziPalestra, cauto: p.age >= 65 || p.parq === 'si', rischio: G.RISCHIO };
+}
+function analizza(p, filtro) {
+  const c = contesto(p);
   let prog;
-  try { prog = costruisci(p); } catch (e) { return { c, prog: null, m: { sedute: [], errori: ['buildProgram ha lanciato: ' + (e && e.message)] }, trovati: [{ crit: CRITERI[0], f: { msg: 'buildProgram ha lanciato: ' + (e && e.message), gravita: 10 } }] }; }
+  try { prog = costruisci(p); } catch (e) { return { c, prog: null, m: { sedute: [], errori: ['buildProgram ha lanciato: ' + (e && e.message)] }, trovati: [{ crit: CRITERI[0], f: { msg: 'buildProgram ha lanciato: ' + (e && e.message), gravita: 10 } }], erroriCriteri: [] }; }
+  const senzaPriorita = p.priorita.length ? () => { try { return modello(costruisci(p, true), c).vol; } catch (e) { return null; } } : null;   /* per PRI-01 */
+  return valuta(p, c, prog, filtro, senzaPriorita);
+}
+/* valuta un programma gia costruito (anche finto: vedi --autotest) */
+function valuta(p, c, prog, filtro, volSenzaPriorita) {
   c.prog = prog; c.metodo = prog.metodo; c.splitNome = prog.split && prog.split.nome;
   const m = modello(prog, c);
   if (!Array.isArray(prog.sedute) || !prog.sedute.length) m.errori.push('nessuna seduta generata');
@@ -805,15 +824,13 @@ function analizza(p, filtro) {
     c.fattibile[k] = G.EXERCISE_LIBRARY.some(x => { const i = infoEs(x.name); return i.mov === k && G.consentito(x.name, prog.prefs) && !p.fastidi.some(f => CONTROINDICAZIONI[f] && CONTROINDICAZIONI[f].forte.test(i.pulito)) && !violaAttrezzatura({ inf: i }, c); });
   });
   const r = rirPianificato(prog, p); m.rirPesante = r.pesante; m.rir1 = r.nov;
-  if (p.priorita.length) { try { const sp = modello(costruisci(p, true), c); m.volSenzaPriorita = sp.vol; } catch (e) { /* senza il confronto il criterio PRI-01 non scatta */ } }
-  const trovati = [];
+  if (volSenzaPriorita) m.volSenzaPriorita = typeof volSenzaPriorita === 'function' ? volSenzaPriorita() : volSenzaPriorita;
+  const trovati = [], erroriCriteri = [];
   CRITERI.forEach(cr => {
     if (filtro && filtro.indexOf(cr.id) === -1) return;
-    let fs_ = [];
-    try { fs_ = cr.check(m, c) || []; } catch (e) { fs_ = [{ msg: 'il criterio ' + cr.id + ' ha lanciato: ' + e.message, gravita: 0, interno: true }]; }
-    fs_.forEach(f => trovati.push({ crit: cr, f }));
+    try { (cr.check(m, c) || []).forEach(f => trovati.push({ crit: cr, f })); } catch (e) { erroriCriteri.push(cr.id + ': ' + e.message); }
   });
-  return { c, prog, m, trovati };
+  return { c, prog, m, trovati, erroriCriteri };
 }
 
 /* =====================================================================================================
@@ -828,13 +845,13 @@ function tabellaSettimana(m) {
   return righe.join('\n');
 }
 function profiloCompatto(p) {
-  return '`' + JSON.stringify({ obiettivi: p.goals, livello: p.level, giorni: p.days, minuti: p.minutes, luogo: p.luogo, fastidi: p.fastidi, sesso: p.sex, eta: p.age, sonno: p.sonno, attrezzi: p.attrezzi, frequenza: p.freq, parq: p.parq, priorita: p.priorita, attrezziPalestra: p.attrezziPalestra, seme: p.seme }) + '`';
+  return '`' + JSON.stringify({ obiettivi: p.goals, livello: p.level, giorni: p.days, minuti: p.minutes, luogo: p.luogo, fastidi: p.fastidi, sesso: p.sex, eta: p.age, sonno: p.sonno, attrezzi: p.attrezzi, frequenza: p.freq, parq: p.parq, priorita: p.priorita, psico: p.psico, attrezziPalestra: p.attrezziPalestra, seme: p.seme }) + '`';
 }
 
 function eseguiMatrice(profili, opz) {
   const classi = new Map();
   const dimensioni = { livello: {}, obiettivo: {}, giorni: {}, minuti: {}, luogo: {}, fastidi: {}, sesso: {}, fasciaEta: {}, metodo: {} };
-  const tot = { pesoTotale: 0, profili: 0, errori: 0, conFallimenti: 0, conGravi: 0, conMetodo: 0, perSev: {}, perMetodo: {}, scemaSettimaneDiverse: 0, fallimentiTotali: 0 };
+  const tot = { erroriCriteri: {}, pesoTotale: 0, profili: 0, errori: 0, conFallimenti: 0, conGravi: 0, conMetodo: 0, perSev: {}, perMetodo: {}, scemaSettimaneDiverse: 0, fallimentiTotali: 0 };
   const rngRes = mulberry32(20261005);
   const K = 40;
   const t0 = Date.now();
@@ -844,6 +861,7 @@ function eseguiMatrice(profili, opz) {
     const wp = pesoProfilo(p);
     tot.profili++; tot.pesoTotale += wp;
     if (!a.prog) tot.errori++;
+    (a.erroriCriteri || []).forEach(e => { tot.erroriCriteri[e] = (tot.erroriCriteri[e] || 0) + 1; });
     if (a.prog && a.prog.metodo) { tot.conMetodo++; tot.perMetodo[a.prog.metodo] = (tot.perMetodo[a.prog.metodo] || 0) + 1; }
     if (a.prog && a.prog.scheme && a.prog.scheme.settimane !== a.prog.settimane) tot.scemaSettimaneDiverse++;
     const viste = new Map(), conteggi = new Map();
@@ -891,6 +909,27 @@ function sceglieEsempi(cl, n) {
   return sc.slice(0, n);
 }
 
+/* Copertura della libreria: per ogni schema o muscolo, quanti esercizi restano disponibili per luogo e per fastidio, secondo consentito() del generatore
+   e, tra parentesi, senza le controindicazioni forti dell elenco esperto. Uno zero spiega da solo molti fallimenti: manca il dato, non la regola. */
+const SCHEMI_COPERTURA = [
+  ['squat (multiarticolare)', (i) => i.mov === 'squat'], ['hinge (multiarticolare)', (i) => i.mov === 'hinge'],
+  ['spinta orizzontale', (i) => i.mov === 'spintaO'], ['spinta verticale', (i) => i.mov === 'spintaV'],
+  ['tirata orizzontale', (i) => i.mov === 'tirataO'], ['tirata verticale', (i) => i.mov === 'tirataV'],
+  ['flessione del ginocchio (femorali)', (i) => /leg curl|nordic/i.test(i.pulito)], ['quadricipiti (isolamento)', (i) => i.bers === 'quadricipiti' && i.tipo === 'isolation'],
+  ['polpacci', (i) => i.bers === 'polpacci'], ['deltoidi laterali', (i) => i.bers === 'deltoide_laterale' && i.tipo === 'isolation'], ['deltoidi posteriori', (i) => i.bers === 'deltoide_posteriore'],
+  ['bicipiti', (i) => i.bers === 'bicipiti'], ['tricipiti (isolamento)', (i) => i.bers === 'tricipiti' && i.tipo === 'isolation'], ['core', (i) => i.gruppoLib === 'core']
+];
+function coperturaLibreria() {
+  const colonne = [['palestra', { luogo: 'palestra', fastidi: [] }], ['manubri', { luogo: 'manubri', fastidi: [] }], ['corpo', { luogo: 'corpo', fastidi: [] }],
+    ['spalle', { luogo: 'palestra', fastidi: ['spalle'] }], ['ginocchia', { luogo: 'palestra', fastidi: ['ginocchia'] }], ['schiena', { luogo: 'palestra', fastidi: ['schiena'] }]];
+  return SCHEMI_COPERTURA.map(([nome, test]) => ({ schema: nome, celle: colonne.map(([col, prefs]) => {
+    const ok = G.EXERCISE_LIBRARY.filter(x => { const i = infoEs(x.name); return test(i) && G.consentito(x.name, prefs); });
+    const fastidi = prefs.fastidi.concat(col === 'palestra' || col === 'manubri' || col === 'corpo' ? [] : []);
+    const senza = ok.filter(x => !fastidi.some(f => CONTROINDICAZIONI[f] && CONTROINDICAZIONI[f].forte.test(G.senzaEmoji(x.name))));
+    return { colonna: col, n: ok.length, nSenzaControindicazioni: senza.length, esercizi: ok.map(x => G.senzaEmoji(x.name)) };
+  }) }));
+}
+
 function verificheModello(risultato) {
   const v = [];
   const lib = G.EXERCISE_LIBRARY;
@@ -921,6 +960,10 @@ function verificheModello(risultato) {
   /* 10. funzioni di progressione presenti */
   const funz = ['caricoProssimo', 'incrementoPer', 'rirBersaglio', 'rirBersaglioBase', 'applicaCaricoProgressivo'].map(n => n + ': ' + (typeof ENV.ctx[n] === 'function' ? 'si' : 'NO'));
   v.push({ id: 'MOD-10', esito: 'info', titolo: 'Regola di progressione presente', nota: funz.join(', ') });
+  const cop = coperturaLibreria();
+  const zeri = []; cop.forEach(r => r.celle.forEach(c => { if (c.nSenzaControindicazioni === 0) zeri.push(r.schema + ' (' + c.colonna + ')'); }));
+  v.push({ id: 'MOD-12', esito: zeri.length ? 'buchi' : 'ok', titolo: 'Copertura della libreria per luogo e per fastidio', nota: zeri.length ? 'Nessun esercizio disponibile (senza controindicazioni forti) per: ' + zeri.join('; ') + '. Tabella completa nel report.' : 'ogni schema ha almeno un esercizio in ogni luogo e con ogni fastidio' });
+  risultato.copertura = cop;
   const att = (cod) => { try { return !!ENV.ctx.regolaAttiva(cod); } catch (e) { return false; } };
   v.push({ id: 'MOD-11', esito: att('INT-04') && att('INT-05') ? 'ok' : 'manca', titolo: 'Calibrazione delle prime sedute (principianti)', nota: 'INT-04 (prima volta con un esercizio: -1 serie e +1 RIR) e INT-05 (bilancio delle prime due sedute) sono regole del coach a runtime: INT-04 ' + (att('INT-04') ? 'attiva' : 'spenta') + ', INT-05 ' + (att('INT-05') ? 'attiva' : 'spenta') + '. Scattano solo con il consenso ai dati (coachAttivo) e non compaiono nel programma generato: il collaudo le vede solo come funzioni (bilancioPrimeSedute: ' + (typeof ENV.ctx.bilancioPrimeSedute === 'function' ? 'presente' : 'assente') + ').' });
   return v;
@@ -967,7 +1010,7 @@ function mdReport(profili, ris, opz, meta, verifiche) {
   L.push('## Classi di fallimento per impatto', '');
   L.push('Impatto = percentuale PESATA di programmi colpiti x peso della severita (1, 2, 4, 8, 16). La percentuale pesata usa PESI_POPOLAZIONE (assunzioni del collaudo: ' + (PESI_UNIFORMI ? 'spente con --pesi uniformi' : 'attive') + '); "% matrice" conta ogni profilo uno. Una classe e un criterio, con il muscolo o lo schema dopo i due punti dove serve. "Colpiti" conta i programmi, non le occorrenze.', '');
   L.push('| # | Classe | Sev | Forza prova | Programmi | % matrice | % pesata | Impatto | Dove guardare nel generatore |', '|---|---|---|---|---|---|---|---|---|');
-  elenco.slice(0, Math.max(opz.top + 10, 25)).forEach((cl, i) => L.push('| ' + (i + 1) + ' | **' + cl.codice + (cl.sub ? ':' + cl.sub : '') + '** ' + cl.nome + ' | ' + cl.sev + ' | ' + cl.forza + ' | ' + cl.n + ' | ' + cl.pct.toFixed(1) + '% | ' + cl.pctPesata.toFixed(1) + '% | ' + cl.impatto.toFixed(1) + ' | ' + cl.dove.slice(0, 2).join('; ') + ' |'));
+  elenco.slice(0, Math.max(opz.top + 10, 25)).forEach((cl, i) => L.push('| ' + (i + 1) + ' | **' + cl.codice + (cl.sub ? ':' + cl.sub : '') + '** ' + cl.nome + ' | ' + cl.sev + ' | ' + cl.forza + ' | ' + cl.n + ' | ' + cl.pct.toFixed(1) + '% | ' + cl.pctPesata.toFixed(1) + '% | ' + cl.impatto.toFixed(1) + ' | ' + cl.dove[0].slice(0, 150) + ' |'));
   L.push('');
 
   L.push('## Esempi per le classi principali', '');
@@ -995,6 +1038,18 @@ function mdReport(profili, ris, opz, meta, verifiche) {
   verifiche.forEach(v => L.push('| ' + v.id + ' | ' + v.esito + ' | ' + v.titolo + ' | ' + v.nota.replace(/\|/g, '/') + ' |'));
   L.push('');
 
+  if (ris.copertura) {
+    L.push('## Copertura della libreria (esercizi disponibili per schema, luogo e fastidio)', '');
+    L.push('Ogni cella: esercizi che consentito() lascia passare, e tra parentesi quelli senza controindicazioni forti dell elenco esperto. 0 = nessuna scelta possibile.', '');
+    L.push('| Schema | ' + ris.copertura[0].celle.map(c => c.colonna).join(' | ') + ' |', '|---|' + ris.copertura[0].celle.map(() => '---').join('|') + '|');
+    ris.copertura.forEach(r => L.push('| ' + r.schema + ' | ' + r.celle.map(c => c.n + (c.n !== c.nSenzaControindicazioni ? ' (' + c.nSenzaControindicazioni + ')' : '')).join(' | ') + ' |'));
+    L.push('');
+  }
+  const scattati = new Set(elenco.map(cl => cl.codice));
+  const superati = CRITERI.filter(cr => !scattati.has(cr.id) && (!opz.solo || opz.solo.indexOf(cr.id) !== -1));
+  L.push('## Criteri superati (nessun fallimento in tutta la matrice)', '');
+  L.push(superati.length ? superati.map(cr => '- **' + cr.id + '** ' + cr.nome).join('\n') : 'Nessuno: ogni criterio ha trovato almeno un caso.', '');
+  L.push('Un criterio che non scatta mai puo essere un pregio del generatore o un criterio mal scritto: `--autotest` controlla che ognuno sappia scattare su un caso costruito apposta.', '');
   L.push('## Criteri e soglie usati', '');
   L.push('| Criterio | Severita | Forza | Fonte |', '|---|---|---|---|');
   CRITERI.forEach(cr => L.push('| ' + cr.id + ' ' + cr.nome + ' | ' + cr.sev + ' | ' + cr.forza + ' | ' + cr.fonte + ' |'));
@@ -1028,6 +1083,78 @@ function confronta(fa, fb) {
 }
 
 /* =====================================================================================================
+   AUTOTEST (--autotest): programmi costruiti a mano, per sapere che ogni criterio SA scattare (e non scatta a vuoto).
+   Un criterio nuovo si aggiunge con la sua riga qui sotto: vedi la skill. Nomi senza emoji, come in js/dati/libreria-esercizi.js.
+   ===================================================================================================== */
+function fixture(nome, over, sedute, extra, attese, assenti) { return { nome, over, sedute, extra: extra || {}, attese: attese || [], assenti: assenti || [] }; }
+const FASI12 = ['carico', 'carico', 'carico', 'scarico', 'carico', 'carico', 'carico', 'scarico', 'carico', 'carico', 'carico', 'scarico'];
+const E = (n, sets, reps, rest, o) => Object.assign({ n, sets, reps, rest }, o || {});
+const FIXTURES = [
+  fixture('pre-affaticamento: pushdown prima della panca', {}, [['Lunedì', 'push', [E('Pushdown con Corda', 3, 12, 60), E('Panca Piana Bilanciere', 3, 8, 120)]]], {}, ['ORD-01'], ['ORD-02']),
+  fixture('isolamento prima di un multiarticolare di altri muscoli', {}, [['Lunedì', 'lower', [E('Curl ai Cavi', 3, 12, 60), E('Squat con Bilanciere', 3, 8, 120)]]], {}, ['ORD-02'], ['ORD-01']),
+  fixture('dip su panca prima dello squat', {}, [['Lunedì', 'fullbody', [E('Dip su Panca', 3, 10, 90), E('Squat con Bilanciere', 3, 8, 120)]]], {}, ['ORD-03']),
+  fixture('core prima della panca', {}, [['Lunedì', 'upper', [E('Plank', 3, 45, 45), E('Panca Piana Bilanciere', 3, 8, 120)]]], {}, ['ORD-04']),
+  fixture('superserie non antagonista', {}, [['Lunedì', 'lower', [E('Leg Extension', 3, 12, 60), E('Curl ai Cavi', 3, 12, 60, { superset: true })]]], {}, ['SS-01']),
+  fixture('superserie con due fondamentali pesanti', {}, [['Lunedì', 'upper', [E('Panca Piana Bilanciere', 3, 8, 120), E('Rematore con Bilanciere', 3, 8, 120, { superset: true })]]], {}, ['SS-02'], ['SS-01']),
+  fixture('due esercizi per lo stesso muscolo', {}, [['Lunedì', 'push', [E('Panca Piana Bilanciere', 3, 8, 120), E('Chest Press Machine', 3, 10, 90)]]], {}, ['RID-01']),
+  fixture('lo stesso esercizio in tre sedute', {}, [['Lunedì', 'upper', [E('Panca Piana Bilanciere', 3, 8, 120)]], ['Mercoledì', 'upper', [E('Panca Piana Bilanciere', 3, 8, 120)]], ['Venerdì', 'upper', [E('Panca Piana Bilanciere', 3, 8, 120)]]], {}, ['RID-02']),
+  fixture('una serie sola e sette serie', {}, [['Lunedì', 'lower', [E('Leg Curl Seduto', 1, 12, 60), E('Leg Extension', 7, 12, 60)]]], {}, ['RX-03']),
+  fixture('isolamento con meno ripetizioni del multiarticolare', {}, [['Lunedì', 'upper', [E('Panca Piana Bilanciere', 3, 12, 120), E('Curl ai Cavi', 3, 6, 60)]]], {}, ['RX-04']),
+  fixture('ripetizioni e recupero fuori fascia (forza)', { goals: ['forza'] }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 4, 20, 30)]]], {}, ['RX-01', 'RX-02']),
+  fixture('nessuno scarico', {}, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 120)]]], { fasi: Array(12).fill('carico') }, ['DEL-01']),
+  fixture('spalla dolente con il military press', { fastidi: ['spalle'] }, [['Lunedì', 'upper', [E('Military Press', 3, 8, 120)]]], {}, ['SAF-01', 'SAF-06']),
+  fixture('schiena dolente con il front squat', { fastidi: ['schiena'] }, [['Lunedì', 'lower', [E('Front Squat', 3, 8, 120)]]], {}, ['SAF-01']),
+  fixture('corpo libero con un bilanciere', { luogo: 'corpo' }, [['Lunedì', 'lower', [E('Squat con Bilanciere', 3, 8, 120)]]], {}, ['SAF-03']),
+  fixture('casa con manubri e la sbarra', { luogo: 'manubri' }, [['Lunedì', 'upper', [E('Trazioni alla Sbarra (Pull-ups)', 3, 8, 90)]]], {}, ['SAF-04'], ['SAF-03']),
+  fixture('palestra senza macchine con una macchina', { attrezziPalestra: ['bilanciere', 'manubri', 'sbarra'] }, [['Lunedì', 'upper', [E('Chest Press Machine', 3, 10, 90)]]], {}, ['SAF-03']),
+  fixture('principiante con stacco da terra', { level: 'principiante' }, [['Lunedì', 'fullbody', [E('Stacco da Terra (Deadlift)', 3, 8, 120)]]], {}, ['SAF-05']),
+  fixture('principiante con un drop set', { level: 'principiante' }, [['Lunedì', 'fullbody', [E('Curl ai Cavi', 3, 12, 60, { tecnica: 'drop' })]]], {}, ['TEC-01']),
+  fixture('tre giorni push, pull, legs', { days: 3 }, [['Lunedì', 'push', [E('Panca Piana Bilanciere', 3, 8, 120)]], ['Mercoledì', 'pull', [E('Lat Machine', 3, 10, 90)]], ['Venerdì', 'legs', [E('Squat con Bilanciere', 3, 8, 120)]]], {}, ['SPL-02', 'FRQ-01']),
+  fixture('cinque giorni dichiarati, tre sedute', { days: 5 }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 120)]], ['Mercoledì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 120)]], ['Venerdì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 120)]]], {}, ['SPL-01']),
+  fixture('esercizio doppio nella stessa seduta', {}, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 120), E('Squat con Bilanciere', 3, 8, 120)]]], {}, ['SAN-01']),
+  fixture('seduta troppo lunga per 30 minuti', { minutes: 30 }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 4, 8, 150), E('Panca Piana Bilanciere', 4, 8, 150), E('Rematore con Bilanciere', 4, 8, 150), E('Military Press', 4, 8, 150), E('Stacco Rumeno', 4, 8, 150), E('Lat Machine', 4, 10, 90)]]], {}, ['DUR-01']),
+  fixture('seduta troppo corta per 90 minuti', { minutes: 90 }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 120), E('Panca Piana Bilanciere', 3, 8, 120)]]], {}, ['DUR-02', 'EXN-01']),
+  fixture('dieci esercizi in una seduta', { minutes: 90 }, [['Lunedì', 'fullbody', ['Squat con Bilanciere', 'Panca Piana Bilanciere', 'Lat Machine', 'Military Press', 'Leg Curl Seduto', 'Curl ai Cavi', 'Pushdown con Corda', 'Alzate Laterali', 'Calf Raise in Piedi', 'Crunch al Cavo'].map(n => E(n, 2, 10, 60))]], {}, ['EXN-02']),
+  fixture('quattordici serie di petto in una seduta', {}, [['Lunedì', 'push', [E('Panca Piana Bilanciere', 5, 8, 120), E('Panca Inclinata Manubri', 5, 10, 90), E('Croci ai Cavi', 4, 12, 60)]]], {}, ['SES-01']),
+  fixture('full body senza gambe', {}, [['Lunedì', 'fullbody', [E('Panca Piana Bilanciere', 3, 8, 120), E('Lat Machine', 3, 10, 90)]]], {}, ['SES-03']),
+  fixture('petto pesante due giorni di fila', {}, [['Lunedì', 'push', [E('Panca Piana Bilanciere', 5, 8, 120)]], ['Martedì', 'push', [E('Panca Inclinata Bilanciere', 5, 8, 120)]]], {}, ['REC-01']),
+  fixture('sei giorni di fila', { days: 6 }, ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'].map(g => [g, 'fullbody', [E('Squat con Bilanciere', 3, 8, 120)]]), {}, ['REC-03']),
+  fixture('stacchi pesanti due giorni di fila', {}, [['Lunedì', 'lower', [E('Stacco da Terra (Deadlift)', 3, 5, 180)]], ['Martedì', 'lower', [E('Stacco Sumo', 3, 5, 180)]]], {}, ['REC-02']),
+  fixture('spinte molto piu delle tirate', {}, [['Lunedì', 'push', [E('Panca Piana Bilanciere', 4, 8, 120), E('Military Press', 4, 8, 120), E('Panca Inclinata Manubri', 4, 10, 90)]], ['Giovedì', 'pull', [E('Lat Machine', 3, 10, 90)]]], {}, ['EQ-01']),
+  fixture('forza senza lavoro pesante', { goals: ['forza'] }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 12, 150), E('Panca Piana Bilanciere', 3, 12, 150)]]], {}, ['GOA-01', 'RX-01']),
+  fixture('avanzato con RIR 0 sul fondamentale', { level: 'avanzato' }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 6, 180)]]], { rirSett: [3, 2, 1, 0, 3, 2, 1, 0, 3, 2, 1, 4] }, ['RIR-02'], ['RIR-01']),
+  fixture('intermedio senza andamento del RIR', { level: 'intermedio' }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 120)]]], {}, ['RIR-01']),
+  fixture('quadricipiti e femorali sbilanciati, nessun leg curl', { days: 4 }, [['Lunedì', 'lower', [E('Squat con Bilanciere', 4, 8, 150), E('Leg Press', 4, 10, 120), E('Leg Extension', 3, 12, 60)]], ['Giovedì', 'lower', [E('Hack Squat', 4, 10, 120), E('Leg Extension', 3, 12, 60)]]], {}, ['EQ-03']),
+  fixture('polpacci assenti nell ipertrofia', { days: 4 }, [['Lunedì', 'lower', [E('Squat con Bilanciere', 4, 8, 150)]], ['Giovedì', 'lower', [E('Leg Press', 4, 10, 120)]]], {}, ['MIS-01']),
+  fixture('priorita senza serie in piu', { priorita: ['petto'] }, [['Lunedì', 'fullbody', [E('Panca Piana Bilanciere', 3, 8, 120)]]], { volSenzaPriorita: { petto: 3 } }, ['PRI-01']),
+  fixture('programma ben fatto (controllo)', { days: 3, minutes: 60 }, [
+    ['Lunedì', 'fullbody', [E('Squat con Bilanciere', 4, 8, 150), E('Panca Piana Bilanciere', 3, 8, 120), E('Rematore con Bilanciere', 3, 8, 120), E('Alzate Laterali', 2, 15, 60)]],
+    ['Mercoledì', 'fullbody', [E('Stacco Rumeno', 3, 8, 120), E('Lat Machine', 3, 10, 90), E('Panca Inclinata Manubri', 3, 10, 90), E('Leg Curl Seduto', 3, 12, 60)]],
+    ['Venerdì', 'fullbody', [E('Leg Press', 3, 10, 120), E('Military Press', 3, 8, 120), E('Pulley Basso', 3, 10, 90), E('Calf Raise in Piedi', 3, 15, 45)]]], {}, [], ['ORD-01', 'ORD-02', 'SS-01', 'SS-02', 'RID-01', 'RID-02', 'RX-03', 'SAN-01', 'DEL-01', 'SPL-01', 'SPL-02', 'SES-03', 'SAF-01', 'SAF-03', 'REC-03'])
+];
+function autotest() {
+  let ok = 0, ko = 0;
+  FIXTURES.forEach(f => {
+    const p = profilo(['massa'], 'intermedio', 3, 60, 'palestra', [], 'M', ['adulto', 35], 'autotest');
+    Object.assign(p, f.over);
+    p.priorita = f.over.priorita || [];
+    const c = contesto(p);
+    const prog = { sedute: f.sedute.map(([giorno, tipo, es]) => ({ giorno, tipo, titolo: tipo + ' ' + giorno, esercizi: es.map(e => ({ name: G.nomeInLibreria(e.n) || ('?' + e.n), sets: e.sets, reps: e.reps, rest: e.rest, weight: 0, superset: e.superset, tecnica: e.tecnica })) })),
+      fasi: f.extra.fasi || FASI12, rirSett: f.extra.rirSett || null, settimane: 12, blocco: 4, scheme: { settimane: 12 }, split: { nome: 'prova', giorni: [] }, prefs: { luogo: p.luogo, fastidi: p.fastidi, attrezziPalestra: p.attrezziPalestra, graditi: [], odiati: [], priorita: p.priorita }, note: [], metodo: null };
+    const a = valuta(p, c, prog, null, f.extra.volSenzaPriorita || null);
+    const trovati = new Set(a.trovati.map(t => t.crit.id));
+    const manca = f.attese.filter(x => !trovati.has(x)), troppi = f.assenti.filter(x => trovati.has(x));
+    const nomiMancanti = f.sedute.reduce((t, x) => t.concat(x[2].map(e => e.n).filter(n => !G.nomeInLibreria(n))), []);
+    const bene = !manca.length && !troppi.length && !nomiMancanti.length && !a.erroriCriteri.length;
+    bene ? ok++ : ko++;
+    console.log((bene ? '  ok   ' : '  MALE ') + f.nome + (manca.length ? '  [non scatta: ' + manca.join(', ') + ']' : '') + (troppi.length ? '  [scatta a torto: ' + troppi.join(', ') + ']' : '') + (nomiMancanti.length ? '  [esercizio non in libreria: ' + nomiMancanti.join(', ') + ']' : '') + (a.erroriCriteri.length ? '  [criteri in errore: ' + a.erroriCriteri.join(' | ') + ']' : ''));
+  });
+  const coperti = new Set(); FIXTURES.forEach(f => f.attese.forEach(x => coperti.add(x)));
+  const senza = CRITERI.filter(cr => !coperti.has(cr.id)).map(cr => cr.id);
+  console.log('Autotest: ' + ok + ' ok, ' + ko + ' falliti. Criteri senza una prova che li faccia scattare: ' + (senza.join(', ') || 'nessuno'));
+}
+
+/* =====================================================================================================
    10. MAIN
    ===================================================================================================== */
 function opzioni(argv) {
@@ -1037,7 +1164,7 @@ function opzioni(argv) {
     if (a === '--out') o.out = v(); else if (a === '--matrice') o.matrice = v(); else if (a === '--etichetta') o.etichetta = v();
     else if (a === '--solo') o.solo = String(v()).split(',').map(s => s.trim().toUpperCase()).filter(Boolean);
     else if (a === '--esempi') o.esempi = Number(v()) || 3; else if (a === '--top') o.top = Number(v()) || 14; else if (a === '--quiet') o.quiet = true;
-    else if (a === '--pesi') o.pesi = v(); else if (a === '--profilo') o.profilo = v(); else if (a === '--confronta') { o.confronta = [v(), v()]; }
+    else if (a === '--autotest') o.autotest = true; else if (a === '--pesi') o.pesi = v(); else if (a === '--profilo') o.profilo = v(); else if (a === '--confronta') { o.confronta = [v(), v()]; }
     else if (a === '--help' || a === '-h') o.aiuto = true; else o.sconosciuta = a;
   }
   return o;
@@ -1056,6 +1183,8 @@ function stampaRiepilogo(ris, meta, file) {
   L.push('Programmi con fallimenti: ' + ris.tot.conFallimenti + ' (' + (ris.tot.conFallimenti / ris.tot.profili * 100).toFixed(1) + '%), gravi (sev >= 4): ' + ris.tot.conGravi + ' (' + (ris.tot.conGravi / ris.tot.profili * 100).toFixed(1) + '% matrice, ' + ((ris.tot.pesoGravi || 0) / ris.tot.pesoTotale * 100).toFixed(1) + '% pesata)');
   L.push('Prime 12 classi per impatto (sev, programmi colpiti, % matrice / % pesata):');
   ris.elenco.slice(0, 12).forEach((cl, i) => L.push(('  ' + (i + 1)).slice(-3) + '. ' + (cl.codice + (cl.sub ? ':' + cl.sub : '')).padEnd(26) + ' sev ' + cl.sev + '  ' + String(cl.n).padStart(6) + ' (' + cl.pct.toFixed(1).padStart(5) + '% / ' + cl.pctPesata.toFixed(1).padStart(5) + '%)  ' + cl.nome.slice(0, 56)));
+  const ec = Object.keys(ris.tot.erroriCriteri || {});
+  if (ec.length) L.push('ATTENZIONE: criteri andati in errore (bug del collaudo): ' + ec.join(' | '));
   if (file) L.push('Report: ' + file.md, 'Dati:   ' + file.json);
   console.log(L.join('\n'));
 }
@@ -1067,6 +1196,7 @@ function main() {
   PESI_UNIFORMI = o.pesi === 'uniformi';
   ENV = creaAmbiente(); G = new Proxy({}, { get: (t, k) => { if (!(k in t)) t[k] = ENV.g(String(k)); return t[k]; } });
   if (!o.quiet && ENV.erroriCaricamento.length) process.stderr.write('Avviso: errori nel caricamento degli script: ' + ENV.erroriCaricamento.join(' | ') + '\n');
+  if (o.autotest) { autotest(); return; }
   if (o.profilo) {
     const base = JSON.parse(o.profilo);
     const p = profilo(base.goals || (base.goal ? [base.goal] : ['massa']), base.level || 'intermedio', base.days || 3, base.minutes || 60, base.luogo || 'palestra', base.fastidi || [], base.sex || 'M', [base.fasciaEta || 'adulto', base.age || 30], 'singolo');
@@ -1089,7 +1219,7 @@ function main() {
   fs.writeFileSync(file.md, mdReport(profili, ris, o, meta, verifiche));
   const json = { meta, riepilogo: riepilogoCompatto(ris, meta), totali: ris.tot, perDimensione: ris.dimensioni, classi: ris.elenco.map((cl, i) => ({ rango: i + 1, chiave: cl.chiave, codice: cl.codice, sub: cl.sub, nome: cl.nome, sev: cl.sev, forza: cl.forza, fonte: cl.fonte, dove: cl.dove, programmiColpiti: cl.n, percentuale: Number(cl.pct.toFixed(2)), percentualePesata: Number(cl.pctPesata.toFixed(2)), occorrenze: cl.occorrenze, impatto: Number(cl.impatto.toFixed(2)), perDimensione: cl.perDim,
     esempi: i < o.top ? sceglieEsempi(cl, o.esempi).map(e => ({ profilo: e.profilo, metodo: e.metodo, cosaNonVa: e.msg, settimana: e.tabella })) : undefined })),
-    criteri: CRITERI.map(c => ({ id: c.id, nome: c.nome, sev: c.sev, forza: c.forza, fonte: c.fonte, dove: c.dove })), verificheModello: verifiche };
+    criteri: CRITERI.map(c => ({ id: c.id, nome: c.nome, sev: c.sev, forza: c.forza, fonte: c.fonte, dove: c.dove })), verificheModello: verifiche, coperturaLibreria: ris.copertura };
   fs.writeFileSync(file.json, JSON.stringify(json, null, 1));
   if (!o.quiet || true) stampaRiepilogo(ris, meta, file);
 }
