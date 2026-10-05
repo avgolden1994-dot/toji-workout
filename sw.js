@@ -2,7 +2,7 @@
    il segnale spesso manca). Strategia: network-first con fallback alla cache,
    così vedi sempre l'ultima versione se sei online, ma l'app parte comunque offline. */
 
-const CACHE_NAME = '3in-v12';   /* cambiando il nome, le copie vecchie vengono buttate */
+const CACHE_NAME = '3in-v13';   /* cambiando il nome, le copie vecchie vengono buttate */
 const ASSETS = [
   './',
   /* Elenco generato da tools/genera-sw.js (npm run sw): non si modifica a mano.
@@ -38,8 +38,12 @@ const ASSETS = [
   './js/dati/libreria-esercizi.js',
   './js/dati/schede-epoca-oro.js',
   './js/dati/dettagli-esercizi.js',
+  './js/dati/attributi-esercizi.js',
   './js/coach/parametri.js',
+  './js/coach/regia/fasi.js',
   './js/coach/catalogo-regole.js',
+  './js/coach/regia/soglie-regia.js',
+  './js/coach/regia/perche.js',
   './js/coach/suggeritore.js',
   './js/core/stato-condiviso.js',
   './js/core/storage.js',
@@ -79,13 +83,25 @@ const ASSETS = [
   './js/coach/programma/schemi.js',
   './js/coach/programma/ricette.js',
   './js/coach/programma/struttura-pro.js',
+  './js/coach/programma/mesociclo.js',
+  './js/coach/programma/completamenti.js',
+  './js/coach/volume/serie-ripetizioni.js',
+  './js/coach/volume/volume.js',
+  './js/coach/volume/tempo.js',
+  './js/coach/volume/tecniche.js',
+  './js/coach/sicurezza/vincoli.js',
+  './js/coach/regia/brief.js',
+  './js/coach/regia/genera.js',
   './js/ui/onboarding-risultato.js',
   './js/coach/programma/archivio.js',
   './js/coach/programma/alternative.js',
   './js/ui/statistiche.js',
   './js/ui/statistiche-grafico.js',
   './js/coach/carichi/progressivo.js',
+  './js/coach/carichi/e1rm.js',
   './js/coach/carichi/partenza.js',
+  './js/coach/carichi/taratura.js',
+  './js/coach/sicurezza/scarico.js',
   './js/coach/questionario-decisioni.js',
   './js/coach/prontezza.js',
   './js/coach/mi-sento-male.js',
