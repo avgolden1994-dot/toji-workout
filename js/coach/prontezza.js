@@ -8,6 +8,9 @@
    multiarticolari (-4%). Sotto 50%: seduta leggera, multiarticolari -10%.
    Gli isolamenti non si toccano: il sonno scarso cala la forza solo nei
    multiarticolari (Knowles 2018). Si puo saltare.
+   PRZ-03 (una serie in piu sugli accessori con prontezza 70% o piu) e ritirata (decisione D-P14, onda 0): "tutto normale" vale circa 78,
+   quindi scattava quasi ogni giorno, oltre il piano e oltre il tetto di 3 serie dei principianti (B18). Il solo "+1 serie" che resta e
+   quello settimanale per unita di volume (PCO-03, W3-T4).
    ============================================================ */
 const PRONTEZZA_KEY = () => 'coach_plus_prontezza_' + currentMode;
 const PRONTEZZA_VOCI = [
@@ -68,13 +71,7 @@ window.applicaProntezza = function(r) {
     e.coachTipo = 'giu';
     toccati++;
   });
-  /* giornata ottima in settimana di carico: una serie in piu sugli accessori */
-  const st = settimanaProgramma();
-  if (punteggio >= 70 && st && st.fase === 'carico') (data[currentDay] || []).forEach(e => {
-    if (tipoCarico(e.name) !== 'isolamento' || e.completedSets.some(x => x.done) || e.sets >= 5) return;
-    e.sets += 1; e.completedSets.push({ done: false, reps: e.reps, weight: e.weight, wasBerserk: false });
-    e.coachNote = (e.coachNote ? e.coachNote + ' \u2022 ' : '') + 'Prontezza alta: una serie in piu'; toccati++;
-  });
+  /* PRZ-03 ritirata (D-P14): una giornata ottima non aggiunge serie */
   saveData(data);
   try { localStorage.setItem(PRONTEZZA_KEY(), JSON.stringify({ data: ymd(new Date()), day: currentDay, punteggio: punteggio, risposte: r })); } catch (e) {}
   /* storia: stanchezza che dura una settimana = scarico anticipato (Hooper) */
