@@ -71,7 +71,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 17. `js/core/storage.js` — Storage per modalita e normalizzazione dei dati
 
-`dataKey` · `historyKey` · `titlesKey` · `leggiJSON()` · `loadTitles` · `saveTitles` · `getDayTitle()` · `normalizeExerciseRecord()` · `loadData()` · `saveData` · `normalizeHistoryEntry()` · `loadHistory()` · `saveHistory` · `migrateLegacyDataIfNeeded()` · `seedDefaultsIfNeeded()`
+`dataKey` · `historyKey` · `titlesKey` · `leggiJSON()` · `loadTitles` · `saveTitles` · `getDayTitle()` · `normalizeExerciseRecord()` · `loadData()` · `saveData` · `normalizeHistoryEntry()` · `loadHistory()` · `saveHistory` · `migrateLegacyDataIfNeeded()` · `CHIAVI_COACH_IA_RIMOSSO` · `ripulisciChiaviCoachIA()` · `seedDefaultsIfNeeded()`
 
 ## js/ui
 

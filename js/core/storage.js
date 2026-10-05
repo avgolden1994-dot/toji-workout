@@ -123,6 +123,18 @@ function migrateLegacyDataIfNeeded(mode) {
   }
 }
 
+/* Chiavi del vecchio Coach IA (rimosso il 2026-10-05): consenso a parte, data del consenso, codice del dispositivo e contatore
+   mensile dei commenti. Nessun codice le legge piu: restano orfane sui telefoni di chi lo aveva usato. Si tolgono in silenzio a ogni
+   avvio (idempotente: se non ci sono non fa nulla; nessun messaggio, nessuna conferma). Il consenso generale (tz_consenso) e i commenti
+   gia salvati nello storico (commentoIA) NON si toccano. */
+const CHIAVI_COACH_IA_RIMOSSO = ['tz_consenso_ia', 'tz_consenso_ia_data', 'tz_device_ia', 'tz_ia_uso'];
+function ripulisciChiaviCoachIA() {
+  CHIAVI_COACH_IA_RIMOSSO.forEach(k => { try { localStorage.removeItem(k); } catch (e) {} });
+}
+/* subito al caricamento, prima di ogni lettura di consenso (consenso.js, avvio.js) e dopo ripristino-guida.js, che puo rimettere
+   chiavi vecchie da una copia di guida interrotta */
+ripulisciChiaviCoachIA();
+
 function seedDefaultsIfNeeded(mode) {
   const seededKey = `tz_seeded_${mode}`;
   if (localStorage.getItem(seededKey) === '1') return;
