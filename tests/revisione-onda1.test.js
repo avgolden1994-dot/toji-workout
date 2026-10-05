@@ -53,3 +53,55 @@ test('M1: nessun prudente e nessun principiante riceve lo Stacco Rumeno a una Ga
   assert.strictEqual(esperti.length, 54);
   assert.strictEqual(con(esperti).length, 20, 'chi ha esperienza lo riceve dove ci sono i manubri');
 });
+
+/* ============================================================================================================ M5 */
+test('M5: gli esercizi di avvio sono due, di schema squat e abilita 1, e si leggono dagli attributi', () => {
+  const ATTR = app.json('ATTRIBUTI');
+  assert.deepStrictEqual(Object.keys(ATTR).filter(n => ATTR[n].soloAvvio).sort(), ['Sit-to-Stand dalla Panca', 'Squat su Scatola']);
+  ['Sit-to-Stand dalla Panca', 'Squat su Scatola'].forEach(n => { assert.strictEqual(ATTR[n].schema, 'squat', n); assert.strictEqual(ATTR[n].abilita, 1, n); });
+  assert.strictEqual(app.g('attributi')('💪 Squat su Scatola').soloAvvio, true, 'anche con l emoji');
+  assert.ok(!app.g('attributi')('Goblet Squat').soloAvvio);
+});
+
+test('M5: strSquatDoppio: lo squat di avvio non sta con un altro squat, in nessuno dei due ordini; due squat carichi restano ammessi (ABB-02)', () => {
+  const doppio = (x, base) => app.g('strSquatDoppio')({ name: x }, base.map(name => ({ name })));
+  assert.strictEqual(doppio('Squat su Scatola', ['Squat a Corpo Libero']), true);
+  assert.strictEqual(doppio('Squat su Scatola', ['Goblet Squat', 'Stacco Rumeno']), true);
+  assert.strictEqual(doppio('Squat a Corpo Libero', ['Squat su Scatola']), true, 'e al contrario: nessun altro squat nella seduta che ha lo squat di avvio');
+  assert.strictEqual(doppio('Leg Press', ['Squat su Scatola']), true);
+  assert.strictEqual(doppio('Sit-to-Stand dalla Panca', ['Squat su Scatola']), true);
+  assert.strictEqual(doppio('Hack Squat', ['Squat con Bilanciere']), false, 'macchina dopo il bilanciere: ammesso (ABB-02)');
+  assert.strictEqual(doppio('Squat su Scatola', ['Stacco Rumeno', 'Panca Piana Manubri']), false, 'senza altri squat nella seduta va bene');
+  assert.strictEqual(doppio('Stacco Rumeno', ['Squat su Scatola']), false, 'lo stacco non e uno squat');
+  assert.strictEqual(doppio('Leg Extension', ['Squat su Scatola']), false, 'un isolamento non e uno squat');
+});
+
+test('M5: la Sentinella vieta gli esercizi di avvio a chi puo fare lo squat con un carico, non a chi inizia ne ai prudenti', () => {
+  const v = d => app.dati(app.chiama('vincoliSicurezza', app.chiama('briefCoach', Object.assign({}, BASE, d), {}))).vietati;
+  const avvio = ['Squat su Scatola', 'Sit-to-Stand dalla Panca'].map(n => app.g('nomeInLibreria')(n));
+  [{ level: 'intermedio' }, { level: 'avanzato' }, { level: 'avanzato', sex: 'M' }].forEach(d => avvio.forEach(n => assert.ok(n in v(d), n + ' vietato per ' + JSON.stringify(d))));
+  [{ level: 'principiante' }, { level: 'avanzato', age: 70 }, { level: 'avanzato', age: 16 }, { level: 'avanzato', parq: 'si' }].forEach(d => avvio.forEach(n => assert.ok(!(n in v(d)), n + ' ammesso per ' + JSON.stringify(d))));
+});
+
+test('M5: su una griglia di 324 programmi nessun intermedio o avanzato sano riceve lo Squat su Scatola e nessuna seduta lo ha con un altro squat', () => {
+  /* sul codice di prima: 32 programmi su 54 di chi ha esperienza (anche avanzati, al posto di uno squat carico), 34 sedute con lo Squat su Scatola e un altro squat, 71 sedute con due squat */
+  const tutti = programmi(['adulto', 'over65', 'parq', 'minorenne']), ATTR = app.json('ATTRIBUTI');
+  assert.strictEqual(tutti.length, 324);
+  const haScatola = x => x.prog.sedute.some(sd => nomiSeduta(sd).indexOf('Squat su Scatola') !== -1);
+  const esperti = tutti.filter(x => x.p._persona === 'adulto' && x.p.level !== 'principiante');
+  assert.strictEqual(esperti.length, 54);
+  assert.deepStrictEqual(esperti.filter(haScatola).map(x => x.p.seme), [], 'chi puo fare lo squat con un carico non riceve lo squat di avvio');
+  /* lo ricevono ancora chi inizia e i prudenti (la progressione verso lo squat carico) */
+  assert.strictEqual(tutti.filter(x => x.p._persona === 'adulto' && x.p.level === 'principiante').filter(haScatola).length, 12);
+  assert.strictEqual(tutti.filter(x => x.p._persona !== 'adulto').filter(haScatola).length, 128);
+  let sedute = 0, conAvvioEAltroSquat = 0, conDueSquat = 0;
+  tutti.forEach(x => x.prog.sedute.forEach(sd => {
+    sedute++;
+    const n = nomiSeduta(sd), squat = n.filter(e => ATTR[e] && ATTR[e].schema === 'squat'), avvio = n.filter(e => ATTR[e] && ATTR[e].soloAvvio);
+    if (squat.length > 1) conDueSquat++;
+    if (avvio.length && squat.length > 1) conAvvioEAltroSquat++;
+  }));
+  assert.ok(sedute > 1000);
+  assert.strictEqual(conAvvioEAltroSquat, 0, 'lo squat di avvio non sta con un altro squat');
+  assert.strictEqual(conDueSquat, 45, 'restano solo i doppi squat carichi (bilanciere + macchina, ABB-02): prima 71');
+});

@@ -66,6 +66,16 @@ window.strTerzoUguale = function(x, base) {
   return base.filter(y => strChiave(y) === k).length >= 2;
 };
 
+/* INT-2a (M5, revisione dell onda 1): un esercizio di avvio (attributo `soloAvvio`: Squat su Scatola, Sit-to-Stand dalla Panca) e la progressione verso lo squat carico, non un secondo squat:
+   non sta nella stessa seduta di un altro esercizio di schema squat, ne un altro squat nella seduta che ne ha uno. Si leggono gli attributi (schema, soloAvvio), non il nome. Due squat
+   che non sono di avvio (bilanciere e macchina) restano ammessi come prima (ABB-02). Prima, su 1800 programmi di prova, 161 sedute avevano lo Squat su Scatola e lo Squat a Corpo Libero e 239 un altro squat */
+window.strSquatDoppio = function(x, base) {
+  if (typeof attributi !== 'function') return false;
+  const a = attributi(x.name);
+  if (!a || a.schema !== 'squat') return false;
+  return base.some(y => { const b = attributi(y.name); return !!b && b.schema === 'squat' && !!(a.soloAvvio || b.soloAvvio); });
+};
+
 /* contare le serie di spinta e di tirata della settimana */
 function strSerie(sedute, filtro) {
   return sedute.reduce((t, sd) => t + sd.esercizi.reduce((a, e) => a + (!isTimeBased(e.name) && filtro(e) ? e.sets : 0), 0), 0);

@@ -31,6 +31,13 @@ function vincoliSicurezza(brief) {
      l abilita (W2-T6); lo stesso vale per chi inizia (SEL-06: abilita 3 non e per i principianti). Hanno lo Stacco Rumeno con Manubri (abilita 2) */
   const unaGamba = nomeInLibreria('Stacco Rumeno a una Gamba');
   if (unaGamba && (chi.cauto || chi.principiante)) vincoli.vietati[unaGamba] = 'abilita 3 (equilibrio su un piede): non per i prudenti ne per chi inizia, finche la scelta non legge l abilita';
+  /* INT-2a (M5 della revisione dell onda 1): gli esercizi di avvio (attributo soloAvvio: Squat su Scatola, Sit-to-Stand dalla Panca) sono la progressione verso lo squat carico:
+     li ricevono chi inizia e i prudenti. Prima, senza nessuna regola, lo Squat su Scatola entrava in 951 programmi su 1800 di una griglia di prova, anche degli avanzati,
+     al posto di uno squat con un carico. Si legge l attributo, non il nome */
+  if (!chi.principiante && !chi.cauto && typeof attributi === 'function') EXERCISE_LIBRARY.forEach(e => {
+    const a = attributi(e.name);
+    if (a && a.soloAvvio) vincoli.vietati[e.name] = 'esercizio di avvio verso lo squat carico: per chi inizia e per i prudenti';
+  });
   if (chi.principiante || chi.cauto) vincoli.serieMaxEsercizio = COACH_PARAMETRI.serieMaxPrudente;   /* 2-3 serie impegnative (Barbell Medicine); CAS-14, femorali, riempimento */
   /* MAV-03: niente tecniche al cedimento a chi inizia, ai minorenni, agli over 65 e in modalita prudente */
   if (!chi.principiante && !chi.cauto) vincoli.gruppiTecniche.push('G2', 'G2b');
