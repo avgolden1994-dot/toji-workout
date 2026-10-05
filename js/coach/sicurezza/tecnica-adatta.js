@@ -129,7 +129,7 @@ function posizioneNelBlocco(settimana, programma, piano) {
   return { tier: tier, p: p, L: L, fase: fase };
 }
 
-/* MAV-08 / MAV-01: il budget di oggi. { perSeduta, perSettimana, gruppi, negati, tier, perSeduta... }
+/* MAV-08 / MAV-01: il budget di oggi: { perSeduta, perSettimana, gruppi, negati, tier, posizione, persona, poco }.
    gruppi = i gruppi di tecniche ammessi a questa persona in questa settimana; negati[gruppo] = { codice, motivo } del primo motivo per cui un gruppo non c'e.
    `settimana`: undefined = quella del brief (briefOggi), null = nessuna (la generazione: vale il tetto del blocco). ctx: { prontezza, programma, piano, settimana }. */
 function budgetTecniche(brief, settimana, ctx) {
