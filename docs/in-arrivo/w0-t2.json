@@ -1,0 +1,177 @@
+{
+  "task": "W0-T2",
+  "frasi": {
+    "Quanti anni hai?": {
+      "en": "How old are you?",
+      "es": "¿Cuántos años tienes?",
+      "de": "Wie alt bist du?"
+    },
+    "Serve per scegliere pesi e ritmo giusti. Sotto i # anni il coach non crea programmi.": {
+      "en": "This is needed to choose the right weights and pace. Under # years old the coach does not create programs.",
+      "es": "Sirve para elegir los pesos y el ritmo adecuados. Por debajo de los # años el coach no crea programas.",
+      "de": "Das brauchen wir, um das richtige Gewicht und Tempo zu wählen. Unter # Jahren erstellt der Coach keine Programme."
+    },
+    "Inserisci la tua età (da # a # anni): serve per scegliere pesi e ritmo giusti.": {
+      "en": "Enter your age (from # to # years): it is needed to choose the right weights and pace.",
+      "es": "Introduce tu edad (de # a # años): sirve para elegir los pesos y el ritmo adecuados.",
+      "de": "Gib dein Alter ein (von # bis # Jahren): Es wird gebraucht, um Gewicht und Tempo richtig zu wählen."
+    },
+    "Sotto i # anni il coach non crea programmi: allenati con un adulto esperto.": {
+      "en": "Under # years old the coach does not create programs: train with an experienced adult.",
+      "es": "Por debajo de los # años el coach no crea programas: entrena con un adulto con experiencia.",
+      "de": "Unter # Jahren erstellt der Coach keine Programme: Trainiere mit einem erfahrenen Erwachsenen."
+    },
+    "Poco tempo: spinte e tirate in superserie (-#% di tempo, stessi risultati).": {
+      "en": "Short on time: pushes and pulls in supersets (-#% time, same results).",
+      "es": "Poco tiempo: empujes y tracciones en superserie (-#% de tiempo, mismos resultados).",
+      "de": "Wenig Zeit: Drücken und Ziehen als Supersätze (-#% Zeit, gleiche Ergebnisse)."
+    },
+    "Per ora niente serie al cedimento: la tecnica viene prima. Per fare prima ti propongo le superserie.": {
+      "en": "No sets to failure for now: technique comes first. To save time I suggest supersets.",
+      "es": "Por ahora, sin series al fallo: primero la técnica. Para ir más rápido te propongo las superseries.",
+      "de": "Vorerst keine Sätze bis zum Muskelversagen: Die Technik kommt zuerst. Um Zeit zu sparen, schlage ich Supersätze vor."
+    },
+    "Dai # anni: #-# serie da #-#, niente cedimento e # minuti di equilibrio a fine seduta.": {
+      "en": "From age #: #-# sets of #-#, no failure and # minutes of balance work at the end.",
+      "es": "Desde los # años: #-# series de #-#, sin fallo y # minutos de equilibrio al final.",
+      "de": "Ab #: #-# Sätze à #-#, kein Muskelversagen und # Minuten Gleichgewicht am Ende."
+    },
+    "Alla tua età conta imparare bene i movimenti: niente massimali né serie al limite, lascia sempre #-# ripetizioni in riserva.": {
+      "en": "At your age, learning the movements well is what counts: no max lifts and no sets to the limit, always leave #-# reps in reserve.",
+      "es": "A tu edad lo que cuenta es aprender bien los movimientos: nada de máximos ni series al límite, deja siempre #-# repeticiones en reserva.",
+      "de": "In deinem Alter zählt es, die Bewegungen richtig zu lernen: keine Maximalgewichte und keine Sätze am Limit, lass immer #-# Wiederholungen in Reserve."
+    },
+    "Allenati con un adulto o un istruttore: la tecnica viene prima dei carichi.": {
+      "en": "Train with an adult or an instructor: technique comes before weight.",
+      "es": "Entrena con un adulto o un instructor: primero la técnica, después las cargas.",
+      "de": "Trainiere mit einem Erwachsenen oder einem Trainer: Die Technik kommt vor dem Gewicht."
+    },
+    "Senza sbarra la schiena si allena con rematori e pullover: meno completo.": {
+      "en": "Without a pull-up bar the back is trained with rows and pullovers: less complete.",
+      "es": "Sin barra de dominadas la espalda se entrena con remos y pullovers: menos completo.",
+      "de": "Ohne Klimmzugstange wird der Rücken mit Rudern und Pullovers trainiert: weniger vollständig."
+    },
+    "Con le ginocchia delicate il Nordic Curl si fa con un cuscino sotto le ginocchia e una discesa lenta: se fa male, salta la serie e passa al ponte glutei.": {
+      "en": "With sensitive knees, do the Nordic Curl with a cushion under your knees and a slow lowering: if it hurts, skip the set and move to the glute bridge.",
+      "es": "Con las rodillas delicadas, el Nordic Curl se hace con un cojín bajo las rodillas y una bajada lenta: si duele, salta la serie y pasa al puente de glúteos.",
+      "de": "Bei empfindlichen Knien wird der Nordic Curl mit einem Kissen unter den Knien und langsamem Absenken gemacht: Wenn es wehtut, lass den Satz aus und mach stattdessen die Glute Bridge."
+    },
+    "Bicipite: un curl su panca inclinata, con il muscolo allungato, per crescere in tutta la lunghezza.": {
+      "en": "Biceps: an incline curl, with the muscle stretched, to grow along the whole length.",
+      "es": "Bíceps: un curl en banco inclinado, con el músculo estirado, para crecer en toda su longitud.",
+      "de": "Bizeps: ein Schrägbank-Curl mit gedehntem Muskel, für Wachstum auf ganzer Länge."
+    },
+    "l’ultimo isolamento leggero da # ripetizioni": {
+      "en": "the last isolation exercise light, # reps",
+      "es": "el último aislamiento ligero de # repeticiones",
+      "de": "die letzte Isolationsübung leicht mit # Wiederholungen"
+    },
+    "isolamenti da almeno # ripetizioni": {
+      "en": "isolation work at # reps or more",
+      "es": "aislamientos de al menos # repeticiones",
+      "de": "Isolationsübungen mit mindestens # Wiederholungen"
+    },
+    "Full body A/B: squat 3×5 a ogni seduta, panca o military 3×5, stacco da terra 1×5; +2,5 kg a ogni seduta; due mancate di fila = −5%.": {
+      "en": "Full body A/B: squat 3×5 every session, bench press or military press 3×5, deadlift 1×5; +2.5 kg every session; two misses in a row = −5%.",
+      "es": "Full body A/B: sentadilla 3×5 en cada sesión, press de banca o press militar 3×5, peso muerto 1×5; +2,5 kg cada sesión; dos fallos seguidos = −5%.",
+      "de": "Ganzkörper A/B: Kniebeuge 3×5 in jeder Einheit, Bankdrücken oder Military Press 3×5, Kreuzheben 1×5; +2,5 kg pro Einheit; zweimal hintereinander verfehlt = −5 %."
+    },
+    "Poco volume per la massa; noioso per chi ama cambiare. Il power clean non c’è nella libreria: nel giorno B resta lo stacco.": {
+      "en": "Little volume for muscle growth; boring if you like variety. The power clean is not in the library: on day B the deadlift stays.",
+      "es": "Poco volumen para ganar masa; aburrido si te gusta cambiar. El power clean no está en la biblioteca: el día B se queda el peso muerto.",
+      "de": "Wenig Volumen für Muskelaufbau; langweilig, wenn du Abwechslung magst. Das Power Clean gibt es in der Bibliothek nicht: Am Tag B bleibt das Kreuzheben."
+    },
+    "Con chi inizia, ai minorenni, sopra i # anni o in modalità prudente il coach toglie l’AMRAP: la serie finale resta a #-# ripetizioni dal cedimento.": {
+      "en": "For beginners, minors, over # years old or in careful mode the coach removes the AMRAP: the final set stays at #-# reps from failure.",
+      "es": "Con quien empieza, con menores, por encima de los # años o en modo prudente el coach quita el AMRAP: la última serie se queda a #-# repeticiones del fallo.",
+      "de": "Bei Anfängern, Minderjährigen, über # Jahren oder im vorsichtigen Modus streicht der Coach das AMRAP: Der letzte Satz bleibt bei #-# Wiederholungen vor dem Muskelversagen."
+    },
+    "# giorni: serve un buon recupero. Con chi inizia, ai minorenni, sopra i # anni o in modalità prudente il coach toglie l’AMRAP: la serie finale resta a #-# ripetizioni dal cedimento.": {
+      "en": "# days: good recovery is needed. For beginners, minors, over # years old or in careful mode the coach removes the AMRAP: the final set stays at #-# reps from failure.",
+      "es": "# días: hace falta una buena recuperación. Con quien empieza, con menores, por encima de los # años o en modo prudente el coach quita el AMRAP: la última serie se queda a #-# repeticiones del fallo.",
+      "de": "# Tage: gute Erholung ist nötig. Bei Anfängern, Minderjährigen, über # Jahren oder im vorsichtigen Modus streicht der Coach das AMRAP: Der letzte Satz bleibt bei #-# Wiederholungen vor dem Muskelversagen."
+    }
+  },
+  "regole": [
+    {
+      "capitolo": 5,
+      "sostituisce": true,
+      "riga": "- **PRG-03** numero di esercizi per seduta (`exerciseCountFor(minuti, schema, { level, prudente })` in onboarding.js; B1, ponte di W0-T2: il risolutore del tempo è di W2-T2): n = floor((minuti - 8) / (serieEffettive * (35 + pausaMedia) / 60)), min 3, max 7 (5 per chi inizia). `serieEffettive` = il minimo tra le serie dello schema, il tetto dello schema e 3 (3,5 per la forza: serie realmente fatte, misurate sul collaudo), al massimo 3 per principianti, minorenni, over 65 e modalità prudente (`COACH_PARAMETRI.serieMaxPrudente`). `pausaMediaPerTipo` pesa le pause dei tre tipi (fondamentale 25%, macchina 35%, isolamento 40%: Convenzione, `PARAM_NUMERO_ESERCIZI`) invece di contare tutte le serie con la pausa del solo fondamentale. Principiante con poca fiducia (psico) e >3 esercizi: -1. Tetto dopo le aggiunte (EXN-02): 8 esercizi per seduta, 6 per chi inizia, tranne le aggiunte protette. (storica: sempre accesa, è un calcolo)"
+    },
+    {
+      "capitolo": 5,
+      "sostituisce": true,
+      "riga": "- **PRG-14** primo multiarticolare con forza come secondo obiettivo: 5x5 «fisso» con 180 s solo se è un fondamentale col bilanciere pesante (`adattoAlCincoPerCinque`: BIL_PESANTI, peso > 0, non a tempo; mai goblet, manubri, macchine guidate o corpo libero: B34, collaudo RX-01), non sopra i 65 anni, non ai minorenni e non nel giorno «ipertrofia» (con le serie capate a 3 o a 4 dagli altri tetti, resta «fisso»). Il giorno «ipertrofia» (PHUL e intermedi senza metodo) riparte dallo schema della massa (`schemeFor('massa')`: al massimo 4 serie, fondamentale da 8 ripetizioni a 150 s, macchina 10 a 120 s, isolamento 12 a 75 s) invece di ereditare 6x8 o 5x8 a 180 s dal giorno di forza (B2). (storica: sempre accesa, è una correzione)"
+    },
+    {
+      "capitolo": 5,
+      "sostituisce": true,
+      "riga": "- **PRG-19** over 65 e minorenni (13-17 anni, ETA-02): max 3 serie; over 65 8-12 ripetizioni, minorenni 8-15. PAR-Q positivo: multiarticolari 8-12 rip (60-80% del carico, niente apnea; ACSM). «cauto» = over 65, PAR-Q positivo oppure minorenne: niente pesanti favoriti, niente metodi ad alta intensità (`sceltaMetodo`), niente tecniche al cedimento (MAV-03), il numero di esercizi per seduta conta al massimo 3 serie ciascuno (PRG-03). (storica: sempre accesa, è una salvaguardia)"
+    },
+    {
+      "capitolo": 5,
+      "sostituisce": true,
+      "riga": "- **PRG-21** schemi di movimento mancanti (piramide di Helms): ogni settimana servono i 6 schemi (squat, hinge, spinta/tirata orizzontale, spinta/tirata verticale); se manca, si aggiunge nella seduta più vuota adatta (3 serie max; cauto/principiante: meno pesanti). Non con i metodi «essenziale». Il Landmine Press conta come spinta verticale. Senza sbarra né macchine (casa, o palestra con solo bilanciere e manubri) il posto della tirata verticale prende il «Pullover con Manubrio» (D-P11, riserva della tirata verticale: se c'è, PRG-21 non ne aggiunge un secondo; CAS-14). Un controllo finale (`SCHEMI_ATTESI`) tiene in ogni seduta gli schemi che il suo tipo richiede (spinta e tirata nell'upper e nel full body, squat e hinge nel lower: SES-03) anche dopo i tagli per il tempo e per il tetto di esercizi; una seduta con meno di 3 esercizi (EXN-01) si riempie con esercizi dei muscoli della sua giornata. (storica: sempre accesa, è una correzione)"
+    },
+    {
+      "capitolo": 5,
+      "sostituisce": true,
+      "riga": "- **PRG-23** copertura per regioni (Schoenfeld, Maeo, Pedrosa): se >=3 giorni e obiettivo non salute: leg extension (retto femorale) per massa o glutei; alzate laterali se c'è panca e obiettivo massa/ricomposizione. Bicipite (D-P8, B32): se >=2 curl e nessuno è su panca inclinata o ai cavi (Bayesiano), l'ultimo diventa «Curl su Panca Inclinata» (o Bayesiano) con la nota «Bicipite: un curl su panca inclinata, con il muscolo allungato…»; lo Scott e lo Spider non si aggiungono più al suo posto (Pedrosa 2025: il muscolo lavora allungato). Femorali (B29, ponte di W0-T2; il risolutore è di W2-T1/W2-T6): da 2 giorni, anche per la salute, ogni seduta di gambe (lower, legs, full body) ha uno stacco o una flessione del ginocchio: dove manca, un leg curl da 3 serie (2 ai principianti), e almeno uno a settimana; `rinforzaFemorali` porta le sedute di gambe con almeno 1,5 serie frazionarie di femorali a 2 e il volume al minimo di tabella (serie fino a 4, 5 avanzati, 3 prudenti), solo se la seduta resta nei minuti. Con le ginocchia dolenti il Nordic Curl resta ammesso con una nota (cuscino, discesa lenta; la modifica per zona è di W4-T1). Le altre aggiunte sono da 2 serie, 75 s. (storica: sempre accesa, è una correzione)"
+    },
+    {
+      "capitolo": 5,
+      "sostituisce": true,
+      "riga": "- **PRG-28** conteggio frazionario: 1 serie per il muscolo principale, 0,5 per sinergisti nei multiarticolari (Pelland 2025). Aggiusta le serie (+1 al meno carico, max 5; -1 al più carico, min 2, senza toccare i «fissi») finché il volume è dentro min-max. Poi `limitaVolumePerMuscolo` (ponte di W0-T2, tabelle `PARAM_TEMPO.volumeMax` e `volumeMin` per tipo di obiettivo e livello: Convenzione, nel file perché parametri.js è condiviso): toglie una serie alla volta all'esercizio che carica di più il muscolo oltre il massimo (minimo 2 serie, mai un fisso, mai sotto il minimo di un altro gruppo, senza rompere il rapporto tirate/spinte di EQ-01); non con i metodi famosi. (storica: sempre accesa, è una correzione)"
+    },
+    {
+      "capitolo": 5,
+      "sostituisce": true,
+      "riga": "- **PRG-33** la seduta deve stare nei minuti dichiarati (+5% di tolleranza) con lo stesso modello del collaudo (`stimaMinutiSeduta`: 3,5 s a ripetizione, 10 s di preparazione, 60 s di cambio, 6 min di riscaldamento + 2×45 s per fino a 2 fondamentali pesanti, unilaterali ×2; `PARAM_TEMPO`): si tolgono serie agli esercizi non prioritari, prima gli isolamenti; se non basta l'ultimo isolamento (se restano >3 esercizi). Poi, senza metodo famoso (B1, DUR-02, ponte di W2-T2: il tempo è un tetto, non un obiettivo, D-P10): una seduta sotto l'82% dei minuti allunga le pause (+15 s, dentro i tetti per tipo e obiettivo), poi +1 serie sugli isolamenti (non core né spalle, dentro il massimo di volume), poi un isolamento in più del muscolo sotto il minimo, fino al tetto di esercizi. (storica: sempre accesa, è una correzione)"
+    },
+    {
+      "capitolo": 5,
+      "sostituisce": true,
+      "riga": "- **PRG-34** tecniche (con i cancelli MAV-02 e MAV-03): poco tempo (<=45 min) -> superserie spinta+tirata e, solo se le tecniche al cedimento sono ammesse, drop set sull'ultimo isolamento che non sia core, a tempo, a peso zero o uno stacco (non se intensità psicologica bassa); over 65 -> «potenza» sul primo multiarticolare su macchina; PAR-Q positivo o over 65 (non i minorenni) -> «cluster» sui pesanti; chi può andare al cedimento e primo esercizio pesante (non uno stacco) -> avanzato «back-off», intermedio «AMRAP» (non se intensità bassa); avanzato o intermedio con intensità alta (non poco tempo): «parziali» su un isolamento. I metodi famosi con l'AMRAP nello schema e il tocco AMRAP lo perdono dove non è ammesso. (storica: sempre accesa, è una correzione)"
+    },
+    {
+      "capitolo": 5,
+      "sostituisce": true,
+      "riga": "- **PRG-37** note aggiunte al programma: poco tempo (superserie -37% di tempo; «e drop set sull'ultimo isolamento» solo se il drop set c'è davvero, altrimenti a chi non può andare al cedimento: «Per ora niente serie al cedimento: la tecnica viene prima…»), over 65 (2-3 serie da 8-12, niente cedimento, 5 minuti di equilibrio; «il primo esercizio veloce in salita per la potenza» solo se c'è un multiarticolare su macchina), minorenni (ETA-03), donne (pause più corte), femorali (PRG-23), curl inclinato (PRG-23), casa senza sbarra (CAS-14), dimagrimento (10-12 mila passi, +500-1000 a settimana, il cardio non toglie muscolo). (storica: sempre accesa, è una correzione)"
+    },
+    {
+      "capitolo": 6,
+      "sostituisce": true,
+      "riga": "- **MET-05** la STRUTTURA cambia solo se un metodo batte chiaramente quello del coach (+2 punti); un secondo metodo (fino a -3 punti dal coach) può dare un «tocco» e il testo dice quello che il codice fa (B22, `TOCCHI` in compone.js): AMRAP sull'ultima serie del primo fondamentale (solo per chi può andare al cedimento: MAV-03; mai su stacchi), ultimo isolamento (non core) leggero da 20 ripetizioni (piramide), isolamenti da almeno 15 ripetizioni, superserie spinte+tirate. Starting Strength (B19): A = squat 3×5, panca 3×5, stacco da terra 1×5; B = squat 3×5, military press 3×5, stacco da terra 1×5 (il power clean non c'è in libreria: lo dice l'avvertenza del metodo). (storica: sempre accesa, è una correzione)"
+    },
+    {
+      "capitolo": 19,
+      "riga": "- **MAV-02** (storica: sempre accesa, ponte di W0-T2; la matrice completa tecnica x classe è di W2-T3) niente cedimento sul core, sugli esercizi a tempo, a peso zero e sugli stacchi (`senzaCedimento`, ABB-09): le tecniche `TECNICHE_AL_CEDIMENTO` (drop, parziali, AMRAP, back-off, calibrazione, riposo-pausa) non vi vengono mai messe, nemmeno dai metodi famosi (GreySkull, GZCLP, Reddit PPL) o dai tocchi."
+    },
+    {
+      "capitolo": 19,
+      "riga": "- **MAV-03** (storica: sempre accesa, ponte di W0-T2) le tecniche al cedimento non si danno ai principianti, ai minorenni (13-17), agli over 65 e in modalità prudente (PAR-Q): `tecnicheOk` in `buildProgram`. Over 65: «potenza» solo su macchina (la libreria non ha l'alzata dalla sedia), «cluster» solo agli adulti. I metodi con l'AMRAP nello schema lo perdono per chi non può e la loro avvertenza lo dice (`ATTENZIONE_AMRAP` in metodi-momenti.js); il tocco AMRAP non si prende per chi non può."
+    },
+    {
+      "capitolo": 19,
+      "riga": "- **ETA-01** (storica: sempre accesa, D-P9, ponte di W0-T2; assorbe REC-11) l'età è obbligatoria prima del programma: nel passo «Preferenze» dell'onboarding il campo «Quanti anni hai?» (da 13 a 99, `etaPerProgramma`) tiene spento «Avanti» e `onbNext` riporta al passo se manca; in Opzioni il campo ha min e max e `setCoach('age')` rifiuta un valore non valido col messaggio. Sotto i 13 anni nessun programma: «Sotto i 13 anni il coach non crea programmi: allenati con un adulto esperto» (`buildProgram` lancia un errore per età da 1 a 12; un'età non detta in un profilo già salvato conta come adulto, così i programmi di prima non cambiano)."
+    },
+    {
+      "capitolo": 19,
+      "riga": "- **ETA-02** (storica: sempre accesa, D-P9, ponte di W0-T2) profilo minorenne, 13-17 anni: al massimo 3 serie per esercizio, 8-15 ripetizioni, nessuna tecnica (niente AMRAP, drop, parziali, cluster, potenza), niente 5x5 «fisso» né 6x3, niente metodi ad alta intensità (`sceltaMetodo` lo tratta come prudente), ripetizioni in riserva almeno 2 (`rirSett` = 2, 4 nello scarico; lo legge `rirBersaglioBase`), niente mesociclo che scende a RIR 0. Non fatto: al massimo 3 sedute con i pesi a settimana (matrice per i minori di W2-T3)."
+    },
+    {
+      "capitolo": 19,
+      "riga": "- **ETA-03** (storica: sempre accesa, D-P9, ponte di W0-T2) note al minorenne: «Alla tua età conta imparare bene i movimenti: niente massimali né serie al limite, lascia sempre 2-3 ripetizioni in riserva.» e «Allenati con un adulto o un istruttore: la tecnica viene prima dei carichi.»"
+    },
+    {
+      "capitolo": 19,
+      "riga": "- **CAS-14** (storica: sempre accesa, ponte di W0-T2, D-P11) senza sbarra (casa, o palestra con solo bilanciere e manubri) il posto della tirata verticale prende il «Pullover con Manubrio» (dorsali, riserva della tirata verticale) oppure, se non c'è, una serie in più di rematore (al massimo 4, 3 per chi inizia), con la nota «Senza sbarra la schiena si allena con rematori e pullover: meno completo.». La tabella degli equivalenti da casa è di W1-T5."
+    }
+  ],
+  "mappaAgenti": [
+    "numero di esercizi, età e tempo di creazione: `PARAM_NUMERO_ESERCIZI`, `serieEffettive`, `pausaMediaPerTipo`, `exerciseCountFor`, `PARAM_ETA`, `etaPerProgramma` (messaggi `MSG_ETA_SOTTO_MINIMO`, `MSG_ETA_MANCANTE`) in js/ui/onboarding.js; l'età si chiede nel passo 4 dell'onboarding (`onbSetEta`, campo `#onb-age`) e si controlla in Opzioni (`setCoach('age')` in js/ui/opzioni/il-coach.js)",
+    "tecniche al cedimento e tetti del generatore: `TECNICHE_AL_CEDIMENTO`, `senzaCedimento`, `adattoAlCincoPerCinque`, `SCHEMI_ATTESI`, `adattoAllaSeduta`, `SLOT_DEF.staccoTerra` in js/coach/programma/ricette.js; `ATTENZIONE_AMRAP` e le ricette di Starting Strength (A/B con `staccoTerra`, schema 3×5 e stacco 1×5) in js/coach/metodi-momenti.js; `TOCCHI` con `alCedimento` e `fa(sd, ps, { tecnicheOk, senzaCedimento })` in js/coach/compone.js",
+    "tempo, volume e femorali dopo l'assemblaggio della settimana (ponte di W2-T2 e W2-T1): `PARAM_TEMPO`, `stimaMinutiSeduta`, `creditoSerie`, `frazionarieSettimana`, `limitaVolumePerMuscolo`, `rinforzaFemorali`, `riempiTempo` in js/coach/programma/ricette.js; il profilo minorenne (13-17) e l'età obbligatoria passano da `buildProgram` (`eta`, `minore`, `cauto`, `tecnicheOk`)"
+  ],
+  "nota": "W0-T2. (1) Il campo `squadra` manca perché il capitolo 0 della mappa lo crea W1-T1; quando c'è: ETA-01..03 e MAV-02..03 alla riga «sentinella»; PRG-03, PRG-14, PRG-19, PRG-23, PRG-28, PRG-33, PRG-34, PRG-37 e CAS-14 al «dosatore»; PRG-21 all'«architetto». (2) Le righe nuove (MAV-02, MAV-03, ETA-01..03, CAS-14) sono «storiche: sempre accese»: sono salvaguardie e ponti senza `regolaAttiva`; se il coordinatore le vuole spegnibili (piano F.4) serve un aggancio in parametri.js, che è condiviso. (3) js/coach/repertorio.js, `nuovoCiclo`: chiama `applyGeneratedProgram` con l'età del profilo senza guardia; un profilo con età da 1 a 12 anni ora fa lanciare `buildProgram` e il pulsante «Crea il ciclo successivo» non fa nulla: va aggiunto un `etaPerProgramma(p.age)` con il messaggio (non è un file del task). (4) Nei dizionari restano le vecchie voci «Full body A/B, 3 fondamentali col bilanciere…», «l’ultimo isolamento leggero da 15-20 ripetizioni», «isolamenti da 12-15 ripetizioni», «Bicipite: un curl su panca inclinata e uno alla Scott…»: non servono più, INT può toglierle. (5) Deviazioni dal piano: il 5x5 «fisso» solo sul bilanciere pesante (non anche «macchine pesanti»: era il residuo di RX-01:ipertrofia/macchina); DUR-02 pesato non arriva al 41% (circa 61-63%): il tempo è un tetto (D-P10) e più serie rompono i tetti di volume (VOL-01, REC); tabelle `PARAM_NUMERO_ESERCIZI` e `PARAM_TEMPO` nei file del task perché parametri.js è condiviso (numeri Convenzione). (6) tests/browser: il passo età dell'onboarding non è provato nel browser (le prove node coprono `etaPerProgramma`, `onbStepValid`, `onbNext`)."
+}
