@@ -184,6 +184,12 @@ function faseCalibrazione(r, c) {
   if (st.stato !== 'aperta' || !st.ultima) return r;
   const u = st.ultima;
   const senzaRpe = u.rpe === null;
+  /* salvaguardie: dolore su questo esercizio, scarico deciso dal coach (CAR-10: niente salti, il carico scende), freno della BIA, prontezza sotto 50 oggi:
+     nessun salto e nessun promemoria (decide il resto della catena) */
+  const ag = aggiustiCoach() || {}, a = (ag.esercizi || {})[c.nome];
+  const pr = leggiProntezza();
+  const bloccata = !!(a && (a.blocca || (Number(a.fattore) > 0 && Number(a.fattore) < 1))) || !!(ag.scarico && Number(ag.scarico.sedute) > 0) || frenoBia() ||
+    !!(pr && pr.data === ymd(new Date()) && typeof pr.punteggio === 'number' && pr.punteggio < COACH_PARAMETRI.prontezzaMedia);
   if (u.azione === 'tieni') {
     /* mai oltre +25% in una volta, nemmeno con la progressione di prima (CAR-16): se un passo supera il tetto (manubrio da 3 kg) si sale con le ripetizioni */
     const tetto = sogliaPartenza('calibrazioneTettoSalto');
@@ -192,17 +198,10 @@ function faseCalibrazione(r, c) {
       r.weight = u.pesoUltimo; r.reps = (Number(c.repsTarget) || r.reps) + 1; r.tipo = 'su';
       r.motivo = '+' + virgola(passo) + ' kg sarebbe un salto del ' + salto + '%: prima una ripetizione in piu (' + r.reps + ')';
     }
-    if (senzaRpe && regolaAttiva('CAR-19')) { r.motivo = (r.motivo ? r.motivo + ' • ' : '') + FRASE_PROMEMORIA_RPE; aggiungiPerche(r, 'CAR-19', FRASE_PROMEMORIA_RPE, { forza: forza }); }
+    if (senzaRpe && !bloccata && regolaAttiva('CAR-19')) { r.motivo = (r.motivo ? r.motivo + ' • ' : '') + FRASE_PROMEMORIA_RPE; aggiungiPerche(r, 'CAR-19', FRASE_PROMEMORIA_RPE, { forza: forza }); }
     return r;
   }
-  if (u.azione !== 'salta') return r;
-  /* salvaguardie: dolore su questo esercizio, freno della BIA, prontezza sotto 50 oggi: nessun salto (decide il resto della catena) */
-  const ag = aggiustiCoach() || {}, a = (ag.esercizi || {})[c.nome];
-  if (a && (a.blocca || (Number(a.fattore) > 0 && Number(a.fattore) < 1))) return r;
-  if (ag.scarico && Number(ag.scarico.sedute) > 0) return r;   /* scarico deciso dal coach (CAR-10): niente salti, il carico scende */
-  if (frenoBia()) return r;
-  const pr = leggiProntezza();
-  if (pr && pr.data === ymd(new Date()) && typeof pr.punteggio === 'number' && pr.punteggio < COACH_PARAMETRI.prontezzaMedia) return r;
+  if (u.azione !== 'salta' || bloccata) return r;
   const nuovo = u.nuovo;
   r.weight = nuovo; r.reps = Number(c.repsTarget) || r.reps; r.tipo = 'su'; delete r.piuPausa;
   const quanto = Math.round((nuovo / u.pesoUltimo - 1) * 100);

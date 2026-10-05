@@ -107,10 +107,6 @@
       "riga": "- **CAR-19** (spegnibile) promemoria dell'RPE (W2-T8, ex PRI-09): finché l'esercizio è in calibrazione e l'ultima esposizione non ha RPE, la nota dice «Segna quanto è stata dura la prima serie (RPE): con il dato il carico sale più in fretta»; con l'RPE il salto passa dalla tabella di CAR-18 e il promemoria non c'è. Forza: Convenzione."
     }
   ],
-  "squadra": [
-    { "sottoCoach": "bilancia", "codici": "PAR-06..09" },
-    { "sottoCoach": "bilancia", "codici": "CAR-18..19" }
-  ],
   "mappaAgenti": [
     "partenza bassa per le donne e carichi stimati: js/coach/carichi/partenza.js (PAR-01, PAR-05..09, penalitaPartenza; numeri e forza in js/coach/carichi/soglie-partenza.js)",
     "calibrazione rapida del carico stimato: js/coach/carichi/calibrazione.js (fase 'carico' 15, CAR-18/19; calibrazioneNellaSeduta serve a INT-05 in intensita.js e a ESI-02 in esigenza.js)",
