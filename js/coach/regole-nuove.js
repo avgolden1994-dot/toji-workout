@@ -64,7 +64,10 @@ function regoleRicAlCarico(r, c) {
   const nome = c.nome, repsTarget = c.repsTarget;
   if (!r || r.tipo === 'scarico' || isTimeBased(nome)) return r;
   const pc = profiloCoach();
-  const cauto = pc.prudente || pc.sonnoMale || pc.livello === 'principiante' || pc.eta >= 65;
+  /* ETA-02 (INT-1, correzione di sicurezza): il minorenne (eta > 0 e sotto i 18: 0 = non detta) e prudente come l over 65, il PAR-Q e il principiante: niente serie in piu
+     (RIC-01, una 16enne arrivava a 5 serie) e niente pausa allungata di RIC-02; il generatore gia lo trattava cosi (brief.chi.cauto) */
+  const minorenne = pc.eta > 0 && pc.eta < PARAM_ETA.maggiorenne;
+  const cauto = pc.prudente || pc.sonnoMale || pc.livello === 'principiante' || pc.eta >= 65 || minorenne;
   const rientro = regolaAttiva('RIC-05') ? rientroPiano() : 0;
   if (rientro) {
     if (r.sets > 2) {

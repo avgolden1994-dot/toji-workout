@@ -420,8 +420,8 @@ if (process.argv.includes('--ricampiona')) {
     chiamano.forEach(f => assert.ok(file.indexOf(f) > iF, f + ' viene prima di fasi.js'));
   });
 
-  test('fasi: per chi e prudente (principiante, over 65, PAR-Q, sonno scarso) nessuna fase dopo la progressione alza carico o serie (RIC e INT accese contro spente)', () => {
-    const cauti = golden.casi.filter(c => ['principiante', 'principianteForza', 'over65', 'parq', 'sonnoMale'].includes(c.spec.liv) && c.spec.reg === 'tutte').slice(0, 60);
+  test('fasi: per chi e prudente (principiante, over 65, minorenne, PAR-Q, sonno scarso) nessuna fase dopo la progressione alza carico o serie (RIC e INT accese contro spente)', () => {
+    const cauti = golden.casi.filter(c => ['principiante', 'principianteForza', 'over65', 'parq', 'sonnoMale', 'minorenne'].includes(c.spec.liv) && c.spec.reg === 'tutte').slice(0, 80);
     assert.ok(cauti.length >= 40, 'casi prudenti con le regole accese: ' + cauti.length);
     cauti.forEach(c => {
       const carichi = (reg) => { const app = caricaApp({ ora: ORA }); costruisciStato(app, Object.assign({}, c.spec, { reg: reg })); return ES.map(es => app.dati(app.chiama('caricoProssimo', es.nome, es.kg, es.reps, es.sets))); };
@@ -430,6 +430,29 @@ if (process.argv.includes('--ricampiona')) {
         assert.ok(accese[i].weight <= spente[i].weight, c.id + ' ' + es.nome + ': peso ' + accese[i].weight + ' > ' + spente[i].weight);
         assert.ok(accese[i].sets <= spente[i].sets, c.id + ' ' + es.nome + ': serie ' + accese[i].sets + ' > ' + spente[i].sets);
       });
+    });
+  });
+
+  /* INT-1 (correzione di sicurezza, ETA-02): il minorenne e «cauto» per RIC-01 e RIC-02, come l over 65: una 16enne con la regola accesa arrivava a 5 serie
+     (cauto non comprendeva eta < 18). Golden riscritto con --registra: cambiano solo i 20 casi del profilo minorenne. */
+  test('RIC-01 e RIC-02: il minorenne (eta tra 1 e 17) non ha ne la serie in piu ne la pausa allungata; a 18 anni e con l eta non detta si', () => {
+    const adulto = golden.casi.find(c => c.spec.liv === 'intermedio' && c.spec.reg === 'tutte' && c.out.carico.some(r => /settimana centrale del blocco, muscolo prioritario/.test(r.motivo)));
+    assert.ok(adulto, 'un caso dove RIC-01 scatta per un adulto');
+    const motivi = (eta) => {
+      const app = caricaApp({ ora: ORA });
+      costruisciStato(app, adulto.spec);
+      app.profilo(Object.assign({}, PROFILI.intermedio, { age: eta }));
+      const r = ES.map(es => app.dati(app.chiama('caricoProssimo', es.nome, es.kg, es.reps, es.sets)));
+      return r;
+    };
+    const ric01 = r => r.some(x => /settimana centrale del blocco, muscolo prioritario/.test(x.motivo));
+    const ric02 = r => r.some(x => /mancava solo l ultima serie/.test(x.motivo) || x.piuPausa);
+    [30, 18, undefined].forEach(eta => assert.ok(ric01(motivi(eta)), 'RIC-01 scatta con eta ' + eta + ' (18 anni e adulto; eta non detta = adulto, invariante F.1 punto 10)'));
+    [13, 16, 17].forEach(eta => {
+      const r = motivi(eta), adultoR = motivi(30);
+      assert.ok(!ric01(r), 'RIC-01 non scatta a ' + eta + ' anni');
+      assert.ok(!ric02(r), 'RIC-02 non scatta a ' + eta + ' anni');
+      r.forEach((x, i) => assert.ok(x.sets <= adultoR[i].sets, eta + ' anni, ' + ES[i].nome + ': serie ' + x.sets + ' > adulto ' + adultoR[i].sets));
     });
   });
 
