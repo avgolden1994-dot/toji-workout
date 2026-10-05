@@ -5,15 +5,22 @@
    COACH ENGINE: costruzione del programma
    Dalla ricerca:
    - un blocco di lavoro dura 4-8 settimane, con uno SCARICO ogni 4-8;
-     ai principianti bastano blocchi corti (3 settimane + 1 di scarico)
+     il principiante non prudente fa 8 settimane con un solo scarico, all 8a
+     (PRN-03 ponte, registro B4: nei sani lo scarico a calendario non ha un
+     vantaggio provato); i prudenti (over 65, PAR-Q, minorenni) restano a 3+1
    - nello scarico si tagliano le serie del 30-50% e si alleggerisce il carico
    - piu obiettivi insieme: uno guida, gli altri correggono. Massimizzare
      tutto nello stesso blocco non funziona meglio che alternare.
+   Sicurezza e segnali (onda 0, W0-T5): RISCHIO e consentito sotto (SAF-01, SEL-11,
+   REC-04 ponte per il ginocchio, CAS-01 guardia degli attrezzi di casa).
    ============================================================ */
 
-/* Durata e struttura in base all esperienza */
-function strutturaProgramma(level) {
-  if (level === 'principiante') return { settimane: 8, blocco: 4 };    /* 2 blocchi da 3+1 */
+/* Durata e struttura in base all esperienza.
+   PRN-03 (ponte, D-P5): principiante = 8 settimane e scarico solo all 8a, SOLO per i programmi creati da ora
+   (un programma salvato tiene le sue fasi: stanno in prog.fasi). `prudente` (over 65, PAR-Q positivo, minorenne):
+   blocchi 3+1 come prima; chi chiama (buildProgram) deve passarlo: over65, PAR-Q positivo o eta tra 1 e 17 anni. */
+function strutturaProgramma(level, prudente) {
+  if (level === 'principiante') return prudente ? { settimane: 8, blocco: 4 } : { settimane: 8, blocco: 8 };   /* prudente: 2 blocchi da 3+1; altri: 7 di carico + 1 di scarico */
   if (level === 'avanzato') return { settimane: 12, blocco: 6 };       /* 2 blocchi da 5+1 */
   return { settimane: 12, blocco: 4 };                                 /* 3 blocchi da 3+1 */
 }
@@ -36,11 +43,42 @@ function attrezzoDi(nome) {
   return 'corpo';
 }
 
+/* Esercizi che un fastidio dichiarato toglie dal programma (regex sul nome).
+   SAF-01 (B25, buchi di RISCHIO): spalle + Pike Push-up; schiena + Front Squat, Rematore Presa Inversa (Yates).
+   SEL-11 (ponte): schiena + Sit-up, Russian Twist, Crunch a Terra (restano plank, dead bug, bird dog).
+   B13 (REC-04 ponte): ginocchia SENZA leg extension e leg press, coerente con SCALE_DOLORE.ginocchia (leg extension isometrica,
+   ampiezza senza dolore): il ginocchio dolente si modifica, non si toglie ogni lavoro per i quadricipiti. Resta fuori il resto
+   dello squat e degli affondi (vedi ECCEZIONI_RISCHIO per il solo squat a corpo libero). */
 const RISCHIO = {
-  spalle: /military|lento avanti|arnold|tirate al mento|dip|panca piana bilanciere|pullover|shoulder press/i,
-  ginocchia: /squat|affondi|leg extension|step-up|hack|bulgar|jump|salti|pistol/i,
-  schiena: /stacco|good morning|rematore con bilanciere|squat con bilanciere|hyperextension|t-bar/i
+  spalle: /military|lento avanti|arnold|tirate al mento|dip|panca piana bilanciere|pullover|shoulder press|pike/i,
+  ginocchia: /squat|affondi|step-up|hack|bulgar|jump|salti|pistol/i,
+  schiena: /stacco|good morning|rematore con bilanciere|squat con bilanciere|hyperextension|t-bar|front squat|rematore presa inversa|yates|sit-up|russian twist|crunch a terra/i
 };
+/* B33 (REC-04 ponte): con le ginocchia dolenti resta almeno un esercizio per i quadricipiti. Con le macchine c e la leg press; senza
+   (a casa, o in una palestra con solo pesi liberi) lo squat a corpo libero, ad ampiezza senza dolore (la nota e in SCALE_DOLORE), passa
+   anche se il regex dello squat lo toglierebbe: senza di lui i quadricipiti restano a zero (collaudo MIS-01). Wall Sit e leg extension
+   passano gia: non sono nel regex. quando(prefs): dove vale l eccezione (solo senza macchine: con le macchine non serve). */
+const ECCEZIONI_RISCHIO = { ginocchia: { nome: /^squat a corpo libero$/i, quando: p => senzaMacchine(p) } };
+function senzaMacchine(prefs) {
+  if (prefs.luogo === 'manubri' || prefs.luogo === 'corpo') return true;
+  return !!(prefs.attrezziPalestra && prefs.attrezziPalestra.length && prefs.attrezziPalestra.indexOf('macchine') === -1);
+}
+/* CAS-01 (guardia, B28): a casa (manubri o corpo libero) non si da per certo un attrezzo che il questionario non chiede.
+   L attrezzo vero e il campo di DETTAGLI (dettaglioEsercizio().att); finche l utente non lo dichiara (W2-T5) quegli esercizi non entrano.
+   La sbarra bassa o gli anelli (rematore inverso) restano a corpo libero: e l unica tirata orizzontale senza manubri, senza di lui
+   la schiena non si allena per niente (collaudo MIS-01:schiena, sev 4 contro SAF-04, sev 2); con i manubri c e il rematore. */
+const ATTREZZI_NON_DI_CASA = /^(sbarra|parallele|sedia romana|panca per lombari|panca a 45°|ruota addominale)$/i;
+const ATTREZZI_NON_CON_I_MANUBRI = /^(sbarra bassa o anelli)$/i;
+function attrezzoFisicoDi(nome) { const d = dettaglioEsercizio(nome); return d ? d.att : ''; }
+function attrezzoDiCasaMancante(nome, luogo) {
+  if (luogo !== 'manubri' && luogo !== 'corpo') return false;
+  const att = attrezzoFisicoDi(nome);
+  return ATTREZZI_NON_DI_CASA.test(att) || (luogo === 'manubri' && ATTREZZI_NON_CON_I_MANUBRI.test(att));
+}
+function eccezioneRischio(f, nome, prefs) {
+  const e = ECCEZIONI_RISCHIO[f];
+  return !!(e && e.nome.test(senzaEmoji(nome).trim()) && e.quando(prefs));
+}
 
 function consentito(nome, prefs) {
   const a = attrezzoDi(nome);
@@ -50,7 +88,8 @@ function consentito(nome, prefs) {
   if (/sbarra|trazioni/i.test(nome) && prefs.attrezziPalestra && prefs.attrezziPalestra.length && prefs.attrezziPalestra.indexOf('sbarra') === -1) return false;
   if (prefs.luogo === 'manubri' && (a === 'macchine' || a === 'bilanciere')) return false;
   if (prefs.luogo === 'corpo' && a !== 'corpo') return false;
-  return !(prefs.fastidi || []).some(f => RISCHIO[f] && RISCHIO[f].test(nome));
+  if (attrezzoDiCasaMancante(nome, prefs.luogo)) return false;   /* CAS-01 */
+  return !(prefs.fastidi || []).some(f => RISCHIO[f] && RISCHIO[f].test(nome) && !eccezioneRischio(f, nome, prefs));
 }
 
 /* Sostituto: SOLO con lo stesso muscolo bersaglio, o la stessa famiglia per i multiarticolari totali

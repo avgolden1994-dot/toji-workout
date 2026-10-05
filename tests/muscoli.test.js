@@ -1,9 +1,12 @@
 /* Muscolo bersaglio, "Macchinario occupato", "Esercizi alternativi" e sostituto: tutti allenano lo STESSO muscolo
    (i multiarticolari totali, come lo stacco da terra, la stessa famiglia: MULTIARTICOLARI_TOTALI).
-   Esegue il codice vero dell app in node (vm), senza browser. Lancio: npm test */
+   Esegue il codice vero dell app in node (vm), senza browser. Lancio: npm test
+   In fondo (W0-T6, dati degli esercizi): hinge, Stacco con Trap Bar, squat e leg press, Pullover con Manubrio, allungamento
+   (B15, B16, SEL-02, P10, P12, D-P8, D-P11). */
 const test = require('node:test'), assert = require('node:assert');
 const fs = require('fs'), path = require('path'), vm = require('vm');
 const R = path.join(__dirname, '..');
+const { caricaApp } = require('./aiuto-app');   /* l app intera (buildProgram): solo per le prove di W0-T6 in fondo */
 
 /* carica in un contesto isolato solo gli script che servono, con un document finto */
 function carica() {
@@ -49,7 +52,7 @@ test('ogni esercizio della libreria ha un muscolo bersaglio valido', () => {
 test('il bersaglio viene da DETTAGLI: sottogruppo di un muscolo solo, altrimenti il primo muscolo del focus', () => {
   const misti = ['Multiarticolari', 'Spinte', 'Aperture e isolamento', 'Glutei e femorali'];
   const eccezioni = ['Hammer Curl', 'Curl ai Cavi con Corda (Presa Martello)'];   /* focus brachiale e brachioradiale, sottogruppo Bicipiti */
-  const primo = { quadricipiti: /^quadricipiti/i, grande_gluteo: /^grande gluteo/i, femorali: /^femorali/i, deltoide_anteriore: /^deltoide anteriore/i,
+  const primo = { quadricipiti: /^quadricipiti/i, grande_gluteo: /^grande gluteo/i, femorali: /^femorali/i, deltoide_anteriore: /^deltoide anteriore/i, erettori: /^erettori spinali/i,
     petto_alto: /^gran pettorale \(fasci alti\)/i, petto_basso: /^gran pettorale \(fasci bassi\)/i, petto_medio: /^gran pettorale(?! \(fasci)/i };
   Object.keys(DETTAGLI).forEach(nome => {
     const r = DETTAGLI[nome], b = r[7];
@@ -129,8 +132,8 @@ test('multiarticolari totali: lo stacco da terra si scambia con chi allena tutta
     .forEach(n => assert.strictEqual(famiglia(nomeLib(n)), '', n));
   /* stacco rumeno e good morning restano distinti: non sono alternative l uno dell altro */
   assert.ok(alt('Stacco Rumeno').indexOf('Good Morning') === -1 && alt('Good Morning').indexOf('Stacco Rumeno') === -1);
-  /* un muscolo solo resta sul suo bersaglio: l Hyperextension (lombari) propone ancora lo stacco da terra, che allena anche i lombari */
-  assert.deepStrictEqual(alt('Hyperextension (Lombari)'), ['Stacco da Terra (Deadlift)']);
+  /* un muscolo solo resta sul suo bersaglio: l Hyperextension (lombari) propone ancora lo stacco da terra e quello con la trap bar (bersaglio erettori), che allenano anche i lombari */
+  assert.deepStrictEqual(alt('Hyperextension (Lombari)').sort(), ['Stacco con Trap Bar', 'Stacco da Terra (Deadlift)']);
   /* schiena delicata: tutti gli stacchi sono a rischio, nessun sostituto (lo stacco resta dov e) */
   assert.strictEqual(g('sostituto')(nomeLib('Stacco da Terra (Deadlift)'), Object.assign(PREFS(), { fastidi: ['schiena'] }), []), null);
   /* nella tendina: «Stesso lavoro», non un muscolo solo */
@@ -268,4 +271,153 @@ test('sostituto: rispetta usati, odiati e la preferenza macchine o pesi liberi, 
   /* i graditi contano solo tra gli esercizi dello stesso muscolo */
   const gradito = g('alternativeStessoMuscolo')(nome, PREFS(), [], { max: 99 }).pop().ex.name;
   assert.strictEqual(bersaglio(g('sostituto')(nome, Object.assign(PREFS(), { graditi: [gradito] }), []).name), bersaglio(nome));
+});
+
+/* ============================================================================================================
+   W0-T6 · Dati degli esercizi (B15, B16, SEL-02, P10, P12, D-P8, D-P11)
+   ============================================================================================================ */
+
+test('B15: hip thrust e ponte glutei non sono hinge (spinte d anca da supini), stacchi e hyperextension si', () => {
+  const s = g('schemaDi');
+  ['Hip Thrust', 'Hip Thrust alla Macchina', 'Ponte Glutei', 'Ponte Glutei a una Gamba'].forEach(n => assert.strictEqual(s(nomeLib(n)), null, n));
+  ['Stacco da Terra (Deadlift)', 'Stacco con Trap Bar', 'Stacco Sumo', 'Stacco Rumeno', 'Good Morning', 'Hyperextension (Lombari)', 'Hyperextension a 45° per Glutei']
+    .forEach(n => assert.strictEqual(s(nomeLib(n)), 'hinge', n));
+  /* l espressione dell hinge, da cui buildProgram pesca lo schema mancante, non li prende nemmeno */
+  const hinge = g('SCHEMI_MOV').find(x => x[0] === 'hinge')[1];
+  ['Hip Thrust', 'Ponte Glutei', 'Ponte Glutei a una Gamba', 'Hip Thrust alla Macchina'].forEach(n => assert.ok(!hinge.test(n), n));
+  /* gli altri schemi non cambiano */
+  assert.strictEqual(s(nomeLib('Squat con Bilanciere')), 'squat');
+  assert.strictEqual(s(nomeLib('Lat Machine')), 'tirataV');
+});
+
+test('B15: ogni scheda da palestra senza fastidi ha uno stacco vero (l hip thrust da solo non basta a contare l hinge)', () => {
+  const app = caricaApp({ ora: '2026-10-05T12:00:00' });
+  assert.strictEqual(app.chiama('schemaDi', '🍑 Hip Thrust'), null);
+  let n = 0;
+  ['principiante', 'intermedio', 'avanzato'].forEach(level => [3, 4, 5].forEach(days => [['massa'], ['forza'], ['glutei'], ['salute']].forEach(goals => [45, 90].forEach(minutes => {
+    const p = app.dati(app.chiama('buildProgram', { goals, level, days, minutes, luogo: 'palestra', fastidi: [], sex: 'F', age: 30, usaProfilo: false, seme: 'w0t6-' + (n++) }));
+    const nomi = [].concat(...p.sedute.map(sd => sd.esercizi.map(e => e.name)));
+    assert.ok(nomi.some(x => app.chiama('schemaDi', x) === 'hinge'), level + ' ' + days + ' giorni ' + goals + ' ' + minutes + ' min: nessun hinge vero (' + nomi.length + ' esercizi)');
+  }))));
+  assert.ok(n >= 70);
+});
+
+test('B16 e P12: squat e leg press non hanno i femorali tra i muscoli; gli adduttori sono tra quelli che lavorano', () => {
+  ['Squat con Bilanciere', 'Leg Press'].forEach(n => {
+    const d = g('dettaglioEsercizio')(nomeLib(n));
+    assert.ok(d.secondari.indexOf('femorali') === -1, n + ': femorali tra i secondari');
+    assert.ok(!/femorali/i.test(d.focus + ' ' + d.sec), n + ': femorali nel testo (' + d.focus + ' / ' + d.sec + ')');
+    assert.ok(d.secondari.indexOf('adduttori') !== -1 && /adduttori/i.test(d.focus), n + ': adduttori');
+    assert.strictEqual(d.bersaglio, 'quadricipiti', n);
+    assert.ok(/^quadricipiti/i.test(d.focus), n + ': il bersaglio resta il primo muscolo del focus');
+  });
+  assert.deepStrictEqual([...g('dettaglioEsercizio')(nomeLib('Squat con Bilanciere')).secondari].sort(), ['adduttori', 'erettori', 'grande_gluteo']);
+  assert.deepStrictEqual([...g('dettaglioEsercizio')(nomeLib('Leg Press')).secondari].sort(), ['adduttori', 'grande_gluteo']);
+  /* lo stacco rumeno (RDL) non cambia qui: i crediti per muscolo sono di W1-T2 */
+  assert.strictEqual(bersaglio('Stacco Rumeno'), 'grande_gluteo');
+  assert.deepStrictEqual([...g('dettaglioEsercizio')(nomeLib('Stacco Rumeno')).secondari].sort(), ['erettori', 'femorali']);
+});
+
+test('SEL-02 (a): Stacco con Trap Bar non e un esercizio dei quadricipiti; resta nella famiglia catena_totale', () => {
+  const n = nomeLib('Stacco con Trap Bar');
+  assert.notStrictEqual(bersaglio(n), 'quadricipiti');
+  assert.strictEqual(bersaglio(n), 'erettori', 'il bersaglio dello stacco da terra: come lui scambia solo con gli stacchi, e con l Hyperextension dei lombari');
+  assert.strictEqual(bersaglio(n), bersaglio('Stacco da Terra (Deadlift)'));
+  assert.strictEqual(famiglia(n), 'catena_totale');
+  assert.ok(g('dettaglioEsercizio')(n).secondari.indexOf('quadricipiti') !== -1, 'allena ancora i quadricipiti, come secondario');
+  /* nessun esercizio dei quadricipiti lo propone, in nessuna delle liste di alternative; mai come sostituto */
+  LIB.filter(e => bersaglio(e.name) === 'quadricipiti').forEach(e => {
+    assert.ok(!g('alternativeDi')(e.name, PREFS(), [], { max: 99 }).some(x => x.name === n), pulito(e.name) + ' propone lo Stacco con Trap Bar');
+    assert.ok(!alt(pulito(e.name)).some(x => /Trap Bar/.test(x)), pulito(e.name) + ' (macchinario occupato)');
+    assert.ok(!/Trap Bar/.test((g('sostituto')(e.name, PREFS(), []) || { name: '' }).name), pulito(e.name) + ' sostituto');
+  });
+  ['Leg Extension', 'Goblet Squat'].forEach(x => assert.ok(!alt(x).some(y => /Trap Bar/.test(y)), x));
+  /* lui scambia solo con gli altri stacchi da terra */
+  assert.deepStrictEqual(alt('Stacco con Trap Bar').sort(), ['Stacco Sumo', 'Stacco da Terra (Deadlift)']);
+});
+
+test('D-P11: Pullover con Manubrio allena i dorsali (petto secondario), gruppo schiena; le sue alternative sono tutte dorsali', () => {
+  const n = nomeLib('Pullover con Manubrio'), d = g('dettaglioEsercizio')(n), e = LIB.find(x => x.name === n);
+  assert.strictEqual(bersaglio(n), 'dorsali');
+  assert.strictEqual(e.group, 'schiena');
+  assert.strictEqual(d.sub, 'Dorsali · larghezza');
+  assert.ok(d.secondari.indexOf('petto_medio') !== -1 && d.secondari.indexOf('tricipiti') !== -1);
+  assert.ok(/^gran dorsale/i.test(d.focus));
+  for (const a of [alt('Pullover con Manubrio'), g('alternativeDi')(n, PREFS(), []).map(x => pulito(x.name)), g('alternativeDi')(n, PREFS(), [], { max: 99 }).map(x => pulito(x.name))]) {
+    assert.ok(a.length >= 3, a.join(', '));
+    a.forEach(x => assert.strictEqual(bersaglio(nomeLib(x)), 'dorsali', 'Pullover con Manubrio -> ' + x));
+    assert.ok(!a.some(x => /panca|croci|piegamenti|chest|pectoral|dip/i.test(x)), a.join(', '));
+  }
+  assert.ok(g('alternativeDi')(nomeLib('Pullover ai Cavi'), PREFS(), [], { max: 99 }).some(x => x.name === n), 'il pullover ai cavi lo propone');
+  /* e non e piu un isolamento del petto: ne la panca ne le croci lo propongono, e non entra nel posto isoPetto */
+  ['Panca Piana Bilanciere', 'Croci su Panca Manubri', 'Pectoral Machine (Butterfly)'].forEach(x => assert.ok(!alt(x).some(y => /Pullover/.test(y)), x));
+  assert.strictEqual(g('SLOT_DEF').isoPetto(e), false);
+  /* il sottogruppo di ogni esercizio sta nel suo gruppo (la schermata Gruppi li mostra cosi) */
+  LIB.forEach(x => assert.ok(SOTTOGRUPPI[x.group].indexOf(g('dettaglioEsercizio')(x.name).sub) !== -1, x.name + ': ' + x.group + ' / ' + g('dettaglioEsercizio')(x.name).sub));
+  const org = g('organizzaEsercizi')([e], null);
+  assert.strictEqual(JSON.stringify(org.map(s => [s.sez, s.gruppi.map(gr => [gr.gruppo, gr.sottogruppi.map(s2 => s2.sub)])])), JSON.stringify([['L', [['schiena', ['Dorsali · larghezza']]]]]));
+});
+
+test('D-P11: il pullover coi manubri e solo la riserva della tirata verticale (non sostituisce trazioni e lat, ne in palestra ne con la sbarra)', () => {
+  /* come schema: non conta come tirata verticale (altrimenti prenderebbe il posto di trazioni e lat, e strBilancia lo conterebbe come tirata) */
+  assert.strictEqual(g('schemaDi')(nomeLib('Pullover con Manubrio')), null);
+  assert.strictEqual(g('SLOT_DEF').tirataV(LIB.find(e => e.name === nomeLib('Pullover con Manubrio'))), false);
+  assert.ok(g('SCHEMI_MOV').find(x => x[0] === 'tirataV')[1].test('Pullover con Manubrio'), 'e nell elenco da cui si pesca lo schema mancante');
+  const app = caricaApp({ ora: '2026-10-05T12:00:00' });
+  const prova = (extra, i) => {
+    const p = app.dati(app.chiama('buildProgram', Object.assign({ goals: ['massa'], level: 'intermedio', days: 4, minutes: 60, luogo: 'palestra', fastidi: [], sex: 'M', age: 30, usaProfilo: false, seme: 'w0t6-' + i }, extra)));
+    const nomi = [].concat(...p.sedute.map(sd => sd.esercizi.map(e => pulito(e.name))));
+    return { pullover: nomi.indexOf('Pullover con Manubrio') !== -1, vera: nomi.some(x => app.chiama('schemaDi', x) === 'tirataV'), note: p.note || [] };
+  };
+  for (let i = 0; i < 6; i++) {
+    /* palestra completa o con la sbarra o con le sole macchine: trazioni o lat, mai il pullover */
+    [{}, { attrezziPalestra: ['bilanciere', 'manubri', 'sbarra'] }, { attrezziPalestra: ['macchine'] }].forEach(extra => {
+      const r = prova(extra, i);
+      assert.strictEqual(r.pullover, false, JSON.stringify(extra));
+      assert.strictEqual(r.vera, true, JSON.stringify(extra));
+    });
+    /* niente sbarra e niente macchine: nessuna tirata verticale possibile, il pullover la sostituisce, con la nota dello schema mancante */
+    const senza = prova({ attrezziPalestra: ['bilanciere', 'manubri'] }, i);
+    assert.strictEqual(senza.vera, false);
+    assert.strictEqual(senza.pullover, true);
+    assert.ok(senza.note.some(x => /Pullover con Manubrio/.test(x)), senza.note.join(' | '));
+  }
+});
+
+test('P10 e D-P8: allungamento (IN_ALLUNGAMENTO): niente «da seduto» generico, niente scambio ne +1,5 per le croci', () => {
+  const a = g('inAllungamento');
+  /* provati: sopra la testa, leg curl seduto, curl su panca inclinata e Bayesiano (bicipite allungato), affondi col piede rialzato */
+  ['Estensione Tricipiti sopra la Testa ai Cavi', 'Estensione Tricipiti sopra la Testa con Manubrio', 'Leg Curl Seduto', 'Curl su Panca Inclinata', 'Curl Bayesiano ai Cavi',
+    'Affondi al Multipower (Piede Rialzato)'].forEach(n => assert.strictEqual(a(nomeLib(n)), true, n));
+  /* RIC-03 (accesa): schiena e glutei */
+  ['Pullover con Manubrio', 'Affondi Bulgari', 'Stacco Rumeno'].forEach(n => assert.strictEqual(a(nomeLib(n)), true, n));
+  /* le croci stanno alla pari, ai cavi (anche da seduto) e coi manubri: nessuna e «in allungamento» */
+  ['Croci ai Cavi', 'Croci ai Cavi da Seduto', 'Croci su Panca Manubri', 'Croci ai Cavi dal Basso', 'Croci ai Cavi Alti (Parte Bassa)', 'Pectoral Machine (Butterfly)']
+    .forEach(n => assert.strictEqual(a(nomeLib(n)), false, n));
+  /* bicipiti: Scott e Spider non lo sono, il curl inclinato e il Bayesiano si */
+  ['Curl su Panca Scott', 'Curl alla Macchina (Scott)', 'Spider Curl', 'Curl Bilanciere Bicipiti', 'Hammer Curl'].forEach(n => assert.strictEqual(a(nomeLib(n)), false, n));
+  /* nessun pezzo che prende un esercizio per sbaglio, nessun pezzo che non cattura nulla */
+  assert.ok(!g('IN_ALLUNGAMENTO').source.includes('da seduto'));
+  assert.ok(!g('IN_ALLUNGAMENTO').source.includes('panca inclinata \\('));
+  assert.ok(!g('IN_ALLUNGAMENTO_NUOVI').source.includes('croci'));
+  /* RIC-03 spenta: solo la lista vecchia */
+  const prima = c.regolaAttiva;
+  c.regolaAttiva = () => false;
+  try {
+    ['Pullover con Manubrio', 'Affondi Bulgari', 'Stacco Rumeno'].forEach(n => assert.strictEqual(a(nomeLib(n)), false, n + ' (RIC-03 spenta)'));
+    assert.strictEqual(a(nomeLib('Curl Bayesiano ai Cavi')), true);
+    assert.strictEqual(g('scambiAllungamento')().length, 3);
+  } finally { c.regolaAttiva = prima; }
+});
+
+test('SEL-02 (b) e D-P8: nessuno scambio per allungamento attraversa i gruppi o i muscoli (ne croci ne pullover)', () => {
+  const coppie = g('scambiAllungamento')();
+  assert.strictEqual(coppie.length, 3);
+  assert.strictEqual(g('SCAMBI_ALLUNGAMENTO_NUOVI').length, 0);
+  coppie.forEach(([da, a]) => {
+    assert.ok(nomeLib(pulito(da)) && nomeLib(pulito(a)), da + ' -> ' + a + ': fuori libreria');
+    assert.strictEqual(bersaglio(da), bersaglio(a), da + ' -> ' + a + ': muscolo diverso');
+    assert.strictEqual(LIB.find(e => pulito(e.name) === da).group, LIB.find(e => pulito(e.name) === a).group, da + ' -> ' + a + ': gruppo diverso');
+    assert.ok(!/croci|pullover/i.test(da + a), da + ' -> ' + a);
+  });
 });

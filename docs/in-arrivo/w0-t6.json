@@ -1,0 +1,18 @@
+{
+  "task": "W0-T6",
+  "regole": [
+    {
+      "capitolo": 19,
+      "sostituisce": true,
+      "riga": "- **RIC-03** (spegnibile) posizione allungata per schiena e glutei (Maeo 2021-2023, Pedrosa 2025): pullover coi manubri, affondi bulgari e stacco rumeno contano come esercizi in allungamento (preferiti nella scelta). Le croci, ai cavi e coi manubri, stanno alla pari: niente +1,5 per le croci su panca e nessuno scambio tra «Croci ai Cavi» e «Croci su Panca Manubri» (D-P8, 2026-10-05). Nessuna coppia di scambio nuova: «Pullover ai Cavi» -> «Pullover con Manubrio» è tolta (SEL-02: cambiava gruppo)."
+    },
+    {
+      "capitolo": 9,
+      "riga": "- **SEL-02** (regola dei dati, sempre attiva) un esercizio non si propone al posto di uno di un altro muscolo: «Stacco con Trap Bar» non è più nella classe dei quadricipiti (bersaglio erettori come lo stacco da terra, quadricipiti tra i secondari, resta nella famiglia `catena_totale` con stacco da terra e sumo); «Pullover con Manubrio» è dei dorsali (D-P11: bersaglio dorsali, petto e tricipite secondari, gruppo schiena) e non propone né è proposto dalla panca o dalle croci; niente coppie di scambio per allungamento che attraversano gruppi (biomeccanica P2, P6). Insieme: hip thrust e ponte glutei non contano come hinge (B15), squat e leg press senza femorali tra i muscoli e con gli adduttori tra quelli che lavorano (B16, P12), `IN_ALLUNGAMENTO` senza «da seduto» generico (P10)."
+    }
+  ],
+  "mappaAgenti": [
+    "riserve degli schemi: `SCHEMI_RISERVA` in js/coach/programma/schemi.js. Il pullover coi manubri (dorsali) sta nell'elenco della tirata verticale ma `schemaDi` non lo conta come tirata verticale: lo pesca per ultimo il blocco «schemi mancanti» di `buildProgram` (casa senza sbarra, palestra senza sbarra né macchine). Hip thrust e ponte glutei non sono più nell'hinge (B15)"
+  ],
+  "nota": "W0-T6. (1) tests/browser/regole-nuove.js, prova RIC-03 (riga 42 e 54): dopo D-P8 «Croci su Panca Manubri» non è più in allungamento; l'atteso diventa false,true,true,false (e conviene aggiungere le croci ai cavi: false). Non è un file del task: lo aggiorna INT-0. (2) js/dati/schede-tecniche.js, TECNICA: «Squat con Bilanciere» e «Leg Press» hanno ancora «ischiocrurali» tra i secondari nel testo `m` (P12): serve cambiare il testo e le voci en/es/de «Secondari: adduttori, ischiocrurali...»; non è un file del task. (3) PAT-01:hinge in palestra non è 0 (34 programmi su 10.800, 0,3% pesata, contro 2 e 0,1%): sono tutti con la schiena dolente e senza cavi ne macchine, dove RISCHIO toglie ogni hinge vero; prima il generatore aggiungeva un hip thrust perché contava come hinge. Rimedio: in buildProgram («schemi mancanti», ricette.js) ripiegare su hip thrust o ponte glutei solo se non ci sono hinge consentiti e nessuno dei due è già in settimana, oppure far valere hip thrust come hinge in PAT-01 (INT-0) solo in quel caso. (4) Nuova area SEL: riga nella tabella del cap. 1 e nel cap. 20 della mappa (e il capitolo 16: 140 esercizi, non 139); SEL-02 va alla riga «tecnico» della tabella della squadra (non esiste ancora: la crea W1-T1, per questo manca il campo `squadra`). (5) PRG-23 (Scott/Spider al posto del curl inclinato) è di W0-T2, BIO-05 (+0,5 alle croci ai cavi) di W0-T5. Nessuna frase nuova: i testi di focus cambiati («Quadricipiti, glutei, adduttori», «Gran dorsale, gran pettorale», «Erettori spinali, glutei, quadricipiti») si traducono a pezzi con voci già presenti."
+}

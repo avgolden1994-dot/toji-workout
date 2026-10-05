@@ -31,9 +31,11 @@ function cueEsercizio(nome) {
   if (sch === 'squat' && t.caviglia === 'no') righe.push('Caviglia rigida: talloni su due dischi sottili.');
   return righe;
 }
+/* REC-06 parte a (B31): niente apnea con PAR-Q positivo e, come nel resto del coach (cauto = PAR-Q o 65 anni e oltre),
+   anche per chi ha 65 anni o piu. La parte b (pressione alta dichiarata) e bloccata: non c e nessun campo nuovo. */
 function respiroPer(tipo) {
   const p = getProfile() || {};
-  if (tipo === 'compound' && p.parq) return 'Non trattenere il fiato: espira mentre sollevi, inspira in discesa. Carichi moderati, 8–12 ripetizioni.';
+  if (tipo === 'compound' && (p.parq || Number(p.age) >= 65)) return 'Non trattenere il fiato: espira mentre sollevi, inspira in discesa. Carichi moderati, 8–12 ripetizioni.';
   return RESPIRO[tipo];
 }
 /* cedimento solo su varianti stabili: pesi liberi multiarticolari almeno 1 RIR */
@@ -103,7 +105,8 @@ function bonusBiomecc(x, slot, test, fastidi) {
   if (slot === 'squat' && test.caviglia === 'no') { if (/hack|leg press|pendulum|goblet|multipower/i.test(n)) v += 2; if (/squat con bilanciere|front squat/i.test(n)) v -= 2; }
   if (slot === 'spintaV' && (test.spalle === 'no' || fastidi.indexOf('spalle') !== -1)) { if (/landmine/i.test(n)) v += 3; if (/military|lento avanti|arnold/i.test(n)) v -= 3; }
   if (slot === 'spintaO' && fastidi.indexOf('spalle') !== -1) { if (/manubri|chest press|presa stretta/i.test(n)) v += 1.5; }
-  if (slot === 'isoPetto' && /cavi/i.test(n)) v += 0.5;   /* croci ai cavi: tensione su tutto il ROM (Menno) */
+  /* croci: cavi e manubri alla pari (D-P8, B32): il +0,5 dei cavi (tensione su tutto il ROM, Menno) contraddiceva il +1,5 dei manubri
+     (allungamento, RIC-03). Tra le croci decide l ordine di PRIORI, non un punteggio che l altra regola smentisce. */
   if (slot === 'isoPolp' && /in piedi/i.test(n)) v += 1;  /* in piedi: gastrocnemio cresce il doppio (Kinoshita 2023) */
   return v;
 }

@@ -17,6 +17,16 @@
      il doppio: soglie dimezzate.
    - Scarico mirato (Dr. Muscle): massimale stimato in calo per due
      sedute di fila su un esercizio = -10% e meta serie solo li.
+   Onda 0 del coach v2 (W0-T4, docs/piano-coach-v2.md E.1):
+   - MES-02 (ponte) RIR di partenza per livello: principiante 3-4 nelle prime due settimane e poi 2-3, mai 0;
+     intermedio e avanzato almeno 2 nella prima settimana del blocco e almeno 1 sui pesanti col bilanciere (anche con rirSett).
+   - MES-06 carico di riferimento nello scarico: la stessa dose su un carico fisso, uguale in tutte le sedute della settimana,
+     e la prima seduta dopo lo scarico riparte da li (con un RIR in piu); prima i carichi si componevano (60, 54, 48,5 kg).
+   - MES-10 lo scarico fuori dalle analisi (inScarico): il massimale in calo (CAR-08) non lo conta e vuole il 3% (il rumore del RIR).
+   - CAR-06 (ETA-18) aumenti dimezzati anche dopo i 65 anni, come dice il capitolo 14 della mappa.
+   - CAR-07 (PCO-01, riga del principiante) lo schema 5x3 solo con obiettivo forza; altrimenti stesso peso, 30 secondi in piu, poi -5%.
+   - CAR-14 (B10, ponte) la taratura del RIR non impara piu dal confronto tra serie diverse: ogni taratura dimezza la correzione
+     appresa (rirBias) e non si fa a principianti, minori, over 65, modalita prudente e sul core.
    ============================================================ */
 /* tecniche speciali che il coach assegna (quando e perche: vedi Opzioni > Il coach) */
 const TECNICHE = {
@@ -47,25 +57,60 @@ function tipoCarico(nome) {
   return BIL_PESANTI.test(senzaEmoji(nome)) ? 'pesante' : 'macchina';
 }
 const RIR_TIPO = { pesante: [1, 3], macchina: [0, 2], isolamento: [0, 1] };
-function rirBersaglio(nome) {
-  const r = rirBersaglioBase(nome);
+/* MES-02 (ponte dell onda 0): una tabella sola per il RIR di partenza (registro B5; collaudo RIR-02 e RIR-03). Principiante: 3-4
+   ripetizioni in riserva nelle prime due settimane e 2-3 dopo, mai 0 (le stime del RIR sbagliano di circa una ripetizione: Halperin
+   2022). Intermedio e avanzato: almeno 2 nella prima settimana del blocco, su ogni tipo di esercizio, e almeno 1 sui fondamentali
+   pesanti col bilanciere anche con la rampa dell avanzato (rirSett). Convenzione + Moderata; la tabella completa e di W2-T4. */
+const MES_RIR = { principianteInizio: [3, 4], principianteDopo: [2, 3], principianteSettimaneInizio: 2, pisoPrimaSettimana: 2, pisoPesante: 1 };
+/* prima settimana di un blocco (1, 1 + blocco, ...); senza programma o senza la durata del blocco conta solo la settimana 1 */
+function primaSettimanaBlocco(p, numero) {
+  if (!(numero >= 1)) return false;
+  return numero === 1 || !!(p && p.blocco > 0 && (numero - 1) % p.blocco === 0);
+}
+function inDeficitCalorico() {
+  const p = getProfile() || {};
+  const goals = p.goals || (p.goal ? [p.goal] : []);
+  return (p.fase || (goals[0] === 'dimagrimento' ? 'deficit' : '')) === 'deficit';
+}
+/* PRN-01 / MES-02: il -1 RIR dell esigenza (>= 1,15) non porta mai sotto il pavimento del livello: ai principianti e in dimagrimento
+   non si applica (99 = non si tocca), nella prima settimana del blocco non scende sotto 2 */
+function pisoRirEsigenza(sett) {
+  if (!regolaAttiva('MES-02')) return 0;
+  if (inDeficitCalorico() || profiloCoach().livello === 'principiante') return 99;
+  const n = sett || (settimanaProgramma() || {}).numero || 0;
+  return primaSettimanaBlocco(getProgramma(), n) ? MES_RIR.pisoPrimaSettimana : 0;
+}
+/* sett = numero di settimana del programma (1..N): serve a rifare il bersaglio di una seduta passata (MES-11); senza, quella di oggi */
+function rirBersaglio(nome, sett) {
+  const r = rirBersaglioBase(nome, sett);
   /* chi si ferma alla prima fatica si allena lontano dal cedimento (PRETIE-Q): stessa crescita fino a 3-4 RIR */
   let piu = psicoCoach((getProfile() || {}).psico).intensita === 'bassa' ? 1 : 0;
   const mo = momentoAttivo();
   if (mo && !mo.scaduto) piu += mo.rir || 0;
   if (typeof rirExtraIntensita === 'function') piu += rirExtraIntensita(nome);   /* INT-03/04: BIA con bandiere di prudenza, prima volta con l esercizio */
   let out = piu ? [Math.min(4, r[0] + piu), Math.min(5, r[1] + piu)] : r.slice();
-  if (!piu && esigenzaCoach() >= 1.15 && tipoCarico(nome) !== 'pesante') { const a = Math.max(0, out[0] - 1); out = [a, Math.max(a, out[1] - 1)]; }
+  if (!piu && esigenzaCoach() >= 1.15 && tipoCarico(nome) !== 'pesante') {
+    const a = Math.max(0, out[0] - 1);
+    if (a >= pisoRirEsigenza(sett)) out = [a, Math.max(a, out[1] - 1)];
+  }
   if (!stabile(nome) && out[0] < 1) out = [1, Math.max(2, out[1])];
   return out;
 }
-function rirBersaglioBase(nome) {
+function rirBersaglioBase(nome, sett) {
   const pc = profiloCoach();
   if (pc.prudente || pc.eta >= 65) return [3, 4];
+  const p = getProgramma(), numero = sett || ((p && settimanaProgramma()) || {}).numero || 0;
+  const nuova = regolaAttiva('MES-02'), tipo = tipoCarico(nome);
+  /* principiante: 3-4 nelle prime due settimane, poi 2-3, mai 0 (MES-02, PRN-01) */
+  if (nuova && pc.livello === 'principiante') return (numero >= 1 && numero <= MES_RIR.principianteSettimaneInizio ? MES_RIR.principianteInizio : MES_RIR.principianteDopo).slice();
   /* avanzati: RIR che scende nelle settimane del blocco (RP) */
-  const p = getProgramma(), st = p && p.rirSett ? settimanaProgramma() : null;
-  if (st && st.numero >= 1 && st.numero <= p.rirSett.length) { const r = p.rirSett[st.numero - 1]; return [r, r + 1]; }
-  return RIR_TIPO[tipoCarico(nome)];
+  let r = RIR_TIPO[tipo];
+  if (p && p.rirSett && numero >= 1 && numero <= p.rirSett.length) { const x = p.rirSett[numero - 1]; r = [x, x + 1]; }
+  if (!nuova) return r;
+  r = r.slice();
+  if (tipo === 'pesante' && r[0] < MES_RIR.pisoPesante) r = [MES_RIR.pisoPesante, Math.max(r[1], MES_RIR.pisoPesante + 1)];
+  if (primaSettimanaBlocco(p, numero) && r[0] < MES_RIR.pisoPrimaSettimana) r = [MES_RIR.pisoPrimaSettimana, Math.max(r[1], MES_RIR.pisoPrimaSettimana + 1)];
+  return r;
 }
 /* scarico dosato sul bisogno (Bell 2024): poca, media o molta fatica */
 function livelloFatica() {
@@ -80,19 +125,69 @@ function livelloFatica() {
 }
 const DOSE_SCARICO = { bassa: { serie: 0.65, carico: 0.95, t: 'volume -35%' }, media: { serie: 0.5, carico: 0.9, t: 'volume -50% e carico -10%' }, alta: { serie: 0.3, carico: 0.9, t: 'volume -70% e carico -10%' } };
 function storicoProntezza() { try { return JSON.parse(localStorage.getItem('coach_plus_prontezza_storia_' + currentMode) || '[]'); } catch (e) { return []; } }
-function rpeBersaglio(nome) { const r = rirBersaglio(nome); return 10 - (r[0] + r[1]) / 2; }
+function rpeBersaglio(nome, sett) { const r = rirBersaglio(nome, sett); return 10 - (r[0] + r[1]) / 2; }
 function testoRir(nome) { const r = rirBersaglio(nome); return r[1] === 1 && r[0] === 0 ? 'fino a 0–1 ripetizioni in riserva' : 'lascia ' + r[0] + '–' + r[1] + ' ripetizioni in riserva'; }
 /* massimale stimato (Epley) solo da serie fino a 12 ripetizioni */
 function e1rmSerie(x) { const w = Number(x.weight) || 0, r = Number(x.reps) || 0; if (!w || !r || r > 12) return 0; return w * (1 + r / 30); }
 function e1rmSeduta(ex) { const v = (ex.sets || []).filter(x => x.done).map(e1rmSerie); return v.length ? Math.max.apply(null, v) : 0; }
-function sessioniConData(nome, n) {
-  const out = [];
+/* B11 / MES-10: una seduta fatta in una settimana di scarico (o un esercizio scaricato dal coach) non e un dato di forma e non conta nelle
+   analisi (esigenza, esercizi fermi, verdetto del ciclo, carico mirato). La fase e scritta nella seduta dall onda 0 (settimana.fase e
+   obiettivo.coachTipo, MES-09); per le sedute piu vecchie si ricostruisce dalle fasi del programma attuale e dalla data: se il programma
+   di allora non c e piu, la seduta conta come di carico. */
+const PARAM_ANALISI = {
+  rumoreE1rm: 0.03,           /* MES-10/MES-12: sotto il 3% una differenza di massimale non si distingue dall errore di stima del RIR (circa 1 ripetizione, Epley) */
+  giorniRiferimento: 28,      /* MES-06: il carico di riferimento vale se l ultima seduta di carico e di non oltre 4 settimane fa */
+  giorniDopoScarico: 14,      /* MES-10: nessun nuovo scarico del coach entro due settimane dall ultimo */
+  prontezzaRipresa: 60,       /* MES-06: ripresa dopo lo scarico al 95% se la prontezza media degli ultimi giorni e sotto questa soglia */
+  ripresaPrudente: 0.95,
+  saltoMaxRipresa: 1.3        /* MES-06: dopo uno scarico (anche vecchio, con carichi composti) non si torna a oltre il 130% dell ultima seduta in un colpo: si risale in due passi */
+};
+/* p0 = il programma gia letto (chi scorre tutto lo storico lo legge una volta sola) */
+function faseDelGiorno(d, p0) {
+  const p = p0 || getProgramma();
+  if (!regolaAttiva('MES-10') || !p || !p.inizio || !p.fasi || !d) return null;
+  const w = Math.floor(giorniTra(daYmd(p.inizio), lunediDi(d)) / 7);
+  return w >= 0 && w < p.fasi.length ? p.fasi[w] : null;
+}
+function settimanaDellaSeduta(h) {
+  if (h && h.settimana && h.settimana.numero >= 1) return Number(h.settimana.numero);
+  const p = getProgramma(), d = h ? dataSessione(h) : null;
+  if (!p || !p.inizio || !d) return 0;
+  const w = Math.floor(giorniTra(daYmd(p.inizio), lunediDi(d)) / 7) + 1;
+  return w >= 1 && w <= (p.settimane || 0) ? w : 0;
+}
+function inScarico(h, ex, p0) {
+  if (!h || !regolaAttiva('MES-10')) return false;
+  if (ex && ex.obiettivo && ex.obiettivo.coachTipo === 'scarico') return true;
+  if (h.settimana && h.settimana.fase) return /^scarico/.test(String(h.settimana.fase));
+  return faseDelGiorno(dataSessione(h), p0) === 'scarico';
+}
+function sessioniConData(nome, n, senzaScarico) {
+  const out = [], prog = getProgramma();
   loadHistory().forEach(h => {
     if (out.length >= n || !h.sessione || h.interrotta) return;
     const ex = h.sessione.find(e => e.name === nome);
-    if (ex) out.push({ ex: ex, data: dataSessione(h) });
+    if (!ex) return;
+    const scarico = inScarico(h, ex, prog);
+    if (senzaScarico && scarico) return;
+    out.push({ ex: ex, data: dataSessione(h), scarico: scarico });
   });
   return out;
+}
+/* MES-06: carico di riferimento = il carico massimo dell ultima seduta di quell esercizio che non era di scarico, entro 28 giorni
+   (se c e, lo da caricoRiferimento() di progressivo.js, W0-T3; 0 se non c e). Lo scarico e la ripresa si calcolano su questo. */
+function riferimentoNonScarico(nome, lista) {
+  if (typeof caricoRiferimento === 'function') { try { const r = Number(caricoRiferimento(nome)); if (r > 0) return r; } catch (e) {} }
+  const s = (lista || sessioniConData(nome, 40)).filter(x => !x.scarico)[0];
+  if (!s || !s.data || giorniTra(s.data, new Date()) > PARAM_ANALISI.giorniRiferimento) return 0;
+  const pesi = s.ex.sets.filter(x => x.done).map(x => Number(x.weight) || 0);
+  return pesi.length ? Math.max.apply(null, pesi) : 0;
+}
+/* MES-06: la seduta di questo esercizio prima di oggi era di scarico: oggi si riparte dal riferimento, con un RIR in piu (usata da rirExtraIntensita) */
+function ripresaDopoScarico(nome) {
+  if (!coachAttivo() || !regolaAttiva('MES-06') || isTimeBased(nome)) return false;
+  const s = sessioniConData(nome, 1)[0];
+  return !!(s && s.scarico && !((settimanaProgramma() || {}).fase === 'scarico'));
 }
 function rientroDopoPausa(giorni, eta) {
   const g = eta >= 65 ? giorni * 2 : giorni;
@@ -103,12 +198,18 @@ function rientroDopoPausa(giorni, eta) {
   return { f: 0.5, t: '-50%' };
 }
 const fmtKg = (x) => String(Math.round(x * 10) / 10);
+/* l obiettivo e la forza? (il programma attuale, altrimenti il profilo) */
+function obiettivoForza() {
+  const pr = getProgramma(), p = getProfile() || {};
+  return ((pr && pr.goals && pr.goals[0]) || (p.goals && p.goals[0]) || p.goal) === 'forza';
+}
 
 function caricoProssimoBase(nome, base, repsTarget, setsBase) {
   const sett = settimanaProgramma();
   const scarico = sett && sett.fase === 'scarico';
   const pc = profiloCoach();
-  const prudente = pc.sonnoMale || pc.prudente;
+  const over65 = pc.eta >= 65;   /* ETA-18: gli aumenti si dimezzano anche dopo i 65 anni, come dice il capitolo 14 della mappa */
+  const prudente = pc.sonnoMale || pc.prudente || over65;
   const sess = ultimeSessioni(nome, 2);
   const dose = scarico ? DOSE_SCARICO[livelloFatica()] : null;
   const sets = scarico ? Math.max(2, Math.round((setsBase || 3) * dose.serie)) : (setsBase || 3);
@@ -127,20 +228,35 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase) {
   const pesoUltimo = fatteUltima.length ? Math.max.apply(null, fatteUltima.map(x => Number(x.weight) || 0)) : base;
   /* prime sedute con questo esercizio: il carico di partenza e una stima, quindi si corregge piu in fretta */
   const calibrazione = ultimeSessioni(nome, 3).length < 3;
+  const lista = sessioniConData(nome, 40);   /* una sola lettura dello storico: le ultime sedute, le ultime di carico e il riferimento */
+  const sd = lista.slice(0, 3);              /* allineata a sess: stesse sedute, stesso ordine */
   const e1 = esito(sess[0], repsTarget);
-  const e2 = sess[1] ? esito(sess[1], repsTarget) : null;
+  const e2 = sess[1] && !(sd[1] && sd[1].scarico) ? esito(sess[1], repsTarget) : null;   /* una seduta di scarico non conta come mancata */
   const freno = frenoBia();
 
-  if (scarico) return { weight: arrotonda(pesoUltimo * dose.carico), reps: repsTarget, sets: sets, tipo: 'scarico',
-    motivo: 'Settimana di scarico: ' + dose.t + ', per recuperare e ripartire piu forte (mai stop totale: la forza calerebbe)' };
+  /* MES-06: lo scarico si calcola sul carico di riferimento (l ultima seduta non di scarico), non sull ultima seduta: cosi la dose e la
+     stessa in tutte le sedute della settimana (prima 60 -> 54 -> 48,5 -> 43,5 kg) */
+  const rif = regolaAttiva('MES-06') ? riferimentoNonScarico(nome, lista) : 0;
+  if (scarico) return { weight: arrotonda((rif > 0 ? rif : pesoUltimo) * dose.carico), reps: repsTarget, sets: sets, tipo: 'scarico',
+    motivo: 'Settimana di scarico: ' + dose.t + ', per recuperare e ripartire piu forte (mai stop totale: la forza calerebbe)' + (rif > 0 ? ' \u2022 sul carico di riferimento (' + fmtKg(rif) + ' kg), lo stesso in tutte le sedute della settimana' : '') };
+
+  /* MES-06: la seduta di prima era di scarico: oggi si riparte dal carico di riferimento (5% in meno con la prontezza bassa o in prudenza) */
+  const dopoScarico = !!(sd[0] && sd[0].scarico) && rif > 0;
+  const pesoBase = dopoScarico ? rif : pesoUltimo;
 
   /* rientro dopo una pausa su questo esercizio */
-  const sd = sessioniConData(nome, 3);
   const giorni = sd[0] && sd[0].data ? giorniTra(sd[0].data, new Date()) : 0;
   const rientro = rientroDopoPausa(giorni, pc.eta);
-  if (rientro && pesoUltimo > 0) {
-    return { weight: arrotonda(pesoUltimo * rientro.f), reps: repsTarget, sets: sets, tipo: 'giu',
+  if (rientro && pesoBase > 0) {
+    return { weight: arrotonda(pesoBase * rientro.f), reps: repsTarget, sets: sets, tipo: 'giu',
              motivo: 'Rientro dopo ' + giorni + ' giorni: carico ' + rientro.t + ' e 3 ripetizioni in riserva, si risale in fretta' };
+  }
+  if (dopoScarico) {
+    const pr = storicoProntezza().slice(-3).map(x => x.punteggio).filter(x => typeof x === 'number');
+    const stanco = prudente || (pr.length && pr.reduce((t, x) => t + x, 0) / pr.length < PARAM_ANALISI.prontezzaRipresa);
+    const voluto = rif * (stanco ? PARAM_ANALISI.ripresaPrudente : 1), tetto = pesoUltimo > 0 ? pesoUltimo * PARAM_ANALISI.saltoMaxRipresa : voluto;
+    return { weight: arrotonda(Math.min(voluto, tetto)), reps: repsTarget, sets: sets, tipo: 'fermo',
+             motivo: 'Dopo lo scarico si riparte dal carico di prima' + (stanco ? ' \u2022 -5% perché il recupero non è ancora pieno' : '') + (voluto > tetto ? ' \u2022 il carico di prima è lontano: si risale in due passi' : '') + ' \u2022 una ripetizione in riserva in più' };
   }
 
   /* esercizi a corpo libero: si progredisce con le ripetizioni */
@@ -152,7 +268,7 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase) {
   if (e1 === 'ok') {
     if (freno) return { weight: pesoUltimo, reps: repsTarget, sets: sets, tipo: 'fermo', motivo: freno };
     const inc = prudente ? Math.max(0.5, incrementoPer(nome) / 2) : incrementoPer(nome);
-    const nota = pc.prudente ? ' (modalita prudente)' : (pc.sonnoMale ? ' (aumento prudente: recupero scarso)' : '');
+    const nota = (pc.prudente ? ' (modalita prudente)' : (pc.sonnoMale ? ' (aumento prudente: recupero scarso)' : '')) + (over65 && !pc.prudente && !pc.sonnoMale ? ' \u2022 aumento dimezzato: dopo i 65 anni si sale più piano' : '');
     /* autoregolazione dall RPE segnato sulle serie */
     const bias = Number((aggiustiCoach() || {}).rirBias) || 0;
     const rpes = fatteUltima.map(x => Number(x.rpe)).filter(x => x > 0).map(x => Math.max(1, x - bias));
@@ -163,7 +279,7 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase) {
       if (delta >= 1) return { weight: pesoUltimo, reps: repsTarget, sets: sets, tipo: 'fermo',
         motivo: 'Serie complete ma RPE ' + String(media).replace('.', ',') + ', sopra il bersaglio ' + String(bers).replace('.', ',') + ': stesso carico, consolida' };
       if (delta <= -1) {
-        const pct = calibrazione ? Math.min(0.15, -delta * 0.05) : Math.min(0.1, -delta * 0.04);
+        const pct = (calibrazione ? Math.min(0.15, -delta * 0.05) : Math.min(0.1, -delta * 0.04)) * (prudente ? 0.5 : 1);   /* aumenti dimezzati: anche quello a percentuale */
         const w = Math.max(arrotonda(pesoUltimo + inc), arrotonda(pesoUltimo * (1 + pct)));
         return { weight: w, reps: repsTarget, sets: sets, tipo: 'su',
           motivo: 'Serie facili (RPE ' + String(media).replace('.', ',') + ', bersaglio ' + String(bers).replace('.', ',') + '): +' + fmtKg(w - pesoUltimo) + ' kg' + nota + (calibrazione ? ' \u2022 prime sedute: mi avvicino piu in fretta' : '') };
@@ -213,16 +329,18 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase) {
   if (e1 === 'mancato' && e2 === 'mancato') {
     const ag0 = aggiustiCoach();
     const stalli = ((ag0.stalli || {})[nome] || 0);
-    if (pc.livello === 'principiante' && tipoCarico(nome) === 'pesante' && stalli >= 1)
+    /* PCO-01 (riga del principiante, ex PRI-12): lo schema 5x3 e per chi punta alla forza; con gli altri obiettivi si resta sul peso (+30 s) e poi -5% */
+    if (pc.livello === 'principiante' && tipoCarico(nome) === 'pesante' && stalli >= 1 && obiettivoForza())
       return { weight: pesoUltimo, reps: 3, sets: 5, tipo: 'fermo', stallo: true,
         motivo: 'Secondo stallo: stesso peso ma schema 5\u00D73 (poi 6\u00D72 e 10\u00D71), come nel GZCLP' };
     if (pc.livello === 'principiante') return { weight: arrotonda(pesoUltimo * 0.95), reps: repsTarget, sets: sets, tipo: 'giu', stallo: true, motivo: 'Due volte di fila non completato: -5% e si ricostruisce' };
     return { weight: arrotonda(pesoUltimo * COACH_PARAMETRI.dopoDueMancateCarico), reps: repsTarget, sets: sets, tipo: 'giu', stallo: true, motivo: 'Due volte di fila non completato: -10% e si ricostruisce' };
   }
-  /* scarico mirato: massimale stimato in calo per due sedute di fila */
-  if (sd.length >= 3) {
-    const m = sd.map(x => e1rmSeduta(x.ex));
-    if (m[0] && m[1] && m[2] && m[0] < m[1] && m[1] < m[2]) {
+  /* scarico mirato (CAR-08): massimale stimato in calo per due sedute di fila, senza contare le sedute di scarico e solo oltre il 3% (il rumore del RIR: MES-10) */
+  const sc = lista.filter(x => !x.scarico).slice(0, 3);
+  if (sc.length >= 3) {
+    const m = sc.map(x => e1rmSeduta(x.ex)), r = regolaAttiva('MES-10') ? 1 - PARAM_ANALISI.rumoreE1rm : 1;
+    if (m[0] && m[1] && m[2] && m[0] < m[1] * r && m[1] < m[2] * r) {
       return { weight: arrotonda(pesoUltimo * COACH_PARAMETRI.scaricoReattivoCarico), reps: repsTarget, sets: Math.max(2, Math.round(sets * COACH_PARAMETRI.scaricoProgressioneSerie)), tipo: 'scarico',
                motivo: 'Massimale stimato in calo da due sedute: scarico solo qui (-10% e meta serie), il resto non cambia' };
     }
@@ -258,10 +376,13 @@ window.applicaCaricoProgressivo = function(day) {
     e.tecnicaSeduta = '';
     cambiati++;
   });
-  /* calibrazione del RIR: nell ultima settimana di carico del blocco, l ultima serie del primo isolamento va a cedimento */
-  const st = settimanaProgramma(), pr = getProgramma();
-  if (st && pr && pr.fasi && st.fase === 'carico' && pr.fasi[st.numero] === 'scarico') {
-    const iso = list.find(e => tipoCarico(e.name) === 'isolamento' && !isTimeBased(e.name) && !e.completedSets.some(x => x.done));
+  /* calibrazione del RIR (CAR-14, ponte dell onda 0): nell ultima settimana di carico del blocco, l ultima serie del primo isolamento va a
+     cedimento. Solo per intermedi e avanzati adulti, sotto i 65 anni, senza modalita prudente e mai sul core: chi e piu fragile o ha
+     ancora poca esperienza non va a cedimento per tarare una stima. */
+  const st = settimanaProgramma(), pr = getProgramma(), pcal = profiloCoach();
+  const puoTarare = pcal.livello !== 'principiante' && !pcal.prudente && pcal.eta < 65 && !(pcal.eta > 0 && pcal.eta < 18);
+  if (puoTarare && st && pr && pr.fasi && st.fase === 'carico' && pr.fasi[st.numero] === 'scarico') {
+    const iso = list.find(e => tipoCarico(e.name) === 'isolamento' && !isTimeBased(e.name) && (findExercise(e.name) || {}).group !== 'core' && !e.completedSets.some(x => x.done));
     if (iso) iso.tecnicaSeduta = 'calibrazione';
   }
   saveData(data);
@@ -274,16 +395,12 @@ function imparaDallaSeduta(list) {
   ag.stalli = ag.stalli || {};
   list.forEach(e => {
     if (e.coachNote && /Due volte di fila non completato/.test(e.coachNote)) ag.stalli[e.name] = (ag.stalli[e.name] || 0) + 1;
-    if (e.tecnicaSeduta === 'calibrazione') {
-      const fatte = e.completedSets.filter(x => x.done);
-      const ultima = fatte[fatte.length - 1];
-      const altre = fatte.slice(0, -1).map(x => Number(x.rpe)).filter(x => x > 0);
-      if (ultima && altre.length) {
-        const rirStimato = 10 - altre.reduce((t, x) => t + x, 0) / altre.length;
-        const rirVero = (Number(ultima.reps) || 0) - (Number(e.reps) || 0);
-        const b = Math.max(-2, Math.min(3, rirVero - rirStimato));
-        ag.rirBias = Math.round(((Number(ag.rirBias) || 0) * 0.5 + b * 0.5) * 10) / 10;
-      }
+    if (e.tecnicaSeduta === 'calibrazione' && e.completedSets.some(x => x.done)) {
+      /* B10 (ponte fino alla taratura nuova di W3-T3): il confronto tra l ultima serie al cedimento e l RPE delle serie prima, gia stanche,
+         ha sempre lo stesso segno e non misura la stima del RIR: non si impara piu niente da li. Ogni taratura dimezza la correzione
+         che il coach aveva gia appreso (rirBias), che cosi si spegne. */
+      const mezza = (Number(ag.rirBias) || 0) * 0.5;
+      ag.rirBias = Math.abs(mezza) < 0.1 ? 0 : Math.round(mezza * 10) / 10;
     }
   });
   salvaAggiusti(ag);
