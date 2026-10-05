@@ -1,0 +1,54 @@
+{
+  "task": "W0-T3",
+  "frasi": {
+    "Dopo lo scarico riparti dal carico che avevi prima": {
+      "en": "After the deload you restart from the load you had before",
+      "es": "Tras la descarga vuelves a empezar con la carga que tenías antes",
+      "de": "Nach der Entlastung startest du wieder mit dem Gewicht von vorher"
+    },
+    "Dopo lo scarico riparti poco sotto il carico che avevi prima (-#%), per prudenza": {
+      "en": "After the deload you restart a little below the load you had before (-#%), to be safe",
+      "es": "Tras la descarga vuelves a empezar un poco por debajo de la carga que tenías antes (-#%), por prudencia",
+      "de": "Nach der Entlastung startest du etwas unter dem Gewicht von vorher (-#%), sicherheitshalber"
+    },
+    "ampiezza senza dolore, almeno # ripetizioni in riserva": {
+      "en": "pain-free range, at least # reps in reserve",
+      "es": "amplitud sin dolor, al menos # repeticiones en reserva",
+      "de": "schmerzfreier Bewegungsumfang, mindestens # Wiederholungen in Reserve"
+    },
+    "Dopo lo scarico si risale per gradi verso il carico di prima: oggi +#%": {
+      "en": "After the deload you climb back toward your previous load step by step: +#% today",
+      "es": "Tras la descarga se vuelve poco a poco hacia la carga de antes: hoy +#%",
+      "de": "Nach der Entlastung geht es Schritt für Schritt zurück zum Gewicht von vorher: heute +#%"
+    }
+  },
+  "regole": [
+    {
+      "capitolo": 8,
+      "riga": "- **CAR-10** scarico deciso dal coach attivo (aggiusti.scarico): carico = carico di riferimento (MES-06: l'ultima seduta dell'esercizio non di scarico, entro 28 giorni; mai più di quello che il motore proponeva) x0,9 e serie = 60% della base (min 2); le sedute di scarico seguenti ripartono dallo stesso riferimento, non da un carico già ridotto.",
+      "sostituisce": true
+    },
+    {
+      "capitolo": 8,
+      "riga": "- **CAR-11** aggiusto per esercizio: fattore (dolore, reset) -> carico x fattore; \"blocca\" -> nessun aumento, quindi carico e ripetizioni dell'ultima volta (ALG-02); \"extra\" -> +1 incremento in più solo se il «su» era un aumento di carico (non dopo +1 ripetizione); \"alte ripetizioni\" (gomito/ginocchio) -> resta il -10% con il motivo «ampiezza senza dolore, almeno 3 ripetizioni in riserva»: le ripetizioni non si alzano più a 12 (senza base nelle fonti, ricerca-recupero §6 DEC-02).",
+      "sostituisce": true
+    },
+    {
+      "capitolo": 8,
+      "riga": "- **ALG-02** (spegnibile) carico di lavoro robusto, parte «blocca» ed «extra» (W0-T3; il carico più frequente tra le serie, U10, è di W3-T1): «blocca» (carichi pesanti e seduta al limite) = nessun aumento, quindi carico e ripetizioni dell'ultima volta (`pesoUltimoDi`) e non più «un incremento in meno»: con +1 ripetizione il carico finiva un passo sotto quello di prima, con un aumento da RPE restava sopra. «extra» dà un incremento in più solo se il «su» era un aumento di carico. Forza: Convenzione (ricerca-algoritmi §6 U12, bug B6)."
+    },
+    {
+      "capitolo": 8,
+      "riga": "- **MES-06** (spegnibile) carico di riferimento e ripresa dopo lo scarico (ponte di W0-T3 in `dolore-mattina.js`; l'aggancio dentro `caricoProssimoBase` è di W0-T4): `caricoRiferimento(nome)` = carico massimo delle serie fatte nell'ultima seduta dell'esercizio non di scarico, entro 28 giorni; lo scarico del programma e quello deciso dal coach valgono riferimento x dose in tutte le sedute della settimana (60 → 54 → 54, prima 60 → 54 → 48,5 → 43,5); la prima seduta dopo uno scarico completato riparte dal riferimento con una ripetizione in riserva in più (dal 95% per prudenti, over 65, sonno scarso o prontezza media sotto 60), non da carico di scarico + incremento; il rientro dopo una pausa (CAR-04) si applica al riferimento; `ultimeSessioni(nome, n, { senzaScarico: true })` salta gli scarichi. Motivo: «Dopo lo scarico riparti dal carico che avevi prima». Forza: Convenzione + Moderata (1-2 settimane ridotte mantengono la forza, PMID 28328712). Fonte: ricerca-mesocicli §3.6.1 e bug N1-N2, ricerca-algoritmi §3.12 e U15."
+    },
+    {
+      "capitolo": 8,
+      "riga": "- **MES-09** (spegnibile) etichetta di fase sulla seduta salvata (dato interno, nessun testo): a ogni seduta del programma `endWorkout` salva `settimana: { numero, fase }` e, per ogni esercizio, `obiettivo: { reps, sets, rir, tecnica, coachTipo }` (RIR bersaglio e tipo del coach al momento della seduta). Campi facoltativi: le voci vecchie non li hanno e la fase si ricava dal programma attuale e dalla data (`faseSedutaSalvata`, `esercizioInScarico`). Non si salvano per le sedute libere o passate. Prerequisito di MES-06, MES-10, MES-11, MES-12. Fonte: ricerca-mesocicli §5 riga 19 (N9) e §6 MES-09."
+    }
+  ],
+  "mappaAgenti": [
+    "carico di riferimento e storico per fase (W0-T3): js/coach/carichi/progressivo.js (caricoRiferimento, ultimeSessioni con { senzaScarico }, pesoUltimoDi, faseSedutaSalvata, esercizioInScarico); la ripresa dopo lo scarico e «blocca»/«extra» sono nel wrapper di caricoProssimo in js/coach/dolore-mattina.js",
+    "dati salvati con la seduta (MES-09): settimana e obiettivo per esercizio in endWorkout, js/ui/allenamento/termina-e-cardio.js; lo stesso file rimette `settimana` dentro normalizeHistoryEntry (js/core/storage.js la scarterebbe a ogni loadHistory/saveHistory)"
+  ],
+  "nota": "W0-T3. (1) Nessuno script nuovo, nessuna chiave nuova di localStorage. (2) `squadra` non c'e: il capitolo 0 della mappa lo crea W1-T1; a INT-1 aggiungere ALG-02 e MES-06 alla riga «bilancia» e MES-09 alla riga «regista». (3) ALG-02, MES-06 e MES-09 sono gia dietro `regolaAttiva(codice)` (sempre vero finche W1-T1 non legge «(spegnibile)» dalla mappa; la prova li aggiunge a REGOLE_SPEGNIBILI nel suo contesto). (4) Il wrapper di normalizeHistoryEntry in termina-e-cardio.js si toglie se storage.js, in normalizeHistoryEntry, aggiunge la riga `settimana: session.settimana || undefined`. (5) Ponte MES-06 in dolore-mattina.js: se W0-T4 calcola gia lo scarico e la ripresa nella base con `caricoRiferimento(nome)`, il ponte da gli stessi numeri (idempotente) e si puo togliere in INT-0 o W1-T3. (6) La voce «ripetizioni alte (#-#) per rispettare l articolazione» di en/es/de non e piu usata. (7) Da portare in file soglie (convenzione B.4): GIORNI_CARICO_RIFERIMENTO 28 (progressivo.js), RIPRESA_DOPO_SCARICO_PRUDENTE 0,95, RIPRESA_PRONTEZZA_MIN 60, RIPRESA_SALTO_MAX 1,25 e RIR_MIN_DOLORE 3 (dolore-mattina.js), tutte forza Convenzione. RIPRESA_SALTO_MAX serve alla fixture principiante-donna-casa (scarico gia composto 24,5 → 22 → 20 → 18 kg dal codice v1): senza tetto la ripresa a 24,5 e +36% sull'ultima seduta e tests/migrazione-v1.test.js (soglia 1,35) fallisce. (8) Nomi globali nuovi: faseSedutaSalvata, esercizioInScarico, sedutePerEsercizio, caricoRiferimento, pesoUltimoDi, obiettivoSeduta, fattoreRipresaDopoScarico: W0-T4 non deve ridefinirli (la sua inScarico(h) e un'altra funzione)."
+}
