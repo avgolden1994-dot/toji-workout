@@ -7,7 +7,7 @@
    la seconda mostra solo quello, senza altre scelte intorno.
    ============================================================ */
 window.backToDayPicker = function() {
-  dockStato('nascosto');
+  chiudiCedimento();   /* uscendo dalla seduta il cedimento si chiude e libera tutto */
   fermaTempoSeduta(false);
   tieniSchermoAcceso(false);
   fermaLavoro();
@@ -82,9 +82,8 @@ window.openWorkoutDay = function(day) {
   }
   currentDay = day;
   armedSet = null;
-  occupatoAperto = null;
-  ripristinaMusica(true);   /* la canzone scelta nelle Opzioni e gia pronta */
-  setTimeout(() => dockStato('sessione'), 0);   /* il lettore resta raggiungibile in seduta */
+  impostaOccupato(null);
+  ripristinaMusica(false);   /* si legge solo la scelta: il lettore web si carica al cedimento, non qui */
   if (!specialeAttiva(day)) applicaCaricoProgressivo(day);   /* il coach imposta i carichi della seduta (non in seduta libera o passata) */
   avviaTempoSeduta(day);
   document.getElementById('workout-day-picker').style.display = 'none';

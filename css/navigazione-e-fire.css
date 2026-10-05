@@ -28,7 +28,7 @@ body.fire-mode { animation: fire-glow-bg 1s ease-in-out infinite; }
   60% { transform: translate(-1px,2px) rotate(-0.2deg); }
   80% { transform: translate(1px,-2px) rotate(0.2deg); }
 }
-body.fire-mode .drop-card { animation: shake-intense 0.22s infinite; border-color: var(--primary); }
+body.fire-mode #cedimento-sheet .drop-card { animation: shake-intense 0.22s infinite; border-color: var(--primary); }
 
 @keyframes text-burn {
   0%, 100% { text-shadow: 0 0 6px var(--warning), 0 0 14px var(--accent); color: var(--warning); }

@@ -78,6 +78,7 @@ const ALIAS_ESTERI = [
   [/dumbbell row|one arm row|single arm row/i, 'Rematore con Manubrio'],
   [/machine row/i, 'Rematore alla Macchina'],
   [/bent over row|barbell row|pendlay/i, 'Rematore con Bilanciere'],
+  [/sumo squat|pli[eé] squat/i, 'Squat Sumo'],
   [/front squat/i, 'Front Squat'],
   [/goblet/i, 'Goblet Squat'],
   [/hack squat/i, 'Hack Squat'],

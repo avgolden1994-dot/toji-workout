@@ -9,19 +9,11 @@ window.altraVariante = function() {
 };
 
 /* ---- Esercizi alternativi: una tendina per ogni esercizio ----
-   Alternative dello stesso schema di movimento (o dello stesso posto nella
-   ricetta), dello stesso muscolo, con attrezzi e fastidi consentiti. */
+   Solo esercizi con lo STESSO muscolo bersaglio (alternativeStessoMuscolo), con attrezzi e fastidi
+   consentiti, mai uno gia in seduta, al massimo 6. Se ce ne sono meno, o nessuno, se ne mostrano meno:
+   mai un esercizio per un altro muscolo. */
 function alternativeDi(nome, prefs, sessione) {
-  const m = findExercise(nome);
-  if (!m) return [];
-  const sch = schemaDi(nome);
-  const posti = Object.keys(SLOT_DEF).filter(k => k !== 'core' && SLOT_DEF[k](m));
-  const nomi = sessione.map(e => e.name);
-  return EXERCISE_LIBRARY.filter(x => x.name !== nome && nomi.indexOf(x.name) === -1 && x.group === m.group &&
-      (sch ? schemaDi(x.name) === sch : (posti.length ? posti.some(k => SLOT_DEF[k](x)) : x.type === m.type)) &&
-      consentito(x.name, prefs))
-    .sort((a, b) => (PRIORI[senzaEmoji(b.name)] || 1) - (PRIORI[senzaEmoji(a.name)] || 1))
-    .slice(0, 6);
+  return alternativeStessoMuscolo(nome, prefs, sessione.map(e => e.name)).map(a => a.ex);
 }
 let altScelte = {};
 window.apriAlternative = function() {
@@ -45,7 +37,7 @@ function renderAlternative() {
   const box = document.getElementById('alt-body');
   if (!box) return;
   const base = buildProgram(Object.assign({}, onbData, { scelte: {} }));
-  box.innerHTML = '<div class="alt-intro">Cambia solo quelli che vuoi. Le alternative allenano gli stessi muscoli.</div>' +
+  box.innerHTML = '<div class="alt-intro">Cambia solo quelli che vuoi. Le alternative allenano lo stesso muscolo.</div>' +
     base.sedute.map(sd => '<div class="alt-day"><span>' + escapeHtml(sd.titolo) + '</span> · <span>' + sd.giorno + '</span></div>' +
       sd.esercizi.map(e => {
         const alt = alternativeDi(e.name, base.prefs, sd.esercizi);

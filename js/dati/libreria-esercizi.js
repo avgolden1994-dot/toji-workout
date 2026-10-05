@@ -167,7 +167,9 @@ const EXERCISE_LIBRARY = [
   { name: '🎯 Crunch alla Macchina', group: 'core', type: 'isolation', sets: 3, reps: 15, weight: 20, rest: 45 },
   { name: '🎯 Woodchop ai Cavi (Rotazioni)', group: 'core', type: 'isolation', sets: 3, reps: 12, weight: 10, rest: 45, lato: true },
   { name: '🎯 Leg Raise alla Sedia Romana', group: 'core', type: 'isolation', sets: 3, reps: 12, weight: 0, rest: 45 },
-  { name: '🎯 Sit-up a Ginocchia Piegate', group: 'core', type: 'isolation', sets: 3, reps: 15, weight: 0, rest: 45 }
+  { name: '🎯 Sit-up a Ginocchia Piegate', group: 'core', type: 'isolation', sets: 3, reps: 15, weight: 0, rest: 45 },
+  /* adduttori: l alternativa a carico libero dell Adductor Machine (e viceversa) */
+  { name: '🦵 Squat Sumo', group: 'gambe', type: 'compound', sets: 3, reps: 12, weight: 16, rest: 75 }
 ];
 
 /* Il menu a tendina si genera dalla libreria: una sola fonte di verita',

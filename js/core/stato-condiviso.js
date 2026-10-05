@@ -8,11 +8,12 @@ let recoveryTotal = 90;
 let recoveryMuted = localStorage.getItem('tz_recovery_muted') === '1';
 const RECOVERY_RING_CIRCUMFERENCE = 2 * Math.PI * 52;
 
-/* Modulo Cedimento (Drop) — ora armato per singola serie, non per intero esercizio */
+/* Modulo Cedimento (Drop) — si apre per singola serie, non per intero esercizio */
 let dropInterval = null;
 let dropRemaining = FAILURE_SET_SECONDS;
 let dropActive = false;
-let armedSet = null; /* { exIdx, setIdx } | null */
+let armedSet = null; /* { exIdx, setIdx } | null: la serie con il cedimento aperto */
+let dropAudioAttivo = false; /* vero solo se il cedimento ha davvero acceso audio (canzone scelta) */
 let activeSourceTab = 'mp3';
 let currentWebMode = null; /* 'youtube' | 'spotify' | null */
 

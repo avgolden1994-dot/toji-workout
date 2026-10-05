@@ -1,6 +1,7 @@
 # Indice del codice
 
 File generato da `tools/indice.js` (`npm run indice`): non si modifica a mano.
+Prima di leggere il codice consulta `graphify-out/GRAPH_REPORT.md`, poi il grafo (`graphify-out/graph.json`).
 Gli script si caricano **in questo ordine** (lo stesso di `index.html`).
 
 ## js/lingue
@@ -45,7 +46,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 12. `js/dati/dettagli-esercizi.js` — Dettagli per esercizio: attrezzo, presa o attacco, sottogruppo e focus muscolare
 
-`SEZIONI_ESERCIZI` · `SOTTOGRUPPI` · `NOTE_ATTACCO` · `DETTAGLI` · `_nomePulito()` · `window.dettaglioEsercizio()` · `window.sezioneEsercizio()` · `window.etichettaAttrezzo()` · `window.focusEsercizio()` · `window.focusConTipo()` · `window.ordineEsercizi()` · `window.organizzaEsercizi()` · `window.variantiEsercizio()`
+`SEZIONI_ESERCIZI` · `SOTTOGRUPPI` · `MUSCOLI` · `MULTIARTICOLARI_TOTALI` · `NOTE_ATTACCO` · `DETTAGLI` · `_nomePulito()` · `window.dettaglioEsercizio()` · `window.bersaglioDi()` · `window.muscoloBersaglio()` · `window.famigliaTotaleDi()` · `window.lavoroDaSostituire()` · `window.sezioneEsercizio()` · `window.etichettaAttrezzo()` · `window.focusEsercizio()` · `window.focusConTipo()` · `window.ordineEsercizi()` · `window.organizzaEsercizi()` · `window.variantiEsercizio()`
 
 ## js/coach
 
@@ -65,7 +66,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 16. `js/core/stato-condiviso.js` — Stato condiviso di timer, cedimento e musica
 
-`recoveryInterval` · `recoveryRemaining` · `recoveryTotal` · `recoveryMuted` · `RECOVERY_RING_CIRCUMFERENCE` · `dropInterval` · `dropRemaining` · `dropActive` · `armedSet` · `activeSourceTab` · `currentWebMode` · `AUDIO_DB_NAME` · `AUDIO_DB_VERSION` · `AUDIO_STORE` · `failureTracks` · `selectedTrackId` · `selectedTrackUrl` · `ytPlayer` · `ytPlayerReady` · `spotifyController` · `spotifyReady` · `webDuration`
+`recoveryInterval` · `recoveryRemaining` · `recoveryTotal` · `recoveryMuted` · `RECOVERY_RING_CIRCUMFERENCE` · `dropInterval` · `dropRemaining` · `dropActive` · `armedSet` · `dropAudioAttivo` · `activeSourceTab` · `currentWebMode` · `AUDIO_DB_NAME` · `AUDIO_DB_VERSION` · `AUDIO_STORE` · `failureTracks` · `selectedTrackId` · `selectedTrackUrl` · `ytPlayer` · `ytPlayerReady` · `spotifyController` · `spotifyReady` · `webDuration`
 
 ### 17. `js/core/storage.js` — Storage per modalita e normalizzazione dei dati
 
@@ -97,7 +98,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 22. `js/core/utility.js` — Utility
 
-`escapeHtml()` · `nomeSicuro()` · `pulisciDeep()` · `jsArg()` · `formatMMSS()` · `formatNow()` · `handleSelectExercise()` · `audioCtx` · `getAudioCtx()`
+`escapeHtml()` · `nomeSicuro()` · `pulisciDeep()` · `jsArg()` · `formatMMSS()` · `formatNow()` · `handleSelectExercise()` · `audioCtx` · `getAudioCtx()` · `sospendiAudioCtx()`
 
 ### 23. `js/core/audio-silenzioso.js` — Suono con il telefono in silenzioso
 
@@ -105,7 +106,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 24. `js/core/musica-altre-app.js` — Convivenza con la musica delle altre app
 
-`tipoSessione()` · `avviaCanaleMultimediale()` · `fermaCanaleMultimediale()` · `window.lampeggia()` · `unlockAudio()` · `playTone()` · `playBeep()` · `window.testSound()` · `playTick()` · `playEnd()` · `window.stepValue()`
+`tipoSessione()` · `avviaCanaleMultimediale()` · `fermaCanaleMultimediale()` · `window.lampeggia()` · `window.preparaAudio()` · `sospendiAudioT` · `sospendiAudioDopo()` · `playTone()` · `playBeep()` · `window.testSound()` · `playTick()` · `playEnd()` · `window.stepValue()`
 
 ## js/ui
 
@@ -127,7 +128,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 29. `js/ui/allenamento/macchinario-occupato.js` — Macchinario occupato: sostituzione per oggi
 
-`ETICHETTA_ATTREZZO` · `ICONA_SCAMBIO` · `ICONA_FRECCIA_GIU` · `occupatoAperto` · `occupatoOpzioni` · `prefsOccupato()` · `alternativeOggi()` · `copiaRecord()` · `htmlSostituito()` · `htmlOccupato()` · `window.toggleOccupato()` · `window.sostituisciOggi()` · `window.ripristinaOriginale()` · `ripristinaSostituzioni()` · `pulisciSostituzioniVecchie()` · `window.updateSetField()` · `window.toggleSetDone()` · `window.annullaCedimento()` · `window.armDropTarget()` · `refreshDropButtonState()`
+`ETICHETTA_ATTREZZO` · `ICONA_SCAMBIO` · `ICONA_FRECCIA_GIU` · `occupatoAperto` · `occupatoOpzioni` · `occupatoAscolto` · `impostaOccupato()` · `triggerOccupato()` · `chiudiOccupato()` · `fuoriOccupato()` · `tastoOccupato()` · `prefsOccupato()` · `alternativeOggi()` · `copiaRecord()` · `htmlSostituito()` · `htmlOccupato()` · `window.tastoApriOccupato()` · `window.toggleOccupato()` · `posizionaOccupato()` · `dopoSceltaOccupato()` · `window.sostituisciOggi()` · `window.ripristinaOriginale()` · `ripristinaSostituzioni()` · `pulisciSostituzioniVecchie()` · `window.updateSetField()` · `window.toggleSetDone()` · `window.annullaCedimento()`
 
 ### 30. `js/ui/allenamento/sessione.js` — Allenamento: prima il giorno, poi la sessione
 
@@ -151,7 +152,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 34. `js/ui/allenamento/cedimento-canzone.js` — Cedimento: la canzone si sceglie una volta
 
-`MUSIC_KEY` · `musicaRipristinata` · `leggiMusica()` · `window.salvaMusica()` · `nomeMusica()` · `aggiornaRiassuntoMusica()` · `window.ripristinaMusica()` · `window.clearCedimentoAudio()` · `window.openMusicSheet()` · `window.closeMusicSheet()` · `window.switchAudioSourceTab()` · `getResolvedAudioMode()`
+`MUSIC_KEY` · `musicaRipristinata` · `leggiMusica()` · `window.salvaMusica()` · `nomeMusica()` · `aggiornaRiassuntoMusica()` · `window.ripristinaMusica()` · `window.clearCedimentoAudio()` · `window.openMusicSheet()` · `window.closeMusicSheet()` · `window.switchAudioSourceTab()` · `getResolvedAudioMode()` · `modoCanzone()`
 
 ### 35. `js/ui/musica/lettore-fisso.js` — Lettore musicale sempre raggiungibile
 
@@ -159,7 +160,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 36. `js/ui/allenamento/cedimento.js` — Modulo cedimento (drop set)
 
-`sessioneCanzoneAttiva()` · `rilasciaSessioneCanzone()` · `startDropAudio()` · `stopDropAudio()` · `updateDropTimerDisplay()` · `updateFireModeState()` · `window.onDropVolumeInput()` · `window.startDropSet()` · `dropEndAt` · `tickCedimento()` · `finishDropSet()` · `window.stopDropSet()`
+`sessioneCanzoneAttiva()` · `dropEndAt` · `dropChiudiTimer` · `DROP_CHIUSURA_MS` · `caricaPlayerWebSalvato()` · `avviaWebPronto()` · `startDropAudio()` · `rilasciaAudioCedimento()` · `updateDropTimerDisplay()` · `updateFireModeState()` · `window.onDropVolumeInput()` · `window.apriCedimento()` · `tickCedimento()` · `finishDropSet()` · `chiudiCedimento()` · `window.stopDropSet()`
 
 ### 37. `js/ui/musica/mp3-locale.js` — Libreria MP3 locale (IndexedDB)
 
@@ -167,7 +168,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 38. `js/ui/musica/player-web.js` — Player web (YouTube e Spotify)
 
-`parseWebAudioUrl()` · `setWebStatus()` · `configureWebSegment()` · `updateWebSegmentLabel()` · `window.onWebRangeInput()` · `window.nudgeWebSegment()` · `window.previewWebSegment()` · `window.handleWebLinkSubmit()` · `ensureYouTubeApi()` · `YT_ERRORS` · `loadYouTubePlayer()` · `readYouTubeDuration()` · `ensureSpotifyApi()` · `loadSpotifyPlayer()`
+`parseWebAudioUrl()` · `setWebStatus()` · `configureWebSegment()` · `updateWebSegmentLabel()` · `window.onWebRangeInput()` · `window.nudgeWebSegment()` · `window.previewWebSegment()` · `window.handleWebLinkSubmit()` · `webToken` · `window.liberaPlayerWeb()` · `playerWebCaricato()` · `ensureYouTubeApi()` · `YT_ERRORS` · `loadYouTubePlayer()` · `readYouTubeDuration()` · `ensureSpotifyApi()` · `loadSpotifyPlayer()`
 
 ### 39. `js/ui/gesti.js` — Swipe, rotella dei numeri e trascinamento
 
@@ -221,7 +222,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 50. `js/coach/programma/motore.js` — Coach engine: costruzione del programma
 
-`strutturaProgramma()` · `fasiProgramma()` · `attrezzoDi()` · `RISCHIO` · `consentito()` · `sostituto()` · `schemaMisto()`
+`strutturaProgramma()` · `fasiProgramma()` · `attrezzoDi()` · `RISCHIO` · `consentito()` · `sostituto()` · `alternativeStessoMuscolo()` · `schemaMisto()`
 
 ### 51. `js/coach/programma/schemi.js` — Schemi di movimento e regole di costruzione
 

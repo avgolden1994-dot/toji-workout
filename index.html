@@ -195,27 +195,6 @@
       </div>
       <div id="speciale-box"></div>
       <div id="prontezza-box"></div>
-    <div class="card drop-card">
-      <div class="section-title fire-text">🔥 Cedimento 90s — Modalità Berserk</div>
-      <div class="drop-hint" id="drop-hint">Tocca l'icona 🔥 accanto a una serie per portarla a cedimento.</div>
-
-      <!-- la canzone si sceglie UNA volta, nelle Opzioni: qui si vede solo quale e -->
-      <div class="drop-song" id="drop-song">
-        <span class="drop-song-ico">🎵</span>
-        <span class="aw-main"><span class="entry-name" id="drop-song-name">Nessuna canzone</span>
-        <span class="aw-meta">Vale per tutti gli allenamenti</span></span>
-        <button class="drop-song-btn" onclick="openMusicSheet()">Cambia</button>
-      </div>
-      <!-- qui si appoggia il lettore: e un posto nella pagina, non un riquadro sopra -->
-      <div class="dock-slot" id="dock-slot"></div>
-
-      <div class="drop-timer-display fire-text" id="drop-timer-display">01:30</div>
-      <div class="drop-status fire-text" id="drop-status"></div>
-
-      <button class="btn-main" id="start-drop-btn" disabled onclick="startDropSet()">🔥 Inizia Cedimento</button>
-      <button class="stop-btn danger" style="width:100%; margin-top:8px;" onclick="stopDropSet()">Stop</button>
-    </div>
-
     <div class="card">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
         <div class="section-title" style="margin-bottom:0;">Esercizi</div>
@@ -521,6 +500,32 @@
     </div>
     <div class="set-about">Se non scegli nessuna canzone, durante il cedimento continua la musica che stai già ascoltando (Spotify, Apple Music…).</div>
     <button class="btn-archive" onclick="clearCedimentoAudio()">Nessuna canzone: usa la mia musica</button>
+  </div>
+</div>
+
+<!-- finestra del Cedimento: nascosta, compare solo quando tocchi la fiamma di una serie e sparisce da sola alla fine -->
+<div class="group-sheet hidden" id="cedimento-sheet" role="dialog" aria-modal="true" aria-labelledby="cedimento-title">
+  <div class="sheet-bar">
+    <button class="sheet-back" onclick="stopDropSet()" aria-label="Indietro">←</button>
+    <div class="sheet-titles"><div class="sheet-title fire-text" id="cedimento-title">🔥 Cedimento 90s — Modalità Berserk</div><div class="sheet-sub" id="cedimento-sub"></div></div>
+  </div>
+  <div class="sheet-body" id="cedimento-body">
+    <div class="card drop-card">
+      <div class="drop-hint" id="drop-hint">Dai tutto fino al cedimento, finito il tempo la finestra si chiude da sola.</div>
+      <div class="drop-timer-display fire-text" id="drop-timer-display">01:30</div>
+      <div class="drop-status fire-text" id="drop-status"></div>
+
+      <!-- la canzone si sceglie UNA volta, nelle Opzioni: qui si vede solo quale e -->
+      <div class="drop-song" id="drop-song">
+        <span class="drop-song-ico">🎵</span>
+        <span class="aw-main"><span class="entry-name" id="drop-song-name">Nessuna canzone</span>
+        <span class="aw-meta">Vale per tutti gli allenamenti</span></span>
+      </div>
+      <!-- qui si appoggia il lettore (solo se la canzone e un link web) -->
+      <div class="dock-slot" id="dock-slot"></div>
+
+      <button class="stop-btn danger" id="drop-stop-btn" style="width:100%; margin-top:8px;" onclick="stopDropSet()">Stop</button>
+    </div>
   </div>
 </div>
 

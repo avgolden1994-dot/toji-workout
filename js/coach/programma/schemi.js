@@ -15,9 +15,11 @@ const SCHEMI_MOV = [
   ['spintaV', /military|lento avanti|arnold|shoulder press|pike push/i, 'Spinta verticale'],
   ['tirataV', /trazioni|lat machine/i, 'Tirata verticale']
 ];
-function schemaDi(nome) { const n = senzaEmoji(nome); if (/curl|croci|french|estensione|alzate|y-raise|kickback/i.test(n)) return null; const x = SCHEMI_MOV.find(sc => sc[1].test(n)); return x ? x[0] : null; }
+/* fuori dagli schemi: gli isolamenti col nome di un multiarticolare ("Calf Raise alla Leg Press",
+   "Sissy Squat"); \balzate perche "Mani Rialzate" sono piegamenti, non alzate */
+function schemaDi(nome) { const n = senzaEmoji(nome); if (/curl|croci|french|estensione|\balzate|y-raise|kickback|calf raise|sissy/i.test(n)) return null; const x = SCHEMI_MOV.find(sc => sc[1].test(n)); return x ? x[0] : null; }
 const ISOLAMENTI = [
-  ['quadricipiti', /leg extension/i], ['femorali', /leg curl|stacco rumeno|good morning/i], ['bicipiti', /curl/i],
+  ['quadricipiti', /leg extension/i], ['femorali', /leg curl|nordic curl|stacco rumeno|good morning/i], ['bicipiti', /curl/i],
   ['tricipiti', /pushdown|french press|estensione tricipiti|kickback tricipiti|presa stretta|dip su panca/i],
   ['deltoidi', /alzate laterali/i], ['polpacci', /calf raise/i]
 ];

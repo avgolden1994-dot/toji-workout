@@ -166,7 +166,7 @@ window.iniziaOggi = function() {
 
 window.switchTab = function(tab) {
   currentTab = tab;
-  if (tab !== 'allenamento' && dockStatoAttuale === 'sessione' && !dropInterval) dockStato('nascosto');
+  chiudiCedimento();   /* cambiando schermata la finestra del cedimento non resta aperta */
   hideSnackbar();
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + tab));
   const inNav = tab === 'allenamento' ? 'oggi' : tab;

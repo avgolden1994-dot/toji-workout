@@ -150,7 +150,7 @@ window.endWorkout = function() {
     try { commentaSeduta(historyEntry.id, true); } catch (err) {}
   }
   ripristinaSostituzioni(list);   /* macchinario occupato: l esercizio previsto torna nel piano */
-  occupatoAperto = null;
+  impostaOccupato(null);
   list.forEach(e => {
     e.completedSets = e.completedSets.map(() => ({ done: false, reps: e.reps, weight: e.weight, wasBerserk: false }));
     if (e.riscaldamento) e.riscaldamento = e.riscaldamento.map(w => Object.assign({}, w, { done: false }));

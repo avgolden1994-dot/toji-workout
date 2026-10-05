@@ -93,7 +93,9 @@ window.preferisci = function(name, lista) {
   localStorage.setItem(PROFILE_KEY(), JSON.stringify(p));
   if (lista === 'odiati' && p.odiati.indexOf(name) !== -1) {
     const alt = sostituto(name, prefsCoach(), []);
+    /* nessun esercizio dello stesso muscolo con i tuoi attrezzi: resta in scheda, e lo dico */
     if (alt) conAnnulla(senzaEmoji(name) + ' \u2192 ' + senzaEmoji(alt.name), () => sostituisciNelPiano(name, alt.name, 'Sostituito: ' + senzaEmoji(name) + ' non ti piace'));
+    else if (DAYS.some(g => (loadData()[g] || []).some(e => e.name === name))) showUndo(trP('Nessun sostituto con lo stesso muscolo: %s resta nel piano', tr(senzaEmoji(name))), null, 6000);
   }
   /* il pulsante si accende subito, senza ridisegnare la scheda */
   if (exInfoNome === name && document.querySelector('.ex-pref-b')) {

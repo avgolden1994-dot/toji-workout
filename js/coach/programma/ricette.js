@@ -21,7 +21,7 @@ const SLOT_DEF = {
   spintaV: e => schemaDi(e.name) === 'spintaV' || /landmine/i.test(_n(e)),
   tirataO: e => schemaDi(e.name) === 'tirataO' || /rematore alla macchina|rematore con petto|rematore inverso/i.test(_n(e)),
   tirataV: e => schemaDi(e.name) === 'tirataV',
-  squat: e => schemaDi(e.name) === 'squat' && e.type === 'compound' && !e.lato,
+  squat: e => schemaDi(e.name) === 'squat' && e.type === 'compound' && !e.lato && !/sumo/i.test(_n(e)),   /* lo squat sumo e per gli adduttori: non e il fondamentale delle gambe */
   unilaterale: e => (e.group === 'gambe' || e.group === 'glutei') && e.type === 'compound' && !!e.lato,
   hinge: e => /stacco|good morning|pull-through/i.test(_n(e)),
   glutSpinta: e => /hip thrust|ponte glutei/i.test(_n(e)),
@@ -154,7 +154,9 @@ window.buildProgram = function(d) {
         if (vietaSchiena && strSchiena(x.name)) v -= 5;   /* ABB-07: due giorni di fila, schiena pesante una volta sola */
         return v;
       };
-      const scelta = ok.slice().sort((x, y) => punteggio(y) - punteggio(x))[0];
+      /* ABB-02 come regola: il migliore che non fa lo stesso lavoro di uno gia scelto, se c e (stesso ordine, stessa casualita) */
+      const ordinati = ok.slice().sort((x, y) => punteggio(y) - punteggio(x));
+      const scelta = ordinati.find(x => !strRidondante(x, base)) || ordinati[0];
       if (migliore && scelta.name !== migliore.name && !consentito(migliore.name, prefs)) sostituzioni.push({ da: migliore.name, a: scelta.name });
       if (SCHIENA_PESANTE.test(scelta.name)) pesantiSchiena++;
       if (strSchiena(scelta.name)) schienaQui = true;

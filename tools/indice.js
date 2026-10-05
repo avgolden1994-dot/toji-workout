@@ -9,6 +9,7 @@ const html = fs.readFileSync(path.join(R, 'index.html'), 'utf8');
 const scripts = [...html.matchAll(/<script src="([^"]+)"/g)].map(m => m[1]);
 const righe = ['# Indice del codice', '',
   'File generato da `tools/indice.js` (`npm run indice`): non si modifica a mano.',
+  'Prima di leggere il codice consulta `graphify-out/GRAPH_REPORT.md`, poi il grafo (`graphify-out/graph.json`).',
   'Gli script si caricano **in questo ordine** (lo stesso di `index.html`).', ''];
 let cartella = '';
 scripts.forEach((f, i) => {

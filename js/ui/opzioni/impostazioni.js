@@ -58,10 +58,6 @@ window.toggleSetting = function(k, def) {
   if (k === DISCHI_KEY) renderAllenamento();
   if (k === ZOOM_KEY) applicaZoom();
   if (k === WAKE_KEY) tieniSchermoAcceso(sedutaAperta());
-  if (k === BYPASS_KEY) {
-    if (isOn(BYPASS_KEY, false)) avviaCanaleMultimediale();
-    else fermaCanaleMultimediale();
-  }
   renderSettings();
 };
 

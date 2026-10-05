@@ -23,8 +23,8 @@
 /* barra sottile: il lettore c e ancora, a misura piena, solo fuori vista */
 .music-dock.compatto .dock-player { height: 0; overflow: hidden; }
 .music-dock.compatto .dock-msg { display: none !important; }
-/* in seduta: appoggiato sul suo posto nella card, scorre con la pagina */
-.music-dock.sessione { position: absolute; bottom: auto; right: auto; margin: 0; max-width: none; box-shadow: none; z-index: 20; }
+/* nel cedimento: appoggiato sul suo posto nella finestra (posizionaDock), sopra di essa */
+.music-dock.sessione { position: fixed; bottom: auto; right: auto; margin: 0; max-width: none; box-shadow: none; z-index: 100; }
 .dock-slot { transition: height .2s ease; }
 
 /* ======= Oggi ======= */

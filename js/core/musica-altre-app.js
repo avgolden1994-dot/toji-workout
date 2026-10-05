@@ -3,21 +3,28 @@
 
 /* ============================================================
    CONVIVENZA CON LA MUSICA DELLE ALTRE APP
-   Il difetto: la traccia silenziosa per suonare col telefono zittito
-   partiva al primo tocco e restava attiva. Su iPhone un audio che gira
-   come "lettore musicale" prende il controllo esclusivo, e Spotify o
-   Apple Music si fermano. L app non deve mai bloccare la musica.
-   La soluzione documentata: dichiarare i nostri suoni come audio
-   TRANSITORIO (Safari 16.4+). iOS li mescola alla musica, che continua
-   o si abbassa un istante. La traccia silenziosa resta solo come
-   opzione esplicita, spenta di default, e avvisa che ferma la musica.
+   Il difetto: l app teneva sempre l audio del telefono occupato (traccia
+   silenziosa dal primo tocco, contesto audio sempre acceso, tipo di
+   sessione "playback"), e Spotify o Apple Music si fermavano e non
+   ripartivano. La regola ora e una sola:
+   - FUORI dal cedimento l app non ferma mai l audio degli altri: bip e
+     tick del recupero e del cronometro sono audio "ambient" (si mescolano
+     alla musica, rispettano l interruttore silenzioso) e il contesto
+     audio nasce dentro il tocco che avvia il timer e si sospende subito
+     dopo l ultimo bip;
+   - DURANTE i 90 secondi del cedimento, e solo se hai scelto una canzone,
+     l app puo prendere l audio (vedi cedimento.js). L opzione "Suona anche
+     in silenzioso" accende la traccia silenziosa SOLO in quei 90 secondi:
+     finiti, la traccia viene fermata e scaricata e l audio torna libero.
    ============================================================ */
 function tipoSessione(tipo) {
   try { if ('audioSession' in navigator) navigator.audioSession.type = tipo; } catch (e) {}
 }
-/* all avvio i suoni dell app sono transitori: si mescolano */
-tipoSessione('transient');
+/* all avvio i suoni dell app si mescolano alla musica: non la interrompono */
+tipoSessione('ambient');
 
+/* Traccia silenziosa per suonare col telefono zittito: parte SOLO dal
+   cedimento (cedimento.js), mai da un tocco qualunque, e si scarica del tutto. */
 function avviaCanaleMultimediale() {
   if (!isOn(BYPASS_KEY, false)) return;
   tipoSessione('playback');
@@ -38,8 +45,14 @@ function avviaCanaleMultimediale() {
 }
 
 function fermaCanaleMultimediale() {
-  if (mediaKeeper) { try { mediaKeeper.pause(); } catch (e) {} }
-  tipoSessione('transient');   /* la musica delle altre app torna libera */
+  if (mediaKeeper) {
+    /* pausa, sorgente tolta e elemento rimosso: la musica delle altre app torna libera */
+    try { mediaKeeper.pause(); } catch (e) {}
+    try { mediaKeeper.removeAttribute('src'); mediaKeeper.load(); } catch (e) {}
+    try { if (mediaKeeper.parentNode) mediaKeeper.parentNode.removeChild(mediaKeeper); } catch (e) {}
+    mediaKeeper = null;
+  }
+  tipoSessione('ambient');
 }
 
 /* Segnale visivo: lampeggia lo schermo. Questo funziona sempre,
@@ -58,21 +71,28 @@ window.lampeggia = function(volte) {
   giro();
 };
 
-function unlockAudio() {
-  const ctx = getAudioCtx();
-  if (isOn(BYPASS_KEY, false)) avviaCanaleMultimediale();
-  if (ctx && ctx.state === 'running') {
-    document.removeEventListener('pointerdown', unlockAudio);
-    document.removeEventListener('touchstart', unlockAudio);
-  }
+/* Il contesto audio si crea e si risveglia DENTRO il tocco che avvia un
+   timer con suoni (recupero, cronometro di serie, prova): i bip arrivano
+   poi senza tocco, ma il telefono li lascia partire perche il contesto e
+   gia sbloccato. Subito dopo si sospende: resta acceso solo mentre suona. */
+window.preparaAudio = function() {
+  if (dropAudioAttivo) return;
+  if (!isOn(SOUND_KEY, true) && !isOn(COUNTDOWN_KEY, true)) return;
+  tipoSessione('ambient');
+  const ctx = getAudioCtx(true);
+  if (ctx) sospendiAudioDopo(300);
+};
+let sospendiAudioT = null;
+function sospendiAudioDopo(ms) {
+  clearTimeout(sospendiAudioT);
+  sospendiAudioT = setTimeout(sospendiAudioCtx, ms);
 }
-document.addEventListener('pointerdown', unlockAudio);
-document.addEventListener('touchstart', unlockAudio);
 
 function playTone(freq, dur, tipo) {
   try {
-    tipoSessione(isOn(BYPASS_KEY, false) ? 'playback' : 'transient');
-    const ctx = getAudioCtx();
+    /* durante il cedimento la sessione e quella della canzone: non si tocca */
+    if (!dropAudioAttivo) tipoSessione('ambient');
+    const ctx = getAudioCtx();   /* senza contesto sbloccato da un tocco: niente suono, solo lampeggio e vibrazione */
     if (!ctx) return;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -84,14 +104,15 @@ function playTone(freq, dur, tipo) {
     osc.connect(gain); gain.connect(ctx.destination);
     osc.start();
     osc.stop(ctx.currentTime + dur);
+    sospendiAudioDopo(dur * 1000 + 1300);
   } catch (e) {}
 }
 
 function playBeep() { playTone(880, 0.25, 'sawtooth'); }
 
-/* Prova dalle impostazioni: serve anche a sbloccare l audio al primo uso */
+/* Prova dalle impostazioni: il tocco sblocca il contesto audio, poi si sospende da solo */
 window.testSound = function() {
-  if (isOn(BYPASS_KEY, false)) avviaCanaleMultimediale();
+  getAudioCtx(true);
   lampeggia(1);
   playTick();
   setTimeout(() => playTick(), 230);

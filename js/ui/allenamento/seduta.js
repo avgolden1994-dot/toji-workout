@@ -199,7 +199,7 @@ function renderAllenamento() {
               <span class="set-x">×</span>
               <input type="number" class="set-input" value="${corpoLibero(e.name) && !s.weight ? '' : s.weight}" placeholder="${corpoLibero(e.name) ? '+0' : ''}" step="0.5" oninput="updateSetField(${idx},${si},'weight',this.value)" aria-label="Carico">
               <span class="set-kg-label">kg</span>
-              ${isTimeBased(e.name) && !s.done ? htmlLavoro(idx, si) : s.done && !s.wasBerserk ? `<select class="rpe-sel" onchange="updateSetRpe(${idx},${si},this.value)" aria-label="Quanto era dura (RPE)"><option value="">RPE</option>${RPE_VALORI.map(v => `<option value="${v}" ${Number(s.rpe) === Number(v) ? 'selected' : ''}>${v.replace('.', ',')}</option>`).join('')}</select>` : s.wasBerserk ? `<button class="set-flame-btn flame-on" onclick="annullaCedimento(${idx},${si})" aria-label="Togli il cedimento dalla serie ${si + 1}" title="Tocca per togliere il cedimento">🔥</button>` : `<button class="set-flame-btn ${armedSet && armedSet.exIdx === idx && armedSet.setIdx === si ? 'armed' : ''}" onclick="armDropTarget(${idx},${si})" aria-label="Porta la serie ${si + 1} a cedimento" title="Porta a cedimento">🔥</button>`}
+              ${isTimeBased(e.name) && !s.done ? htmlLavoro(idx, si) : s.done && !s.wasBerserk ? `<select class="rpe-sel" onchange="updateSetRpe(${idx},${si},this.value)" aria-label="Quanto era dura (RPE)"><option value="">RPE</option>${RPE_VALORI.map(v => `<option value="${v}" ${Number(s.rpe) === Number(v) ? 'selected' : ''}>${v.replace('.', ',')}</option>`).join('')}</select>` : s.wasBerserk ? `<button class="set-flame-btn flame-on" onclick="annullaCedimento(${idx},${si})" aria-label="Togli il cedimento dalla serie ${si + 1}" title="Tocca per togliere il cedimento">🔥</button>` : `<button class="set-flame-btn ${armedSet && armedSet.exIdx === idx && armedSet.setIdx === si ? 'armed' : ''}" onclick="apriCedimento(${idx},${si})" aria-label="Porta la serie ${si + 1} a cedimento" title="Porta a cedimento">🔥</button>`}
               <button class="set-check ${s.done ? 'checked' : ''}" onclick="toggleSetDone(${idx},${si})" aria-label="Segna serie ${si + 1} completata">✓</button>
             </div>
           `).join('')}
@@ -233,8 +233,6 @@ function renderAllenamento() {
   const skipped = list.length - active.length;
   const prog = document.getElementById('session-progress');
   if (prog) prog.innerText = (totalSets ? doneSets + ' / ' + totalSets + ' serie completate' : '') + (skipped ? ' \u2022 ' + skipped + ' saltati' : '');
-
-  refreshDropButtonState();
 }
 
 /* Aggiungere o togliere una serie si fa QUI, il giorno dell'allenamento:

@@ -231,7 +231,7 @@ function renderSetPage() {
       toggleHtml(SOUND_KEY, true, 'Suono a fine recupero', 'Quando il tempo scade') +
       toggleHtml(COUNTDOWN_KEY, true, 'Conto alla rovescia sonoro', 'Bip negli ultimi 5 secondi') +
       toggleHtml(FLASH_KEY, true, 'Lampeggia lo schermo', 'Funziona anche senza audio') +
-      toggleHtml(BYPASS_KEY, false, 'Suona anche in silenzioso', 'Mette in pausa Spotify o Apple Music')) +
+      toggleHtml(BYPASS_KEY, false, 'Suona anche in silenzioso', 'Solo per la canzone del cedimento, ferma la tua musica per 90 secondi')) +
       setGroup('Comportamento', toggleHtml(AUTOCLOSE_KEY, true, 'Chiudi da solo a fine recupero', 'Senza doverlo toccare') +
         toggleHtml(WAKE_KEY, true, 'Schermo sempre acceso in seduta', 'Non si spegne mentre ti alleni')) +
       '<button class="set-row-btn" onclick="testSound()">Prova il suono</button>' +

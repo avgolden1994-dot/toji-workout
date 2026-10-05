@@ -17,6 +17,7 @@ window.fermaLavoro = function() { if (lavoro) clearInterval(lavoro.int); lavoro 
 window.avviaLavoro = function(exIdx, setIdx) {
   if (lavoro && lavoro.exIdx === exIdx && lavoro.setIdx === setIdx) { fermaLavoro(); renderAllenamento(); return; }
   fermaLavoro();
+  preparaAudio();   /* il contesto audio si sblocca dentro questo tocco: tick e fine arrivano dopo */
   const s = ((loadData()[currentDay][exIdx] || {}).completedSets || [])[setIdx];
   if (!s) return;
   const sec = Math.max(5, Number(s.reps) || 30);

@@ -2,17 +2,18 @@
    (3in, parte di ui; ordine di caricamento: vedi index.html) */
 
 /* ============================================================
-   LETTORE MUSICALE SEMPRE RAGGIUNGIBILE (iPhone)
-   Due problemi insieme:
-   1. il lettore YouTube/Spotify stava nella schermata delle Opzioni,
-      che durante l allenamento e nascosta: non c era niente da toccare;
-   2. su iPhone Safari NON passa il tuo tocco dall app al riquadro di
-      YouTube: un video incorporato parte con l audio solo dopo un tocco
-      DENTRO il video. E una regola di Apple, non aggirabile.
-   Soluzione: il lettore vive in un riquadro fisso, piccolo, che resta
-   visibile durante la seduta. Su iPhone si tocca ▶ una volta sola:
-   l app lo ferma subito e lo porta all inizio dei tuoi 90 secondi.
-   Da quel momento il cedimento fa partire la musica da solo.
+   LETTORE MUSICALE DEL CEDIMENTO (iPhone)
+   Il lettore YouTube/Spotify compare solo dentro la finestra del
+   cedimento, e solo se la canzone scelta e un link web: all apertura
+   della seduta non si carica niente.
+   Su iPhone Safari NON passa il tuo tocco dall app al riquadro di
+   YouTube: un video incorporato parte con l audio solo dopo un tocco
+   DENTRO il video. E una regola di Apple, non aggirabile. Quindi:
+   - dove la piattaforma lo permette (Android, desktop) la musica parte
+     da sola nel tocco sulla fiamma e il lettore resta una barra sottile;
+   - su iPhone, finche non c e stato quel tocco, il riquadro si apre
+     nella finestra con scritto "tocca ▶": un tocco solo.
+   Finito il cedimento il lettore viene fermato e scaricato del tutto.
    ============================================================ */
 let IS_IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) ||
   (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -21,7 +22,10 @@ let dockStatoAttuale = 'nascosto';
 let attesaAvvio = null;
 
 function inizioSegmento() {
-  return Number((document.getElementById('segment-start-web') || {}).value) || 0;
+  /* con la durata nota vale il cursore; mentre il lettore si carica, il punto salvato */
+  if (webDuration > 0) return Number((document.getElementById('segment-start-web') || {}).value) || 0;
+  const m = typeof leggiMusica === 'function' ? leggiMusica() : null;
+  return m && m.tab === 'web' ? Number(m.webStart) || 0 : Number((document.getElementById('segment-start-web') || {}).value) || 0;
 }
 
 /* Il riquadro esiste sempre (mai display:none, cosi il lettore non si
@@ -29,7 +33,7 @@ function inizioSegmento() {
 let dockApertoAMano = false;
 let dockChiama = false;
 
-/* In seduta il lettore si apre solo quando va toccato (su iPhone prima
+/* Nella finestra del cedimento il lettore si apre solo quando va toccato (su iPhone prima
    dello sblocco, o se al cedimento la musica non parte). Il resto del
    tempo e una barra sottile che non copre le serie. Il video resta
    comunque della sua misura piena (almeno 200 px, come chiede YouTube):
@@ -56,10 +60,10 @@ window.dockStato = function(stato) {
   posizionaDock();
 };
 
-/* In seduta il lettore non galleggia sopra gli esercizi: si appoggia sul
-   posto riservato nella card del Cedimento e scorre con la pagina. Non
-   viene spostato nel codice della pagina (il video si ricaricherebbe e
-   perderebbe lo sblocco): cambia solo la sua posizione. */
+/* Nel cedimento il lettore non galleggia: si appoggia sul posto riservato
+   nella finestra (dock-slot). Non viene spostato nel codice della pagina
+   (il video si ricaricherebbe e perderebbe lo sblocco): cambia solo la
+   sua posizione, fissa sullo schermo, sopra la finestra. */
 window.posizionaDock = function() {
   const d = document.getElementById('music-dock');
   const slot = document.getElementById('dock-slot');
@@ -70,17 +74,24 @@ window.posizionaDock = function() {
     return;
   }
   const r = slot.getBoundingClientRect();
-  if (!r.width) { slot.style.height = '0px'; return; }   /* card non visibile */
-  d.style.top = (r.top + window.scrollY) + 'px';
-  d.style.left = (r.left + window.scrollX) + 'px';
+  if (!r.width) { slot.style.height = '0px'; return; }   /* finestra non visibile */
+  d.style.top = r.top + 'px';
+  d.style.left = r.left + 'px';
   d.style.width = r.width + 'px';
   slot.style.height = d.offsetHeight + 'px';
 };
 window.addEventListener('resize', () => posizionaDock());
 if (window.ResizeObserver) {
-  /* se cambia qualcosa sopra (testi, card), il posto si sposta e il lettore lo segue */
-  new ResizeObserver(() => posizionaDock()).observe(document.getElementById('app-root'));
+  /* se cambia qualcosa sopra (testi, finestra), il posto si sposta e il lettore lo segue */
+  const ro = new ResizeObserver(() => posizionaDock());
+  ro.observe(document.getElementById('app-root'));
+  const fin = document.getElementById('cedimento-sheet');
+  if (fin) ro.observe(fin);
 }
+(function() {
+  const corpo = document.getElementById('cedimento-body');
+  if (corpo) corpo.addEventListener('scroll', () => posizionaDock(), { passive: true });
+})();
 
 window.toggleDock = function() {
   if (dockStatoAttuale !== 'sessione') return;
