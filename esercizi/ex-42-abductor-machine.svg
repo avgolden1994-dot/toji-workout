@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="807.41 94.30 139.73 104.80" fill="none" role="img" aria-label="Abductor Machine (frontale)">
 <style>
-.fr{animation:9s linear infinite}
+.fr{animation:5.4s linear infinite}
 #f-giu{animation-name:giu} #f-q1{animation-name:q1} #f-mid{animation-name:mid} #f-q3{animation-name:q3} #f-su{animation-name:su}
-@keyframes giu{0%,6%{opacity:1;animation-timing-function:cubic-bezier(.4,0,.7,.55)}17.4%,82.6%{opacity:0;animation-timing-function:cubic-bezier(.3,.45,.6,1)}94%,100%{opacity:1}}
-@keyframes q1{0%{opacity:0}6%{opacity:0;animation-timing-function:cubic-bezier(.4,0,.7,.55)}17.4%{opacity:1}25%,75%{opacity:0}82.6%{opacity:1;animation-timing-function:cubic-bezier(.3,.45,.6,1)}94%,100%{opacity:0}}
-@keyframes mid{0%,17.4%{opacity:0}25%{opacity:1}32.6%,67.4%{opacity:0}75%{opacity:1}82.6%,100%{opacity:0}}
-@keyframes q3{0%,25%{opacity:0}32.6%{opacity:1;animation-timing-function:cubic-bezier(.3,.45,.6,1)}44%,56%{opacity:0;animation-timing-function:cubic-bezier(.4,0,.7,.55)}67.4%{opacity:1}75%,100%{opacity:0}}
-@keyframes su{0%,32.6%{opacity:0;animation-timing-function:cubic-bezier(.3,.45,.6,1)}44%,56%{opacity:1;animation-timing-function:cubic-bezier(.4,0,.7,.55)}67.4%,100%{opacity:0}}
+@keyframes giu{0%,3%{opacity:1;animation-timing-function:cubic-bezier(.4,0,.7,.55)}16.2%,83.8%{opacity:0;animation-timing-function:cubic-bezier(.3,.45,.6,1)}97%,100%{opacity:1}}
+@keyframes q1{0%{opacity:0}3%{opacity:0;animation-timing-function:cubic-bezier(.4,0,.7,.55)}16.2%{opacity:1}25%,75%{opacity:0}83.8%{opacity:1;animation-timing-function:cubic-bezier(.3,.45,.6,1)}97%,100%{opacity:0}}
+@keyframes mid{0%,16.2%{opacity:0}25%{opacity:1}33.8%,66.2%{opacity:0}75%{opacity:1}83.8%,100%{opacity:0}}
+@keyframes q3{0%,25%{opacity:0}33.8%{opacity:1;animation-timing-function:cubic-bezier(.3,.45,.6,1)}47%,53%{opacity:0;animation-timing-function:cubic-bezier(.4,0,.7,.55)}66.2%{opacity:1}75%,100%{opacity:0}}
+@keyframes su{0%,33.8%{opacity:0;animation-timing-function:cubic-bezier(.3,.45,.6,1)}47%,53%{opacity:1;animation-timing-function:cubic-bezier(.4,0,.7,.55)}66.2%,100%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.fr{animation:none}#f-q1,#f-mid,#f-q3,#f-su{opacity:0}}
 </style>
 <ellipse cx="877.9" cy="191.9" rx="20.5" ry="2.2" fill="#000" fill-opacity=".15"/>

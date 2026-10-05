@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="356.86 43.16 289.72 217.29" fill="none" role="img" aria-label="Good Morning (profilo)">
 <style>
-.fr{animation:6s cubic-bezier(.45,0,.55,1) infinite}
+.fr{animation:3.6s linear infinite}
 #f-giu{animation-name:giu} #f-mid{animation-name:mid} #f-su{animation-name:su}
-@keyframes giu{0%,6%{opacity:1}25%,75%{opacity:0}94%,100%{opacity:1}}
-@keyframes mid{0%,6%{opacity:0}25%{opacity:1}44%,56%{opacity:0}75%{opacity:1}94%,100%{opacity:0}}
-@keyframes su{0%,25%{opacity:0}44%,56%{opacity:1}75%,100%{opacity:0}}
+@keyframes giu{0%,3%{opacity:1}25%,75%{opacity:0}97%,100%{opacity:1}}
+@keyframes mid{0%,3%{opacity:0}25%{opacity:1}47%,53%{opacity:0}75%{opacity:1}97%,100%{opacity:0}}
+@keyframes su{0%,25%{opacity:0}47%,53%{opacity:1}75%,100%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.fr{animation:none}#f-mid,#f-su{opacity:0}}
 </style>
 <ellipse cx="490.4" cy="251.4" rx="25.8" ry="3.1" fill="#000" fill-opacity=".15"/>
