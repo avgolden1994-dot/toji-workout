@@ -26,12 +26,11 @@ function griglia(persone) {
 const programmi = persone => griglia(persone).map(p => { const q = Object.assign({}, p); delete q._persona; return { p, prog: costruisci(q) }; });
 
 /* ============================================================================================================ M1 */
-test('M1: Stacco Rumeno a una Gamba e un esercizio coi manubri, non col bilanciere (e gli elastici non sono macchine ne manubri)', () => {
-  /* prima: 'bilanciere' (la regex /stacco/); Lat Pulldown e Face Pull con Elastico 'macchine', Alzate Laterali con Elastico 'manubri' */
+test('M1: Stacco Rumeno a una Gamba e un esercizio coi manubri, non col bilanciere', () => {
+  /* prima: 'bilanciere' (la regex /stacco/). Tutti i 169 esercizi: tests/attributi.test.js confronta attrezzoDi con gli attributi e tests/browser/dettagli-esercizi.js con la sezione della lista */
   assert.strictEqual(app.g('attrezzoDi')('Stacco Rumeno a una Gamba'), 'manubri');
   assert.strictEqual(app.g('attrezzoDi')('Stacco Rumeno con Manubri'), 'manubri');
   assert.strictEqual(app.g('attrezzoDi')('Stacco Rumeno'), 'bilanciere');
-  ['Lat Pulldown con Elastico', 'Alzate Laterali con Elastico', 'Face Pull con Elastico'].forEach(n => assert.strictEqual(app.g('attrezzoDi')(n), 'corpo', n));
   const nome = app.g('nomeInLibreria')('Stacco Rumeno a una Gamba');
   const cons = prefs => app.g('consentito')(nome, prefs);
   assert.strictEqual(cons({ luogo: 'palestra', attrezziPalestra: ['bilanciere'], fastidi: [] }), false, 'serve un manubrio: con il solo bilanciere non c e');
