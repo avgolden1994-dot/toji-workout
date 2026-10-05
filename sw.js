@@ -153,6 +153,7 @@ const ASSETS = [
   './esercizi/ex-15-lat-machine.svg',
   './esercizi/ex-16-lat-machine-presa-inversa.svg',
   './esercizi/ex-17-rematore-bilanciere.svg',
+  './esercizi/ex-18-rematore-manubrio.svg',
   /*FINE-ASSET*/
 
 ];
