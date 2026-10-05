@@ -89,7 +89,7 @@ function contestoPiano(brief, struttura) {
     principiante: chi.livello === 'principiante',
     obiettivo: ob.primo, deficit: ob.fase === 'deficit',
     rir: regolaAttiva('MES-02'), rampa: regolaAttiva('MES-03'), obi: regolaAttiva('OBI-03'),
-    lungo: chi.livello === 'principiante' && !chi.cauto && struttura.settimane === sogliaStruttura('strutturaPrincipiante').settimane   /* i 12 mesi di PRN-03, con la verifica e il controllo */
+    lungo: chi.livello === 'principiante' && !chi.cauto && struttura.settimane === sogliaStruttura('strutturaPrincipiante').settimane   /* le 12 settimane di PRN-03, con la verifica alla 12a e il controllo all 8a */
   };
 }
 /* la dose di scarico di partenza segnata nel piano: bassa fino a 3 giorni a settimana, media oltre e per i prudenti (poi la sceglie la fatica: MES-05) */
