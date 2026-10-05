@@ -97,7 +97,7 @@ Legenda responsabile: **U** = Utente, **C** = Claude, **U+C** = entrambi.
 | D4 | Funzioni native | **APERTA** (l'utente non ha risposto): vedi 1.2 | 2.5, 2.8 |
 | D5 | Mercati e lingue | **Tutti i paesi possibili, esclusa la Cina continentale** (dal 2023/2024 serve un numero ICP tramite un'entità locale: non praticabile per un individuo estero; da verificare, consultato 2026-10-05). Lingue per ora it/en/es/de, traduzioni aggiunte e migliorate nel tempo. Metadata localizzati almeno nelle 4 lingue; negli altri paesi si mostra l'inglese. Da controllare in ASC gli altri paesi con requisiti locali (da verificare) | 4.4 |
 | D6 | Account Apple | **Individuale.** Il nome legale dell'utente comparirà come venditore | 1.3, 8 |
-| D7 | Nome | **"3in"** (sostituisce "Toji Workout": il rischio Jujutsu Kaisen sparisce). Da fare: nome libero in ASC (i nomi sono unici), ricerca marchi EUIPO/TMview e USPTO, sottotitolo (max 30 caratteri), parole chiave, bundle id. Vedi 1.3 | 1.3, 4.6 |
+| D7 | Nome | **"3in"** (sostituisce il vecchio nome, preso da un personaggio di Jujutsu Kaisen: il rischio sparisce). Da fare: nome libero in ASC (i nomi sono unici), ricerca marchi EUIPO/TMview e USPTO, sottotitolo (max 30 caratteri), parole chiave, bundle id. Vedi 1.3 | 1.3, 4.6 |
 | D8 | Dispositivi | **Solo iPhone** per ora: niente screenshot iPad 13", in Xcode Targeted Device Family = iPhone | 2.11, 4.4 |
 | D9 | Coach IA | **Da togliere dalla build iOS v1** (o disattivare con un flag): l'app è guidata dal coach a regole. Niente `connect-src` verso il Worker Cloudflare, niente consenso IA, niente "AI di terzi" (5.1.2), nessun requisito 2.1 sul backend attivo. Punti di codice in 3.7 (lavoro futuro, solo con l'OK dell'utente) | 3.7 |
 | D10 | Privacy | **Capirne di più:** sezione 9 (in parole semplici) e bozza in [`privacy-policy-bozza.md`](privacy-policy-bozza.md), da ospitare gratis con GitHub Pages | 3.6, 9 |
@@ -123,13 +123,13 @@ Legenda responsabile: **U** = Utente, **C** = Claude, **U+C** = entrambi.
 
 ### 1.3 Nome "3in", bundle id e cosa va rinominato
 
-- **Stato attuale (verificato con grep, 2026-10-05):** il nome visibile è già "3in" in `manifest.json` (`name`, `short_name`, `description`) e `index.html` (`<title>`, `apple-mobile-web-app-title`); il service worker usa la cache `3in-v10`. "Toji" resta solo come identificativo interno (vedi sotto). Le modalità Toji e Maki furono tolte perché nomi di personaggi protetti; il commento di `js/core/modalita.js` spiega che oggi `currentMode` è solo l'id dello spazio dei dati.
+- **Stato attuale (verificato con grep, 2026-10-05):** il nome visibile è già "3in" in `manifest.json` (`name`, `short_name`, `description`) e `index.html` (`<title>`, `apple-mobile-web-app-title`); il service worker usa la cache `3in-vNN` (`CACHE_NAME` in `sw.js`). Il vecchio nome resta solo come identificativo interno dei dati (`'toji'`, chiavi `_toji`: vedi sotto); il commento di `js/core/modalita.js` spiega che oggi `currentMode` è solo l'id dello spazio dei dati.
 - **Da fare per il nome:** (1) controllare in ASC che "3in" sia libero (i nomi sono unici); un nome di 3 caratteri è probabilmente già preso o difficile da cercare: preparare una variante (es. "3in: Allenamento", max 30 caratteri) (da verificare); (2) ricerca marchi su "3in" in EUIPO/TMview e USPTO (da fare, con consulto legale se serve); (3) sottotitolo (max 30 caratteri) e parole chiave; (4) niente marchi altrui nelle keyword (2.3.7).
 - **Bundle id** (immutabile dopo la pubblicazione): scegliere una forma che inizi con una lettera in ogni segmento, perché un segmento che inizia con una cifra può dare problemi in alcuni contesti (da verificare, consultato 2026-10-05). Proposte: `com.<cognome>.trein` oppure, se si ha un dominio, `it.<dominio>.trein` o `app.<dominio>.trein` (le cifre non nel primo carattere; il trattino è ammesso ma si evita). Evitare di mettere "toji".
-- **Rinominare "Toji" → "3in" dove visibile all'utente (lavoro futuro sul codice, NON eseguito ora):**
+- **Rinomina verso "3in" dove visibile (fatta il 2026-10-05, tranne il repository):**
   - repository e cartella `toji-workout` (compare nell'URL di GitHub Pages della privacy policy: scegliere il nome PRIMA di pubblicare l'URL, perché finisce in ASC; il comportamento dei redirect di Pages dopo un rinomina è da verificare);
-  - `js/ui/esporta-ics.js:50`: UID degli eventi `@tojiworkout` (invisibile; cambiarlo duplicherebbe gli eventi già importati nel calendario: decidere se lasciarlo);
-  - titoli e testi nei `docs/` (PIANO.md, ARCHITETTURA.md, ecc.) e nel README.
+  - `js/ui/esporta-ics.js`: fatto (2026-10-05). File `allenamenti-3in.ics`, UID degli eventi `3in-AAAAMMGG@3in`: gli eventi importati prima del cambio compaiono doppi una volta e vanno cancellati a mano;
+  - titoli e testi nei `docs/`, nel README e in CLAUDE.md: fatto (2026-10-05).
 - **NON rinominare:** l'id dello spazio dati `'toji'` (e `'maki'`, per chi lo scelse a settembre 2026) in `currentMode` (`js/core/costanti.js:9`, `js/core/modalita.js`, `js/core/storage.js:115-119`, `js/core/backup.js:60`, `js/avvio.js:18`) e tutte le chiavi `localStorage` con suffisso `_toji`, oltre a `coach_plus_*` e `tz_*` (ne dipendono i dati degli utenti esistenti).
 
 ---
@@ -297,7 +297,7 @@ Disclaimer visibile: l'app non è un dispositivo medico, non sostituisce il medi
 - **YouTube (D11)**: per i tutorial l'app apre una ricerca generica e l'utente sceglie il video; per la musica incorpora il link incollato con l'IFrame Player API (descrizione in 3.3). L'app è solo interfaccia e non scarica né converte (5.2.3, da verificare); verificare comunque i Termini dei servizi API di YouTube; non mostrare loghi o marchi YouTube/Spotify come se fossero dell'app (5.2.2/5.2.5).
 - **"Schede epoca d'oro"** con nomi di culturisti reali (Reg Park, Arnold, Gironda, Reeves, Yates, Mentzer...): diritti di nome/immagine e di marchio (5.2.1) da verificare; usare i nomi come riferimento storico descrittivo, senza foto né logo, senza suggerire approvazione.
 - **5.2.5**: non imitare UI Apple (Activity rings, icone Health).
-- **Nome/marchi (5.2)**: D7, "3in": ricerca marchi e nome libero in ASC (1.3). Il rischio "Toji/Jujutsu Kaisen" non c'è più; resta da verificare che non ne restino tracce visibili.
+- **Nome/marchi (5.2)**: D7, "3in": ricerca marchi e nome libero in ASC (1.3). Il rischio del vecchio nome (personaggio di Jujutsu Kaisen) non c'è più; tracce visibili tolte il 2026-10-05 (restano l'id interno dei dati e il nome del repository).
 
 ### 4.7 Pagamenti (3.1)
 L'app è gratuita con tip jar IAP (D2, sezione 8): le mance sono acquisti consumabili (3.1.1), niente link a donazioni esterne dentro l'app (3.1.1(a)). Prodotti IAP da configurare e inviare in revisione insieme alla build.

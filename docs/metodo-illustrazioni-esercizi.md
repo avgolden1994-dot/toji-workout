@@ -1,6 +1,6 @@
-# Metodo illustrazioni esercizi — app train track (toji.html)
+# Metodo illustrazioni esercizi — app 3in
 
-Documento di passaggio. Contiene **solo la logica**: la lista degli esercizi va letta ogni volta da `EXERCISE_LIBRARY` in `toji.html` (l'ordine della libreria = numerazione NN).
+Documento di passaggio. Contiene **solo la logica**: la lista degli esercizi va letta ogni volta da `EXERCISE_LIBRARY` in `js/dati/libreria-esercizi.js` (l'ordine della libreria = numerazione NN).
 
 ---
 
@@ -115,16 +115,16 @@ Quiver ignora id, gruppi e articolazioni, quindi l'animazione si costruisce dopo
 
 ## 5. Collegamento nell'app
 
-- `toji.html` → tabella `IMMAGINI_ESERCIZI`: nome dell'esercizio senza emoji → `'esercizi/ex-NN-nome.svg'`. Compare nella scheda "Come si fa".
-- `sw.js` (cache `toji-workout-v3`) → aggiungere ogni file finale ad `ASSETS`, altrimenti offline non si vede.
-- GitHub: caricare la cartella `esercizi` accanto a `toji.html`, insieme a `toji.html` e `sw.js` aggiornati. Aspettare la spunta verde in Actions, poi sul telefono: Opzioni → Informazioni → Cerca aggiornamenti.
+- `js/dati/disegni-esercizi.js` → tabella `IMMAGINI_ESERCIZI`: nome dell'esercizio senza emoji → `'esercizi/ex-NN-nome.svg'`. Compare nella scheda "Come si fa".
+- `sw.js` → `npm run sw` mette da solo in `ASSETS` ogni file di `esercizi/` (poi si alza `CACHE_NAME`), altrimenti offline non si vede.
+- GitHub: caricare la cartella `esercizi` accanto a `index.html`, insieme a `js/dati/disegni-esercizi.js` e `sw.js` aggiornati. Aspettare la spunta verde in Actions, poi sul telefono: Opzioni → Informazioni → Cerca aggiornamenti.
 - Nell'app vanno **solo** i file senza lettera.
 
 ---
 
 ## 6. Mappa muscolare (già fatta)
 
-La tavola anatomica fronte/retro (`mappa-muscoli.svg`) è già dentro `toji.html` (`MC_PARTS`, `renderBodyMap()`). Ogni muscolo ha `class="bm-muscle"` e `data-g` (petto, spalle, braccia, core, schiena, glutei, gambe). Niente colori fissi: li decide il CSS dell'app, così si accende solo il gruppo dell'esercizio scelto.
+La tavola anatomica fronte/retro (`mappa-muscoli.svg`) è già in `js/ui/figura-anatomica.js` (`MC_PARTS`, `renderBodyMap()`). Ogni muscolo ha `class="bm-muscle"` e `data-g` (petto, spalle, braccia, core, schiena, glutei, gambe). Niente colori fissi: li decide il CSS dell'app, così si accende solo il gruppo dell'esercizio scelto.
 
 ---
 

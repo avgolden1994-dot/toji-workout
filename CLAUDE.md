@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Linee guida per Claude Code su questo repository (toji-workout).
+Linee guida per Claude Code su questo repository (3in).
 
 ## Delegation
 
@@ -18,7 +18,7 @@ Linee guida per Claude Code su questo repository (toji-workout).
 
 ## Project context & code search
 
-- This file is the project context for toji-workout: it lives in the repo (saved locally and versioned).
+- This file is the project context for 3in: it lives in the repo (saved locally and versioned).
 - Always consult the graph report FIRST (`graphify-out/GRAPH_REPORT.md`), before re-reading any code.
 - The report and the graph (`graphify-out/`) are versioned in the repo (gitignored: `graphify-out/cache/`, graphify's hidden local files `graphify-out/.graphify_*` and its dated backups) and are up to date with the code (`npm run grafo:verifica`).
 - Use the graph (`graphify query` / `path` / `explain`) to search actively; read only the files/nodes actually needed. No broad reads of the code base.

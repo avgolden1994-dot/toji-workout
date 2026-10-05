@@ -167,7 +167,7 @@ if (ok.size < comunita.size) { console.error('graphify non ha riusato tutti i no
 /* report: due righe in testa su come si usa il grafo in questo repo, e l'impronta dei sorgenti */
 const rp = path.join(OUT, 'GRAPH_REPORT.md');
 let report = fs.readFileSync(rp, 'utf8');
-report = report.replace(/^(# .*\n)/, '$1\n' +
+report = report.replace(/^# Graph Report - \S+/, '# Graph Report - 3in').replace(/^(# .*\n)/, '$1\n' +
   '> Rigenerato con `npm run grafo` (graphify + legami dei nomi globali da `tools/simboli.js` + nomi italiani da `tools/grafo-nomi.json`).\n' +
   '> Un nome preciso (funzione, costante, `window.nome`): `npm run -s trova -- nome` → file:riga, chi lo usa e cosa usa.\n' +
   '> Archi con contesto "nome globale" o "html (onclick/markup)": legami tra file ricavati da `tools/simboli.js`; gli altri da graphify.\n' +

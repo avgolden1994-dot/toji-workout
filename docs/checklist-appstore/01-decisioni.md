@@ -19,10 +19,10 @@ Piano: [sezione 1](../piano-lancio-appstore.md#1-decisioni-prese-e-questioni-ape
 - [x] D7a Nome app: **"3in"** (2026-10-05)
 - [ ] D7a2 "3in" libero in App Store Connect (i nomi sono unici); variante pronta se occupato; sottotitolo (max 30) e parole chiave
 - [ ] D7b Ricerca marchi su "3in": EUIPO/TMview, USPTO
-- [x] D7b2 Rischio "Toji" (Jujutsu Kaisen): superato dal cambio nome (il nome visibile è già "3in" nel codice)
+- [x] D7b2 Rischio del vecchio nome (personaggio di Jujutsu Kaisen): superato dal cambio nome (il nome visibile è già "3in" nel codice)
 - [ ] D7c Bundle id scelto (immutabile; forma che inizia con una lettera, es. `com.<cognome>.trein`; da verificare)
 - [ ] D7d Icona 1024x1024: stile deciso; asset Quiver con data, prompt e termini conservati
-- [ ] D7e Rinomina "Toji" → "3in" dove visibile (lavoro futuro; l'id `'toji'` e le chiavi `_toji` NON si toccano; vedi piano 1.3)
+- [x] D7e Rinomina verso "3in" dove visibile (fatta il 2026-10-05, resta il nome del repository; l'id `'toji'` e le chiavi `_toji` NON si toccano; vedi piano 1.3)
 - [x] D8 Solo iPhone (2026-10-05); Targeted Device Family = iPhone
 - [x] D9 Coach IA: **da togliere o disattivare con flag nella v1 iOS** (2026-10-05); lavoro di codice solo con l'OK dell'utente (piano 3.7)
 - [x] D10 Privacy: sezione 9 del piano e [bozza](../privacy-policy-bozza.md) (2026-10-05)
