@@ -756,9 +756,9 @@
     "semantic_hash": ""
   },
   "CLAUDE.md": {
-    "mtime": 1791193601.8832266,
-    "seen": 1791193621.9917343,
-    "ast_hash": "05c08beb0c5645c12eb829db9fb1dc56",
+    "mtime": 1791203342.7360044,
+    "seen": 1791203462.7955837,
+    "ast_hash": "ca771c001e241c78e70bd02ba45705ff",
     "semantic_hash": ""
   },
   "toji.html": {
@@ -786,9 +786,9 @@
     "semantic_hash": ""
   },
   "docs/mappa-per-agenti.md": {
-    "mtime": 1791182341.435202,
-    "seen": 1791182361.198758,
-    "ast_hash": "7f56e08bacb119ddd730bb7694fe190c",
+    "mtime": 1791203342.7355218,
+    "seen": 1791203462.7956111,
+    "ast_hash": "3acc9e6e494b4733da08357ca89ba607",
     "semantic_hash": ""
   },
   "docs/checklist-appstore/01-decisioni.md": {
@@ -1113,6 +1113,12 @@
     "mtime": 1791182376.2992039,
     "seen": 1791182414.2345912,
     "ast_hash": "5b4dabf170fb5b3712698a8f42da2872",
+    "semantic_hash": ""
+  },
+  "docs/tema-chiaro.md": {
+    "mtime": 1791203333.7479777,
+    "seen": 1791203462.7956202,
+    "ast_hash": "2c12c33816183060fa372da37487f561",
     "semantic_hash": ""
   }
 }
