@@ -138,7 +138,8 @@ function bersagliVolume(brief, opz) {
   const fasce = sogliaVolume('fasceUnita'), gen = sogliaVolume('fasceGenerale')[level] || sogliaVolume('fasceGenerale').intermedio, forzaQ = sogliaVolume('forzaQuotaFascia');
   const pavimenti = sogliaVolume('pavimentiDirette'), pr = sogliaVolume('priorita'), tt = sogliaVolume('tettoSeduta'), defi = sogliaVolume('deficit'), ff = sogliaVolume('fattoreFisico');
   const prioritarie = opz.senzaPriorita ? [] : unitaPriorita(brief);
-  const specializza = prioritarie.length > 0 && puoSpecializzare(brief, prioritarie);
+  const specializza = prioritarie.length > 0 && regolaAttiva('EST-05') && puoSpecializzare(brief, prioritarie);   /* EST-05 spenta: solo la priorità leggera */
+  const altriAMantenimento = specializza && regolaAttiva('EST-06');
   const base = (brief.lavoro && brief.lavoro.volumeBase) || {};   /* il volume che il programma standard ha dato a ogni unità: la priorità si misura da lì (PRI-01) */
   const unita = {};
   UNITA_VOLUME.forEach(u => {
@@ -178,7 +179,7 @@ function bersagliVolume(brief, opz) {
       x.min = Math.min(x.target, rif + 1);   /* ciò che il programma standard dà più una serie vengono prima del resto: la priorità vale sempre almeno una serie */
       x.max = specializza ? tetto : Math.max(mx, x.target);
       if (specializza) { x.capDuro = piccola ? tt.specializzazionePiccole : tt.specializzazione; x.capMorbido = Math.min(x.capMorbido, x.capDuro); }
-    } else if (specializza && u !== 'deltoide_anteriore') {
+    } else if (altriAMantenimento && u !== 'deltoide_anteriore') {
       /* EST-06: gli altri a max(mantenimento, 50% del bersaglio standard), carichi invariati */
       const m = Math.max(mant[1], Math.round(pr.altriQuota * t));
       x.altro = true; x.target = Math.min(t, m); x.min = Math.min(mant[0], x.target); x.max = Math.min(mx, x.target + 1);
@@ -192,7 +193,7 @@ function bersagliVolume(brief, opz) {
   const fem = unita.femorali;
   if (!fem.altro && rapporto > fem.min) { fem.min = Math.min(rapporto, fem.max); fem.minBanda = Math.max(fem.minBanda, fem.min); fem.target = Math.max(fem.target, fem.min); }
   /* il tetto di gruppo della schiena: dorsali e spessore insieme non oltre la fascia IPE (le trazioni e i rematori sono la stessa schiena) */
-  return { tipo: tipo, giorni: giorni, esigenza: esig, deficit: deficit, specializza: specializza, prioritarie: prioritarie, unita: unita,
+  return { tipo: tipo, giorni: giorni, esigenza: esig, deficit: deficit, specializza: specializza, altriAMantenimento: altriAMantenimento, prioritarie: prioritarie, unita: unita,
     gruppiLimite: { schiena: { unita: ['dorsali', 'schiena_spessore'], max: Math.max(unita.dorsali.max, unita.schiena_spessore.max) } } };
 }
 

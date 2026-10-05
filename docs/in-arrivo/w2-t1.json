@@ -1,0 +1,240 @@
+{
+ "task": "W2-T1",
+ "script": [
+  {
+   "src": "js/coach/volume/soglie-volume.js",
+   "prima": "js/coach/volume/volume.js"
+  }
+ ],
+ "frasi": {
+  "Petto # serie": {
+   "en": "Chest # sets",
+   "es": "Pecho # series",
+   "de": "Brust # Sätze"
+  },
+  "Dorsali # serie": {
+   "en": "Lats # sets",
+   "es": "Dorsales # series",
+   "de": "Latissimus # Sätze"
+  },
+  "Spessore della schiena # serie": {
+   "en": "Back thickness # sets",
+   "es": "Grosor de la espalda # series",
+   "de": "Rückendicke # Sätze"
+  },
+  "Quadricipiti # serie": {
+   "en": "Quadriceps # sets",
+   "es": "Cuádriceps # series",
+   "de": "Quadrizeps # Sätze"
+  },
+  "Femorali # serie": {
+   "en": "Hamstrings # sets",
+   "es": "Isquiotibiales # series",
+   "de": "Beinbeuger # Sätze"
+  },
+  "Glutei # serie": {
+   "en": "Glutes # sets",
+   "es": "Glúteos # series",
+   "de": "Gesäß # Sätze"
+  },
+  "Adduttori # serie": {
+   "en": "Adductors # sets",
+   "es": "Aductores # series",
+   "de": "Adduktoren # Sätze"
+  },
+  "Abduttori # serie": {
+   "en": "Abductors # sets",
+   "es": "Abductores # series",
+   "de": "Abduktoren # Sätze"
+  },
+  "Polpacci # serie": {
+   "en": "Calves # sets",
+   "es": "Pantorrillas # series",
+   "de": "Waden # Sätze"
+  },
+  "Deltoidi anteriori # serie": {
+   "en": "Anterior deltoids # sets",
+   "es": "Deltoides anteriores # series",
+   "de": "Vordere Deltamuskeln # Sätze"
+  },
+  "Deltoidi laterali # serie": {
+   "en": "Lateral deltoids # sets",
+   "es": "Deltoides laterales # series",
+   "de": "Seitliche Deltamuskeln # Sätze"
+  },
+  "Deltoidi posteriori # serie": {
+   "en": "Rear deltoids # sets",
+   "es": "Deltoides posteriores # series",
+   "de": "Hintere Deltamuskeln # Sätze"
+  },
+  "Bicipiti # serie": {
+   "en": "Biceps # sets",
+   "es": "Bíceps # series",
+   "de": "Bizeps # Sätze"
+  },
+  "Tricipiti # serie": {
+   "en": "Triceps # sets",
+   "es": "Tríceps # series",
+   "de": "Trizeps # Sätze"
+  },
+  "Addome # serie": {
+   "en": "Abs # sets",
+   "es": "Abdomen # series",
+   "de": "Bauch # Sätze"
+  },
+  "Spessore della schiena": {
+   "en": "Back thickness",
+   "es": "Grosor de la espalda",
+   "de": "Rückendicke"
+  },
+  "Abduttori": {
+   "en": "Abductors",
+   "es": "Abductores",
+   "de": "Abduktoren"
+  },
+  "Deltoidi posteriori": {
+   "en": "Rear deltoids",
+   "es": "Deltoides posteriores",
+   "de": "Hintere Deltamuskeln"
+  },
+  "Addome": {
+   "en": "Abs",
+   "es": "Abdomen",
+   "de": "Bauch"
+  },
+  "con # minuti non entra di più": {
+   "en": "with # minutes there is no room for more",
+   "es": "con # minutos no cabe más",
+   "de": "mit # Minuten passt nicht mehr hinein"
+  },
+  "i limiti di serie e di esercizi per seduta non lasciano altro posto": {
+   "en": "the limits on sets and exercises per session leave no more room",
+   "es": "los límites de series y ejercicios por sesión no dejan más espacio",
+   "de": "die Grenzen für Sätze und Übungen pro Einheit lassen keinen Platz mehr"
+  },
+  "con i tuoi attrezzi o i tuoi fastidi non c’è un esercizio adatto": {
+   "en": "with your equipment or your aches there is no suitable exercise",
+   "es": "con tu equipamiento o tus molestias no hay un ejercicio adecuado",
+   "de": "mit deinem Equipment oder deinen Beschwerden gibt es keine passende Übung"
+  },
+  "Con questi minuti è un programma di mantenimento": {
+   "en": "With these minutes it is a maintenance programme",
+   "es": "Con estos minutos es un programa de mantenimiento",
+   "de": "Mit dieser Zeit ist es ein Erhaltungsprogramm"
+  },
+  "per crescere servono più sedute o sedute più lunghe.": {
+   "en": "to grow you need more sessions or longer sessions.",
+   "es": "para crecer hacen falta más sesiones o sesiones más largas.",
+   "de": "um zu wachsen braucht es mehr oder längere Einheiten."
+  },
+  "il muscolo restava sotto il volume minimo.": {
+   "en": "the muscle was below the minimum volume.",
+   "es": "el músculo quedaba por debajo del volumen mínimo.",
+   "de": "der Muskel lag unter dem Mindestvolumen."
+  },
+  "Priorità": {
+   "en": "Priority",
+   "es": "Prioridad",
+   "de": "Priorität"
+  },
+  "qualche serie in più.": {
+   "en": "a few extra sets.",
+   "es": "algunas series más.",
+   "de": "ein paar Sätze mehr."
+  },
+  "Al massimo due muscoli alla volta": {
+   "en": "At most two muscles at a time",
+   "es": "Como máximo dos músculos a la vez",
+   "de": "Höchstens zwei Muskeln gleichzeitig"
+  },
+  "gli altri restano al volume normale.": {
+   "en": "the others stay at the normal volume.",
+   "es": "los demás se quedan con el volumen normal.",
+   "de": "die anderen bleiben beim normalen Volumen."
+  },
+  "+#% di serie": {
+   "en": "+#% sets",
+   "es": "+#% de series",
+   "de": "+#% Sätze"
+  },
+  "gli altri muscoli a mantenimento con gli stessi carichi.": {
+   "en": "the other muscles at maintenance with the same loads.",
+   "es": "los demás músculos en mantenimiento con las mismas cargas.",
+   "de": "die anderen Muskeln im Erhaltungsmodus mit denselben Gewichten."
+  }
+ },
+ "regole": [
+  {
+   "capitolo": 21,
+   "riga": "- **IPE-01** (spegnibile) volume per muscolo (W2-T1; assorbe SEL-01, SEL-05, SPE-02; registro B6): le serie si contano per UNITÀ, le 15 di `UNITA_VOLUME` (petto, dorsali, spessore della schiena, quadricipiti, femorali, grande gluteo, adduttori, abduttori, polpacci, deltoide anteriore, laterale e posteriore, bicipiti, tricipiti, addome), con i crediti degli attributi degli esercizi (1 al bersaglio, 0,5 a un secondario che è un vero motore, 0 con eccezione scritta; `contaVolume` è la stessa misura; niente pesi 0,2-0,8). `bersagliVolume(brief)` (`js/coach/volume/volume.js`, numeri in `soglie-volume.js`) dà a ogni unità minimo, massimo, mantenimento e bersaglio (il punto di partenza dentro la fascia: minimo × esigenza, mai oltre il massimo; ×1,2 con massa magra bassa e ×0,85 in calo, che era PRG-26): ipertrofia e ricomposizione = tabella `VOLUME_UNITA` (fasce IPE 6-10 / 10-16 / 12-20 per petto, dorsali e quadricipiti; per muscolo le altre: glutei 4-8 / 8-14 / 10-16, spessore 4-8 / 6-12 / 8-14, femorali 4-8 / 8-12 / 10-14, laterali 4-6 / 8-14 / 10-18, posteriori 3-5 / 6-12 / 8-14, bicipiti 4-6 / 8-14 / 10-18, tricipiti 4-6 / 6-12 / 8-16, polpacci 4-6 / 8-12 / 10-16, adduttori 0-2 / 3-8 / 4-10, abduttori 0-2 / 2-6 / 3-8, addome 2-4 / 4-8 / 6-10; deltoide anteriore solo il massimo 14 / 16); obiettivo glutei 8-12 / 12-18 / 14-20; salute e dimagrimento: unità grandi 4-8 / 6-10 / 8-12, le piccole almeno 2 frazionarie; forza: grandi nella metà bassa della fascia, piccole a mantenimento; i femorali almeno 0,6 volte i quadricipiti (collaudo EQ-03) e almeno una flessione del ginocchio. Il solutore (`assegnaVolume`, stadio 9, e un secondo giro in `limitaVolume` dopo `strBilancia`) parte dalle sedute composte e le porta dentro le fasce con mosse di una serie: toglie dove un'unità supera il massimo (anche un esercizio intero, mai il fondamentale, l'unico del suo schema nella seduta o l'unica flessione del ginocchio), aggiunge una serie dove costa meno tempo e dà più all'unità col deficit relativo più alto con poco «sbordo» sugli altri, scambia serie tra esercizi quando il tempo è finito (il tempo è un tetto: `durataSeduta`, D-P10) e, se un'unità non ha esercizi, chiede un posto (`aggiungiSerieUtile`: un esercizio nuovo da 2 serie nella seduta con più tempo, o al posto di quello che costa meno se la seduta ha già 8 esercizi, 6 per chi inizia; a casa solo senza attrezzi che il questionario non chiede). Quando il tempo non basta per tutte vale la scala di priorità di ricerca-casa §5.4: le unità grandi, poi i pavimenti di IPE-02, poi i minimi dei piccoli. Rispetta sempre: 5 serie per multiarticolare e 6 per isolamento (3 per chi inizia, gli over 65, i prudenti), il tetto per seduta di IPE-06, le 48 ore tra due sedute dello stesso grande muscolo (REC-01), l'equilibrio tra spinte e tirate (ABB-04), almeno 2 sedute per unità con 3 giorni o più (collaudo FRQ-01, FRQ-02). Spenta, con un metodo famoso o senza il file delle soglie: l'algoritmo di prima per gruppi (PRG-25..30, `assegnaVolumeGruppi`, `limitaVolumeGruppi`). Forza: Solida per «almeno 10 serie negli allenati» (Schoenfeld 2017, ACSM 2026), Moderata per il conteggio frazionario (Pelland 2025-2026), Convenzione per le fasce per singolo muscolo (ricerca-specializzazione §3.1, registro C.4)."
+  },
+  {
+   "capitolo": 21,
+   "riga": "- **IPE-02** (spegnibile) pavimento di serie dirette per unità (W2-T1; assorbe SPE-09, SPE-10; registro B6): per intermedi e avanzati, in `pavimentiDirette` di `soglie-volume.js` e letto da `pavimentoVolume(brief, unita)`: deltoide laterale 6 / 4 / 3 serie con 4 o più / 3 / 2 giorni (2 in forza, 0 in salute e dimagrimento), posteriore 4 / 3 / 2, bicipiti e tricipiti 4 / 4 / 2, polpacci 8 / 6 / 3 (2 in generale), femorali (la flessione del ginocchio) e addome 4 / 4 / 2 (2 in generale); ai principianti solo femorali e addome (un esercizio). Il solutore le tratta prima dei minimi dei muscoli piccoli e il taglio per il tempo (W2-T2) non scende sotto `pavimentoVolume` (le grandi: il mantenimento 4-6; 0 con IPE-01 spenta). Convenzione (Maeo 2023 e Baz-Valle 2022 per tricipiti e bicipiti: Moderata; deltoidi e polpacci: Convenzione)."
+  },
+  {
+   "capitolo": 21,
+   "riga": "- **IPE-06** (spegnibile) tetto di serie frazionarie di un'unità in una seduta (W2-T1; registro B7): morbido 8 (il solutore sposta la serie in un'altra seduta se c'è), duro 11; l'unità prioritaria in specializzazione ha il duro a 8, a 6 se è piccola (deltoidi, braccia, polpacci, addome); con frequenza 1 scelta dall'utente 11. Provvisoria (Remmert 2025, un preprint, finché non esce la versione rivista: registro C.4)."
+  },
+  {
+   "capitolo": 28,
+   "riga": "- **OBI-04** (spegnibile) niente +20% in deficit (W2-T1; assorbe MES-17 per il volume): con il dimagrimento tra gli obiettivi (o la fase scelta a mano) `esigenzaIniziale` non supera 1,00 e `tettoEsigenza` è 1 (`esigenzaInDeficit`, `esigenza.js`: nessuna nota «Coach esigente»); per l'ipertrofia e la forza con un secondo obiettivo di dimagrimento il volume parte dall'85% del minimo e il massimo è il 90% (per salute e dimagrimento come primo obiettivo valgono già le fasce generali, che sono di mantenimento). Il pavimento di RIR in deficit resta di MES-02 (W2-T4). Convenzione e un RCT (3 o 5 serie danno lo stesso mantenimento: Moderata)."
+  },
+  {
+   "capitolo": 31,
+   "riga": "- **EST-02** (sempre accesa: guardia) al massimo 2 unità prioritarie (W2-T1 per il volume, W5-T1 per l'interfaccia; assorbe SPE-01; D-P17): le unità fini sono quelle di `UNITA_VOLUME`; finché l'interfaccia non le chiede, `unitaPriorita(brief)` ricava dai gruppi scelti nell'onboarding la prima unità di ogni gruppo, poi la seconda, finché sono 2 (braccia = bicipiti e tricipiti; spalle = laterale e posteriore; gambe = quadricipiti e femorali); la nota dice «Al massimo due muscoli alla volta». Il brief le tiene in `obiettivi.prioritaUnita`. Ogni priorità vale almeno una serie in più di quel che il programma standard dà all'unità (`volumeBase`: si risolve prima il programma standard) e il solutore le dà più peso."
+  },
+  {
+   "capitolo": 31,
+   "riga": "- **EST-03** (sempre accesa: guardia) chi può specializzare (W2-T1; assorbe SPE-03): livello avanzato (l'intermedio solo nella modalità Estetica di W5-T4: i 12 mesi di allenamento non si possono ancora verificare), adulto, non prudente (over 65, PAR-Q), non in deficit, nessun fastidio dichiarato nella zona dell'unità (petto, dorsali e spalle con la spalla dolente; quadricipiti con le ginocchia; femorali, glutei e addome con la schiena), nessun momento di vita che riduce il volume. Chi non può ha la priorità leggera: +25% sul volume standard e nessun taglio agli altri."
+  },
+  {
+   "capitolo": 31,
+   "riga": "- **EST-05** (spegnibile) dose della specializzazione (W2-T1 per il volume, W5-T4 per il resto; assorbe SPE-04, SPE-06, IPE-13, MES-16): le unità prioritarie del programma salgono del 25% (intermedio) o del 45% (avanzato) sul volume standard, con un tetto assoluto di 20 serie frazionarie (22 per deltoidi laterali e posteriori e polpacci, 18 per i tricipiti) e un tetto duro per seduta di 8 (6 per le piccole). Spenta: solo la priorità leggera. Convenzione (ricerca-specializzazione §5.2: +40-50% l'avanzato)."
+  },
+  {
+   "capitolo": 31,
+   "riga": "- **EST-06** (spegnibile) gli altri muscoli in specializzazione (W2-T1; assorbe SPE-05, SPE-08; registro B19): max(mantenimento della tabella B6, 50% del bersaglio standard), carico e RIR invariati. La durata (blocchi di 4-8 settimane, al massimo 2 di fila) e l'uscita sono di W5-T4. Convenzione e Moderata da verificare (Bickel 2011, Spiering 2021: conoscenza del modello)."
+  },
+  {
+   "capitolo": 32,
+   "riga": "- **REG-02** (sempre accesa: regia) verifica finale del programma (`verificaProgramma`, W1-T4; ogni onda aggiunge il suo `valida*`): dopo l'ultimo taglio il programma passa i controlli di volume, tempo, tecniche e sicurezza; ciò che non si ripara diventa una nota con la causa (assorbe CAS-09). Per il volume (`validaVolume`, W2-T1): rimette in ordine con le serie che ci sono (si scambiano, nessuna seduta si allunga: il tempo lo ha già deciso `adattaAlTempo`) e per ogni unità grande, o con pavimento, ancora sotto la fascia scrive la causa: «Polpacci 4 serie: con 30 minuti non entra di più» (tempo), «…: i limiti di serie e di esercizi per seduta non lasciano altro posto» (tetti e 48 ore), «…: con i tuoi attrezzi o i tuoi fastidi non c’è un esercizio adatto»; sotto 4 serie frazionarie su un'unità grande: «Con questi minuti è un programma di mantenimento: per crescere servono più sedute o sedute più lunghe.»",
+   "sostituisce": true
+  },
+  {
+   "capitolo": 5,
+   "riga": "- **PRG-25** volume settimanale (serie) (riscritta da IPE-01, W2-T1): non più `VOLUME_LIVELLO` (principiante 8-10, intermedio 10-14, avanzato 14-20; salute 6-12, ora `assegnaVolumeGruppi`, usato con IPE-01 spenta o con un metodo famoso) ma le fasce per unità della tabella B6 (`soglie-volume.js`, vedi IPE-01). (storica: sempre accesa, è una correzione)",
+   "sostituisce": true
+  },
+  {
+   "capitolo": 5,
+   "riga": "- **PRG-26** fattore fisico (ritirata come regola a sé, W2-T1): la massa magra bassa (FFMI basso, non in dimagrimento) e la massa magra in calo spostano il punto di partenza dentro la fascia (×1,2 e ×0,85, `fattoreFisico` in `soglie-volume.js`), mai oltre il massimo; le frasi di `fattoreFisico` (compone.js) restano vere. (storica: sempre accesa)",
+   "sostituisce": true
+  },
+  {
+   "capitolo": 5,
+   "riga": "- **PRG-27** esigenza del coach (ESIGENZA_INIZIO, ora `esigenzaIniziale`, INT-02): +20% di volume all'inizio solo senza bandiere dalla BIA (100% con una, 95% con due), segue l'andamento; =1 se cauto, principiante (PRN-01), in deficit (OBI-04) o con un \"momento di vita\" attivo che riduce volume o aumenta RIR; >=1,15 aggiunge la nota \"Coach esigente\" (mai al principiante, mai in deficit). Dal coach v2 (W2-T1) sposta solo il punto di partenza dentro la fascia di IPE-01 (minimo × esigenza, mai oltre il massimo); <1 riduce il minimo. (storica, corretta nell'onda 0 e in W2-T1)",
+   "sostituisce": true
+  },
+  {
+   "capitolo": 5,
+   "riga": "- **PRG-28** conteggio frazionario (riscritta da IPE-01, W2-T1): 1 serie per il bersaglio, 0,5 per un secondario che è un vero motore, 0 con eccezione scritta (femorali nello squat e nella leg press: Kubo 2019), per unità, dagli attributi degli esercizi (Pelland 2025-2026). Il vecchio blocco per gruppi (+1 al meno carico, max 5; -1 al più carico, min 2) e `limitaVolumePerMuscolo` restano con IPE-01 spenta e per i metodi famosi. (storica: sempre accesa, è una correzione)",
+   "sostituisce": true
+  },
+  {
+   "capitolo": 5,
+   "riga": "- **PRG-29** priorità (riscritta da EST-02, EST-05, EST-06, W2-T1): al massimo 2 unità prioritarie con +25% (+45% l'avanzato che specializza) sul volume che il programma standard dà all'unità, almeno una serie in più; chi specializza porta gli altri a max(mantenimento, 50%). Il vecchio ×1,2 / ×1,5 per gruppi resta con IPE-01 spenta. (storica: sempre accesa)",
+   "sostituisce": true
+  },
+  {
+   "capitolo": 5,
+   "riga": "- **PRG-30** tetto per muscolo per seduta (riscritta da IPE-06, W2-T1): 8 serie frazionarie morbido e 11 duro per unità (in specializzazione 8, 6 per le piccole); prima 11 serie per gruppo (`serieMaxMuscoloSeduta`, ancora usata da `recuperoOk`). (storica: sempre accesa)",
+   "sostituisce": true
+  }
+ ],
+ "mappaAgenti": [
+  "volume per muscolo (IPE-01, IPE-02, IPE-06, EST-02..06, REG-02, W2-T1): `bersagliVolume(brief)` (numeri per unità), `volumeMotore` (il solutore: mosse di serie, esercizio nuovo, scambio, sostituzione) e `unitaPriorita(brief)` in js/coach/volume/volume.js (stadio 9: `assegnaVolume` e `limitaVolume`; stadio 17: `validaVolume`); numeri in js/coach/volume/soglie-volume.js (`SOGLIE_VOLUME`, letti da `sogliaVolume(nome)`); i posti per il tempo di W2-T2: `pavimentoVolume(brief, unita)` e `aggiungiSerieUtile(brief, sedute, unita)`; l'algoritmo per gruppi di prima è `assegnaVolumeGruppi` / `limitaVolumeGruppi` (IPE-01 spenta o metodo famoso)",
+  "in deficit niente +20% (OBI-04, W2-T1): `esigenzaInDeficit(d, p)` in js/coach/esigenza.js, letta da `esigenzaIniziale` (intensita.js) e da `tettoEsigenza`"
+ ],
+ "nota": "W2-T1: (1) il collaudo INT-2b deve leggere i crediti dagli attributi e le fasce dalla tabella B6: contaSerie via `creditoMuscoli`/`unitaDiMuscolo` (massimo dei crediti delle unità del gruppo), fasce per gruppo da `sogliaVolume('fasceUnita')` (+ `fasceGenerale`, forza nella metà bassa, `fasciaGlutei`), tolleranza +10% in VOL-02, DIR-01 con `pavimentiDirette` per giorni, VERSIONE_CRITERI alzata; (2) i programmi cambiano per costruzione: i golden di W1-T3 e W1-T4 (300 profili di buildProgram, 24 con profilo salvato) si rigenerano una volta in INT-2b insieme a quelli di W2-T2..T4; (3) un test della W1-T4 (tests/genera-stadi.test.js) asserisce che i tre posti di W2-T1 «non fanno niente» con un brief vuoto: resta vero (pavimento 0, aggiungiSerieUtile e validaVolume undefined senza brief); (4) `npm test` prima di INT-2b dà 'file orfano' per soglie-volume.js (lo mette in index.html lo script del JSON); (5) tests/volume.test.js simula IPE-01 e OBI-04 «(spegnibili)» con REGOLE_SPEGNIBILI finché la mappa non le rende tali; (6) la regola EST-02 è sempre accesa (guardia), EST-05 ed EST-06 spegnibili, nel capitolo 31; (7) frasi nuove: 15 «Etichetta # serie», le 4 etichette senza voce, i pezzi delle note di priorità, di mancanza e del mantenimento; CACHE_NAME lo alza INT."
+}
