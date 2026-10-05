@@ -298,7 +298,7 @@ function corpoCoach() {
   /* ETA-04: sotto i 18 anni niente numeri su peso, cibo e integratori (proteine, passi, creatina, ritmo di calo): si rimanda a un adulto e a un medico o dietista */
   if (regolaAttiva('ETA-04') && Number(p.age) > 0 && Number(p.age) < 18) return ['Alla tua età non do numeri su peso o cibo: sono cose da parlare con un medico o un dietista. Se pensi spesso al peso o salti i pasti, parlane con qualcuno di cui ti fidi.'];
   const goals = p.goals || (p.goal ? [p.goal] : []);
-  const fase = p.fase || (goals[0] === 'dimagrimento' ? 'deficit' : (goals[0] === 'ricomposizione' ? 'ricomposizione' : (goals[0] === 'massa' ? 'massa' : 'mantenimento')));
+  const fase = faseCorpo(p);   /* OBI-02: una sola fase del corpo per tutta l app (regia/brief.js) */
   const st = getBiaStorico().filter(x => x.valori && x.valori.peso && x.data);
   const donna = p.sex === 'F' || p.sex === 'donna';
   if (st.length >= 2) {

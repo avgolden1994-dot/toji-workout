@@ -24,12 +24,7 @@ function tendenzaPeso(pts) {
   const k = xs.reduce((a, x, i) => a + (x - mx) * (ys[i] - my), 0) / den;
   return { settimana: k * 7, perc: k * 7 / my * 100 };
 }
-function faseCorpo() {
-  const p = getProfile() || {};
-  if (p.fase) return p.fase;
-  const g = (p.goals || [p.goal])[0];
-  return g === 'dimagrimento' ? 'deficit' : (g === 'massa' ? 'massa' : null);
-}
+/* faseCorpo(): la fase del corpo (deficit, massa, ricomposizione, mantenimento) e una sola per tutta l app, in js/coach/regia/brief.js (OBI-02) */
 function consiglioPeso(t) {
   if (!t) return 'Pesati 2-3 volte a settimana, al mattino: dopo 2 settimane il coach legge la tendenza.';
   const f = faseCorpo();

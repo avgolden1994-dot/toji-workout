@@ -116,3 +116,24 @@ function pesoPartenza(nome, ctx) {
   try { s = stimaCaricoIniziale(nome, ctx || contestoCarichi({}, getProfile() || {})); } catch (e) {}
   return s ? { peso: s.peso, stimato: true, fonte: s.fonte, motivo: s.motivo } : { peso: base, stimato: false };
 }
+
+/* applicaPartenze(brief, sedute): il carico di partenza di ogni esercizio del programma nuovo (stadio 15 del generatore, piano B.3): dai dati del corpo (BIA) e, se ci
+   sono, dallo storico; senza consenso restano quelli della libreria. Scrive weight, stimato e, se ne ha stimato qualcuno, la nota sulla fonte della stima.
+   Oggi e il blocco «carichi di partenza» di buildProgram, spostato qui senza cambiarne l esito; lo riscrive W2-T8 (partenza bassa per le donne, CAR-18, PAR-06..09). */
+function applicaPartenze(brief, sedute) {
+  const d = brief.grezzo.d, prof0 = brief.grezzo.prof0, note = brief.lavoro.note;
+  if (coachAttivo()) {
+    const cc = contestoCarichi(d, prof0);
+    cc.storico = scalaDaStorico();
+    let stimati = 0, fonteStima = null;
+    sedute.forEach(sd => sd.esercizi.forEach(e => {
+      const s = stimaCaricoIniziale(e.name, cc);
+      if (s) { e.weight = s.peso; e.stimato = s.fonte; stimati++; fonteStima = fonteStima || s.fonte; }
+    }));
+    if (stimati) note.push({ smm: 'Carichi di partenza stimati dalla tua massa muscolare, dal livello e dall’età: prudenti, si regolano nelle prime sedute.',
+      ffm: 'Carichi di partenza stimati dalla tua massa magra, dal livello e dall’età: prudenti, si regolano nelle prime sedute.',
+      peso: 'Carichi di partenza stimati dal tuo peso, dal livello e dall’età: senza la BIA sono meno precisi, si regolano nelle prime sedute.',
+      storico: 'Carichi di partenza stimati da quello che sollevi già: si regolano nelle prime sedute.' }[fonteStima]);
+  }
+  return sedute;
+}
