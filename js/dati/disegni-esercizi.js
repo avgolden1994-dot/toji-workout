@@ -30,7 +30,8 @@ const IMMAGINI_ESERCIZI = {
   'Piegamenti a Terra (Push-up)': 'esercizi/ex-07-push-up.svg',
   'Croci ai Cavi': 'esercizi/ex-08-croci-cavi.svg',
   'Croci su Panca Manubri': 'esercizi/ex-09-croci-panca-manubri.svg',
-  'Pectoral Machine (Butterfly)': 'esercizi/ex-10-pectoral-machine.svg'
+  'Pectoral Machine (Butterfly)': 'esercizi/ex-10-pectoral-machine.svg',
+  'Pullover con Manubrio': 'esercizi/ex-11-pullover-manubrio.svg'
 };
 window.immagineEsercizio = function(nome) {
   const pulito = String(nome).replace(EMOJI_TESTA, '');
