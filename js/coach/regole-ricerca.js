@@ -55,8 +55,10 @@ const TECNICHE = {
 };
 function profiloCoach() {
   const p = getProfile() || {};
-  return { livello: p.level || 'intermedio', eta: Number(p.age) || 0, prudente: !!p.parq,
-           sonnoMale: !!(p.prefs && p.prefs.sonno === 'male') };
+  const eta = Number(p.age) || 0;
+  return { livello: p.level || 'intermedio', eta: eta, prudente: !!p.parq,
+           sonnoMale: !!(p.prefs && p.prefs.sonno === 'male'),
+           minorenne: eta > 0 && eta < PARAM_ETA.maggiorenne };   /* ETA-02 (INT-2a): un età non detta (0) vale adulto, come per i programmi già salvati */
 }
 const BIL_PESANTI = /Squat con Bilanciere|Squat con Pausa|Front Squat|Stacco(?! Rumeno (?:con Manubri|a una Gamba))|Panca con Pausa|Panca Piana Bilanciere|Panca Inclinata Bilanciere|Panca Declinata|Military Press|Rematore con Bilanciere|T-Bar Row|Good Morning/;
 function tipoCarico(nome) {
@@ -69,7 +71,7 @@ const RIR_TIPO = { pesante: [1, 3], macchina: [0, 2], isolamento: [0, 1] };
    ripetizioni in riserva nelle prime due settimane e 2-3 dopo, mai 0 (le stime del RIR sbagliano di circa una ripetizione: Halperin
    2022). Intermedio e avanzato: almeno 2 nella prima settimana del blocco, su ogni tipo di esercizio, e almeno 1 sui fondamentali
    pesanti col bilanciere anche con la rampa dell avanzato (rirSett). Convenzione + Moderata; la tabella completa e di W2-T4. */
-const MES_RIR = { principianteInizio: [3, 4], principianteDopo: [2, 3], principianteSettimaneInizio: 2, pisoPrimaSettimana: 2, pisoPesante: 1 };
+const MES_RIR = { principianteInizio: [3, 4], principianteDopo: [2, 3], principianteSettimaneInizio: 2, pisoPrimaSettimana: 2, pisoPesante: 1, pisoMinorenni: 2 };   /* pisoMinorenni: ETA-02, INT-2a (M3 della revisione dell onda 1): mai sotto 2 ripetizioni in riserva sotto i 18 anni, con o senza rirSett */
 /* prima settimana di un blocco (1, 1 + blocco, ...); senza programma o senza la durata del blocco conta solo la settimana 1 */
 function primaSettimanaBlocco(p, numero) {
   if (!(numero >= 1)) return false;
@@ -88,6 +90,12 @@ function pisoRirEsigenza(sett) {
   return primaSettimanaBlocco(getProgramma(), n) ? MES_RIR.pisoPrimaSettimana : 0;
 }
 /* sett = numero di settimana del programma (1..N): serve a rifare il bersaglio di una seduta passata (MES-11); senza, quella di oggi */
+/* ETA-02 (M3, INT-2a): il minorenne lavora sempre con almeno 2 ripetizioni in riserva, in ogni percorso: anche con un programma senza rirSett (salvato dalla v1: le correzioni di RIR
+   valgono subito, D-P5 a) dove prima un 16enne leggeva «lascia 0–0» sugli isolamenti, e anche dopo il -1 dell esigenza (ora i minorenni ne sono esclusi: esigenzaEsclusa) */
+function pavimentoRirMinorenni(r) {
+  const piso = MES_RIR.pisoMinorenni;
+  return profiloCoach().minorenne && r[0] < piso ? [piso, Math.max(r[1], piso + 1)] : r;
+}
 function rirBersaglio(nome, sett) {
   const r = rirBersaglioBase(nome, sett);
   /* chi si ferma alla prima fatica si allena lontano dal cedimento (PRETIE-Q): stessa crescita fino a 3-4 RIR */
@@ -101,9 +109,10 @@ function rirBersaglio(nome, sett) {
     if (a >= pisoRirEsigenza(sett)) out = [a, Math.max(a, out[1] - 1)];
   }
   if (!stabile(nome) && out[0] < 1) out = [1, Math.max(2, out[1])];
-  return out;
+  return pavimentoRirMinorenni(out);
 }
-function rirBersaglioBase(nome, sett) {
+function rirBersaglioBase(nome, sett) { return pavimentoRirMinorenni(rirBersaglioPerLivello(nome, sett)); }
+function rirBersaglioPerLivello(nome, sett) {
   const pc = profiloCoach();
   if (pc.prudente || pc.eta >= 65) return [3, 4];
   const p = getProgramma(), numero = sett || ((p && settimanaProgramma()) || {}).numero || 0;

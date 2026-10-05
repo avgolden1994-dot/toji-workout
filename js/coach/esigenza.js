@@ -21,7 +21,9 @@ const ESIGENZA_INIZIO = 1.2;   /* senza bandiere dalla BIA; con angolo di fase b
 function esigenzaEsclusa(p, soloSicurezza) {
   const mo = momentoAttivo();
   if (!soloSicurezza && p.level === 'principiante' && regolaAttiva('PRN-01')) return true;
-  return !!(p.parq || Number(p.age) >= 65 || (mo && !mo.scaduto && (mo.vol < 1 || mo.rir)));
+  /* INT-2a (M3 della revisione dell onda 1, ETA-02): i minorenni (età tra 1 e 17: 0 = non detta) non hanno il -1 RIR dell esigenza ne l aumento del bilancio: restano a 2-3 ripetizioni in riserva */
+  const minorenne = Number(p.age) > 0 && Number(p.age) < PARAM_ETA.maggiorenne;
+  return !!(p.parq || Number(p.age) >= 65 || minorenne || (mo && !mo.scaduto && (mo.vol < 1 || mo.rir)));
 }
 /* PRN-01: il principiante non sale oltre il 100%; gli altri fino al 130% */
 function tettoEsigenza(p) { return p && p.level === 'principiante' && regolaAttiva('PRN-01') ? 1 : 1.3; }
