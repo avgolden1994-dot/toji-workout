@@ -95,7 +95,7 @@ const VOLUME_IMPORTANZA = { petto: 1, dorsali: 1, quadricipiti: 1, femorali: 1, 
 /* pesi del solutore: dicono solo in che ordine prova le mosse (non sono soglie del coach). Per ogni serie e per bersaglio:
    sotto il mantenimento 4, fino al minimo 2,5, fino al bersaglio 1,5 (i prioritari valgono 1,4 volte), oltre il bersaglio niente (il tempo è un tetto), oltre il massimo -3;
    tutto diviso per max(8, bersaglio): contano i deficit RELATIVI, senza che un muscolo piccolo pesi più di uno grande. */
-const VOLUME_PESI = { mantenimento: 4, minimo: 2.5, bersaglio: 1.5, importanzaPriorita: 1.4, eccesso: 3, direttePavimento: 3, riferimentoMin: 8, frequenza: 0.35, morbidoSeduta: 0.1, equilibrio: 0.2, soglia: 0.004, sogliaScambio: 0.01, giriMax: 160 };
+const VOLUME_PESI = { mantenimento: 4, minimo: 2.5, bersaglio: 1.5, importanzaPriorita: 1.4, eccesso: 3, direttePavimento: 3, riferimentoMin: 8, frequenza: 0.35, morbidoSeduta: 0.1, equilibrio: 0.2, recupero: 0.3, soglia: 0.004, sogliaScambio: 0.01, giriMax: 160 };
 
 /* volume della settimana per scopo (come tipoObiettivoDi di tempo.js: tre tipi) */
 function volumeTipo(goals) { const g = goals[0]; return g === 'forza' ? 'forza' : ((g === 'salute' || g === 'dimagrimento') ? 'generale' : 'ipertrofia'); }
@@ -261,6 +261,8 @@ function volumeMotore(brief, sedute, b, opz) {
   const G = sedute.map(() => { const o = {}; GR.forEach(g => { o[g] = 0; }); return o; });
   let PUSH = 0, PULL = 0, SCHIENA = 0;
   const giorno = sedute.map(sd => giornoSeduta(sd));
+  const consecutive = [];
+  for (let s = 0; s < nS; s++) for (let o = s + 1; o < nS; o++) if (giorno[s] >= 0 && giorno[o] >= 0 && Math.abs(giorno[s] - giorno[o]) === 1) consecutive.push([s, o]);
   const recs = [], vietatiNuovi = {};
   const T = sedute.map(sd => durataSeduta(sd.esercizi));
   const T0 = T.slice();
@@ -282,7 +284,8 @@ function volumeMotore(brief, sedute, b, opz) {
     const cr = creditiUnita(e.name), crv = [];
     Object.keys(cr).forEach(u => crv.push([iU[u], cr[u]]));
     const gr = [];
-    GR.forEach(g => { const v = VOLUME_GRUPPI_RECUPERO[g].map(u => cr[u] || 0), c = VOLUME_GRUPPI_SOMMA.indexOf(g) !== -1 ? v.reduce((t, x) => t + x, 0) : Math.max.apply(null, v); if (c > 0) gr.push([g, c]); });
+    const vecchio = creditoSerie(e.name);   /* le 48 ore valgono anche col conteggio di prima (ponte dei femorali, riempimento): il credito al gruppo è il più alto dei due */
+    GR.forEach(g => { const v = VOLUME_GRUPPI_RECUPERO[g].map(u => cr[u] || 0), c0 = VOLUME_GRUPPI_SOMMA.indexOf(g) !== -1 ? v.reduce((t, x) => t + x, 0) : Math.max.apply(null, v), c = Math.max(c0, VOLUME_GRUPPI_SOMMA.indexOf(g) !== -1 ? 0 : (vecchio[g] || 0)); if (c > 0) gr.push([g, c]); });
     const tempo = !isTimeBased(e.name);
     return { s: s, e: e, cr: crv, gr: gr, push: tempo && strEspinta(e), pull: tempo && strEtirata(e), tm: tempoSerie(e), sets0: e.sets, cap: capSerie(e), fond: !!fond, min: Math.min(e.sets, fond ? 3 : 2), bloccato: false,
       sch: Math.max(cr.dorsali || 0, cr.schiena_spessore || 0) };
@@ -322,6 +325,10 @@ function volumeMotore(brief, sedute, b, opz) {
     for (let k = 0; k < freqU.length; k++) { const i = freqU[k]; let n = 0; for (let s = 0; s < nS; s++) n += Math.min(1, S[s][i] / serieMinSeduta); r += PS.frequenza * Math.min(seduteMin, n); }
     for (let k = 0; k < dirU.length; k++) { const i = dirU[k]; let n = 0; for (let s = 0; s < nS; s++) n += Math.min(1, SD[s][i]); r += PS.frequenza * Math.min(seduteMin, n); }
     if (PUSH + PULL >= minBilancio && PULL < rapportoTirate * PUSH) r -= (rapportoTirate * PUSH - PULL) * PS.equilibrio;
+    for (let k = 0; k < consecutive.length; k++) for (let h = 0; h < GR.length; h++) {   /* REC-01: due sedute in giorni consecutivi non hanno entrambe 4 serie frazionarie dello stesso grande muscolo */
+      const m = Math.min(G[consecutive[k][0]][GR[h]], G[consecutive[k][1]][GR[h]]);
+      if (m >= minRec) r -= (m - minRec + 1) * PS.recupero;
+    }
     return r;
   };
   const squilibrio = () => (PUSH + PULL >= minBilancio && PULL < rapportoTirate * PUSH) ? rapportoTirate * PUSH - PULL : 0;
@@ -383,13 +390,24 @@ function volumeMotore(brief, sedute, b, opz) {
     if (schema === 'hinge' || ['erettori', 'grande_gluteo', 'femorali'].indexOf(bers) !== -1) return 'hinge';
     return null;
   };
+  const SCHEMI_SEDUTA = { fullbody: ['spinta', 'tirata', 'basso'], upper: ['spinta', 'tirata'], lower: ['squat', 'hinge'], legs: ['squat', 'hinge'], push: ['spinta'], pull: ['tirata'] };
+  const classeSeduta = (cat, tipo) => cat === 'spintaO' || cat === 'spintaV' ? 'spinta' : cat === 'tirataO' || cat === 'tirataV' ? 'tirata' : ((cat === 'squat' || cat === 'hinge') && tipo === 'fullbody' ? 'basso' : cat);
+  const femoraleSeduta = (e) => /leg curl|nordic|stacco|good morning|pull-through/i.test(senzaEmoji(e.name));   /* come SLOT_DEF.hinge e la flessione del ginocchio del collaudo */
   const rimovibile = (r) => {
     const sd = sedute[r.s];
     if (r.e.fisso || r.fond || sd.esercizi.length <= 3 || !consente(r, -r.e.sets, true)) return false;
+    const att = typeof attributi === 'function' ? attributi(r.e.name) : null;
+    if (att && att.soloAvvio) return false;   /* lo squat di avvio (Squat su Scatola, Sit-to-Stand) lo toglie la progressione, non il volume (M5) */
     const cat = categoria(r.e);
-    if (cat && !sd.esercizi.some(x => x !== r.e && categoria(x) === cat)) return false;
+    if (cat) {   /* la seduta tiene gli schemi del suo tipo (SES-03) e la settimana tiene ogni schema (PAT-01) */
+      const k = classeSeduta(cat, sd.tipo);
+      if (SCHEMI_SEDUTA[sd.tipo] && SCHEMI_SEDUTA[sd.tipo].indexOf(k) !== -1 && !sd.esercizi.some(x => x !== r.e && categoria(x) && classeSeduta(categoria(x), sd.tipo) === k)) return false;
+      if (!sedute.some(o => o.esercizi.some(x => x !== r.e && categoria(x) === cat))) return false;
+    }
     /* l unica flessione del ginocchio della settimana (leg curl, nordic) resta: i femorali hanno bisogno di una flessione (Maeo 2021, EQ-03) */
     if (/leg curl|nordic/i.test(senzaEmoji(r.e.name)) && !sedute.some(o => o.esercizi.some(x => x !== r.e && /leg curl|nordic/i.test(senzaEmoji(x.name))))) return false;
+    /* una seduta di gambe (lower, legs, full body) tiene uno stacco o una flessione del ginocchio (SES-03, FRQ-01): non si toglie l unico */
+    if (/lower|legs|fullbody/.test(sd.tipo || '') && femoraleSeduta(r.e) && !sd.esercizi.some(x => x !== r.e && femoraleSeduta(x))) return false;
     /* il muscolo che l esercizio allena in pieno (credito 1) non scende sotto il minimo della sua fascia per toglierlo (il core, i polpacci, i deltoidi posteriori restano coperti) */
     return r.cr.every(c => c[1] < 1 || ((P[c[0]].minBanda <= 0 || W[c[0]] - r.e.sets >= P[c[0]].minBanda - 1e-9) && (P[c[0]].floorD <= 0 || D[c[0]] - r.e.sets >= P[c[0]].floorD - 1e-9)));
   };
