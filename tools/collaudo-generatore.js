@@ -690,9 +690,13 @@ function modello(prog, c) {
 }
 function contaSerie(e, grp, dir) {
   if (!(e.sets > 0)) return;
-  const add = (muscolo, w, diretto) => { const g = gruppoDi(muscolo); if (!g) return; grp[g] = (grp[g] || 0) + e.sets * w; if (diretto) dir[g] = (dir[g] || 0) + e.sets; };
-  if (e.inf.bers) add(e.inf.bers, 1, true);
-  e.inf.sec.forEach(s => add(s, FRAZ_SINERGISTA, false));
+  /* Per ogni gruppo una serie vale 1 se il bersaglio e nel gruppo, altrimenti 0,5 se lo e un sinergista: due muscoli dello stesso gruppo
+     (es. dorsali bersaglio e romboidi secondario nelle trazioni) non contano due volte. */
+  const peso = {};
+  e.inf.sec.forEach(m => { const g = gruppoDi(m); if (g) peso[g] = Math.max(peso[g] || 0, FRAZ_SINERGISTA); });
+  const gb = e.inf.bers ? gruppoDi(e.inf.bers) : null;
+  if (gb) { peso[gb] = 1; dir[gb] = (dir[gb] || 0) + e.sets; }
+  Object.keys(peso).forEach(g => { grp[g] = (grp[g] || 0) + e.sets * peso[g]; });
 }
 function secTut(e) { return ((e.inf.tempo ? e.reps : e.reps * SEC_PER_RIPETIZIONE) * (e.inf.meta && e.inf.meta.lato ? FATTORE_LATO : 1)) + SEC_SETUP_SERIE; }
 function stimaMinuti(es) {
