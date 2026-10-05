@@ -164,20 +164,30 @@ function valuta(cfg, snap, ondaId, opz) {
   /* -- 7. regressione: nessuna classe peggiora (rispetto al «prima», o a --contro); i criteri riscritti non si confrontano col «prima» -- */
   const riscritti = opz.contro ? new Set((onda.riscritti || [])) : unione(ordine, cfg.onde, ondaId, 'riscritti');
   const sicurezza = new Set(cfg.regressione.sicurezza);
-  let controllate = 0, peggiorate = 0;
+  let controllate = 0, peggiorate = 0, ammesseUsate = 0;
+  /* INT-1: `onde.<onda>.ammesse` = peggioramenti giustificati e scritti, uno per classe: { "VOL-02:glutei": { "max": 32.5, "motivo": "...", "risolve": "W2-T1" } }. Una classe ammessa
+     puo salire fino a `max` (non oltre: il tetto vale come una soglia) e il cancello lo dice; mai per le classi di sicurezza. Le altre classi restano giudicate dalla tolleranza. */
+  const ammesse = (onda && onda.ammesse) || {};
   chiavi.forEach(k => {
     const cod = codiceDi(k);
     if ((coperte.has(k) && !opz.contro) || riscritti.has(cod)) return;   /* contro il «prima» una soglia esplicita sostituisce il confronto; contro un'onda precedente vale sempre */
     controllate++;
     const tol = sicurezza.has(cod) ? cfg.regressione.tolleranzaSicurezza : cfg.regressione.tolleranzaPunti;
-    if (val(k) > valRif(k) + tol + EPS) { peggiorate++; ko('regressione ' + k + ': ' + f2(val(k)) + '% contro ' + f2(valRif(k)) + '% (' + rif.etichetta + '), tolleranza ' + tol + ' punti'); }
+    if (val(k) > valRif(k) + tol + EPS) {
+      const am = ammesse[k];
+      if (am && !sicurezza.has(cod) && typeof am.max === 'number' && am.motivo) {
+        if (val(k) <= am.max + EPS) { ammesseUsate++; ok('regressione AMMESSA ' + k + ': ' + f2(val(k)) + '% contro ' + f2(valRif(k)) + '% (' + rif.etichetta + '), tetto ' + am.max + '%: ' + am.motivo + (am.risolve ? ' [' + am.risolve + ']' : '')); return; }
+        peggiorate++; return ko('regressione ' + k + ': ' + f2(val(k)) + '% oltre il tetto ammesso di ' + am.max + '% (contro ' + f2(valRif(k)) + '% di ' + rif.etichetta + ')');
+      }
+      peggiorate++; ko('regressione ' + k + ': ' + f2(val(k)) + '% contro ' + f2(valRif(k)) + '% (' + rif.etichetta + '), tolleranza ' + tol + ' punti');
+    }
   });
   /* INT-1: con --contro il totale non puo peggiorare oltre la tolleranza NEMMENO se ha una soglia esplicita (una soglia allentata, per esempio 21,5 contro un 2,7 misurato, non nasconde una regressione) */
   if (sTot === undefined || opz.contro) {
     const tolG = cfg.regressione.tolleranzaPunti;
     (snap.gravi_pesata <= rif.gravi_pesata + tolG + EPS ? ok : ko)('gravi_pesata ' + f2(snap.gravi_pesata) + '% non peggiora (' + rif.etichetta + ' ' + f2(rif.gravi_pesata) + '%)');
   }
-  ok('regressione contro «' + rif.etichetta + '»: ' + controllate + (opz.contro ? ' classi controllate (anche quelle con una soglia esplicita)' : ' classi non coperte da una soglia') + ', ' + peggiorate + ' peggiorate' + (riscritti.size ? ' (criteri riscritti, non confrontati: ' + Array.from(riscritti).join(', ') + ')' : ''));
+  ok('regressione contro «' + rif.etichetta + '»: ' + controllate + (opz.contro ? ' classi controllate (anche quelle con una soglia esplicita)' : ' classi non coperte da una soglia') + ', ' + peggiorate + ' peggiorate' + (ammesseUsate ? ', ' + ammesseUsate + ' ammesse con il loro motivo' : '') + (riscritti.size ? ' (criteri riscritti, non confrontati: ' + Array.from(riscritti).join(', ') + ')' : ''));
 
   /* -- 8. collaudo identico (INT-1 passo 1) -- */
   if (opz.identico) {
@@ -375,6 +385,23 @@ function autotest() {
     const m2 = istantaneaBuona(cfg, 'onda-1', { modello: { 'MOD-12': 'buchi' } });
     eq(esegui(m2, 'onda-1').falliti, 0, 'MOD-12 non e governato a onda-1: senza --contro non conta');
     eq(esegui(m2, 'onda-1', { contro: m1 }).falliti >= 1, true, 'con --contro un MOD «ok» che diventa «buchi» ferma il cancello');
+  });
+  prova('regressioni ammesse (INT-1): una classe con il suo tetto e il suo motivo puo salire fino al tetto, non oltre; le altre restano giudicate; la sicurezza non si ammette', () => {
+    const cfg2 = JSON.parse(JSON.stringify(cfg));
+    cfg2.onde['onda-3'].ammesse = { 'RID-01:grande_gluteo': { max: 4, motivo: 'prova', risolve: 'W9-T9' }, 'SAF-01:spalle': { max: 20, motivo: 'non si puo' } };
+    const contro = daCollaudo(istantaneaBuona(cfg2, 'onda-2', { pesata: { 'RID-01:grande_gluteo': 2 }, conteggio: { 'RID-01:grande_gluteo': 200 } }));
+    const mk = (v) => istantaneaBuona(cfg2, 'onda-3', { pesata: { 'RID-01:grande_gluteo': v }, conteggio: { 'RID-01:grande_gluteo': v * 100 } });
+    const valuta2 = (snapshot) => valuta(cfg2, daCollaudo(snapshot), 'onda-3', { contro });
+    eq(valuta2(mk(2)).falliti, 0, 'uguale: passa');
+    eq(valuta2(mk(3.5)).falliti, 0, '+1,5 punti ma sotto il tetto 4: ammessa');
+    eq(valuta2(mk(3.5)).righe.some(r => /regressione AMMESSA RID-01:grande_gluteo/.test(r.testo)), true, 'e lo dice');
+    eq(valuta2(mk(4.6)).falliti >= 1, true, 'oltre il tetto: fallisce');
+    eq(valuta2(mk(4.6)).righe.some(r => /oltre il tetto ammesso/.test(r.testo)), true, 'e dice che e oltre il tetto');
+    const altra = istantaneaBuona(cfg2, 'onda-3', { pesata: { 'RID-01:grande_gluteo': 2, 'RID-02': 20 }, conteggio: { 'RID-01:grande_gluteo': 200, 'RID-02': 2000 } });
+    eq(valuta2(altra).righe.some(r => r.esito === 'fallito' && /RID-02/.test(r.testo)), true, 'una classe non ammessa continua a fallire');
+    const contro2 = daCollaudo(istantaneaBuona(cfg2, 'onda-2', { pesata: { 'SAF-01:spalle': 0 }, conteggio: { 'SAF-01:spalle': 0 } }));
+    const sic = istantaneaBuona(cfg2, 'onda-3', { pesata: { 'SAF-01:spalle': 3 }, conteggio: { 'SAF-01:spalle': 300 } });
+    eq(valuta(cfg2, daCollaudo(sic), 'onda-3', { contro: contro2 }).falliti >= 1, true, 'una classe di sicurezza non si ammette mai');
   });
   prova('nomi delle onde e etichette del collaudo', () => {
     eq(normalizzaOnda('INT-0', cfg), 'onda-0'); eq(normalizzaOnda('coach-v2-onda-2', cfg), 'onda-2'); eq(normalizzaOnda('2a', cfg), 'onda-2a');
