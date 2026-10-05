@@ -100,8 +100,9 @@ const ES_MIN_SEDUTA = 3, ES_MAX_SEDUTA = 8, ES_MAX_PRINCIPIANTE = 6;
 
 /* --- prescrizione: ripetizioni e recuperi per obiettivo e tipo di carico ---
    forza: 1-6 ripetizioni oltre l 80% di 1RM, pause 2-5 minuti sui fondamentali (ACSM 2009; ACSM 2026: Solida);
-   ipertrofia: tutti i carichi vanno bene vicino al cedimento (ACSM 2026: Solida), ma per prassi 6-12 sui multiarticolari e 12-20 sugli isolamenti
-   (Convenzione); pausa sopra 60 s piccolo vantaggio, oltre 90 s nessuna differenza per la massa (Singer 2024, Schoenfeld 2016: Moderata). */
+   ipertrofia: tutti i carichi vanno bene vicino al cedimento (ACSM 2026: Solida), ma per prassi 5-10 ripetizioni sui multiarticolari col bilanciere,
+   6-15 sulle macchine e 8-20 sugli isolamenti (docs/ricerca-ipertrofia-programmazione.md 3.4: Convenzione, fasce larghe); pausa sopra 60 s piccolo vantaggio,
+   oltre 90 s nessuna differenza per la massa (Singer 2024, Schoenfeld 2016: Moderata). Il collaudo segnala solo cio che esce dalle fasce. */
 const REPS_AMMESSE = {
   forza:      { pesante: [1, 6],  macchina: [4, 12], isolamento: [8, 15] },
   ipertrofia: { pesante: [5, 10], macchina: [6, 15], isolamento: [8, 20] },   /* docs/ricerca-ipertrofia-programmazione.md 3.4: bilanciere 5-10, macchine 8-12, isolamenti 10-15 (fasce larghe: ACSM 2026) */
@@ -200,12 +201,12 @@ const GRUPPI = {
   quadricipiti: { muscoli: ['quadricipiti'], classe: 'grande' },
   femorali: { muscoli: ['femorali'], classe: 'grande' },
   glutei: { muscoli: ['grande_gluteo'], classe: 'grande' },
-  deltoidi_laterali: { muscoli: ['deltoide_laterale'], classe: 'piccolo', diretto: true },
-  deltoidi_posteriori: { muscoli: ['deltoide_posteriore'], classe: 'piccolo', diretto: true },
+  deltoidi_laterali: { muscoli: ['deltoide_laterale'], classe: 'piccolo' },
+  deltoidi_posteriori: { muscoli: ['deltoide_posteriore'], classe: 'piccolo' },
   deltoidi_anteriori: { muscoli: ['deltoide_anteriore'], classe: 'piccolo', soloMax: true },
   bicipiti: { muscoli: ['bicipiti'], classe: 'piccolo' },
   tricipiti: { muscoli: ['tricipiti'], classe: 'piccolo' },
-  polpacci: { muscoli: ['polpacci'], classe: 'piccolo', diretto: true },
+  polpacci: { muscoli: ['polpacci'], classe: 'piccolo' },
   core: { muscoli: ['addome', 'addome_basso', 'obliqui', 'stabilita'], classe: 'core' },
   avambracci: { muscoli: ['brachioradiale'], classe: 'piccolo', soloDiretto: true }
 };
@@ -319,7 +320,7 @@ const CRITERI = [
         }
       }));
       return out; } },
-  { id: 'ORD-02', nome: 'Isolamento prima di un multiarticolare (muscoli diversi)', sev: 2, forza: 'Solida', fonte: 'Nunes 2021, ACSM 2009: i multiarticolari per primi (per la forza l ordine conta)',
+  { id: 'ORD-02', nome: 'Isolamento prima di un multiarticolare (muscoli diversi)', sev: 2, forza: 'Solida', fonte: 'Nunes 2021 (11 studi): per la forza migliora l esercizio fatto per primo, per la massa l ordine non conta (effetto 0,03); ACSM 2009: multiarticolari per primi',
     dove: [STRUTTURA_JS + ': strOrdina / strTier / strRango'],
     check: (m) => {
       const out = [];
