@@ -43,10 +43,8 @@
   --on-accent: #1a0d0d;
 
   /* STATO: verde = fatto o giusto, ambra = attenzione, rosso = pericolo.
-     Questi NON cambiano col protocollo. Se cambiassero, in modalita Maki
-     "volume giusto" sarebbe ambra e "carico alto" arancione: due segnali
-     quasi uguali, con il significato perso. Il colore di stato deve voler
-     dire sempre la stessa cosa, ovunque nell app. */
+     Il colore di stato deve voler dire sempre la stessa cosa, ovunque
+     nell app. */
   --success: #3ddc84;
   --warning: #fbbf24;
   --danger: #f87171;
@@ -183,31 +181,6 @@ html[data-theme="light"] :is(.mc-ghost, .g-bub) { box-shadow: var(--shadow-2); }
 /* finestre dal basso: ombra verso l alto e velo caldo invece del nero al 60-72% */
 html[data-theme="light"] :is(.template-sheet, .wheel-sheet) { box-shadow: var(--shadow-3); }
 html[data-theme="light"] :is(.template-overlay, .wheel-overlay) { background: color-mix(in srgb, var(--text) 40%, transparent); }
-
-/* marchio Maki: giada e viola, freddo e tagliente */
-html[data-mode="maki"], body[data-mode="maki"] {
-  /* Giada tendente al teal, NON verde puro: il verde puro distava quattro
-     gradi di tinta dal verde di "fatto", praticamente lo stesso colore con
-     due significati diversi. Sul teal la lama resta fredda e riconoscibile
-     senza confondersi con lo stato. */
-  --primary: #2dd4bf;
-  --primary-glow: #0f766e;
-  --primary-shadow: color-mix(in srgb, var(--primary) 30%, transparent);
-  --accent: #b98cf5;
-  --on-primary: #041412;
-  --on-accent: #140a1f;
-}
-html[data-theme="light"][data-mode="maki"], body[data-theme="light"][data-mode="maki"] {
-  --primary: #0a5751;
-  --primary-glow: #073f3a;
-  --primary-shadow: color-mix(in srgb, var(--primary) 22%, transparent);
-  --accent: #5b21b6;
-  --on-primary: #ffffff;
-  --on-accent: #ffffff;
-  /* i token dei chip seguono il suo verde-acqua */
-  --primary-text: var(--primary); --primary-tint: #e2f0ee;
-  --accent-text: var(--accent);   --accent-tint: #efe8fb;
-}
 
 :root {
   /* Scala a 8 punti: tutte le distanze sono multipli di 8 (con mezzo passo

@@ -126,7 +126,6 @@ const TEMI = { dark: 'Scuro', light: 'Chiaro', auto: 'Automatico' };
 
 function renderSettings() {
   const prof = getProfile();
-  document.getElementById('settings-sub').innerText = '';
   const nome = getNome();
   const sett = coachAttivo() ? settimanaProgramma() : null;
   const iniziali = (nome || '?').trim().split(/\s+/).map(x => x.charAt(0)).join('').slice(0, 2).toUpperCase();
@@ -285,14 +284,3 @@ function renderSetPage() {
   }
   box.innerHTML = h;
 }
-
-window.switchProtocol = function(mode) {
-  if (mode === currentMode) return;
-  localStorage.setItem(MODE_KEY, mode);
-  activateMode(mode);
-  applyTheme();
-  /* activateMode riporta al Piano: qui restiamo dove siamo, cioe nelle
-     impostazioni, altrimenti a ogni cambio si veniva sbalzati fuori. */
-  switchTab('impostazioni');
-  
-};

@@ -16,15 +16,11 @@ window.chooseMode = function(mode) {
 };
 
 
-/* Le modalita Toji e Maki sono state tolte (nomi di personaggi protetti,
-   rischiosi in un app a pagamento). Resta un solo aspetto. I dati
-   continuano a vivere nello spazio usato finora (currentMode), cosi
-   nessuno perde schede o storico con l aggiornamento. */
+/* Un solo aspetto (tema scuro o chiaro, Opzioni > Aspetto). currentMode resta
+   l id dello spazio dati ('toji'; 'maki' per chi lo scelse a settembre 2026):
+   decide le chiavi di localStorage, non l aspetto. */
 function activateMode(mode) {
   currentMode = mode;
-  document.body.dataset.mode = 'toji';
-  document.documentElement.dataset.mode = 'toji';
-  if (typeof applyTheme === 'function') applyTheme();
 
   migrateLegacyDataIfNeeded(mode);
   seedDefaultsIfNeeded(mode);

@@ -19,15 +19,14 @@
 .coach-name, .coach-reason,
 .sugg-name, .sugg-meta,
 .ex-name, .ex-data, .plan-ex-name,
-.lib-name, .lib-meta,
-.mode-name, .mode-sub {
+.lib-name, .lib-meta {
   display: block;
 }
 
 /* lo spazio tra titolo e sua descrizione, ovunque e sempre uguale */
 .set-toggle-desc, .pick-meta, .onb-opt-desc, .wday-meta, .wk-meta,
 .week-meta, .track-meta, .coach-reason, .sugg-meta, .ex-data,
-.lib-meta, .mode-sub {
+.lib-meta {
   margin-top: var(--sp-1);
 }
 .template-desc { margin-top: var(--sp-2); }

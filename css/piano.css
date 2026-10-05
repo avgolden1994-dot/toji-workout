@@ -143,48 +143,6 @@
 .cal-legend span { display: flex; align-items: center; gap: 4px; }
 .cal-summary { font-size: 0.72rem; font-weight: 800; color: var(--primary); text-align: center; margin-top: var(--sp-3); }
 
-/* ======= Banner =======
-   Costruito in CSS sui token, non piu' con un disegno a colori fissi:
-   cosi segue il tema invece di restare una macchia scura sul chiaro.
-   Tre strati: una velatura del colore del protocollo dall alto a
-   sinistra, due fendenti diagonali, e la superficie della card sotto. */
-.banner {
-  position: relative; overflow: hidden;
-  border-radius: 14px; border: 1px solid var(--border);
-  background:
-    radial-gradient(120% 90% at 12% 8%, color-mix(in srgb, var(--primary) 26%, transparent) 0%, transparent 62%),
-    radial-gradient(90% 80% at 96% 96%, color-mix(in srgb, var(--accent) 18%, transparent) 0%, transparent 60%),
-    linear-gradient(150deg, var(--surface-2) 0%, var(--surface-1) 100%);
-  height: 108px; display: flex; flex-direction: column; justify-content: flex-end;
-  padding: var(--sp-4);
-}
-/* i due fendenti: lame di luce oblique, nel colore del protocollo */
-.banner::before, .banner::after {
-  content: ''; position: absolute; pointer-events: none;
-  background: linear-gradient(90deg,
-    transparent 0%,
-    color-mix(in srgb, var(--primary) 55%, transparent) 45%,
-    transparent 100%);
-}
-.banner::before {
-  top: -30%; left: -12%; width: 130%; height: 7px;
-  transform: rotate(-19deg);
-  opacity: 0.85;
-}
-.banner::after {
-  top: 32%; left: -18%; width: 140%; height: 3px;
-  transform: rotate(-19deg);
-  opacity: 0.5;
-}
-.banner-quote { position: relative; font-size: 0.68rem; color: var(--primary); text-transform: uppercase; font-weight: 900; letter-spacing: 1.2px; line-height: var(--lh-tight); }
-.banner-title {
-  position: relative;
-  font-size: 1.4rem; font-weight: 900; color: var(--text);
-  text-transform: uppercase; letter-spacing: 0.5px;
-  line-height: var(--lh-loose); margin: var(--sp-1) 0 0 0;
-}
-.banner-title:active { opacity: 0.7; }
-
 /* campi parametri nella lista Gruppi */
 .lib-row { padding: 10px 0; border-bottom: 1px solid var(--border); }
 .lib-row:last-child { border-bottom: none; }

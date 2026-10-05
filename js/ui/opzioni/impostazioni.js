@@ -29,7 +29,7 @@ window.applyTheme = function() {
   document.documentElement.dataset.theme = tema;
   const meta = document.getElementById('theme-color-meta');
   /* barra del browser: nel chiaro e lo stesso colore di --bg (css/base.css) */
-  if (meta) meta.setAttribute('content', tema === 'light' ? '#f6f5f3' : (MODE_META[currentMode] ? MODE_META[currentMode].themeColor : '#08080a'));
+  if (meta) meta.setAttribute('content', tema === 'light' ? '#f6f5f3' : '#08080a');
 };
 
 window.setTheme = function(v) {
@@ -68,12 +68,6 @@ window.toggleSetting = function(k, def) {
   if (k === WAKE_KEY) tieniSchermoAcceso(sedutaAperta());
   renderSettings();
 };
-
-function segHtml(valori, attuale, fn) {
-  return '<div class="set-seg">' + valori.map(v =>
-    '<button class="' + (attuale === v.id ? 'on' : '') + '" onclick="' + fn + '(\'' + v.id + '\')">' + v.label + '</button>'
-  ).join('') + '</div>';
-}
 
 function toggleHtml(k, def, nome, desc) {
   const on = isOn(k, def);

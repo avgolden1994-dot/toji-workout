@@ -35,7 +35,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 9. `js/core/costanti.js` — Costanti e stato globale
 
-`DAYS` · `currentDay` · `currentMode` · `currentTab` · `MODE_KEY` · `MODE_META` · `DEFAULT_MONDAY_PROGRAM` · `FAILURE_SET_SECONDS`
+`DAYS` · `currentDay` · `currentMode` · `currentTab` · `MODE_KEY` · `DEFAULT_MONDAY_PROGRAM` · `FAILURE_SET_SECONDS`
 
 ## js/dati
 
@@ -333,7 +333,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 74. `js/ui/opzioni/impostazioni.js` — Impostazioni
 
-`SOUND_KEY` · `COUNTDOWN_KEY` · `AUTOCLOSE_KEY` · `BYPASS_KEY` · `FLASH_KEY` · `window.getSetting()` · `window.setSetting()` · `window.isOn()` · `window.applyTheme()` · `window.setTheme()` · `ZOOM_KEY` · `window.applicaZoom()` · `window.openSettings()` · `window.closeSettings()` · `window.toggleSetting()` · `segHtml()` · `toggleHtml()`
+`SOUND_KEY` · `COUNTDOWN_KEY` · `AUTOCLOSE_KEY` · `BYPASS_KEY` · `FLASH_KEY` · `window.getSetting()` · `window.setSetting()` · `window.isOn()` · `window.applyTheme()` · `window.setTheme()` · `ZOOM_KEY` · `window.applicaZoom()` · `window.openSettings()` · `window.closeSettings()` · `window.toggleSetting()` · `toggleHtml()`
 
 ### 75. `js/ui/opzioni/stile-iphone.js` — Opzioni in stile Impostazioni di iPhone
 
@@ -423,7 +423,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 95. `js/coach/psicologia.js` — Psicologia: chi ha davanti il coach
 
-`PSICO_DOMANDE` · `psicoCoach()` · `ritrattoCoach()` · `window.onbPsico()` · `window.setPsico()` · `htmlDomandePsico()` · `renderPsicoStep()` · `window.onbMomento()` · `htmlPrimiPassi()` · `sedutaPianoB()` · `TEMI` · `renderSettings()` · `setPagina` · `SET_PAGINE` · `window.openSetPage()` · `window.closeSetPage()` · `renderSetPage()` · `window.switchProtocol()`
+`PSICO_DOMANDE` · `psicoCoach()` · `ritrattoCoach()` · `window.onbPsico()` · `window.setPsico()` · `htmlDomandePsico()` · `renderPsicoStep()` · `window.onbMomento()` · `htmlPrimiPassi()` · `sedutaPianoB()` · `TEMI` · `renderSettings()` · `setPagina` · `SET_PAGINE` · `window.openSetPage()` · `window.closeSetPage()` · `renderSetPage()`
 
 ## js/ui
 
