@@ -3,6 +3,32 @@
 > **Fotografia del codice al 1 ottobre 2026** (commit `611ea0c`). Copia di sicurezza dell'app prima del riordino: ramo `backup/prima-del-riordino-coach-2026-10-01`.
 > Questo documento **descrive** cosa fa oggi il coach: non propone e non cambia nulla. Il codice vive in `js/coach/` (vedi la tabella «Dove sta il codice» in fondo e `docs/indice-codice.md`): per ritrovare una regola cerca il nome della funzione. Eventuali numeri di riga citati sotto si riferiscono alla vecchia versione in un solo file e non valgono più.
 
+## 0. La squadra del coach
+
+Il coach è una **squadra**: otto sotto-coach e un regista (piano coach v2, B.1). Ogni regola (codice) appartiene a **un solo** sotto-coach. Il Regista non decide numeri di allenamento: fissa l'ordine, applica le precedenze (REG-01), verifica il risultato (REG-02) e scrive il perché (REG-03). Le missioni sono le frasi che l'utente legge (Opzioni › Il coach › «La squadra del coach»): nomi e missioni sono tradotti in en, es, de.
+
+La tabella è il **registro della squadra**: `npm run catalogo` (`tools/genera-catalogo.js`) la legge e scrive nel catalogo `COACH_SQUADRA` e, per ogni regola, `sottoCoach`. Nella colonna Codici si scrive un codice (`PRG-07`), un intervallo (`PRG-01..06`) o un prefisso intero (`IPE-*`), separati da virgole. Un codice del catalogo che non sta in nessuna riga, o che sta in due, fa fallire `npm run catalogo` e `npm run catalogo -- --check`. Ci sono anche i codici ancora da implementare (registro `docs/coach-v2-decisioni.md` A.3); i codici **assorbiti, rinominati o rinviati** del registro A.3 non sono regole: se compaiono come riga il catalogo si ferma. Un task aggiunge codici a una riga con il campo `squadra` del suo JSON in `docs/in-arrivo/`.
+
+Segni nella riga di una regola, letti dal catalogo:
+
+- «(spegnibile)» → `spegnibile: true`: `regolaAttiva(codice)` la spegne con `tz_regole_spente` senza toccare `js/coach/parametri.js` (che tiene l'elenco `REGOLE_SPEGNIBILI` delle regole di prima). Le salvaguardie, che tolgono o riducono, non sono spegnibili.
+- «(bloccata)» → `bloccata: true`: la regola **non si implementa**, nemmeno come testo, interruttore spento o funzione vuota (cancello E.0 punto 0 del piano), e `regolaAttiva(codice)` è sempre falsa; `aggiungiPerche` non le fa scrivere perché. La sblocca solo una nota di ricerca aggiornata (due fonti indipendenti, query del registro C.2) con una riga datata nel registro.
+- «(parte b bloccata)» → `bloccataInParte: true`: si implementa solo la parte a scritta nella riga, la parte b resta fuori (registro C.2).
+
+Scelte rispetto alla tabella B.1 del piano, che metteva alcuni codici in due righe: PRG-07 (vincoli e fastidi) alla Sentinella; PRG-26 (fattore fisico, da ritirare) e MET-03 (fattore fisico nella scelta del metodo) al Preparatore; PRG-36 (picco e fine) al Motivatore. STA-03 (rotazione degli accessori, che MES-14 riscrive) e RIC-03 (posizione allungata, che W2-T6 riscrive con IPE-09) all'Architetto. RIS-01..13 assorbono REC-10, PCO-10, ETA-06 ed ETA-16. Le regole bloccate in tutto o in parte (registro C.2) hanno la loro riga nei capitoli 23, 24, 27, 28 e 31.
+
+| id | Nome | Missione | Codici | File |
+|---|---|---|---|---|
+| `regista` | **Il Regista** | «Metto insieme il lavoro della squadra, controllo che il programma regga e ti spiego perché.» | LIV-01..02, CIC-01..02, STD-01..02, REG-01..06, MES-09, MES-12..13 | `js/coach/regia/` (perche, soglie-regia; poi brief, genera, fasi, migrazione) |
+| `architetto` | **L’Architetto** | «Decido i giorni, la divisione, il ciclo di settimane e quali esercizi entrano.» | PRG-01..06, PRG-08..11, PRG-21..24, PRG-35, PRG-39, MET-01..02, MET-04..06, EPO-01..07, ABB-01..10, SCH-01, STA-03, RIC-03, IPE-09, MES-01..02, MES-14, PRN-03, PRN-14..15, PCO-09, OBI-01, OBI-03, OBI-12, SEL-03..04, SEL-06..08, SEL-13, SEL-15..16, CAS-01, CAS-14 | `js/coach/programma/*`, `compone.js`, `metodi-momenti.js` (METODI), `metodi-epoca-oro.js`, `js/ui/onboarding.js` (split) |
+| `dosatore` | **Il Dosatore** | «Decido quante serie fa ogni muscolo, ripetizioni e pause, e faccio stare tutto nei tuoi minuti.» | PRG-12..20, PRG-25, PRG-27..34, PRG-37..38, RIC-01, ESI-01..03, IPE-01..02, IPE-04, IPE-06, IPE-12, MES-03, MES-11, PRN-01, PCO-03..04, OBI-04, CAS-05..08, CAS-10, CAS-18 | `esigenza.js` → `js/coach/volume/` |
+| `bilancia` | **La Bilancia** | «Decido quanto sollevi: il carico di partenza, quando salire e di quanto.» | PAR-01..05, PAR-06..09, PRO-01..04, CAR-01..02, CAR-04..07, CAR-09, CAR-11..17, CAR-18..19, INT-04..05, RIC-02, STA-01..02, PGR-01..02, PGR-04, AUT-01..03, ALG-02, ALG-05..06, ALG-08, ALG-11, ALG-14, ALG-17, PCO-01, PCO-06, MES-06, CAS-02, CAS-15 | `js/coach/carichi/*`, `regole-ricerca.js` (progressione), `dolore-mattina.js` (aggiusti) |
+| `sentinella` | **La Sentinella** | «Controllo che ti alleni al sicuro e che recuperi: dolori, fatica, scarichi, età e salute.» | PRG-07, PRZ-01..05, DEC-01..10, DOL-01, BIO-02..03, BIO-06, INT-01..03, CAR-03, CAR-08, CAR-10, RIC-04..05, STR-01, MAV-01..11, MAV-13..14, MAV-16, REC-01..09, REC-12, ETA-01..05, ETA-07..08, ETA-11..13, ETA-17..18, DON-13, MES-05, MES-07..08, MES-10, MES-19, ALG-12, SEL-11, PCO-08, CST-01..02, CST-07, CST-09, DCA-01 | `prontezza.js`, `questionario-decisioni.js`, `mi-sento-male.js`, `intensita.js` (INT-01..03) → `js/coach/sicurezza/` |
+| `tecnico` | **Il Tecnico** | «Conosco gli esercizi: muscoli, varianti, esecuzione, riscaldamento.» | SUG-01..08, BIO-01, BIO-04..05, BIO-07, TEC-01..07, SEL-02, SEL-12, RIS-01..13 | `js/dati/*`, `biomeccanica.js`, `suggeritore.js`, `pannello.js`, `motore.js` (alternative) → `js/coach/tecnica/` |
+| `preparatore` | **Il Preparatore** | «Penso al resto della settimana: cardio, passi, peso e composizione, solo come informazione.» | COR-01..03, BIA-01..03, MET-03, PRG-26, AER-01..04, NUT-01..02, PES-01..04, DCA-02..03, OBI-02, OBI-05..08, OBI-11, OBI-17 | `js/coach/bia/*`, `repertorio.js` (corpoCoach), `compone.js` (fattoreFisico) → `js/coach/corpo/` |
+| `motivatore` | **Il Motivatore** | «Ti conosco: come ti alleni meglio, cosa fare quando salti, il periodo che stai vivendo.» | PSI-01..12, MOM-01..06, SAL-01, ADE-01, ORA-01, IA-01..05, PRG-36, CST-03..06, CST-08, CST-10..12, OBI-18, PRN-19 | `psicologia.js`, `metodi-momenti.js` (MOMENTI), `stato.js`, `coach-ia.js` → `js/coach/mente/` |
+| `specialista` | **Lo Specialista** | «Se vuoi forza da powerlifting o un fisico da bodybuilding, preparo il percorso dedicato.» | FRZ-01..10, TAP-01, EST-01..06, MAV-15 | → `js/coach/specialita/` |
+
 ## 1. Come leggere la mappa
 
 Ogni regola ha un **codice** (tre lettere e un numero): il codice indica l'area, la riga dice **quando scatta**, **cosa fa** e, tra parentesi, la **fonte** citata nel codice. Quando una frase dice "da verificare", l'ho letta nel codice ma non l'ho provata in uso.
@@ -604,3 +630,87 @@ Cinque regole nuove, ognuna spegnibile (`regolaAttiva`, vedi `js/coach/parametri
 | Biomeccanica, esigenza, psicologia, metodi e momenti | `js/coach/biomeccanica.js`, `esigenza.js`, `psicologia.js`, `metodi-momenti.js`, `compone.js` |
 | Stato e pannello del coach | `js/coach/stato.js`, `pannello.js` |
 | Coach IA (IA) | `js/coach/coach-ia.js` |
+
+## 21. Volume e tempo (IPE, CAS)
+
+Capitolo del coach v2 (piano B.5), per ora vuoto: volume per muscolo e pavimenti di serie dirette (IPE, W2-T1), modello dei tempi e risolutore della seduta (CAS-05..08, CAS-18, W2-T2; CAS-10, W2-T5). Le soglie nuove stanno in `js/coach/volume/soglie-volume.js` con forza e fonte (piano B.4).
+
+## 22. Progressione dei carichi v2 (PGR, AUT, STD, ALG)
+
+Capitolo del coach v2, per ora vuoto: modelli di progressione, ricalcolo dal massimale, autoregolazione e record (W3-T1, W3-T3, W3-T5; ALG-14 in W4-T2). ALG-02 e STD-01 dell'onda 0 restano nei capitoli 8 e 19.
+
+## 23. Tecniche: idoneità e budget (MAV)
+
+Capitolo del coach v2: idoneità delle tecniche per classe di esercizio e budget per seduta e blocco (W2-T3, MAV-10 in W3-T3). MAV-02 e MAV-03 dell'onda 0 restano nel capitolo 19.
+
+- **MAV-14** (bloccata) allenamento con restrizione del flusso (BFR), anche solo come scheda informativa (contiene controindicazioni): non implementata, nemmeno come testo, interruttore spento o funzione vuota (registro C.2 n. 14, cancello E.0 punto 0); la sblocca solo una nota di ricerca con due fonti indipendenti e una riga datata nel registro. `regolaAttiva` è sempre falsa.
+
+## 24. Recupero, dolore e popolazioni (REC, ETA, DON-13)
+
+Capitolo del coach v2: domande d'allarme, dolore e malattia (W4-T1), età, rientro e popolazioni (W4-T2). Gran parte delle regole di popolazione è bloccata in tutto o in parte (registro C.2): le righe sotto lo dicono. DON-10 parte b (la frase sugli effetti della fase del ciclo e il grafico dell'RPE per fase, registro C.2 n. 7) non ha una riga: il codice DON-10 vive in PRZ-01, che resta com'è. ETA-01..04 ed ETA-18 dell'onda 0 restano nel capitolo 19.
+
+- **REC-06** (parte b bloccata) respiro e pressione: la parte a è fatta in W0-T5 (gli over 65 come chi ha il PAR-Q positivo nel testo del respiro, niente apnea: `respiroPer`, vedi BIO-02); la parte b (campo «pressione alta», tetto di RPE, regola clinica sull'apnea) è bloccata: registro C.2 n. 1, non implementata.
+- **REC-07** (parte b bloccata) malattia: la parte a (W4-T1) è la voce «sto male», con febbre o dolori diffusi una proposta di riposo annullabile; la parte b (sintomi «sopra il collo» → seduta leggera, giorni di ripresa dopo la febbre) è bloccata: registro C.2 n. 2, non implementata.
+- **REC-09** (parte b bloccata) dolenzia: la parte a (W4-T1) dice che la dolenzia è normale e non misura i progressi; la parte b (segnali di danno muscolare grave e invio al pronto soccorso) è bloccata: registro C.2 n. 3, non implementata.
+- **REC-12** (parte b bloccata) gravidanza e post-parto (= DON-12): la parte a (W4-T2) è una bandiera separata nel PAR-Q, con il messaggio fisso di parlarne con l'ostetrica o il medico, modalità prudente, niente tecniche e niente deficit (DCA-01); la parte b (esercizi da evitare, posizione supina, ripresa dopo il parto, domande sul pavimento pelvico) è bloccata: registro C.2 n. 4, non implementata.
+- **DON-13** (bloccata) menopausa e salute delle ossa (ex «REC-14» del piano): non implementata, nemmeno come testo, interruttore spento o funzione vuota (registro C.2 n. 5, cancello E.0 punto 0); la sblocca solo una nota di ricerca con due fonti indipendenti e una riga datata nel registro. `regolaAttiva` è sempre falsa.
+- **ETA-07** (bloccata) dolori da crescita nei minorenni e rinvio: non implementata, nemmeno come testo, interruttore spento o funzione vuota (registro C.2 n. 8, cancello E.0 punto 0); la sblocca solo una nota di ricerca con due fonti indipendenti e una riga datata nel registro. `regolaAttiva` è sempre falsa.
+- **ETA-08** (parte b bloccata) over 65 (ex «REC-13» del piano): la parte a (W4-T2) è la base di 8 settimane, poi un po' più vicino al cedimento solo su macchine e cavi, con le stesse ripetizioni (Borde); la parte b (più intensità con i pesi liberi pesanti) è bloccata: registro C.2 n. 9, non implementata.
+- **ETA-11** (bloccata) equilibrio negli anziani: dose e frase sulle cadute: non implementata, nemmeno come testo, interruttore spento o funzione vuota (registro C.2 n. 10, cancello E.0 punto 0); la sblocca solo una nota di ricerca con due fonti indipendenti e una riga datata nel registro. `regolaAttiva` è sempre falsa.
+- **ETA-12** (bloccata) test funzionali con valori di riferimento e soglie di rinvio: non implementata, nemmeno come testo, interruttore spento o funzione vuota (registro C.2 n. 11, cancello E.0 punto 0); la sblocca solo una nota di ricerca con due fonti indipendenti e una riga datata nel registro. `regolaAttiva` è sempre falsa.
+- **ETA-13** (bloccata) domande su cadute, osteoporosi, farmaci e capogiri, filtro sui movimenti sotto carico: non implementata, nemmeno come testo, interruttore spento o funzione vuota (registro C.2 n. 12, cancello E.0 punto 0); la sblocca solo una nota di ricerca con due fonti indipendenti e una riga datata nel registro. `regolaAttiva` è sempre falsa.
+- **ETA-17** (bloccata) modo «fragile» (criteri, visita prima di iniziare): non implementata, nemmeno come testo, interruttore spento o funzione vuota (registro C.2 n. 13, cancello E.0 punto 0); la sblocca solo una nota di ricerca con due fonti indipendenti e una riga datata nel registro. `regolaAttiva` è sempre falsa.
+
+## 25. Riscaldamento e mobilità (RIS)
+
+Capitolo del coach v2, per ora vuoto: riscaldamento generale e specifico, serie di avvicinamento, mobilità (RIS-01..13, W4-T3; il costo in minuti entra nel modello dei tempi in W2-T2).
+
+## 26. Costanza e comunicazione (CST)
+
+Capitolo del coach v2, per ora vuoto: rientro dopo una pausa, prontezza, lessico e messaggi (W3-T4, W3-T5, W4-T2, W5-T2).
+
+## 27. Cardio, nutrizione e peso (AER, NUT, PES, DCA)
+
+Capitolo del coach v2: cardio prescritto, nutrizione e peso solo come informazione, guardie sui disturbi alimentari (W5-T3; DCA-01 in W4-T2).
+
+- **DCA-03** (parte b bloccata) segnali di salute legati al peso e al grasso: la parte a (W5-T3) toglie la frase «sotto il 17% di grasso» di BIA-02 (affermazione senza base); la parte b (= DON-14: elenco di segnali con significato clinico) è bloccata: registro C.2 n. 6, non implementata.
+
+## 28. Dall'obiettivo al programma (OBI)
+
+Capitolo del coach v2: fase del corpo (OBI-02, W1-T4), obiettivi e programma (W2-T1, W2-T4, W2-T5, W5-T3).
+
+- **OBI-17** (bloccata) umore, stress e sonno come obiettivo (frase sui benefici per umore e sonno): non implementata, nemmeno come testo, interruttore spento o funzione vuota (registro C.2 n. 16, cancello E.0 punto 0); la sblocca solo una nota di ricerca con due fonti indipendenti e una riga datata nel registro. `regolaAttiva` è sempre falsa.
+- **OBI-02** (sempre accesa: correzione di coerenza, non cambia il programma) Fase del corpo da tutti gli obiettivi: una sola funzione `faseCorpo` (js/coach/regia/brief.js) per la scheda Peso, il pannello del coach (`corpoCoach`) e la nota dei passi del programma; il dimagrimento, in qualunque posizione, è un deficit (come già faceva la nota dei passi), poi vince il primo tra ricomposizione e massa, altrimenti mantenimento; la fase scelta a mano in Opzioni vince su tutto; la priorità tra massa e dimagrimento dichiarati insieme è di OBI-01 (W2-T5). Obiettivi che il coach non conosce ancora (D-P6): il programma è quello di «salute» e il profilo conserva l'obiettivo dichiarato. Convenzione (coerenza interna: docs/ricerca-obiettivi-e-programmi.md A5, OBI-02).
+
+## 29. Scelta degli esercizi (SEL)
+
+Capitolo del coach v2, per ora vuoto: scelta per attributi degli esercizi (W2-T6), sicurezza (SEL-11, W4-T1), schermate (SEL-12, W5-T1). SEL-02 dell'onda 0 resta nel capitolo 16.
+
+## 30. Pratiche dei coach (PCO)
+
+Capitolo del coach v2, per ora vuoto: gradini dello stallo, volume autoregolato, cuffia dei rotatori con la spalla delicata e altre pratiche dei coach (W2-T2, W2-T5, W2-T6, W3-T1, W3-T4).
+
+## 31. Specialista (FRZ, EST, TAP)
+
+Capitolo del coach v2: modalità Forza (FRZ, W2-T7, W3-T6) e modalità Estetica (EST, W2-T1, W5-T4). Il taper TAP-01 è bloccato e resta spento di base (registro C.2 n. 15, D-P4).
+
+- **TAP-01** (bloccata) taper prima di un test o di una gara (assorbe MES-18); resta anche spento di base (D-P4): non implementata, nemmeno come testo, interruttore spento o funzione vuota (registro C.2 n. 15, cancello E.0 punto 0); la sblocca solo una nota di ricerca con due fonti indipendenti e una riga datata nel registro. `regolaAttiva` è sempre falsa.
+
+## 32. Regia (REG)
+
+Le regole del Regista (piano B.6): come lavora la squadra. Il codice è in `js/coach/regia/` (`perche.js`, `soglie-regia.js` da W1-T1; `brief.js`, `genera.js`, `fasi.js` dagli altri task dell'onda 1). Sono regole di funzionamento, sempre accese.
+
+- **REG-01** (sempre accesa: regia) precedenze tra i sotto-coach (piano B.2): quando due sotto-coach non sono d'accordo vince, in quest'ordine, la Sentinella (limiti assoluti), il Motivatore per i momenti di vita, lo Specialista quando la sua modalità è attiva, poi Architetto, Dosatore e Bilancia (proposte), infine Preparatore e Tecnico (aggiunte e informazioni, mai sostituzioni). L'ordine è `SOGLIE_REGIA.precedenza` (`js/coach/regia/soglie-regia.js`, Decisione). Si realizza con la fase «tetti» della Sentinella in fondo a ogni catena, che può solo abbassare e scrive il suo codice nel perché (W1-T3, W4-T1, W4-T2); una prova verifica che per i prudenti nessuna fase dopo i tetti alzi carico, serie o vicinanza al cedimento (W1-T3).
+- **REG-02** (sempre accesa: regia) verifica finale del programma (`verificaProgramma`, W1-T4; ogni onda aggiunge il suo `valida*`): dopo l'ultimo taglio il programma passa i controlli di volume, tempo, tecniche e sicurezza; ciò che non si ripara diventa una nota con la causa («Polpacci 4 serie: con 30 minuti non entra di più», assorbe CAS-09; W2-T1 `validaVolume`).
+- **REG-03** (sempre accesa: regia) perché: ogni numero cambiato porta codice e sotto-coach. `aggiungiPerche(dove, codice, testo)` (`js/coach/regia/perche.js`, W1-T1) aggiunge `{ codice, sottoCoach, testo }` a `dove.perche` (brief, programma o risultato di `caricoProssimo`), senza doppioni e mai per una regola bloccata; il motivo mostrato è `testoPerche(perche)`: i testi separati da « • » come i motivi di oggi, con `{ etichette: true }` ognuno preceduto dal nome breve del sotto-coach («Bilancia · …», foglio «Perché?» di W5-T1). `fasePerche` è l'ultima fase della catena 'carico' (99, piano B.3): si registra da sola se c'è `registraFase` (W1-T3) e, senza perché, lascia il risultato identico. `sottoCoachDi(codice)`, `nomeSottoCoach(id)` ed `etichettaForza(forza)` (le etichette del registro C.4 per Convenzione, Decisione e Provvisoria) servono alle schermate. Assorbe ALG-16 (il perché del peso con il numero: W3-T1, W5-T1).
+- **REG-04** (sempre accesa: regia) versione: i programmi nuovi hanno `prog.versione = 2` (`SOGLIE_REGIA.versioneProgramma`, W1-T4); quelli salvati prima continuano con le regole di prima, tranne le correzioni dei bug dell'onda 0 e le correzioni di sicurezza e di calcolo della seduta (registro D-P5 a).
+- **REG-05** (sempre accesa: regia) stesso seme, stesso programma, anche con le parti nuove (prova «golden» di W1-T4: 300 profili identici byte per byte).
+- **REG-06** (sempre accesa: regia) l'aggiornamento al coach nuovo si propone, non si impone: una scheda in Oggi propone «Aggiorna il programma», con «Annulla» che ripristina tutto; altrimenti le regole nuove valgono dal prossimo ciclo (registro D-P5; W5-T5).
+
+## 33. Mesociclo e scarichi (MES)
+
+Capitolo del coach v2, per ora vuoto: struttura del blocco, rampe di RIR e di serie, scarichi programmati e reattivi (W2-T4, W3-T4, W3-T5). MES-02, MES-06, MES-09..12 dell'onda 0 restano nei capitoli 8 e 19.
+
+## 34. Principianti (PRN)
+
+Capitolo del coach v2, per ora vuoto: le 12 settimane del principiante, lo sblocco del bilanciere, il sovrappeso, il primo mese elastico (PRN-03, PRN-14, PRN-15, PRN-19: W2-T4, W2-T6, W3-T5). PRN-01 dell'onda 0 resta nel capitolo 19.

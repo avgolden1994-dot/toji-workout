@@ -12,8 +12,9 @@
     "trova": "node tools/simboli.js --trova",
     "grafo": "node tools/simboli.js && node tools/grafo.js",
     "grafo:verifica": "node tools/grafo.js --verifica",
-    "controlla": "npm run sw -- --check && npm run catalogo -- --check && npm run indice -- --check && npm run simboli -- --check && npm test && npm run cancello -- --autotest && npm run integra -- --autotest",
+    "controlla": "npm run sw -- --check && npm run catalogo -- --check && npm run soglie -- --check && npm run indice -- --check && npm run simboli -- --check && npm test && npm run cancello -- --autotest && npm run integra -- --autotest",
     "catalogo": "node tools/genera-catalogo.js",
+    "soglie": "node tools/elenco-soglie.js",
     "collaudo:schede": "node tools/collaudo-generatore.js",
     "cancello": "node tools/cancello-collaudo.js",
     "integra": "node tools/integra-onda.js"
