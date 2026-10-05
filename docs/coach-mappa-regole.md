@@ -221,7 +221,7 @@ Uscita: programma con sedute, giorni, note, sostituzioni, fasi, RIR a settimana,
 | gbr | Generic Bulking Routine | intermedio | 4 | media | 60-75 | palestra | massa | si |
 | hatfield | Metodo Hatfield | intermedio/avanzato | 3,4 | alta | 60-90 | palestra | massa | si |
 | redditppl | Reddit PPL | principiante/intermedio | 6,3 | alta | 60-90 | palestra | massa/forza | si |
-| minimo | Dose minima | principiante/intermedio/avanzato | 2 | media | 30-45 | palestra/manubri/corpo | salute/massa/dimagrimento/ricomposizione/forza/glutei | si |
+| minimo | Dose minima | principiante/intermedio/avanzato | 2,3 | media | 20-45 | palestra/manubri/corpo | salute/massa/dimagrimento/ricomposizione/forza/glutei | si |
 | mantenimento | Mantenimento | principiante/intermedio/avanzato | 1,2 | bassa | 20-40 | palestra/manubri/corpo | salute/massa/forza/dimagrimento/ricomposizione/glutei | si |
 | rr | Recommended Routine (corpo libero) | principiante/intermedio | 3 | media | 45-60 | corpo/manubri | salute/massa/forza/ricomposizione | si |
 | hit | Alta intensità (HIT) | intermedio/avanzato | 2,3 | alta | 30-45 | palestra | massa | si |

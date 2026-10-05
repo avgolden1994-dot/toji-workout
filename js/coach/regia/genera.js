@@ -65,11 +65,9 @@ function applicaMetodo(brief, sedute) {
   /* la Recommended Routine mette 3 serie a tutti (schema): l equilibrio tra spinte e tirate si rifa dopo, a casa dove la tirata e il solo rematore inverso (W0-T7) */
   if (metodoAttivo && metodoAttivo.id === 'rr') strBilancia({ sedute: sedute, level: level, over65: over65, note: note, metodoAttivo: metodoAttivo, prefs: prefs }, true);
   if (tocco) sedute.forEach(sd => TOCCHI[tocco.m.tocco].fa(sd, ps, { tecnicheOk: tecnicheOk, senzaCedimento: (n) => senzaCedimentoPer(n, prefs.fastidi) }));
-  if (metodoAttivo && metodoAttivo.superserie) sedute.forEach(sd => {
-    if (metodoAttivo.id !== 'rr') { strSuperserie(sd); return; }   /* ABB-06; la Recommended Routine ha le sue coppie (trazione + squat, dip + hinge...) */
-    const es = sd.esercizi; const accoppiabile = (x) => !isTimeBased(x.name) && (findExercise(x.name) || {}).group !== 'core';   /* SS-02: ne il core ne i tempi in coppia */
-    for (let k = 1; k < es.length; k++) { if (!es[k - 1].superset && !es[k].superset && accoppiabile(es[k - 1]) && accoppiabile(es[k])) { es[k].superset = true; k++; } }
-  });
+  /* ABB-06 e SS-01: le coppie del metodo sono di muscoli antagonisti e senza un fondamentale pesante (strSuperserie). La Recommended Routine non passa di qui: ha `superserie: false` e le sue coppie
+     per MUSCOLO le fa il suo `schema` sull ultimo esercizio (coppiePerMuscolo, metodi-momenti.js, PCO-04, W2-T2); il vecchio ramo «per indice» (Rematore inverso + Ponte glutei, Squat + Piegamenti) e tolto (INT-2b) */
+  if (metodoAttivo && metodoAttivo.superserie) sedute.forEach(sd => strSuperserie(sd));
   return sedute;
 }
 
