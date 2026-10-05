@@ -88,7 +88,10 @@ const q = await p.evaluate(() => {
   const S = (w, reps, done, rpe) => ({ weight: w, reps: reps, done: done, rpe: rpe });
   const lun = lunediDi(new Date()), lunS = ymd(lun);
   const profilo = (o) => localStorage.setItem(PROFILE_KEY(), JSON.stringify(Object.assign({ level: 'intermedio', age: 30, sex: 'M', goals: ['massa'], esigenza: { valore: 1.2, sett: lunS, storia: [] } }, o)));
-  const programma = (creato) => localStorage.setItem(progKey(), JSON.stringify({ creato: creato || 'A', inizio: lunS, settimane: 12, fasi: Array(12).fill('carico') }));
+  /* il programma e iniziato 14 giorni fa: le due sedute di prova (1 ora e 30 ore fa) ne fanno sempre parte.
+     Con inizio = lunedi di questa settimana la prova falliva dal lunedi alle 00:00 al martedi alle 06:00 (la seduta di 30 ore fa
+     cadeva prima dell inizio del programma): bilancioPrimeSedute() vedeva una seduta sola e non decideva. Il codice era giusto. */
+  const programma = (creato) => localStorage.setItem(progKey(), JSON.stringify({ creato: creato || 'A', inizio: ymd(piuGiorni(lun, -14)), settimane: 12, fasi: Array(12).fill('carico') }));
   const sess = (sets, pront, ore) => ({ id: Date.now() - (ore || 0) * 3600000, day: 'Lunedì', date: formatNow(), minuti: 50, prontezza: pront, sessione: [{ name: nome, rest: 120, sets: sets }], exercises: [] });
   const set = (rpe, fatte) => [S(60, 8, fatte >= 1, rpe), S(60, 8, fatte >= 2, rpe), S(60, 8, fatte >= 3, rpe), S(60, 8, fatte >= 4, rpe)];
   const prova = (nomeProva, sedute, o) => { profilo(o); programma('P-' + nomeProva); saveHistory(sedute); const res = bilancioPrimeSedute(); const pf = getProfile(); out[nomeProva] = { res: res, valore: pf.esigenza.valore, storia: (pf.esigenza.storia || []).slice(-1)[0] }; };
