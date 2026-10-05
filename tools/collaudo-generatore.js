@@ -70,8 +70,8 @@ const PICCOLI_GIORNI_MIN = 3, PICCOLI_MINUTI_MIN = 45;
 /* --- frequenza e recupero --- */
 /* Ogni grande gruppo almeno 2 sedute a settimana (ACSM 2026: Solida; a volume pari la frequenza cambia poco la crescita: Pelland 2025) */
 const FREQ_MIN_SETTIMANA = 2;
-/* Una seduta "conta" per un muscolo da 2 serie frazionarie in su (Convenzione) */
-const FREQ_SERIE_MIN_SEDUTA = 2;
+/* Una seduta "conta" per un muscolo da 1,5 serie frazionarie in su, cioe 3 serie sinergiche (Convenzione) */
+const FREQ_SERIE_MIN_SEDUTA = 1.5;
 /* Stesso grande muscolo con almeno 4 serie frazionarie in due giorni di fila = meno di 48 ore di recupero (ACSM 2009: 48 ore: Moderata) */
 const REC_SERIE_MIN = 4;
 /* Giorni di fila in palestra: oltre 4 si segnala (Convenzione) */
@@ -107,6 +107,8 @@ const REPS_AMMESSE = {
   ipertrofia: { pesante: [5, 10], macchina: [6, 15], isolamento: [8, 20] },   /* docs/ricerca-ipertrofia-programmazione.md 3.4: bilanciere 5-10, macchine 8-12, isolamenti 10-15 (fasce larghe: ACSM 2026) */
   generale:   { pesante: [6, 15], macchina: [8, 15], isolamento: [10, 20] }
 };
+/* Modalita prudente (over 65, PAR-Q): 8-12 ripetizioni al 60-80% di 1RM, senza apnea (ACSM 2026 per gli anziani e per la pressione: Solida; la fascia e Convenzione) */
+const REPS_AMMESSE_PRUDENTE = { pesante: [6, 15], macchina: [6, 15], isolamento: [8, 20] };
 const PAUSA_AMMESSA = {
   forza:      { pesante: [120, 300], macchina: [90, 240], isolamento: [45, 150] },
   ipertrofia: { pesante: [90, 180],  macchina: [60, 150], isolamento: [45, 120] },
@@ -443,17 +445,17 @@ const CRITERI = [
 
   /* ---------------- prescrizione ---------------- */
   { id: 'RX-01', nome: 'Ripetizioni fuori dalla fascia dell obiettivo e del tipo di esercizio', sev: 3, forza: 'Convenzione', fonte: 'ACSM 2009 e 2026 (forza 1-6 oltre l 80%); prassi per ipertrofia 6-12 / 12-20',
-    dove: [RICETTE_JS + ': buildProgram (blocco ripetizioni per tipo, tipoGiorno, over 65, PAR-Q)', ONB_JS + ': schemeFor', 'js/coach/compone.js: TOCCHI', 'js/coach/metodi-momenti.js: METODI (schema)'],
+    dove: [RICETTE_JS + ': buildProgram (blocco ripetizioni per tipo; PRG-14 forzaSulPrimo 5x5 su qualunque multiarticolare; blocco "schemi mancanti" PRG-21: reps = max(8, schema) e recupero da macchina anche su un isolamento)', ONB_JS + ': schemeFor', 'js/coach/compone.js: TOCCHI', 'js/coach/metodi-momenti.js: METODI (schema)'],
     check: (m, c) => {
       const out = [];
       m.sedute.forEach(s => s.es.forEach(e => {
         if (e.inf.tempo || !(e.reps > 0)) return;
-        const r = REPS_AMMESSE[c.tipoObiettivo][e.inf.carico];
-        if (e.reps < r[0] || e.reps > r[1]) out.push({ sub: c.tipoObiettivo + '/' + e.inf.carico, msg: s.titolo + ': ' + e.pulito + ' ' + e.sets + 'x' + e.reps + ' (' + e.inf.carico + ', ' + c.tipoObiettivo + ': ' + r[0] + '-' + r[1] + ')' + (c.metodo ? ' metodo ' + c.metodo : ''), gravita: Math.abs(e.reps < r[0] ? r[0] - e.reps : e.reps - r[1]) });
+        const r = (c.cauto ? REPS_AMMESSE_PRUDENTE : REPS_AMMESSE[c.tipoObiettivo])[e.inf.carico];
+        if (e.reps < r[0] || e.reps > r[1]) out.push({ sub: c.tipoObiettivo + '/' + e.inf.carico, msg: s.titolo + ': ' + e.pulito + ' ' + e.sets + 'x' + e.reps + ' (' + e.inf.carico + ', ' + (c.cauto ? 'modalita prudente' : c.tipoObiettivo) + ': ' + r[0] + '-' + r[1] + ')' + (c.metodo ? ' metodo ' + c.metodo : ''), gravita: Math.abs(e.reps < r[0] ? r[0] - e.reps : e.reps - r[1]) });
       }));
       return out; } },
   { id: 'RX-02', nome: 'Recupero tra le serie fuori dalla fascia dell obiettivo e del tipo di esercizio', sev: 3, forza: 'Moderata', fonte: 'Singer 2024, Schoenfeld 2016, ACSM 2009 (2-3 minuti sui fondamentali per la forza)',
-    dove: [RICETTE_JS + ': buildProgram (rest per tipo, donne -15% min 60 s, arrotondamento a 15 s)', ONB_JS + ': schemeFor (restCompound / restIso)'],
+    dove: [RICETTE_JS + ': buildProgram (rest per tipo, donne -15% min 60 s, arrotondamento a 15 s; il blocco "schemi mancanti" PRG-21 salta tutto questo)', ONB_JS + ': schemeFor (restCompound / restIso)'],
     check: (m, c) => {
       const out = [];
       m.sedute.forEach(s => s.es.forEach(e => {

@@ -13,7 +13,8 @@
     "grafo": "node tools/simboli.js && node tools/grafo.js",
     "grafo:verifica": "node tools/grafo.js --verifica",
     "controlla": "npm run sw -- --check && npm run catalogo -- --check && npm run indice -- --check && npm run simboli -- --check && npm test",
-    "catalogo": "node tools/genera-catalogo.js"
+    "catalogo": "node tools/genera-catalogo.js",
+    "collaudo:schede": "node tools/collaudo-generatore.js"
   },
   "devDependencies": {
     "acorn": "^8.18.0",
