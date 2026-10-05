@@ -134,14 +134,6 @@ window.usageState = function(name, usage) {
   return { level: null, days: [] };
 };
 
-function usageBadge(st) {
-  if (!st.level) return '';
-  if (st.level === 'today') return '<span class="use-tag today">\u2713 in scheda oggi</span>';
-  const altri = st.days.filter(d => d !== currentDay);
-  const txt = altri.length === 1 ? 'gia ' + altri[0] : 'gia in ' + altri.length + ' giorni';
-  return '<span class="use-tag week">\u21BB ' + txt + '</span>';
-}
-
 function usageRank(st) {
   if (!st.level) return 0;          /* mai scelto: primo */
   if (st.level === 'week') return 1; /* scelto altrove: dopo */

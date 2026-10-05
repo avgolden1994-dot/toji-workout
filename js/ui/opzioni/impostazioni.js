@@ -58,9 +58,6 @@ window.applicaZoom = function() {
 };
 try { applicaZoom(); } catch (e) {}
 
-window.openSettings = function() { switchTab('impostazioni'); };
-window.closeSettings = function() { switchTab('piano'); };
-
 window.toggleSetting = function(k, def) {
   setSetting(k, isOn(k, def) ? '0' : '1');
   if (k === DISCHI_KEY) renderAllenamento();

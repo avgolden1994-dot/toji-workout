@@ -118,7 +118,6 @@ window.buildProgram = function(d) {
   let schienaPrima = null;   /* ABB-07: la seduta del giorno prima aveva un carico pesante sulla schiena? */
   const sedute = split.giorni.slice(0, d.days).map((tplId, i) => {
     const tpl = WORKOUT_TEMPLATES.find(t => t.id === tplId);
-    const usati = [];
     const base = [];
     let pesantiSchiena = 0;
     const vietaSchiena = !!(schienaPrima && !metodoAttivo && indiciGiorni[i] - schienaPrima.idx === 1 && schienaPrima.pesa);

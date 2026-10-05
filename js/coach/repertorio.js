@@ -10,11 +10,6 @@
    ============================================================ */
 
 /* ---- livello dai numeri (moltiplicatori del peso corporeo) ---- */
-const STANDARD_FORZA = {
-  M: { squat: [0.5, 1, 1.5, 2, 2.5], stacco: [0.75, 1.25, 1.75, 2.25, 2.75], panca: [0.5, 0.75, 1.25, 1.5, 2], military: [0.35, 0.55, 0.75, 1, 1.25] },
-  F: { squat: [0.5, 0.75, 1.25, 1.5, 2], stacco: [0.5, 1, 1.5, 2, 2.5], panca: [0.35, 0.5, 0.75, 1, 1.25], military: [0.2, 0.35, 0.5, 0.65, 0.8] }
-};
-const ALZATE_BASE = { squat: /Squat con Bilanciere/, stacco: /Stacco da Terra/, panca: /Panca Piana Bilanciere/, military: /Military Press/ };
 function pesoCorporeo() {
   const p = getProfile() || {};
   const st = getBiaStorico();

@@ -348,12 +348,6 @@ function renderWeekOverview() {
     }).join('');
 }
 
-/* Toccando un giorno del riepilogo lo si apre; ritoccandolo lo si richiude,
-   cosi si puo tenere la vista corta quando serve. */
-window.openPlanDay = function(day) {
-  openPlanDayScreen(day);
-};
-
 function renderPiano() {
   const data = loadData();
   const list = data[currentDay] || [];

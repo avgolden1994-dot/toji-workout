@@ -100,11 +100,3 @@ function renderAnno() {
     '<div class="yr-leg"><span><i class="yf"></i><span>Fatti</span> <b>' + nFatti + '</b></span><span><i class="ys"></i><span>Saltati</span> <b>' + nSaltati + '</b></span><span><i class="yr"></i><span>Riposo</span></span></div>' +
     '<div class="sr-note"><b>' + Object.keys(settimane).length + '/53</b> <span>settimane attive</span></div>';
 }
-function annoRiassunto() {
-  const fatti = {};
-  tutteLeSedute().forEach(h0 => { const d = dataSessione(h0); if (d) fatti[ymd(d)] = true; });
-  const cal = loadCal(), kOggi = ymd(new Date()), da = ymd(piuGiorni(new Date(), -365));
-  let s0 = 0;
-  Object.keys(cal).forEach(k => { const v = cal[k]; if (k >= da && k < kOggi && !fatti[k] && !v.done && !v.rest && (v.saltato || v.title || (v.items && v.items.length))) s0++; });
-  return { fatti: Object.keys(fatti).filter(k => k >= da).length, saltati: s0 };
-}

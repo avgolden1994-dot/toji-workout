@@ -140,7 +140,7 @@ forza 5x5, rec. multi 210 s / iso 90 s, 8 sett. (Robinson 2024, ACSM 2026); mass
 
 - **PRG-25** volume settimanale (serie): VOLUME_LIVELLO principiante 8-10, intermedio 10-14, avanzato 14-20; salute 6-12.
 - **PRG-26** fattore fisico: massa magra bassa (FFMI basso) e non dimagrimento: x1,2; massa magra in calo: x0,85.
-- **PRG-27** esigenza del coach (ESIGENZA_INIZIO, ora `esigenzaIniziale`, INT-02): +20% di volume all'inizio solo senza bandiere dalla BIA (100% con una, 95% con due), segue l'andamento; =1 se cauto o con un "momento di vita" attivo che riduce volume o aumenta RIR; >=1,15 aggiunge la nota "Coach esigente". <1 riduce min e max.
+- **PRG-27** esigenza del coach (`esigenzaIniziale`, INT-02): +20% di volume all'inizio solo senza bandiere dalla BIA (100% con una, 95% con due), segue l'andamento; =1 se cauto o con un "momento di vita" attivo che riduce volume o aumenta RIR; >=1,15 aggiunge la nota "Coach esigente". <1 riduce min e max.
 - **PRG-28** conteggio frazionario: 1 serie per il muscolo principale, 0,5 per sinergisti nei multiarticolari (Pelland 2025). Aggiusta le serie (+1 al meno carico, max 5; -1 al piu carico, min 2, senza toccare i "fissi") finche il volume e dentro min-max.
 - **PRG-29** priorita: gruppo prioritario x1,2 (x1,5 se avanzato che specializza); avanzato che specializza: gli altri gruppi min 6, max = vMin.
 - **PRG-30** tetto di 11 serie per muscolo per seduta (si tolgono serie dagli esercizi non fissi, min 2).
@@ -342,7 +342,7 @@ Tabelle di conoscenza di questa sezione: ZONE_DOLORE (spalla, gomito, polso, sch
 ### Livello e stalli
 
 - **LIV-01** livello stimato dai numeri (livelloStimato; serve almeno 6 sedute): mesi regolari = settimane con >=2 sedute / 4,33; frequenza = sedute / settimane attive; difficolta = media per seduta di (+0,5 se c'e un esercizio "pesante", +0,2 se ci sono tecniche/extra, +0,3 se >=5 esercizi). Principiante <6 mesi regolari; intermedio >=6 mesi e >=2 sedute/sett.; avanzato >=24 mesi, >=3 sedute/sett., difficolta >=0,5 (NSCA, Helms). Se il livello stimato e piu alto di quello del profilo, propone "Aggiorna il livello".
-- **LIV-02** tabelle STANDARD_FORZA (squat, stacco, panca, military come multipli del peso corporeo, 5 livelli, uomini/donne) e ALZATE_BASE: definite per il livello "verificato sui numeri" — da verificare dove vengono usate (non risulta nella funzione livelloStimato).
+- **LIV-02** livello "verificato sui numeri" (squat, stacco, panca, military come multipli del peso corporeo): non applicato. Le tabelle STANDARD_FORZA e ALZATE_BASE non erano lette da nessuna funzione (`livelloStimato` non le usa) e sono state tolte il 2026-10-05: per attivarla vanno riscritte.
 - **STA-01** esercizio fermo (eserciziFermi): servono >=3 sedute con massimale stimato (e1RM). Soglia per livello: principiante 2 sedute (finestra: ultime 3), intermedio 4 settimane, avanzato 8 settimane. E' fermo se l'ultimo e1RM <= quello piu vecchio della finestra e <= il migliore precedente.
 - **STA-02** azioni sul fermo (max 3 esercizi): se recuperi bene (media degli ultimi 5 punteggi di prontezza >=60, o nessun dato) "+20% serie", altrimenti "-20% serie"; sempre "Cambia variante"; per i pesanti anche "Reset -10%" (si ricostruisce, stile 5/3/1). Serie nel piano limitate a 2-6.
 - **STA-03** rotazione accessori: all'inizio di ogni blocco (settimana 1 + k*blocco), se non gia fatta in quel blocco e l'obiettivo non e forza: propone di ruotare gli isolamenti (non i fondamentali) con equivalenti.
@@ -513,8 +513,6 @@ Le regole non leggono una scheda unica per esercizio: la stessa conoscenza ("qua
 | `SCHIENA_PESANTE` | 8890 | esercizi pesanti per la schiena (max 1 a seduta) |
 | `GLUTEI_FAMIGLIE` | 8891 | 4 famiglie per l'obiettivo glutei |
 | `BIL_PESANTI` | 10866 | esercizi "pesanti" col bilanciere (tipoCarico) |
-| `ALZATE_BASE` | 10344 | 4 fondamentali (NON USATA) |
-| `STANDARD_FORZA` | 10340 | standard di forza come multipli del peso corporeo (NON USATA) |
 | `ZONE_DOLORE` | 9961 | 7 zone del dolore |
 | `STRESS_ZONA` | 9970 | esercizi che caricano ogni zona |
 | `SOSTITUZIONI` | 9981 | variante per zona di dolore |
@@ -529,7 +527,7 @@ Tassonomie diverse per le zone del corpo: i **fastidi** del questionario sono 3 
 Elenco in ordine di importanza. Sono fatti letti nel codice, non ancora corretti.
 
 1. ~~Consenso del Coach IA incompleto~~ — risolto: il testo elenca tutto ciò che esce dal telefono (`TESTI_IA` in `js/coach/coach-ia.js`) e un test controlla che sia tradotto. Resta da verificare lato Worker se i dati vengono conservati.
-2. **Conoscenza degli esercizi ripetuta** in 14 tabelle (capitolo 16), e due tabelle mai usate: `STANDARD_FORZA` e `ALZATE_BASE` (pensate per il livello "dai numeri", ma `livelloStimato` non le legge). La scheda tecnica con muscoli primari e secondari (`TECNICA`) e usata solo per mostrare la scheda dell'esercizio, non dalle regole.
+2. **Conoscenza degli esercizi ripetuta** in 14 tabelle (capitolo 16), e due tabelle mai usate, `STANDARD_FORZA` e `ALZATE_BASE` (pensate per il livello "dai numeri"), tolte il 2026-10-05 (LIV-02). La scheda tecnica con muscoli primari e secondari (`TECNICA`) e usata solo per mostrare la scheda dell'esercizio, non dalle regole.
 3. **Soglie diverse per lo stesso concetto.**
    - Massa grassa alta nelle donne: 30% e 35% in `analyzeBia`, 32% in `fattoreFisico` e nella ricomposizione (BIA, MET-03, COR-02).
    - Massa magra in calo: -0,5 kg riduce il volume del 15% (`fattoreFisico`), -1 kg ferma gli aumenti (`frenoBia`).

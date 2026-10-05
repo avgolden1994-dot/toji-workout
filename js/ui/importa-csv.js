@@ -208,31 +208,3 @@ function sedutaImportata(s, origine) {
     exercises: s.es.map(e => ({ name: nomeSicuro(e.name), weight: e.sets.length ? e.sets[e.sets.length - 1].weight : 0, totalSets: e.sets.length, doneSets: e.sets.length, wasBerserk: e.sets.some(x => x.wasBerserk) }))
   };
 }
-window.importaCSV = function() {
-  scegliFile('.csv,text/csv,text/plain', (testo, nomeFile) => {
-    const r = leggiExport(testo);
-    if (r.errore) { showUndo(r.errore); return; }
-    const storia = loadHistory();
-    const esistenti = {};
-    storia.forEach(h => { const d = dataSessione(h); if (d) esistenti[ymd(d) + ' ' + d.getHours() + ':' + d.getMinutes()] = 1; });
-    const nuove = r.sedute.filter(s => !esistenti[ymd(s.quando) + ' ' + s.quando.getHours() + ':' + s.quando.getMinutes()]);
-    foglioDati = { r: r, nuove: nuove };
-    const sconosciuti = Object.keys(r.sconosciuti);
-    const ric = Object.keys(r.riconosciuti).filter(k => r.riconosciuti[k] !== k);
-    const primo = r.sedute[r.sedute.length - 1], ultimo = r.sedute[0];
-    const fmt = (d) => d.toLocaleDateString(LOCALE(), { day: 'numeric', month: 'short', year: 'numeric' });
-    apriFoglio('Importa allenamenti',
-      '<div class="res-card"><div class="res-title">' + escapeHtml(r.origine) + '</div>' +
-        '<div class="res-line"><span>Allenamenti nel file</span><b>' + r.sedute.length + '</b></div>' +
-        '<div class="res-line"><span>Nuovi da aggiungere</span><b>' + nuove.length + '</b></div>' +
-        (r.sedute.length - nuove.length ? '<div class="res-line"><span>Già presenti</span><b>' + (r.sedute.length - nuove.length) + '</b></div>' : '') +
-        (primo ? '<div class="res-line"><span>Periodo</span><b data-no-tr>' + fmt(primo.quando) + ' – ' + fmt(ultimo.quando) + '</b></div>' : '') + '</div>' +
-      (ric.length ? '<div class="res-card"><div class="res-title">Esercizi riconosciuti</div>' + ric.slice(0, 40).map(k =>
-        '<div class="consent-li"><span data-no-tr>' + escapeHtml(k) + '</span> → ' + escapeHtml(senzaEmoji(r.riconosciuti[k])) + '</div>').join('') + '</div>' : '') +
-      (sconosciuti.length ? '<div class="res-card"><div class="res-title">Restano con il loro nome</div><div class="consent-li" data-no-tr>' +
-        escapeHtml(sconosciuti.slice(0, 40).join(', ')) + '</div><div class="sr-note">Si vedono nello storico ma il coach non li usa per i carichi.</div></div>' : '') +
-      '<div class="sr-note">I riscaldamenti vengono saltati, le libbre convertite in kg. Il coach userà questi carichi come punto di partenza.</div>' +
-      (nuove.length ? '<button class="btn-start-workout" onclick="confermaImport()">Importa ' + nuove.length + ' allenamenti</button>' : '<div class="sr-note">Niente di nuovo da importare.</div>'),
-      nomeFile);
-  });
-};

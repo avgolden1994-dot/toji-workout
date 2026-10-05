@@ -63,16 +63,6 @@ function renderStorico() {
   container.innerHTML = htmlStoricoOrdinato(history);
 }
 
-/* Archivio completo, raggruppato per mese */
-window.openAllSessions = function() {
-  const history = loadHistory();
-  const html = htmlStoricoOrdinato(history);
-  document.getElementById('all-sessions-sub').innerText = history.length + (history.length === 1 ? ' allenamento' : ' allenamenti');
-  document.getElementById('all-sessions-body').innerHTML = html || '<div class="dv-empty">Nessun allenamento completato.</div>';
-  document.getElementById('all-sessions-sheet').classList.remove('hidden');
-};
-window.closeAllSessions = function() { document.getElementById('all-sessions-sheet').classList.add('hidden'); };
-
 /* Numeri in cima a Progressi e l elenco dei blocchi da 4 settimane */
 function renderProgressiTop() {
   const box = document.getElementById('pg-kpis');

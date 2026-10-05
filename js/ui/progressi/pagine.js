@@ -78,7 +78,7 @@ function htmlPesate(pts, ob) {
     }
     h += '</div>';
   }
-  let righe = [];
+  let righe;
   if (pts.length <= 6 || pesateTutte) {
     righe = pts.map((x, i) => ({ x: x, t: i === 0 ? 'inizio' : (i === pts.length - 1 ? 'ultima' : ''), d: i ? x.kg - pts[i - 1].kg : null }));
   } else {

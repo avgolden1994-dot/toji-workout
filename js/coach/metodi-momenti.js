@@ -200,26 +200,3 @@ function prontezzaBassaSettimana() {
   const st = storicoProntezza().filter(x => typeof x.punteggio === 'number' && x.data >= ymd(piuGiorni(new Date(), -8)));
   return st.length >= 3 && st.reduce((a, x) => a + x.punteggio, 0) / st.length < 50;
 }
-function htmlMomento() {
-  if (!coachAttivo()) return '';
-  const m = momentoAttivo();
-  if (m) {
-    const giorni7 = tutteLeSedute().filter(h0 => { const d = dataSessione(h0); return d && d >= piuGiorni(new Date(), -7); }).length;
-    const prev = ((getProfile() || {}).days) || 3;
-    let h = '<div class="card og-saltata og-momento"><div class="og-dol-t">' + ico('cuore') + ' <span>' + m.nome + '</span></div>';
-    if (m.scaduto) {
-      return h + '<p>Come va? Il periodo che avevi segnato è finito.</p><div class="og-dol-b og-tre">' +
-        '<button class="btn-main" onclick="fineMomento(false)">Sto meglio</button><button class="btn-archive" onclick="fineMomento(true)">Ancora due settimane</button></div></div>';
-    }
-    h += '<p class="og-muted">' + m.testo + '</p>';
-    if (m.guardia && giorni7 > prev + 1) h += '<p><b>Sette giorni, ' + giorni7 + ' allenamenti.</b> <span>Anche il riposo fa crescere. Se allenarti diventa un obbligo o ti fa stare in ansia quando salti, parlane con qualcuno.</span></p>';
-    if (m.aiuto) h += '<p class="og-muted"><span>Se il malessere non passa o diventa pesante, parlane con il medico o con uno psicologo: chiedere aiuto è un gesto di forza.</span></p>';
-    return h + '<button class="og-link" onclick="fineMomento(false)">Il periodo è finito</button></div>';
-  }
-  if (prontezzaBassaSettimana()) {
-    return '<div class="card og-saltata"><div class="og-dol-t">' + ico('cuore') + ' <span>Settimana pesante?</span></div>' +
-      '<p>Da qualche giorno il check prima della seduta è basso. Se stai passando un periodo difficile, il coach adatta il piano.</p>' +
-      '<div class="og-dol-b og-tre"><button class="btn-main" onclick="switchTab(\'impostazioni\'); openSetPage(\'coach\');">Dimmi cosa succede</button></div></div>';
-  }
-  return '';
-}

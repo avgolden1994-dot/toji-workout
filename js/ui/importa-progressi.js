@@ -204,19 +204,3 @@ window.confermaImportProgressi = function() {
     if (currentTab === 'storico') renderStorico();
   }, 8000);
 };
-
-window.confermaImport = function() {
-  if (!foglioDati || !foglioDati.nuove) return;
-  const prima = localStorage.getItem(historyKey());
-  const storia = loadHistory().concat(foglioDati.nuove.map(s => sedutaImportata(s, foglioDati.r.origine)));
-  storia.sort((a, b) => (dataSessione(b) || 0) - (dataSessione(a) || 0));
-  saveHistory(storia);
-  const n = foglioDati.nuove.length;
-  foglioDati = null;
-  chiudiFoglio();
-  if (currentTab === 'storico') renderStorico();
-  showUndo(n + ' allenamenti importati', () => {
-    if (prima === null) localStorage.removeItem(historyKey()); else localStorage.setItem(historyKey(), prima);
-    if (currentTab === 'storico') renderStorico();
-  }, 10000);
-};

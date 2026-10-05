@@ -155,8 +155,7 @@ window.mcCopyWeeks = function(origine, destinazioni) {
   const cal = loadCal();
   const backup = JSON.stringify(cal);
   const da = daYmd(origine);
-  let n = 0;
-  destinazioni.forEach(k => { n += copiaSettimana(da, daYmd(k), cal); });
+  destinazioni.forEach(k => { copiaSettimana(da, daYmd(k), cal); });
   saveCal(cal);
   renderMonthCal();
   showUndo('Settimana ricopiata su ' + destinazioni.length + (destinazioni.length === 1 ? ' settimana' : ' settimane'), () => {

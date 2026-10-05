@@ -40,4 +40,3 @@ const GLUTEI_FAMIGLIE = [
 ];
 const VOLUME_LIVELLO = { principiante: [8, 10], intermedio: [10, 14], avanzato: [14, 20] };
 const GRUPPI_PRINCIPALI = ['petto', 'schiena', 'gambe', 'spalle', 'braccia', 'glutei'];
-function libNome(pulito) { return nomeInLibreria(pulito) || pulito; }

@@ -224,7 +224,6 @@ window.closeStats = function() { document.getElementById('stats-sheet').classLis
 function reportBloccoHtml(i, nome) {
   const r = calcolaBlocco(i);
   const d = (x) => x.toLocaleDateString(LOCALE(), { day: 'numeric', month: 'short' });
-  const fmt = (n) => Math.round(n).toLocaleString(LOCALE());
   if (r.vuoto) return '<div class="dv-empty">Nessun allenamento in queste 4 settimane.</div>';
   const b = r.blocco;
   const delta = (a, p) => {

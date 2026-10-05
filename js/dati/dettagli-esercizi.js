@@ -306,12 +306,6 @@ window.focusEsercizio = function(nome) {
   const d = dettaglioEsercizio(nome);
   return d ? d.focus : '';
 };
-/* da multiarticolare a isolamento: con piu focus si dice che e multiarticolare */
-window.focusConTipo = function(nome) {
-  const m = findExercise(nome), d = dettaglioEsercizio(nome);
-  if (!d) return '';
-  return (m && m.type === 'compound' ? 'Multiarticolare' : 'Isolamento') + ': ' + d.focus;
-};
 
 /* Ordine dentro una lista: prima i multiarticolari, poi per preferenza del coach (PRIORI), poi per nome */
 window.ordineEsercizi = function(a, b) {

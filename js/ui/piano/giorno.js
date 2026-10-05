@@ -237,7 +237,6 @@ function renderPlanDayPicker() {
   /* riepilogo in una riga sola, al posto delle sette schede */
   const giorni = DAYS.filter(d => !isRestDay(d) && (data[d] || []).length > 0).length;
   const serie = DAYS.reduce((s2, d) => s2 + (isRestDay(d) ? 0 : (data[d] || []).reduce((a, e) => a + e.sets, 0)), 0);
-  const riposi = DAYS.filter(d => isRestDay(d)).length;
   const sum = document.getElementById('cal-summary');
   if (sum) {
     sum.innerText = giorni === 0

@@ -9,7 +9,6 @@
    il bersaglio o prontezza bassa -5%, dolore che non passa -10%.
    Limiti 90-130%. Esclusi: modalita prudente, over 65, periodi difficili.
    ============================================================ */
-const ESIGENZA_INIZIO = 1.2;   /* senza bandiere dalla BIA; con angolo di fase basso o acqua extracellulare alta parte piu bassa (INT-02, esigenzaIniziale) */
 function esigenzaEsclusa(p) {
   const mo = momentoAttivo();
   return !!(p.parq || Number(p.age) >= 65 || (mo && !mo.scaduto && (mo.vol < 1 || mo.rir)));

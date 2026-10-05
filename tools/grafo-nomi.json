@@ -10,7 +10,7 @@
   "js/coach/repertorio.js": "Coach: repertorio di consigli e azioni",
   "js/lingue/traduttore.js": "Lingue: traduttore automatico dell'interfaccia",
   "js/ui/guida-interattiva.js": "Guida interattiva",
-  "js/ui/schede-esercizio.js": "Schede esercizio: disegno e spiegazione",
+  "js/ui/schede-esercizio.js": "Schede esercizio: spiegazione e video",
   "tools/simboli.js": "Strumento: mappa dei simboli globali",
   "tools/grafo.js": "Strumento: aggiornamento del grafo",
   "tools/indice.js": "Strumento: indice del codice",

@@ -115,13 +115,6 @@ window.agentBiaPdf = async function(files) {
   }
 };
 
-window.compilaBiaAgente = function(v) {
-  if (v.peso) document.getElementById('ag-peso').value = v.peso;
-  if (v.fmPerc) document.getElementById('ag-fm').value = v.fmPerc;
-  if (v.ffm) document.getElementById('ag-ffm').value = v.ffm;
-  if (v.bmr) document.getElementById('ag-bmr').value = v.bmr;
-};
-
 window.salvaBiaAgente = function() {
   const n = (id) => { const x = parseFloat(document.getElementById(id).value); return isNaN(x) ? null : x; };
   const v = { peso: n('ag-peso'), fmPerc: n('ag-fm'), ffm: n('ag-ffm'), bmr: n('ag-bmr') };

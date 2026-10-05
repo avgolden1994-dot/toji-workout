@@ -6,14 +6,6 @@
    ============================================================ */
 let selectedGroups = [];
 
-/* Toccare un gruppo apre la sua schermata dedicata invece di allungare
-   la pagina: la ricerca sui form mobile mostra che lo scroll lungo e' il
-   peggiore dei pattern, mentre passare a una schermata dedicata no. */
-window.toggleGroup = function(groupId) {
-  if (selectedGroups.indexOf(groupId) === -1) selectedGroups.push(groupId);
-  openGroupSheet(groupId);
-};
-
 let sheetGroup = null;
 let sheetOrder = null;      /* ordine congelato mentre la schermata e aperta */
 let suggestedOrder = [];
@@ -184,7 +176,6 @@ window.removeExerciseByName = function(name) {
 
 window.clearGroupSelection = function() {
   if (selectedGroups.length === 0) return;
-  const quanti = selectedGroups.length;
   selectedGroups = [];
   suggestedOrderKey = null;   /* senza questo l ordine vecchio restava in memoria */
   azzeraSezioniEsercizi('proposte');
