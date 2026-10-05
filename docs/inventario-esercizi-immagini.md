@@ -7,13 +7,13 @@ Generato con uno script node che legge `EXERCISE_LIBRARY` (`js/dati/libreria-ese
 | Voce | Valore |
 |---|---|
 | Esercizi nel catalogo (`EXERCISE_LIBRARY`) | 140 totali (139 nel branch + 1 da altro branch) |
-| Con immagine (campo presente e file esistente) | 33 (di cui 1 con immagine condivisa: ex-29 usa il file di ex-28) |
-| Senza immagine (mancanti) | 107 su 140 (106 nel branch + 1 da altro branch) |
+| Con immagine (campo presente e file esistente) | 34 (di cui 1 con immagine condivisa: ex-29 usa il file di ex-28) |
+| Senza immagine (mancanti) | 106 su 140 (105 nel branch + 1 da altro branch) |
 | Di cui non ancora presenti in questo branch | 1 (n. 140 Squat Sumo, da `claude/hopeful-thompson-uthd8f`) |
-| File in `esercizi/` | 33 (tutti SVG) |
+| File in `esercizi/` | 34 (tutti SVG) |
 | File orfani (non referenziati) | 1 (`ex-02-panca-inclinata-su-a.svg`) |
-| Peso totale `esercizi/` | 897.9 KB |
-| Peso medio per file | 27.2 KB |
+| Peso totale `esercizi/` | 910.4 KB |
+| Peso medio per file | 26.8 KB |
 
 Copertura per gruppo muscolare:
 
@@ -21,7 +21,7 @@ Copertura per gruppo muscolare:
 |---|---|---|---|
 | Petto | 17 | 11 | 6 |
 | Schiena | 23 | 11 | 12 |
-| Gambe | 25 (24 nel branch + 1 da altro branch) | 11 | 14 (13 nel branch + 1 da altro branch) |
+| Gambe | 25 (24 nel branch + 1 da altro branch) | 12 | 13 (12 nel branch + 1 da altro branch) |
 | Glutei | 15 | 0 | 15 |
 | Spalle | 16 | 0 | 16 |
 | Braccia | 26 | 0 | 26 |
@@ -29,7 +29,7 @@ Copertura per gruppo muscolare:
 
 Note: gli esercizi usati in `schede-*.js` e le chiavi di `DETTAGLI` (139) coincidono con la libreria: nessun esercizio fuori catalogo. `tools/genera-catalogo.js` NON riguarda gli esercizi: genera il catalogo delle regole del coach da `docs/coach-mappa-regole.md`.
 
-Le bozze Quiver non finali (varianti a-d degli esercizi 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27 e 28, 30, 31, 32 e 33, di cui la b per il 10, la d per l'11, la d per il 13, la a per il 14, la a per il 15, identica alla d, la d per il 16 e la c per il 17 e la d per il 18 e la d per il 19 e la c per il 20 e la d per il 21 e la d per il 22 e la a per il 23 e la a per il 24 e la c per il 25 e la a per il 26 e la d per il 27 e la a per il 28 e la c per il 30 e la a per il 31 e la a per il 32 e la b per il 33, sono state usate per il finale) stanno in `esercizi-bozze/`, fuori da `esercizi/` e dalla cache del service worker.
+Le bozze Quiver non finali (varianti a-d degli esercizi 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27 e 28, 30, 31, 32, 33 e 34, di cui la b per il 10, la d per l'11, la d per il 13, la a per il 14, la a per il 15, identica alla d, la d per il 16 e la c per il 17 e la d per il 18 e la d per il 19 e la c per il 20 e la d per il 21 e la d per il 22 e la a per il 23 e la a per il 24 e la c per il 25 e la a per il 26 e la d per il 27 e la a per il 28 e la c per il 30 e la a per il 31 e la a per il 32 e la b per il 33 e la c per il 34, sono state usate per il finale) stanno in `esercizi-bozze/`, fuori da `esercizi/` e dalla cache del service worker.
 
 ## 2. Tabella completa
 
@@ -70,7 +70,7 @@ Il nome e' mostrato senza emoji iniziale. Percorso `img/<slug>.png` e' il ripieg
 | 31 | Leg Extension | Gambe | `esercizi/ex-31-leg-extension.svg` |
 | 32 | Leg Curl Sdraiato | Gambe | `esercizi/ex-32-leg-curl-sdraiato.svg` |
 | 33 | Leg Curl Seduto | Gambe | `esercizi/ex-33-leg-curl-seduto.svg` |
-| 34 | Calf Raise in Piedi | Gambe | nessuna (ripiego inesistente `img/calf-raise-in-piedi.png`) |
+| 34 | Calf Raise in Piedi | Gambe | `esercizi/ex-34-calf-raise-in-piedi.svg` |
 | 35 | Calf Raise Seduto | Gambe | nessuna (ripiego inesistente `img/calf-raise-seduto.png`) |
 | 36 | Hip Thrust | Glutei | nessuna (ripiego inesistente `img/hip-thrust.png`) |
 | 37 | Stacco Rumeno | Glutei | nessuna (ripiego inesistente `img/stacco-rumeno.png`) |
@@ -180,11 +180,10 @@ Il nome e' mostrato senza emoji iniziale. Percorso `img/<slug>.png` e' il ripieg
 
 ## 3. Esercizi senza immagine
 
-109 esercizi (108 nel branch + 1 da altro branch, l'ultimo in coda con nota). Motivo per tutti: **nessun campo** in `IMMAGINI_ESERCIZI`, quindi l'app prova `img/<slug>.png`, il file non esiste e compare il segnaposto "Immagine in arrivo". Nessun file referenziato risulta assente su disco e non ci sono placeholder file.
+108 esercizi (107 nel branch + 1 da altro branch, l'ultimo in coda con nota). Motivo per tutti: **nessun campo** in `IMMAGINI_ESERCIZI`, quindi l'app prova `img/<slug>.png`, il file non esiste e compare il segnaposto "Immagine in arrivo". Nessun file referenziato risulta assente su disco e non ci sono placeholder file.
 
 | Gruppo | Esercizio | Motivo | File atteso dal ripiego |
 |---|---|---|---|
-| Gambe | Calf Raise in Piedi | nessun campo nella mappa | `img/calf-raise-in-piedi.png` |
 | Gambe | Calf Raise Seduto | nessun campo nella mappa | `img/calf-raise-seduto.png` |
 | Glutei | Hip Thrust | nessun campo nella mappa | `img/hip-thrust.png` |
 | Glutei | Stacco Rumeno | nessun campo nella mappa | `img/stacco-rumeno.png` |
@@ -372,8 +371,9 @@ Controlli: file referenziati ma assenti = 0; voci di mappa non presenti in libre
 | `ex-31-leg-extension.svg` | 9.4 | 66.18 -0.50 399.33 299.50 |
 | `ex-32-leg-curl-sdraiato.svg` | 9.5 | 246.53 73.91 157.43 118.07 |
 | `ex-33-leg-curl-seduto.svg` | 10.6 | 211.29 57.82 234.77 176.08 |
+| `ex-34-calf-raise-in-piedi.svg` | 12.5 | 131.42 4.23 380.76 285.57 |
 
-Formato SVG vettoriale (nessun PNG/WebP); peso medio 27.2 KB, totale 897.9 KB (33 file con l'orfano). Il viewBox base e' 400x300 (rapporto 4:3); gli altri sono ritagli sulla figura (rapporti diversi, da 40x30 a 388x291). Nessun attributo width/height (tranne l'orfano 400x300): scalano al riquadro CSS `.ex-img` (`object-fit: contain`, rapporto 300/165).
+Formato SVG vettoriale (nessun PNG/WebP); peso medio 26.8 KB, totale 910.4 KB (34 file con l'orfano). Il viewBox base e' 400x300 (rapporto 4:3); gli altri sono ritagli sulla figura (rapporti diversi, da 40x30 a 388x291). Nessun attributo width/height (tranne l'orfano 400x300): scalano al riquadro CSS `.ex-img` (`object-fit: contain`, rapporto 300/165).
 
 ### Convenzione nome file
 
@@ -419,3 +419,4 @@ Elenco delle illustrazioni da rivedere o rifare a fine lavoro. La lista si aggio
 | 16 - Lat Machine Presa Inversa | `esercizi/ex-16-lat-machine-presa-inversa.svg` | Presa supina poco leggibile di profilo; poco arancione sui dorsali in END. | Difetto lieve, da valutare |
 | 17 - Rematore con Bilanciere | `esercizi/ex-17-rematore-bilanciere.svg` | In END anca un po' piu' arretrata/alta che in START. | Difetto lieve, da valutare |
 | 18 - Rematore con Manubrio | `esercizi/ex-18-rematore-manubrio.svg` | Arancione piu' marcato in START che in END. | Difetto lieve, da valutare |
+| 34 - Calf Raise in Piedi | `esercizi/ex-34-calf-raise-in-piedi.svg` | Bozza c, la migliore (tutte e 4 le bozze mostrano una vera differenza di posa START/END). Difetti lievi: la salita di atleta e cuscino e' circa 4-5% dell'altezza (testa e cuscino su di circa 9-12 unita' su 275) invece del ~12% richiesto, ma talloni ben alzati e piedi in punta; nella bozza la macchina differisce un poco tra i frame (gradino a due livelli in START, blocco unico in END): usata quella di START, pavimento e gradino allineati (traslazione END 157.9,0); in START il tallone e' solo appena sotto il bordo del gradino. Rimossi rect bianco, 2 ombre (ne resta una statica) e 20 tratti decorativi #DADADA. Alternative: bozze a, b, d in `esercizi-bozze/` (a: colonna piu' bassa in START e piedi piatti sul gradino; b: colonna dietro la schiena, macchina diversa e due impugnature; d: pantaloncini, cuscino piccolo, colonna di altezza diversa tra i frame). | Difetto lieve, da valutare |
