@@ -155,6 +155,7 @@ const ASSETS = [
   './esercizi/ex-17-rematore-bilanciere.svg',
   './esercizi/ex-18-rematore-manubrio.svg',
   './esercizi/ex-19-t-bar-row.svg',
+  './esercizi/ex-20-pulley-basso.svg',
   /*FINE-ASSET*/
 
 ];
