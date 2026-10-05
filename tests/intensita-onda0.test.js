@@ -161,7 +161,7 @@ test('MES-11: lo sforzo si confronta con il RIR bersaglio della seduta, non con 
 });
 
 test('MES-12: un intermedio che sale dell\'1,5% a settimana ha un ciclo "buono"; senza salita e "stallo"; con poche sedute non si dice stallo', () => {
-  const ciclo = (crescita, aderenza) => {
+  const ciclo = (crescita, aderenza, picco) => {
     const app = caricaApp({ ora: '2026-10-05T12:00:00' });
     app.profilo({ level: 'intermedio', days: 3 });
     app.programma(programma({ inizio: '2026-07-13', settimane: 12, blocco: 4, fasi: ['carico', 'carico', 'carico', 'scarico', 'carico', 'carico', 'carico', 'scarico', 'carico', 'carico', 'carico', 'scarico'] }));
@@ -169,7 +169,7 @@ test('MES-12: un intermedio che sale dell\'1,5% a settimana ha un ciclo "buono";
     let k = 0;
     for (let w = 0; w < 12; w++) {
       const scarico = w % 4 === 3, lun = new Date(new Date('2026-07-13T12:00:00').getTime() + w * 7 * 86400000);
-      const carico = 100 * Math.pow(1 + crescita, k) * (scarico ? 0.9 : 1);
+      const carico = 100 * Math.pow(1 + crescita, k) * (scarico ? 0.9 : 1) * (picco && w === 9 ? 1.25 : 1);   /* picco: una sola seduta con una misura alta (rumore): la mediana lo ignora (revisione dell onda 0) */
       if (!scarico) k++;
       [0, 2, 4].forEach(g => {
         const d = new Date(lun.getTime() + g * 86400000), iso = app.ymd(d);
@@ -186,6 +186,7 @@ test('MES-12: un intermedio che sale dell\'1,5% a settimana ha un ciclo "buono";
   assert.strictEqual(sale.esito, 'buono', 'verdetto ' + JSON.stringify(sale));
   assert.strictEqual(sale.quota, 100);
   assert.strictEqual(ciclo(0, true).esito, 'stallo', 'di controllo: senza progressi e uno stallo');
+  assert.strictEqual(ciclo(0, true, true).esito, 'stallo', 'MES-12 (mediana delle ultime 3 sedute di carico): una misura isolata alta non e una salita');
   assert.strictEqual(ciclo(0.015, false).esito, 'aderenza', 'con una seduta su tre il verdetto resta quello dell\'aderenza');
   /* meno di 2 esercizi misurabili: "buono" per default */
   const app = caricaApp({ ora: '2026-10-05T12:00:00' });

@@ -124,7 +124,9 @@ function livelloFatica() {
   const hist = loadHistory().filter(h => h.feedback && !h.interrotta).slice(0, 3);
   const pr = storicoProntezza().slice(-3).map(x => x.punteggio).filter(x => typeof x === 'number');
   if (!hist.length && !pr.length) return 'media';
-  const srpe = hist.length ? hist.reduce((t, h) => t + (h.feedback.srpe || 7), 0) / hist.length : 7;
+  /* la scala dell sRPE e 3/6/8/10 (W0-T5, MES-08); le risposte salvate prima dell onda 0 erano 4/7/9/10 e si portano sulla scala nuova (il 9 conta come 8: registro B9) */
+  const sulla3_6_8 = (v) => ({ 4: 3, 7: 6, 9: 8 })[v] || v;
+  const srpe = hist.length ? hist.reduce((t, h) => t + (sulla3_6_8(h.feedback.srpe) || 6), 0) / hist.length : 6;
   const pz = pr.length ? pr.reduce((t, x) => t + x, 0) / pr.length : 70;
   if (srpe >= SOGLIA_SRPE_ALTA || pz < 50) return 'alta';
   if (srpe < 7 && pz >= 70) return 'bassa';

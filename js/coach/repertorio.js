@@ -61,7 +61,10 @@ function livelloStandardForza() {
 function proposteLivello(livelloStimatoDaiNumeri) {
   const ord = ['principiante', 'intermedio', 'avanzato'];
   const dich = profiloCoach().livello;
-  const std = regolaAttiva('STD-01') ? livelloStandardForza() : null;
+  /* STD-01 non vale per chi e fragile (revisione dell onda 0): over 65, modalita prudente (PAR-Q) e fastidi dichiarati. Senza i numeri delle alzate resta il criterio di LIV-01 */
+  const pc = profiloCoach(), fastidi = ((getProfile() || {}).fastidi || []).filter(f => f && f !== 'nessuno');
+  const fragile = pc.eta >= 65 || pc.prudente || fastidi.length > 0;
+  const std = regolaAttiva('STD-01') && !fragile ? livelloStandardForza() : null;
   const misurabile = !!std && !std.indicativo && std.alzate.length >= STD_MINIMO_ALZATE;
   let salita = null;
   for (let i = ord.indexOf(livelloStimatoDaiNumeri); i > ord.indexOf(dich) && !salita; i--) {
@@ -282,7 +285,7 @@ function azioniCoach() {
   if (l && l.salita) {
     out.push({ testo: '<span>Livello:</span> ' + l.salita + ' \u2014 ' + l.testo + '.', bottoni: [['Aggiorna il livello', "azioneCoach('livello', '')"]] });
   } else if (l && l.revisione && !(ag.livelloRivistoIl && giorniTra(daYmd(ag.livelloRivistoIl), new Date()) < COACH_GIORNI_REVISIONE_LIVELLO)) {
-    out.push({ testo: 'Hai scelto il livello avanzato, ma nei sollevamenti base i carichi sono ancora quelli di un principiante: forse conviene rivedere il livello o il peso di partenza.',
+    out.push({ testo: 'Hai indicato il livello avanzato, e nei sollevamenti di base i carichi che usi sono ancora bassi: se ti va, puoi rivedere il livello o il peso di partenza. Decidi tu.',
       bottoni: [['Passa a intermedio', "azioneCoach('rivediLivello', '')"], ['Lascia com’è', "azioneCoach('livelloOk', '')"]] });
   }
   return out;
@@ -472,14 +475,15 @@ function verdettoCiclo() {
     const m = e1rmSeduta(e);
     if (nuova ? (m > 0 && !inScarico(h, e, prog)) : true) (perEs[e.name] = perEs[e.name] || []).push({ m: m, ultimi: dataSessione(h) >= dalBlocchi });   /* dalla piu recente */
   }));
-  const media3 = (a) => { const t = a.slice(0, 3); return t.reduce((x, y) => x + y, 0) / t.length; };
+  /* MES-12 (revisione dell onda 0): la mediana, non la media delle migliori: il massimo di misure rumorose gonfiava la salita e lo stallo non scattava quasi mai */
+  const mediana3 = (a) => { const t = a.slice(0, 3).sort((x, y) => x - y); return t[Math.floor(t.length / 2)]; };
   const misure = (n) => perEs[n].filter(x => x.m > 0);
   const nomi = Object.keys(perEs).filter(n => misure(n).length >= 2);
   const saliti = nomi.filter(n => {
     const v = misure(n);
     if (!nuova) return v[0].m > v[v.length - 1].m * 1.02;
-    const prime = media3(v.map(x => x.m).reverse());                                              /* le 3 prime del ciclo */
-    const recenti = media3(v.filter(x => x.ultimi).map(x => x.m).sort((x, y) => y - x));          /* le 3 migliori degli ultimi 2 blocchi */
+    const prime = mediana3(v.map(x => x.m).reverse());                                            /* le 3 prime sedute di carico del ciclo */
+    const recenti = mediana3(v.map(x => x.m));                                                    /* le 3 piu recenti (v e dalla piu recente) */
     return recenti > prime * (1 + PARAM_ANALISI.rumoreE1rm);
   });
   const quota = nomi.length ? saliti.length / nomi.length : 0;
