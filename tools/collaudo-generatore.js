@@ -83,13 +83,13 @@ const LOMBARE_SERIE_PESANTI = 3;
 /* --- durata della seduta (modello del collaudo; nessuna fonte diretta: Convenzione) --- */
 const SEC_PER_RIPETIZIONE = 3.5;        /* cadenza 2-0-1 piu ripresa */
 const SEC_SETUP_SERIE = 10;             /* mettersi in posizione, caricare */
-const SEC_TRANSIZIONE_ESERCIZIO = 60;   /* cambio di macchina o di peso (il recupero dell ultima serie e dentro) */
+const SEC_TRANSIZIONE_ESERCIZIO = 60;   /* cambio di macchina o di peso, 1 minuto (docs 3.8); il recupero dell ultima serie e dentro */
 const SEC_TRANSIZIONE_SUPERSERIE = 10;  /* passaggio da un esercizio all altro della coppia */
 const FATTORE_LATO = 2;                 /* esercizi unilaterali: ogni serie si fa da due lati, senza recupero in mezzo */
-const MIN_RISCALDAMENTO_GENERALE = 5;
+const MIN_RISCALDAMENTO_GENERALE = 6;      /* docs/ricerca-ipertrofia-programmazione.md 3.8: 6 minuti di riscaldamento */
 const SERIE_RISCALDAMENTO_PESANTE = 2;  /* serie progressive prima di ogni multiarticolare pesante (al massimo 2 esercizi) */
 const RISCALDAMENTO_ESERCIZI_MAX = 2;
-const SEC_SERIE_RISCALDAMENTO = 60;
+const SEC_SERIE_RISCALDAMENTO = 45;
 const SEC_TECNICA_DROP = 45;
 /* La seduta non deve superare i minuti dichiarati di oltre il 10% (Convenzione: il tempo reale oscilla) e non deve sprecarne piu del 25% (richiesta del collaudo) */
 const TOLLERANZA_SFORAMENTO = 0.10, QUOTA_SPRECO_MAX = 0.25;
@@ -103,12 +103,12 @@ const ES_MIN_SEDUTA = 3, ES_MAX_SEDUTA = 8, ES_MAX_PRINCIPIANTE = 6;
    (Convenzione); pausa sopra 60 s piccolo vantaggio, oltre 90 s nessuna differenza per la massa (Singer 2024, Schoenfeld 2016: Moderata). */
 const REPS_AMMESSE = {
   forza:      { pesante: [1, 6],  macchina: [4, 12], isolamento: [8, 15] },
-  ipertrofia: { pesante: [5, 12], macchina: [6, 15], isolamento: [8, 20] },
+  ipertrofia: { pesante: [5, 10], macchina: [6, 15], isolamento: [8, 20] },   /* docs/ricerca-ipertrofia-programmazione.md 3.4: bilanciere 5-10, macchine 8-12, isolamenti 10-15 (fasce larghe: ACSM 2026) */
   generale:   { pesante: [6, 15], macchina: [8, 15], isolamento: [10, 20] }
 };
 const PAUSA_AMMESSA = {
   forza:      { pesante: [120, 300], macchina: [90, 240], isolamento: [45, 150] },
-  ipertrofia: { pesante: [75, 180],  macchina: [60, 180], isolamento: [45, 120] },
+  ipertrofia: { pesante: [90, 180],  macchina: [60, 150], isolamento: [45, 120] },
   generale:   { pesante: [60, 150],  macchina: [45, 120], isolamento: [30, 90] }
 };
 /* Una serie sola per esercizio rende meno di 2-3 (Krieger 2010, Ralston 2017: Solida); oltre 6 serie su un esercizio non rende di piu (Amirthalingam 2017, Ralston 2017: Moderata) */
@@ -135,8 +135,9 @@ const PRIORITA_DELTA_MIN_SERIE = 1;
 const SCARICO_OGNI_MAX = 8;
 /* Sui fondamentali pesanti col bilanciere non si arriva al cedimento tecnico: RIR minimo 1 (Convenzione; ACSM 2026: il cedimento non serve, Solida) */
 const RIR_MIN_PESANTE = 1;
-/* Principianti: nelle prime due settimane almeno 2 ripetizioni in riserva (le stime sbagliano di circa 1 ripetizione per difetto: Halperin 2022, Refalo 2023: Moderata) */
-const RIR_MIN_PRINCIPIANTE = 2;
+/* RIR bersaglio minimo alla settimana 1 per livello: principiante 3, intermedio 2, avanzato 2 (docs/ricerca-ipertrofia-programmazione.md 3.5: Convenzione + Moderata;
+   le stime del RIR sbagliano di circa 1 ripetizione per difetto: Halperin 2022, Refalo 2023: Moderata) */
+const RIR_SETT1_MIN = { principiante: 3, intermedio: 2, avanzato: 2 };
 
 /* --- sicurezza e attrezzatura --- */
 const CAUTELA_SEV = 2;
@@ -267,6 +268,20 @@ const CRITERI = [
       if (c.prof.freq === '1') return [];   /* scelta esplicita dell utente: il coach la rispetta */
       return Object.keys(GRUPPI_FREQUENZA).map(g => ({ g, n: m.sedute.filter(s => GRUPPI_FREQUENZA[g].reduce((t, x) => t + (s.grp[x] || 0), 0) >= FREQ_SERIE_MIN_SEDUTA).length }))
         .filter(x => x.n < FREQ_MIN_SETTIMANA && c.days >= 2).map(x => ({ sub: x.g, sev: ['bicipiti', 'tricipiti'].indexOf(x.g) !== -1 ? 2 : (x.g === 'spalle' ? 3 : 4), msg: x.g + ' in ' + x.n + ' sedute su ' + m.sedute.length + (c.metodo ? ' (metodo ' + c.metodo + ')' : ''), gravita: 3 - x.n })); } },
+  { id: 'FRQ-02', nome: 'Muscolo piccolo (deltoidi, braccia, polpacci) con serie dirette in una sola seduta', sev: 2, forza: 'Convenzione', fonte: 'docs/ricerca-ipertrofia-programmazione.md 3.3',
+    dove: [STRUTTURA_JS + ': strCopri (le aggiunte vanno nella seduta con meno esercizi: una sola)', RICETTE_JS + ': buildProgram (aggiungiRegione)'],
+    check: (m, c) => {
+      if (c.tipoObiettivo !== 'ipertrofia' || c.level === 'principiante' || c.days < 3 || c.minutes < PICCOLI_MINUTI_MIN || c.prof.freq === '1') return [];
+      return ['deltoidi_laterali', 'deltoidi_posteriori', 'bicipiti', 'tricipiti', 'polpacci'].map(g => ({ g, tot: m.dir[g] || 0, n: m.sedute.filter(s => (s.dir[g] || 0) >= 1).length }))
+        .filter(x => x.tot >= 1 && x.n < SEDUTE_DIRETTE_PICCOLI_MIN).map(x => ({ sub: x.g, msg: x.g + ': ' + r1(x.tot) + ' serie dirette, in ' + x.n + ' seduta su ' + m.sedute.length, gravita: 1 })); } },
+  { id: 'SES-03', nome: 'Seduta senza uno schema di base per il suo tipo (full body senza squat/hinge, spinta o tirata; upper senza spinta o tirata; lower senza squat o hinge)', sev: 3, forza: 'Moderata', fonte: 'docs/ricerca-ipertrofia-programmazione.md 3.3 (un multiarticolare di ogni schema: Iversen 2021); piramide di Helms',
+    dove: [RICETTE_JS + ': buildProgram (taglio per il tempo toglie posti dalla ricetta; RICETTE fullbody a 7 posti)', ONB_JS + ': exerciseCountFor'],
+    check: (m, c) => {
+      const attesi = { fullbody: ['spinta', 'tirata', 'basso'], upper: ['spinta', 'tirata'], lower: ['squat', 'hinge'], legs: ['squat', 'hinge'], push: ['spinta'], pull: ['tirata'] };
+      const ha = (s, k) => s.es.some(e => (k === 'spinta' ? (e.inf.mov === 'spintaO' || e.inf.mov === 'spintaV') : (k === 'tirata' ? (e.inf.mov === 'tirataO' || e.inf.mov === 'tirataV') : (k === 'basso' ? (e.inf.mov === 'squat' || e.inf.mov === 'hinge') : e.inf.mov === k))));
+      const out = [];
+      m.sedute.forEach(s => (attesi[s.tipo] || []).forEach(k => { if (!ha(s, k)) out.push({ sub: s.tipo + '/' + k, msg: s.titolo + ' (' + s.giorno + '): manca ' + k + ' (' + s.es.length + ' esercizi)' + (c.metodo ? ' metodo ' + c.metodo : ''), gravita: 2 }); }));
+      return out; } },
   { id: 'SES-01', nome: 'Oltre 11 serie frazionarie per muscolo in una sola seduta', sev: 3, forza: 'Moderata', fonte: 'Pelland, meta-regressione sul volume per seduta (preprint 2025)',
     dove: [RICETTE_JS + ': buildProgram (tetto serieMaxMuscoloSeduta: conta le serie dirette per gruppo, senza sinergisti)', 'js/coach/parametri.js: COACH_PARAMETRI.serieMaxMuscoloSeduta'],
     check: (m, c) => {
@@ -413,7 +428,7 @@ const CRITERI = [
     check: (m, c) => { const mx = giorniDiFila(m.sedute.map(s => s.gi)); return mx > GIORNI_CONSECUTIVI_MAX ? [{ msg: mx + ' giorni di fila (' + m.sedute.map(s => s.giorno.slice(0, 3)).join(' ') + ')', gravita: mx - GIORNI_CONSECUTIVI_MAX }] : []; } },
   { id: 'SPL-01', nome: 'Numero di sedute diverso dai giorni dichiarati', sev: 4, forza: 'Convenzione', fonte: 'coerenza con la richiesta',
     dove: [ONB_JS + ': splitFor (principianti con 5-6 giorni: solo 4 sedute)', RICETTE_JS + ': buildProgram (split.giorni.slice(0, d.days))'],
-    check: (m, c) => m.sedute.length !== c.days ? [{ msg: c.days + ' giorni dichiarati, ' + m.sedute.length + ' sedute generate (split ' + c.splitNome + ')', gravita: Math.abs(c.days - m.sedute.length) }] : [] },
+    check: (m, c) => m.sedute.length !== c.days ? [{ sub: c.level === 'principiante' && c.days >= 5 ? 'principiante-limitato' : 'altri', sev: c.level === 'principiante' && c.days >= 5 ? 2 : 4, msg: c.days + ' giorni dichiarati, ' + m.sedute.length + ' sedute generate (split ' + c.splitNome + ')' + (c.prog.note.some(n => /giorni/i.test(String(n))) ? '' : ', senza una nota che lo spieghi'), gravita: Math.abs(c.days - m.sedute.length) }] : [] },
   { id: 'SPL-02', nome: 'Divisione non adatta al numero di giorni (muscolo singolo con pochi giorni, upper/lower con 2 giorni, full body con 5-6)', sev: 3, forza: 'Solida', fonte: 'ACSM 2026 (frequenza 2); ABB-05',
     dove: [ONB_JS + ': splitFor / splitPerFrequenza', 'js/coach/metodi-momenti.js: METODI (split)'],
     check: (m, c) => {
@@ -502,9 +517,11 @@ const CRITERI = [
   { id: 'RIR-02', nome: 'RIR 0 pianificato anche sui fondamentali pesanti col bilanciere', sev: 3, forza: 'Convenzione', fonte: 'ACSM 2026: il cedimento non serve; Helms: niente cedimento tecnico su squat, stacco, panca',
     dove: ['js/coach/regole-ricerca.js: rirBersaglioBase (con rirSett ignora il tipo di esercizio e RIR_TIPO)', RICETTE_JS + ': buildProgram (rirSett: 3,2,2,1,0)'],
     check: (m, c) => { const w = m.rirPesante.map((r, i) => ({ r, i })).filter(x => x.r < RIR_MIN_PESANTE && c.prog.fasi[x.i] !== 'scarico'); return w.length ? [{ msg: 'RIR bersaglio sui fondamentali pesanti: settimane ' + w.map(x => (x.i + 1) + '=' + x.r).join(', '), gravita: 2 }] : []; } },
-  { id: 'RIR-03', nome: 'Principianti: RIR sotto 2 nelle prime due settimane (cedimento sugli isolamenti)', sev: 3, forza: 'Moderata', fonte: 'Halperin 2022, Refalo 2023 (stime del RIR sbagliate di circa 1 ripetizione); INT-04/05 (prime sedute come taratura)',
-    dove: ['js/coach/regole-ricerca.js: RIR_TIPO (isolamento [0,1], macchina [0,2]) e rirBersaglio', 'js/coach/intensita.js: rirExtraIntensita (+1 solo alla prima volta con un esercizio)'],
-    check: (m, c) => { if (c.level !== 'principiante') return []; const bassi = Object.keys(m.rirNov).filter(k => m.rirNov[k] < RIR_MIN_PRINCIPIANTE); return bassi.length ? [{ msg: 'RIR bersaglio minimo per tipo: ' + Object.keys(m.rirNov).map(k => k + '=' + m.rirNov[k]).join(', '), gravita: 2 }] : []; } },
+  { id: 'RIR-03', nome: 'RIR della prima settimana troppo basso per il livello (cedimento sugli isolamenti e sulle macchine dal primo giorno)', sev: 3, forza: 'Moderata', fonte: 'docs/ricerca-ipertrofia-programmazione.md 3.5; Halperin 2022, Refalo 2023 (stime del RIR sbagliate di circa 1 ripetizione); INT-04/05',
+    dove: ['js/coach/regole-ricerca.js: RIR_TIPO (isolamento [0,1], macchina [0,2]) e rirBersaglioBase', 'js/coach/intensita.js: rirExtraIntensita (+1 solo alla prima volta con un esercizio e solo con il consenso)'],
+    check: (m, c) => {
+      const min = RIR_SETT1_MIN[c.level], bassi = Object.keys(m.rir1).filter(k => m.rir1[k] < min);
+      return bassi.length ? [{ sub: c.level, sev: c.level === 'principiante' ? 3 : 2, msg: 'RIR bersaglio alla settimana 1: ' + Object.keys(m.rir1).map(k => k + '=' + m.rir1[k]).join(', ') + ' (minimo ' + min + ' per ' + c.level + ')', gravita: min - Math.min.apply(null, bassi.map(k => m.rir1[k])) }] : []; } },
 
   /* ---------------- sicurezza ---------------- */
   { id: 'SAF-01', nome: 'Esercizio in conflitto con un fastidio dichiarato (controindicato)', sev: 5, forza: 'Convenzione', fonte: 'pratica clinica e dei coach (non consulenza medica); elenco del collaudo in CONTROINDICAZIONI',
@@ -538,7 +555,10 @@ const CRITERI = [
       const rx = c.cauto ? TECNICI_PRUDENTE : (c.level === 'principiante' ? TECNICI_PRINCIPIANTE : null);
       if (!rx) return out;
       m.sedute.forEach(s => s.es.forEach(e => { if (rx.test(e.pulito)) out.push({ sub: c.cauto ? 'prudente' : 'principiante', msg: s.titolo + ': ' + e.pulito + ' (' + (c.cauto ? 'modalita prudente' : 'principiante') + ')', gravita: c.cauto ? 2 : 1 }); }));
-      return out; } }
+      return out; } },
+  { id: 'SAF-06', nome: 'Fastidio alla spalla senza lavoro per la cuffia o i deltoidi posteriori', sev: 2, forza: 'Convenzione', fonte: 'docs/ricerca-metodi-coach-pratici.md H-08 (Cressey: rotazione esterna della cuffia almeno una volta a settimana)',
+    dove: ['js/coach/biomeccanica.js: SCALE_DOLORE (solo una nota)', STRUTTURA_JS + ': strCopri (aggiunge i deltoidi posteriori solo per ipertrofia non principiante)'],
+    check: (m, c) => c.fastidi.indexOf('spalle') !== -1 && (m.dir.deltoidi_posteriori || 0) < 2 ? [{ msg: 'fastidio alla spalla e ' + r1(m.dir.deltoidi_posteriori || 0) + ' serie dirette di deltoidi posteriori o cuffia (face pull, reverse fly) a settimana', gravita: 2 }] : [] }
 ];
 /* SAF-05 con modalita prudente pesa di piu: la gravita lo dice, la severita di classe resta quella del criterio */
 
@@ -759,7 +779,9 @@ function rirPianificato(prog, p) {
     ctx.getProgramma = () => ({ rirSett: prog.rirSett, fasi: prog.fasi, settimane: prog.settimane });
     const w = (n) => { ctx.settimanaProgramma = () => ({ numero: n, fase: prog.fasi[n - 1] }); };
     for (let n = 1; n <= prog.settimane; n++) { w(n); out.pesante.push(G.rirBersaglioBase('Squat con Bilanciere')[0]); }
-    if (p.level === 'principiante') [['pesante', 'Squat con Bilanciere'], ['macchina', 'Leg Press'], ['isolamento', 'Curl ai Cavi']].forEach(([k, nome]) => { let mn = 9; for (let n = 1; n <= Math.min(2, prog.settimane); n++) { w(n); mn = Math.min(mn, G.rirBersaglioBase(nome)[0]); } out.nov[k] = mn; });
+    w(1);
+    out.nov = {};
+    [['pesante', 'Squat con Bilanciere'], ['macchina', 'Leg Press'], ['isolamento', 'Curl ai Cavi']].forEach(([k, nome]) => { out.nov[k] = G.rirBersaglioBase(nome)[0]; });
   } catch (e) { out.errore = e.message; }
   Object.assign(ctx, salvati);
   return out;
@@ -778,7 +800,7 @@ function analizza(p, filtro) {
   ['squat', 'hinge', 'spintaO', 'tirataO', 'spintaV', 'tirataV'].forEach(k => {
     c.fattibile[k] = G.EXERCISE_LIBRARY.some(x => { const i = infoEs(x.name); return i.mov === k && G.consentito(x.name, prog.prefs) && !p.fastidi.some(f => CONTROINDICAZIONI[f] && CONTROINDICAZIONI[f].forte.test(i.pulito)) && !violaAttrezzatura({ inf: i }, c); });
   });
-  const r = rirPianificato(prog, p); m.rirPesante = r.pesante; m.rirNov = r.nov;
+  const r = rirPianificato(prog, p); m.rirPesante = r.pesante; m.rir1 = r.nov;
   if (p.priorita.length) { try { const sp = modello(costruisci(p, true), c); m.volSenzaPriorita = sp.vol; } catch (e) { /* senza il confronto il criterio PRI-01 non scatta */ } }
   const trovati = [];
   CRITERI.forEach(cr => {

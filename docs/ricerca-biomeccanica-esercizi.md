@@ -425,10 +425,10 @@ Codice area **SEL**. **Parte A**: si basa su fatti del codice [V] (non su studi)
 
 | Codice | Quando scatta | Cosa fa | Motivo | Forza | Rischio | File |
 |---|---|---|---|---|---|---|
-| SEL-05 | Piano ≥3 giorni | Monitor di volume per **muscolo** (non gruppo) per i muscoli «a rischio buco»: bicipite contro tricipite, femorali, polpacci, deltoide laterale e posteriore, adduttori | «Controllo che ogni muscolo abbia le sue serie.» | Convenzione · Conoscenza del modello (non verificata sul web) (da verificare; ipotesi: Moderata, Pelland) | Complessità; va dopo SEL-01 | `ricette.js:292` |
+| SEL-05 | Piano ≥3 giorni | Monitor di volume per **muscolo** (non gruppo) per i muscoli «a rischio buco»: bicipite contro tricipite, femorali, polpacci, deltoide laterale e posteriore, adduttori | «Controllo che ogni muscolo abbia le sue serie.» | Convenzione · Conoscenza del modello (non verificata sul web) (da verificare; ipotesi: Moderata; Pelland 2025 è la fonte di PRG-28 nel repo [R]) | Complessità; va dopo SEL-01 | `ricette.js:292` |
 | SEL-09 | Esercizi tricipiti ≥2 | Almeno un'estensione sopra la testa | Già coperto da PRG-10 e PRIORI 3: nessuna regola nuova | Convenzione · Conoscenza del modello (non verificata sul web) (Maeo 2022-23) | | |
 | SEL-10 | Fastidio ginocchio | Mantenere un esercizio per i quadricipiti (Leg Press a ROM senza dolore, Wall Sit, Leg Extension isometrico) prima di dirottare su hip thrust o rumeno; unificare `RISCHIO.ginocchia` e `STRESS_ZONA.ginocchio` | «Il ginocchio sensibile non significa niente quadricipiti: li alleno con carichi che non fanno male.» | Convenzione · Conoscenza del modello (non verificata sul web) (isometria nella tendinopatia, studio da trovare) | Con dolore che peggiora → medico | `questionario-decisioni.js:45-69`; `motore.js:39` |
-| SEL-14 | Slot femorali | Separare `femorali` in due id (ginocchio, anca); good morning e rumeno non sostituiscono il leg curl e viceversa | «Leg curl e stacco rumeno allenano i femorali in modo diverso: ne tengo uno per tipo.» | Convenzione · Conoscenza del modello (non verificata sul web) (da verificare; ipotesi: Moderata, Bourne 2017) | Dati da riscrivere | `dettagli-esercizi.js` |
+| SEL-14 | Slot femorali | Separare `femorali` in due id (ginocchio, anca); good morning e rumeno non sostituiscono il leg curl e viceversa | «Leg curl e stacco rumeno allenano i femorali in modo diverso: ne tengo uno per tipo.» | Convenzione · Conoscenza del modello (non verificata sul web) (da verificare; ipotesi: Moderata; studi sull'ipertrofia dei femorali per esercizio, autori da ritrovare) | Dati da riscrivere | `dettagli-esercizi.js` |
 | SEL-16 | Piano glutei | Un movimento «in alto» (hip thrust) e uno «allungato» (bulgari, rumeno, squat profondo) a settimana | «Per i glutei servono entrambi gli stimoli.» | Contrastata (D3) | | `ricette.js` PRG-22 |
 
 ## 8. Domande aperte
@@ -441,9 +441,20 @@ Codice area **SEL**. **Parte A**: si basa su fatti del codice [V] (non su studi)
 4. **P8 ginocchio**: una sola tabella (`RISCHIO` o `STRESS_ZONA`).
 5. Aggiungere elastici, kettlebell, panca e anelli alle attrezzature: sì o no.
 
-### 8.2 Piano di ricerca (query pronte per quando il budget sarà ripristinato)
+Le ricerche che avrei fatto sono nell'**Appendice A** (query pronte).
 
-`allowed_domains`: **P** = `["pubmed.ncbi.nlm.nih.gov","pmc.ncbi.nlm.nih.gov","europepmc.org"]`; **E** = un solo sito esperto (`strongerbyscience.com`, `mennohenselmans.com`, `sciencerelatedtostrength` non incluso nella lista, solo dove indicato nelle fonti); **S** = nessun filtro. Ogni numero in due fonti indipendenti; mai citare ciò che non è nel risultato.
+## 9. Limiti onesti
+
+- **Nessuna ricerca web eseguita** (budget esaurito): tutta la parte scientifica è [NV] o [R]; nulla è «Solida» o «Moderata» oggi.
+- Il giudizio sugli esperti (Contreras, Nippard, Henselmans, Israetel, Beardsley, Baraki, Nuckols) è assente: non ho letto nessuna loro frase.
+- Gli audit [V] sono su dati e funzioni caricati in un ambiente di prova (script nella scratchpad): le funzioni di `ricette.js` che dipendono dal browser non sono state eseguite; le alternative sono ricalcolate dal codice reale di `motore.js`.
+- Le priorità delle aggiunte (5.5) e le classifiche della matrice (sezione 3) sono giudizio da coach, non da studi: Convenzione.
+- Numeri di effetto e di n non compaiono perché non li ho visti: andranno scritti solo dopo la ricerca.
+- Il registro della skill (`SKILL.md`) non è stato aggiornato: proposta di riga da aggiungere a chi ha il permesso: `2026-10-05 | WebSearch con budget per sessione (CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION, qui 200) | a budget esaurito ogni chiamata viene rifiutata («Web search was not performed»): controllare prima di avviare più agenti in parallelo.`
+
+## Appendice A: Query pronte (da ripetere in un'altra sessione con il tetto di ricerche alzato)
+
+`allowed_domains` (campo «Filtri»): **P** = `["pubmed.ncbi.nlm.nih.gov","pmc.ncbi.nlm.nih.gov","europepmc.org"]` (titolo, anno, PMID dello studio vero; il riassunto può essere impreciso); **E** = un solo sito esperto per volta (`strongerbyscience.com`, `mennohenselmans.com`, `rpstrength.com`) per l'elenco degli articoli; **S** = nessun filtro. Per ogni risultato annotare tipo di studio, n, popolazione, durata, effetto, preprint sì/no; ogni numero in due fonti indipendenti; mai citare ciò che non compare nel risultato. Le righe 1-36 sono tutte da fare; la 37-38 sono per capire cosa dicono gli esperti e restano «riportato da... da verificare».
 
 | # | Domanda | Query | Filtri | Decisione dell'app che cambia |
 |---|---|---|---|---|
@@ -485,12 +496,3 @@ Codice area **SEL**. **Parte A**: si basa su fatti del codice [V] (non su studi)
 | 36 | Dolore al ginocchio e carico | `patellofemoral pain tendinopathy exercise isometric loading` | P | SEL-10 |
 | 37 | Esperti: Henselmans, Nuckols, Beardsley, RP (lista di articoli per esercizio) | `best exercise biceps chest back triceps` | E | D1..D9 |
 | 38 | Podcast e video citati (titoli e studi) | `exercise selection hypertrophy podcast` | `["youtube.com"]` | solo «riportato da... da verificare» |
-
-## 9. Limiti onesti
-
-- **Nessuna ricerca web eseguita** (budget esaurito): tutta la parte scientifica è [NV] o [R]; nulla è «Solida» o «Moderata» oggi.
-- Il giudizio sugli esperti (Contreras, Nippard, Henselmans, Israetel, Beardsley, Baraki, Nuckols) è assente: non ho letto nessuna loro frase.
-- Gli audit [V] sono su dati e funzioni caricati in un ambiente di prova (script nella scratchpad): le funzioni di `ricette.js` che dipendono dal browser non sono state eseguite; le alternative sono ricalcolate dal codice reale di `motore.js`.
-- Le priorità delle aggiunte (5.5) e le classifiche della matrice (sezione 3) sono giudizio da coach, non da studi: Convenzione.
-- Numeri di effetto e di n non compaiono perché non li ho visti: andranno scritti solo dopo la ricerca.
-- Il registro della skill (`SKILL.md`) non è stato aggiornato: proposta di riga da aggiungere a chi ha il permesso: `2026-10-05 | WebSearch con budget per sessione (CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION, qui 200) | a budget esaurito ogni chiamata viene rifiutata («Web search was not performed»): controllare prima di avviare più agenti in parallelo.`
