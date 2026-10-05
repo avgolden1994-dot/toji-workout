@@ -241,9 +241,13 @@ function esitoControlloPrincipiante(fatica, segnale) {
 
 /* ---------------- leggere il piano dal programma salvato ---------------- */
 
-/* la settimana (1..N) del programma salvato per `data`: una data (Date, 'AAAA-MM-GG'), un numero di settimana, o niente = la settimana di oggi; null se e fuori dal piano */
+/* la settimana (1..N) del programma salvato per `data`: una data (Date, 'AAAA-MM-GG'), un numero di settimana, o niente = la settimana di oggi; null se e fuori dal piano.
+   INT-2b: «niente» e anche 0, NaN e la stringa vuota: rirBersaglioBase (regole-ricerca.js, W2-T3) chiama rirPianoSettimana(nome, sett) con lo stesso `sett` di tutto il coach
+   (numero di settimana 1..N, oppure niente = oggi: `sett || settimanaProgramma().numero`), e uno 0 non deve far perdere la tabella, solo dire «oggi» come altrove */
 function settimanaDelPiano(p, data) {
   const totale = p.piano.settimane.length;
+  if (typeof data === 'number' && (data !== data || data === 0)) data = undefined;
+  if (data === '') data = undefined;
   if (typeof data === 'number' && data < 1e6) return data >= 1 && data <= totale ? Math.floor(data) : null;
   if (data === undefined || data === null) {
     const st = typeof settimanaProgramma === 'function' ? settimanaProgramma() : null;
@@ -274,6 +278,7 @@ function classeRirDi(nome) {
    cadere addosso almeno 2 (CAS-11); un RIR 0 solo con una prontezza di oggi di almeno 60; in taglio calorico pavimento 2 sui pesanti e 1 sul resto (OBI-03). */
 function rirPianoSettimana(nome, data) {
   if (!pianoAttivo() || !regolaAttiva('MES-02')) return null;
+  if (data === 0 || data === '' || (typeof data === 'number' && data !== data)) data = undefined;   /* INT-2b: «niente» = oggi, come nel resto del coach (sett || settimana di oggi) */
   const p = typeof getProgramma === 'function' ? getProgramma() : null;
   if (!p || !p.piano || !Array.isArray(p.piano.settimane)) return null;
   const n = settimanaDelPiano(p, data);
