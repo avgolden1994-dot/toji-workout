@@ -239,7 +239,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 54. `js/coach/programma/motore.js` — Coach engine: costruzione del programma
 
-`attrezzoDi()` · `RISCHIO` · `ECCEZIONI_RISCHIO` · `senzaMacchine()` · `ATTREZZI_NON_DI_CASA` · `ATTREZZI_NON_CON_I_MANUBRI` · `attrezzoFisicoDi()` · `attrezzoDiCasaMancante()` · `eccezioneRischio()` · `consentito()` · `sostituto()` · `alternativeStessoMuscolo()` · `schemaMisto()`
+`attrezzoDi()` · `RISCHIO` · `ECCEZIONI_RISCHIO` · `senzaMacchine()` · `ATTREZZI_NON_DI_CASA` · `ATTREZZI_NON_CON_I_MANUBRI` · `attrezzoFisicoDi()` · `attrezzoDiCasaMancante()` · `ATTREZZI_NON_DICHIARABILI_IN_PALESTRA` · `eccezioneRischio()` · `consentito()` · `sostituto()` · `alternativeStessoMuscolo()` · `schemaMisto()`
 
 ### 55. `js/coach/programma/schemi.js` — Schemi di movimento e regole di costruzione
 
