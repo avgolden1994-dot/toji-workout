@@ -10,7 +10,7 @@ window.openTemplatePicker = function() {
   const usage = weekUsage();
   container.innerHTML = WORKOUT_TEMPLATES.map(t => {
     const totalSets = t.exercises.reduce((s, e) => s + e.sets, 0);
-    const estMin = Math.round(t.exercises.reduce((s, e) => s + e.sets * (30 + e.rest), 0) / 60);
+    const estMin = Math.round(durataSeduta(t.exercises));   /* CAS-05, B36 (INT-2b): la stessa stima del generatore, di Oggi e di Aggiungi allenamento */
     const inOggi = t.exercises.filter(e => (usage[e.name] || []).indexOf(currentDay) !== -1).length;
     const inSett = t.exercises.filter(e => (usage[e.name] || []).length > 0).length;
     const stato = inOggi === t.exercises.length ? 'done' : (inSett > 0 ? 'partial' : 'fresh');

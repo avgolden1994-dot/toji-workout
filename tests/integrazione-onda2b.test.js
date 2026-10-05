@@ -141,3 +141,32 @@ test('rr e minimo: le coppie sono per muscolo antagonista, mai con core o tenute
   assert.ok(coppie > 0, 'il campione ha delle coppie: ' + coppie);
   assert.deepStrictEqual(a.errori, []);
 });
+
+/* ---------------------------------------------------------------- 4) le stime di durata rimaste (figura anatomica, schede pronte): la funzione condivisa (CAS-05, B36) ---------------------------------------------------------------- */
+test('le card delle schede pronte (Piano e figura anatomica) mostrano la durata di durataSeduta, la stessa del generatore e di Oggi, non la vecchia stima serie x (30 s + pausa)', () => {
+  const fs = require('fs'), path = require('path');
+  ['js/ui/figura-anatomica.js', 'js/ui/piano/schede-pronte.js'].forEach(f => {
+    const src = fs.readFileSync(path.join(__dirname, '..', f), 'utf8');
+    assert.ok(!/\(30 \+ e\.rest\)/.test(src), f + ': la vecchia formula serie x (30 + pausa) e tolta');
+    assert.ok(/durataSeduta\(t\.exercises\)/.test(src), f + ': usa durataSeduta');
+  });
+  const a = caricaApp({ ora: ORA });
+  a.profilo({ level: 'intermedio', age: 30, minutes: 60 });
+  const els = {};
+  const el = id => els[id] || (els[id] = new Proxy({ style: {}, dataset: {}, classList: { add() {}, remove() {}, toggle() {}, contains() { return false; } }, innerHTML: '', innerText: '', value: '' }, { get: (t, k) => k in t ? t[k] : () => undefined }));
+  a.ctx.document = { getElementById: el, querySelectorAll: () => [], querySelector: () => null, createElement: () => el('x'), body: el('body') };
+  const durate = a.json('WORKOUT_TEMPLATES.map(t => Math.round(durataSeduta(t.exercises)))');
+  const vecchie = a.json('WORKOUT_TEMPLATES.map(t => Math.round(t.exercises.reduce((s, e) => s + e.sets * (30 + e.rest), 0) / 60))');
+  assert.ok(durate.every(m => m > 10 && m < 120), 'durate plausibili: ' + durate);
+  assert.notDeepStrictEqual(durate, vecchie, 'il modello nuovo (riscaldamento, cambi, tempo sotto tensione) non e la vecchia stima');
+  /* Piano > Schede pronte */
+  a.g('openTemplatePicker()');
+  const minuti = html => (String(html).match(/~(\d+) min/g) || []).map(x => Number(x.replace(/\D/g, '')));
+  assert.deepStrictEqual(minuti(el('template-list').innerHTML), durate, 'Piano > Schede pronte');
+  /* figura anatomica: le stesse schede nel carosello (nessun gruppo scelto: tutte) */
+  a.g('renderGruppi()');
+  const gt = minuti(el('group-templates').innerHTML);
+  assert.strictEqual(gt.length, durate.length, 'una card per scheda');
+  assert.deepStrictEqual(gt.slice().sort((x, y) => x - y), durate.slice().sort((x, y) => x - y), 'figura anatomica: le stesse durate (il carosello e ordinato per stato)');
+  assert.deepStrictEqual(a.errori, []);
+});
