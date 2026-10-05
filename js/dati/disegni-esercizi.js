@@ -59,7 +59,8 @@ const IMMAGINI_ESERCIZI = {
   'Hip Thrust': 'esercizi/ex-36-hip-thrust.svg',
   'Stacco Rumeno': 'esercizi/ex-37-stacco-rumeno.svg',
   'Stacco Sumo': 'esercizi/ex-38-stacco-sumo.svg',
-  'Affondi Bulgari': 'esercizi/ex-39-affondi-bulgari.svg'
+  'Affondi Bulgari': 'esercizi/ex-39-affondi-bulgari.svg',
+  'Good Morning': 'esercizi/ex-40-good-morning.svg'
 };
 window.immagineEsercizio = function(nome) {
   const pulito = String(nome).replace(EMOJI_TESTA, '');
