@@ -660,16 +660,16 @@
     "semantic_hash": "56a386b6a7afca1b6aac30ae68681197"
   },
   "package.json": {
-    "mtime": 1791164897.0371084,
-    "seen": 1791164923.046503,
+    "mtime": 1791168354.6600435,
+    "seen": 1791168432.8743532,
     "ast_hash": "fe771c223367d04d441b2a0d0faefb3d",
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1791161643.7891893,
-    "seen": 1791163452.3520713,
-    "ast_hash": "faeae7af36c9ffb49258c27dbb64771d",
-    "semantic_hash": "faeae7af36c9ffb49258c27dbb64771d"
+    "mtime": 1791168425.1206024,
+    "seen": 1791168432.8743556,
+    "ast_hash": "cd02a6de354d81ce18ab033a63b818b5",
+    "semantic_hash": ""
   },
   "tests/avvio.test.js": {
     "mtime": 1790820327.4271536,
@@ -696,20 +696,20 @@
     "semantic_hash": "355cebc51ff91f56313195a6d39d63ea"
   },
   "tools/indice.js": {
-    "mtime": 1791164741.7760234,
-    "seen": 1791164771.39635,
+    "mtime": 1791168354.558003,
+    "seen": 1791168432.8743713,
     "ast_hash": "92c8d3a8086e6f791a329330aa12c722",
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1791164626.1332736,
-    "seen": 1791164771.3963535,
+    "mtime": 1791168354.7481372,
+    "seen": 1791168432.8743756,
     "ast_hash": "51722d1f44cdd38667cf322563fa0004",
     "semantic_hash": ""
   },
   "docs/ARCHITETTURA.md": {
-    "mtime": 1791164626.1304462,
-    "seen": 1791164771.3963542,
+    "mtime": 1791168354.7481372,
+    "seen": 1791168432.874377,
     "ast_hash": "31e643f8c3faf4f53d6efe0346a4d4d5",
     "semantic_hash": ""
   },
@@ -756,8 +756,8 @@
     "semantic_hash": ""
   },
   "CLAUDE.md": {
-    "mtime": 1791164761.5450075,
-    "seen": 1791164771.3963523,
+    "mtime": 1791168354.7481372,
+    "seen": 1791168432.8743744,
     "ast_hash": "f225298a1208243c7d3fea2bf132fdf2",
     "semantic_hash": ""
   },
@@ -768,26 +768,26 @@
     "semantic_hash": ""
   },
   "tools/simboli.js": {
-    "mtime": 1791164541.1682487,
-    "seen": 1791164771.3963509,
+    "mtime": 1791168354.558003,
+    "seen": 1791168432.874373,
     "ast_hash": "44379f09d1e0464dd727ef782b4ecb74",
     "semantic_hash": ""
   },
   "tools/grafo-nomi.json": {
-    "mtime": 1791164429.759,
-    "seen": 1791164433.6142552,
+    "mtime": 1791168354.6600435,
+    "seen": 1791168432.874368,
     "ast_hash": "ff42549324e14fae52382022348a94d8",
     "semantic_hash": ""
   },
   "tools/grafo.js": {
-    "mtime": 1791164865.032834,
-    "seen": 1791164869.771958,
+    "mtime": 1791168354.6600435,
+    "seen": 1791168432.8743699,
     "ast_hash": "7b4bbd654ef3685c37e37c12516ca9ee",
     "semantic_hash": ""
   },
   "docs/mappa-per-agenti.md": {
-    "mtime": 1791164741.7718003,
-    "seen": 1791164771.396359,
+    "mtime": 1791168354.7481372,
+    "seen": 1791168432.8743815,
     "ast_hash": "24e77a2c37f0a8c22b4c12164de03460",
     "semantic_hash": ""
   }
