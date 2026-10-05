@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="300" viewBox="0 0 800 300">
+<!-- SVG created with Arrow, by QuiverAI (https://quiver.ai) -->
+  <g id="exercise-demonstration" transform="matrix(.515 0 0 .515 139 -17)" stroke-linecap="round" stroke-linejoin="round">
+    <g id="starting-position">
+      <g id="left-machine-frame">
+        <ellipse cx="240" cy="594" rx="220" ry="17" fill="#8a919c" />
+        <path d="m29 151h37v264l210-23 4 23-202 23v137h352v26h-401z" fill="#8a919c" />
+        <path d="m29 156h16v263l32-3v163h351v17h-399z" fill="#8a919c" />
+        <path d="m26 146h40v10h-40z" fill="#8a919c" />
+        <path d="m59 243h8v73h-8z" fill="#383b3b" />
+        <path d="m60 243h4v69h-4z" fill="#8a919c" />
+        <path d="M43 311H87V411H43Z" fill="#272a2a" stroke="#555b5e" />
+        <g id="left-weight-plates" stroke="#898d90" stroke-width="1.3">
+          <path d="m44 325h42m-42 15h42m-42 14h42m-42 15h42m-42 14h42m-42 15h42" />
+        </g>
+        <path d="m44 182 12-3 67 189-11 10q-13 2-16-9z" fill="#8a919c" />
+        <path d="m52 174q18-9 26-4 7 4 10 19l62 169q4 11-7 15l-24 7q-12 2-16-11l-51-179q-5-10 0-16z" fill="#252727" stroke="#1f2121" stroke-width="2" />
+        <path d="m108 383q28-11 67-8l94-8q16 0 16 14l-2 9q-2 8-14 10l-165 16q-7-4 0-27z" fill="#242626" stroke="#202222" stroke-width="2" />
+      </g>
+      <g id="left-person">
+        <path d="m96 131q0-12-4-21l6-42 28-15 23 6q10 11 8 25v9l7 12q3 5-5 6l-2 13q0 11-9 11h-9l-4 23-42-2z" fill="#dcbca5" />
+        <path d="m96 131q-6-16-11-24-9-16-2-33 6-19 23-24 12-4 25-2l10-3q4-1 8 3 14-1 7 12l-3 8q-14-5-20 5-5 7-7 20-9-9-14-2-5 5-4 17-1 15-12 23z" fill="#252727" stroke="#202222" stroke-width="2" />
+        <path d="m93 151q15-8 38 1 25 13 38 30 16 21 10 41 7 22 7 43 1 16 8 32 5 7 26 4l16-2 2 26-10 43q-24 11-67 7-14-19-30-43l-29-51-19-68q-9-31 3-55z" fill="#232525" stroke="#202222" stroke-width="2" />
+        <path d="m235 303q30-5 64 6l36 4q22 4 23 23l-1 85q5 23 7 51l1 17q-5 16-21 20l-11-15-7-32-16-71-4-30q-34 4-76 9-10-21-1-54z" fill="#dbbba4" />
+        <path d="m234 300q18-4 41 1 21 5 34 12 6 4-2 7l-38 6q-25 4-41-1 2-17 6-25z" fill="#fb8b3c" />
+        <path d="m103 161q15-6 32 10 15 16 9 39l-4 10q7 24 4 46l-1 9q11 15 16 40t18 44l12 8 9 12-2 12q-3 5-7 2-4 7-8 3-4 6-9 2-4 3-9-3l-4-13-1-15q-20-26-35-53-10-19-12-33-18-33-22-61-11-21-2-44 4-12 16-15z" fill="#dfbfa6" />
+        <path d="m331 504q15 8 26-5l6-10q6-4 13 2 22 11 37 8 15-4 18 2 7 9-6 18-18 12-46 14l-30 7q-14 5-16-5-3-13-2-31z" fill="#252727" stroke="#1d2020" stroke-width="2.5" />
+      </g>
+      <g id="left-machine-moving-parts">
+        <path d="m291 384 16-5 42 116q1 10-12 11z" fill="#8a919c" />
+        <path d="m296 394 10-4 40 104-9 6z" fill="#8a919c" />
+        <circle cx="296" cy="378" r="18.5" fill="#8a919c" />
+        <circle cx="296" cy="378" r="3.7" fill="#8a919c" />
+        <circle cx="365" cy="460" r="25" fill="#252727" stroke="#1c1e1e" stroke-width="2" />
+        <path d="m150 386 8-3 3 14-8 3q-3 1-4-3l-1-6q-1-3 2-5z" fill="#8a919c" />
+        <path d="m191 372 14-6q4-2 5 2l3 8q1 3-2 4l-14 5z" fill="#8a919c" />
+      </g>
+    </g>
+    <g id="extended-position">
+      <g id="right-machine-frame">
+        <ellipse cx="730" cy="594" rx="220" ry="17" fill="#8a919c" />
+        <path d="m519 151h37v264l210-23 4 23-202 23v137h352v26h-401z" fill="#8a919c" />
+        <path d="m519 156h16v263l32-3v163h351v17h-399z" fill="#8a919c" />
+        <path d="m516 146h40v10h-40z" fill="#8a919c" />
+        <path d="m549 243h8v73h-8z" fill="#383b3b" />
+        <path d="m550 243h4v69h-4z" fill="#8a919c" />
+        <path d="m533 311h44v100h-44z" fill="#272a2a" stroke="#555b5e" />
+        <g id="right-weight-plates" stroke="#898d90" stroke-width="1.3">
+          <path d="m534 325h42m-42 15h42m-42 14h42m-42 15h42m-42 14h42m-42 15h42" />
+        </g>
+        <path d="m534 182 12-3 67 189-11 10q-13 2-16-9z" fill="#8a919c" />
+        <path d="m542 174q18-9 26-4 7 4 10 19l62 169q4 11-7 15l-24 7q-12 2-16-11l-51-179q-5-10 0-16z" fill="#252727" stroke="#1f2121" stroke-width="2" />
+        <path d="m598 383q28-11 67-8l102-9q15 0 16 15l-2 9q-2 8-14 10l-173 16q-7-4 0-27z" fill="#242626" stroke="#202222" stroke-width="2" />
+      </g>
+      <g id="right-person">
+        <path d="m586 131q0-12-4-21l6-42 28-15 23 6q10 11 8 25v9l7 12q3 5-5 6l-2 13q0 11-9 11h-9l-4 23-42-2z" fill="#dcbca5" />
+        <path d="m586 131q-6-16-11-24-9-16-2-33 6-19 23-24 12-4 25-2l10-3q4-1 8 3 14-1 7 12l-3 8q-14-5-20 5-5 7-7 20-9-9-14-2-5 5-4 17-1 15-12 23z" fill="#252727" stroke="#202222" stroke-width="2" />
+        <path d="m583 151q15-8 38 1 25 13 38 30 16 21 10 41 7 22 7 43 1 16 8 32 5 7 26 4l16-2 2 26-10 43q-24 11-67 7-14-19-30-43l-29-51-19-68q-9-31 3-55z" fill="#232525" stroke="#202222" stroke-width="2" />
+        <path d="m724 303q23-6 55 4l32 6q16 2 26 8 33 0 62 7l36 3 17-4q11 9 12 22l-10 16h-38l-66-1q-24-6-38-3l-92 9q-10-22-1-54z" fill="#dbbba4" />
+        <path d="m724 301q18-4 41 1 21 5 34 12 6 4-2 7l-38 6q-25 4-41-1 2-17 6-25z" fill="#fb8b3c" />
+        <path d="m593 161q15-6 32 10 15 16 9 39l-4 10q7 24 4 46l-1 9q11 15 16 40t18 44l12 8 9 12-2 12q-3 5-7 2-4 7-8 3-4 6-9 2-4 3-9-3l-4-13-1-15q-20-26-35-53-10-19-12-33-18-33-22-61-11-21-2-44 4-12 16-15z" fill="#dfbfa6" />
+        <path d="m950 329q16-11 21-30 3-25 10-26 9-2 11 11 4 18-1 48l-4 34q0 8-5 8-16 0-31-7 9-13 7-24-2-8-8-14z" fill="#252727" stroke="#1d2020" stroke-width="2.5" />
+      </g>
+      <g id="right-machine-moving-parts">
+        <path d="m799 371 108-23q4 0 5 5l2 12-110 26z" fill="#8a919c" />
+        <circle cx="799" cy="378" r="18.5" fill="#8a919c" />
+        <circle cx="799" cy="378" r="3.7" fill="#8a919c" />
+        <circle cx="920" cy="327" r="25" fill="#252727" stroke="#1c1e1e" stroke-width="2" />
+        <path d="m640 386 8-3 3 14-8 3q-3 1-4-3l-1-6q-1-3 2-5z" fill="#8a919c" />
+        <path d="m681 372 14-6q4-2 5 2l3 8q1 3-2 4l-14 5z" fill="#8a919c" />
+      </g>
+    </g>
+  </g>
+</svg>

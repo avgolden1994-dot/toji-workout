@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="300" viewBox="0 0 800 300">
+<!-- SVG created with Arrow, by QuiverAI (https://quiver.ai) -->
+  <g id="leg-extension-exercise" transform="matrix(.59 0 0 .59 106.5 -75)">
+    <g id="machine-ground-shadows" fill="#9ba1ac" opacity=".55">
+      <ellipse cx="227" cy="630" rx="210" ry="15" />
+      <ellipse cx="713" cy="630" rx="211" ry="15" />
+    </g>
+    <g id="left-leg-extension-machine">
+      <path id="left-weight-guide" d="M82 332H93V605H82Z" fill="#8a919c" />
+      <path d="m83 333h4v270h-4z" fill="#8a919c" />
+      <path id="left-weight-stack" d="m63 372h51v154h-51z" fill="#272928" />
+      <g id="left-weight-plate-divisions" stroke="#81837f" stroke-width="1.6">
+        <path d="m64 392h50m-50 19h50m-50 19h50m-50 20h50m-50 20h50m-50 18h50m-50 19h50" />
+      </g>
+      <path id="left-machine-frame" d="m39 222h26v381h210v-140h28v141h92l8 25h-371l7-24z" fill="#8a919c" />
+      <path d="m39 223h6v382h-6z" fill="#8a919c" />
+      <path d="m275 476h7v127h-7z" fill="#8a919c" />
+      <path id="left-backrest-support" d="m66 208 26-3 76 233-20 9z" fill="#8a919c" />
+      <path id="left-backrest" d="m67 219q0-6 8-8l15-4q8-3 12 8l61 212q3 7-6 9l-19 5q-5 1-7-8z" fill="#232524" />
+      <path d="m71 218 63 214q2 6 6 6l15-4" fill="none" stroke="#30312f" stroke-width="2" />
+      <path id="left-seat" d="m179 423 135-15q9 0 10 8l1 15q0 7-9 7l-130 15q-9 1-10-6l-1-14q0-7 4-10z" fill="#222423" />
+      <path id="left-seat-hardware" d="m165 423 11-2 4 31-13 3-2-13 6-10z" fill="#292c2c" />
+      <path d="m142 442 14-3 4 19-14 2z" fill="#8a919c" />
+      <path id="left-handgrip" d="m180 447 53-12q6-2 6 6l-1 5-56 12z" fill="#8a919c" />
+    </g>
+    <g id="left-seated-person">
+      <path id="left-bent-leg" d="m264 353q18-5 46-3l38 5q25 3 32 18 6 11 2 34l-4 39-2 40-2 44q-1 12-13 17l-16 4-9-10 3-21q-5-26-8-50-5-30 2-52l5-14q-28 11-57 11h-19z" fill="#f8b184" />
+      <path id="left-thigh-muscle" d="m270 352q31-5 54-1 28 4 39 12 2 4-18 8-24 6-48 7h-30z" fill="#fb8b3c" />
+      <path d="m271 352 23-1q10 3 9 12-1 8-7 15h-29z" fill="#fb955d" />
+      <path id="left-shorts" d="m190 365 36-14q18 6 44 1-5 31-3 63-25 4-54 7l-12-9z" fill="#252726" />
+      <path id="left-upper-body" d="m120 195q-1 16-5 36-9 19-1 49 6 24 20 44 6 9 9 23l13 39q12 23 23 41l5 18q-1 12 8 16 11 4 28-2 9-3 5-14-1-8-9-11l-9-8-8-36-8-22q16-10 36-16-7-14-9-31-2-21-9-37 0-18-12-32-14-14-31-26-3-4-2-16 9 1 15-3 5-4 6-20 1-8-2-16l-3-23-15-6-25 13z" fill="#f7b082" />
+      <path id="left-head" d="m121 201-6-15 1-27 20-21 25 2 17 7 2 16 3 8 1 17q0 16-7 21l-13 1-14 11-24-1z" fill="#f7b082" />
+      <path id="left-hair" d="m121 205q-2-11-9-23-12-19-3-32 11-18 32-20 12-2 23 1 10 2 18-1 2 13-6 17l-17 2q5 11-3 16-3 3-2 11l-4 2q-2-13-10-10-6 1-5 13 1 14-14 24z" fill="#322922" />
+      <path d="m108 158q7-21 29-26 14-3 29 0" fill="none" stroke="#3d3026" stroke-width="2" />
+      <path id="left-shoe" d="m337 538q5 9 17 9 10-2 15-10 4-5 10 2l11 10q9 7 26 11 10 2 14 7l1 6q-18 10-41 7l-20-3-25 1q-13-1-17-5-1-4 3-17l2-14q1-6 4-4z" fill="#202221" />
+      <path d="m330 572q15 6 31 3 13-1 28 4 22 3 40-6" fill="none" stroke="#303230" stroke-width="2" />
+    </g>
+    <g id="left-moving-lever">
+      <path id="left-seat-crossbar" d="m141 456 156-19 5 27-153 16q-5 0-6-6z" fill="#8a919c" />
+      <path d="m148 457 142-17" fill="none" stroke="#adb4be" stroke-width="2" />
+      <path id="left-lowered-arm" d="m285 447q11-6 17 2 2 14 9 20l77 46q11 6 5 16-4 8-15 3l-85-49q-14-8-14-22-1-11 6-16z" fill="#8a919c" />
+      <circle id="left-pivot-rim" cx="300" cy="446" r="13.5" fill="#8a919c" />
+      <circle id="left-pivot" cx="300" cy="446" r="9" fill="#8a919c" />
+      <path id="left-ankle-roller" d="m364 495q6-14 21-15t23 11q8 13 1 26-6 11-20 12-17-1-24-14-5-10-1-20z" fill="#272928" stroke="#1d201f" stroke-width="2" />
+      <path d="m370 491q11-11 25-7" fill="none" stroke="#303331" stroke-width="2" />
+    </g>
+    <g id="right-leg-extension-machine">
+      <path id="right-weight-guide" d="m562 332h12v273h-12z" fill="#8a919c" />
+      <path d="m563 333h4v270h-4z" fill="#8a919c" />
+      <path id="right-weight-stack" d="m545 372h50v154h-50z" fill="#272928" />
+      <g id="right-weight-plate-divisions" stroke="#81837f" stroke-width="1.6">
+        <path d="m546 392h49m-49 19h49m-49 19h49m-49 20h49m-49 20h49m-49 18h49m-49 19h49" />
+      </g>
+      <path id="right-machine-frame" d="m520 222h26v381h210v-140h29v141h94l8 25h-372l5-24z" fill="#8a919c" />
+      <path d="m520 223h6v382h-6z" fill="#8a919c" />
+      <path d="m756 476h7v127h-7z" fill="#8a919c" />
+      <path id="right-backrest-support" d="m546 208 26-3 76 233-20 9z" fill="#8a919c" />
+      <path id="right-backrest" d="m547 219q0-6 8-8l15-4q8-3 12 8l61 212q3 7-6 9l-19 5q-5 1-7-8z" fill="#232524" />
+      <path d="m551 218 63 214q2 6 6 6l15-4" fill="none" stroke="#30312f" stroke-width="2" />
+      <path id="right-seat" d="m659 423 135-15q9 0 11 8l1 15q0 7-9 7l-131 15q-9 1-10-6l-1-14q0-7 4-10z" fill="#222423" />
+      <path id="right-seat-hardware" d="m645 423 11-2 4 31-13 3-2-13 6-10z" fill="#292c2c" />
+      <path d="m622 442 14-3 4 19-14 2z" fill="#8a919c" />
+      <path id="right-handgrip" d="m660 447 53-12q6-2 6 6l-1 5-56 12z" fill="#8a919c" />
+    </g>
+    <g id="right-seated-person">
+      <path id="right-extended-leg" d="m741 355q22-1 45 6 23 5 43 14 20 2 37 3 25 3 52 12l25 2 13-10 13 10v22l-10 10q-12-4-23-3l-38-1q-29 5-49 1-16-3-29-9-11-5-21-3l-28 5-32 1-7-25z" fill="#f8b184" />
+      <path id="right-thigh-muscle" d="m746 357q24-2 48 6 25 7 36 14 1 4-15 6-27 4-49 0l-23-3z" fill="#fb8b3c" />
+      <path d="m746 357h21q8 5 7 13-1 9-8 13l-23-2z" fill="#fb955d" />
+      <path id="right-shorts" d="m670 365 36-14q19 6 39 3-5 30-5 61-23 4-47 7l-12-9z" fill="#252726" />
+      <path id="right-upper-body" d="m600 195q-1 16-5 36-9 19-1 49 6 24 20 44 6 9 9 23l13 39q12 23 23 41l5 18q-1 12 8 16 11 4 28-2 9-3 5-14-1-8-9-11l-9-8-8-36-9-23q16-9 36-15-6-13-9-29-3-23-10-39-1-17-12-31-13-14-30-26-5-4-4-17 11 1 16-3 6-5 6-20 1-8-2-16l-3-23-15-6-25 13z" fill="#f7b082" />
+      <path id="right-head" d="m599 201-6-15 1-27 20-21 25 2 17 7 2 16 3 8 1 17q0 16-7 21l-13 1-14 11-24-1z" fill="#f7b082" />
+      <path id="right-hair" d="m599 205q-2-11-9-23-12-19-3-32 11-18 32-20 12-2 23 1 10 2 18-1 2 13-6 17l-17 2q5 11-3 16-3 3-2 11l-4 2q-2-13-10-10-6 1-5 13 1 14-14 24z" fill="#322922" />
+      <path d="m586 158q7-21 29-26 14-3 29 0" fill="none" stroke="#3d3026" stroke-width="2" />
+      <path id="right-shoe" d="m949 385q7-9 17-18 7-10 10-24 2-10 9-8 6 0 8 12 4 16-2 35-4 12-3 21v19q-1 9-7 9-13 0-26-5-5-2-1-7 6-3 5-12-1-15-10-22z" fill="#232524" stroke="#1d1f1e" stroke-width="1.5" />
+    </g>
+    <g id="right-moving-lever">
+      <path id="right-seat-crossbar" d="m621 456 156-19 5 27-153 16q-5 0-6-6z" fill="#8a919c" />
+      <path d="m628 457 142-17" fill="none" stroke="#adb4be" stroke-width="2" />
+      <path id="right-raised-arm" d="m773 437q9-4 17 2l16 6 110-62 12-5q8 1 12 8 4 8-4 14l-118 64q-5 3-12 2l-26-6q-11-3-13-10-1-8 6-13z" fill="#8a919c" />
+      <circle id="right-pivot-rim" cx="780" cy="446" r="13.5" fill="#8a919c" />
+      <circle id="right-pivot" cx="780" cy="446" r="9" fill="#8a919c" />
+      <path id="right-ankle-roller" d="m907 362q7-13 21-13 15 0 22 13t-1 24q-7 11-21 10-14 0-20-11-7-11-1-23z" fill="#272928" stroke="#1d201f" stroke-width="2" />
+      <path d="m911 359q12-11 25-5" fill="none" stroke="#303331" stroke-width="2" />
+    </g>
+  </g>
+</svg>
