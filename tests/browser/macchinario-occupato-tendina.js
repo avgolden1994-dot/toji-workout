@@ -16,7 +16,7 @@ await p.addInitScript(()=>{
 await p.goto(require('url').pathToFileURL(require('path').join(__dirname,'..','..','index.html')).href);await p.waitForTimeout(900);
 await p.evaluate(()=>{
   const d=loadData(); const g=DAYS[(new Date().getDay()+6)%7];
-  d[g]=[ ['💪 Panca Piana Bilanciere',3,10,60,90], ['🏹 Lat Machine',3,10,50,90], ['🦵 Adductor Machine',3,12,30,60] ].map(([name,sets,reps,weight,rest])=>normalizeExerciseRecord({name,sets,reps,weight,rest}));
+  d[g]=[ ['💪 Panca Piana Bilanciere',3,10,60,90], ['🏹 Lat Machine',3,10,50,90], ['🛡️ Scrollate (Shrug)',3,12,30,60] ].map(([name,sets,reps,weight,rest])=>normalizeExerciseRecord({name,sets,reps,weight,rest}));
   saveData(d); const t=loadTitles(); t[g]='Upper'; saveTitles(t); saveRestDays(DAYS.filter(x=>x!==g)); });
 await p.reload(); await p.waitForTimeout(1000);
 await p.click('#oggi-body .btn-start-workout'); await p.waitForTimeout(700);
@@ -119,7 +119,7 @@ assert(await aperta()===0 && await delta()===0 && await p.evaluate(()=>!loadData
 
 console.log('7) senza alternative: solo il messaggio, nessun pulsante');
 if(await p.locator('.busy-btn[data-busy="2"]').count()) console.log('  stato:',await p.evaluate(()=>JSON.stringify({giorno:currentDay,es:loadData()[currentDay].map(e=>e.name+(e.sostituito?' <- '+e.sostituito.name:'')),alt:alternativeOggi(loadData()[currentDay][2],loadData()[currentDay]).map(a=>a.ex.name)})));
-assert(await p.locator('.busy-btn[data-busy="2"]').count()===0,'Adductor Machine: nessun pulsante');
+assert(await p.locator('.busy-btn[data-busy="2"]').count()===0,'Scrollate (unico esercizio senza alternative): nessun pulsante');
 const msg=await p.evaluate(()=>[...document.querySelectorAll('.busy-none')].map(x=>x.textContent));
 assert(msg.length===1 && /Nessuna alternativa adatta/.test(msg[0]),'messaggio "Nessuna alternativa adatta..." ('+msg.length+')');
 

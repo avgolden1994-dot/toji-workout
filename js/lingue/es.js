@@ -3655,4 +3655,14 @@ window.I18N["es"] = {
 "Stesso muscolo": "Mismo músculo",
 "Nessun sostituto con lo stesso muscolo: %s resta nel piano": "Ningún sustituto para el mismo músculo: %s se queda en el plan",
 "Nessun accessorio da ruotare con lo stesso muscolo: restano quelli attuali": "Ningún accesorio se puede cambiar por el mismo músculo: se quedan los actuales",
+"Squat Sumo": "Sentadilla sumo",
+"Stesso lavoro": "Mismo trabajo",
+"Catena posteriore e gambe (multiarticolare totale)": "Cadena posterior y piernas (multiarticular total)",
+"Piedi molto larghi, punte in fuori, un manubrio tra le gambe": "Pies muy separados, puntas hacia fuera, una mancuerna entre las piernas",
+"Piedi molto larghi con punte in fuori, un manubrio o un kettlebell tenuto a braccia tese tra le gambe, busto dritto.": "Pies muy separados con las puntas hacia fuera, una mancuerna o una kettlebell sujeta con los brazos estirados entre las piernas, torso recto.",
+"Scendi piegando anche e ginocchia: le ginocchia vanno nella direzione delle punte.": "Baja flexionando caderas y rodillas: las rodillas siguen la dirección de las puntas.",
+"Arriva almeno con le cosce parallele al pavimento: l’interno coscia si allunga.": "Llega al menos con los muslos paralelos al suelo: la cara interna del muslo se estira.",
+"Risali spingendo con tutto il piede, come se volessi stringere il pavimento tra i piedi.": "Sube empujando con todo el pie, como si quisieras apretar el suelo entre los pies.",
+"Busto che si piega in avanti: il peso scende e sale in verticale.": "Torso que se inclina hacia delante: el peso baja y sube en vertical.",
+"Più i piedi sono larghi e le punte aperte, più lavorano gli adduttori: scegli l’apertura che senti senza fastidio all’inguine.": "Cuanto más separados los pies y más abiertas las puntas, más trabajan los aductores: elige la apertura que sientes sin molestias en la ingle."
 };

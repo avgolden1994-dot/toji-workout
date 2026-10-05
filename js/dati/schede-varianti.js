@@ -156,6 +156,13 @@
       e: ['Arrotola il busto fino a sederti, portando i gomiti verso le ginocchia.', 'Scendi lentamente, vertebra dopo vertebra.', 'Respira senza trattenere il fiato.'],
       x: ['Tirare la testa con le mani.', 'Usare lo slancio.'],
       c: 'Nel Golden Six di Arnold si faceva con i piedi bloccati: se la schiena protesta, passa al crunch a terra.'
+    },
+    'Squat Sumo': {
+      m: 'Primari: adduttori · Secondari: grande gluteo, quadricipiti',
+      s: 'Piedi molto larghi con punte in fuori, un manubrio o un kettlebell tenuto a braccia tese tra le gambe, busto dritto.',
+      e: ['Scendi piegando anche e ginocchia: le ginocchia vanno nella direzione delle punte.', 'Arriva almeno con le cosce parallele al pavimento: l’interno coscia si allunga.', 'Risali spingendo con tutto il piede, come se volessi stringere il pavimento tra i piedi.'],
+      x: ['Ginocchia che cadono verso l\'interno.', 'Busto che si piega in avanti: il peso scende e sale in verticale.'],
+      c: 'Più i piedi sono larghi e le punte aperte, più lavorano gli adduttori: scegli l’apertura che senti senza fastidio all’inguine.'
     }
   };
   Object.keys(V).forEach(k => {

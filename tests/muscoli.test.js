@@ -1,4 +1,5 @@
-/* Muscolo bersaglio, "Macchinario occupato", "Esercizi alternativi" e sostituto: tutti allenano lo STESSO muscolo.
+/* Muscolo bersaglio, "Macchinario occupato", "Esercizi alternativi" e sostituto: tutti allenano lo STESSO muscolo
+   (i multiarticolari totali, come lo stacco da terra, la stessa famiglia: MULTIARTICOLARI_TOTALI).
    Esegue il codice vero dell app in node (vm), senza browser. Lancio: npm test */
 const test = require('node:test'), assert = require('node:assert');
 const fs = require('fs'), path = require('path'), vm = require('vm');
@@ -26,11 +27,14 @@ const LIB = g('EXERCISE_LIBRARY'), DETTAGLI = g('DETTAGLI'), MUSCOLI = g('MUSCOL
 const pulito = n => g('senzaEmoji')(n);
 const nomeLib = p => LIB.find(e => pulito(e.name) === p).name;
 const bersaglio = n => g('bersaglioDi')(n);
+const famiglia = n => g('famigliaTotaleDi')(n);
+/* x e un alternativa giusta per e: stessa famiglia se e e un multiarticolare totale, altrimenti lo stesso muscolo bersaglio */
+const stessoLavoro = (e, x) => famiglia(e) ? famiglia(x) === famiglia(e) : bersaglio(x) === bersaglio(e);
 /* alternative di "Macchinario occupato" con la seduta fatta del solo esercizio */
 const alt = (p, seduta) => { const n = nomeLib(p); return [...g('alternativeOggi')({ name: n }, [{ name: n }].concat((seduta || []).map(s => ({ name: nomeLib(s) }))))].map(a => pulito(a.ex.name)); };
 
 test('ogni esercizio della libreria ha un muscolo bersaglio valido', () => {
-  assert.strictEqual(LIB.length, 139);
+  assert.strictEqual(LIB.length, 140);
   LIB.forEach(e => {
     const b = bersaglio(e.name);
     assert.ok(b && MUSCOLI[b], 'senza bersaglio: ' + e.name);
@@ -55,7 +59,7 @@ test('il bersaglio viene da DETTAGLI: sottogruppo di un muscolo solo, altrimenti
   });
 });
 
-test('Macchinario occupato: per ogni esercizio ogni alternativa ha lo stesso muscolo bersaglio', () => {
+test('Macchinario occupato: per ogni esercizio ogni alternativa ha lo stesso muscolo bersaglio (o la stessa famiglia totale)', () => {
   let coppie = 0;
   LIB.forEach(e => {
     const a = g('alternativeOggi')({ name: e.name }, [{ name: e.name }]);
@@ -63,7 +67,9 @@ test('Macchinario occupato: per ogni esercizio ogni alternativa ha lo stesso mus
     a.forEach(x => {
       coppie++;
       assert.notStrictEqual(x.ex.name, e.name);
-      assert.strictEqual(bersaglio(x.ex.name), bersaglio(e.name), pulito(e.name) + ' -> ' + pulito(x.ex.name));
+      /* un muscolo solo: sempre lo stesso bersaglio, mai allentato */
+      if (!famiglia(e.name)) assert.strictEqual(bersaglio(x.ex.name), bersaglio(e.name), pulito(e.name) + ' -> ' + pulito(x.ex.name));
+      else assert.strictEqual(famiglia(x.ex.name), famiglia(e.name), pulito(e.name) + ' -> ' + pulito(x.ex.name));
     });
   });
   assert.ok(coppie > 500, 'troppe poche alternative in tutto: ' + coppie);
@@ -72,9 +78,71 @@ test('Macchinario occupato: per ogni esercizio ogni alternativa ha lo stesso mus
 test('adduttori e abduttori non si scambiano', () => {
   assert.deepStrictEqual(alt('Abductor Machine').sort(), ['Abduzioni ai Cavi', 'Slanci Laterali a Terra']);
   assert.ok(alt('Slanci Laterali a Terra').indexOf('Abductor Machine') !== -1);
-  /* nel catalogo non c e lo squat sumo: per l Adductor Machine nessuna alternativa, piuttosto che un altro muscolo */
-  assert.deepStrictEqual(alt('Adductor Machine'), []);
+  /* adduttori: Adductor Machine e Squat Sumo, l una l alternativa dell altro (mai l Abductor Machine) */
+  assert.deepStrictEqual(alt('Adductor Machine'), ['Squat Sumo']);
+  assert.deepStrictEqual(alt('Squat Sumo'), ['Adductor Machine']);
   ['Abductor Machine', 'Slanci Laterali a Terra', 'Abduzioni ai Cavi'].forEach(n => assert.ok(alt(n).every(x => bersaglio(nomeLib(x)) === 'abduttori'), n));
+});
+
+test('Squat Sumo: adduttori, a manubri, nella libreria e nei suoi collegamenti', () => {
+  const n = nomeLib('Squat Sumo'), d = g('dettaglioEsercizio')(n);
+  assert.strictEqual(bersaglio(n), 'adduttori');
+  assert.deepStrictEqual([...d.secondari].sort(), ['grande_gluteo', 'quadricipiti']);
+  assert.strictEqual(d.sub, 'Adduttori');
+  assert.strictEqual(famiglia(n), '');
+  assert.strictEqual(g('attrezzoDi')('Squat Sumo'), 'manubri');
+  assert.strictEqual(g('schemaDi')(n), 'squat');
+  /* e un accessorio per gli adduttori: non prende il posto del fondamentale delle gambe */
+  assert.strictEqual(g('SLOT_DEF').squat(LIB.find(e => e.name === n)), false);
+  /* dal Macchinario occupato all Adductor Machine e ritorno; il sostituto pure */
+  assert.strictEqual(pulito(g('sostituto')(n, PREFS(), []).name), 'Adductor Machine');
+  assert.strictEqual(pulito(g('sostituto')(nomeLib('Adductor Machine'), PREFS(), []).name), 'Squat Sumo');
+  /* ginocchia delicate: niente squat sumo */
+  assert.ok(!g('consentito')(n, Object.assign(PREFS(), { fastidi: ['ginocchia'] })));
+});
+
+test('multiarticolari totali: lo stacco da terra si scambia con chi allena tutta la catena posteriore e le gambe', () => {
+  const FAM = g('MULTIARTICOLARI_TOTALI');
+  const membri = [];
+  Object.keys(FAM).forEach(id => {
+    FAM[id].muscoli.forEach(mu => assert.ok(MUSCOLI[mu], id + ': muscolo sconosciuto ' + mu));
+    FAM[id].esercizi.forEach(nome => {
+      assert.ok(nomeLib(nome) && DETTAGLI[nome], id + ': ' + nome + ' non e nella libreria');
+      assert.ok(membri.indexOf(nome) === -1, nome + ' in due famiglie');
+      membri.push(nome);
+      /* ogni esercizio della famiglia allena tutto l insieme (bersaglio o secondari) */
+      const tutti = [bersaglio(nome)].concat(g('dettaglioEsercizio')(nome).secondari);
+      FAM[id].muscoli.forEach(mu => assert.ok(tutti.indexOf(mu) !== -1, nome + ' non allena ' + mu));
+    });
+  });
+  /* le alternative proposte (da confermare): gli altri stacchi da terra, mai un esercizio di un muscolo solo */
+  const tot = { 'Stacco da Terra (Deadlift)': ['Stacco Sumo', 'Stacco con Trap Bar'], 'Stacco con Trap Bar': ['Stacco Sumo', 'Stacco da Terra (Deadlift)'],
+    'Stacco Sumo': ['Stacco con Trap Bar', 'Stacco da Terra (Deadlift)'] };
+  Object.keys(tot).forEach(n => {
+    assert.strictEqual(famiglia(nomeLib(n)), 'catena_totale', n);
+    assert.deepStrictEqual(alt(n).sort(), tot[n].slice().sort(), n);
+    assert.deepStrictEqual([...g('alternativeDi')(nomeLib(n), PREFS(), [])].map(x => pulito(x.name)).sort(), tot[n].slice().sort(), n);
+    assert.ok(tot[n].indexOf(pulito(g('sostituto')(nomeLib(n), PREFS(), []).name)) !== -1, n + ': sostituto');
+  });
+  /* fuori dalla famiglia: catena posteriore senza quadricipiti (o senza femorali per squat e affondi) */
+  ['Stacco Rumeno', 'Good Morning', 'Hyperextension (Lombari)', 'Squat con Bilanciere', 'Leg Press', 'Affondi in Camminata', 'Affondi Bulgari', 'Hip Thrust']
+    .forEach(n => assert.strictEqual(famiglia(nomeLib(n)), '', n));
+  /* stacco rumeno e good morning restano distinti: non sono alternative l uno dell altro */
+  assert.ok(alt('Stacco Rumeno').indexOf('Good Morning') === -1 && alt('Good Morning').indexOf('Stacco Rumeno') === -1);
+  /* un muscolo solo resta sul suo bersaglio: l Hyperextension (lombari) propone ancora lo stacco da terra, che allena anche i lombari */
+  assert.deepStrictEqual(alt('Hyperextension (Lombari)'), ['Stacco da Terra (Deadlift)']);
+  /* schiena delicata: tutti gli stacchi sono a rischio, nessun sostituto (lo stacco resta dov e) */
+  assert.strictEqual(g('sostituto')(nomeLib('Stacco da Terra (Deadlift)'), Object.assign(PREFS(), { fastidi: ['schiena'] }), []), null);
+  /* nella tendina: «Stesso lavoro», non un muscolo solo */
+  assert.strictEqual(g('lavoroDaSostituire')(nomeLib('Stacco da Terra (Deadlift)')).totale, true);
+  assert.strictEqual(g('lavoroDaSostituire')(nomeLib('Squat Sumo')).nome, MUSCOLI.adduttori.nome);
+});
+
+test('scelte confermate: bersagli che non cambiano', () => {
+  ['Affondi Bulgari', 'Affondi al Multipower (Piede Rialzato)'].forEach(n => assert.strictEqual(bersaglio(n), 'grande_gluteo', n));
+  ['Hammer Curl', 'Curl ai Cavi con Corda (Presa Martello)'].forEach(n => assert.strictEqual(DETTAGLI[n][3], 'Bicipiti', n));
+  assert.strictEqual(bersaglio('Stacco Rumeno'), 'grande_gluteo');
+  assert.strictEqual(bersaglio('Good Morning'), 'femorali');
 });
 
 test('calf raise: solo polpacci', () => {
@@ -136,7 +204,7 @@ test('schemi di movimento: niente falsi multiarticolari', () => {
 /* palestra completa, nessun fastidio, seduta vuota */
 const PREFS = () => ({ luogo: 'palestra', fastidi: [], attrezziPalestra: null, graditi: [], odiati: [], attrezzi: 'indifferente' });
 
-test('Esercizi alternativi (alternativeDi): per tutti i 139 esercizi solo lo stesso muscolo bersaglio, al massimo 6', () => {
+test('Esercizi alternativi (alternativeDi): per tutti i 140 esercizi solo lo stesso muscolo bersaglio (o la stessa famiglia totale), al massimo 6', () => {
   let coppie = 0, senza = [];
   LIB.forEach(e => {
     const a = g('alternativeDi')(e.name, PREFS(), []);
@@ -145,14 +213,15 @@ test('Esercizi alternativi (alternativeDi): per tutti i 139 esercizi solo lo ste
     a.forEach(x => {
       coppie++;
       assert.notStrictEqual(x.name, e.name);
-      assert.strictEqual(bersaglio(x.name), bersaglio(e.name), pulito(e.name) + ' -> ' + pulito(x.name));
+      assert.ok(stessoLavoro(e.name, x.name), pulito(e.name) + ' -> ' + pulito(x.name));
+      if (!famiglia(e.name)) assert.strictEqual(bersaglio(x.name), bersaglio(e.name), pulito(e.name) + ' -> ' + pulito(x.name));
     });
     /* e lo stesso elenco che propone Macchinario occupato senza il vincolo dell attrezzo diverso */
     assert.deepStrictEqual(a.map(x => x.name), g('alternativeStessoMuscolo')(e.name, PREFS(), []).map(x => x.ex.name));
   });
   assert.ok(coppie > 600, 'troppe poche alternative in tutto: ' + coppie);
   /* mai un altro muscolo, anche se restano meno scelte: gli unici senza alternativa */
-  assert.deepStrictEqual(senza.sort(), ['Adductor Machine', 'Scrollate (Shrug)']);
+  assert.deepStrictEqual(senza.sort(), ['Scrollate (Shrug)']);
 });
 
 test('Esercizi alternativi: restano i filtri (gia in seduta, attrezzi, fastidi, odiati)', () => {
@@ -168,16 +237,17 @@ test('Esercizi alternativi: restano i filtri (gia in seduta, attrezzi, fastidi, 
   assert.ok(!g('alternativeDi')(curl, odiati, []).some(x => x.name === cavi));
 });
 
-test('sostituto: per tutti i 139 esercizi lo stesso muscolo bersaglio, oppure null (mai un altro muscolo)', () => {
+test('sostituto: per tutti i 140 esercizi lo stesso muscolo bersaglio (o la stessa famiglia totale), oppure null (mai un altro muscolo)', () => {
   let nulli = [];
   LIB.forEach(e => {
     const s = g('sostituto')(e.name, PREFS(), []);
     const esatte = g('alternativeStessoMuscolo')(e.name, PREFS(), []);
     if (!s) { nulli.push(pulito(e.name)); assert.strictEqual(esatte.length, 0, e.name + ': null ma ci sono alternative'); return; }
     assert.notStrictEqual(s.name, e.name);
-    assert.strictEqual(bersaglio(s.name), bersaglio(e.name), pulito(e.name) + ' -> ' + pulito(s.name));
+    assert.ok(stessoLavoro(e.name, s.name), pulito(e.name) + ' -> ' + pulito(s.name));
+    if (!famiglia(e.name)) assert.strictEqual(bersaglio(s.name), bersaglio(e.name), pulito(e.name) + ' -> ' + pulito(s.name));
   });
-  assert.deepStrictEqual(nulli.sort(), ['Adductor Machine', 'Scrollate (Shrug)']);
+  assert.deepStrictEqual(nulli.sort(), ['Scrollate (Shrug)']);
   assert.strictEqual(g('sostituto')('Esercizio che non esiste', PREFS(), []), null);
 });
 

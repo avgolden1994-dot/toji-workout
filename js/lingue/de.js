@@ -3655,4 +3655,14 @@ window.I18N["de"] = {
 "Stesso muscolo": "Gleicher Muskel",
 "Nessun sostituto con lo stesso muscolo: %s resta nel piano": "Kein Ersatz für denselben Muskel: %s bleibt im Plan",
 "Nessun accessorio da ruotare con lo stesso muscolo: restano quelli attuali": "Keine Zusatzübung lässt sich gegen eine für denselben Muskel tauschen: die aktuellen bleiben",
+"Squat Sumo": "Sumo-Kniebeuge",
+"Stesso lavoro": "Gleiche Arbeit",
+"Catena posteriore e gambe (multiarticolare totale)": "Hintere Kette und Beine (Ganzkörper-Grundübung)",
+"Piedi molto larghi, punte in fuori, un manubrio tra le gambe": "Sehr breiter Stand, Fußspitzen nach außen, eine Kurzhantel zwischen den Beinen",
+"Piedi molto larghi con punte in fuori, un manubrio o un kettlebell tenuto a braccia tese tra le gambe, busto dritto.": "Sehr breiter Stand mit Fußspitzen nach außen, eine Kurzhantel oder Kettlebell mit gestreckten Armen zwischen den Beinen, Oberkörper aufrecht.",
+"Scendi piegando anche e ginocchia: le ginocchia vanno nella direzione delle punte.": "Geh nach unten, indem du Hüfte und Knie beugst: Die Knie zeigen in Richtung der Fußspitzen.",
+"Arriva almeno con le cosce parallele al pavimento: l’interno coscia si allunga.": "Geh mindestens so tief, dass die Oberschenkel parallel zum Boden sind: Die Innenseite der Oberschenkel wird gedehnt.",
+"Risali spingendo con tutto il piede, come se volessi stringere il pavimento tra i piedi.": "Drück dich mit dem ganzen Fuß nach oben, als wolltest du den Boden zwischen den Füßen zusammendrücken.",
+"Busto che si piega in avanti: il peso scende e sale in verticale.": "Oberkörper kippt nach vorn: Das Gewicht geht senkrecht nach unten und nach oben.",
+"Più i piedi sono larghi e le punte aperte, più lavorano gli adduttori: scegli l’apertura che senti senza fastidio all’inguine.": "Je breiter der Stand und je weiter die Fußspitzen nach außen zeigen, desto mehr arbeiten die Adduktoren: Wähle die Breite, die du ohne Beschwerden in der Leiste hältst."
 };

@@ -34,7 +34,8 @@ const SOTTOGRUPPI = {
 
 /* Muscoli bersaglio: un livello sotto i gruppi di MUSCLE_GROUPS e i sottogruppi qui sopra.
    Ogni esercizio ne ha uno (ultima parte della riga in DETTAGLI): le alternative
-   di "Macchinario occupato" devono avere lo stesso. gruppo = chiave di MUSCLE_GROUPS,
+   di "Macchinario occupato" devono avere lo stesso (per i multiarticolari totali, sotto,
+   la stessa famiglia). gruppo = chiave di MUSCLE_GROUPS,
    sub = sottogruppo di SOTTOGRUPPI a cui corrisponde, nome = come si mostra.
    Adduttori (interno coscia) e abduttori (esterno anca, medio gluteo) sono separati:
    l Adductor Machine non scambia con l Abductor Machine. */
@@ -65,6 +66,21 @@ const MUSCOLI = {
   /* solo come muscoli secondari */
   avambracci:          { gruppo: 'braccia', sub: 'Avambracci', nome: 'Avambracci (presa)' },
   flessori_anca:       { gruppo: 'core',    sub: 'Addominali', nome: 'Flessori dell’anca' }
+};
+
+/* Multiarticolari totali: esercizi che allenano INSIEME catena posteriore e tutte le gambe.
+   Un muscolo bersaglio solo non li descrive: lo stacco da terra cambiato con un esercizio per i
+   lombari perde gambe e glutei. Per loro l alternativa deve coprire tutto l insieme, quindi si
+   scambiano solo tra loro (alternativeStessoMuscolo in coach/programma/motore.js).
+   Il bersaglio di DETTAGLI resta e vale per gli esercizi di un muscolo solo: l Hyperextension
+   (lombari) puo proporre lo stacco da terra, che allena anche i lombari; non il contrario.
+   muscoli: gli id di MUSCOLI che ogni esercizio della famiglia ha tra bersaglio e secondari (lo controlla npm test).
+   Fuori, e perche: stacco rumeno e good morning (niente quadricipiti, ginocchia quasi ferme), hyperextension
+   (niente quadricipiti, carico basso), squat e leg press (i femorali quasi non lavorano: Kubo 2019). */
+const MULTIARTICOLARI_TOTALI = {
+  catena_totale: { nome: 'Catena posteriore e gambe (multiarticolare totale)',
+    muscoli: ['erettori', 'grande_gluteo', 'femorali', 'quadricipiti'],
+    esercizi: ['Stacco da Terra (Deadlift)', 'Stacco con Trap Bar', 'Stacco Sumo'] }
 };
 
 /* perche l attacco o la presa contano: una nota per famiglia di esercizi, con la fonte */
@@ -103,7 +119,7 @@ const DETTAGLI = {
   'Croci ai Cavi da Seduto': ['M', 'Cavo', 'Maniglie singole, seduto sulla panca', 'Aperture e isolamento', 'Gran pettorale', 'Deltoide anteriore', 'crocialti', 'petto_medio', 'deltoide_anteriore'],
 
   /* ---------------- SCHIENA ---------------- */
-  'Stacco da Terra (Deadlift)': ['L', 'Bilanciere', 'Presa mista o prona', 'Lombari e catena posteriore', 'Erettori spinali, glutei, femorali', 'Trapezio, gran dorsale, avambracci', '', 'erettori', 'grande_gluteo femorali trapezio dorsali avambracci'],
+  'Stacco da Terra (Deadlift)': ['L', 'Bilanciere', 'Presa mista o prona', 'Lombari e catena posteriore', 'Erettori spinali, glutei, femorali', 'Quadricipiti, trapezio, gran dorsale, avambracci', '', 'erettori', 'grande_gluteo femorali quadricipiti trapezio dorsali avambracci'],
   'Trazioni alla Sbarra (Pull-ups)': ['C', 'Sbarra', 'Presa prona poco più larga delle spalle', 'Dorsali · larghezza', 'Gran dorsale', 'Bicipite, romboidi, trapezio inferiore', 'trazioni', 'dorsali', 'bicipiti schiena_spessore'],
   'Trazioni Presa Inversa (Chin-up)': ['C', 'Sbarra', 'Presa supina alla larghezza delle spalle', 'Dorsali · larghezza', 'Gran dorsale, bicipite', 'Romboidi, trapezio inferiore', 'trazioni', 'dorsali', 'bicipiti schiena_spessore'],
   'Lat Machine': ['M', 'Cavo', 'Barra lunga, presa prona larga', 'Dorsali · larghezza', 'Gran dorsale', 'Grande rotondo, bicipite', 'lat', 'dorsali', 'bicipiti'],
@@ -224,6 +240,7 @@ const DETTAGLI = {
   'Piegamenti Declinati (Piedi Rialzati)': ['C', 'Corpo libero', 'Piedi su una panca', 'Petto · fasci alti', 'Gran pettorale (fasci alti), deltoide anteriore', 'Tricipite, core', '', 'petto_alto', 'deltoide_anteriore tricipiti stabilita'],
   'Piegamenti a Diamante': ['C', 'Corpo libero', 'Mani vicine a forma di diamante', 'Tricipiti', 'Tricipite', 'Gran pettorale, deltoide anteriore', '', 'tricipiti', 'petto_medio deltoide_anteriore'],
   'Adductor Machine': ['M', 'Macchina', 'Seduto, cuscini all’interno delle ginocchia', 'Adduttori', 'Adduttori', 'Gracile', '', 'adduttori'],
+  'Squat Sumo': ['L', 'Manubri', 'Piedi molto larghi, punte in fuori, un manubrio tra le gambe', 'Adduttori', 'Adduttori', 'Grande gluteo, quadricipiti', '', 'adduttori', 'grande_gluteo quadricipiti'],
   'Calf Raise a un Piede (Corpo Libero)': ['C', 'Gradino', 'Un piede sul gradino, tallone nel vuoto', 'Polpacci', 'Gemelli', 'Soleo', 'calf', 'polpacci'],
   'Sissy Squat': ['C', 'Corpo libero', 'Ginocchia in avanti, talloni alti, appoggio con una mano', 'Quadricipiti', 'Quadricipiti (retto femorale)', 'Flessori d’anca', '', 'quadricipiti', 'flessori_anca'],
   'Alzate Laterali alla Macchina': ['M', 'Macchina', 'Seduto, cuscini sui gomiti', 'Deltoidi laterali', 'Deltoide laterale', 'Trapezio superiore', '', 'deltoide_laterale', 'trapezio'],
@@ -259,6 +276,19 @@ window.bersaglioDi = function(nome) {
 window.muscoloBersaglio = function(nome) {
   const id = bersaglioDi(nome);
   return id && MUSCOLI[id] ? Object.assign({ id: id }, MUSCOLI[id]) : null;
+};
+/* id della famiglia di MULTIARTICOLARI_TOTALI, o '' se l esercizio ha un muscolo bersaglio solo */
+window.famigliaTotaleDi = function(nome) {
+  const n = _nomePulito(nome);
+  return Object.keys(MULTIARTICOLARI_TOTALI).find(id => MULTIARTICOLARI_TOTALI[id].esercizi.indexOf(n) !== -1) || '';
+};
+/* cosa devono allenare le alternative, per mostrarlo: la famiglia per i multiarticolari totali,
+   altrimenti il muscolo bersaglio. { totale, nome } o null */
+window.lavoroDaSostituire = function(nome) {
+  const f = famigliaTotaleDi(nome);
+  if (f) return { totale: true, nome: MULTIARTICOLARI_TOTALI[f].nome };
+  const m = muscoloBersaglio(nome);
+  return m ? { totale: false, nome: m.nome } : null;
 };
 /* M, L o C: da DETTAGLI; per gli esercizi fuori libreria si ricava dall attrezzo */
 window.sezioneEsercizio = function(nome) {

@@ -3655,4 +3655,14 @@ window.I18N["en"] = {
 "Stesso muscolo": "Same muscle",
 "Nessun sostituto con lo stesso muscolo: %s resta nel piano": "No substitute for the same muscle: %s stays in your plan",
 "Nessun accessorio da ruotare con lo stesso muscolo: restano quelli attuali": "No accessory can be swapped for the same muscle: the current ones stay",
+"Squat Sumo": "Sumo Squat",
+"Stesso lavoro": "Same work",
+"Catena posteriore e gambe (multiarticolare totale)": "Posterior chain and legs (full-body compound)",
+"Piedi molto larghi, punte in fuori, un manubrio tra le gambe": "Very wide stance, toes out, one dumbbell between the legs",
+"Piedi molto larghi con punte in fuori, un manubrio o un kettlebell tenuto a braccia tese tra le gambe, busto dritto.": "Very wide stance with toes out, a dumbbell or kettlebell held with straight arms between the legs, torso upright.",
+"Scendi piegando anche e ginocchia: le ginocchia vanno nella direzione delle punte.": "Go down by bending hips and knees: the knees track in the direction of the toes.",
+"Arriva almeno con le cosce parallele al pavimento: l’interno coscia si allunga.": "Reach at least thighs parallel to the floor: the inner thigh stretches.",
+"Risali spingendo con tutto il piede, come se volessi stringere il pavimento tra i piedi.": "Come back up pushing through the whole foot, as if you wanted to squeeze the floor between your feet.",
+"Busto che si piega in avanti: il peso scende e sale in verticale.": "Torso tipping forward: the weight goes down and up vertically.",
+"Più i piedi sono larghi e le punte aperte, più lavorano gli adduttori: scegli l’apertura che senti senza fastidio all’inguine.": "The wider the stance and the more the toes point out, the more the adductors work: choose the width you can hold without groin discomfort."
 };

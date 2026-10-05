@@ -41,8 +41,8 @@ const STRESS_ZONA = {
   gomito: ['French Press', 'Curl Bilanciere Bicipiti', 'Panca Presa Stretta', 'Dip su Panca', 'Trazioni Presa Inversa (Chin-up)', 'Curl su Panca Scott'],
   polso: ['Curl Bilanciere Bicipiti', 'Front Squat', 'Panca Piana Bilanciere', 'Panca Presa Stretta', 'Piegamenti a Terra (Push-up)'],
   schiena: ['Stacco da Terra (Deadlift)', 'Rematore con Bilanciere', 'Good Morning', 'Squat con Bilanciere', 'T-Bar Row', 'Stacco Rumeno', 'Military Press', 'Stacco Sumo', 'Hyperextension (Lombari)'],
-  anca: ['Squat con Bilanciere', 'Affondi Bulgari', 'Stacco Sumo', 'Affondi in Camminata', 'Hip Thrust', 'Leg Press'],
-  ginocchio: ['Squat con Bilanciere', 'Front Squat', 'Hack Squat', 'Affondi Manubri', 'Affondi in Camminata', 'Affondi Bulgari', 'Step-up su Panca', 'Leg Extension', 'Leg Press', 'Goblet Squat'],
+  anca: ['Squat con Bilanciere', 'Affondi Bulgari', 'Stacco Sumo', 'Affondi in Camminata', 'Hip Thrust', 'Leg Press', 'Squat Sumo'],
+  ginocchio: ['Squat con Bilanciere', 'Front Squat', 'Hack Squat', 'Affondi Manubri', 'Affondi in Camminata', 'Affondi Bulgari', 'Step-up su Panca', 'Leg Extension', 'Leg Press', 'Goblet Squat', 'Squat Sumo'],
   caviglia: ['Calf Raise in Piedi', 'Affondi in Camminata', 'Step-up su Panca', 'Mountain Climber', 'Squat con Bilanciere']
 };
 /* la variante che risolve il problema: meno leva, presa neutra,
@@ -60,10 +60,10 @@ const SOSTITUZIONI = {
     'Squat con Bilanciere': 'Leg Press', 'T-Bar Row': 'Pulley Basso', 'Stacco Rumeno': 'Leg Curl Sdraiato', 'Military Press': 'Shoulder Press Machine',
     'Stacco Sumo': 'Hip Thrust', 'Hyperextension (Lombari)': 'Ponte Glutei' },
   anca: { 'Squat con Bilanciere': 'Leg Press', 'Affondi Bulgari': 'Leg Press', 'Stacco Sumo': 'Stacco Rumeno', 'Affondi in Camminata': 'Leg Press',
-    'Hip Thrust': 'Ponte Glutei', 'Leg Press': 'Leg Extension' },
+    'Hip Thrust': 'Ponte Glutei', 'Leg Press': 'Leg Extension', 'Squat Sumo': 'Adductor Machine' },
   ginocchio: { 'Squat con Bilanciere': 'Hip Thrust', 'Front Squat': 'Hip Thrust', 'Hack Squat': 'Hip Thrust', 'Affondi Manubri': 'Stacco Rumeno',
     'Affondi in Camminata': 'Stacco Rumeno', 'Affondi Bulgari': 'Hip Thrust', 'Step-up su Panca': 'Ponte Glutei', 'Leg Extension': 'Leg Curl Seduto',
-    'Leg Press': 'Hip Thrust', 'Goblet Squat': 'Stacco Rumeno' },
+    'Leg Press': 'Hip Thrust', 'Goblet Squat': 'Stacco Rumeno', 'Squat Sumo': 'Adductor Machine' },
   caviglia: { 'Calf Raise in Piedi': 'Calf Raise Seduto', 'Affondi in Camminata': 'Leg Press', 'Step-up su Panca': 'Leg Press',
     'Mountain Climber': 'Plank', 'Squat con Bilanciere': 'Leg Press' }
 };

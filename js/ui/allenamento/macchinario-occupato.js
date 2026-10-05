@@ -94,8 +94,9 @@ function htmlOccupato(e, idx, list) {
     '" onclick="toggleOccupato(' + idx + ', event)" onkeydown="tastoApriOccupato(event, ' + idx + ')">' + ICONA_SCAMBIO + '<span class="busy-lbl">Macchinario occupato</span>' + ICONA_FRECCIA_GIU + '</button>';
   if (aperto) {
     occupatoOpzioni = alt.map(a => a.ex.name);
+    const lavoro = lavoroDaSostituire(m.name) || { totale: false, nome: MUSCLE_GROUPS[m.group].label };   /* multiarticolari totali: la famiglia, non un muscolo */
     h += '<div class="busy-panel" id="busy-p-' + idx + '">' +
-      '<div class="busy-head" data-no-tr>' + escapeHtml(tr('Stesso muscolo')) + ': <b>' + escapeHtml(tr((muscoloBersaglio(m.name) || { nome: MUSCLE_GROUPS[m.group].label }).nome)) + '</b> · ' + escapeHtml(tr('solo per oggi')) + '</div>' +
+      '<div class="busy-head" data-no-tr>' + escapeHtml(tr(lavoro.totale ? 'Stesso lavoro' : 'Stesso muscolo')) + ': <b>' + escapeHtml(tr(lavoro.nome)) + '</b> · ' + escapeHtml(tr('solo per oggi')) + '</div>' +
       '<div class="busy-menu" role="menu" aria-label="' + escapeHtml(tr('Alternative')) + '">';
     if (e.sostituito) {
       h += '<button class="busy-opt torna" role="menuitem" tabindex="-1" onclick="ripristinaOriginale(' + idx + ')"><span class="busy-opt-txt" data-no-tr><span class="busy-opt-name">' +

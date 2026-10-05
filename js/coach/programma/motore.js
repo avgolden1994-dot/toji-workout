@@ -32,7 +32,7 @@ function attrezzoDi(nome) {
   if (/manubri|concentrazione/.test(n) && !/cavi|cavo|macchin/.test(n)) return 'manubri';   /* "Lento Avanti Manubri" non e da bilanciere */
   if (/macchin|leg press|leg extension|leg curl|hack|pectoral|chest press|shoulder press|lat machine|pulley|cavi|cavo|abductor|adductor|smith|t-bar|multipower|pendulum|pec deck|pallof|pushdown|face pull|pulldown|woodchop|calf raise/.test(n)) return 'macchine';   /* il calf raise e alla macchina o al multipower: a corpo libero c e solo quello a un piede */
   if (/bilanciere|stacco|good morning|squat con|front squat|rematore con b|military|lento avanti|french press|panca presa stretta|panca declinata|trap bar|landmine|hip thrust|tirate al mento|panca scott|yates/.test(n)) return 'bilanciere';
-  if (/manubri|goblet|arnold|hammer|croci|alzate|scrollate|kickback|pullover|concentrat|panca inclinata|petto appoggiato|farmer|y-raise|spider|zottman/.test(n)) return 'manubri';
+  if (/manubri|goblet|squat sumo|arnold|hammer|croci|alzate|scrollate|kickback|pullover|concentrat|panca inclinata|petto appoggiato|farmer|y-raise|spider|zottman/.test(n)) return 'manubri';
   return 'corpo';
 }
 
@@ -53,7 +53,8 @@ function consentito(nome, prefs) {
   return !(prefs.fastidi || []).some(f => RISCHIO[f] && RISCHIO[f].test(nome));
 }
 
-/* Sostituto: SOLO con lo stesso muscolo bersaglio (alternativeStessoMuscolo), attrezzo consentito.
+/* Sostituto: SOLO con lo stesso muscolo bersaglio, o la stessa famiglia per i multiarticolari totali
+   (alternativeStessoMuscolo), attrezzo consentito.
    Tra quelli adatti vince chi ha lo stesso movimento e tipo, e la direzione preferita (allungamento,
    graditi, pesi liberi o macchine). Se non c e nessun esercizio dello stesso muscolo ritorna null:
    chi chiama lascia l esercizio dov e (mai uno per un altro muscolo). */
@@ -67,18 +68,23 @@ function sostituto(nome, prefs, usati) {
 
 /* Alternative con lo STESSO muscolo bersaglio (bersaglioDi, da DETTAGLI): mai un altro muscolo,
    anche a costo di proporne poche o nessuna. Movimento, tipo e attrezzo servono solo a ordinare.
+   I multiarticolari totali (famigliaTotaleDi: stacco da terra, trap bar, sumo) allenano catena posteriore
+   e tutte le gambe insieme: le loro alternative sono solo gli altri della stessa famiglia, che coprono
+   tutto l insieme. Gli esercizi di un muscolo solo restano sul bersaglio (e possono proporre un
+   multiarticolare totale con lo stesso bersaglio: allena anche quel muscolo).
    prefs: come per consentito() (attrezzi, fastidi, odiati, graditi); esclusi: nomi da non proporre
    (es. quelli gia in seduta); opz.attrezzoDiverso: prima gli attrezzi diversi da quello dell esercizio
    (macchinario occupato); opz.bonus(x): punti in piu decisi da chi chiama; opz.max: quante al massimo (6).
    Ritorna [{ ex, stessoMov, punti }] dalla migliore. */
 function alternativeStessoMuscolo(nome, prefs, esclusi, opz) {
-  const m = findExercise(nome), b = bersaglioDi(nome);
+  const m = findExercise(nome), b = bersaglioDi(nome), fam = famigliaTotaleDi(nome);
   if (!m || !b) return [];
   const o = opz || {}, p = prefs || {};
   const fuori = (esclusi || []).map(senzaEmoji);
   const sch = schemaDi(m.name), att = attrezzoDi(m.name), graditi = p.graditi || [];
+  const stessoLavoro = fam ? (x => famigliaTotaleDi(x.name) === fam) : (x => bersaglioDi(x.name) === b);
   return EXERCISE_LIBRARY
-    .filter(x => x.name !== m.name && bersaglioDi(x.name) === b && fuori.indexOf(senzaEmoji(x.name)) === -1 && consentito(x.name, p))
+    .filter(x => x.name !== m.name && stessoLavoro(x) && fuori.indexOf(senzaEmoji(x.name)) === -1 && consentito(x.name, p))
     .map(x => {
       const stessoMov = !!sch && schemaDi(x.name) === sch;
       const punti = (stessoMov ? 10 : 0) + (x.type === m.type ? 5 : 0) + (o.attrezzoDiverso && attrezzoDi(x.name) !== att ? 4 : 0) +
