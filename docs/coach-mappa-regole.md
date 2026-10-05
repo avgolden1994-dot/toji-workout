@@ -54,6 +54,7 @@ Ogni regola ha un **codice** (tre lettere e un numero): il codice indica l'area,
 | ALG, MES, PRN, STD | Carico di riferimento e ripresa dopo lo scarico (ALG-02, MES-06, MES-09), RIR di partenza e scarico fuori dalle analisi (MES-02, MES-10..12), principiante (PRN-01), tabelle di forza (STD-01) | onda 0 del coach v2 | `caricoRiferimento`, `rirBersaglioBase`, `inScarico`, `livelloStandardForza` |
 | MAV, ETA, CAS | Tecniche al cedimento vietate a chi non può (MAV-02, MAV-03), età e minorenni (ETA-01..04, ETA-18), casa senza sbarra (CAS-14) | creazione del programma, onboarding, corpo | `senzaCedimento`, `etaPerProgramma`, `corpoCoach` |
 | SEL | Selezione degli esercizi: un esercizio non si propone al posto di uno di un altro muscolo | scelta e alternative | `alternativeStessoMuscolo`, `SCHEMI_MOV`, `DETTAGLI` |
+| REG | Regia: precedenze tra i sotto-coach, verifica finale, perché di ogni numero cambiato, versione dei programmi, aggiornamento proposto (capitolo 32; la squadra dei sotto-coach è nel capitolo 0) | creazione del programma, seduta, fogli «Perché?» | `registraFase`, `aggiungiPerche`, `testoPerche`, `verificaProgramma`, `SOGLIE_REGIA` |
 
 ## 2. Panoramica: il percorso di un allenamento
 
@@ -575,8 +576,11 @@ Elenco in ordine di importanza. Sono fatti letti nel codice, non ancora corretti
 8. ~~Numeri magici sparsi~~ — in parte risolto: i principali sono in `js/coach/parametri.js`; restano soglie minori dentro le funzioni.
 9. ~~Il codice del coach era mescolato al resto~~ — risolto: ora sta in `js/coach/` (una cartella, un file per argomento).
 10. **Giorni veri anche sopra i 65 anni (deroga di B20).** CAR-04 (rientro dopo una pausa su un esercizio) e RIC-05 (rientro del piano intero, `rientroPiano` in `regole-nuove.js`: 14 giorni per tutti) contano i giorni veri; il testo del registro (B20) li vuole doppi oltre i 65. Deroga datata 2026-10-05 nel registro (5 giorni di pausa, normali a 2 sedute a settimana, davano -10% di carico e -25% di serie): il trattamento dell'età torna con la catena completa di W4-T2 (CST-01, CST-02, MES-15).
-11. **Salvaguardie e interruttori.** MAV-02, MAV-03 ed ETA-01..03 sono salvaguardie sempre accese; ETA-04 (niente numeri su peso e cibo ai minorenni) è invece in `REGOLE_SPEGNIBILI` per scelta di W0-T4. Da uniformare quando W1-T1 legge «(spegnibile)» dalla riga della mappa.
+11. ~~Salvaguardie e interruttori~~ — risolto in INT-1: `regolaAttiva` legge «(spegnibile)» e «(bloccata)» dalla riga della mappa (via catalogo); le salvaguardie, la regia e le correzioni di coerenza dicono «(sempre accesa: …)» o «(storica: sempre accesa)». `REGOLE_SPEGNIBILI` in `parametri.js` resta solo per le regole di prima (ETA-04 compreso, che ha anche «(spegnibile)» nella riga).
 12. **Età minima.** La logica del coach usa 13 anni (decisione dell'utente, D-P9); la soglia legale per i dati personali (14 in Italia) è da verificare con un legale prima del rilascio (registro G.1).
+13. **Il minorenne nei carichi (parziale).** Dall'integrazione dell'onda 1 il minorenne (età tra 1 e 17) è «cauto» per RIC-01 e RIC-02 (prima una 16enne con RIC-01 acceso arrivava a 5 serie). Restano da trattare in W4-T2 (ETA): `esigenzaEsclusa` (`esigenza.js`) e l'aumento dimezzato di `caricoProssimoBase` (`prudente`: PAR-Q, sonno scarso, 65 anni e oltre) non guardano ancora l'età sotto i 18.
+14. **Stacco Rumeno e schiena pesante.** Il generatore (`SCHIENA_PESANTE` in `schemi.js`, `vietaSchiena` in `ricette.js`) non conta lo Stacco Rumeno (col bilanciere o coi manubri) tra gli esercizi pesanti per i lombari; il collaudo (REC-02) conta ogni «stacco». Con lo Stacco Rumeno coi manubri a casa il caso compare in 87 programmi: da decidere con l'attributo `fatica` o `stress` della schiena (W1-T6).
+15. **Nota dei femorali con lo stacco rumeno.** `rinforzaFemorali` (`completamenti.js`) guarda solo le flessioni (leg curl, Nordic Curl): con lo Stacco Rumeno coi manubri la nota «senza leg curl restano meno allenati» compare lo stesso (vera, ma i femorali sono già allenati dallo stacco): da correggere con la scelta per attributi (W2-T6).
 
 ## 18. Come usare questa mappa
 
@@ -613,17 +617,18 @@ Cinque regole nuove, ognuna spegnibile (`regolaAttiva`, vedi `js/coach/parametri
 | Area | File |
 |---|---|
 | Suggerimento del prossimo esercizio (SUG) | `js/coach/suggeritore.js` |
-| Costruzione del programma (PRG, MET, PRZ) | `js/coach/programma/motore.js`, `schemi.js`, `ricette.js` (contiene `buildProgram`), `alternative.js`, `archivio.js` |
+| Costruzione del programma (PRG, MET, PRZ) | `js/coach/regia/genera.js` (`buildProgram` a stadi), `regia/brief.js`, `programma/motore.js`, `schemi.js`, `ricette.js` (posti e scelta: `componiSedute`), `completamenti.js`, `mesociclo.js`, `alternative.js`, `archivio.js`; `js/coach/volume/` (volume, tempo, serie e ripetizioni, tecniche), `js/coach/sicurezza/vincoli.js` |
 | Abbinamenti e struttura professionale (ABB) | `js/coach/programma/struttura-pro.js` (ABB-05 in `splitFor`, `js/ui/onboarding.js`) |
 | Intensita dal corpo e dalle prime sedute (INT) | `js/coach/intensita.js` |
 | Metodi e schede dell'epoca d'oro (EPO, TEC) | `js/coach/metodi-epoca-oro.js`, `js/dati/schede-epoca-oro.js`, `TECNICHE` in `js/coach/regole-ricerca.js` |
-| Carichi (CAR) | `js/coach/carichi/progressivo.js`, `partenza.js` |
+| Carichi (CAR) | `js/coach/carichi/progressivo.js`, `partenza.js`, `e1rm.js`, `taratura.js`; scarico `js/coach/sicurezza/scarico.js`; le catene dei carichi sono fasi registrate in `js/coach/regia/fasi.js` |
+| Regia (REG) | `js/coach/regia/fasi.js`, `perche.js`, `soglie-regia.js`; soglie: `docs/soglie-coach.md` (`npm run soglie`) |
 | Questionario e decisioni (DEC, STR) | `js/coach/questionario-decisioni.js` |
 | Prontezza, «mi sento male», dolore (PAR, LIV, DOL) | `js/coach/prontezza.js`, `mi-sento-male.js`, `dolore-mattina.js` |
 | Repertorio e regole dalla ricerca | `js/coach/repertorio.js`, `regole-ricerca.js`, `regole-nuove.js` (RIC) |
 | Parametri e catalogo | `js/coach/parametri.js`, `catalogo-regole.js` (generato dalla mappa) |
-| Selezione degli esercizi (SEL) e dati degli esercizi | `js/dati/dettagli-esercizi.js`, `libreria-esercizi.js`, `js/coach/programma/schemi.js` (`SCHEMI_MOV`, `SCHEMI_RISERVA`), `alternative.js` |
-| Età, tecniche al cedimento e tetti del generatore (ETA, MAV, CAS) | `js/ui/onboarding.js` (`etaPerProgramma`), `js/coach/programma/ricette.js` (`senzaCedimento`, `SCHEMI_ATTESI`), `js/coach/compone.js` (`TOCCHI`) |
+| Selezione degli esercizi (SEL) e dati degli esercizi | `js/dati/dettagli-esercizi.js`, `libreria-esercizi.js`, `attributi-esercizi.js` (classe, schema, crediti, stress, attrezzo), `js/coach/programma/schemi.js` (`SCHEMI_MOV`, `SCHEMI_RISERVA`), `alternative.js` |
+| Età, tecniche al cedimento e tetti del generatore (ETA, MAV, CAS) | `js/ui/onboarding.js` (`etaPerProgramma`), `js/coach/volume/tecniche.js` (`senzaCedimento`), `js/coach/volume/serie-ripetizioni.js`, `js/coach/programma/ricette.js` (`SCHEMI_ATTESI`), `js/coach/compone.js` (`TOCCHI`) |
 | Carico di riferimento e storico per fase (ALG, MES) | `js/coach/carichi/progressivo.js` (`caricoRiferimento`, `esercizioInScarico`), `js/coach/regole-ricerca.js` (`caricoProssimoBase`, `inScarico`) |
 | Consigli e agente | `js/coach/agente-consigli.js` |
 | Dati del corpo (BIA) | `js/coach/bia/lettore.js`, `opzioni.js` |
