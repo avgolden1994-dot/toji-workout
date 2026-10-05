@@ -18,6 +18,7 @@
    - ETA-04 sotto i 18 anni nessun giudizio sulla BIA (i valori di riferimento sono da adulti): niente bandiere di prudenza ne testi.
    - MES-06 la prima seduta con un esercizio dopo lo scarico lascia una ripetizione in riserva in piu (rirExtraIntensita).
    - MES-11 il bilancio confronta lo sforzo con il RIR bersaglio che valeva in quella seduta (rpeBersaglioSeduta).
+   W2-T8: INT-05 non conta come «serie facili» (sforzo sotto il bersaglio) quelle degli esercizi in calibrazione (CAR-18, carichi/calibrazione.js): contano solo per il completamento.
    W1-T3: nessun involucro. INT-04 e la fase 70 della catena 'carico', INT-05 la fase 30 di 'dopoSeduta' (regia/fasi.js, piano B.3).
    Le prove, con la loro forza, stanno in docs/ricerca-struttura-e-intensita.md.
    ============================================================ */
@@ -114,12 +115,16 @@ window.bilancioPrimeSedute = function() {
   if (due.length < P.primeSedute) return null;
   let fatte = 0, tot = 0;
   const scarti = [];
-  due.forEach(x => (x.h.sessione || []).forEach(e => (e.sets || []).forEach(st => {
-    tot++;
-    if (!st.done) return;
-    fatte++;
-    if (Number(st.rpe) > 0) scarti.push(Number(st.rpe) - rpeBersaglioSeduta(x.h, e));
-  })));
+  due.forEach(x => (x.h.sessione || []).forEach(e => {
+    /* W2-T8 (piano D.6): le serie di un esercizio in calibrazione (CAR-18) contano per il completamento ma non come «serie facili»: una partenza bassa voluta non deve alzare l esigenza */
+    const inCalibrazione = typeof calibrazioneNellaSeduta === 'function' && calibrazioneNellaSeduta(x.h, e);
+    (e.sets || []).forEach(st => {
+      tot++;
+      if (!st.done) return;
+      fatte++;
+      if (Number(st.rpe) > 0 && !inCalibrazione) scarti.push(Number(st.rpe) - rpeBersaglioSeduta(x.h, e));
+    });
+  }));
   const compl = tot ? fatte / tot : 1;
   const scarto = scarti.length >= 3 ? scarti.reduce((t, x) => t + x, 0) / scarti.length : null;
   const pr = due.map(x => x.h.prontezza).filter(x => typeof x === 'number');
