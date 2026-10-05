@@ -7,3 +7,10 @@ node_modules/
 skills-lock.json
 package-lock.json
 *.png
+# file generati che ripetono il codice: nel grafo sarebbero solo rumore
+# (indice e mappa restano da leggere come documenti, vedi CLAUDE.md)
+docs/indice-codice.md
+docs/mappa-simboli.md
+# prove in browser: script playwright isolati (rendono playwright-core un falso "nodo dio");
+# quali prove toccano un simbolo lo dice docs/mappa-simboli.md
+tests/browser/
