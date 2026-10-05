@@ -1,2 +1,5 @@
 graphify-out/cache/
 node_modules/
+# file locali di graphify (rigenerati da npm run grafo; i nomi delle community stanno in tools/grafo-nomi.json)
+graphify-out/.graphify_*
+graphify-out/[0-9][0-9][0-9][0-9]-*/

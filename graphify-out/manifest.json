@@ -660,142 +660,22 @@
     "semantic_hash": "56a386b6a7afca1b6aac30ae68681197"
   },
   "package.json": {
-    "mtime": 1791163149.5732787,
-    "seen": 1791163452.35207,
-    "ast_hash": "60720e981b668eaad2e153edcb427a66",
+    "mtime": 1791168354.6600435,
+    "seen": 1791168432.8743532,
+    "ast_hash": "fe771c223367d04d441b2a0d0faefb3d",
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1791161643.7891893,
-    "seen": 1791163452.3520713,
-    "ast_hash": "faeae7af36c9ffb49258c27dbb64771d",
-    "semantic_hash": "faeae7af36c9ffb49258c27dbb64771d"
+    "mtime": 1791168425.1206024,
+    "seen": 1791168432.8743556,
+    "ast_hash": "cd02a6de354d81ce18ab033a63b818b5",
+    "semantic_hash": ""
   },
   "tests/avvio.test.js": {
     "mtime": 1790820327.4271536,
     "seen": 1791155006.8184202,
     "ast_hash": "1438aec992ef078bc6a8ac79deecf194",
     "semantic_hash": "1438aec992ef078bc6a8ac79deecf194"
-  },
-  "tests/browser/carichi-evoluzione.js": {
-    "mtime": 1790820327.4284036,
-    "seen": 1791155006.8184214,
-    "ast_hash": "9f7c1d9967ff38c319cfc20ddf8931c4",
-    "semantic_hash": "9f7c1d9967ff38c319cfc20ddf8931c4"
-  },
-  "tests/browser/carichi-partenza.js": {
-    "mtime": 1790820327.428463,
-    "seen": 1791155006.8184226,
-    "ast_hash": "74a524b4e2c9286ed7cf05cf3b525e2e",
-    "semantic_hash": "74a524b4e2c9286ed7cf05cf3b525e2e"
-  },
-  "tests/browser/coerenza-schede.js": {
-    "mtime": 1791155417.6807394,
-    "seen": 1791163452.352075,
-    "ast_hash": "493748a0c64bb38e7179d8242608765a",
-    "semantic_hash": "493748a0c64bb38e7179d8242608765a"
-  },
-  "tests/browser/dettagli-esercizi.js": {
-    "mtime": 1791155417.6807394,
-    "seen": 1791163452.352076,
-    "ast_hash": "3e1024a1639572920504faa6b4887c73",
-    "semantic_hash": "3e1024a1639572920504faa6b4887c73"
-  },
-  "tests/browser/elenco-esercizi.js": {
-    "mtime": 1791155417.6807394,
-    "seen": 1791163452.352077,
-    "ast_hash": "587e16c5ac69d18f2da5d60f85001f3e",
-    "semantic_hash": "587e16c5ac69d18f2da5d60f85001f3e"
-  },
-  "tests/browser/guida-tocchi.js": {
-    "mtime": 1791155417.6807394,
-    "seen": 1791163452.352078,
-    "ast_hash": "eed075b3e7189df67868fe2100815958",
-    "semantic_hash": "eed075b3e7189df67868fe2100815958"
-  },
-  "tests/browser/guida.js": {
-    "mtime": 1790820327.428463,
-    "seen": 1791155006.8184285,
-    "ast_hash": "cc8bee3de8439009f51eeca510ac69d8",
-    "semantic_hash": "cc8bee3de8439009f51eeca510ac69d8"
-  },
-  "tests/browser/intensita-bia.js": {
-    "mtime": 1791155417.6807394,
-    "seen": 1791163452.3520799,
-    "ast_hash": "0782023dfc192e62e1011ea76a9d6e9c",
-    "semantic_hash": "0782023dfc192e62e1011ea76a9d6e9c"
-  },
-  "tests/browser/macchinario-occupato-layout.js": {
-    "mtime": 1790820327.428463,
-    "seen": 1791155006.8184304,
-    "ast_hash": "e12c31650dddbabbef119047135a9d74",
-    "semantic_hash": "e12c31650dddbabbef119047135a9d74"
-  },
-  "tests/browser/macchinario-occupato-profilo.js": {
-    "mtime": 1790820327.428463,
-    "seen": 1791155006.8184314,
-    "ast_hash": "e366c3e6045bbbe4918bc104275357c3",
-    "semantic_hash": "e366c3e6045bbbe4918bc104275357c3"
-  },
-  "tests/browser/macchinario-occupato.js": {
-    "mtime": 1790820327.428463,
-    "seen": 1791155006.8184326,
-    "ast_hash": "c81d0a3f57bd62e0a82a3f19e294d719",
-    "semantic_hash": "c81d0a3f57bd62e0a82a3f19e294d719"
-  },
-  "tests/browser/metodi-epoca-oro.js": {
-    "mtime": 1791155417.6807394,
-    "seen": 1791163452.352086,
-    "ast_hash": "337a8d7a774306d468fbb75039004346",
-    "semantic_hash": "337a8d7a774306d468fbb75039004346"
-  },
-  "tests/browser/prove-biomeccaniche.js": {
-    "mtime": 1790820327.428463,
-    "seen": 1791155006.8184345,
-    "ast_hash": "0eaf54630005e6b642d6b5c239474e78",
-    "semantic_hash": "0eaf54630005e6b642d6b5c239474e78"
-  },
-  "tests/browser/recupero-contrasto.js": {
-    "mtime": 1791155417.6807394,
-    "seen": 1791163452.3520882,
-    "ast_hash": "88ebba11cd4ef7159a796926cc8da43e",
-    "semantic_hash": "88ebba11cd4ef7159a796926cc8da43e"
-  },
-  "tests/browser/regole-nuove.js": {
-    "mtime": 1790820327.428463,
-    "seen": 1791155006.8184369,
-    "ast_hash": "58a3bc4af70e3f7c83a3e33052f1c154",
-    "semantic_hash": "58a3bc4af70e3f7c83a3e33052f1c154"
-  },
-  "tests/browser/ripetizioni.js": {
-    "mtime": 1791155417.6807394,
-    "seen": 1791163452.3520901,
-    "ast_hash": "f66957ee50eb243e7eaea7f0cb7d829f",
-    "semantic_hash": "f66957ee50eb243e7eaea7f0cb7d829f"
-  },
-  "tests/browser/scheda-unica.js": {
-    "mtime": 1790820327.428463,
-    "seen": 1791155006.8184392,
-    "ast_hash": "a3571b760cc02df2cda9b5a6aa51243d",
-    "semantic_hash": "a3571b760cc02df2cda9b5a6aa51243d"
-  },
-  "tests/browser/sicurezza.js": {
-    "mtime": 1790820327.428463,
-    "seen": 1791155006.8184404,
-    "ast_hash": "c3136212f83f31c084cf16d9241d4725",
-    "semantic_hash": "c3136212f83f31c084cf16d9241d4725"
-  },
-  "tests/browser/statistiche.js": {
-    "mtime": 1791155417.6807394,
-    "seen": 1791163452.352093,
-    "ast_hash": "3708e205fe87609aa736f04ad86796b2",
-    "semantic_hash": "3708e205fe87609aa736f04ad86796b2"
-  },
-  "tests/browser/traduzioni-esercizi.js": {
-    "mtime": 1791155417.6807394,
-    "seen": 1791163452.352094,
-    "ast_hash": "40c905b465dd4fda38d717265e75f8cc",
-    "semantic_hash": "40c905b465dd4fda38d717265e75f8cc"
   },
   "tests/struttura.test.js": {
     "mtime": 1791163149.5732787,
@@ -816,22 +696,22 @@
     "semantic_hash": "355cebc51ff91f56313195a6d39d63ea"
   },
   "tools/indice.js": {
-    "mtime": 1791157067.913481,
-    "seen": 1791163452.3520997,
-    "ast_hash": "0996159ce21986b17d087844f629cbb3",
+    "mtime": 1791168354.558003,
+    "seen": 1791168432.8743713,
+    "ast_hash": "92c8d3a8086e6f791a329330aa12c722",
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1791157067.9136784,
-    "seen": 1791163452.3521016,
-    "ast_hash": "8ec107a392d3d4a7ba63749e8b274253",
+    "mtime": 1791168354.7481372,
+    "seen": 1791168432.8743756,
+    "ast_hash": "51722d1f44cdd38667cf322563fa0004",
     "semantic_hash": ""
   },
   "docs/ARCHITETTURA.md": {
-    "mtime": 1791155417.6407392,
-    "seen": 1791163452.3521025,
-    "ast_hash": "0ad67c937cb583ab3c72d55011795d1e",
-    "semantic_hash": "0ad67c937cb583ab3c72d55011795d1e"
+    "mtime": 1791168354.7481372,
+    "seen": 1791168432.874377,
+    "ast_hash": "31e643f8c3faf4f53d6efe0346a4d4d5",
+    "semantic_hash": ""
   },
   "docs/PIANO.md": {
     "mtime": 1791155417.6407392,
@@ -863,12 +743,6 @@
     "ast_hash": "8ed80c3ba6067fba11967c9d79f35f4c",
     "semantic_hash": ""
   },
-  "tests/browser/macchinario-occupato-tendina.js": {
-    "mtime": 1791163247.1123598,
-    "seen": 1791163452.3520837,
-    "ast_hash": "61b32ac53b63c33d768b3c27387cdd03",
-    "semantic_hash": ""
-  },
   "tests/cedimento.test.js": {
     "mtime": 1791162738.9335113,
     "seen": 1791163452.3520947,
@@ -882,21 +756,39 @@
     "semantic_hash": ""
   },
   "CLAUDE.md": {
-    "mtime": 1791157067.9132257,
-    "seen": 1791163452.3521006,
-    "ast_hash": "950b220e5798e93f908c728c3c09df23",
-    "semantic_hash": ""
-  },
-  "docs/indice-codice.md": {
-    "mtime": 1791163280.9532866,
-    "seen": 1791163452.3521063,
-    "ast_hash": "f1354f58f537187f9d85a18903fe283b",
+    "mtime": 1791168354.7481372,
+    "seen": 1791168432.8743744,
+    "ast_hash": "f225298a1208243c7d3fea2bf132fdf2",
     "semantic_hash": ""
   },
   "toji.html": {
     "mtime": 1790820327.428463,
     "seen": 1791163452.3521092,
     "ast_hash": "776952df166649184dbb1f85c73623cf",
+    "semantic_hash": ""
+  },
+  "tools/simboli.js": {
+    "mtime": 1791168354.558003,
+    "seen": 1791168432.874373,
+    "ast_hash": "44379f09d1e0464dd727ef782b4ecb74",
+    "semantic_hash": ""
+  },
+  "tools/grafo-nomi.json": {
+    "mtime": 1791168354.6600435,
+    "seen": 1791168432.874368,
+    "ast_hash": "ff42549324e14fae52382022348a94d8",
+    "semantic_hash": ""
+  },
+  "tools/grafo.js": {
+    "mtime": 1791168354.6600435,
+    "seen": 1791168432.8743699,
+    "ast_hash": "7b4bbd654ef3685c37e37c12516ca9ee",
+    "semantic_hash": ""
+  },
+  "docs/mappa-per-agenti.md": {
+    "mtime": 1791168354.7481372,
+    "seen": 1791168432.8743815,
+    "ast_hash": "24e77a2c37f0a8c22b4c12164de03460",
     "semantic_hash": ""
   }
 }
