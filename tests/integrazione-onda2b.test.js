@@ -170,3 +170,28 @@ test('le card delle schede pronte (Piano e figura anatomica) mostrano la durata 
   assert.deepStrictEqual(gt.slice().sort((x, y) => x - y), durate.slice().sort((x, y) => x - y), 'figura anatomica: le stesse durate (il carosello e ordinato per stato)');
   assert.deepStrictEqual(a.errori, []);
 });
+
+/* ---------------------------------------------------------------- 5) m9: il livello grezzo entra normalizzato (difetto vero trovato da W2-T1) ---------------------------------------------------------------- */
+test('m9: «Principiante assoluto», «esperto», «Pro» e simili danno lo stesso programma (byte per byte) del livello noto; d del chiamante non si tocca; un livello mancante resta com e', () => {
+  const a = conSoglieStruttura(caricaApp({ ora: ORA }));
+  const costruisci = d => a.dati(a.chiama('buildProgram', Object.assign({}, BASE, { seme: 'm9b' }, d)));
+  const casi = [['Principiante assoluto', 'principiante'], ['PRINCIPIANTE', 'principiante'], ['neofita', 'principiante'], ['Principiante', 'principiante'], ['esperto', 'avanzato'],
+    ['Avanzato (agonista)', 'avanzato'], ['elite', 'avanzato'], ['boh', 'intermedio'], ['Intermedio+', 'intermedio']];
+  ['massa', 'forza', 'salute'].forEach(g => [3, 5].forEach(days => casi.forEach(([grezzo, noto]) => {
+    assert.strictEqual(JSON.stringify(costruisci({ level: grezzo, goals: [g], days })), JSON.stringify(costruisci({ level: noto, goals: [g], days })), g + ' ' + days + ' giorni: «' + grezzo + '» = ' + noto);
+  })));
+  /* anche la donna principiante con il profilo dentro il brief: esigenza (PRN-01), serie e metodo vedono il livello normalizzato */
+  const brief = a.dati(a.chiama('briefCoach', Object.assign({}, BASE, { level: 'Principiante assoluto', sex: 'F' }), {}));
+  assert.strictEqual(brief.chi.livello, 'principiante');
+  assert.strictEqual(brief.grezzo.d.level, 'principiante', 'chi legge d.level dopo il brief vede un livello noto');
+  assert.ok(brief.mente.esigenza <= 1, 'PRN-01: il principiante non parte con il +20% dell esigenza (' + brief.mente.esigenza + ')');
+  /* d del chiamante (onbData) non si modifica, e un livello mancante resta mancante */
+  const d = Object.assign({}, BASE, { level: 'Principiante assoluto' }), prima = JSON.stringify(d);
+  a.ctx.__d = a.g('JSON.parse(' + JSON.stringify(JSON.stringify(d)) + ')');
+  a.g('buildProgram(__d)');
+  assert.strictEqual(JSON.stringify(a.dati(a.g('__d'))), prima, 'buildProgram non cambia le risposte che riceve');
+  const senza = a.dati(a.chiama('briefCoach', Object.assign({}, BASE, { level: undefined }), {}));
+  assert.strictEqual(senza.grezzo.d.level, undefined, 'livello mancante: resta mancante (ognuno ha il suo ripiego)');
+  assert.strictEqual(senza.chi.livello, 'intermedio');
+  assert.deepStrictEqual(a.errori, []);
+});

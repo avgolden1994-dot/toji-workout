@@ -64,6 +64,14 @@ function livelloConosciuto(livello) {
   return 'intermedio';
 }
 
+/* m9 (INT-2b): il livello che arriva grezzo («Principiante assoluto», «esperto») entra nel brief gia normalizzato: chi legge `d.level` dopo il brief (il metodo famoso, l esigenza, le partenze, la
+   composizione) vede lo stesso livello di `chi.livello`, non una stringa che nessuna tabella conosce. Un livello mancante resta mancante (ognuno ha il suo ripiego: «intermedio» per il brief,
+   «principiante» per le partenze, D-P12); `d` del chiamante non si tocca (e onbData: serve identico per `usaProfilo`) */
+function conLivelloNoto(d) {
+  if (!d || !d.level || LIVELLI_NOTI.indexOf(d.level) !== -1) return d;
+  return Object.assign({}, d, { level: livelloConosciuto(d.level) });
+}
+
 /* chi sei: eta (0 = non detta), minorenne, over 65, livello, PAR-Q, prudente. Una sola definizione per il brief del programma e per quello di oggi. */
 function chiDa(d) {
   const eta = Number(d.age) || 0;
@@ -82,6 +90,7 @@ function chiDa(d) {
    risolviMetodo(brief) dopo i vincoli: il tocco dipende da cosa la Sentinella ammette. */
 function briefCoach(d, prof0) {
   prof0 = prof0 || {};
+  d = conLivelloNoto(d);   /* m9 */
   const dichiarati = obiettiviDichiarati(d);
   const goals = obiettiviEffettivi(dichiarati);
   const chi = chiDa(d);
