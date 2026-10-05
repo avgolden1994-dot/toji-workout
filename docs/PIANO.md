@@ -28,6 +28,8 @@ Il consenso elenca tutto ciò che esce dal telefono (`TESTI_IA`), tradotto in en
 ## Fase 5 — Pubblicazione su App Store (rimandata su richiesta)
 Da fare più avanti, in ordine: privacy e dichiarazioni dei dati, guscio Capacitor (notifiche locali, haptics), icona 1024, schermate, test su dispositivo, requisiti sanitari (non è un dispositivo medico: nessuna promessa di salute), pagamenti se previsti.
 
+Piano dettagliato e checklist: [`piano-lancio-appstore.md`](piano-lancio-appstore.md).
+
 ## Regole di lavoro
 - Una PR = un argomento. La ristrutturazione non si mescola con le modifiche al coach.
 - Prima di aprire una PR: `npm run controlla`.
