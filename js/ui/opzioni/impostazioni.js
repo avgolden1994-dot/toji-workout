@@ -4,7 +4,7 @@
 /* ============================================================
    IMPOSTAZIONI
    ============================================================ */
-const THEME_KEY = 'tz_theme';               /* 'dark' | 'light' | 'auto' */
+/* THEME_KEY ('tz_theme') sta in js/core/tema-iniziale.js: serve gia in <head> */
 const SOUND_KEY = 'tz_sound';               /* suoni del timer */
 const COUNTDOWN_KEY = 'tz_countdown';       /* bip negli ultimi 5 secondi */
 const AUTOCLOSE_KEY = 'tz_autoclose';       /* chiusura automatica del timer */
@@ -19,12 +19,9 @@ window.setSetting = function(k, v) { localStorage.setItem(k, String(v)); };
 window.isOn = function(k, def) { return getSetting(k, def ? '1' : '0') === '1'; };
 
 window.applyTheme = function() {
-  const pref = getSetting(THEME_KEY, 'dark');
-  let tema = pref;
-  if (pref === 'auto') {
-    const mq = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)');
-    tema = (mq && mq.matches) ? 'light' : 'dark';
-  }
+  /* scelta salvata e, in 'auto', tema del sistema: la stessa funzione che in
+     <head> lo applica prima del primo disegno (js/core/tema-iniziale.js) */
+  const tema = temaRisolto();
   /* Lo sfondo della pagina lo disegna <html>, non <body>: applicando il
      tema al solo body, fuori dall area occupata dal contenuto restava il
      fondo scuro di partenza. Va messo su entrambi. */
@@ -40,6 +37,16 @@ window.setTheme = function(v) {
   applyTheme();
   renderSettings();
 };
+
+/* In automatico il tema segue anche i cambi del sistema ad app aperta (prima
+   si leggeva una volta sola, all avvio). Con la dissolvenza di body, come
+   quando si cambia da Opzioni. */
+try {
+  const sistemaChiaro = window.matchMedia('(prefers-color-scheme: light)');
+  const segui = () => { if (getSetting(THEME_KEY, 'dark') === 'auto') applyTheme(); };
+  if (sistemaChiaro.addEventListener) sistemaChiaro.addEventListener('change', segui);
+  else if (sistemaChiaro.addListener) sistemaChiaro.addListener(segui);   /* Safari prima della 14 */
+} catch (e) {}
 
 /* Zoom con le dita: spento di default (l app resta ferma come un app vera), acceso da Opzioni > Aspetto */
 const ZOOM_KEY = 'tz_zoom';

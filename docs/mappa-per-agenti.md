@@ -41,6 +41,7 @@ Avvio: `js/avvio.js` (IIFE `boot`) → `chooseMode()` (js/core/modalita.js) → 
 | `caricoProssimo()` | js/coach/dolore-mattina.js | **avvolto** da regole-nuove.js e poi da intensita.js: vale l'ultima versione |
 | `applicaCaricoProgressivo()`, `imparaDallaSeduta()` | js/coach/regole-ricerca.js | avvolti da regole-nuove.js / intensita.js |
 | `applicaProntezza()` | js/coach/prontezza.js | avvolto da regole-nuove.js |
+| `THEME_KEY`, `temaRisolto()` | js/core/tema-iniziale.js | primo script, in `<head>` prima dei fogli di stile: il tema c'e gia al primo disegno; `applyTheme()` (opzioni/impostazioni.js) usa la stessa funzione |
 
 ## Flussi principali
 

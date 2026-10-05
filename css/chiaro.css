@@ -92,3 +92,14 @@ html[data-theme="light"] .og-day.today { background: var(--primary-tint); border
   50% { background: radial-gradient(ellipse at 50% 15%, color-mix(in srgb, var(--primary) 16%, transparent), var(--bg) 62%); }
 }
 :where(html[data-theme="light"]) body.fire-mode { animation-name: fire-glow-bg-chiaro; }
+
+/* Barra di stato di iOS (app dalla schermata Home): con black-translucent ora e batteria sono
+   SEMPRE bianche (il meta e fisso, non segue il tema) e sul fondo pietra non si leggevano.
+   Solo nel chiaro e solo da app installata, la fascia sotto la barra (.statusbar-guard, alta
+   env(safe-area-inset-top): 0 dove la barra non copre la pagina, es. Android e computer)
+   diventa scura e sale sopra i fogli a tutto schermo (Opzioni, guida iniziale, schede: fino
+   a 140), cosi il bianco si legge ovunque (17:1). Lo scuro non cambia. Nell app nativa si
+   fara con @capacitor/status-bar (docs/piano-lancio-appstore.md). */
+@media (display-mode: standalone) {
+  :where(html[data-theme="light"]) .statusbar-guard { background: var(--text); z-index: 150; }
+}

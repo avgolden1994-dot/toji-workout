@@ -53,6 +53,42 @@ test('sw.js elenca esattamente i file dell app', () => {
   const r = require('child_process').spawnSync('node', [path.join(R, 'tools/genera-sw.js'), '--check'], { encoding: 'utf8' });
   assert.strictEqual(r.status, 0, r.stderr);
 });
+/* Niente lampo all avvio: il tema si applica in <head> prima dei fogli di stile, con la stessa funzione di applyTheme */
+const sfondoToken = sel => leggi('css/base.css').match(new RegExp('^' + sel + '[^{]*\\{[^}]*?--bg:\\s*(#[0-9a-f]{6})', 'm'))[1];
+test('il tema si decide in <head> prima dei fogli di stile (niente lampo scuro o bianco all avvio)', () => {
+  const testa = html.slice(0, html.indexOf('</head>'));
+  const iScript = testa.indexOf('<script src="js/core/tema-iniziale.js"></script>');   /* sincrono: niente async/defer */
+  assert.strictEqual(scripts[0], 'js/core/tema-iniziale.js');
+  assert.ok(iScript > testa.indexOf('id="theme-color-meta"') && iScript < testa.indexOf('<link rel="stylesheet"'), 'tema-iniziale.js va dopo il meta theme-color e prima dei fogli di stile');
+  /* lo stile critico ha gli stessi fondi dei token --bg di css/base.css, e sta prima dei fogli */
+  const stile = testa.match(/<style>([\s\S]*?)<\/style>/);
+  assert.ok(stile && testa.indexOf(stile[0]) < testa.indexOf('<link rel="stylesheet"'), 'manca lo <style> critico prima dei fogli');
+  const scuro = sfondoToken(':root, html\\[data-theme="dark"\\]'), chiaro = sfondoToken('html\\[data-theme="light"\\], body\\[data-theme="light"\\]');
+  assert.ok(stile[1].includes(':where(html){background:' + scuro), 'fondo scuro diverso da --bg di base.css (' + scuro + ')');
+  assert.ok(stile[1].includes(':where(html[data-theme="light"]){background:' + chiaro), 'fondo chiaro diverso da --bg di base.css (' + chiaro + ')');
+  /* applyTheme usa la stessa funzione e la stessa barra del browser nel chiaro */
+  const imp = leggi('js/ui/opzioni/impostazioni.js');
+  assert.match(imp, /applyTheme = function\(\) \{[^}]*const tema = temaRisolto\(\);/);
+  assert.ok(imp.includes("tema === 'light' ? '" + chiaro + "'"), 'applyTheme: barra del browser nel chiaro diversa da --bg');
+});
+test('tema-iniziale.js: stessa scelta di applyTheme per ogni preferenza, anche con localStorage bloccato', () => {
+  const src = leggi('js/core/tema-iniziale.js');
+  const chiaro = sfondoToken('html\\[data-theme="light"\\], body\\[data-theme="light"\\]');
+  const prova = (salvato, sistemaChiaro, bloccato) => {
+    const radice = { dataset: {} }, meta = { content: '#08080a', setAttribute(k, v) { this[k] = v; } };
+    const window = { matchMedia: q => ({ matches: q === '(prefers-color-scheme: light)' && sistemaChiaro }) };
+    const localStorage = { getItem: k => { if (bloccato) throw new Error('bloccato'); return k === 'tz_theme' ? salvato : null; } };
+    const document = { documentElement: radice, getElementById: id => (id === 'theme-color-meta' ? meta : null) };
+    new Function('window', 'localStorage', 'document', src)(window, localStorage, document);
+    return radice.dataset.theme + ' ' + meta.content;
+  };
+  assert.strictEqual(prova(null, true), 'dark #08080a');          /* nessuna scelta: scuro, come getSetting(THEME_KEY, 'dark') */
+  assert.strictEqual(prova('dark', true), 'dark #08080a');
+  assert.strictEqual(prova('light', false), 'light ' + chiaro);
+  assert.strictEqual(prova('auto', true), 'light ' + chiaro);
+  assert.strictEqual(prova('auto', false), 'dark #08080a');
+  assert.strictEqual(prova('light', true, true), 'dark #08080a');  /* localStorage che lancia: il default, senza errori */
+});
 test('manifest e toji.html (vecchio indirizzo) puntano a index.html', () => {
   assert.strictEqual(JSON.parse(leggi('manifest.json')).start_url, './index.html');
   assert.match(leggi('toji.html'), /index\.html/);

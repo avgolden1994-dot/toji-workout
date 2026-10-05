@@ -16,6 +16,15 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 
+<!-- Tema prima del primo disegno: lo script (sincrono, prima dei fogli di stile) mette
+     data-theme su <html> e la barra del browser dalla scelta salvata, cosi chi usa il chiaro
+     non vede prima lo scuro. Lo stile da a <html> il fondo del tema anche prima che arrivino
+     i fogli: stessi valori di --bg in css/base.css (li confronta tests/struttura.test.js);
+     :where() non pesa, da li in poi decide solo base.css. Nessun color-scheme nello scuro:
+     base.css non lo usa e cambierebbe i comandi nativi. -->
+<script src="js/core/tema-iniziale.js"></script>
+<style>:where(html){background:#0e0e12}:where(html[data-theme="light"]){background:#f6f5f3;color-scheme:light}</style>
+
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/shell.css">
 <link rel="stylesheet" href="css/calendario.css">
