@@ -177,7 +177,7 @@ window.azioneCoach = function(tipo, nome) {
       const ag = aggiustiCoach(); ag.ruotatoBlocco = bloccoCorrente(); salvaAggiusti(ag);
     });
   }
-  if (tipo === 'scarico') conAnnulla('Prossime due sedute di scarico', () => { const ag = aggiustiCoach(); ag.scarico = { sedute: 2, motivo: 'carico della settimana troppo alto' }; salvaAggiusti(ag); });
+  if (tipo === 'scarico') conAnnulla('Prossime due sedute di scarico', () => { const ag = aggiustiCoach(); ag.scarico = scaricoReattivo('carico della settimana troppo alto', 2); salvaAggiusti(ag); });   /* scarico deciso dal coach: la voce la fa sicurezza/scarico.js (W1-T3) */
   /* STD-01: il livello cambia solo col tocco dell utente e si annulla (prima: solo in salita e senza annulla) */
   if (tipo === 'livello' || tipo === 'rivediLivello') {
     if (!coachAttivo()) return;
