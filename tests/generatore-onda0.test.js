@@ -116,7 +116,7 @@ test('B1 (DUR-02): le sedute non restano mezze vuote come prima (stima del tempo
 test('B3 (TEC-01 = 0): niente tecniche al cedimento a principianti, minorenni, over 65, PAR-Q; mai su core, a tempo, peso zero, stacchi', () => {
   const a = app();
   const ced = TECNICHE_CED();
-  assert.deepStrictEqual(ced.slice().sort(), ['amrap', 'backoff', 'calibrazione', 'drop', 'parziali', 'riposopausa']);
+  assert.deepStrictEqual(ced.slice().sort(), ['amrap', 'backoff', 'calibrazione', 'drop', 'myo', 'parziali', 'riposopausa']);   /* W2-T3 (MAV-13): anche i myo-reps portano al cedimento */
   const colpe = [];
   let conTecnica = 0;
   tutti().forEach(({ p, prog }) => prog.sedute.forEach(sd => sd.esercizi.forEach(e => {
