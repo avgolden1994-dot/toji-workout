@@ -12,6 +12,8 @@
    RIC-03 posizione allungata per petto, schiena e glutei (Maeo 2021-2023, Pedrosa 2025)  -> schemi.js
    RIC-04 al massimo una tecnica al cedimento per seduta (Robinson 2024)
    RIC-05 rientro dopo una pausa: serie ridotte su tutto il piano (detraining, SBS)
+   W1-T3: nessun involucro. RIC-01/02/05 sono la fase 60 della catena 'carico', RIC-04 la fase 20 di 'apertura' e di 'prontezza'
+   (regia/fasi.js, piano B.3): l ordine e scritto nel numero, non nell ordine degli script.
    ============================================================ */
 const TECNICHE_INTENSE = ['drop', 'amrap', 'parziali', 'calibrazione', 'negativa', 'forzate', 'riposopausa'];   /* tutte arrivano al cedimento */
 
@@ -56,9 +58,10 @@ function mancavaSoloUltimaSerie(nome, repsTarget) {
   return s.sets.slice(0, -1).every(completa) && !completa(s.sets[s.sets.length - 1]);
 }
 
-const _caricoProssimoPrima = window.caricoProssimo;
-window.caricoProssimo = function(nome, base, repsTarget, setsBase) {
-  const r = _caricoProssimoPrima(nome, base, repsTarget, setsBase);
+/* Fase 60 RIC della catena 'carico' (regia/fasi.js, W1-T3): RIC-05, RIC-01 e RIC-02 sul risultato di 10 BIL e 50 AGG; prima era un involucro
+   di caricoProssimo. Viene dopo gli aggiusti (50) e prima di INT-04 (70): lo scritto «60» e l ordine, non quello degli script. */
+function regoleRicAlCarico(r, c) {
+  const nome = c.nome, repsTarget = c.repsTarget;
   if (!r || r.tipo === 'scarico' || isTimeBased(nome)) return r;
   const pc = profiloCoach();
   const cauto = pc.prudente || pc.sonnoMale || pc.livello === 'principiante' || pc.eta >= 65;
@@ -80,7 +83,8 @@ window.caricoProssimo = function(nome, base, repsTarget, setsBase) {
     r.motivo += ' • mancava solo l ultima serie: 45 secondi di pausa in piu prima di abbassare il carico';
   }
   return r;
-};
+}
+registraFase('carico', 60, 'RIC', regoleRicAlCarico);
 
 /* RIC-04: tecniche al cedimento. In scarico o con prontezza bassa nessuna; altrimenti una sola per seduta.
    La tecnica del programma non si cancella: per la seduta di oggi si mette '-' (nessun badge). */
@@ -100,15 +104,9 @@ function limitaTecnicheIntense(day) {
   if (tolte) saveData(data);
   return tolte;
 }
-const _applicaCaricoPrima = window.applicaCaricoProgressivo;
-window.applicaCaricoProgressivo = function(day) {
-  const n = _applicaCaricoPrima(day);
-  limitaTecnicheIntense(day);
-  return n;
-};
-const _applicaProntezzaPrima = window.applicaProntezza;
-window.applicaProntezza = function(r) {
-  const out = _applicaProntezzaPrima(r);
+/* RIC-04 come fase 20 dei punti 'apertura' (dopo i carichi, 10) e 'prontezza' (dopo la prontezza, 10): prima erano involucri di
+   applicaCaricoProgressivo e applicaProntezza. Non restituiscono niente: il valore (esercizi cambiati, punteggio) resta quello della fase 10. */
+registraFase('apertura', 20, 'RIC-04', (n, c) => { limitaTecnicheIntense(c.giorno); });
+registraFase('prontezza', 20, 'RIC-04', () => {
   if (limitaTecnicheIntense(currentDay) && typeof renderAllenamento === 'function') renderAllenamento();
-  return out;
-};
+});

@@ -52,10 +52,12 @@ function consumaAggiusti(entry) {
 /* B7 (DEC-02): dolore a gomito o ginocchio: -10% con ampiezza senza dolore e almeno cosi tante ripetizioni in riserva */
 const RIR_MIN_DOLORE = 3;
 
-/* Il carico della prossima seduta: caricoProssimoBase (regole-ricerca.js: progressione, scarico del programma e ripresa dopo lo scarico,
-   MES-06) piu gli aggiustamenti del coach (scarico deciso CAR-10, dolore, «blocca» ed «extra» ALG-02) e la frase del RIR. */
-window.caricoProssimo = function(nome, base, repsTarget, setsBase) {
-  const r = caricoProssimoBase(nome, base, repsTarget, setsBase);
+/* Il carico della prossima seduta, fase 50 AGG della catena 'carico' (regia/fasi.js, W1-T3): sopra caricoProssimoBase (fase 10, regole-ricerca.js:
+   progressione, scarico del programma e ripresa dopo lo scarico, MES-06) mette gli aggiustamenti del coach (scarico deciso CAR-10, dolore,
+   «blocca» ed «extra» ALG-02) e la frase del RIR. Prima era la funzione caricoProssimo stessa, avvolta poi da regole-nuove.js e intensita.js:
+   ora sono tutte fasi (60 RIC, 70 INT) con l ordine scritto. */
+function aggiustiAlCarico(r, c) {
+  const nome = c.nome, setsBase = c.setsBase;
   let ag;
   try { ag = aggiustiCoach(); } catch (e) { return r; }
   if (ag.scarico && ag.scarico.sedute > 0 && r.tipo !== 'scarico') {
@@ -90,4 +92,5 @@ window.caricoProssimo = function(nome, base, repsTarget, setsBase) {
   /* il RIR di oggi; dopo uno scarico e una ripetizione in piu e lo dice testoRir (MES-06) */
   if (!isTimeBased(nome) && r.weight > 0 && r.tipo !== 'scarico' && r.tipo !== 'giu') r.motivo += ' • ' + testoRir(nome);
   return r;
-};
+}
+registraFase('carico', 50, 'AGG', aggiustiAlCarico);

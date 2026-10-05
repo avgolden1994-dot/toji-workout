@@ -240,7 +240,7 @@ function applicaDecisioni(dec, fb) {
       }
     }
     if (d.tipo === 'blocca' || d.tipo === 'extra') fb.esercizi.forEach(n => { if (!ag.esercizi[n]) ag.esercizi[n] = { [d.tipo]: true, sedute: 1 }; });
-    if (d.tipo === 'scarico') ag.scarico = { sedute: 1, motivo: 'fatica accumulata nelle ultime sedute' };
+    if (d.tipo === 'scarico') ag.scarico = scaricoReattivo('fatica accumulata nelle ultime sedute', 1);
     if (d.tipo === 'sostituisci') {
       const lib = findExercise(d.variante);
       DAYS.forEach(g => (data[g] || []).forEach(e => {

@@ -11,6 +11,7 @@
    PRZ-03 (una serie in piu sugli accessori con prontezza 70% o piu) e ritirata (decisione D-P14, onda 0): "tutto normale" vale circa 78,
    quindi scattava quasi ogni giorno, oltre il piano e oltre il tetto di 3 serie dei principianti (B18). Il solo "+1 serie" che resta e
    quello settimanale per unita di volume (PCO-03, W3-T4).
+   W1-T3: applicaProntezza non e piu avvolta da regole-nuove.js ma una catena 'prontezza' di fasi registrate (regia/fasi.js): 10 PRZ qui, 20 RIC-04.
    ============================================================ */
 const PRONTEZZA_KEY = () => 'coach_plus_prontezza_' + currentMode;
 const PRONTEZZA_VOCI = [
@@ -56,7 +57,12 @@ window.saltaProntezza = function() {
   prontezzaStato = {};
   renderProntezza();
 };
+/* La prontezza di oggi. La catena 'prontezza' (regia/fasi.js, W1-T3): 10 PRZ qui (prontezzaDiOggi), 20 RIC-04 in regole-nuove.js
+   (tecniche al cedimento con prontezza bassa). Restituisce il punteggio. */
 window.applicaProntezza = function(r) {
+  return eseguiFasi('prontezza', undefined, { risposte: r });
+};
+function prontezzaDiOggi(r) {
   const punteggio = punteggioProntezza(r);
   const f = punteggio >= COACH_PARAMETRI.prontezzaBuona ? 1 : (punteggio >= COACH_PARAMETRI.prontezzaMedia ? COACH_PARAMETRI.prontezzaFattoreMedia : COACH_PARAMETRI.prontezzaFattoreBassa);
   const prima = localStorage.getItem(dataKey());
@@ -80,7 +86,7 @@ window.applicaProntezza = function(r) {
   const settimana = storia.filter(x => giorniTra(daYmd(x.data), new Date()) <= 7);
   if (settimana.length >= 3 && settimana.slice(-3).every(x => x.punteggio < 50)) {
     const ag = aggiustiCoach();
-    if (!ag.scarico) { ag.scarico = { sedute: 2, motivo: 'stanchezza alta per piu giorni di fila' }; salvaAggiusti(ag); }
+    if (!ag.scarico) { ag.scarico = scaricoReattivo('stanchezza alta per piu giorni di fila', 2); salvaAggiusti(ag); }
   }
   prontezzaStato = {};
   renderProntezza(); renderAllenamento();
@@ -88,4 +94,5 @@ window.applicaProntezza = function(r) {
     (punteggio >= 50 ? 'Prontezza ' + punteggio + '%: multiarticolari un po’ più leggeri' : 'Prontezza ' + punteggio + '%: oggi seduta leggera. Anche solo muoversi conta.');
   showUndo(msg, toccati ? () => { if (prima !== null) localStorage.setItem(dataKey(), prima); renderAllenamento(); } : null, 6000);
   return punteggio;
-};
+}
+registraFase('prontezza', 10, 'PRZ', (v, c) => prontezzaDiOggi(c.risposte));

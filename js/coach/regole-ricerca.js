@@ -31,6 +31,10 @@
    - CAR-07 (PCO-01, riga del principiante) lo schema 5x3 solo con obiettivo forza; altrimenti stesso peso, 30 secondi in piu, poi -5%.
    - CAR-14 (B10, ponte) la taratura del RIR non impara piu dal confronto tra serie diverse: ogni taratura dimezza la correzione
      appresa (rirBias) e non si fa a principianti, minori, over 65, modalita prudente e sul core.
+   Onda 1 del coach v2 (W1-T3, nessun cambiamento di comportamento): caricoProssimo, applicaCaricoProgressivo e imparaDallaSeduta non sono piu
+   avvolte da altri file ma catene di fasi registrate (regia/fasi.js, piano B.3), con l ordine scritto: la fase 10 di ognuna e in questo file
+   (caricoProssimoBase, carichiDelGiorno, contaStalli), le altre nei file delle loro regole. Spostati: DOSE_SCARICO e livelloFatica in
+   sicurezza/scarico.js, e1rmSerie e e1rmSeduta in carichi/e1rm.js, la taratura del RIR (CAR-14) in carichi/taratura.js.
    ============================================================ */
 /* tecniche speciali che il coach assegna (quando e perche: vedi Opzioni > Il coach) */
 const TECNICHE = {
@@ -116,23 +120,7 @@ function rirBersaglioBase(nome, sett) {
   if (primaSettimanaBlocco(p, numero) && r[0] < MES_RIR.pisoPrimaSettimana) r = [MES_RIR.pisoPrimaSettimana, Math.max(r[1], MES_RIR.pisoPrimaSettimana + 1)];
   return r;
 }
-/* MES-08: con le risposte 3/6/8/10 (Facile, Giusta, Dura, Al limite) la fatica e «alta» solo se la media delle ultime sedute e quasi sempre «Al limite» (9,5; era 9: bastava
-   una Dura in piu); Convenzione (ricerca-mesocicli-periodizzazione-scarichi.md, MES-08) */
-const SOGLIA_SRPE_ALTA = 9.5;
-/* scarico dosato sul bisogno (Bell 2024): poca, media o molta fatica */
-function livelloFatica() {
-  const hist = loadHistory().filter(h => h.feedback && !h.interrotta).slice(0, 3);
-  const pr = storicoProntezza().slice(-3).map(x => x.punteggio).filter(x => typeof x === 'number');
-  if (!hist.length && !pr.length) return 'media';
-  /* la scala dell sRPE e 3/6/8/10 (W0-T5, MES-08); le risposte salvate prima dell onda 0 erano 4/7/9/10 e si portano sulla scala nuova (il 9 conta come 8: registro B9) */
-  const sulla3_6_8 = (v) => ({ 4: 3, 7: 6, 9: 8 })[v] || v;
-  const srpe = hist.length ? hist.reduce((t, h) => t + (sulla3_6_8(h.feedback.srpe) || 6), 0) / hist.length : 6;
-  const pz = pr.length ? pr.reduce((t, x) => t + x, 0) / pr.length : 70;
-  if (srpe >= SOGLIA_SRPE_ALTA || pz < 50) return 'alta';
-  if (srpe < 7 && pz >= 70) return 'bassa';
-  return 'media';
-}
-const DOSE_SCARICO = { bassa: { serie: 0.65, carico: 0.95, t: 'volume -35%' }, media: { serie: 0.5, carico: 0.9, t: 'volume -50% e carico -10%' }, alta: { serie: 0.3, carico: 0.9, t: 'volume -70% e carico -10%' } };
+/* La dose dello scarico (DOSE_SCARICO) e la fatica che la sceglie (livelloFatica) stanno in sicurezza/scarico.js (W1-T3) */
 function storicoProntezza() { try { return JSON.parse(localStorage.getItem('coach_plus_prontezza_storia_' + currentMode) || '[]'); } catch (e) { return []; } }
 function rpeBersaglio(nome, sett) { const r = rirBersaglio(nome, sett); return 10 - (r[0] + r[1]) / 2; }
 /* il RIR di oggi in una frase; dopo uno scarico (MES-06) dice che e una ripetizione in piu: lo stesso rirBersaglio (ripresaDopoScarico) lo alza di uno */
@@ -141,9 +129,7 @@ function testoRir(nome) {
   if (r[1] === 1 && r[0] === 0) return 'fino a 0–1 ripetizioni in riserva';
   return 'lascia ' + r[0] + '–' + r[1] + ' ripetizioni in riserva' + (ripresaDopoScarico(nome) ? ', una in più dopo lo scarico' : '');
 }
-/* massimale stimato (Epley) solo da serie fino a 12 ripetizioni */
-function e1rmSerie(x) { const w = Number(x.weight) || 0, r = Number(x.reps) || 0; if (!w || !r || r > 12) return 0; return w * (1 + r / 30); }
-function e1rmSeduta(ex) { const v = (ex.sets || []).filter(x => x.done).map(e1rmSerie); return v.length ? Math.max.apply(null, v) : 0; }
+/* il massimale stimato (e1rmSerie, e1rmSeduta) sta in carichi/e1rm.js (W1-T3) */
 /* B11 / MES-10: una seduta fatta in una settimana di scarico (o un esercizio scaricato dal coach) non e un dato di forma e non conta nelle
    analisi (esigenza, esercizi fermi, verdetto del ciclo, carico mirato). La fase e scritta nella seduta dall onda 0 (settimana.fase e
    obiettivo.coachTipo, MES-09); per le sedute piu vecchie si ricostruisce dalle fasi del programma attuale e dalla data: se il programma
@@ -373,9 +359,22 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase) {
   return { weight: pesoUltimo, reps: repsTarget, sets: sets, tipo: 'fermo', motivo: 'Non tutte le serie complete: stesso carico, punta a piu ripetizioni' };
 };
 
+/* CARICO PROSSIMO: la catena 'carico' (regia/fasi.js, piano B.3). L ordine e scritto nelle fasi, non e quello degli script: 10 BIL qui
+   (caricoProssimoBase: progressione, scarico del programma e ripresa), 50 AGG in dolore-mattina.js (aggiusti del coach e frase del RIR),
+   60 RIC in regole-nuove.js, 70 INT in intensita.js. Ogni fase vede il risultato delle precedenti (r.motivo contiene gia i pezzi aggiunti
+   prima, r.tipo puo essere gia 'scarico') e restituisce la stessa forma { weight, reps, sets, tipo, motivo, piuPausa?, stallo? } */
+window.caricoProssimo = function(nome, base, repsTarget, setsBase) {
+  return eseguiFasi('carico', undefined, { nome: nome, base: base, repsTarget: repsTarget, setsBase: setsBase });
+};
+registraFase('carico', 10, 'BIL', (r, c) => caricoProssimoBase(c.nome, c.base, c.repsTarget, c.setsBase));
+
 /* Applicato quando si apre una seduta: solo se c e il consenso e solo se
-   la seduta non e ancora iniziata (non tocca serie gia fatte) */
+   la seduta non e ancora iniziata (non tocca serie gia fatte). La catena 'apertura' (regia/fasi.js): 10 BIL qui (carichiDelGiorno),
+   20 RIC-04 in regole-nuove.js (una sola tecnica al cedimento). Restituisce il numero di esercizi cambiati. */
 window.applicaCaricoProgressivo = function(day) {
+  return eseguiFasi('apertura', 0, { giorno: day });
+};
+function carichiDelGiorno(day) {
   if (!coachAttivo()) return 0;
   if (!getProgramma() && !loadHistory().some(h => h.sessione)) return 0;
   const data = loadData();
@@ -399,32 +398,24 @@ window.applicaCaricoProgressivo = function(day) {
     e.tecnicaSeduta = '';
     cambiati++;
   });
-  /* calibrazione del RIR (CAR-14, ponte dell onda 0): nell ultima settimana di carico del blocco, l ultima serie del primo isolamento va a
-     cedimento. Solo per intermedi e avanzati adulti, sotto i 65 anni, senza modalita prudente e mai sul core: chi e piu fragile o ha
-     ancora poca esperienza non va a cedimento per tarare una stima. */
-  const st = settimanaProgramma(), pr = getProgramma(), pcal = profiloCoach();
-  const puoTarare = pcal.livello !== 'principiante' && !pcal.prudente && pcal.eta < 65 && !(pcal.eta > 0 && pcal.eta < 18);
-  if (puoTarare && st && pr && pr.fasi && st.fase === 'carico' && pr.fasi[st.numero] === 'scarico') {
-    const iso = list.find(e => tipoCarico(e.name) === 'isolamento' && !isTimeBased(e.name) && (findExercise(e.name) || {}).group !== 'core' && !e.completedSets.some(x => x.done));
-    if (iso) iso.tecnicaSeduta = 'calibrazione';
-  }
+  /* calibrazione del RIR (CAR-14, ponte dell onda 0): quale esercizio va a cedimento per tarare la stima lo dice carichi/taratura.js */
+  segnaEsercizioTaratura(list);
   saveData(data);
   return cambiati;
-};
+}
+registraFase('apertura', 10, 'BIL', (n, c) => carichiDelGiorno(c.giorno));
 
-/* dopo la seduta: stalli e calibrazione del RIR */
+/* dopo la seduta: la catena 'dopoSeduta' (regia/fasi.js): 10 STA qui (stalli), 20 CAR-14 in carichi/taratura.js (taratura del RIR),
+   30 INT-05 in intensita.js (bilancio delle prime due sedute) */
 function imparaDallaSeduta(list) {
+  eseguiFasi('dopoSeduta', undefined, { lista: list });
+}
+function contaStalli(list) {
   const ag = aggiustiCoach();
   ag.stalli = ag.stalli || {};
   list.forEach(e => {
     if (e.coachNote && /Due volte di fila non completato/.test(e.coachNote)) ag.stalli[e.name] = (ag.stalli[e.name] || 0) + 1;
-    if (e.tecnicaSeduta === 'calibrazione' && e.completedSets.some(x => x.done)) {
-      /* B10 (ponte fino alla taratura nuova di W3-T3): il confronto tra l ultima serie al cedimento e l RPE delle serie prima, gia stanche,
-         ha sempre lo stesso segno e non misura la stima del RIR: non si impara piu niente da li. Ogni taratura dimezza la correzione
-         che il coach aveva gia appreso (rirBias), che cosi si spegne. */
-      const mezza = (Number(ag.rirBias) || 0) * 0.5;
-      ag.rirBias = Math.abs(mezza) < 0.1 ? 0 : Math.round(mezza * 10) / 10;
-    }
   });
   salvaAggiusti(ag);
 }
+registraFase('dopoSeduta', 10, 'STA', (v, c) => { contaStalli(c.lista); });
