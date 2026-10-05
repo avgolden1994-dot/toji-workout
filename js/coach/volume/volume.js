@@ -220,7 +220,7 @@ function volumeUnita(sedute) { return contaVolume(sedute); }
 
 /* IPE-01 acceso, il file delle soglie presente e nessun metodo famoso (il metodo decide da sé le serie) */
 function volumeNuovoAttivo(brief) {
-  return typeof SOGLIE_VOLUME !== 'undefined' && regolaAttiva('IPE-01') && !(brief.metodo && brief.metodo.attivo);
+  return typeof SOGLIE_VOLUME !== 'undefined' && !!(brief && brief.chi && brief.obiettivi && brief.agenda) && regolaAttiva('IPE-01') && !(brief.metodo && brief.metodo.attivo);
 }
 
 /* ============================================================
@@ -397,6 +397,7 @@ function volumeMotore(brief, sedute, b, opz) {
   const provaNuovo = (s, x) => {
     const sd = sedute[s];
     if (sd.esercizi.some(e => e.name === x.name) || vietatiNuovi[s + '|' + x.name]) return null;
+    if (sd.tipo === 'punti' && x.type === 'compound') return null;   /* il giorno dei punti deboli tiene l ordine di priorità: un multiarticolare in coda sarebbe dopo gli isolamenti (ORD-01, ORD-02) */
     if (usoSettimana(x.name) >= maxSettimana(x.name)) return null;
     if (typeof adattoAllaSeduta === 'function' && !adattoAllaSeduta(x, sd.tipo)) return null;
     if (strRidondante(x, sd.esercizi) || strSquatDoppio(x, sd.esercizi)) return null;
@@ -560,14 +561,15 @@ function volumeMotore(brief, sedute, b, opz) {
     return true;
   };
 
+  /* soloUnita: solo aggiunte per quell unità e un passo solo (una serie o un esercizio nuovo da 2 serie): è aggiungiSerieUtile */
   const risolvi = (soloUnita) => {
     let aggiunte = 0;
     for (let giri = 0; giri < PS.giriMax; giri++) {
       const u0 = utilita();
-      let az = miglioreToglimento(u0) || (opz.senzaNuovi ? null : miglioreEsercizioTolto(u0));
+      let az = soloUnita ? null : (miglioreToglimento(u0) || (opz.senzaNuovi ? null : miglioreEsercizioTolto(u0)));
       if (az) { if (applica(az)) continue; }
       az = migliorAggiunta(u0, soloUnita);
-      if (az && applica(az)) { aggiunte += az.d; continue; }
+      if (az && applica(az)) { aggiunte += az.d; if (soloUnita) break; continue; }
       if (az) continue;   /* non e entrata: riprova senza di lei */
       if (soloUnita) break;
       az = migliorScambio(u0);
@@ -668,10 +670,10 @@ function pavimentoVolume(brief, unita) {
 }
 
 /* aggiungiSerieUtile(brief, sedute, unita): una serie in più (o un esercizio nuovo da 2 serie nella seduta con più tempo) per l unità sotto fascia, dove costa meno tempo e dà
-   meno «sbordo»; rispetta i tetti e i minuti dichiarati. Ritorna quante serie ha aggiunto (0 se non c è posto). La chiede il solutore, e adattaAlTempo (W2-T2)
+   meno «sbordo»; rispetta i tetti e i minuti dichiarati. Ritorna quante serie ha aggiunto (0 se non c è posto, niente se IPE-01 non agisce). La chiede il solutore, e adattaAlTempo (W2-T2)
    «solo finché un unità è sotto fascia» (D-P10) */
 function aggiungiSerieUtile(brief, sedute, unita) {
-  if (!volumeNuovoAttivo(brief) || !sedute.length || UNITA_VOLUME.indexOf(unita) === -1) return 0;
+  if (!volumeNuovoAttivo(brief) || !sedute.length || UNITA_VOLUME.indexOf(unita) === -1) return;
   const b = (brief.lavoro && brief.lavoro.volumeBersagli) || bersagliVolume(brief);
   const m = volumeMotore(brief, sedute, b, { aggiunti: [] });
   return m.risolvi(unita);
@@ -680,7 +682,7 @@ function aggiungiSerieUtile(brief, sedute, unita) {
 /* REG-02, verifica finale: rimette in ordine con le serie che ci sono (si scambiano, non si aggiungono minuti: il tempo lo ha già deciso adattaAlTempo) e scrive la nota con la CAUSA
    di ciò che non entra. Ritorna le note (testi) che verificaProgramma aggiunge al programma */
 function validaVolume(brief, sedute) {
-  if (!volumeNuovoAttivo(brief) || !sedute.length) return [];
+  if (!volumeNuovoAttivo(brief) || !sedute.length) return;
   const b = (brief.lavoro && brief.lavoro.volumeBersagli) || bersagliVolume(brief);
   const m = volumeMotore(brief, sedute, b, { senzaCrescita: true });
   m.risolvi();
@@ -688,7 +690,8 @@ function validaVolume(brief, sedute) {
   const mancano = m.sotto();
   const nTesto = (v) => { const r = Math.round(v * 2) / 2; return String(r).replace('.', ','); };
   const gruppi = {};
-  mancano.sort((a, c) => (c.min - c.v) / c.min - (a.min - a.v) / a.min).slice(0, 4).forEach(x => {
+  const grande = (x) => VOLUME_UNITA_GRANDI.indexOf(x.u) !== -1 ? 0 : 1;
+  mancano.sort((a, c) => (grande(a) - grande(c)) || ((c.min - c.v) / Math.max(1, c.min) - (a.min - a.v) / Math.max(1, a.min))).slice(0, 5).forEach(x => {   /* prima le unità grandi */
     const dirette = x.floorD > 0 && x.d < x.floorD - 1e-9 && !(x.v < x.min - 1e-9);
     (gruppi[m.causa(x.u)] = gruppi[m.causa(x.u)] || []).push(volumeEtichetta(x.u) + ' ' + nTesto(dirette ? x.d : x.v) + ' serie');
   });
