@@ -12,7 +12,7 @@
    - una riga con «(spegnibile)» da `spegnibile: true` (regolaAttiva la spegne con tz_regole_spente, senza toccare parametri.js);
      con «(bloccata)» da `bloccata: true` (regolaAttiva sempre false: cancello E.0 punto 0); con «(parte b bloccata)» da
      `bloccataInParte: true` (si implementa solo la parte a).
-   - codici di due o tre lettere (IA-01..05 entrano nel catalogo).
+   - codici di due o tre lettere (due lettere: dal 2026-10-05 nessuna regola ne usa piu, IA-01..05 sono ritirati nel registro A.3).
    Errori (la scrittura e --check falliscono): codice ripetuto; codice senza sotto-coach o con due; codice ritirato nel registro A.3
    (assorbito, rinominato o rinviato) scritto come regola; regola del registro C.2 senza «(bloccata)» (o, se e bloccata solo in
    parte, senza la parola «bloccata»); regola spegnibile e bloccata insieme; voce non valida nella tabella della squadra.
@@ -109,7 +109,7 @@ function espandiCodici(testo) {
   return out;
 }
 /* A.3: «| Vecchio | Finale | SC | Task | Stato |». Un codice vecchio e ritirato (non entra nel catalogo) se e assorbito, se il codice
-   finale e un altro (rinominato: PRI-01 → PRN-01, DON-01 → PAR-06, «REC-13» → ETA-08) o se non ha un codice finale (rinviato, nessuna regola). */
+   finale e un altro (rinominato: PRI-01 → PRN-01, DON-01 → PAR-06, «REC-13» → ETA-08), se non ha un codice finale (rinviato, nessuna regola) o se e rimosso dal prodotto (IA-01..05). */
 function leggiRitirati(righe) {
   const ritirati = {};
   const sez = sezione(righe, /^### A\.3 /, /^## B\. /);
@@ -125,6 +125,7 @@ function leggiRitirati(righe) {
     vecchi.forEach(v => {
       let motivo = null;
       if (/assorbit/i.test(stato)) motivo = 'assorbita → ' + finale;
+      else if (/rimoss/i.test(stato)) motivo = 'rimossa' + ((stato.match(/\d{4}-\d{2}-\d{2}/) || [])[0] ? ' il ' + stato.match(/\d{4}-\d{2}-\d{2}/)[0] : '');
       else if (/^idem\b/i.test(finale)) motivo = null;
       else if (!primoFinale) motivo = (/rinviat/i.test(stato) ? 'rinviata' : 'senza codice finale') + ' (' + (finale || '—') + ')';
       else if (primoFinale !== v) motivo = 'rinominata → ' + finale;

@@ -14,6 +14,7 @@
 | **bloccata** | la regola (o la parte indicata) **non si implementa** finché una ricerca web non la conferma (sezione C) |
 | **spenta** | si implementa ma esce spenta di base (oggi solo TAP-01, che è anche bloccata) |
 | **rinviata** | fuori dalla v2; il modello dei dati non deve impedirla |
+| **rimossa** | il codice ha avuto una regola e il prodotto l'ha tolta: non entra nel catalogo e non si riusa (oggi solo IA-01..05, 2026-10-05) |
 
 **Base delle prove** (come nelle note): [V] visto in un risultato di ricerca della sessione (riassunto, non testo integrale); [R] già nel repo; [D]/[C] calcolo dichiarato; **[M] [N] [K] [CM] [NV] †** = *conoscenza del modello, non verificata sul web*: **non è una prova**. Le note dichiarano in testa la copertura: biomeccanica e mesocicli **0** ricerche riuscite, casa 4, obiettivi 8, algoritmi 10, metodi avanzati 11, principianti 15, specializzazione 16, fasce d'età 18, donne 20, cardio 22, riscaldamento 23, forza 29, psicologia 33, metodi dei coach 37, recupero 38, ipertrofia 42.
 
@@ -366,6 +367,12 @@ Sotto-coach: REG Regista, ARC Architetto, DOS Dosatore, BIL Bilancia, SEN Sentin
 | OBI-13..16 | — | — | — | rinviate (D-P6) |
 | OBI-17 | OBI-17 | PRE | — | **bloccata** |
 | OBI-18 | OBI-18 | MOT | W5-T1 | attiva (Convenzione) |
+
+**Coach IA (IA)**
+
+| Vecchio | Finale | SC | Task | Stato |
+|---|---|---|---|---|
+| IA-01..05 | — | — | — | **rimossa** il 2026-10-05: Coach IA rimosso il 2026-10-05 per decisione del proprietario (client del Worker, consenso a parte, invio dei dati e commento a fine seduta); i cinque codici sono ritirati e non hanno piu un sotto-coach |
 
 **Codici del piano**: REG-01..06 (REG, W1-T1 e W5), FRZ-01..10 (SPC, W2-T7 e W3-T6), EST-01..06 (SPC, come sopra), PAR-06..09 e CAR-18..19 (BIL, **W2-T8**, ex W3-T2). Codici PRN sopravvissuti: **PRN-01, PRN-03, PRN-14, PRN-15, PRN-19**.
 

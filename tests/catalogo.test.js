@@ -1,5 +1,5 @@
 /* Catalogo delle regole e squadra del coach (W1-T1, piano coach v2 B.1, B.4, B.6; registro docs/coach-v2-decisioni.md A.3 e C.2).
-   - tools/genera-catalogo.js: ogni regola ha UN sotto-coach (capitolo 0 della mappa), i codici di due lettere (IA-01..05) entrano,
+   - tools/genera-catalogo.js: ogni regola ha UN sotto-coach (capitolo 0 della mappa), i codici di due lettere entrano (nelle prove ZZ-01: dal 2026-10-05 la mappa vera non ne ha piu, IA-01..05 sono ritirati nel registro A.3),
      «(spegnibile)» e «(bloccata)» passano nel catalogo, i codici ritirati del registro A.3 e le regole bloccate senza segno lo fermano;
    - regolaAttiva (js/coach/parametri.js): una regola bloccata e sempre spenta, una «(spegnibile)» si spegne senza toccare parametri.js;
    - js/coach/regia/perche.js: aggiungiPerche, testoPerche, sottoCoachDi, nomeSottoCoach, fasePerche.
@@ -36,7 +36,7 @@ const catalogoVero = () => G.costruisciCatalogo({ mappa: mappaVera(), registro: 
 /* mappa in miniatura: capitolo 0 con tre sotto-coach e un capitolo di regole */
 const TABELLA = ['## 0. La squadra del coach', '', '| id | Nome | Missione | Codici | File |', '|---|---|---|---|---|',
   '| `regista` | **Il Regista** | «Metto insieme.» | REG-01..06 | `js/coach/regia/` |',
-  '| `motivatore` | **Il Motivatore** | «Ti conosco.» | IA-01..05, PSI-* | — |',
+  '| `motivatore` | **Il Motivatore** | «Ti conosco.» | ZZ-01..05, PSI-* | — |',
   '| `bilancia` | **La Bilancia** | «Decido quanto sollevi.» | CAR-01..19, TAP-01, RIC-01..02, REC-06, IPE-*, DON-*, PRI-*, SEL-* | — |'];
 const mini = (righe, tabella) => (tabella || TABELLA).concat(['', '## 1. Regole di prova', ''], righe).join('\n');
 const errori = c => c.errori.join('\n');
@@ -61,7 +61,7 @@ function contesto(testoCatalogo, prima) {
   };
 }
 
-test('catalogo vero: ogni regola ha un sotto-coach solo, la squadra ha 9 righe, IA-01..05 e REG-01..06 ci sono', () => {
+test('catalogo vero: ogni regola ha un sotto-coach solo, la squadra ha 9 righe, IA-01..05 non ci sono piu e REG-01..06 ci sono', () => {
   const c = catalogoVero();
   assert.strictEqual(errori(c), '', 'il catalogo vero deve generarsi senza errori');
   assert.deepStrictEqual(c.squadra.map(s => s.id), SQUADRA_ID);
@@ -69,11 +69,16 @@ test('catalogo vero: ogni regola ha un sotto-coach solo, la squadra ha 9 righe, 
   assert.strictEqual(c.voci.length, righeRegola, 'ogni riga di regola della mappa e nel catalogo');
   assert.deepStrictEqual(c.voci.filter(v => SQUADRA_ID.indexOf(v.sottoCoach) === -1).map(v => v.codice), [], 'regole senza sotto-coach');
   SQUADRA_ID.forEach(id => assert.ok(c.voci.some(v => v.sottoCoach === id), id + ' possiede almeno una regola'));
-  assert.deepStrictEqual(c.voci.filter(v => /^IA-/.test(v.codice)).map(v => [v.codice, v.sottoCoach]),
-    ['IA-01', 'IA-02', 'IA-03', 'IA-04', 'IA-05'].map(x => [x, 'motivatore']), 'IA-01..05 (due lettere) nel catalogo, al Motivatore');
+  assert.deepStrictEqual(c.voci.filter(v => /^IA-/.test(v.codice)).map(v => v.codice), [], 'Coach IA rimosso il 2026-10-05: nessuna regola IA nel catalogo');
+  assert.ok(!c.squadra.some(s => s.voci.some(v => /^IA-/.test(v.testo))), 'nessun sotto-coach ha piu un codice IA nel capitolo 0');
   assert.deepStrictEqual(c.voci.filter(v => /^REG-/.test(v.codice)).map(v => v.codice + ':' + v.sottoCoach),
     [1, 2, 3, 4, 5, 6].map(n => 'REG-0' + n + ':regista'));
   assert.ok(c.voci.filter(v => /^REG-/.test(v.codice)).every(v => v.area === 'Regia (REG)' && !v.spegnibile && !v.bloccata), 'REG nel capitolo 32, sempre accese');
+});
+
+test('registro A.3: IA-01..05 sono codici ritirati («rimossa il 2026-10-05»), una riga che li riusasse ferma il catalogo', () => {
+  const c = G.costruisciCatalogo({ mappa: mini(['- **CAR-01** carico.', '- **IA-01** consenso.', '- **IA-05** errori.'], TABELLA.map(r => r.replace('ZZ-01..05', 'IA-01..05'))), registro: REGISTRO });
+  ['IA-01', 'IA-05'].forEach(x => assert.match(errori(c), new RegExp(x + ' e un codice ritirato nel registro A\\.3 \\(rimossa il 2026-10-05\\)')));
 });
 
 test('catalogo vero: sotto-coach scelti dove la tabella B.1 del piano metteva un codice in due righe o in nessuna', () => {
@@ -163,7 +168,7 @@ test('npm run catalogo: esce 1 e non scrive con un codice senza sotto-coach; --c
     assert.strictEqual(rotto.status, 1, rotto.stdout + rotto.stderr);
     assert.match(rotto.stderr, /XYZ-01 .* non ha un sotto-coach/);
     assert.ok(!fs.existsSync(path.join(tmp, G.FILE_CATALOGO)), 'con un errore il catalogo non si scrive');
-    fs.writeFileSync(path.join(tmp, G.FILE_MAPPA), mini(['- **CAR-01** carico.', '- **IA-01** consenso.', '- **TAP-01** (bloccata) taper.']));
+    fs.writeFileSync(path.join(tmp, G.FILE_MAPPA), mini(['- **CAR-01** carico.', '- **ZZ-01** consenso.', '- **TAP-01** (bloccata) taper.']));
     assert.strictEqual(lancia('--check').status, 1, 'catalogo mancante');
     assert.strictEqual(lancia().status, 0);
     assert.strictEqual(lancia('--check').status, 0);
@@ -201,14 +206,15 @@ test('regolaAttiva sul catalogo vero: le 9 regole bloccate sono spente, RIC-03 s
   assert.strictEqual(a.attiva('RIC-03'), true);
   a.spegni(['RIC-03', 'MAV-03', 'REG-01']);
   assert.deepStrictEqual(['RIC-03', 'MAV-03', 'REG-01'].map(a.attiva), [false, true, true]);
-  assert.strictEqual(a.g("regolaDescritta('IA-02').sottoCoach"), 'motivatore');
+  assert.strictEqual(a.g("regolaDescritta('PSI-01').sottoCoach"), 'motivatore');
+  assert.strictEqual(a.g("regolaDescritta('IA-02')"), null, 'IA-02 rimossa il 2026-10-05');
   assert.strictEqual(a.g("regolaDescritta('IPE-03')"), null);
 });
 
 test('perche.js: sottoCoachDi e nomeSottoCoach dal catalogo e dalla tabella della squadra', () => {
   const a = contesto(catalogoVero().testo);
   const di = c => a.g('sottoCoachDi(' + JSON.stringify(c) + ')');
-  assert.deepStrictEqual(['CAR-05', 'PRG-07', 'MET-03', 'RIC-03', 'IA-03', 'REG-03'].map(di), ['bilancia', 'sentinella', 'preparatore', 'architetto', 'motivatore', 'regista']);
+  assert.deepStrictEqual(['CAR-05', 'PRG-07', 'MET-03', 'RIC-03', 'PSI-03', 'REG-03'].map(di), ['bilancia', 'sentinella', 'preparatore', 'architetto', 'motivatore', 'regista']);
   assert.deepStrictEqual(['CAR-18', 'FRZ-05', 'IPE-01', 'RIS-13'].map(di), ['bilancia', 'specialista', 'dosatore', 'tecnico'], 'codici non ancora nella mappa: dalla tabella');
   assert.deepStrictEqual(['IPE-03', 'XYZ-01', 'nonso'].map(di), [null, null, null]);
   assert.strictEqual(a.g("nomeSottoCoach('architetto')"), 'L’Architetto');

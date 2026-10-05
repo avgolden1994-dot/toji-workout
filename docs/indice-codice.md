@@ -87,7 +87,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 21. `js/core/storage.js` — Storage per modalita e normalizzazione dei dati
 
-`dataKey` · `historyKey` · `titlesKey` · `leggiJSON()` · `loadTitles` · `saveTitles` · `getDayTitle()` · `normalizeExerciseRecord()` · `loadData()` · `saveData` · `normalizeHistoryEntry()` · `loadHistory()` · `saveHistory` · `migrateLegacyDataIfNeeded()` · `seedDefaultsIfNeeded()`
+`dataKey` · `historyKey` · `titlesKey` · `leggiJSON()` · `loadTitles` · `saveTitles` · `getDayTitle()` · `normalizeExerciseRecord()` · `loadData()` · `saveData` · `normalizeHistoryEntry()` · `loadHistory()` · `saveHistory` · `migrateLegacyDataIfNeeded()` · `CHIAVI_COACH_IA_RIMOSSO` · `ripulisciChiaviCoachIA()` · `seedDefaultsIfNeeded()`
 
 ## js/ui
 
@@ -539,22 +539,14 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 122. `js/ui/sessione-completata.js` — Sessione gia completata
 
-`mostraSessione()` · `window.openDoneView()`
+`mostraSessione()` · `window.openDoneView()` · `window.openHistoryDetail()` · `window.closeDoneView()`
 
-## js/coach
-
-### 123. `js/coach/coach-ia.js` — Coach IA
-
-`COACH_IA_URL` · `IA_CONSENT_KEY` · `IA_DEVICE_KEY` · `TESTI_IA` · `window.coachIAAttivo()` · `window.setCoachIA()` · `htmlPrivacyIA()` · `deviceIA()` · `serieCompatte()` · `nomePulito()` · `contestoSeduta()` · `chiamaCoachIA()` · `iaInCorso` · `window.iaErrore()` · `window.commentaSeduta()` · `aggiornaBoxIA()` · `window.htmlCommentoIA()` · `window.openHistoryDetail()` · `window.closeDoneView()`
-
-## js/ui
-
-### 124. `js/ui/esporta-ics.js` — Esportazione verso calendari (.ics)
+### 123. `js/ui/esporta-ics.js` — Esportazione verso calendari (.ics)
 
 `icsEscape()` · `icsFold()` · `icsData()` · `window.buildIcs()` · `window.exportIcs()` · `linkGoogle()` · `aggiornaAiutoIcs()`
 
 ## js
 
-### 125. `js/avvio.js` — Avvio: ultimo file caricato
+### 124. `js/avvio.js` — Avvio: ultimo file caricato
 
 _solo istruzioni, nessun nome pubblico_

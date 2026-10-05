@@ -49,7 +49,7 @@ test('SOGLIE_REGIA: precedenze di REG-01 nell\'ordine del piano B.2 e versione 2
 
 test('validaVoci rifiuta una voce senza v, forza o fonte, una forza inventata, regole scritte male e campi sconosciuti', () => {
   const ok = { v: 0, forza: 'Convenzione', fonte: 'registro C.4' };
-  assert.deepStrictEqual(S.validaVoci('SOGLIE_PROVA', { zero: ok, falso: Object.assign({}, ok, { v: false }), conRegole: Object.assign({}, ok, { regole: ['IPE-01', 'IA-02'] }) }), [], 'v: 0 e v: false sono valori');
+  assert.deepStrictEqual(S.validaVoci('SOGLIE_PROVA', { zero: ok, falso: Object.assign({}, ok, { v: false }), conRegole: Object.assign({}, ok, { regole: ['IPE-01', 'ZZ-02'] }) }), [], 'v: 0 e v: false sono valori');
   const casi = [
     [{ forza: 'Solida', fonte: 'Pelland 2026' }, /manca `v`/],
     [{ v: 4, fonte: 'Pelland 2026' }, /`forza` «undefined» non ammessa/],
