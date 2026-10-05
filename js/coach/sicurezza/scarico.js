@@ -6,8 +6,9 @@
    Un posto solo per cio che dice quanto scaricare e chi puo chiedere uno scarico, che prima stava in regole-ricerca.js
    (dose e fatica) e in tre punti diversi che scrivevano `ag.scarico` a mano (questionario-decisioni.js, prontezza.js, repertorio.js).
    W1-T3 sposta qui, senza cambiare un numero, DOSE_SCARICO, livelloFatica e la soglia dell sRPE (MES-08) e aggiunge scaricoReattivo:
-   la voce di `ag.scarico` (aggiusti del coach) con il motivo che l utente legge. La dose unica (MES-07) e il riferimento (MES-06) sono
-   di W3-T5: cambieranno qui.
+   la voce di `ag.scarico` (aggiusti del coach) con il motivo che l utente legge; la scrivono questionario-decisioni.js e prontezza.js e la legge
+   dolore-mattina.js (fase 50 AGG di 'carico'). repertorio.js (azioneCoach 'scarico') la scrive ancora a mano: file di un altro task, da
+   portare qui quando lo si tocca. La dose unica (MES-07) e il riferimento (MES-06) sono di W3-T5: cambieranno qui.
    ============================================================ */
 
 /* MES-08: con le risposte 3/6/8/10 (Facile, Giusta, Dura, Al limite) la fatica e «alta» solo se la media delle ultime sedute e quasi sempre «Al limite» (9,5; era 9: bastava

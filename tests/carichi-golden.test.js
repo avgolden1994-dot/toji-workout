@@ -18,6 +18,9 @@
    nuovi: il test rilegge i casi dal JSON (la specifica e scritta per nome in ogni caso) e controlla che ogni valore di ogni dimensione
    compaia davvero.
 
+   Oltre al golden, qui stanno le prove delle funzioni nuove di W1-T3: le fasi registrate (regia/fasi.js: ordine scritto, errori, nessuna
+   funzione riassegnata) e il massimale stimato (carichi/e1rm.js: vettori della nota e stesse cifre di unoRM, e1rmSerie, e1rmSeduta).
+
    Uso:   node --test tests/carichi-golden.test.js            (confronto, fa parte di npm test)
           node tests/carichi-golden.test.js --registra        (riscrive le uscite dei casi gia scelti: SOLO se un task cambia
                                                               apposta il comportamento dei carichi e lo dichiara)
@@ -25,7 +28,8 @@
 'use strict';
 const test = require('node:test'), assert = require('node:assert');
 const fs = require('fs'), path = require('path');
-const { caricaApp } = require('./aiuto-app');
+const acorn = require('acorn');
+const { caricaApp, VETTORI_CARICHI } = require('./aiuto-app');
 
 const FILE_GOLDEN = path.join(__dirname, 'dati', 'carichi-golden.json');
 const ORA = '2026-10-05T10:00:00';          /* lunedi */
@@ -340,5 +344,141 @@ if (process.argv.includes('--ricampiona')) {
       if (diff.length) diversi.push(c.id + ' [' + chiaveSpec(c.spec) + ']\n    ' + diff.join('\n    '));
     });
     assert.strictEqual(diversi.length, 0, diversi.length + ' casi su ' + golden.casi.length + ' sono diversi dal golden:\n  ' + diversi.slice(0, 8).join('\n  '));
+  });
+
+  /* ========================================================================================================
+     Le fasi registrate (js/coach/regia/fasi.js)
+     ======================================================================================================== */
+  const ATTESE = {
+    carico: [{ ordine: 10, codice: 'BIL' }, { ordine: 50, codice: 'AGG' }, { ordine: 60, codice: 'RIC' }, { ordine: 70, codice: 'INT' }],
+    apertura: [{ ordine: 10, codice: 'BIL' }, { ordine: 20, codice: 'RIC-04' }],
+    prontezza: [{ ordine: 10, codice: 'PRZ' }, { ordine: 20, codice: 'RIC-04' }],
+    dopoSeduta: [{ ordine: 10, codice: 'STA' }, { ordine: 20, codice: 'CAR-14' }, { ordine: 30, codice: 'INT-05' }]
+  };
+  test('fasi: i quattro punti hanno le fasi dei vecchi involucri, con l\'ordine di prima scritto nel numero (piano B.3)', () => {
+    const app = caricaApp({ ora: ORA });
+    assert.deepStrictEqual(app.erroriCaricamento, []);
+    const tutte = app.json('fasiRegistrate()');
+    Object.keys(ATTESE).forEach(punto => {
+      const ordini = tutte[punto].map(f => f.ordine);
+      assert.deepStrictEqual(ordini, ordini.slice().sort((a, b) => a - b), punto + ': sempre in ordine');
+      /* le fasi di altri task (per esempio il «perche» a 99) possono aggiungersi: le nostre ci sono tutte, nello stesso ordine */
+      assert.deepStrictEqual(tutte[punto].filter(f => ATTESE[punto].some(a => a.ordine === f.ordine && a.codice === f.codice)), ATTESE[punto], punto);
+    });
+    assert.deepStrictEqual(app.json("fasiRegistrate('carico')"), tutte.carico, 'fasiRegistrate(punto) da solo il punto');
+  });
+
+  test('fasi: vale il numero scritto e non l\'ordine di registrazione; undefined lascia il valore; un punto senza fasi lascia il valore', () => {
+    const app = caricaApp({ ora: ORA });
+    app.g("registraFase('prova', 30, 'C', (v, c) => v.concat('C' + c.x));" +
+          "registraFase('prova', 10, 'A', (v) => { v.push('A'); });" +                 /* non restituisce niente: il valore resta lo stesso oggetto */
+          "registraFase('prova', 20, 'B', (v) => v.concat('B'));");
+    assert.deepStrictEqual(app.json("eseguiFasi('prova', [], { x: 1 })"), ['A', 'B', 'C1']);
+    assert.deepStrictEqual(app.json("fasiRegistrate('prova')"), [{ ordine: 10, codice: 'A' }, { ordine: 20, codice: 'B' }, { ordine: 30, codice: 'C' }]);
+    assert.ok(app.g("fasiRegistrate('prova').every(f => f.fn === undefined)"), 'le funzioni non si espongono');
+    assert.strictEqual(app.g("eseguiFasi('non-esiste', 7, {})"), 7);
+  });
+
+  test('fasi: due fasi con lo stesso ordine e argomenti sbagliati sono errori chiari', () => {
+    const app = caricaApp({ ora: ORA });
+    app.g("registraFase('prova', 10, 'A', () => 1)");
+    const errore = codice => { try { app.g(codice); } catch (e) { return String(e && e.message); } return null; };
+    assert.match(errore("registraFase('prova', 10, 'B', () => 2)"), /l ordine 10 e gia di A/);
+    assert.match(errore("registraFase('prova', '10', 'B', () => 2)"), /ordine deve essere un numero/);
+    assert.match(errore("registraFase('prova', NaN, 'B', () => 2)"), /ordine deve essere un numero/);
+    assert.match(errore("registraFase('prova', 20, 'B', null)"), /fn deve essere una funzione/);
+    assert.match(errore("registraFase('prova', 20, '', () => 2)"), /manca il codice/);
+    assert.match(errore("registraFase('', 20, 'B', () => 2)"), /manca il punto/);
+    assert.deepStrictEqual(app.json("fasiRegistrate('prova')"), [{ ordine: 10, codice: 'A' }], 'dopo gli errori resta solo la prima');
+  });
+
+  test('fasi: nessun file riassegna caricoProssimo, applicaCaricoProgressivo, applicaProntezza e imparaDallaSeduta (una definizione sola)', () => {
+    const NOMI = ['caricoProssimo', 'applicaCaricoProgressivo', 'applicaProntezza', 'imparaDallaSeduta'];
+    const radice = path.join(__dirname, '..'), html = fs.readFileSync(path.join(radice, 'index.html'), 'utf8');
+    const file = [...html.matchAll(/<script src="([^"]+)"/g)].map(m => m[1]).filter(f => !/lingue\//.test(f));
+    const trovate = {}; NOMI.forEach(n => { trovate[n] = []; });
+    const cerca = (n, f) => {
+      if (!n || typeof n.type !== 'string') return;
+      if (n.type === 'FunctionDeclaration' && NOMI.includes(n.id.name)) trovate[n.id.name].push(f + ' (function)');
+      if (n.type === 'AssignmentExpression') {
+        const l = n.left, nome = l.type === 'Identifier' ? l.name : (l.type === 'MemberExpression' && l.object.name === 'window' && l.property.name);
+        if (NOMI.includes(nome)) trovate[nome].push(f + ' (assegnata)');
+      }
+      Object.keys(n).forEach(k => { const v = n[k]; if (Array.isArray(v)) v.forEach(x => cerca(x, f)); else if (v && typeof v.type === 'string') cerca(v, f); });
+    };
+    file.forEach(f => cerca(acorn.parse(fs.readFileSync(path.join(radice, f), 'utf8'), { ecmaVersion: 'latest', sourceType: 'script' }), f));
+    NOMI.forEach(n => assert.strictEqual(trovate[n].length, 1, n + ' deve avere una definizione sola, ne ha ' + trovate[n].length + ': ' + trovate[n].join(', ')));
+  });
+
+  test('fasi: fasi.js sta prima di ogni file che registra una fase (nessun vincolo d\'ordine tra le regole)', () => {
+    const radice = path.join(__dirname, '..'), html = fs.readFileSync(path.join(radice, 'index.html'), 'utf8');
+    const file = [...html.matchAll(/<script src="([^"]+)"/g)].map(m => m[1]);
+    const iF = file.indexOf('js/coach/regia/fasi.js');
+    assert.ok(iF > file.indexOf('js/coach/parametri.js'), 'dopo parametri.js');
+    const chiamano = file.filter(f => f !== 'js/coach/regia/fasi.js' && !/lingue\//.test(f) && /registraFase\(/.test(fs.readFileSync(path.join(radice, f), 'utf8')));
+    assert.ok(chiamano.length >= 6, 'i file che registrano fasi: ' + chiamano.join(', '));
+    chiamano.forEach(f => assert.ok(file.indexOf(f) > iF, f + ' viene prima di fasi.js'));
+  });
+
+  test('fasi: per chi e prudente (principiante, over 65, PAR-Q, sonno scarso) nessuna fase dopo la progressione alza carico o serie (RIC e INT accese contro spente)', () => {
+    const cauti = golden.casi.filter(c => ['principiante', 'principianteForza', 'over65', 'parq', 'sonnoMale'].includes(c.spec.liv) && c.spec.reg === 'tutte').slice(0, 60);
+    assert.ok(cauti.length >= 40, 'casi prudenti con le regole accese: ' + cauti.length);
+    cauti.forEach(c => {
+      const carichi = (reg) => { const app = caricaApp({ ora: ORA }); costruisciStato(app, Object.assign({}, c.spec, { reg: reg })); return ES.map(es => app.dati(app.chiama('caricoProssimo', es.nome, es.kg, es.reps, es.sets))); };
+      const accese = carichi('tutte'), spente = carichi('senzaRICINT');
+      ES.forEach((es, i) => {
+        assert.ok(accese[i].weight <= spente[i].weight, c.id + ' ' + es.nome + ': peso ' + accese[i].weight + ' > ' + spente[i].weight);
+        assert.ok(accese[i].sets <= spente[i].sets, c.id + ' ' + es.nome + ': serie ' + accese[i].sets + ' > ' + spente[i].sets);
+      });
+    });
+  });
+
+  /* ========================================================================================================
+     Il massimale stimato (js/coach/carichi/e1rm.js) e lo scarico (js/coach/sicurezza/scarico.js)
+     ======================================================================================================== */
+  test('e1rm e caricoPer: i vettori della nota (ricerca-algoritmi 3.2-3.3) e le cifre di sempre', () => {
+    const app = caricaApp({ ora: ORA });
+    const [conRpe, conRirAssunto, alCedimento] = VETTORI_CARICHI.e1rmStima;
+    assert.strictEqual(app.g('e1rm(80, 8, 2)'), conRpe.atteso, 'RPE 8 = RIR 2');
+    assert.strictEqual(app.g('e1rm(80, 8, ' + conRirAssunto.rirAssunto + ')'), conRirAssunto.atteso);
+    assert.strictEqual(app.g('e1rm(80, 8)'), alCedimento.atteso, 'al cedimento (RIR 0, anche senza dirlo)');
+    const [daMassimale, daSerie] = VETTORI_CARICHI.caricoDaE1rm;
+    assert.strictEqual(app.g('caricoPer(' + daMassimale.e1rm + ', ' + daMassimale.reps + ', ' + daMassimale.rir + ')'), daMassimale.atteso);
+    assert.strictEqual(app.g('caricoPer(e1rm(' + daSerie.da.weight + ', ' + daSerie.da.reps + ', ' + daSerie.da.rir + '), ' + daSerie.reps + ', ' + daSerie.rir + ')'), daSerie.atteso, daSerie.nota);
+    assert.strictEqual(app.g('e1rm(0, 8, 2) + e1rm(80, 0, 2) + caricoPer(0, 5, 2) + caricoPer(100, 0, 2)'), 0, 'senza peso o ripetizioni: 0');
+    assert.strictEqual(app.g('e1rm(100, 1)'), 100, 'una ripetizione: il peso stesso');
+  });
+
+  test('e1rm: stessi numeri di unoRM, e1rmSerie ed e1rmSeduta di prima (spostate, non cambiate)', () => {
+    const app = caricaApp({ ora: ORA });
+    const unoRMdiPrima = (peso, reps) => { peso = Number(peso) || 0; reps = Number(reps) || 0; if (peso <= 0 || reps <= 0) return 0; if (reps === 1) return peso; return Math.round(peso * (1 + Math.min(reps, 12) / 30) * 10) / 10; };
+    const e1rmSerieDiPrima = x => { const w = Number(x.weight) || 0, r = Number(x.reps) || 0; if (!w || !r || r > 12) return 0; return w * (1 + r / 30); };
+    [0, 2.5, 20, 60, 61.3, 100, 142.5, '80', 'x', null].forEach(peso => [0, 1, 2, 5, 8, 10, 12, 13, 20, '8', null].forEach(reps => {
+      const p = JSON.stringify(peso), r = JSON.stringify(reps);
+      assert.strictEqual(app.g('unoRM(' + p + ', ' + r + ')'), unoRMdiPrima(peso, reps), 'unoRM ' + p + ' x ' + r);
+      assert.strictEqual(app.g('e1rm(' + p + ', ' + r + ')'), unoRMdiPrima(peso, reps), 'e1rm ' + p + ' x ' + r);
+      assert.strictEqual(app.g('e1rmSerie({ weight: ' + p + ', reps: ' + r + ' })'), e1rmSerieDiPrima({ weight: peso, reps: reps }), 'e1rmSerie ' + p + ' x ' + r);
+    }));
+    const ex = { sets: [{ weight: 60, reps: 8, done: true }, { weight: 62.5, reps: 6, done: true }, { weight: 70, reps: 3, done: false }, { weight: 40, reps: 20, done: true }] };
+    assert.strictEqual(app.g('e1rmSeduta(' + JSON.stringify(ex) + ')'), Math.max.apply(null, ex.sets.filter(x => x.done).map(e1rmSerieDiPrima)));
+    assert.strictEqual(app.g('e1rmSeduta({ sets: [] })'), 0);
+    assert.strictEqual(app.g('e1rmSeduta({})'), 0);
+  });
+
+  test('scaricoReattivo: la voce di ag.scarico di sempre; le decisioni e la prontezza la usano e gli aggiusti restano com\'erano', () => {
+    const app = caricaApp({ ora: ORA });
+    assert.deepStrictEqual(app.json("scaricoReattivo('motivo di prova', 3)"), { sedute: 3, motivo: 'motivo di prova' });
+    app.profilo(PROFILI.intermedio);
+    app.programma(programma('S2', 'intermedio'));
+    app.g('applicaDecisioni([{ tipo: "scarico" }], { esercizi: [] })');
+    assert.deepStrictEqual(app.json('aggiustiCoach().scarico'), { sedute: 1, motivo: 'fatica accumulata nelle ultime sedute' });
+    /* la prontezza bassa per tre giorni di fila scrive lo scarico da 2 sedute (il golden lo registra in molti casi: qui la voce intera) */
+    const b = caricaApp({ ora: ORA });
+    b.profilo(PROFILI.intermedio);
+    b.programma(programma('S2', 'intermedio'));
+    b.scrivi('coach_plus_prontezza_storia_toji', [2, 1].map(dd => ({ data: b.ymd(b.giorniFa(dd)), punteggio: 40, sonno: 0 })));
+    b.g('showUndo = function () {}; renderAllenamento = function () {}; currentDay = ' + JSON.stringify(GIORNO));
+    b.g('applicaProntezza({ sonno: 0, stress: 0, dolenzia: 0, voglia: 0 })');
+    assert.deepStrictEqual(b.json('aggiustiCoach().scarico'), { sedute: 2, motivo: 'stanchezza alta per piu giorni di fila' });
   });
 }

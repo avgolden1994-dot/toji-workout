@@ -11,6 +11,7 @@
    PRZ-03 (una serie in piu sugli accessori con prontezza 70% o piu) e ritirata (decisione D-P14, onda 0): "tutto normale" vale circa 78,
    quindi scattava quasi ogni giorno, oltre il piano e oltre il tetto di 3 serie dei principianti (B18). Il solo "+1 serie" che resta e
    quello settimanale per unita di volume (PCO-03, W3-T4).
+   W1-T3: applicaProntezza non e piu avvolta da regole-nuove.js ma una catena 'prontezza' di fasi registrate (regia/fasi.js): 10 PRZ qui, 20 RIC-04.
    ============================================================ */
 const PRONTEZZA_KEY = () => 'coach_plus_prontezza_' + currentMode;
 const PRONTEZZA_VOCI = [

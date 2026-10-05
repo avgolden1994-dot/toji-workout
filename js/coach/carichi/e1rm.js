@@ -23,13 +23,14 @@ function e1rm(peso, reps, rir) {
 }
 
 /* caricoPer(e1rmKg, ripetizioni, rir): il carico che con quel massimale permette `ripetizioni` con `rir` in riserva (Epley al contrario),
-   arrotondato a 0,1 kg; 0 se manca il massimale. Il passo dell attrezzo e l arrotondamento al disco sono di W3-T1 */
+   arrotondato a 0,1 kg; 0 se manca il massimale. Non taglia le ripetizioni efficaci a 12 come e1rm (che lo fa per restare uguale a unoRM): 12 ripetizioni
+   con 2 in riserva sono 14 e dal massimale di 123,3 kg danno 84,1 kg, non 88. Il passo dell attrezzo, il tetto del salto e l arrotondamento al disco sono di W3-T1 */
 function caricoPer(e1rmKg, reps, rir) {
   e1rmKg = Number(e1rmKg) || 0; reps = Number(reps) || 0; rir = Number(rir) || 0;
   if (e1rmKg <= 0 || reps <= 0) return 0;
   const eff = reps + Math.max(0, rir);
   if (eff <= 1) return e1rmKg;
-  return Math.round(e1rmKg / (1 + Math.min(eff, 12) / 30) * 10) / 10;
+  return Math.round(e1rmKg / (1 + eff / 30) * 10) / 10;
 }
 
 /* massimale stimato (Epley) di una serie dello storico, solo da serie fino a 12 ripetizioni (0 altrimenti); non arrotondato: serve ai
