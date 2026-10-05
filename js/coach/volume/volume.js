@@ -82,7 +82,9 @@ const VOLUME_PRIORITA_UNITA = { petto: ['petto'], schiena: ['dorsali', 'schiena_
 const VOLUME_ZONA_UNITA = { petto: ['spalle'], dorsali: ['spalle', 'schiena'], schiena_spessore: ['schiena', 'spalle'], quadricipiti: ['ginocchia'], femorali: ['ginocchia', 'schiena'],
   grande_gluteo: ['schiena'], deltoide_laterale: ['spalle'], deltoide_posteriore: ['spalle'], deltoide_anteriore: ['spalle'], addome: ['schiena'] };
 /* i gruppi del collaudo REC-01 (48 ore) e dell equilibrio: il credito di un esercizio al gruppo e il massimo dei crediti delle sue unità (come il collaudo: 1 per il bersaglio, 0,5 per un secondario) */
-const VOLUME_GRUPPI_RECUPERO = { petto: ['petto'], schiena: ['dorsali', 'schiena_spessore'], quadricipiti: ['quadricipiti'], femorali: ['femorali'], glutei: ['grande_gluteo'] };
+const VOLUME_GRUPPI_RECUPERO = { petto: ['petto'], schiena: ['dorsali', 'schiena_spessore'], quadricipiti: ['quadricipiti'], femorali: ['femorali'], glutei: ['grande_gluteo'],
+  spalle: ['deltoide_laterale', 'deltoide_posteriore', 'deltoide_anteriore'] };
+const VOLUME_GRUPPI_SOMMA = ['spalle'];   /* le spalle sono tre unità: il credito al gruppo è la somma (come il collaudo REC-01), per gli altri il massimo */
 /* unità con la frequenza da controllare: ≥ 2 sedute con almeno 1,5 serie frazionarie (FRQ-01) e, per i muscoli piccoli, ≥ 2 sedute con serie dirette (FRQ-02) */
 const VOLUME_FREQUENZA_UNITA = ['petto', 'dorsali', 'quadricipiti', 'femorali', 'grande_gluteo', 'bicipiti', 'tricipiti'];
 const VOLUME_FREQUENZA_DIRETTE = ['deltoide_laterale', 'deltoide_posteriore', 'bicipiti', 'tricipiti', 'polpacci'];
@@ -279,7 +281,7 @@ function volumeMotore(brief, sedute, b, opz) {
     const cr = creditiUnita(e.name), crv = [];
     Object.keys(cr).forEach(u => crv.push([iU[u], cr[u]]));
     const gr = [];
-    GR.forEach(g => { const c = Math.max.apply(null, VOLUME_GRUPPI_RECUPERO[g].map(u => cr[u] || 0)); if (c > 0) gr.push([g, c]); });
+    GR.forEach(g => { const v = VOLUME_GRUPPI_RECUPERO[g].map(u => cr[u] || 0), c = VOLUME_GRUPPI_SOMMA.indexOf(g) !== -1 ? v.reduce((t, x) => t + x, 0) : Math.max.apply(null, v); if (c > 0) gr.push([g, c]); });
     const tempo = !isTimeBased(e.name);
     return { s: s, e: e, cr: crv, gr: gr, push: tempo && strEspinta(e), pull: tempo && strEtirata(e), tm: tempoSerie(e), sets0: e.sets, cap: capSerie(e), fond: !!fond, min: Math.min(e.sets, fond ? 3 : 2), bloccato: false,
       sch: Math.max(cr.dorsali || 0, cr.schiena_spessore || 0) };
@@ -388,7 +390,7 @@ function volumeMotore(brief, sedute, b, opz) {
     /* l unica flessione del ginocchio della settimana (leg curl, nordic) resta: i femorali hanno bisogno di una flessione (Maeo 2021, EQ-03) */
     if (/leg curl|nordic/i.test(senzaEmoji(r.e.name)) && !sedute.some(o => o.esercizi.some(x => x !== r.e && /leg curl|nordic/i.test(senzaEmoji(x.name))))) return false;
     /* il muscolo che l esercizio allena in pieno (credito 1) non scende sotto il minimo della sua fascia per toglierlo (il core, i polpacci, i deltoidi posteriori restano coperti) */
-    return r.cr.every(c => c[1] < 1 || P[c[0]].minBanda <= 0 || W[c[0]] - r.e.sets >= P[c[0]].minBanda - 1e-9);
+    return r.cr.every(c => c[1] < 1 || ((P[c[0]].minBanda <= 0 || W[c[0]] - r.e.sets >= P[c[0]].minBanda - 1e-9) && (P[c[0]].floorD <= 0 || D[c[0]] - r.e.sets >= P[c[0]].floorD - 1e-9)));
   };
   /* un esercizio nuovo nella seduta s, con 2 serie: { r, ex } oppure null. La prescrizione (ripetizioni, pausa) e quella di sempre (prescriviSeduta) */
   const presCache = {};
@@ -403,8 +405,8 @@ function volumeMotore(brief, sedute, b, opz) {
     if (x.group === 'core' && sd.esercizi.some(e => (findExercise(e.name) || {}).group === 'core')) return null;
     const k = s + '|' + x.name;
     if (!presCache[k]) presCache[k] = prescriviSeduta(brief, [{ name: x.name, weight: x.weight || 0 }], L.tipiGiorno[s])[0];
-    const ex = Object.assign({}, presCache[k], { sets: 0, protetto: true });
-    delete ex.fisso;
+    const ex = Object.assign({}, presCache[k], { sets: 0 });
+    delete ex.fisso; delete ex.protetto;   /* non protetto: se la seduta ha troppi esercizi (EXN-02) lo toglie la stessa regola degli altri */
     const r = nuovoRec(s, ex, false);
     r.sets0 = 2; r.min = 2; r.cap = Math.max(r.cap, 2);
     return { r: r, ex: ex, pieno: sd.esercizi.length >= maxEs };
@@ -520,7 +522,6 @@ function volumeMotore(brief, sedute, b, opz) {
       (opz.tolti || []).push(r.e.name);
       return true;
     }
-    if (typeof __VOLDBG !== 'undefined') console.log('  mossa', az.tipo, az.tipo === 'scambio' ? '-' + az.da.e.name + ' +' + az.a.e.name : (az.d > 0 ? '+' : '') + az.d + ' ' + (az.r ? az.r.e.name : ''), 'du=' + (az.du || 0).toFixed(3), 'eff=' + (az.eff || 0).toFixed(3));
     if (az.tipo === 'scambio') {
       muovi(az.da, -1); muovi(az.a, 1);
       const ss = az.da.s === az.a.s ? [az.a.s] : [az.da.s, az.a.s];
@@ -578,13 +579,17 @@ function volumeMotore(brief, sedute, b, opz) {
   };
 
   /* ---- lo stato, per la verifica e le note ---- */
-  const sotto = () => U.map((u, i) => ({ u: u, i: i, v: W[i], d: D[i], min: P[i].minBanda, floorD: P[i].floorD, target: P[i].target })).filter(x => x.min > 0 && x.v < x.min - 1e-9 || (x.floorD > 0 && x.d < x.floorD - 1e-9));
+  /* le unità sotto la loro fascia che meritano una nota: le grandi e quelle con un pavimento di serie dirette (adduttori, abduttori e il resto non ne hanno) */
+  const sotto = () => U.map((u, i) => ({ u: u, i: i, v: W[i], d: D[i], min: P[i].minBanda, floorD: P[i].floorD, target: P[i].target }))
+    .filter(x => (VOLUME_UNITA_GRANDI.indexOf(x.u) !== -1 || x.floorD > 0) && ((x.min > 0 && x.v < x.min - 1e-9) || (x.floorD > 0 && x.d < x.floorD - 1e-9)));
   /* perché un unità non arriva: 'attrezzi' (nessun esercizio adatto), 'tetto' (le serie o gli esercizi di una seduta sono al limite), 'tempo' */
   const causa = (u) => {
-    if (!candidatiNuovi(u).length && !recs.some(r => r.cr.some(c => c[0] === iU[u]))) return 'attrezzi';
-    const conPosto = recs.some(r => r.cr.some(c => c[0] === iU[u]) && !r.e.fisso && T[r.s] + r.tm <= minuti + 1e-9);
-    if (conPosto) return 'tetto';
-    return 'tempo';
+    const iu = iU[u];
+    if (!candidatiNuovi(u).length && !recs.some(r => r.cr.some(c => c[0] === iu))) return 'attrezzi';
+    /* c è posto nei minuti ma una regola lo impedisce (serie per esercizio, per seduta, 48 ore, esercizi per seduta)? */
+    const conPosto = recs.some(r => r.cr.some(c => c[0] === iu) && !r.e.fisso && T[r.s] + r.tm <= minuti + 1e-9) ||
+      sedute.some((sd, s) => sd.esercizi.length >= maxEs && T[s] + 2 * 2.5 + 1 <= minuti);
+    return conPosto ? 'tetto' : 'tempo';
   };
   const volumi = () => { const o = {}; U.forEach((u, i) => { o[u] = W[i]; }); return o; };
   return { risolvi: risolvi, sotto: sotto, causa: causa, volumi: volumi, W: W, D: D, S: S, SD: SD, T: T, P: P, iU: iU, minuti: minuti, recs: recs };

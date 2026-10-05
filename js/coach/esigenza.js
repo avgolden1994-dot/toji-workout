@@ -12,6 +12,7 @@
    - PRN-01 il principiante non ha l esigenza del 120%: parte da 100%, non sale oltre e non vede il "Coach esigente" (riceve la
      scheda con il volume del suo livello, vicino al cedimento mai).
    - W2-T8 (ESI-02): le serie facili degli esercizi in calibrazione (CAR-18) non alzano l esigenza: la partenza bassa era voluta (calibrazioneNellaSeduta).
+   - W2-T1 (OBI-04): in deficit calorico l esigenza non supera il 100% (esigenzaInDeficit): niente +20% di volume e niente nota «Coach esigente».
    - MES-10 / MES-11 la settimana di scarico non e un dato di forma: l esigenza non cambia per le serie e per lo sforzo di quella
      settimana (le serie facili di uno scarico non la alzano) e la prima settimana dopo lo scarico non conta "RPE sopra il bersaglio"
      (i carichi di rientro); lo sforzo si confronta con il RIR bersaglio che valeva in quella seduta, non con quello di oggi.
@@ -25,8 +26,15 @@ function esigenzaEsclusa(p, soloSicurezza) {
   const minorenne = Number(p.age) > 0 && Number(p.age) < PARAM_ETA.maggiorenne;
   return !!(p.parq || Number(p.age) >= 65 || minorenne || (mo && !mo.scaduto && (mo.vol < 1 || mo.rir)));
 }
-/* PRN-01: il principiante non sale oltre il 100%; gli altri fino al 130% */
-function tettoEsigenza(p) { return p && p.level === 'principiante' && regolaAttiva('PRN-01') ? 1 : 1.3; }
+/* OBI-04: in deficit calorico (il dimagrimento, in qualunque posizione tra gli obiettivi, o la fase scelta a mano) il volume non sale: l esigenza non supera il 100%
+   (il recupero cala, l obiettivo dei pesi e tenere i carichi e il muscolo: ricerca-obiettivi §3.1, un RCT sul volume; Convenzione). d = risposte, p = profilo salvato */
+function esigenzaInDeficit(d, p) {
+  d = d || {}; p = p || {};
+  const goals = (d.goals && d.goals.length) ? d.goals : (p.goals && p.goals.length ? p.goals : (d.goal || p.goal ? [d.goal || p.goal] : []));
+  return regolaAttiva('OBI-04') && faseCorpo({ goals: goals, fase: d.fase || p.fase }) === 'deficit';
+}
+/* PRN-01: il principiante non sale oltre il 100%; OBI-04: nemmeno chi e in deficit; gli altri fino al 130% */
+function tettoEsigenza(p) { return (p && p.level === 'principiante' && regolaAttiva('PRN-01')) || esigenzaInDeficit({}, p) ? 1 : 1.3; }
 /* MES-11: lo scarto RPE-bersaglio di una seduta passata si misura con il RIR bersaglio salvato in quella seduta (obiettivo.rir, dall onda 0);
    per le sedute vecchie si rifa con la settimana in cui sono state fatte */
 function rpeBersaglioSeduta(h, x) {

@@ -16,6 +16,7 @@
    Onda 0 del coach v2 (W0-T4):
    - PRN-01 il principiante parte da 100% (esigenzaIniziale), non sale oltre e il bilancio delle prime sedute lo puo solo abbassare.
    - ETA-04 sotto i 18 anni nessun giudizio sulla BIA (i valori di riferimento sono da adulti): niente bandiere di prudenza ne testi.
+   - OBI-04 (W2-T1) in deficit calorico l esigenza di partenza non supera il 100% (esigenzaInDeficit, esigenza.js).
    - MES-06 la prima seduta con un esercizio dopo lo scarico lascia una ripetizione in riserva in piu (rirExtraIntensita).
    - MES-11 il bilancio confronta lo sforzo con il RIR bersaglio che valeva in quella seduta (rpeBersaglioSeduta).
    W2-T8: INT-05 non conta come «serie facili» (sforzo sotto il bersaglio) quelle degli esercizi in calibrazione (CAR-18, carichi/calibrazione.js): contano solo per il completamento.
@@ -76,7 +77,9 @@ window.statoBia = function(d, prof) {
 window.esigenzaIniziale = function(d, prof) {
   const v = PARAM_INTENSITA.esigenza[statoBia(d, prof).livello];
   /* PRN-01: il principiante parte da 100% (niente "Coach esigente"): impara i movimenti, il corpo si abitua senza troppa dolenzia */
-  return ((d && d.level) || (prof && prof.level)) === 'principiante' && regolaAttiva('PRN-01') ? Math.min(v, 1) : v;
+  if (((d && d.level) || (prof && prof.level)) === 'principiante' && regolaAttiva('PRN-01')) return Math.min(v, 1);
+  /* OBI-04: in deficit calorico (il dimagrimento tra gli obiettivi) niente +20%: parte da 100% al massimo */
+  return esigenzaInDeficit(d, prof) ? Math.min(v, 1) : v;
 };
 /* INT-03 e INT-04: ripetizioni in riserva in piu per questo esercizio (usata da rirBersaglio) */
 window.rirExtraIntensita = function(nome) {
