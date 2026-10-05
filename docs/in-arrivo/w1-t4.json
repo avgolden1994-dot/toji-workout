@@ -1,23 +1,54 @@
 {
   "task": "W1-T4",
   "script": [
-    { "src": "js/coach/programma/mesociclo.js", "dopo": "js/coach/programma/struttura-pro.js" },
-    { "src": "js/coach/programma/completamenti.js", "dopo": "js/coach/programma/mesociclo.js" },
-    { "src": "js/coach/volume/serie-ripetizioni.js", "dopo": "js/coach/programma/completamenti.js" },
-    { "src": "js/coach/volume/volume.js", "dopo": "js/coach/volume/serie-ripetizioni.js" },
-    { "src": "js/coach/volume/tempo.js", "dopo": "js/coach/volume/volume.js" },
-    { "src": "js/coach/volume/tecniche.js", "dopo": "js/coach/volume/tempo.js" },
-    { "src": "js/coach/sicurezza/vincoli.js", "dopo": "js/coach/volume/tecniche.js" },
-    { "src": "js/coach/regia/brief.js", "dopo": "js/coach/sicurezza/vincoli.js" },
-    { "src": "js/coach/regia/genera.js", "dopo": "js/coach/regia/brief.js" }
+    {
+      "src": "js/coach/programma/mesociclo.js",
+      "dopo": "js/coach/programma/struttura-pro.js"
+    },
+    {
+      "src": "js/coach/programma/completamenti.js",
+      "dopo": "js/coach/programma/mesociclo.js"
+    },
+    {
+      "src": "js/coach/volume/serie-ripetizioni.js",
+      "dopo": "js/coach/programma/completamenti.js"
+    },
+    {
+      "src": "js/coach/volume/volume.js",
+      "dopo": "js/coach/volume/serie-ripetizioni.js"
+    },
+    {
+      "src": "js/coach/volume/tempo.js",
+      "dopo": "js/coach/volume/volume.js"
+    },
+    {
+      "src": "js/coach/volume/tecniche.js",
+      "dopo": "js/coach/volume/tempo.js"
+    },
+    {
+      "src": "js/coach/sicurezza/vincoli.js",
+      "dopo": "js/coach/volume/tecniche.js"
+    },
+    {
+      "src": "js/coach/regia/brief.js",
+      "dopo": "js/coach/sicurezza/vincoli.js"
+    },
+    {
+      "src": "js/coach/regia/genera.js",
+      "dopo": "js/coach/regia/brief.js"
+    }
   ],
   "regole": [
-    { "capitolo": 28, "titolo": "Dall'obiettivo al programma (OBI)", "riga": "- **OBI-02** Fase del corpo da tutti gli obiettivi: una sola funzione `faseCorpo` (js/coach/regia/brief.js) per la scheda Peso, il pannello del coach (`corpoCoach`) e la nota dei passi del programma; il dimagrimento, in qualunque posizione, è un deficit (come già faceva la nota dei passi), poi vince il primo tra ricomposizione e massa, altrimenti mantenimento; la fase scelta a mano in Opzioni vince su tutto; la priorità tra massa e dimagrimento dichiarati insieme è di OBI-01 (W2-T5). Obiettivi che il coach non conosce ancora (D-P6): il programma è quello di «salute» e il profilo conserva l'obiettivo dichiarato. Convenzione (coerenza interna: docs/ricerca-obiettivi-e-programmi.md A5, OBI-02)." }
+    {
+      "capitolo": 28,
+      "titolo": "Dall'obiettivo al programma (OBI)",
+      "riga": "- **OBI-02** Fase del corpo da tutti gli obiettivi: una sola funzione `faseCorpo` (js/coach/regia/brief.js) per la scheda Peso, il pannello del coach (`corpoCoach`) e la nota dei passi del programma; il dimagrimento, in qualunque posizione, è un deficit (come già faceva la nota dei passi), poi vince il primo tra ricomposizione e massa, altrimenti mantenimento; la fase scelta a mano in Opzioni vince su tutto; la priorità tra massa e dimagrimento dichiarati insieme è di OBI-01 (W2-T5). Obiettivi che il coach non conosce ancora (D-P6): il programma è quello di «salute» e il profilo conserva l'obiettivo dichiarato. Convenzione (coerenza interna: docs/ricerca-obiettivi-e-programmi.md A5, OBI-02)."
+    }
   ],
   "mappaAgenti": [
     "generatore a stadi: `window.buildProgram` e l'elenco degli stadi (nell'intestazione) in js/coach/regia/genera.js; il brief (`briefCoach`, `briefOggi`, `faseCorpo`, D-P6) in js/coach/regia/brief.js; i limiti in js/coach/sicurezza/vincoli.js (`vincoliSicurezza`)",
     "dove e finito il codice di ricette.js: posti e scelta (`componiSedute`) restano in js/coach/programma/ricette.js; serie, ripetizioni e pause in js/coach/volume/serie-ripetizioni.js (`prescriviSerie`); volume per muscolo in js/coach/volume/volume.js (`assegnaVolume`, `limitaVolume`, `recuperoOk`, `creditoSerie`); tempo in js/coach/volume/tempo.js (`durataSeduta` = ex `stimaMinutiSeduta`, `stimaEsercizi` = ex `exerciseCountFor`, `adattaAlTempo`, `riempiTempo`); tecniche in js/coach/volume/tecniche.js (`assegnaTecniche`, `senzaCedimentoPer`); completamenti in js/coach/programma/completamenti.js (`completaSettimana`, `rinforzaFemorali`, `ordinaSedute`); mesociclo in js/coach/programma/mesociclo.js (`strutturaProgramma`, `fasiProgramma`, `pianoMesociclo`); carichi di partenza in js/coach/carichi/partenza.js (`applicaPartenze`)",
     "nomi spostati senza cambiare comportamento: `faseCorpo` da js/ui/progressi/peso.js a js/coach/regia/brief.js; `exerciseCountFor` e `stimaMinutiSeduta` restano come sinonimi in js/coach/volume/tempo.js"
   ],
-  "nota": "W1-T4: generatore a stadi e brief. Il programma di 300 profili è identico byte per byte a prima (tests/genera-golden.test.js); l'unico cambiamento di comportamento voluto è D-P6 (obiettivo sconosciuto = programma di salute, profilo invariato) e la fase del corpo di OBI-02 nelle sole schermate Peso e pannello del coach (il programma non cambia)."
+  "nota": "W1-T4: generatore a stadi e brief. Il programma di 300 profili (e di altri 3.780 confronti col codice di prima, anche a coach spento, con profilo salvato e con valori limite) è identico byte per byte (tests/genera-golden.test.js); il collaudo standard è identico a quello di coach-v2-onda-0 (criteri 1.2). Cambiamenti di comportamento voluti: D-P6 (obiettivo sconosciuto = programma di salute, profilo invariato) e la fase del corpo di OBI-02 nelle sole schermate Peso e pannello del coach (il programma non cambia). Per INT-1: il golden si rigenera dopo W1-T5 (GENERA_GOLDEN=scrivi node tests/genera-golden.test.js); i puntatori `dove` di tools/collaudo-generatore.js dicono ancora ricette.js: buildProgram e onboarding.js: exerciseCountFor (ora regia/genera.js, volume/*.js, programma/completamenti.js, volume/tempo.js): da aggiornare con le righe dei criteri riscritti; regole-ricerca.js:77 (inDeficitCalorico) guarda ancora solo il primo obiettivo (file di W1-T3): usare faseCorpo() in INT-1 o in W3-T5."
 }
