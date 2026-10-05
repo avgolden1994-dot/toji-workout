@@ -5,9 +5,10 @@
 const test = require('node:test'), assert = require('node:assert');
 const { caricaApp, ORA, profili, TUTTI_GLI_OBIETTIVI } = require('./aiuto-genera');
 const { elencoFixture } = require('./aiuto-app');
+const { conSoglieStruttura } = require('./aiuto-mesociclo');
 
 let _app = null;
-const app = () => _app || (_app = caricaApp({ ora: ORA }));
+const app = () => _app || (_app = conSoglieStruttura(caricaApp({ ora: ORA })));   /* W2-T4: il mesociclo v2 legge le soglie della struttura */
 const BASE = { goals: ['massa'], level: 'intermedio', days: 4, minutes: 60, luogo: 'palestra', fastidi: [], sex: 'M', age: 30, usaProfilo: false, seme: 'w1t4-stadi' };
 const costruisci = (d, a) => (a || app()).dati((a || app()).chiama('buildProgram', Object.assign({}, BASE, d)));
 const brief = (d, a) => (a || app()).chiama('briefCoach', Object.assign({}, BASE, d), {});
@@ -196,18 +197,18 @@ test('vincoliSicurezza: oggi le regole di prima: Nordic Curl, serie massime, tec
 });
 
 /* ---------- 4. il mesociclo ---------- */
-test('pianoMesociclo: settimane, scarichi e RIR per settimana come prima', () => {
+test('pianoMesociclo: settimane, scarichi e RIR per settimana (W2-T4: 12 settimane per chi comincia, blocchi 5+1; i prudenti come prima)', () => {
   const m = (d) => app().dati(app().chiama('pianoMesociclo', app().chiama('briefCoach', Object.assign({}, BASE, d), {})));
-  assert.deepStrictEqual(m({ level: 'principiante' }).struttura, { settimane: 8, blocco: 8 });
+  assert.deepStrictEqual(m({ level: 'principiante' }).struttura, { settimane: 12, blocco: 12 });
   assert.deepStrictEqual(m({ level: 'principiante', age: 70 }).struttura, { settimane: 8, blocco: 4 });
-  assert.deepStrictEqual(m({ level: 'intermedio' }).struttura, { settimane: 12, blocco: 4 });
+  assert.deepStrictEqual(m({ level: 'intermedio' }).struttura, { settimane: 12, blocco: 6 });
   const av = m({ level: 'avanzato' });
   assert.deepStrictEqual(av.struttura, { settimane: 12, blocco: 6 });
-  assert.deepStrictEqual(av.rirSett, [3, 2, 2, 1, 0, 4, 3, 2, 2, 1, 0, 4]);
+  assert.deepStrictEqual(av.rirSett, [3, 2, 2, 1, 1, 4, 3, 2, 2, 1, 1, 4], 'il limite basso dei fondamentali col bilanciere: mai 0 (PCO-02)');
   assert.strictEqual(av.note.length, 1);
-  assert.strictEqual(m({ level: 'intermedio' }).rirSett, null);
+  assert.deepStrictEqual(m({ level: 'intermedio' }).rirSett, [3, 3, 2, 2, 1, 4, 3, 3, 2, 2, 1, 4], 'MES-02: anche l intermedio ha la rampa del RIR');
   assert.deepStrictEqual(m({ level: 'intermedio', age: 15 }).rirSett, [2, 2, 2, 4, 2, 2, 2, 4, 2, 2, 2, 4], 'minorenne: almeno 2 ripetizioni in riserva, 4 nello scarico');
-  assert.strictEqual(m({ level: 'avanzato', age: 15 }).note.length, 0, 'il minorenne avanzato non ha la rampa a 0');
+  assert.strictEqual(m({ level: 'avanzato', age: 15 }).note.length, 0, 'il minorenne avanzato non ha la rampa');
   assert.deepStrictEqual(app().json("fasiProgramma(strutturaProgramma('avanzato'))"), ['carico', 'carico', 'carico', 'carico', 'carico', 'scarico', 'carico', 'carico', 'carico', 'carico', 'carico', 'scarico']);
 });
 
@@ -281,7 +282,7 @@ test('buildProgram non scrive niente e, con lo stesso seme, da lo stesso program
 
 test('buildProgram: la forma del programma e dei suoi campi, nell ordine di sempre (le schermate e il salvataggio li leggono)', () => {
   const p = costruisci({});
-  assert.deepStrictEqual(Object.keys(p), ['goals', 'scheme', 'split', 'sedute', 'prefs', 'metodo', 'ispirazioni', 'fisico', 'sostituzioni', 'note', 'riposo', 'settimane', 'blocco', 'fasi', 'rirSett', 'eserciziPerSeduta', 'seme']);
+  assert.deepStrictEqual(Object.keys(p), ['goals', 'scheme', 'split', 'sedute', 'prefs', 'metodo', 'ispirazioni', 'fisico', 'sostituzioni', 'note', 'riposo', 'settimane', 'blocco', 'fasi', 'rirSett', 'eserciziPerSeduta', 'seme', 'versione', 'piano', 'perche', 'modalita']);
   assert.deepStrictEqual(Object.keys(p.prefs), ['luogo', 'fastidi', 'sonno', 'attrezzi', 'attrezziPalestra', 'graditi', 'odiati', 'priorita', 'esclusi']);
   assert.deepStrictEqual(Object.keys(p.sedute[0]), ['giorno', 'tipo', 'titolo', 'esercizi']);
   Object.keys(p.sedute[0].esercizi[0]).forEach(k => assert.ok(['name', 'sets', 'reps', 'weight', 'rest', 'fisso', 'tecnica', 'superset', 'stimato'].indexOf(k) !== -1, 'campo inatteso ' + k));
