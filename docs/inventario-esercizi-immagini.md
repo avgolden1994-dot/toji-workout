@@ -7,13 +7,13 @@ Generato con uno script node che legge `EXERCISE_LIBRARY` (`js/dati/libreria-ese
 | Voce | Valore |
 |---|---|
 | Esercizi nel catalogo (`EXERCISE_LIBRARY`) | 140 totali (139 nel branch + 1 da altro branch) |
-| Con immagine (campo presente e file esistente) | 40 (di cui 1 con immagine condivisa: ex-29 usa il file di ex-28) |
-| Senza immagine (mancanti) | 100 su 140 (99 nel branch + 1 da altro branch) |
+| Con immagine (campo presente e file esistente) | 41 (di cui 1 con immagine condivisa: ex-29 usa il file di ex-28) |
+| Senza immagine (mancanti) | 99 su 140 (98 nel branch + 1 da altro branch) |
 | Di cui non ancora presenti in questo branch | 1 (n. 140 Squat Sumo, da `claude/hopeful-thompson-uthd8f`) |
-| File in `esercizi/` | 40 (tutti SVG) |
+| File in `esercizi/` | 41 (tutti SVG) |
 | File orfani (non referenziati) | 1 (`ex-02-panca-inclinata-su-a.svg`) |
-| Peso totale `esercizi/` | 965.9 KB |
-| Peso medio per file | 24.8 KB |
+| Peso totale `esercizi/` | 977.4 KB |
+| Peso medio per file | 24.4 KB |
 
 Copertura per gruppo muscolare:
 
@@ -22,14 +22,14 @@ Copertura per gruppo muscolare:
 | Petto | 17 | 11 | 6 |
 | Schiena | 23 | 11 | 12 |
 | Gambe | 25 (24 nel branch + 1 da altro branch) | 13 | 12 (11 nel branch + 1 da altro branch) |
-| Glutei | 15 | 5 | 10 |
+| Glutei | 15 | 6 | 9 |
 | Spalle | 16 | 0 | 16 |
 | Braccia | 26 | 0 | 26 |
 | Core | 18 | 0 | 18 |
 
 Note: gli esercizi usati in `schede-*.js` e le chiavi di `DETTAGLI` (139) coincidono con la libreria: nessun esercizio fuori catalogo. `tools/genera-catalogo.js` NON riguarda gli esercizi: genera il catalogo delle regole del coach da `docs/coach-mappa-regole.md`.
 
-Le bozze Quiver non finali (varianti a-d degli esercizi 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27 e 28, 30, 31, 32, 33, 34, 35, 36, 37 e 39 e 40, di cui la b per il 10, la d per l'11, la d per il 13, la a per il 14, la a per il 15, identica alla d, la d per il 16 e la c per il 17 e la d per il 18 e la d per il 19 e la c per il 20 e la d per il 21 e la d per il 22 e la a per il 23 e la a per il 24 e la c per il 25 e la a per il 26 e la d per il 27 e la a per il 28 e la c per il 30 e la a per il 31 e la a per il 32 e la b per il 33 e la c per il 34 e la b per il 35 e la b per il 36 e la a per il 39 e la a per il 40, sono state usate per il finale) stanno in `esercizi-bozze/`, fuori da `esercizi/` e dalla cache del service worker.
+Le bozze Quiver non finali (varianti a-d degli esercizi 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27 e 28, 30, 31, 32, 33, 34, 35, 36, 37 e 39 e 40 e 41, di cui la b per il 10, la d per l'11, la d per il 13, la a per il 14, la a per il 15, identica alla d, la d per il 16 e la c per il 17 e la d per il 18 e la d per il 19 e la c per il 20 e la d per il 21 e la d per il 22 e la a per il 23 e la a per il 24 e la c per il 25 e la a per il 26 e la d per il 27 e la a per il 28 e la c per il 30 e la a per il 31 e la a per il 32 e la b per il 33 e la c per il 34 e la b per il 35 e la b per il 36 e la a per il 39 e la a per il 40 e la d per il 41 (la a e' presente in due copie identiche), sono state usate per il finale) stanno in `esercizi-bozze/`, fuori da `esercizi/` e dalla cache del service worker.
 
 ## 2. Tabella completa
 
@@ -77,7 +77,7 @@ Il nome e' mostrato senza emoji iniziale. Percorso `img/<slug>.png` e' il ripieg
 | 38 | Stacco Sumo | Glutei | `esercizi/ex-38-stacco-sumo.svg` |
 | 39 | Affondi Bulgari | Glutei | `esercizi/ex-39-affondi-bulgari.svg` |
 | 40 | Good Morning | Glutei | `esercizi/ex-40-good-morning.svg` |
-| 41 | Ponte Glutei | Glutei | nessuna (ripiego inesistente `img/ponte-glutei.png`) |
+| 41 | Ponte Glutei | Glutei | `esercizi/ex-41-ponte-glutei.svg` |
 | 42 | Abductor Machine | Glutei | nessuna (ripiego inesistente `img/abductor-machine.png`) |
 | 43 | Kickback ai Cavi | Glutei | nessuna (ripiego inesistente `img/kickback-ai-cavi.png`) |
 | 44 | Slanci Laterali a Terra | Glutei | nessuna (ripiego inesistente `img/slanci-laterali-a-terra.png`) |
@@ -184,7 +184,6 @@ Il nome e' mostrato senza emoji iniziale. Percorso `img/<slug>.png` e' il ripieg
 
 | Gruppo | Esercizio | Motivo | File atteso dal ripiego |
 |---|---|---|---|
-| Glutei | Ponte Glutei | nessun campo nella mappa | `img/ponte-glutei.png` |
 | Glutei | Abductor Machine | nessun campo nella mappa | `img/abductor-machine.png` |
 | Glutei | Kickback ai Cavi | nessun campo nella mappa | `img/kickback-ai-cavi.png` |
 | Glutei | Slanci Laterali a Terra | nessun campo nella mappa | `img/slanci-laterali-a-terra.png` |
@@ -372,8 +371,9 @@ Controlli: file referenziati ma assenti = 0; voci di mappa non presenti in libre
 | `ex-38-stacco-sumo.svg` | 32.9 | 150.8 10.3 363.6 272.7 (come ex-12, copia modificata) |
 | `ex-39-affondi-bulgari.svg` | 11.6 | 192.90 48.26 262.64 196.98 |
 | `ex-40-good-morning.svg` | 11.4 | 356.86 43.16 289.72 217.29 (3 pose) |
+| `ex-41-ponte-glutei.svg` | 11.5 | 444.00 120.51 114.00 85.50 (3 pose) |
 
-Formato SVG vettoriale (nessun PNG/WebP); peso medio 25.0 KB, totale 998.8 KB (40 file con l'orfano). Il viewBox base e' 400x300 (rapporto 4:3); gli altri sono ritagli sulla figura (rapporti diversi, da 40x30 a 388x291). Nessun attributo width/height (tranne l'orfano 400x300): scalano al riquadro CSS `.ex-img` (`object-fit: contain`, rapporto 300/165).
+Formato SVG vettoriale (nessun PNG/WebP); peso medio 24.6 KB, totale 1010.4 KB (41 file con l'orfano). Il viewBox base e' 400x300 (rapporto 4:3); gli altri sono ritagli sulla figura (rapporti diversi, da 40x30 a 388x291). Nessun attributo width/height (tranne l'orfano 400x300): scalano al riquadro CSS `.ex-img` (`object-fit: contain`, rapporto 300/165).
 
 ### Convenzione nome file
 
@@ -428,3 +428,4 @@ Elenco delle illustrazioni da rivedere o rifare a fine lavoro. La lista si aggio
 | 38 - Stacco Sumo | `esercizi/ex-38-stacco-sumo.svg` | Derivata da ex-12 (Stacco da Terra) con gambe e busto modificati a mano, senza Quiver: atleta donna come in ex-12. START: busto ruotato di 17 gradi attorno alla spalla (piu' verticale, circa 42 gradi dalla verticale), bacino abbassato di circa 10 e avanzato di circa 12 unita', coscia vicina accorciata del 5% e ruotata, tibia lontana accorciata del 14% e spostata di 12 unita' avanti, piede lontano accorciato in larghezza (x0.72, punta in fuori) e distanza tra i talloni di circa 29 unita', scarpa vicina x0.9; aggiunti a mano tibia vicina e coscia lontana ruotata/ingrandita 15%. END: gambe quasi tese con tibie inclinate di 4-6 gradi (talloni piu' distanti), scarpe x0.9 e x0.72. Difetti residui: stance larga solo suggerita (in profilo puro non si vede), punta di scarpa vicina poco ruotata, ginocchio lontano con piccola punta della pelle in START, tibia vicina un po' lunga e pallida, spigoli originali del ginocchio in END, muscoli quadricipiti lontani semplificati. | Difetto lieve, da valutare |
 | 39 - Affondi Bulgari | `esercizi/ex-39-affondi-bulgari.svg` | Bozza a, la migliore (atleta uomo, un manubrio, piede posteriore sulla panca). Tutte e 4 le bozze mostrano una vera differenza di posa START/END (START ginocchio anteriore quasi esteso, busto verticale; END ginocchio anteriore circa 90 gradi con coscia orizzontale, ginocchio posteriore vicino al pavimento, piede posteriore sulla panca, busto inclinato) e nessuna ha etichette di testo. a: panca identica nei due frame (b, c, d: panca di altezza diversa tra START ed END, la d di circa 7 unita'); b: busto in END piu' ripido e muscoli secondari poco leggibili; c: proporzioni diverse e wrapper con clipPath/matrix da appiattire; d: ok ma panca diversa. Rimossi rect di sfondo, 2 ombre (ne resta una statica), 2 barre #D9D9D9 vaganti; panca e scarpe statiche da START, END traslato di 150 unita'; pelle #D2B8A3, quadricipiti/glutei #fb8b3c, secondari #fdba8c. Difetti lievi: discesa piu' contenuta del previsto (testa circa 27 unita' piu' bassa, non ~55); in END il ginocchio anteriore sta un poco oltre la caviglia; scarpa anteriore statica da START (in END e' leggermente diversa); linee di muscolo semitrasparenti #706259. | Difetto lieve, da valutare |
 | 40 - Good Morning | `esercizi/ex-40-good-morning.svg` | Bozza a, la migliore (atleta donna, disco sulla spalla). Tutte e 4 le bozze mostrano 3 pose progressive (in piedi, busto circa 45 gradi, busto quasi orizzontale) con piedi allineati e disco sulla spalla; nessuna ha etichette di testo visibili (a-d hanno `<text>` bianchi al 30% da rimuovere). a: pulita, nessun tratto vagante; b: ~20 tratti grigi vaganti, scarpe con doppia suola e ombre; c: rect grigio di sfondo e polpacci troppo chiari; d: archi/cerchi tratteggiati vaganti e macchia arancio sul fianco in START. Rimossi rect di sfondo, 12 `<text>`, 3 ombre (ne resta una statica), ritocchi d'ombra #AD643A/#D3763E; scarpa statica da START, MID e END traslati (-97.9 e -196.4 in x) per far coincidere i piedi; disco nero con centro #8a919c; pelle #D2B8A3, glutei/femorali/erettori #fb8b3c, secondari #fdba8c. Difetti lievi: pelle uniforme senza contrasto tra braccio lontano e busto (mani poco leggibili); in MID/END la caviglia (pelle) non coincide perfettamente con la scarpa statica; in END il busto e' circa 20-25 gradi sopra l'orizzontale e le braccia si confondono col disco; ciuffo di capelli un po' frastagliato. | Difetto lieve, da valutare |
+| 41 - Ponte Glutei | `esercizi/ex-41-ponte-glutei.svg` | Bozza d, la migliore e l'unica con atleta uomo (a e' presente in due copie identiche, verificato con cmp). Tutte le bozze mostrano 3 pose progressive (bacino che sale da quasi a terra fino a ponte con spalle-anche-ginocchia quasi allineati, piedi fermi, braccia a terra); la posa non e' stata allargata (in d il bacino sale di circa 20 unita' su una figura lunga 90). a: atleta donna, rect bianco, 3 ombre, tappetini #989AA1 separati, muscoli poco leggibili; b: atleta donna, rect bianco, ombre doppie, tappetini viola; c: atleta donna, ponte a una gamba (altra gamba tesa in aria), non e' il Ponte Glutei base; d: rect grigio di sfondo con wrapper `matrix(3.75 0 0 3.75 450 0)` e clipPath, 25 tratti d'ombra #B5A090, nessun tappetino vero. Rimossi rect, clipPath, matrix (path appiattiti), 3 ombre (ne resta una statica), tratti #B5A090/#A38E80; tappetino #8a919c ricostruito (rect arrotondato statico) perche' in d il tappetino era il rect di sfondo; scarpa statica da START, MID e END traslati (-97.9 -0.3 e -196.7 -0.4) per far coincidere i piedi; pelle #D2B8A3, glutei/femorali #fb8b3c, secondari #fdba8c. Difetti lievi: pelle uniforme (poco contrasto tra braccio e busto), addominali/erettori in MID/END a spicchi un po' spigolosi, chiusura del collo/spalla in END un po' netta. | Difetto lieve, da valutare |
