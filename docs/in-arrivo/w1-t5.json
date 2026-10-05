@@ -1,0 +1,1367 @@
+{
+  "task": "W1-T5",
+  "mappaAgenti": [],
+  "nota": "W1-T5 (provvisorio)",
+  "frasi": {
+    "Sdraiato a terra, i gomiti si fermano sul pavimento": {
+      "en": "Lying on the floor, elbows stop on the ground",
+      "es": "Tumbado en el suelo, los codos se detienen en el suelo",
+      "de": "Auf dem Boden liegend, die Ellbogen stoppen am Boden"
+    },
+    "Sdraiato sul pavimento con le ginocchia piegate e i piedi a terra, un manubrio per mano sopra il petto, scapole addotte e depresse (strette e portate verso il basso).": {
+      "en": "Lie on the floor with your knees bent and feet flat, a dumbbell in each hand above your chest, shoulder blades retracted and depressed (squeezed together and pulled down).",
+      "es": "Tumbado en el suelo con las rodillas flexionadas y los pies apoyados, una mancuerna en cada mano sobre el pecho, escápulas aducidas y deprimidas (juntas y hacia abajo).",
+      "de": "Lege dich auf den Boden, Knie angewinkelt und Füße aufgestellt, in jeder Hand eine Kurzhantel über der Brust, Schulterblätter zusammengezogen und nach unten gesenkt."
+    },
+    "Scendi controllato finché i gomiti toccano il pavimento, a circa #° dal busto.": {
+      "en": "Lower with control until your elbows touch the floor, at about #° from your torso.",
+      "es": "Baja con control hasta que los codos toquen el suelo, a unos #° del tronco.",
+      "de": "Senke kontrolliert ab, bis die Ellbogen den Boden berühren, etwa #° vom Oberkörper entfernt."
+    },
+    "Fai una pausa di un istante senza rilassare le spalle sul pavimento.": {
+      "en": "Pause for a moment without relaxing your shoulders onto the floor.",
+      "es": "Haz una pausa de un instante sin relajar los hombros sobre el suelo.",
+      "de": "Halte einen Moment inne, ohne die Schultern auf dem Boden zu entspannen."
+    },
+    "Spingi i manubri verso l’alto fino a braccia distese, avvicinandoli sopra il petto.": {
+      "en": "Press the dumbbells up until your arms are straight, bringing them together above your chest.",
+      "es": "Empuja las mancuernas hacia arriba hasta extender los brazos, acercándolas sobre el pecho.",
+      "de": "Drücke die Kurzhanteln nach oben, bis die Arme gestreckt sind, und führe sie über der Brust zusammen."
+    },
+    "Gomiti aperti a #° rispetto al busto.": {
+      "en": "Elbows flared out at #° to the torso.",
+      "es": "Codos abiertos a #° respecto al tronco.",
+      "de": "Ellbogen im #°-Winkel zum Oberkörper abgespreizt."
+    },
+    "Rimbalzare con i gomiti sul pavimento.": {
+      "en": "Bouncing off the floor with your elbows.",
+      "es": "Rebotar con los codos en el suelo.",
+      "de": "Mit den Ellbogen vom Boden abfedern."
+    },
+    "Spalle giù e indietro, piedi forti a terra: spingi il pavimento lontano da te.": {
+      "en": "Shoulders down and back, feet firm on the floor: push the floor away from you.",
+      "es": "Hombros abajo y atrás, pies firmes en el suelo: empuja el suelo lejos de ti.",
+      "de": "Schultern nach unten und hinten, Füße fest am Boden: Drücke den Boden von dir weg."
+    },
+    "Floor Press con Manubri": {
+      "en": "Dumbbell Floor Press",
+      "es": "Press de suelo con mancuernas",
+      "de": "Floor Press mit Kurzhanteln"
+    },
+    "Chest Press Inclinata alla Macchina": {
+      "en": "Incline Chest Press Machine",
+      "es": "Press de pecho inclinado en máquina",
+      "de": "Schrägbrustpresse"
+    },
+    "Schienale reclinato a circa #°, maniglie in alto": {
+      "en": "Backrest reclined at about #°, handles high",
+      "es": "Respaldo reclinado a unos #°, asas arriba",
+      "de": "Rückenlehne etwa #° geneigt, Griffe oben"
+    },
+    "Seduto con lo schienale reclinato, schiena e glutei appoggiati, maniglie all’altezza della parte alta del petto, piedi a terra.": {
+      "en": "Sit with the backrest reclined, back and glutes against the pad, handles at upper-chest height, feet flat on the floor.",
+      "es": "Sentado con el respaldo reclinado, espalda y glúteos apoyados, asas a la altura de la parte alta del pecho, pies en el suelo.",
+      "de": "Setze dich mit geneigter Rückenlehne hin, Rücken und Gesäß angelehnt, Griffe auf Höhe des oberen Brustbereichs, Füße fest am Boden."
+    },
+    "Spingi le maniglie in avanti e in alto senza staccare la schiena dallo schienale.": {
+      "en": "Press the handles forward and up without lifting your back off the pad.",
+      "es": "Empuja las asas hacia delante y hacia arriba sin despegar la espalda del respaldo.",
+      "de": "Drücke die Griffe nach vorn und oben, ohne den Rücken von der Lehne zu lösen."
+    },
+    "Fermati prima di bloccare i gomiti.": {
+      "en": "Stop before locking your elbows.",
+      "es": "Detente antes de bloquear los codos.",
+      "de": "Halte an, bevor du die Ellbogen durchstreckst."
+    },
+    "Torna lentamente finché senti allungare il petto, non la spalla.": {
+      "en": "Return slowly until you feel your chest stretch, not your shoulder.",
+      "es": "Vuelve despacio hasta sentir que se estira el pecho, no el hombro.",
+      "de": "Komm langsam zurück, bis du die Brust gedehnt spürst, nicht die Schulter."
+    },
+    "Spalle che si portano in avanti verso le orecchie.": {
+      "en": "Shoulders rolling forward toward your ears.",
+      "es": "Hombros que se adelantan hacia las orejas.",
+      "de": "Schultern, die sich nach vorn zu den Ohren schieben."
+    },
+    "Sedile troppo alto o troppo basso: le maniglie devono stare all’altezza della parte alta del petto.": {
+      "en": "Seat too high or too low: the handles should sit at upper-chest height.",
+      "es": "Asiento demasiado alto o demasiado bajo: las asas deben quedar a la altura de la parte alta del pecho.",
+      "de": "Sitz zu hoch oder zu niedrig: Die Griffe sollten auf Höhe des oberen Brustbereichs liegen."
+    },
+    "Sterno alto e scapole ferme sullo schienale per tutta la serie.": {
+      "en": "Chest up and shoulder blades pinned to the pad for the whole set.",
+      "es": "Esternón alto y escápulas firmes en el respaldo durante toda la serie.",
+      "de": "Brustbein oben und Schulterblätter während des ganzen Satzes fest an der Lehne."
+    },
+    "Panca con Pausa": {
+      "en": "Pause Bench Press",
+      "es": "Press de banca con pausa",
+      "de": "Bankdrücken mit Pause"
+    },
+    "Presa prona poco più larga delle spalle, pausa di #–# secondi sul petto": {
+      "en": "Overhand grip slightly wider than the shoulders, #–# second pause on the chest",
+      "es": "Agarre prono algo más ancho que los hombros, pausa de #–# segundos en el pecho",
+      "de": "Obergriff etwas breiter als die Schultern, #–# Sekunden Pause auf der Brust"
+    },
+    "Scendi controllato in #–# secondi fino a sfiorare il petto, con i gomiti a circa #–#° dal busto.": {
+      "en": "Lower with control over #–# seconds until the bar just touches your chest, elbows at about #–#° from your torso.",
+      "es": "Baja con control en #–# segundos hasta rozar el pecho, con los codos a unos #–#° del tronco.",
+      "de": "Senke kontrolliert in #–# Sekunden, bis die Stange die Brust fast berührt, die Ellbogen etwa #–#° vom Oberkörper entfernt."
+    },
+    "Fermati sul petto #–# secondi senza rilassare le scapole e senza far affondare il bilanciere.": {
+      "en": "Pause on your chest for #–# seconds without relaxing your shoulder blades and without letting the bar sink.",
+      "es": "Detente en el pecho #–# segundos sin relajar las escápulas y sin dejar que la barra se hunda.",
+      "de": "Halte #–# Sekunden auf der Brust, ohne die Schulterblätter zu entspannen und ohne die Stange einsinken zu lassen."
+    },
+    "Spingi in verticale fino a braccia distese, senza staccare i glutei dalla panca.": {
+      "en": "Press straight up until your arms are straight, without lifting your glutes off the bench.",
+      "es": "Empuja en vertical hasta extender los brazos, sin despegar los glúteos del banco.",
+      "de": "Drücke senkrecht nach oben, bis die Arme gestreckt sind, ohne das Gesäß von der Bank zu heben."
+    },
+    "Rilassarsi sul petto e rimbalzare per ripartire.": {
+      "en": "Relaxing on your chest and bouncing to restart.",
+      "es": "Relajarse en el pecho y rebotar para arrancar.",
+      "de": "Auf der Brust entspannen und zum Neustart abfedern."
+    },
+    "Glutei che si staccano dalla panca o gomiti aperti a #°.": {
+      "en": "Glutes lifting off the bench or elbows flared out at #°.",
+      "es": "Glúteos que se despegan del banco o codos abiertos a #°.",
+      "de": "Gesäß, das sich von der Bank hebt, oder Ellbogen im #°-Winkel abgespreizt."
+    },
+    "Pausa ferma, tensione viva: se il bilanciere \"affonda\" sul petto il carico è troppo alto. Usa i supporti di sicurezza o un compagno.": {
+      "en": "Still pause, live tension: if the bar \"sinks\" into your chest the load is too heavy. Use the safety supports or a spotter.",
+      "es": "Pausa firme, tensión viva: si la barra \"se hunde\" en el pecho, la carga es demasiado alta. Usa los soportes de seguridad o un compañero.",
+      "de": "Ruhige Pause, Spannung halten: Wenn die Stange auf der Brust \"einsinkt\", ist das Gewicht zu hoch. Nutze die Sicherheitsarme oder einen Spotter."
+    },
+    "Trazioni Negative": {
+      "en": "Negative Pull-ups",
+      "es": "Dominadas negativas",
+      "de": "Negative Klimmzüge"
+    },
+    "Presa prona, parti con il mento sopra la sbarra e scendi in #–# secondi": {
+      "en": "Overhand grip, start with your chin over the bar and lower over #–# seconds",
+      "es": "Agarre prono, empieza con la barbilla sobre la barra y baja en #–# segundos",
+      "de": "Obergriff, starte mit dem Kinn über der Stange und senke dich in #–# Sekunden ab"
+    },
+    "Sotto la sbarra, con uno sgabello o con un salto porta il mento sopra la sbarra; presa prona poco più larga delle spalle, spalle basse, corpo in linea.": {
+      "en": "Stand under the bar and use a stool or a jump to get your chin over the bar; overhand grip slightly wider than your shoulders, shoulders down, body in a straight line.",
+      "es": "Bajo la barra, con un taburete o un salto lleva la barbilla por encima de la barra; agarre prono algo más ancho que los hombros, hombros bajos, cuerpo en línea.",
+      "de": "Stelle dich unter die Stange und bringe mit einem Hocker oder einem Sprung das Kinn über die Stange; Obergriff etwas breiter als die Schultern, Schultern unten, Körper in einer Linie."
+    },
+    "Parti dall’alto, mento sopra la sbarra e gomiti vicini ai fianchi.": {
+      "en": "Start at the top, chin over the bar and elbows close to your sides.",
+      "es": "Empieza arriba, con la barbilla sobre la barra y los codos cerca de los costados.",
+      "de": "Starte oben, Kinn über der Stange und Ellbogen nah an den Seiten."
+    },
+    "Scendi lentamente in #–# secondi, controllando la discesa fino a braccia quasi tese.": {
+      "en": "Lower slowly over #–# seconds, controlling the descent until your arms are almost straight.",
+      "es": "Baja despacio en #–# segundos, controlando el descenso hasta tener los brazos casi extendidos.",
+      "de": "Senke dich langsam in #–# Sekunden ab und kontrolliere die Abwärtsbewegung, bis die Arme fast gestreckt sind."
+    },
+    "Risali con lo sgabello o con un salto e ripeti: la parte che lavora è la discesa (fase eccentrica).": {
+      "en": "Get back up with the stool or a jump and repeat: the working part is the way down (eccentric phase).",
+      "es": "Sube con el taburete o con un salto y repite: la parte que trabaja es el descenso (fase excéntrica).",
+      "de": "Komm mit dem Hocker oder einem Sprung wieder hoch und wiederhole: Gearbeitet wird beim Abwärtsgehen (exzentrische Phase)."
+    },
+    "Lasciarsi cadere senza frenare.": {
+      "en": "Dropping without braking.",
+      "es": "Dejarse caer sin frenar.",
+      "de": "Sich fallen lassen, ohne abzubremsen."
+    },
+    "Spalle che salgono verso le orecchie o corpo che dondola.": {
+      "en": "Shoulders rising toward your ears or body swinging.",
+      "es": "Hombros que suben hacia las orejas o cuerpo que se balancea.",
+      "de": "Schultern, die zu den Ohren hochziehen, oder ein schwingender Körper."
+    },
+    "Gomiti verso le tasche, petto verso la sbarra: più la discesa è lenta, più è utile.": {
+      "en": "Elbows toward your pockets, chest toward the bar: the slower the descent, the more useful it is.",
+      "es": "Codos hacia los bolsillos, pecho hacia la barra: cuanto más lento el descenso, más útil.",
+      "de": "Ellbogen zu den Hosentaschen, Brust zur Stange: Je langsamer der Abstieg, desto nützlicher."
+    },
+    "A pancia in giù su una panca alta, braccia che pendono": {
+      "en": "Face down on a high bench, arms hanging",
+      "es": "Boca abajo sobre un banco alto, brazos colgando",
+      "de": "Bauch nach unten auf einer hohen Bank, Arme hängend"
+    },
+    "A pancia in giù su una panca abbastanza alta da far pendere le braccia senza toccare terra, petto e pancia appoggiati, un manubrio per mano.": {
+      "en": "Lie face down on a bench high enough for your arms to hang without touching the floor, chest and belly supported, a dumbbell in each hand.",
+      "es": "Boca abajo sobre un banco lo bastante alto para que los brazos cuelguen sin tocar el suelo, pecho y abdomen apoyados, una mancuerna en cada mano.",
+      "de": "Lege dich mit dem Bauch nach unten auf eine Bank, die hoch genug ist, damit die Arme hängen, ohne den Boden zu berühren; Brust und Bauch liegen auf, in jeder Hand eine Kurzhantel."
+    },
+    "Seal Row": {
+      "en": "Seal Row",
+      "es": "Remo seal",
+      "de": "Seal Row"
+    },
+    "Lat Pulldown con Elastico": {
+      "en": "Resistance Band Lat Pulldown",
+      "es": "Jalón con banda elástica",
+      "de": "Latzug mit Widerstandsband"
+    },
+    "Elastico ancorato in alto, in ginocchio sotto l’ancoraggio, presa prona larga": {
+      "en": "Band anchored overhead, kneeling under the anchor, wide overhand grip",
+      "es": "Banda anclada arriba, de rodillas bajo el anclaje, agarre prono ancho",
+      "de": "Band oben verankert, kniend unter dem Anker, weiter Obergriff"
+    },
+    "Elastico ancorato in alto (a una sbarra o a una porta con l’ancoraggio apposito), in ginocchio o seduto sotto l’ancoraggio, braccia tese, presa prona poco più larga delle spalle. Prima di iniziare controlla che l’ancoraggio sia saldo e che l’elastico non abbia tagli.": {
+      "en": "Band anchored overhead (to a bar or to a door with a proper door anchor), kneeling or seated under the anchor, arms straight, overhand grip slightly wider than your shoulders. Before you start, check that the anchor is secure and the band has no cuts.",
+      "es": "Banda anclada arriba (a una barra o a una puerta con el anclaje adecuado), de rodillas o sentado bajo el anclaje, brazos extendidos, agarre prono algo más ancho que los hombros. Antes de empezar, comprueba que el anclaje sea firme y que la banda no tenga cortes.",
+      "de": "Band oben verankert (an einer Stange oder an einer Tür mit passendem Türanker), kniend oder sitzend unter dem Anker, Arme gestreckt, Obergriff etwas breiter als die Schultern. Prüfe vor dem Start, dass der Anker fest sitzt und das Band keine Einschnitte hat."
+    },
+    "Tira l’elastico verso la parte alta del petto portando i gomiti verso le tasche.": {
+      "en": "Pull the band toward your upper chest, bringing your elbows toward your pockets.",
+      "es": "Tira de la banda hacia la parte alta del pecho llevando los codos hacia los bolsillos.",
+      "de": "Ziehe das Band zum oberen Brustbereich und führe die Ellbogen zu den Hosentaschen."
+    },
+    "Stringi le scapole in basso # secondo, petto alto.": {
+      "en": "Squeeze your shoulder blades down for # second, chest up.",
+      "es": "Aprieta las escápulas hacia abajo # segundo, pecho alto.",
+      "de": "Ziehe die Schulterblätter # Sekunde nach unten zusammen, Brust raus."
+    },
+    "Torna lentamente a braccia tese, senza lasciarti trascinare dall’elastico.": {
+      "en": "Return slowly to straight arms, without letting the band pull you up.",
+      "es": "Vuelve despacio a los brazos extendidos, sin dejar que la banda te arrastre.",
+      "de": "Gehe langsam zu gestreckten Armen zurück, ohne dich vom Band mitziehen zu lassen."
+    },
+    "Tirare con le braccia portando le spalle alle orecchie.": {
+      "en": "Pulling with your arms and shrugging your shoulders up.",
+      "es": "Tirar con los brazos subiendo los hombros hacia las orejas.",
+      "de": "Mit den Armen ziehen und die Schultern zu den Ohren hochziehen."
+    },
+    "Inarcare la schiena o dondolare per aiutarsi.": {
+      "en": "Arching your back or swinging to help.",
+      "es": "Arquear la espalda o balancearse para ayudarse.",
+      "de": "Den Rücken überstrecken oder schwingen, um nachzuhelfen."
+    },
+    "Gomiti verso le tasche, petto alto: prima scendono le spalle, poi si piegano i gomiti.": {
+      "en": "Elbows toward your pockets, chest up: first your shoulders go down, then your elbows bend.",
+      "es": "Codos hacia los bolsillos, pecho alto: primero bajan los hombros, luego se doblan los codos.",
+      "de": "Ellbogen zu den Hosentaschen, Brust raus: Zuerst gehen die Schultern nach unten, dann beugen sich die Ellbogen."
+    },
+    "Rematore agli Anelli": {
+      "en": "Ring Row",
+      "es": "Remo en anillas",
+      "de": "Ringrudern"
+    },
+    "Presa neutra, corpo teso e inclinato, piedi a terra": {
+      "en": "Neutral grip, body straight and leaning, feet on the floor",
+      "es": "Agarre neutro, cuerpo tenso e inclinado, pies en el suelo",
+      "de": "Neutraler Griff, Körper gestreckt und geneigt, Füße am Boden"
+    },
+    "Anelli o cinghie fissati in alto e saldi, regolati a metà altezza; impugna con presa neutra e cammina in avanti per inclinare il corpo all’indietro, in linea dalle spalle ai talloni. Controlla che il punto d’ancoraggio regga il tuo peso.": {
+      "en": "Rings or straps fixed overhead and secure, set at mid height; grab them with a neutral grip and walk forward to lean your body back, in a straight line from shoulders to heels. Check that the anchor point can hold your weight.",
+      "es": "Anillas o correas fijadas arriba y firmes, a media altura; agárralas con agarre neutro y camina hacia delante para inclinar el cuerpo hacia atrás, en línea desde los hombros hasta los talones. Comprueba que el punto de anclaje aguante tu peso.",
+      "de": "Ringe oder Gurte oben fest verankert, auf mittlere Höhe eingestellt; greife sie neutral und gehe nach vorn, um den Körper nach hinten zu neigen, in einer Linie von den Schultern bis zu den Fersen. Prüfe, dass der Befestigungspunkt dein Gewicht trägt."
+    },
+    "Tira il petto verso gli anelli portando i gomiti indietro vicino ai fianchi.": {
+      "en": "Pull your chest toward the rings, bringing your elbows back close to your sides.",
+      "es": "Lleva el pecho hacia las anillas llevando los codos atrás, cerca de los costados.",
+      "de": "Ziehe die Brust zu den Ringen und führe die Ellbogen nah am Körper nach hinten."
+    },
+    "Stringi le scapole in alto # secondo, con il corpo sempre in linea.": {
+      "en": "Squeeze your shoulder blades at the top for # second, keeping your body in line.",
+      "es": "Aprieta las escápulas arriba # segundo, con el cuerpo siempre en línea.",
+      "de": "Ziehe die Schulterblätter oben # Sekunde zusammen, der Körper bleibt in einer Linie."
+    },
+    "Bacino che cede verso il pavimento.": {
+      "en": "Hips sagging toward the floor.",
+      "es": "Pelvis que cede hacia el suelo.",
+      "de": "Becken, das zum Boden hin durchhängt."
+    },
+    "Tirare solo con le braccia o spingere il collo in avanti.": {
+      "en": "Pulling only with your arms or pushing your neck forward.",
+      "es": "Tirar solo con los brazos o adelantar el cuello.",
+      "de": "Nur mit den Armen ziehen oder den Nacken nach vorn schieben."
+    },
+    "Più i piedi sono avanti, più è difficile: regola la difficoltà con l’inclinazione del corpo.": {
+      "en": "The further forward your feet, the harder it gets: adjust the difficulty with your body angle.",
+      "es": "Cuanto más adelantados los pies, más difícil: regula la dificultad con la inclinación del cuerpo.",
+      "de": "Je weiter die Füße vorn stehen, desto schwerer wird es: Passe die Schwierigkeit über die Körperneigung an."
+    },
+    "Stacco in Deficit": {
+      "en": "Deficit Deadlift",
+      "es": "Peso muerto en déficit",
+      "de": "Kreuzheben im Defizit"
+    },
+    "Presa mista o prona, in piedi su un rialzo di #–# cm": {
+      "en": "Mixed or overhand grip, standing on a #–# cm platform",
+      "es": "Agarre mixto o prono, de pie sobre una elevación de #–# cm",
+      "de": "Gemischter oder Obergriff, auf einer #–# cm hohen Erhöhung stehend"
+    },
+    "Primari: erettori spinali, glutei, ischiocrurali · Secondari: quadricipiti, dorsali, trapezio, avambracci": {
+      "en": "Primary: spinal erectors, glutes, hamstrings · Secondary: quads, lats, traps, forearms",
+      "es": "Principales: erectores espinales, glúteos, isquiotibiales · Secundarios: cuádriceps, dorsales, trapecio, antebrazos",
+      "de": "Primär: Rückenstrecker, Gesäß, Beinbeuger · Sekundär: Quadrizeps, Latissimus, Trapez, Unterarme"
+    },
+    "In piedi su un rialzo stabile di #–# cm (una pedana o un disco da # kg), bilanciere sopra la metà del piede, schiena neutra, spalle leggermente davanti al bilanciere.": {
+      "en": "Stand on a stable #–# cm platform (a riser or a # kg plate), bar over the middle of your foot, neutral back, shoulders slightly in front of the bar.",
+      "es": "De pie sobre una elevación estable de #–# cm (una tarima o un disco de # kg), barra sobre la mitad del pie, espalda neutra, hombros ligeramente por delante de la barra.",
+      "de": "Stelle dich auf eine stabile, #–# cm hohe Erhöhung (ein Podest oder eine #-kg-Scheibe), Stange über der Fußmitte, neutraler Rücken, Schultern leicht vor der Stange."
+    },
+    "Inspira, contrai l’addome e \"togli il gioco\" al bilanciere tirandolo verso di te.": {
+      "en": "Breathe in, brace your abs and \"take the slack out\" of the bar by pulling it toward you.",
+      "es": "Inspira, contrae el abdomen y \"quita la holgura\" a la barra tirando de ella hacia ti.",
+      "de": "Atme ein, spanne den Bauch an und \"nimm die Lockerheit aus der Stange\", indem du sie zu dir ziehst."
+    },
+    "Spingi il pavimento con le gambe e porta il bilanciere in verticale lungo le gambe.": {
+      "en": "Push the floor away with your legs and bring the bar straight up along your legs.",
+      "es": "Empuja el suelo con las piernas y sube la barra en vertical pegada a las piernas.",
+      "de": "Drücke den Boden mit den Beinen weg und führe die Stange senkrecht an den Beinen entlang nach oben."
+    },
+    "Estendi anche e ginocchia insieme fino a stare dritto, senza inarcare la schiena, e scendi controllando il bilanciere fino al rialzo.": {
+      "en": "Extend your hips and knees together until you stand tall, without arching your back, then lower the bar under control back to the platform.",
+      "es": "Extiende cadera y rodillas a la vez hasta ponerte erguido, sin arquear la espalda, y baja la barra con control hasta la tarima.",
+      "de": "Strecke Hüfte und Knie gemeinsam, bis du aufrecht stehst, ohne den Rücken zu überstrecken, und senke die Stange kontrolliert bis zur Erhöhung ab."
+    },
+    "Rialzo troppo alto: la schiena si arrotonda alla partenza.": {
+      "en": "Platform too high: your back rounds at the start.",
+      "es": "Elevación demasiado alta: la espalda se redondea al empezar.",
+      "de": "Erhöhung zu hoch: Der Rücken rundet sich beim Start."
+    },
+    "Strappare la barra da terra senza togliere il gioco.": {
+      "en": "Yanking the bar off the floor without taking the slack out.",
+      "es": "Arrancar la barra del suelo sin quitar la holgura.",
+      "de": "Die Stange vom Boden reißen, ohne die Lockerheit herauszunehmen."
+    },
+    "Spingi il pavimento via, barra strisciante sulle gambe; se la schiena cede, torna allo stacco da terra.": {
+      "en": "Push the floor away, bar sliding along your legs; if your back gives way, go back to the regular deadlift.",
+      "es": "Empuja el suelo, barra deslizándose por las piernas; si la espalda cede, vuelve al peso muerto normal.",
+      "de": "Drücke den Boden weg, die Stange gleitet an den Beinen entlang; wenn der Rücken nachgibt, geh zurück zum normalen Kreuzheben."
+    },
+    "Leg Curl con Asciugamano": {
+      "en": "Towel Leg Curl",
+      "es": "Curl femoral con toalla",
+      "de": "Beinbeuger mit Handtuch"
+    },
+    "Talloni su un asciugamano che scivola, schiena a terra in posizione di ponte": {
+      "en": "Heels on a sliding towel, lying on your back in a bridge position",
+      "es": "Talones sobre una toalla que resbala, espalda en el suelo en posición de puente",
+      "de": "Fersen auf einem rutschenden Handtuch, Rücken am Boden in Brückenposition"
+    },
+    "Supino su un pavimento liscio, talloni su un asciugamano (o su due slider), ginocchia piegate, bacino sollevato in posizione di ponte.": {
+      "en": "Lie on your back on a smooth floor, heels on a towel (or two sliders), knees bent, hips lifted in a bridge position.",
+      "es": "Tumbado boca arriba en un suelo liso, talones sobre una toalla (o dos sliders), rodillas flexionadas, pelvis elevada en posición de puente.",
+      "de": "Lege dich auf einen glatten Boden, Fersen auf einem Handtuch (oder zwei Slidern), Knie angewinkelt, Becken in Brückenposition angehoben."
+    },
+    "Allunga le gambe facendo scivolare i talloni lontano da te, tenendo il bacino alto.": {
+      "en": "Straighten your legs by sliding your heels away from you, keeping your hips high.",
+      "es": "Estira las piernas deslizando los talones lejos de ti, manteniendo la pelvis alta.",
+      "de": "Strecke die Beine, indem du die Fersen von dir wegrutschen lässt, und halte das Becken oben."
+    },
+    "Fermati quando senti che il bacino sta per cadere: non serve arrivare a gambe tese.": {
+      "en": "Stop when you feel your hips about to drop: you don't need to reach fully straight legs.",
+      "es": "Detente cuando notes que la pelvis va a caer: no hace falta llegar a las piernas extendidas.",
+      "de": "Halte an, wenn du spürst, dass das Becken absacken will: Du musst die Beine nicht ganz strecken."
+    },
+    "Riporta i talloni verso i glutei piegando le ginocchia, senza abbassare il bacino.": {
+      "en": "Bring your heels back toward your glutes by bending your knees, without lowering your hips.",
+      "es": "Lleva los talones de vuelta hacia los glúteos flexionando las rodillas, sin bajar la pelvis.",
+      "de": "Ziehe die Fersen durch Beugen der Knie zum Gesäß zurück, ohne das Becken zu senken."
+    },
+    "Bacino che scende durante la discesa o il ritorno.": {
+      "en": "Hips dropping on the way out or back.",
+      "es": "Pelvis que baja durante la bajada o la vuelta.",
+      "de": "Becken, das beim Wegrutschen oder Zurückziehen absinkt."
+    },
+    "Scivolare troppo in fretta, senza frenare: la discesa è la parte che lavora di più.": {
+      "en": "Sliding out too fast without braking: the way out is the part that works the most.",
+      "es": "Deslizarse demasiado rápido, sin frenar: la fase de extensión es la que más trabaja.",
+      "de": "Zu schnell wegrutschen, ohne abzubremsen: Das Wegrutschen ist der Teil, der am meisten arbeitet."
+    },
+    "Il bacino resta alto come un tavolo: se cede, accorcia il percorso.": {
+      "en": "Keep your hips high like a table: if they sag, shorten the range.",
+      "es": "La pelvis se mantiene alta como una mesa: si cede, acorta el recorrido.",
+      "de": "Das Becken bleibt oben wie ein Tisch: Wenn es nachgibt, verkürze den Weg."
+    },
+    "Leg Curl in Piedi": {
+      "en": "Standing Leg Curl",
+      "es": "Curl femoral de pie",
+      "de": "Beinbeuger stehend"
+    },
+    "In piedi, cuscino sopra il tallone, una gamba alla volta": {
+      "en": "Standing, pad above the heel, one leg at a time",
+      "es": "De pie, rodillo sobre el talón, una pierna cada vez",
+      "de": "Stehend, Polster über der Ferse, ein Bein nach dem anderen"
+    },
+    "In piedi di fronte alla macchina, mani agli appoggi, cuscino sopra il tallone della gamba che lavora, ginocchio leggermente avanti.": {
+      "en": "Stand facing the machine, hands on the supports, pad above the heel of the working leg, knee slightly forward.",
+      "es": "De pie frente a la máquina, manos en los apoyos, rodillo sobre el talón de la pierna que trabaja, rodilla ligeramente adelantada.",
+      "de": "Stelle dich vor die Maschine, Hände an den Griffen, Polster über der Ferse des arbeitenden Beins, Knie leicht nach vorn."
+    },
+    "Porta il tallone verso il gluteo piegando il ginocchio, senza muovere il bacino.": {
+      "en": "Bring your heel toward your glute by bending your knee, without moving your hips.",
+      "es": "Lleva el talón hacia el glúteo flexionando la rodilla, sin mover la pelvis.",
+      "de": "Führe die Ferse durch Beugen des Knies zum Gesäß, ohne das Becken zu bewegen."
+    },
+    "Scendi lentamente fino a gamba quasi distesa e cambia lato a fine serie.": {
+      "en": "Lower slowly until your leg is almost straight, and switch sides after the set.",
+      "es": "Baja despacio hasta la pierna casi extendida y cambia de lado al terminar la serie.",
+      "de": "Senke langsam, bis das Bein fast gestreckt ist, und wechsle nach dem Satz die Seite."
+    },
+    "Inarcare la schiena o spingere il bacino in avanti.": {
+      "en": "Arching your back or pushing your hips forward.",
+      "es": "Arquear la espalda o empujar la pelvis hacia delante.",
+      "de": "Den Rücken überstrecken oder das Becken nach vorn schieben."
+    },
+    "Dondolare o far cadere il peso senza frenarlo.": {
+      "en": "Swinging or letting the weight drop without braking it.",
+      "es": "Balancearse o dejar caer el peso sin frenarlo.",
+      "de": "Schwingen oder das Gewicht fallen lassen, ohne es abzubremsen."
+    },
+    "Bacino fermo, solo il ginocchio si muove.": {
+      "en": "Hips still, only the knee moves.",
+      "es": "Pelvis quieta, solo se mueve la rodilla.",
+      "de": "Becken ruhig, nur das Knie bewegt sich."
+    },
+    "Reverse Nordic": {
+      "en": "Reverse Nordic",
+      "es": "Nórdico inverso",
+      "de": "Reverse Nordic"
+    },
+    "In ginocchio su un tappetino, busto che si inclina all’indietro in linea": {
+      "en": "Kneeling on a mat, torso leaning back in a straight line",
+      "es": "De rodillas sobre una esterilla, tronco que se inclina hacia atrás en línea",
+      "de": "Kniend auf einer Matte, der Oberkörper neigt sich in einer Linie nach hinten"
+    },
+    "In ginocchio su un tappetino spesso, busto dritto e anche estese, collo dei piedi a terra (o caviglie sotto un divano), braccia incrociate sul petto.": {
+      "en": "Kneel on a thick mat, torso upright and hips extended, tops of your feet on the floor (or ankles under a sofa), arms crossed over your chest.",
+      "es": "De rodillas sobre una esterilla gruesa, tronco erguido y caderas extendidas, empeines en el suelo (o tobillos bajo un sofá), brazos cruzados sobre el pecho.",
+      "de": "Knie dich auf eine dicke Matte, Oberkörper aufrecht und Hüfte gestreckt, Fußrücken am Boden (oder Knöchel unter einem Sofa), Arme vor der Brust verschränkt."
+    },
+    "Inclina il busto all’indietro in linea retta dalle ginocchia alla testa, senza piegarti alle anche.": {
+      "en": "Lean your torso back in a straight line from knees to head, without bending at the hips.",
+      "es": "Inclina el tronco hacia atrás en línea recta desde las rodillas hasta la cabeza, sin doblarte por las caderas.",
+      "de": "Neige den Oberkörper in einer geraden Linie von den Knien bis zum Kopf nach hinten, ohne dich in der Hüfte zu beugen."
+    },
+    "Scendi finché senti i quadricipiti tendersi, solo fin dove riesci a risalire con controllo.": {
+      "en": "Go down until you feel your quads stretch, only as far as you can come back up with control.",
+      "es": "Baja hasta sentir que se tensan los cuádriceps, solo hasta donde puedas subir con control.",
+      "de": "Gehe nach hinten, bis du die Oberschenkelvorderseite gedehnt spürst, nur so weit, wie du kontrolliert zurückkommst."
+    },
+    "Risali contraendo i quadricipiti, con le anche sempre estese.": {
+      "en": "Come back up by squeezing your quads, keeping your hips extended.",
+      "es": "Sube contrayendo los cuádriceps, con las caderas siempre extendidas.",
+      "de": "Komm zurück, indem du die Oberschenkelvorderseite anspannst, die Hüfte bleibt immer gestreckt."
+    },
+    "Piegarsi alle anche invece di tenere il corpo in linea.": {
+      "en": "Bending at the hips instead of keeping your body in a line.",
+      "es": "Doblarse por las caderas en lugar de mantener el cuerpo en línea.",
+      "de": "In der Hüfte abknicken, statt den Körper in einer Linie zu halten."
+    },
+    "Scendere più di quanto riesci a controllare: se le ginocchia dolgono, accorcia il percorso.": {
+      "en": "Going down further than you can control: if your knees hurt, shorten the range.",
+      "es": "Bajar más de lo que puedes controlar: si te duelen las rodillas, acorta el recorrido.",
+      "de": "Weiter nach hinten gehen, als du kontrollieren kannst: Wenn die Knie schmerzen, verkürze den Weg."
+    },
+    "Il corpo è una tavola dalle ginocchia alla testa: più ti inclini, più è difficile; parti da pochi gradi.": {
+      "en": "Your body is a plank from knees to head: the more you lean, the harder it gets; start with just a few degrees.",
+      "es": "El cuerpo es una tabla desde las rodillas hasta la cabeza: cuanto más te inclinas, más difícil; empieza con pocos grados.",
+      "de": "Dein Körper ist ein Brett von den Knien bis zum Kopf: Je mehr du dich neigst, desto schwerer wird es; beginne mit wenigen Grad."
+    },
+    "Belt Squat": {
+      "en": "Belt Squat",
+      "es": "Sentadilla con cinturón",
+      "de": "Belt Squat"
+    },
+    "Cintura con il carico sul bacino, nessun peso sulla schiena": {
+      "en": "Belt with the load on your hips, no weight on your back",
+      "es": "Cinturón con la carga en la pelvis, sin peso sobre la espalda",
+      "de": "Gürtel mit der Last an der Hüfte, kein Gewicht auf dem Rücken"
+    },
+    "In piedi sulle pedane, cintura con il carico agganciata al bacino, schiena dritta e petto alto, piedi poco più larghi delle spalle.": {
+      "en": "Stand on the platforms with the loaded belt clipped around your hips, back straight and chest up, feet slightly wider than your shoulders.",
+      "es": "De pie sobre las plataformas, cinturón con la carga enganchado a la pelvis, espalda recta y pecho alto, pies algo más anchos que los hombros.",
+      "de": "Stelle dich auf die Plattformen, den Gürtel mit der Last an der Hüfte eingehängt, Rücken gerade und Brust raus, Füße etwas breiter als die Schultern."
+    },
+    "Scendi piegando insieme ginocchia e anche, con il peso che tira dal bacino e non dalle spalle.": {
+      "en": "Go down by bending your knees and hips together, with the weight pulling from your hips and not from your shoulders.",
+      "es": "Baja flexionando rodillas y caderas a la vez, con el peso tirando de la pelvis y no de los hombros.",
+      "de": "Gehe nach unten, indem du Knie und Hüfte gemeinsam beugst; das Gewicht zieht an der Hüfte, nicht an den Schultern."
+    },
+    "Vai in profondità finché i talloni restano a terra e la schiena neutra.": {
+      "en": "Go as deep as you can while keeping your heels down and your back neutral.",
+      "es": "Baja en profundidad mientras los talones sigan en el suelo y la espalda neutra.",
+      "de": "Gehe so tief, wie die Fersen am Boden bleiben und der Rücken neutral bleibt."
+    },
+    "Spingi il pavimento via e risali, senza bloccare di scatto le ginocchia.": {
+      "en": "Push the floor away and stand up, without snapping your knees into lockout.",
+      "es": "Empuja el suelo y sube, sin bloquear las rodillas de golpe.",
+      "de": "Drücke den Boden weg und komm hoch, ohne die Knie ruckartig durchzudrücken."
+    },
+    "Talloni che si staccano o ginocchia che cadono verso l’interno.": {
+      "en": "Heels lifting or knees caving inward.",
+      "es": "Talones que se despegan o rodillas que caen hacia dentro.",
+      "de": "Fersen, die abheben, oder Knie, die nach innen fallen."
+    },
+    "Schiena che si arrotonda in fondo per scendere troppo.": {
+      "en": "Your back rounding at the bottom from going too deep.",
+      "es": "Espalda que se redondea abajo por bajar demasiado.",
+      "de": "Der Rücken rundet sich unten, weil du zu tief gehst."
+    },
+    "Spingi il pavimento \"allargandolo\" con i piedi: il carico sul bacino lascia la schiena libera.": {
+      "en": "Push the floor apart with your feet: the load on your hips leaves your back free.",
+      "es": "Empuja el suelo \"abriéndolo\" con los pies: la carga en la pelvis deja la espalda libre.",
+      "de": "Drücke den Boden mit den Füßen \"auseinander\": Die Last an der Hüfte lässt den Rücken frei."
+    },
+    "Squat con Pausa": {
+      "en": "Pause Squat",
+      "es": "Sentadilla con pausa",
+      "de": "Kniebeuge mit Pause"
+    },
+    "Bilanciere sulle spalle, pausa di #–# secondi in fondo": {
+      "en": "Bar on your shoulders, #–# second pause at the bottom",
+      "es": "Barra sobre los hombros, pausa de #–# segundos abajo",
+      "de": "Stange auf den Schultern, #–# Sekunden Pause unten"
+    },
+    "Bilanciere sui trapezi nel rack, con i supporti di sicurezza all’altezza giusta; piedi alla larghezza delle spalle o poco più, punte leggermente in fuori. Inspira e contrai l’addome (bracing) prima di scendere.": {
+      "en": "Bar on your traps in the rack, with the safety supports at the right height; feet shoulder-width apart or slightly wider, toes turned slightly out. Breathe in and brace your abs before going down.",
+      "es": "Barra sobre los trapecios en el rack, con los soportes de seguridad a la altura correcta; pies a la anchura de los hombros o algo más, puntas ligeramente hacia fuera. Inspira y contrae el abdomen (bracing) antes de bajar.",
+      "de": "Stange auf dem Trapez im Rack, die Sicherheitsarme auf der richtigen Höhe; Füße schulterbreit oder etwas breiter, Fußspitzen leicht nach außen. Atme ein und spanne den Bauch an (Bracing), bevor du nach unten gehst."
+    },
+    "Scendi controllato in #–# secondi fino alla profondità che riesci a tenere con i talloni a terra e la schiena neutra.": {
+      "en": "Lower with control over #–# seconds to the depth you can hold with your heels down and your back neutral.",
+      "es": "Baja con control en #–# segundos hasta la profundidad que puedas mantener con los talones en el suelo y la espalda neutra.",
+      "de": "Senke kontrolliert in #–# Sekunden bis zu der Tiefe, die du mit Fersen am Boden und neutralem Rücken halten kannst."
+    },
+    "Fermati in fondo #–# secondi, senza rilassare la tensione e senza rimbalzare.": {
+      "en": "Pause at the bottom for #–# seconds, without losing tension and without bouncing.",
+      "es": "Detente abajo #–# segundos, sin relajar la tensión y sin rebotar.",
+      "de": "Halte unten #–# Sekunden, ohne die Spannung zu verlieren und ohne abzufedern."
+    },
+    "Risali spingendo il pavimento con tutto il piede, con le ginocchia in linea con le punte.": {
+      "en": "Stand up by pushing the floor with your whole foot, knees in line with your toes.",
+      "es": "Sube empujando el suelo con todo el pie, con las rodillas alineadas con las puntas.",
+      "de": "Komm hoch, indem du den Boden mit dem ganzen Fuß wegdrückst, die Knie in einer Linie mit den Fußspitzen."
+    },
+    "Rilassarsi in fondo e perdere la posizione della schiena.": {
+      "en": "Relaxing at the bottom and losing your back position.",
+      "es": "Relajarse abajo y perder la posición de la espalda.",
+      "de": "Unten locker lassen und die Rückenposition verlieren."
+    },
+    "Ginocchia che crollano verso l’interno o talloni che si sollevano.": {
+      "en": "Knees collapsing inward or heels lifting.",
+      "es": "Rodillas que se hunden hacia dentro o talones que se levantan.",
+      "de": "Knie, die nach innen fallen, oder Fersen, die abheben."
+    },
+    "Spingi il pavimento \"allargandolo\" con i piedi: la pausa toglie il rimbalzo, quindi usa un carico più basso del solito.": {
+      "en": "Push the floor apart with your feet: the pause takes out the bounce, so use a lighter load than usual.",
+      "es": "Empuja el suelo \"abriéndolo\" con los pies: la pausa quita el rebote, así que usa menos carga de lo habitual.",
+      "de": "Drücke den Boden mit den Füßen \"auseinander\": Die Pause nimmt den Schwung, also nimm weniger Gewicht als sonst."
+    },
+    "Cossack Squat": {
+      "en": "Cossack Squat",
+      "es": "Sentadilla cosaca",
+      "de": "Cossack Squat"
+    },
+    "Piedi molto larghi, scendi su una gamba mentre l’altra resta tesa": {
+      "en": "Feet very wide, sink onto one leg while the other stays straight",
+      "es": "Pies muy separados, baja sobre una pierna mientras la otra queda extendida",
+      "de": "Füße sehr weit auseinander, gehe auf einem Bein in die Hocke, während das andere gestreckt bleibt"
+    },
+    "In piedi con i piedi molto più larghi delle spalle, punte leggermente in fuori, braccia davanti al petto per l’equilibrio.": {
+      "en": "Stand with your feet much wider than your shoulders, toes turned slightly out, arms in front of your chest for balance.",
+      "es": "De pie con los pies mucho más separados que los hombros, puntas ligeramente hacia fuera, brazos delante del pecho para el equilibrio.",
+      "de": "Stelle dich mit den Füßen deutlich breiter als die Schultern hin, Fußspitzen leicht nach außen, Arme zum Gleichgewicht vor der Brust."
+    },
+    "Sposta il peso su una gamba piegando il ginocchio e portando il bacino indietro e in basso.": {
+      "en": "Shift your weight onto one leg, bending the knee and sending your hips back and down.",
+      "es": "Pasa el peso a una pierna flexionando la rodilla y llevando la pelvis atrás y abajo.",
+      "de": "Verlagere das Gewicht auf ein Bein, beuge das Knie und schiebe das Becken nach hinten unten."
+    },
+    "L’altra gamba resta tesa con il piede appoggiato a terra (o solo sul tallone, se hai poca mobilità): senti allungarsi l’interno coscia.": {
+      "en": "The other leg stays straight with your foot flat on the floor (or just on the heel, if you have limited mobility): you feel your inner thigh stretch.",
+      "es": "La otra pierna queda extendida con el pie apoyado en el suelo (o solo en el talón, si tienes poca movilidad): notas cómo se estira el interior del muslo.",
+      "de": "Das andere Bein bleibt gestreckt, der Fuß steht flach am Boden (oder nur auf der Ferse, wenn du wenig Beweglichkeit hast): Du spürst die Innenseite des Oberschenkels dehnen."
+    },
+    "Spingi con il piede d’appoggio per tornare al centro e cambia lato.": {
+      "en": "Push through your supporting foot to return to the center and switch sides.",
+      "es": "Empuja con el pie de apoyo para volver al centro y cambia de lado.",
+      "de": "Drücke dich mit dem Standfuß zurück in die Mitte und wechsle die Seite."
+    },
+    "Ginocchio che cade verso l’interno (valgismo).": {
+      "en": "Knee caving inward (valgus).",
+      "es": "Rodilla que cae hacia dentro (valgo).",
+      "de": "Knie, das nach innen fällt (Valgus)."
+    },
+    "Tallone che si stacca o busto che crolla in avanti.": {
+      "en": "Heel lifting or torso collapsing forward.",
+      "es": "Talón que se despega o tronco que se desploma hacia delante.",
+      "de": "Ferse, die abhebt, oder Oberkörper, der nach vorn kippt."
+    },
+    "Siediti sul tallone, non sul ginocchio: la gamba tesa è un compasso che si apre.": {
+      "en": "Sit back on your heel, not on your knee: the straight leg is a compass opening out.",
+      "es": "Siéntate sobre el talón, no sobre la rodilla: la pierna extendida es un compás que se abre.",
+      "de": "Setze dich auf die Ferse, nicht aufs Knie: Das gestreckte Bein ist wie ein Zirkel, der sich öffnet."
+    },
+    "Squat su Scatola": {
+      "en": "Box Squat",
+      "es": "Sentadilla al cajón",
+      "de": "Box Squat"
+    },
+    "Piedi larghi come le spalle, ti siedi a ogni ripetizione su una scatola o una sedia robusta": {
+      "en": "Feet shoulder-width apart, sit down on a box or sturdy chair on every rep",
+      "es": "Pies a la anchura de los hombros, te sientas en un cajón o una silla robusta en cada repetición",
+      "de": "Füße schulterbreit, du setzt dich bei jeder Wiederholung auf eine Kiste oder einen stabilen Stuhl"
+    },
+    "In piedi davanti a una scatola, una panca o una sedia robusta all’altezza delle ginocchia (o poco più alta), piedi larghi come le spalle, braccia tese in avanti.": {
+      "en": "Stand in front of a box, bench or sturdy chair at knee height (or slightly higher), feet shoulder-width apart, arms straight out in front.",
+      "es": "De pie frente a un cajón, un banco o una silla robusta a la altura de las rodillas (o algo más alta), pies a la anchura de los hombros, brazos extendidos hacia delante.",
+      "de": "Stelle dich vor eine Kiste, Bank oder einen stabilen Stuhl in Kniehöhe (oder etwas höher), Füße schulterbreit, Arme gestreckt nach vorn."
+    },
+    "Porta il bacino indietro e piega le ginocchia finché ti siedi sulla scatola in modo controllato.": {
+      "en": "Send your hips back and bend your knees until you sit on the box in a controlled way.",
+      "es": "Lleva la pelvis atrás y flexiona las rodillas hasta sentarte en el cajón de forma controlada.",
+      "de": "Schiebe das Becken nach hinten und beuge die Knie, bis du dich kontrolliert auf die Kiste setzt."
+    },
+    "Fermati un istante, senza rilassarti completamente.": {
+      "en": "Pause for a moment, without fully relaxing.",
+      "es": "Detente un instante, sin relajarte del todo.",
+      "de": "Halte kurz inne, ohne komplett zu entspannen."
+    },
+    "Spingi il pavimento con tutto il piede e risali senza dondolare il busto.": {
+      "en": "Push the floor with your whole foot and stand up without rocking your torso.",
+      "es": "Empuja el suelo con todo el pie y sube sin balancear el tronco.",
+      "de": "Drücke den Boden mit dem ganzen Fuß weg und komm hoch, ohne den Oberkörper zu schaukeln."
+    },
+    "Lasciarsi cadere sulla scatola.": {
+      "en": "Dropping onto the box.",
+      "es": "Dejarse caer sobre el cajón.",
+      "de": "Sich auf die Kiste fallen lassen."
+    },
+    "Rimbalzare sulla scatola o aiutarsi con le mani sulle cosce.": {
+      "en": "Bouncing off the box or pushing off your thighs with your hands.",
+      "es": "Rebotar en el cajón o ayudarse con las manos en los muslos.",
+      "de": "Von der Kiste abfedern oder sich mit den Händen auf den Oberschenkeln abstützen."
+    },
+    "Siediti indietro, non giù: scatola alta se hai le ginocchia delicate, più bassa man mano che diventi più forte.": {
+      "en": "Sit back, not down: use a high box if your knees are sensitive, and a lower one as you get stronger.",
+      "es": "Siéntate hacia atrás, no hacia abajo: cajón alto si tienes las rodillas delicadas, más bajo a medida que te vuelves más fuerte.",
+      "de": "Setze dich nach hinten, nicht nach unten: Nimm eine hohe Kiste, wenn deine Knie empfindlich sind, und eine niedrigere, wenn du stärker wirst."
+    },
+    "Step-up Basso": {
+      "en": "Low Step-up",
+      "es": "Step-up bajo",
+      "de": "Niedriger Step-up"
+    },
+    "Un piede su un gradino basso (#–# cm), l’altro sfiora solo il gradino": {
+      "en": "One foot on a low step (#–# cm), the other only touches the step",
+      "es": "Un pie en un escalón bajo (#–# cm), el otro solo roza el escalón",
+      "de": "Ein Fuß auf einer niedrigen Stufe (#–# cm), der andere berührt die Stufe nur leicht"
+    },
+    "In piedi davanti a un gradino basso (#–# cm: il primo gradino di una scala va bene), un piede interamente appoggiato sopra, una mano a un appoggio se serve.": {
+      "en": "Stand in front of a low step (#–# cm: the first stair of a staircase works), one foot fully on top, one hand on a support if needed.",
+      "es": "De pie frente a un escalón bajo (#–# cm: el primer peldaño de una escalera sirve), un pie totalmente apoyado encima, una mano en un apoyo si hace falta.",
+      "de": "Stelle dich vor eine niedrige Stufe (#–# cm: die erste Treppenstufe geht gut), ein Fuß steht ganz darauf, bei Bedarf eine Hand an einer Stütze."
+    },
+    "Spingi con il piede sul gradino e sali fino a stare dritto sulla gamba d’appoggio.": {
+      "en": "Push through the foot on the step and stand up tall on your supporting leg.",
+      "es": "Empuja con el pie en el escalón y sube hasta quedar erguido sobre la pierna de apoyo.",
+      "de": "Drücke dich mit dem Fuß auf der Stufe hoch, bis du aufrecht auf dem Standbein stehst."
+    },
+    "In cima porta il peso sulla gamba che ha lavorato, con l’altro piede che sfiora solo il gradino.": {
+      "en": "At the top keep your weight on the working leg, with the other foot only touching the step.",
+      "es": "Arriba deja el peso en la pierna que ha trabajado, con el otro pie solo rozando el escalón.",
+      "de": "Oben liegt das Gewicht auf dem arbeitenden Bein, der andere Fuß berührt die Stufe nur leicht."
+    },
+    "Scendi lentamente in #–# secondi, controllando il ginocchio, e ripeti dallo stesso lato.": {
+      "en": "Lower slowly over #–# seconds, controlling your knee, and repeat on the same side.",
+      "es": "Baja despacio en #–# segundos, controlando la rodilla, y repite del mismo lado.",
+      "de": "Senke dich langsam in #–# Sekunden ab, kontrolliere das Knie und wiederhole auf derselben Seite."
+    },
+    "Spingere con il piede rimasto a terra invece che con quello sul gradino.": {
+      "en": "Pushing with the foot left on the floor instead of the one on the step.",
+      "es": "Empujar con el pie que queda en el suelo en lugar de con el del escalón.",
+      "de": "Sich mit dem Fuß am Boden statt mit dem auf der Stufe abdrücken."
+    },
+    "Ginocchio che cade verso l’interno.": {
+      "en": "Knee caving inward.",
+      "es": "Rodilla que cae hacia dentro.",
+      "de": "Knie, das nach innen fällt."
+    },
+    "Il piede sul gradino fa tutto il lavoro: l’altro piede lo sfiora soltanto.": {
+      "en": "The foot on the step does all the work: the other foot only brushes it.",
+      "es": "El pie del escalón hace todo el trabajo: el otro solo lo roza.",
+      "de": "Der Fuß auf der Stufe leistet die ganze Arbeit: Der andere streift sie nur."
+    },
+    "Sit-to-Stand dalla Panca": {
+      "en": "Sit-to-Stand from a Bench",
+      "es": "Levantarse del banco",
+      "de": "Aufstehen von der Bank"
+    },
+    "Seduto sul bordo di una panca o di una sedia stabile, piedi sotto le ginocchia": {
+      "en": "Seated on the edge of a bench or a stable chair, feet under your knees",
+      "es": "Sentado en el borde de un banco o de una silla estable, pies bajo las rodillas",
+      "de": "Auf der Kante einer Bank oder eines stabilen Stuhls sitzend, Füße unter den Knien"
+    },
+    "Seduto sul bordo di una panca o di una sedia stabile (non girevole), piedi a terra poco più larghi delle anche e sotto le ginocchia, braccia incrociate sul petto; un appoggio solido a portata di mano.": {
+      "en": "Sit on the edge of a bench or a stable (non-swivel) chair, feet flat slightly wider than your hips and under your knees, arms crossed over your chest; a solid support within reach.",
+      "es": "Sentado en el borde de un banco o de una silla estable (no giratoria), pies en el suelo algo más separados que las caderas y bajo las rodillas, brazos cruzados sobre el pecho; un apoyo sólido al alcance.",
+      "de": "Setze dich auf die Kante einer Bank oder eines stabilen (nicht drehbaren) Stuhls, Füße flach am Boden, etwas breiter als die Hüfte und unter den Knien, Arme vor der Brust verschränkt; eine feste Stütze in Reichweite."
+    },
+    "Spingi i piedi nel pavimento e alzati portando il busto in avanti, fino a stare in piedi con le anche estese.": {
+      "en": "Push your feet into the floor and stand up, bringing your torso forward, until you are standing with your hips extended.",
+      "es": "Empuja los pies contra el suelo y levántate llevando el tronco hacia delante, hasta quedar de pie con las caderas extendidas.",
+      "de": "Drücke die Füße in den Boden und stehe auf, indem du den Oberkörper nach vorn bringst, bis du mit gestreckter Hüfte stehst."
+    },
+    "In piedi fermati un istante, stabile, prima di scendere.": {
+      "en": "Once standing, pause for a moment, steady, before sitting down.",
+      "es": "De pie, detente un instante, estable, antes de bajar.",
+      "de": "Bleibe im Stehen einen Moment stabil, bevor du dich wieder hinsetzt."
+    },
+    "Scendi lentamente in # secondi appoggiando il sedere sul bordo, senza lasciarti cadere.": {
+      "en": "Lower slowly over # seconds, placing your backside on the edge, without dropping.",
+      "es": "Baja despacio en # segundos apoyando el trasero en el borde, sin dejarte caer.",
+      "de": "Setze dich langsam in # Sekunden auf die Kante, ohne dich fallen zu lassen."
+    },
+    "Aiutarsi con le mani o con lo slancio del busto.": {
+      "en": "Helping yourself with your hands or by swinging your torso.",
+      "es": "Ayudarse con las manos o con el impulso del tronco.",
+      "de": "Sich mit den Händen oder mit Schwung aus dem Oberkörper helfen."
+    },
+    "Lasciarsi cadere sulla panca invece di controllare la discesa.": {
+      "en": "Dropping onto the bench instead of controlling the descent.",
+      "es": "Dejarse caer en el banco en lugar de controlar el descenso.",
+      "de": "Sich auf die Bank fallen lassen, statt den Abstieg zu kontrollieren."
+    },
+    "Sali con decisione, scendi lento. Dopo ogni serie rialzati con calma: se hai un capogiro, siediti e fermati.": {
+      "en": "Stand up with purpose, sit down slowly. After each set get up calmly: if you feel dizzy, sit down and stop.",
+      "es": "Sube con decisión, baja despacio. Después de cada serie levántate con calma: si notas un mareo, siéntate y detente.",
+      "de": "Stehe zügig auf, setze dich langsam. Steh nach jedem Satz in Ruhe auf: Wenn dir schwindelig wird, setz dich hin und hör auf."
+    },
+    "Calf Raise con Manubrio sul Gradino": {
+      "en": "Dumbbell Step Calf Raise",
+      "es": "Elevación de talones con mancuerna en escalón",
+      "de": "Wadenheben mit Kurzhantel auf der Stufe"
+    },
+    "In piedi sul bordo di un gradino, un manubrio per mano, tallone nel vuoto": {
+      "en": "Standing on the edge of a step, a dumbbell in each hand, heels hanging off",
+      "es": "De pie en el borde de un escalón, una mancuerna en cada mano, talones en el vacío",
+      "de": "Auf der Kante einer Stufe stehend, in jeder Hand eine Kurzhantel, Fersen im Leeren"
+    },
+    "Avampiedi sul bordo di un gradino, un manubrio per mano (o uno solo, con l’altra mano a un appoggio), ginocchia distese ma non bloccate.": {
+      "en": "Balls of your feet on the edge of a step, a dumbbell in each hand (or just one, with the other hand on a support), knees straight but not locked.",
+      "es": "Antepiés en el borde de un escalón, una mancuerna en cada mano (o una sola, con la otra mano en un apoyo), rodillas extendidas pero no bloqueadas.",
+      "de": "Fußballen auf der Kante einer Stufe, in jeder Hand eine Kurzhantel (oder nur eine, die andere Hand an einer Stütze), Knie gestreckt, aber nicht durchgedrückt."
+    },
+    "Tibialis Raise": {
+      "en": "Tibialis Raise",
+      "es": "Elevación de tibial",
+      "de": "Tibialis-Heben"
+    },
+    "Schiena al muro, talloni a terra, le punte dei piedi che salgono": {
+      "en": "Back against a wall, heels on the floor, toes lifting",
+      "es": "Espalda contra la pared, talones en el suelo, puntas de los pies que suben",
+      "de": "Rücken an der Wand, Fersen am Boden, die Fußspitzen heben sich"
+    },
+    "Tibiale anteriore": {
+      "en": "Tibialis anterior",
+      "es": "Tibial anterior",
+      "de": "Vorderer Schienbeinmuskel"
+    },
+    "Primari: tibiale anteriore": {
+      "en": "Primary: tibialis anterior",
+      "es": "Principales: tibial anterior",
+      "de": "Primär: vorderer Schienbeinmuskel"
+    },
+    "In piedi con la schiena appoggiata a un muro, piedi avanti di circa un passo, ginocchia leggermente flesse, talloni a terra.": {
+      "en": "Stand with your back against a wall, feet about a step forward, knees slightly bent, heels on the floor.",
+      "es": "De pie con la espalda apoyada en una pared, pies adelantados un paso aproximadamente, rodillas ligeramente flexionadas, talones en el suelo.",
+      "de": "Stelle dich mit dem Rücken an eine Wand, die Füße etwa einen Schritt vor, Knie leicht gebeugt, Fersen am Boden."
+    },
+    "Solleva le punte dei piedi verso le tibie (dorsiflessione), tenendo i talloni a terra.": {
+      "en": "Lift the tips of your feet toward your shins (dorsiflexion), keeping your heels on the floor.",
+      "es": "Levanta las puntas de los pies hacia las espinillas (dorsiflexión), manteniendo los talones en el suelo.",
+      "de": "Hebe die Fußspitzen zu den Schienbeinen (Dorsalextension), die Fersen bleiben am Boden."
+    },
+    "Scendi lentamente senza far cadere le punte.": {
+      "en": "Lower slowly without letting your toes drop.",
+      "es": "Baja despacio sin dejar caer las puntas.",
+      "de": "Senke langsam ab, ohne die Fußspitzen fallen zu lassen."
+    },
+    "Staccare i talloni dal pavimento.": {
+      "en": "Lifting your heels off the floor.",
+      "es": "Despegar los talones del suelo.",
+      "de": "Die Fersen vom Boden abheben."
+    },
+    "Più i piedi sono lontani dal muro, più è difficile: trova la distanza che ti permette # ripetizioni pulite.": {
+      "en": "The further your feet are from the wall, the harder it gets: find the distance that lets you do # clean reps.",
+      "es": "Cuanto más lejos del muro están los pies, más difícil: encuentra la distancia que te permita # repeticiones limpias.",
+      "de": "Je weiter die Füße von der Wand entfernt sind, desto schwerer wird es: Finde den Abstand, bei dem du # saubere Wiederholungen schaffst."
+    },
+    "Copenhagen Plank": {
+      "en": "Copenhagen Plank",
+      "es": "Plancha copenhague",
+      "de": "Copenhagen Plank"
+    },
+    "Di fianco, gamba superiore su una sedia o una panca, avambraccio a terra": {
+      "en": "Side-lying, top leg on a chair or bench, forearm on the floor",
+      "es": "De lado, pierna superior sobre una silla o un banco, antebrazo en el suelo",
+      "de": "Seitlich, oberes Bein auf einem Stuhl oder einer Bank, Unterarm am Boden"
+    },
+    "Di fianco, avambraccio a terra sotto la spalla, la gamba superiore con il ginocchio (poi la caviglia) appoggiata al bordo di una sedia o di una panca, la gamba inferiore sotto la seduta.": {
+      "en": "On your side, forearm on the floor under your shoulder, top leg resting on the edge of a chair or bench with the knee (later the ankle), bottom leg underneath the seat.",
+      "es": "De lado, antebrazo en el suelo bajo el hombro, la pierna superior con la rodilla (después el tobillo) apoyada en el borde de una silla o un banco, la pierna inferior bajo el asiento.",
+      "de": "Seitlich, Unterarm unter der Schulter am Boden, das obere Bein mit dem Knie (später dem Knöchel) auf der Kante eines Stuhls oder einer Bank, das untere Bein unter der Sitzfläche."
+    },
+    "Solleva il bacino fino ad allineare il corpo, spingendo la gamba superiore contro la panca.": {
+      "en": "Lift your hips until your body is in line, pressing your top leg into the bench.",
+      "es": "Eleva la pelvis hasta alinear el cuerpo, empujando la pierna superior contra el banco.",
+      "de": "Hebe das Becken, bis der Körper eine Linie bildet, und drücke das obere Bein gegen die Bank."
+    },
+    "Tieni la posizione respirando, senza ruotare il busto.": {
+      "en": "Hold the position while breathing, without rotating your torso.",
+      "es": "Mantén la posición respirando, sin girar el tronco.",
+      "de": "Halte die Position und atme dabei, ohne den Oberkörper zu drehen."
+    },
+    "Scendi con calma e cambia lato.": {
+      "en": "Lower calmly and switch sides.",
+      "es": "Baja con calma y cambia de lado.",
+      "de": "Senke dich ruhig ab und wechsle die Seite."
+    },
+    "Bacino che scende verso il pavimento.": {
+      "en": "Hips sinking toward the floor.",
+      "es": "Pelvis que baja hacia el suelo.",
+      "de": "Becken, das zum Boden hin absinkt."
+    },
+    "Continuare se senti dolore all’inguine invece di fermarti.": {
+      "en": "Carrying on when you feel groin pain instead of stopping.",
+      "es": "Continuar si sientes dolor en la ingle en lugar de parar.",
+      "de": "Weitermachen, wenn du Leistenschmerzen spürst, statt aufzuhören."
+    },
+    "Parti con il ginocchio sulla panca: passa alla caviglia quando tieni # secondi per lato con il corpo in linea.": {
+      "en": "Start with your knee on the bench: move to the ankle once you can hold # seconds per side with your body in line.",
+      "es": "Empieza con la rodilla en el banco: pasa al tobillo cuando aguantes # segundos por lado con el cuerpo en línea.",
+      "de": "Beginne mit dem Knie auf der Bank: Wechsle zum Knöchel, wenn du # Sekunden pro Seite mit dem Körper in einer Linie halten kannst."
+    },
+    "Elastico": {
+      "en": "Resistance band",
+      "es": "Banda elástica",
+      "de": "Widerstandsband"
+    },
+    "Anelli": {
+      "en": "Rings",
+      "es": "Anillas",
+      "de": "Ringe"
+    },
+    "Kettlebell": {
+      "en": "Kettlebell",
+      "es": "Kettlebell",
+      "de": "Kettlebell"
+    },
+    "Flessori del polso": {
+      "en": "Wrist flexors",
+      "es": "Flexores de la muñeca",
+      "de": "Handgelenkbeuger"
+    },
+    "Estensori del polso": {
+      "en": "Wrist extensors",
+      "es": "Extensores de la muñeca",
+      "de": "Handgelenkstrecker"
+    },
+    "Stacco Rumeno con Manubri": {
+      "en": "Dumbbell Romanian Deadlift",
+      "es": "Peso muerto rumano con mancuernas",
+      "de": "Rumänisches Kreuzheben mit Kurzhanteln"
+    },
+    "Gambe quasi tese, un manubrio per mano vicino alle gambe": {
+      "en": "Legs almost straight, a dumbbell in each hand close to your legs",
+      "es": "Piernas casi extendidas, una mancuerna en cada mano cerca de las piernas",
+      "de": "Beine fast gestreckt, in jeder Hand eine Kurzhantel nah an den Beinen"
+    },
+    "In piedi, un manubrio per mano davanti alle cosce, piedi alla larghezza delle anche, ginocchia leggermente flesse e poi fisse.": {
+      "en": "Stand with a dumbbell in each hand in front of your thighs, feet hip-width apart, knees slightly bent and then fixed.",
+      "es": "De pie, una mancuerna en cada mano delante de los muslos, pies a la anchura de las caderas, rodillas ligeramente flexionadas y luego fijas.",
+      "de": "Stelle dich hin, in jeder Hand eine Kurzhantel vor den Oberschenkeln, Füße hüftbreit, Knie leicht gebeugt und dann fixiert."
+    },
+    "Porta le anche indietro (hip hinge) facendo scivolare i manubri lungo le cosce e le gambe.": {
+      "en": "Push your hips back (hip hinge), sliding the dumbbells down your thighs and legs.",
+      "es": "Lleva las caderas atrás (hip hinge) haciendo deslizar las mancuernas por los muslos y las piernas.",
+      "de": "Schiebe die Hüfte nach hinten (Hip Hinge) und lasse die Kurzhanteln an Oberschenkeln und Beinen entlanggleiten."
+    },
+    "Scendi finché senti tirare i femorali, di solito sotto il ginocchio, con la schiena sempre neutra.": {
+      "en": "Go down until you feel your hamstrings stretch, usually below the knee, with your back always neutral.",
+      "es": "Baja hasta notar que se tensan los isquiotibiales, normalmente por debajo de la rodilla, con la espalda siempre neutra.",
+      "de": "Gehe nach unten, bis du die Beinbeuger ziehen spürst, meist unter dem Knie, der Rücken bleibt immer neutral."
+    },
+    "Risali spingendo le anche in avanti, senza inarcare la schiena in alto.": {
+      "en": "Stand back up by driving your hips forward, without arching your back at the top.",
+      "es": "Sube empujando las caderas hacia delante, sin arquear la espalda arriba.",
+      "de": "Komm hoch, indem du die Hüfte nach vorn schiebst, ohne oben den Rücken zu überstrecken."
+    },
+    "Piegare le ginocchia trasformandolo in uno squat.": {
+      "en": "Bending your knees and turning it into a squat.",
+      "es": "Flexionar las rodillas convirtiéndolo en una sentadilla.",
+      "de": "Die Knie beugen und es in eine Kniebeuge verwandeln."
+    },
+    "Manubri lontani dalle gambe e schiena che si arrotonda.": {
+      "en": "Dumbbells drifting away from your legs and your back rounding.",
+      "es": "Mancuernas lejos de las piernas y espalda que se redondea.",
+      "de": "Kurzhanteln weit weg von den Beinen und ein rund werdender Rücken."
+    },
+    "Chiudi una porta con il sedere, manubri attaccati alle gambe, e risali spingendo i fianchi in avanti.": {
+      "en": "Close a door with your backside, dumbbells glued to your legs, and stand up by driving your hips forward.",
+      "es": "Cierra una puerta con el trasero, mancuernas pegadas a las piernas, y sube empujando las caderas hacia delante.",
+      "de": "Schließ eine Tür mit dem Po, die Kurzhanteln dicht an den Beinen, und komm hoch, indem du die Hüfte nach vorn schiebst."
+    },
+    "Stacco Rumeno a una Gamba": {
+      "en": "Single-Leg Romanian Deadlift",
+      "es": "Peso muerto rumano a una pierna",
+      "de": "Einbeiniges rumänisches Kreuzheben"
+    },
+    "In piedi su una gamba, un manubrio nella mano opposta, busto che si abbassa": {
+      "en": "Standing on one leg, a dumbbell in the opposite hand, torso lowering",
+      "es": "De pie sobre una pierna, una mancuerna en la mano opuesta, tronco que baja",
+      "de": "Auf einem Bein stehend, eine Kurzhantel in der gegenüberliegenden Hand, der Oberkörper senkt sich"
+    },
+    "Primari: grande gluteo, ischiocrurali · Secondari: erettori spinali, medio gluteo, core": {
+      "en": "Primary: gluteus maximus, hamstrings · Secondary: spinal erectors, gluteus medius, core",
+      "es": "Principales: glúteo mayor, isquiotibiales · Secundarios: erectores espinales, glúteo medio, core",
+      "de": "Primär: großer Gesäßmuskel, Beinbeuger · Sekundär: Rückenstrecker, mittlerer Gesäßmuskel, Rumpf"
+    },
+    "In piedi su una gamba sola, ginocchio leggermente flesso, un manubrio nella mano opposta alla gamba d’appoggio; vicino a un muro, se ti serve una mano per l’equilibrio.": {
+      "en": "Stand on one leg, knee slightly bent, a dumbbell in the hand opposite your supporting leg; stay near a wall if you need a hand for balance.",
+      "es": "De pie sobre una sola pierna, rodilla ligeramente flexionada, una mancuerna en la mano opuesta a la pierna de apoyo; cerca de una pared, por si necesitas una mano para el equilibrio.",
+      "de": "Stelle dich auf ein Bein, Knie leicht gebeugt, eine Kurzhantel in der Hand gegenüber dem Standbein; bleib in der Nähe einer Wand, falls du eine Hand zum Gleichgewicht brauchst."
+    },
+    "Porta il busto in avanti e la gamba libera indietro, in linea, come un’altalena (hip hinge su una gamba).": {
+      "en": "Tip your torso forward and your free leg back, in one line, like a seesaw (hip hinge on one leg).",
+      "es": "Lleva el tronco hacia delante y la pierna libre hacia atrás, en línea, como un balancín (hip hinge sobre una pierna).",
+      "de": "Neige den Oberkörper nach vorn und das freie Bein nach hinten, in einer Linie wie eine Wippe (Hip Hinge auf einem Bein)."
+    },
+    "Scendi finché senti tirare il femorale della gamba d’appoggio, con la schiena neutra e il bacino dritto.": {
+      "en": "Go down until you feel the hamstring of your supporting leg stretch, with your back neutral and your hips level.",
+      "es": "Baja hasta notar que se tensa el isquiotibial de la pierna de apoyo, con la espalda neutra y la pelvis recta.",
+      "de": "Gehe nach unten, bis du den Beinbeuger des Standbeins ziehen spürst, mit neutralem Rücken und geradem Becken."
+    },
+    "Risali spingendo l’anca in avanti, fino a tornare in piedi senza appoggiare il piede libero.": {
+      "en": "Stand back up by driving your hip forward, without putting your free foot down.",
+      "es": "Sube empujando la cadera hacia delante, hasta volver a estar de pie sin apoyar el pie libre.",
+      "de": "Komm hoch, indem du die Hüfte nach vorn schiebst, ohne den freien Fuß abzusetzen."
+    },
+    "Bacino che ruota e si apre verso il lato della gamba libera.": {
+      "en": "Hips rotating and opening toward the side of the free leg.",
+      "es": "Pelvis que gira y se abre hacia el lado de la pierna libre.",
+      "de": "Becken, das sich zur Seite des freien Beins dreht und öffnet."
+    },
+    "Ginocchio d’appoggio che si piega fino a diventare uno squat.": {
+      "en": "Supporting knee bending until it becomes a squat.",
+      "es": "Rodilla de apoyo que se flexiona hasta convertirse en una sentadilla.",
+      "de": "Standbein-Knie, das sich so weit beugt, dass es zur Kniebeuge wird."
+    },
+    "Spingi il tallone libero all’indietro: il corpo resta una linea unica dalla testa al tallone.": {
+      "en": "Push your free heel straight back: your body stays one line from head to heel.",
+      "es": "Empuja el talón libre hacia atrás: el cuerpo es una sola línea desde la cabeza hasta el talón.",
+      "de": "Schiebe die freie Ferse nach hinten: Dein Körper bleibt eine einzige Linie vom Kopf bis zur Ferse."
+    },
+    "Hip Thrust con Manubrio": {
+      "en": "Dumbbell Hip Thrust",
+      "es": "Hip thrust con mancuerna",
+      "de": "Hip Thrust mit Kurzhantel"
+    },
+    "Schiena sulla panca, un manubrio sul bacino": {
+      "en": "Back on the bench, a dumbbell on your hips",
+      "es": "Espalda en el banco, una mancuerna sobre la pelvis",
+      "de": "Rücken auf der Bank, eine Kurzhantel auf dem Becken"
+    },
+    "Parte alta della schiena (sotto le scapole) sulla panca o sul bordo di un divano stabile, un manubrio sulle anche tenuto con due mani, piedi alla larghezza delle anche.": {
+      "en": "Upper back (below the shoulder blades) on the bench or on the edge of a stable sofa, a dumbbell on your hips held with both hands, feet hip-width apart.",
+      "es": "Parte alta de la espalda (bajo las escápulas) en el banco o en el borde de un sofá estable, una mancuerna sobre las caderas sujeta con las dos manos, pies a la anchura de las caderas.",
+      "de": "Oberer Rücken (unterhalb der Schulterblätter) auf der Bank oder der Kante eines stabilen Sofas, eine Kurzhantel mit beiden Händen auf der Hüfte, Füße hüftbreit."
+    },
+    "Kettlebell Swing": {
+      "en": "Kettlebell Swing",
+      "es": "Swing con kettlebell",
+      "de": "Kettlebell Swing"
+    },
+    "Piedi larghi come le spalle, il kettlebell passa tra le gambe e sale con la spinta d’anca": {
+      "en": "Feet shoulder-width apart, the kettlebell swings between your legs and rises with the hip drive",
+      "es": "Pies a la anchura de los hombros, el kettlebell pasa entre las piernas y sube con el empuje de cadera",
+      "de": "Füße schulterbreit, das Kettlebell schwingt zwischen den Beinen durch und steigt durch den Hüftstoß"
+    },
+    "Primari: grande gluteo, ischiocrurali · Secondari: erettori spinali, core": {
+      "en": "Primary: gluteus maximus, hamstrings · Secondary: spinal erectors, core",
+      "es": "Principales: glúteo mayor, isquiotibiales · Secundarios: erectores espinales, core",
+      "de": "Primär: großer Gesäßmuskel, Beinbeuger · Sekundär: Rückenstrecker, Rumpf"
+    },
+    "In piedi, piedi poco più larghi delle spalle, kettlebell a un piede davanti a te. Porta il bacino indietro (hip hinge), afferra il manico con due mani e inclinalo all’indietro tra le gambe, come per passare un pallone.": {
+      "en": "Stand with your feet slightly wider than your shoulders, the kettlebell a foot in front of you. Push your hips back (hip hinge), grab the handle with both hands and tilt it back between your legs, as if hiking a football.",
+      "es": "De pie, pies algo más separados que los hombros, kettlebell a un pie delante de ti. Lleva la pelvis atrás (hip hinge), agarra el asa con las dos manos e inclínalo hacia atrás entre las piernas, como para pasar un balón.",
+      "de": "Stelle dich mit den Füßen etwas breiter als die Schultern hin, das Kettlebell einen Fuß vor dir. Schiebe die Hüfte nach hinten (Hip Hinge), greife den Griff mit beiden Händen und kippe es zwischen den Beinen nach hinten, als würdest du einen Ball durchreichen."
+    },
+    "Spingi i fianchi in avanti con forza fino a stare dritto: il kettlebell sale da solo fino all’altezza del petto, con le braccia tese.": {
+      "en": "Drive your hips forward hard until you are standing tall: the kettlebell rises on its own to chest height, with your arms straight.",
+      "es": "Empuja las caderas hacia delante con fuerza hasta quedar erguido: el kettlebell sube solo hasta la altura del pecho, con los brazos extendidos.",
+      "de": "Stoße die Hüfte kräftig nach vorn, bis du aufrecht stehst: Das Kettlebell steigt von allein bis auf Brusthöhe, die Arme bleiben gestreckt."
+    },
+    "In alto contrai glutei e addome, senza inarcare la schiena.": {
+      "en": "At the top squeeze your glutes and abs, without arching your back.",
+      "es": "Arriba contrae glúteos y abdomen, sin arquear la espalda.",
+      "de": "Spanne oben Gesäß und Bauch an, ohne den Rücken zu überstrecken."
+    },
+    "Lascia scendere il kettlebell e riporta il bacino indietro, facendolo passare tra le cosce.": {
+      "en": "Let the kettlebell fall back and send your hips back, letting it pass between your thighs.",
+      "es": "Deja bajar el kettlebell y lleva la pelvis atrás, haciéndolo pasar entre los muslos.",
+      "de": "Lass das Kettlebell zurückfallen und schiebe die Hüfte nach hinten, sodass es zwischen den Oberschenkeln durchschwingt."
+    },
+    "Alzare il kettlebell con le braccia o con le spalle invece che con i fianchi.": {
+      "en": "Lifting the kettlebell with your arms or shoulders instead of your hips.",
+      "es": "Subir el kettlebell con los brazos o los hombros en lugar de con las caderas.",
+      "de": "Das Kettlebell mit Armen oder Schultern statt mit der Hüfte anheben."
+    },
+    "Piegare le ginocchia come in uno squat o inarcare la schiena in alto.": {
+      "en": "Bending your knees like a squat or arching your back at the top.",
+      "es": "Flexionar las rodillas como en una sentadilla o arquear la espalda arriba.",
+      "de": "Die Knie wie bei einer Kniebeuge beugen oder oben den Rücken überstrecken."
+    },
+    "Fianchi, non braccia: il kettlebell è una palla lanciata dall’anca. Se la schiena si arrotonda, fermati.": {
+      "en": "Hips, not arms: the kettlebell is a ball thrown by your hip. If your back rounds, stop.",
+      "es": "Caderas, no brazos: el kettlebell es una pelota lanzada por la cadera. Si la espalda se redondea, detente.",
+      "de": "Hüfte, nicht Arme: Das Kettlebell ist ein Ball, den die Hüfte wirft. Wenn der Rücken rund wird, hör auf."
+    },
+    "Alzate Laterali con Elastico": {
+      "en": "Resistance Band Lateral Raise",
+      "es": "Elevaciones laterales con banda elástica",
+      "de": "Seitheben mit Widerstandsband"
+    },
+    "In piedi sull’elastico, un’estremità per mano, braccia ai lati": {
+      "en": "Standing on the band, one end in each hand, arms at your sides",
+      "es": "De pie sobre la banda, un extremo en cada mano, brazos a los lados",
+      "de": "Auf dem Band stehend, in jeder Hand ein Ende, Arme seitlich"
+    },
+    "In piedi con i piedi sull’elastico, un’estremità per mano (più l’elastico è corto, più è duro), gomiti leggermente flessi.": {
+      "en": "Stand with both feet on the band, one end in each hand (the shorter the band, the harder it is), elbows slightly bent.",
+      "es": "De pie con los pies sobre la banda, un extremo en cada mano (cuanto más corta la banda, más dura), codos ligeramente flexionados.",
+      "de": "Stelle dich mit beiden Füßen auf das Band, in jeder Hand ein Ende (je kürzer das Band, desto schwerer), Ellbogen leicht gebeugt."
+    },
+    "Solleva le braccia ai lati, leggermente in avanti (circa #°, il piano della scapola), fino all’altezza delle spalle.": {
+      "en": "Raise your arms out to the sides, slightly forward (about #°, the plane of the shoulder blade), up to shoulder height.",
+      "es": "Levanta los brazos a los lados, ligeramente hacia delante (unos #°, el plano de la escápula), hasta la altura de los hombros.",
+      "de": "Hebe die Arme seitlich, leicht nach vorn (etwa #°, in der Schulterblattebene), bis auf Schulterhöhe."
+    },
+    "Porta i gomiti verso l’esterno, non le mani: la tensione cresce salendo.": {
+      "en": "Lead with your elbows out to the sides, not your hands: the tension grows as you rise.",
+      "es": "Lleva los codos hacia fuera, no las manos: la tensión aumenta al subir.",
+      "de": "Führe die Ellbogen nach außen, nicht die Hände: Die Spannung nimmt beim Hochgehen zu."
+    },
+    "Scendi lentamente in #–# secondi senza lasciare andare l’elastico.": {
+      "en": "Lower slowly over #–# seconds without letting the band snap back.",
+      "es": "Baja despacio en #–# segundos sin soltar de golpe la banda.",
+      "de": "Senke dich langsam in #–# Sekunden ab, ohne das Band zurückschnellen zu lassen."
+    },
+    "Porta i gomiti verso fuori, non le mani; ferma a livello spalle.": {
+      "en": "Lead with your elbows, not your hands; stop at shoulder level.",
+      "es": "Lleva los codos hacia fuera, no las manos; detente a la altura de los hombros.",
+      "de": "Führe mit den Ellbogen, nicht mit den Händen; stoppe auf Schulterhöhe."
+    },
+    "Alzate Laterali Inclinate": {
+      "en": "Leaning Lateral Raise",
+      "es": "Elevaciones laterales inclinadas",
+      "de": "Seitheben im Lehnen"
+    },
+    "In piedi di lato a un montante, una mano si tiene e il busto si inclina lontano": {
+      "en": "Standing sideways to a post, one hand holding on and your torso leaning away",
+      "es": "De pie de lado junto a un montante, una mano se agarra y el tronco se inclina hacia fuera",
+      "de": "Seitlich an einem Pfosten stehend, eine Hand hält fest und der Oberkörper neigt sich weg"
+    },
+    "In piedi di lato a un montante o a uno stipite, una mano lo afferra e il busto si inclina lontano dall’appoggio; un manubrio leggero nell’altra mano, lungo il fianco.": {
+      "en": "Stand sideways to a post or a door frame, one hand holding it and your torso leaning away from the support; a light dumbbell in the other hand, at your side.",
+      "es": "De pie de lado junto a un montante o a un marco de puerta, una mano lo agarra y el tronco se inclina lejos del apoyo; una mancuerna ligera en la otra mano, a lo largo del costado.",
+      "de": "Stelle dich seitlich an einen Pfosten oder Türrahmen, eine Hand hält ihn fest und der Oberkörper neigt sich vom Halt weg; in der anderen Hand eine leichte Kurzhantel seitlich am Körper."
+    },
+    "Parti con il braccio che pende leggermente davanti al corpo, il gomito appena flesso.": {
+      "en": "Start with your arm hanging slightly in front of your body, elbow barely bent.",
+      "es": "Empieza con el brazo colgando ligeramente delante del cuerpo, el codo apenas flexionado.",
+      "de": "Beginne mit dem Arm leicht vor dem Körper hängend, der Ellbogen kaum gebeugt."
+    },
+    "Solleva il manubrio verso l’esterno fino all’altezza della spalla, portando il gomito verso fuori.": {
+      "en": "Raise the dumbbell out to the side up to shoulder height, leading with your elbow.",
+      "es": "Levanta la mancuerna hacia fuera hasta la altura del hombro, llevando el codo hacia fuera.",
+      "de": "Hebe die Kurzhantel seitlich bis auf Schulterhöhe und führe den Ellbogen nach außen."
+    },
+    "Scendi lentamente in #–# secondi, sentendo il deltoide allungarsi, e cambia lato a fine serie.": {
+      "en": "Lower slowly over #–# seconds, feeling your deltoid stretch, and switch sides after the set.",
+      "es": "Baja despacio en #–# segundos, notando cómo se estira el deltoides, y cambia de lado al terminar la serie.",
+      "de": "Senke dich langsam in #–# Sekunden ab, spüre die Schulter dehnen, und wechsle nach dem Satz die Seite."
+    },
+    "Porta i gomiti verso fuori, non le mani: più il busto è inclinato, più il lavoro parte da lontano.": {
+      "en": "Lead with your elbows, not your hands: the more you lean, the further from the top the work starts.",
+      "es": "Lleva los codos hacia fuera, no las manos: cuanto más inclinado el tronco, más lejos empieza el trabajo.",
+      "de": "Führe mit den Ellbogen, nicht mit den Händen: Je weiter du dich neigst, desto weiter unten beginnt die Arbeit."
+    },
+    "Extrarotazione al Cavo": {
+      "en": "Cable External Rotation",
+      "es": "Rotación externa en polea",
+      "de": "Außenrotation am Kabel"
+    },
+    "Maniglia singola, puleggia all’altezza del gomito, gomito fermo al fianco": {
+      "en": "Single handle, pulley at elbow height, elbow fixed at your side",
+      "es": "Asa individual, polea a la altura del codo, codo fijo al costado",
+      "de": "Einzelgriff, Umlenkrolle auf Ellbogenhöhe, Ellbogen fest an der Seite"
+    },
+    "Extrarotatori della cuffia": {
+      "en": "Rotator cuff external rotators",
+      "es": "Rotadores externos del manguito rotador",
+      "de": "Außenrotatoren der Rotatorenmanschette"
+    },
+    "Primari: extrarotatori della cuffia (sottospinato, piccolo rotondo) · Secondari: deltoide posteriore": {
+      "en": "Primary: rotator cuff external rotators (infraspinatus, teres minor) · Secondary: rear deltoid",
+      "es": "Principales: rotadores externos del manguito (infraespinoso, redondo menor) · Secundarios: deltoides posterior",
+      "de": "Primär: Außenrotatoren der Rotatorenmanschette (Untergrätenmuskel, kleiner Rundmuskel) · Sekundär: hintere Schulter"
+    },
+    "In piedi di lato al cavo, puleggia all’altezza del gomito, maniglia nella mano più lontana dal cavo, gomito piegato a #° tenuto al fianco (un asciugamano arrotolato tra gomito e fianco aiuta a tenerlo fermo).": {
+      "en": "Stand sideways to the cable, pulley at elbow height, handle in the hand furthest from the cable, elbow bent at #° and held at your side (a rolled towel between elbow and ribs helps keep it still).",
+      "es": "De pie de lado a la polea, polea a la altura del codo, asa en la mano más alejada de la polea, codo flexionado a #° y pegado al costado (una toalla enrollada entre el codo y el costado ayuda a mantenerlo quieto).",
+      "de": "Stelle dich seitlich zum Kabel, Umlenkrolle auf Ellbogenhöhe, Griff in der kabelfernen Hand, Ellbogen #° gebeugt und an der Seite gehalten (ein gerolltes Handtuch zwischen Ellbogen und Körper hilft, ihn ruhig zu halten)."
+    },
+    "Parti con l’avambraccio davanti all’addome e ruotalo verso l’esterno, tenendo il gomito fermo.": {
+      "en": "Start with your forearm in front of your belly and rotate it outward, keeping your elbow still.",
+      "es": "Empieza con el antebrazo delante del abdomen y gíralo hacia fuera, manteniendo el codo quieto.",
+      "de": "Beginne mit dem Unterarm vor dem Bauch und drehe ihn nach außen, der Ellbogen bleibt ruhig."
+    },
+    "Fermati quando l’avambraccio è in linea con il busto, senza ruotare il corpo.": {
+      "en": "Stop when your forearm is in line with your torso, without rotating your body.",
+      "es": "Detente cuando el antebrazo esté en línea con el tronco, sin girar el cuerpo.",
+      "de": "Halte an, wenn der Unterarm in einer Linie mit dem Oberkörper ist, ohne den Körper mitzudrehen."
+    },
+    "Torna lentamente in #–# secondi e cambia lato a fine serie.": {
+      "en": "Return slowly over #–# seconds and switch sides after the set.",
+      "es": "Vuelve despacio en #–# segundos y cambia de lado al terminar la serie.",
+      "de": "Gehe langsam in #–# Sekunden zurück und wechsle nach dem Satz die Seite."
+    },
+    "Staccare il gomito dal fianco o ruotare il busto.": {
+      "en": "Letting your elbow leave your side or rotating your torso.",
+      "es": "Despegar el codo del costado o girar el tronco.",
+      "de": "Den Ellbogen vom Körper lösen oder den Oberkörper drehen."
+    },
+    "Usare troppo carico: la cuffia è piccola e si lavora leggeri.": {
+      "en": "Using too much weight: the rotator cuff is small and is trained light.",
+      "es": "Usar demasiada carga: el manguito rotador es pequeño y se trabaja ligero.",
+      "de": "Zu viel Gewicht nehmen: Die Rotatorenmanschette ist klein und wird leicht trainiert."
+    },
+    "Carico leggero e gomito incollato al fianco: la tensione si sente dietro la spalla, non nel braccio.": {
+      "en": "Light load and elbow glued to your side: you feel the tension behind the shoulder, not in the arm.",
+      "es": "Carga ligera y codo pegado al costado: la tensión se nota detrás del hombro, no en el brazo.",
+      "de": "Leichtes Gewicht und Ellbogen am Körper: Die Spannung spürst du hinter der Schulter, nicht im Arm."
+    },
+    "Face Pull con Elastico": {
+      "en": "Resistance Band Face Pull",
+      "es": "Face pull con banda elástica",
+      "de": "Face Pull mit Widerstandsband"
+    },
+    "Elastico ancorato all’altezza del viso, presa con i pollici verso di te": {
+      "en": "Band anchored at face height, grip with your thumbs toward you",
+      "es": "Banda anclada a la altura de la cara, agarre con los pulgares hacia ti",
+      "de": "Band auf Gesichtshöhe verankert, Griff mit den Daumen zu dir"
+    },
+    "Elastico ancorato all’altezza del viso (a una porta con l’ancoraggio apposito o a un montante), presa con i pollici verso di te, un passo indietro per mettere in tensione l’elastico. Controlla che l’ancoraggio sia saldo.": {
+      "en": "Band anchored at face height (to a door with a proper door anchor or to a post), grip with your thumbs toward you, one step back to put the band under tension. Check that the anchor is secure.",
+      "es": "Banda anclada a la altura de la cara (a una puerta con el anclaje adecuado o a un montante), agarre con los pulgares hacia ti, un paso atrás para tensar la banda. Comprueba que el anclaje sea firme.",
+      "de": "Band auf Gesichtshöhe verankert (an einer Tür mit passendem Türanker oder an einem Pfosten), Griff mit den Daumen zu dir, einen Schritt zurück, um das Band zu spannen. Prüfe, dass der Anker fest sitzt."
+    },
+    "Tira l’elastico verso il viso separando le mani.": {
+      "en": "Pull the band toward your face, separating your hands.",
+      "es": "Tira de la banda hacia la cara separando las manos.",
+      "de": "Ziehe das Band zum Gesicht und führe die Hände auseinander."
+    },
+    "Gomiti larghi, tira verso gli occhi aprendo i polsi.": {
+      "en": "Elbows wide, pull toward your eyes, opening your wrists.",
+      "es": "Codos abiertos, tira hacia los ojos abriendo las muñecas.",
+      "de": "Ellbogen weit, ziehe zu den Augen und öffne die Handgelenke."
+    },
+    "Scrollate con Manubri": {
+      "en": "Dumbbell Shrugs",
+      "es": "Encogimientos con mancuernas",
+      "de": "Schulterheben mit Kurzhanteln"
+    },
+    "In piedi, un manubrio per mano, braccia tese lungo i fianchi": {
+      "en": "Standing, a dumbbell in each hand, arms straight at your sides",
+      "es": "De pie, una mancuerna en cada mano, brazos extendidos a lo largo de los costados",
+      "de": "Stehend, in jeder Hand eine Kurzhantel, Arme gestreckt seitlich am Körper"
+    },
+    "In piedi, un manubrio per mano ai lati del corpo, braccia distese, spalle rilassate in basso.": {
+      "en": "Stand with a dumbbell in each hand at your sides, arms straight, shoulders relaxed down.",
+      "es": "De pie, una mancuerna en cada mano a los lados del cuerpo, brazos extendidos, hombros relajados hacia abajo.",
+      "de": "Stelle dich hin, in jeder Hand eine Kurzhantel seitlich am Körper, Arme gestreckt, Schultern entspannt nach unten."
+    },
+    "Wrist Curl": {
+      "en": "Wrist Curl",
+      "es": "Curl de muñeca",
+      "de": "Handgelenkcurl"
+    },
+    "Avambraccio appoggiato sulla coscia, palmo verso l’alto": {
+      "en": "Forearm resting on your thigh, palm facing up",
+      "es": "Antebrazo apoyado en el muslo, palma hacia arriba",
+      "de": "Unterarm auf dem Oberschenkel abgelegt, Handfläche nach oben"
+    },
+    "Primari: flessori del polso e delle dita (avambraccio)": {
+      "en": "Primary: wrist and finger flexors (forearm)",
+      "es": "Principales: flexores de la muñeca y de los dedos (antebrazo)",
+      "de": "Primär: Handgelenk- und Fingerbeuger (Unterarm)"
+    },
+    "Seduto, avambraccio appoggiato sulla coscia con il polso oltre il ginocchio, palmo verso l’alto, un manubrio leggero in mano.": {
+      "en": "Sit with your forearm resting on your thigh and your wrist past your knee, palm facing up, a light dumbbell in your hand.",
+      "es": "Sentado, antebrazo apoyado en el muslo con la muñeca más allá de la rodilla, palma hacia arriba, una mancuerna ligera en la mano.",
+      "de": "Setze dich hin, Unterarm auf dem Oberschenkel abgelegt, das Handgelenk über dem Knie, Handfläche nach oben, eine leichte Kurzhantel in der Hand."
+    },
+    "Lascia scendere il manubrio aprendo le dita, fino a tenerlo sulle punte.": {
+      "en": "Let the dumbbell roll down by opening your fingers, until you hold it on your fingertips.",
+      "es": "Deja bajar la mancuerna abriendo los dedos, hasta sujetarla con las puntas.",
+      "de": "Lass die Kurzhantel nach unten rollen, indem du die Finger öffnest, bis du sie auf den Fingerspitzen hältst."
+    },
+    "Richiudi le dita e solleva il polso il più in alto possibile.": {
+      "en": "Close your fingers again and lift your wrist as high as you can.",
+      "es": "Vuelve a cerrar los dedos y levanta la muñeca lo más alto posible.",
+      "de": "Schließe die Finger wieder und hebe das Handgelenk so hoch wie möglich."
+    },
+    "Tieni # secondo in alto e scendi lentamente.": {
+      "en": "Hold for # second at the top and lower slowly.",
+      "es": "Mantén # segundo arriba y baja despacio.",
+      "de": "Halte # Sekunde oben und senke langsam ab."
+    },
+    "Muovere il gomito o sollevare l’avambraccio dalla coscia.": {
+      "en": "Moving your elbow or lifting your forearm off your thigh.",
+      "es": "Mover el codo o levantar el antebrazo del muslo.",
+      "de": "Den Ellbogen bewegen oder den Unterarm vom Oberschenkel heben."
+    },
+    "Usare un carico troppo pesante e perdere l’ampiezza.": {
+      "en": "Using a weight that is too heavy and losing range of motion.",
+      "es": "Usar una carga demasiado pesada y perder amplitud.",
+      "de": "Ein zu schweres Gewicht nehmen und den Bewegungsumfang verlieren."
+    },
+    "Si muove solo il polso: l’avambraccio resta fermo come appoggiato su un tavolo.": {
+      "en": "Only your wrist moves: your forearm stays still as if resting on a table.",
+      "es": "Solo se mueve la muñeca: el antebrazo queda quieto como apoyado en una mesa.",
+      "de": "Nur das Handgelenk bewegt sich: Der Unterarm bleibt ruhig wie auf einem Tisch."
+    },
+    "Reverse Wrist Curl": {
+      "en": "Reverse Wrist Curl",
+      "es": "Curl de muñeca inverso",
+      "de": "Reverse-Handgelenkcurl"
+    },
+    "Avambraccio appoggiato sulla coscia, palmo verso il basso": {
+      "en": "Forearm resting on your thigh, palm facing down",
+      "es": "Antebrazo apoyado en el muslo, palma hacia abajo",
+      "de": "Unterarm auf dem Oberschenkel abgelegt, Handfläche nach unten"
+    },
+    "Primari: estensori del polso e delle dita (avambraccio)": {
+      "en": "Primary: wrist and finger extensors (forearm)",
+      "es": "Principales: extensores de la muñeca y de los dedos (antebrazo)",
+      "de": "Primär: Handgelenk- und Fingerstrecker (Unterarm)"
+    },
+    "Seduto, avambraccio appoggiato sulla coscia con il polso oltre il ginocchio, palmo verso il basso, un manubrio leggero in mano.": {
+      "en": "Sit with your forearm resting on your thigh and your wrist past your knee, palm facing down, a light dumbbell in your hand.",
+      "es": "Sentado, antebrazo apoyado en el muslo con la muñeca más allá de la rodilla, palma hacia abajo, una mancuerna ligera en la mano.",
+      "de": "Setze dich hin, Unterarm auf dem Oberschenkel abgelegt, das Handgelenk über dem Knie, Handfläche nach unten, eine leichte Kurzhantel in der Hand."
+    },
+    "Lascia scendere il manubrio piegando il polso verso il basso.": {
+      "en": "Let the dumbbell go down by bending your wrist downward.",
+      "es": "Deja bajar la mancuerna flexionando la muñeca hacia abajo.",
+      "de": "Lass die Kurzhantel sinken, indem du das Handgelenk nach unten beugst."
+    },
+    "Solleva il manubrio estendendo il polso, con il dorso della mano verso l’alto.": {
+      "en": "Lift the dumbbell by extending your wrist, the back of your hand facing up.",
+      "es": "Levanta la mancuerna extendiendo la muñeca, con el dorso de la mano hacia arriba.",
+      "de": "Hebe die Kurzhantel, indem du das Handgelenk streckst, der Handrücken zeigt nach oben."
+    },
+    "Usare un carico troppo pesante: gli estensori sono più deboli dei flessori.": {
+      "en": "Using a weight that is too heavy: the extensors are weaker than the flexors.",
+      "es": "Usar una carga demasiado pesada: los extensores son más débiles que los flexores.",
+      "de": "Ein zu schweres Gewicht nehmen: Die Strecker sind schwächer als die Beuger."
+    },
+    "Carico molto leggero: gli estensori sono piccoli e si stancano subito.": {
+      "en": "Very light weight: the extensors are small and tire quickly.",
+      "es": "Carga muy ligera: los extensores son pequeños y se cansan enseguida.",
+      "de": "Sehr leichtes Gewicht: Die Strecker sind klein und ermüden schnell."
+    },
+    "Reverse Crunch": {
+      "en": "Reverse Crunch",
+      "es": "Crunch inverso",
+      "de": "Reverse Crunch"
+    },
+    "Schiena a terra, ginocchia piegate verso il petto, il bacino si stacca": {
+      "en": "Lying on your back, knees bent toward your chest, hips lifting off the floor",
+      "es": "Espalda en el suelo, rodillas flexionadas hacia el pecho, la pelvis se despega",
+      "de": "Rücken am Boden, Knie zur Brust gebeugt, das Becken löst sich vom Boden"
+    },
+    "Supino, braccia lungo i fianchi o mani sotto i glutei, anche e ginocchia piegate a #°.": {
+      "en": "Lie on your back, arms at your sides or hands under your glutes, hips and knees bent at #°.",
+      "es": "Tumbado boca arriba, brazos a lo largo del cuerpo o manos bajo los glúteos, caderas y rodillas flexionadas a #°.",
+      "de": "In Rückenlage, Arme seitlich oder Hände unter dem Gesäß, Hüfte und Knie #° gebeugt."
+    },
+    "Arrotola il bacino portando le ginocchia verso il petto e staccando i glutei dal pavimento.": {
+      "en": "Curl your pelvis up, bringing your knees toward your chest and lifting your glutes off the floor.",
+      "es": "Enrolla la pelvis llevando las rodillas hacia el pecho y despegando los glúteos del suelo.",
+      "de": "Rolle das Becken ein, führe die Knie zur Brust und hebe das Gesäß vom Boden."
+    },
+    "Fermati quando le costole e il bacino si avvicinano, senza dondolare le gambe.": {
+      "en": "Stop when your ribs and pelvis come closer, without swinging your legs.",
+      "es": "Detente cuando las costillas y la pelvis se acerquen, sin balancear las piernas.",
+      "de": "Halte an, wenn Rippen und Becken sich annähern, ohne die Beine zu schwingen."
+    },
+    "Scendi lentamente finché i glutei toccano terra, senza appoggiare i piedi.": {
+      "en": "Lower slowly until your glutes touch the floor, without putting your feet down.",
+      "es": "Baja despacio hasta que los glúteos toquen el suelo, sin apoyar los pies.",
+      "de": "Senke langsam ab, bis das Gesäß den Boden berührt, ohne die Füße abzusetzen."
+    },
+    "Dondolare le gambe usando lo slancio.": {
+      "en": "Swinging your legs and using momentum.",
+      "es": "Balancear las piernas usando el impulso.",
+      "de": "Die Beine schwingen und Schwung nutzen."
+    },
+    "Spingere con le braccia per staccare il bacino.": {
+      "en": "Pushing with your arms to lift your hips.",
+      "es": "Empujar con los brazos para despegar la pelvis.",
+      "de": "Mit den Armen drücken, um das Becken zu heben."
+    },
+    "Avvicina le costole al bacino e arrotola: il movimento parte dall’addome, non dalle gambe.": {
+      "en": "Bring your ribs toward your pelvis and curl: the movement starts from your abs, not your legs.",
+      "es": "Acerca las costillas a la pelvis y enrolla: el movimiento parte del abdomen, no de las piernas.",
+      "de": "Führe die Rippen zum Becken und rolle ein: Die Bewegung kommt aus dem Bauch, nicht aus den Beinen."
+    },
+    "Suitcase Carry": {
+      "en": "Suitcase Carry",
+      "es": "Paseo de la maleta",
+      "de": "Suitcase Carry"
+    },
+    "Un solo manubrio (o kettlebell) pesante in una mano, camminata dritta": {
+      "en": "A single heavy dumbbell (or kettlebell) in one hand, walking tall",
+      "es": "Una sola mancuerna (o kettlebell) pesada en una mano, caminando erguido",
+      "de": "Eine schwere Kurzhantel (oder ein Kettlebell) in einer Hand, aufrecht gehen"
+    },
+    "In piedi, un manubrio o un kettlebell pesante in una mano lungo il fianco, spalle basse, busto dritto, l’altra mano libera.": {
+      "en": "Stand holding a heavy dumbbell or kettlebell in one hand at your side, shoulders down, torso upright, the other hand free.",
+      "es": "De pie, con una mancuerna o un kettlebell pesado en una mano a lo largo del costado, hombros bajos, tronco erguido, la otra mano libre.",
+      "de": "Stelle dich hin, eine schwere Kurzhantel oder ein Kettlebell in einer Hand seitlich am Körper, Schultern unten, Oberkörper aufrecht, die andere Hand frei."
+    },
+    "Cammina a passi corti e controllati per il tempo previsto, senza inclinare il busto verso il peso.": {
+      "en": "Walk with short, controlled steps for the planned time, without leaning your torso toward the weight.",
+      "es": "Camina con pasos cortos y controlados durante el tiempo previsto, sin inclinar el tronco hacia el peso.",
+      "de": "Gehe mit kurzen, kontrollierten Schritten für die vorgesehene Zeit, ohne den Oberkörper zum Gewicht zu neigen."
+    },
+    "Addome contratto, spalle alla stessa altezza.": {
+      "en": "Abs braced, shoulders level.",
+      "es": "Abdomen contraído, hombros a la misma altura.",
+      "de": "Bauch angespannt, Schultern auf gleicher Höhe."
+    },
+    "Appoggia il peso piegando le gambe e cambia mano.": {
+      "en": "Set the weight down by bending your legs and switch hands.",
+      "es": "Apoya el peso flexionando las piernas y cambia de mano.",
+      "de": "Setze das Gewicht ab, indem du die Beine beugst, und wechsle die Hand."
+    },
+    "Busto che si piega verso il lato del carico.": {
+      "en": "Torso bending toward the loaded side.",
+      "es": "Tronco que se inclina hacia el lado de la carga.",
+      "de": "Oberkörper, der sich zur belasteten Seite neigt."
+    },
+    "Spalla che sale o si porta in avanti.": {
+      "en": "Shoulder rising or rolling forward.",
+      "es": "Hombro que sube o se adelanta.",
+      "de": "Schulter, die hochzieht oder nach vorn rutscht."
+    },
+    "Resisti all’inclinazione: sta’ dritto come se il peso non ci fosse, il core lavora per tenerti in asse.": {
+      "en": "Resist the lean: stand tall as if the weight weren't there, your core works to keep you straight.",
+      "es": "Resiste la inclinación: mantente erguido como si el peso no estuviera, el core trabaja para mantenerte en el eje.",
+      "de": "Widerstehe der Neigung: Steh aufrecht, als wäre das Gewicht nicht da; der Rumpf arbeitet, um dich in der Achse zu halten."
+    }
+  }
+}
