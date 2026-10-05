@@ -6,9 +6,10 @@ Generato con uno script node che legge `EXERCISE_LIBRARY` (`js/dati/libreria-ese
 
 | Voce | Valore |
 |---|---|
-| Esercizi nel catalogo (`EXERCISE_LIBRARY`) | 139 |
+| Esercizi nel catalogo (`EXERCISE_LIBRARY`) | 140 totali (139 nel branch + 1 da altro branch) |
 | Con immagine (campo presente e file esistente) | 10 |
-| Senza immagine | 129 |
+| Senza immagine (mancanti) | 131 su 140 (130 nel branch + 1 da altro branch) |
+| Di cui non ancora presenti in questo branch | 1 (n. 140 Squat Sumo, da `claude/hopeful-thompson-uthd8f`) |
 | File in `esercizi/` | 11 (tutti SVG) |
 | File orfani (non referenziati) | 1 (`ex-02-panca-inclinata-su-a.svg`) |
 | Peso totale `esercizi/` | 457.4 KB |
@@ -20,7 +21,7 @@ Copertura per gruppo muscolare:
 |---|---|---|---|
 | Petto | 17 | 10 | 7 |
 | Schiena | 23 | 0 | 23 |
-| Gambe | 24 | 0 | 24 |
+| Gambe | 25 (24 nel branch + 1 da altro branch) | 0 | 25 (24 nel branch + 1 da altro branch) |
 | Glutei | 15 | 0 | 15 |
 | Spalle | 16 | 0 | 16 |
 | Braccia | 26 | 0 | 26 |
@@ -175,10 +176,11 @@ Il nome e' mostrato senza emoji iniziale. Percorso `img/<slug>.png` e' il ripieg
 | 137 | Woodchop ai Cavi (Rotazioni) | Core | nessuna (ripiego inesistente `img/woodchop-ai-cavi.png`) |
 | 138 | Leg Raise alla Sedia Romana | Core | nessuna (ripiego inesistente `img/leg-raise-alla-sedia-romana.png`) |
 | 139 | Sit-up a Ginocchia Piegate | Core | nessuna (ripiego inesistente `img/sit-up-a-ginocchia-piegate.png`) |
+| 140 | Squat Sumo | Gambe | da altro branch (non ancora presente su questo branch), file previsto `esercizi/ex-140-squat-sumo.svg` |
 
 ## 3. Esercizi senza immagine
 
-130 esercizi. Motivo per tutti: **nessun campo** in `IMMAGINI_ESERCIZI`, quindi l'app prova `img/<slug>.png`, il file non esiste e compare il segnaposto "Immagine in arrivo". Nessun file referenziato risulta assente su disco e non ci sono placeholder file.
+131 esercizi (130 nel branch + 1 da altro branch, l'ultimo in coda con nota). Motivo per tutti: **nessun campo** in `IMMAGINI_ESERCIZI`, quindi l'app prova `img/<slug>.png`, il file non esiste e compare il segnaposto "Immagine in arrivo". Nessun file referenziato risulta assente su disco e non ci sono placeholder file.
 
 | Gruppo | Esercizio | Motivo | File atteso dal ripiego |
 |---|---|---|---|
@@ -312,6 +314,23 @@ Il nome e' mostrato senza emoji iniziale. Percorso `img/<slug>.png` e' il ripieg
 | Core | Woodchop ai Cavi (Rotazioni) | nessun campo nella mappa | `img/woodchop-ai-cavi.png` |
 | Core | Leg Raise alla Sedia Romana | nessun campo nella mappa | `img/leg-raise-alla-sedia-romana.png` |
 | Core | Sit-up a Ginocchia Piegate | nessun campo nella mappa | `img/sit-up-a-ginocchia-piegate.png` |
+| Gambe | Squat Sumo (n. 140) | da altro branch: non ancora presente su questo branch | `esercizi/ex-140-squat-sumo.svg` (previsto) |
+
+### Esercizio da altro branch: n. 140 Squat Sumo
+
+| Voce | Valore |
+|---|---|
+| Numero | 140 |
+| Gruppo | Gambe |
+| Tipo | multiarticolare |
+| Attrezzo | manubrio/kettlebell |
+| Bersaglio | adduttori |
+| Provenienza | introdotto nel branch `claude/hopeful-thompson-uthd8f` (commit fe38769), non ancora presente su `claude/immagini-esercizi` |
+| File previsto | `esercizi/ex-140-squat-sumo.svg` |
+| Voce da aggiungere in `IMMAGINI_ESERCIZI` | `'Squat Sumo': 'esercizi/ex-140-squat-sumo.svg'` |
+| Atleta | 140 e' pari: donna (regola pari = donna) |
+| Ordine di lavorazione | in coda |
+| Passi | 1) fare il merge di `claude/hopeful-thompson-uthd8f` in questo branch prima di toccare `js/dati/disegni-esercizi.js`; 2) aggiungere la voce nella mappa; 3) `npm run sw` |
 
 Controlli: file referenziati ma assenti = 0; voci di mappa non presenti in libreria = 0.
 
