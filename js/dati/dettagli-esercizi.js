@@ -73,7 +73,9 @@ const MUSCOLI = {
    lombari perde gambe e glutei. Per loro l alternativa deve coprire tutto l insieme, quindi si
    scambiano solo tra loro (alternativeStessoMuscolo in coach/programma/motore.js).
    Il bersaglio di DETTAGLI resta e vale per gli esercizi di un muscolo solo: l Hyperextension
-   (lombari) puo proporre lo stacco da terra, che allena anche i lombari; non il contrario.
+   (lombari) puo proporre lo stacco da terra e quello con la trap bar, che allenano anche i lombari; non il contrario.
+   La trap bar ha il bersaglio dello stacco da terra (erettori), non i quadricipiti (SEL-02): cosi non compare
+   come alternativa della leg extension o dello squat.
    muscoli: gli id di MUSCOLI che ogni esercizio della famiglia ha tra bersaglio e secondari (lo controlla npm test).
    Fuori, e perche: stacco rumeno e good morning (niente quadricipiti, ginocchia quasi ferme), hyperextension
    (niente quadricipiti, carico basso), squat e leg press (i femorali quasi non lavorano: Kubo 2019). */
@@ -112,7 +114,7 @@ const DETTAGLI = {
   'Croci ai Cavi': ['M', 'Cavo', 'Maniglie singole, pulegge all’altezza delle spalle', 'Aperture e isolamento', 'Gran pettorale', 'Deltoide anteriore', 'crocialti', 'petto_medio', 'deltoide_anteriore'],
   'Croci su Panca Manubri': ['L', 'Manubri', 'Panca piana, presa neutra', 'Aperture e isolamento', 'Gran pettorale (allungato)', 'Deltoide anteriore', '', 'petto_medio', 'deltoide_anteriore'],
   'Pectoral Machine (Butterfly)': ['M', 'Macchina', 'Gomiti o avambracci sui cuscinetti', 'Aperture e isolamento', 'Gran pettorale', 'Deltoide anteriore', '', 'petto_medio', 'deltoide_anteriore'],
-  'Pullover con Manubrio': ['L', 'Manubri', 'Un manubrio a due mani, braccia quasi tese', 'Aperture e isolamento', 'Gran pettorale, gran dorsale', 'Tricipite (capo lungo)', '', 'petto_medio', 'dorsali tricipiti'],
+  'Pullover con Manubrio': ['L', 'Manubri', 'Un manubrio a due mani, braccia quasi tese', 'Dorsali · larghezza', 'Gran dorsale, gran pettorale', 'Tricipite (capo lungo)', '', 'dorsali', 'petto_medio tricipiti'],
   'Panca Piana Manubri': ['L', 'Manubri', 'Presa neutra o prona', 'Petto · fasci medi', 'Gran pettorale', 'Deltoide anteriore, tricipite', '', 'petto_medio', 'deltoide_anteriore tricipiti'],
   'Croci ai Cavi dal Basso': ['M', 'Cavo', 'Maniglie singole, pulegge basse, mani che salgono', 'Petto · fasci alti', 'Gran pettorale (fasci alti)', 'Deltoide anteriore', 'crocialti', 'petto_alto', 'deltoide_anteriore'],
   'Piegamenti Inclinati (Mani Rialzate)': ['C', 'Corpo libero', 'Mani su una panca o un rialzo', 'Petto · fasci bassi', 'Gran pettorale (fasci bassi)', 'Deltoide anteriore, tricipite', '', 'petto_basso', 'deltoide_anteriore tricipiti'],
@@ -138,11 +140,11 @@ const DETTAGLI = {
   'Lat Machine a un Braccio': ['M', 'Cavo', 'Maniglia singola', 'Dorsali · larghezza', 'Gran dorsale', 'Grande rotondo, bicipite', 'lat', 'dorsali', 'bicipiti'],
 
   /* ---------------- GAMBE ---------------- */
-  'Squat con Bilanciere': ['L', 'Bilanciere', 'Bilanciere sulle spalle', 'Multiarticolari', 'Quadricipiti, glutei', 'Adduttori, femorali, erettori spinali', '', 'quadricipiti', 'grande_gluteo adduttori femorali erettori'],
+  'Squat con Bilanciere': ['L', 'Bilanciere', 'Bilanciere sulle spalle', 'Multiarticolari', 'Quadricipiti, glutei, adduttori', 'Erettori spinali', '', 'quadricipiti', 'grande_gluteo adduttori erettori'],
   'Front Squat': ['L', 'Bilanciere', 'Bilanciere davanti, sulle clavicole', 'Multiarticolari', 'Quadricipiti', 'Glutei, core', '', 'quadricipiti', 'grande_gluteo stabilita'],
   'Goblet Squat': ['L', 'Manubri', 'Un manubrio davanti al petto', 'Multiarticolari', 'Quadricipiti, glutei', 'Core', '', 'quadricipiti', 'grande_gluteo stabilita'],
   'Hack Squat': ['M', 'Macchina', 'Schiena appoggiata, pedana inclinata', 'Multiarticolari', 'Quadricipiti, glutei', 'Adduttori', 'pressa', 'quadricipiti', 'grande_gluteo adduttori'],
-  'Leg Press': ['M', 'Macchina', 'Pedana inclinata a 45°', 'Multiarticolari', 'Quadricipiti, glutei', 'Adduttori, femorali', 'pressa', 'quadricipiti', 'grande_gluteo adduttori femorali'],
+  'Leg Press': ['M', 'Macchina', 'Pedana inclinata a 45°', 'Multiarticolari', 'Quadricipiti, glutei, adduttori', '', 'pressa', 'quadricipiti', 'grande_gluteo adduttori'],
   'Affondi Manubri': ['L', 'Manubri', 'Passo avanti, un manubrio per mano', 'Multiarticolari', 'Quadricipiti, glutei', 'Adduttori, femorali', '', 'quadricipiti', 'grande_gluteo adduttori femorali'],
   'Affondi in Camminata': ['C', 'Corpo libero o manubri', 'Passi lunghi, manubri facoltativi', 'Multiarticolari', 'Quadricipiti, glutei', 'Adduttori, femorali', '', 'quadricipiti', 'grande_gluteo adduttori femorali'],
   'Step-up su Panca': ['C', 'Corpo libero o manubri', 'Un piede sulla panca, manubri facoltativi', 'Multiarticolari', 'Quadricipiti, glutei', 'Femorali', '', 'quadricipiti', 'grande_gluteo femorali'],
@@ -158,7 +160,7 @@ const DETTAGLI = {
   'Pendulum Squat': ['M', 'Macchina', 'Schiena appoggiata, arco a pendolo', 'Multiarticolari', 'Quadricipiti', 'Glutei, adduttori', '', 'quadricipiti', 'grande_gluteo adduttori'],
   'Squat al Multipower': ['M', 'Multipower', 'Guide fisse, piedi leggermente avanti', 'Multiarticolari', 'Quadricipiti, glutei', 'Adduttori', '', 'quadricipiti', 'grande_gluteo adduttori'],
   'Calf Raise alla Leg Press': ['M', 'Macchina', 'Punte sul bordo basso della pedana', 'Polpacci', 'Gemelli', 'Soleo', 'calf', 'polpacci'],
-  'Stacco con Trap Bar': ['L', 'Trap bar', 'Maniglie neutre alte o basse', 'Multiarticolari', 'Quadricipiti, glutei, erettori spinali', 'Femorali, trapezio, avambracci', '', 'quadricipiti', 'grande_gluteo erettori femorali trapezio avambracci'],
+  'Stacco con Trap Bar': ['L', 'Trap bar', 'Maniglie neutre alte o basse', 'Multiarticolari', 'Erettori spinali, glutei, quadricipiti', 'Femorali, trapezio, avambracci', '', 'erettori', 'grande_gluteo quadricipiti femorali trapezio avambracci'],
 
   /* ---------------- GLUTEI ---------------- */
   'Hip Thrust': ['L', 'Bilanciere', 'Schiena sulla panca, bilanciere sul bacino', 'Glutei', 'Grande gluteo', 'Femorali, adduttori', '', 'grande_gluteo', 'femorali adduttori'],
