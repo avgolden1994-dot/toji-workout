@@ -29,7 +29,17 @@ const IMMAGINI_ESERCIZI = {
   'Dip alle Parallele': 'esercizi/ex-06-dip-parallele.svg',
   'Piegamenti a Terra (Push-up)': 'esercizi/ex-07-push-up.svg',
   'Croci ai Cavi': 'esercizi/ex-08-croci-cavi.svg',
-  'Croci su Panca Manubri': 'esercizi/ex-09-croci-panca-manubri.svg'
+  'Croci su Panca Manubri': 'esercizi/ex-09-croci-panca-manubri.svg',
+  'Pectoral Machine (Butterfly)': 'esercizi/ex-10-pectoral-machine.svg',
+  'Pullover con Manubrio': 'esercizi/ex-11-pullover-manubrio.svg',
+  'Stacco da Terra (Deadlift)': 'esercizi/ex-12-stacco-da-terra.svg',
+  'Trazioni alla Sbarra (Pull-ups)': 'esercizi/ex-13-trazioni-sbarra.svg',
+  'Trazioni Presa Inversa (Chin-up)': 'esercizi/ex-14-trazioni-presa-inversa.svg',
+  'Lat Machine': 'esercizi/ex-15-lat-machine.svg',
+  'Lat Machine Presa Inversa': 'esercizi/ex-16-lat-machine-presa-inversa.svg',
+  'Rematore con Bilanciere': 'esercizi/ex-17-rematore-bilanciere.svg',
+  'Rematore con Manubrio': 'esercizi/ex-18-rematore-manubrio.svg',
+  'T-Bar Row': 'esercizi/ex-19-t-bar-row.svg'
 };
 window.immagineEsercizio = function(nome) {
   const pulito = String(nome).replace(EMOJI_TESTA, '');

@@ -145,6 +145,16 @@ const ASSETS = [
   './esercizi/ex-07-push-up.svg',
   './esercizi/ex-08-croci-cavi.svg',
   './esercizi/ex-09-croci-panca-manubri.svg',
+  './esercizi/ex-10-pectoral-machine.svg',
+  './esercizi/ex-11-pullover-manubrio.svg',
+  './esercizi/ex-12-stacco-da-terra.svg',
+  './esercizi/ex-13-trazioni-sbarra.svg',
+  './esercizi/ex-14-trazioni-presa-inversa.svg',
+  './esercizi/ex-15-lat-machine.svg',
+  './esercizi/ex-16-lat-machine-presa-inversa.svg',
+  './esercizi/ex-17-rematore-bilanciere.svg',
+  './esercizi/ex-18-rematore-manubrio.svg',
+  './esercizi/ex-19-t-bar-row.svg',
   /*FINE-ASSET*/
 
 ];
