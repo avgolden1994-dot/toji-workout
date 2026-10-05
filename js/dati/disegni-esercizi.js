@@ -40,7 +40,8 @@ const IMMAGINI_ESERCIZI = {
   'Rematore con Bilanciere': 'esercizi/ex-17-rematore-bilanciere.svg',
   'Rematore con Manubrio': 'esercizi/ex-18-rematore-manubrio.svg',
   'T-Bar Row': 'esercizi/ex-19-t-bar-row.svg',
-  'Pulley Basso': 'esercizi/ex-20-pulley-basso.svg'
+  'Pulley Basso': 'esercizi/ex-20-pulley-basso.svg',
+  'Pullover ai Cavi': 'esercizi/ex-21-pullover-ai-cavi.svg'
 };
 window.immagineEsercizio = function(nome) {
   const pulito = String(nome).replace(EMOJI_TESTA, '');

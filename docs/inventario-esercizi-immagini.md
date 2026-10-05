@@ -7,20 +7,20 @@ Generato con uno script node che legge `EXERCISE_LIBRARY` (`js/dati/libreria-ese
 | Voce | Valore |
 |---|---|
 | Esercizi nel catalogo (`EXERCISE_LIBRARY`) | 140 totali (139 nel branch + 1 da altro branch) |
-| Con immagine (campo presente e file esistente) | 20 |
-| Senza immagine (mancanti) | 120 su 140 (119 nel branch + 1 da altro branch) |
+| Con immagine (campo presente e file esistente) | 21 |
+| Senza immagine (mancanti) | 119 su 140 (118 nel branch + 1 da altro branch) |
 | Di cui non ancora presenti in questo branch | 1 (n. 140 Squat Sumo, da `claude/hopeful-thompson-uthd8f`) |
-| File in `esercizi/` | 21 (tutti SVG) |
+| File in `esercizi/` | 22 (tutti SVG) |
 | File orfani (non referenziati) | 1 (`ex-02-panca-inclinata-su-a.svg`) |
-| Peso totale `esercizi/` | 697.8 KB |
-| Peso medio per file | 33.2 KB |
+| Peso totale `esercizi/` | 716.9 KB |
+| Peso medio per file | 32.6 KB |
 
 Copertura per gruppo muscolare:
 
 | Gruppo | Esercizi | Con immagine | Senza |
 |---|---|---|---|
 | Petto | 17 | 11 | 6 |
-| Schiena | 23 | 9 | 14 |
+| Schiena | 23 | 10 | 13 |
 | Gambe | 25 (24 nel branch + 1 da altro branch) | 0 | 25 (24 nel branch + 1 da altro branch) |
 | Glutei | 15 | 0 | 15 |
 | Spalle | 16 | 0 | 16 |
@@ -29,7 +29,7 @@ Copertura per gruppo muscolare:
 
 Note: gli esercizi usati in `schede-*.js` e le chiavi di `DETTAGLI` (139) coincidono con la libreria: nessun esercizio fuori catalogo. `tools/genera-catalogo.js` NON riguarda gli esercizi: genera il catalogo delle regole del coach da `docs/coach-mappa-regole.md`.
 
-Le bozze Quiver non finali (varianti a-d degli esercizi 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 e 20, di cui la b per il 10, la d per l'11, la d per il 13, la a per il 14, la a per il 15, identica alla d, la d per il 16 e la c per il 17 e la d per il 18 e la d per il 19 e la c per il 20, sono state usate per il finale) stanno in `esercizi-bozze/`, fuori da `esercizi/` e dalla cache del service worker.
+Le bozze Quiver non finali (varianti a-d degli esercizi 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 e 21, di cui la b per il 10, la d per l'11, la d per il 13, la a per il 14, la a per il 15, identica alla d, la d per il 16 e la c per il 17 e la d per il 18 e la d per il 19 e la c per il 20 e la d per il 21, sono state usate per il finale) stanno in `esercizi-bozze/`, fuori da `esercizi/` e dalla cache del service worker.
 
 ## 2. Tabella completa
 
@@ -57,7 +57,7 @@ Il nome e' mostrato senza emoji iniziale. Percorso `img/<slug>.png` e' il ripieg
 | 18 | Rematore con Manubrio | Schiena | `esercizi/ex-18-rematore-manubrio.svg` |
 | 19 | T-Bar Row | Schiena | `esercizi/ex-19-t-bar-row.svg` |
 | 20 | Pulley Basso | Schiena | `esercizi/ex-20-pulley-basso.svg` |
-| 21 | Pullover ai Cavi | Schiena | nessuna (ripiego inesistente `img/pullover-ai-cavi.png`) |
+| 21 | Pullover ai Cavi | Schiena | `esercizi/ex-21-pullover-ai-cavi.svg` |
 | 22 | Hyperextension (Lombari) | Schiena | nessuna (ripiego inesistente `img/hyperextension.png`) |
 | 23 | Squat con Bilanciere | Gambe | nessuna (ripiego inesistente `img/squat-con-bilanciere.png`) |
 | 24 | Front Squat | Gambe | nessuna (ripiego inesistente `img/front-squat.png`) |
@@ -180,11 +180,10 @@ Il nome e' mostrato senza emoji iniziale. Percorso `img/<slug>.png` e' il ripieg
 
 ## 3. Esercizi senza immagine
 
-120 esercizi (119 nel branch + 1 da altro branch, l'ultimo in coda con nota). Motivo per tutti: **nessun campo** in `IMMAGINI_ESERCIZI`, quindi l'app prova `img/<slug>.png`, il file non esiste e compare il segnaposto "Immagine in arrivo". Nessun file referenziato risulta assente su disco e non ci sono placeholder file.
+119 esercizi (118 nel branch + 1 da altro branch, l'ultimo in coda con nota). Motivo per tutti: **nessun campo** in `IMMAGINI_ESERCIZI`, quindi l'app prova `img/<slug>.png`, il file non esiste e compare il segnaposto "Immagine in arrivo". Nessun file referenziato risulta assente su disco e non ci sono placeholder file.
 
 | Gruppo | Esercizio | Motivo | File atteso dal ripiego |
 |---|---|---|---|
-| Schiena | Pullover ai Cavi | nessun campo nella mappa | `img/pullover-ai-cavi.png` |
 | Schiena | Hyperextension (Lombari) | nessun campo nella mappa | `img/hyperextension.png` |
 | Gambe | Squat con Bilanciere | nessun campo nella mappa | `img/squat-con-bilanciere.png` |
 | Gambe | Front Squat | nessun campo nella mappa | `img/front-squat.png` |
@@ -332,7 +331,7 @@ Controlli: file referenziati ma assenti = 0; voci di mappa non presenti in libre
 ## 5. Precache sw.js
 
 - Cache: `CACHE_NAME = '3in-v10'` (cambiare il nome butta le copie vecchie).
-- Le immagini SONO nel precache: elenco **statico** tra i marcatori `/*INIZIO-ASSET*/ ... /*FINE-ASSET*/`, con 21 righe `./esercizi/*.svg` (compreso l'orfano).
+- Le immagini SONO nel precache: elenco **statico** tra i marcatori `/*INIZIO-ASSET*/ ... /*FINE-ASSET*/`, con 22 righe `./esercizi/*.svg` (compreso l'orfano).
 - L'elenco e' rigenerato da `tools/genera-sw.js` (`npm run sw`, `-- --check` per verificarlo): fa un glob di `esercizi/*.svg` (solo `.svg`, ordinato), piu' index, manifest, icone e i riferimenti di `index.html`. Quindi un nuovo SVG in `esercizi/` entra nel precache dopo `npm run sw`; PNG/WebP no (andrebbe esteso il filtro).
 - Install: `Promise.allSettled(ASSETS.map(cache.add))`, un file mancante non blocca gli altri.
 - Fetch: network-first con fallback alla cache, e le risposte vengono messe in cache a runtime (`cache.put`). Per immagini non trovate (png/jpg/jpeg/webp/svg) risponde 404 pulito, cosi si vede il segnaposto.
@@ -374,8 +373,9 @@ Controlli: file referenziati ma assenti = 0; voci di mappa non presenti in libre
 | `ex-18-rematore-manubrio.svg` | 21.0 | 220.0 69.4 213.9 160.4 |
 | `ex-19-t-bar-row.svg` | 20.9 | 208.4 39.6 238.8 179.1 |
 | `ex-20-pulley-basso.svg` | 18.1 | 217.3 70.7 212.0 159.0 |
+| `ex-21-pullover-ai-cavi.svg` | 19.0 | -26.11 5.22 92.99 69.74 |
 
-Formato SVG vettoriale (nessun PNG/WebP); peso medio 33.2 KB, totale 697.8 KB (21 file). Il viewBox base e' 400x300 (rapporto 4:3); gli altri sono ritagli sulla figura (rapporti diversi, da 40x30 a 388x291). Nessun attributo width/height (tranne l'orfano 400x300): scalano al riquadro CSS `.ex-img` (`object-fit: contain`, rapporto 300/165).
+Formato SVG vettoriale (nessun PNG/WebP); peso medio 32.6 KB, totale 716.9 KB (22 file). Il viewBox base e' 400x300 (rapporto 4:3); gli altri sono ritagli sulla figura (rapporti diversi, da 40x30 a 388x291). Nessun attributo width/height (tranne l'orfano 400x300): scalano al riquadro CSS `.ex-img` (`object-fit: contain`, rapporto 300/165).
 
 ### Convenzione nome file
 
@@ -403,6 +403,7 @@ Elenco delle illustrazioni da rivedere o rifare a fine lavoro. La lista si aggio
 | Esercizio | File | Motivo | Stato |
 |---|---|---|---|
 | 19 - T-Bar Row | `esercizi/ex-19-t-bar-row.svg` | Segnato dall'utente come "non convince del tutto"; da rivedere/rifare alla fine con gli altri. Difetti noti: pelle grigio-beige scura, in END il disco sfiora la maniglia, romboidi non distinti dal trapezio. Alternative: bozze a, b, c, d in `esercizi-bozze/` (usata la d; la c e' buona ma ha la barra curva in END). | Da rivedere |
+| 21 - Pullover ai Cavi | `esercizi/ex-21-pullover-ai-cavi.svg` | In START i gomiti sono piegati (non quasi tesi) e la testa e' coperta dalle braccia; in END il cavo termina in un anellino che sta circa 0,5 unita' sopra la barra (piccolo vuoto); il pacco pesi e' statico (non sale col cavo); il viewBox 4:3 lascia ampi margini bianchi ai lati perche' la figura e' alta e stretta; muscoli arancioni nei colori della bozza (#FF8445/#FF8B4F, non esattamente #fb8b3c); sfondo grigio #F2F2F2 e clipPath della bozza rimossi. Alternative: bozze a, b, c, d in `esercizi-bozze/` (usata la d; la a ha testa START malformata e tratti decorativi tratteggiati, la b ha secondari poco visibili e barra minuscola, la c ha collo/testa malformati in END). | Difetto lieve, da valutare |
 | 20 - Pulley Basso | `esercizi/ex-20-pulley-basso.svg` | In END il dorsale arancione si vede poco (resta una striscia sul bordo, deltoide posteriore chiaro); romboidi e trapezio medio non distinti. Seduta e macchina sono statiche e prese dalla posa START (nella bozza c il sedile e la base in END erano spostati di circa 12 unita'), quindi in END il bacino e' piu' vicino alla torre di circa 12 unita' (sul sedile comunque); cavo e pacco pesi (rialzato di 16.5) ricostruiti. Alternative: bozze a, b, c, d in `esercizi-bozze/` (usata la c; a ha macchina enorme e blob grigio, b ha rect #F2F2F2 e pacco pesi spezzato, d ha cavo incoerente tra i frame e molti path vuoti). | Difetto lieve, da valutare |
 | 15 - Lat Machine | `esercizi/ex-15-lat-machine.svg` | In END barra un po' alta, gola/clavicole. | Difetto lieve, da valutare |
 | 16 - Lat Machine Presa Inversa | `esercizi/ex-16-lat-machine-presa-inversa.svg` | Presa supina poco leggibile di profilo; poco arancione sui dorsali in END. | Difetto lieve, da valutare |
