@@ -1,0 +1,142 @@
+{
+  "task": "W2-T3",
+  "nota": "Cancello delle tecniche (MAV-01..09, MAV-11, MAV-13, MAV-16; ETA-02; PRG-34 e RIC-04 riscritte). MAV-10 e di W3-T3; MAV-14 (BFR) e bloccata: ne qui ne come testo. Le due righe script vanno dopo vincoli.js (i file usano i nomi degli altri solo durante l esecuzione).",
+  "script": [
+    { "src": "js/coach/sicurezza/soglie-tecniche.js", "dopo": "js/coach/sicurezza/vincoli.js" },
+    { "src": "js/coach/sicurezza/tecnica-adatta.js", "dopo": "js/coach/sicurezza/soglie-tecniche.js" }
+  ],
+  "frasi": {
+    "Drop set sull’ultima serie: arrivato vicino al cedimento togli il #% e continua, due volte. Non fa crescere di più: serve a risparmiare tempo": {
+      "en": "Drop set on the last set: close to failure, remove #% and keep going, twice. It does not make you grow more: it saves time",
+      "es": "Drop set en la última serie: cerca del fallo, quita el #% y sigue, dos veces. No hace crecer más: ahorra tiempo",
+      "de": "Drop Set im letzten Satz: nahe am Muskelversagen #% abziehen und weitermachen, zweimal. Es bringt nicht mehr Wachstum: es spart Zeit"
+    },
+    "Myo-reps: una serie da #-# ripetizioni vicino al cedimento, poi #-# mini-serie da #-# ripetizioni con #-# secondi di pausa. Non fa crescere di più: serve a risparmiare tempo": {
+      "en": "Myo-reps: one set of #-# reps close to failure, then #-# mini-sets of #-# reps with #-# seconds of rest. It does not make you grow more: it saves time",
+      "es": "Myo-reps: una serie de #-# repeticiones cerca del fallo, luego #-# mini-series de #-# repeticiones con #-# segundos de pausa. No hace crecer más: ahorra tiempo",
+      "de": "Myo-Reps: ein Satz mit #-# Wiederholungen nahe am Muskelversagen, dann #-# Mini-Sätze mit #-# Wiederholungen und #-# Sekunden Pause. Es bringt nicht mehr Wachstum: es spart Zeit"
+    },
+    "Cluster: # secondi di pausa ogni # ripetizioni. Non fa crescere di più: serve ad arrivare meno stanco": {
+      "en": "Cluster: # seconds of rest every # reps. It does not make you grow more: it helps you arrive less tired",
+      "es": "Cluster: # segundos de pausa cada # repeticiones. No hace crecer más: sirve para llegar menos cansado",
+      "de": "Cluster: # Sekunden Pause alle # Wiederholungen. Es bringt nicht mehr Wachstum: du kommst weniger müde an"
+    },
+    "Ultima serie: arriva a # ripetizione dal cedimento e fermati se la velocità cala o la tecnica cede": {
+      "en": "Last set: get to # rep from failure and stop if the speed drops or your technique breaks down",
+      "es": "Última serie: llega a # repetición del fallo y para si baja la velocidad o falla la técnica",
+      "de": "Letzter Satz: bis # Wiederholung vor dem Muskelversagen und stopp, wenn die Geschwindigkeit nachlässt oder die Technik nachgibt"
+    },
+    "A fine serie, dopo il cedimento, #-# ripetizioni solo nella parte in cui il muscolo è allungato. Facoltativo: non è dimostrato che batta il movimento completo": {
+      "en": "At the end of the set, after failure, #-# reps only in the part where the muscle is stretched. Optional: it is not proven to beat the full range of motion",
+      "es": "Al final de la serie, tras el fallo, #-# repeticiones solo en la parte en la que el músculo está estirado. Opcional: no está demostrado que supere al movimiento completo",
+      "de": "Am Ende des Satzes, nach dem Muskelversagen, #-# Wiederholungen nur im Bereich, in dem der Muskel gedehnt ist. Optional: Es ist nicht bewiesen, dass es die volle Bewegung übertrifft"
+    },
+    "Il drop set e i myo-reps servono a risparmiare tempo: non fanno crescere di più.": {
+      "en": "Drop sets and myo-reps are there to save time: they do not make you grow more.",
+      "es": "El drop set y las myo-reps sirven para ahorrar tiempo: no hacen crecer más.",
+      "de": "Drop Sets und Myo-Reps sparen Zeit: sie bringen nicht mehr Wachstum."
+    },
+    "Scendi piano: #-# secondi in discesa.": {
+      "en": "Lower slowly: #-# seconds on the way down.",
+      "es": "Baja despacio: #-# segundos en la bajada.",
+      "de": "Langsam ablassen: #-# Sekunden in der Abwärtsbewegung."
+    },
+    "Ho tolto qualche tecnica: non è adatta a te o è troppa in una settimana. Restano le serie normali.": {
+      "en": "I removed a few techniques: they are not right for you or there are too many in a week. Normal sets stay.",
+      "es": "He quitado algunas técnicas: no son adecuadas para ti o son demasiadas en una semana. Quedan las series normales.",
+      "de": "Ich habe ein paar Techniken entfernt: Sie passen nicht zu dir oder es sind zu viele in einer Woche. Die normalen Sätze bleiben."
+    },
+    "Per ora niente serie al cedimento: la tecnica viene prima.": {
+      "en": "No sets to failure for now: technique comes first.",
+      "es": "Por ahora nada de series al fallo: primero la técnica.",
+      "de": "Vorerst keine Sätze bis zum Muskelversagen: erst die Technik."
+    },
+    "Con la modalità prudente niente serie al cedimento: meglio qualche ripetizione in riserva.": {
+      "en": "In cautious mode no sets to failure: it is better to keep a few reps in reserve.",
+      "es": "Con el modo prudente nada de series al fallo: mejor dejar algunas repeticiones en reserva.",
+      "de": "Im vorsichtigen Modus keine Sätze bis zum Muskelversagen: besser ein paar Wiederholungen in Reserve lassen."
+    },
+    "Dai # anni niente serie al limite: la stessa crescita arriva con più ripetizioni in riserva.": {
+      "en": "From age # no sets to the limit: the same growth comes with more reps in reserve.",
+      "es": "A partir de los # años nada de series al límite: el mismo crecimiento llega con más repeticiones en reserva.",
+      "de": "Ab # Jahren keine Sätze bis ans Limit: dasselbe Wachstum kommt mit mehr Wiederholungen in Reserve."
+    },
+    "Dai # anni le serie al limite solo su macchine e isolamenti, non sui multiarticolari liberi.": {
+      "en": "From age # sets to the limit only on machines and isolation exercises, not on free compound lifts.",
+      "es": "A partir de los # años las series al límite solo en máquinas y aislamientos, no en multiarticulares libres.",
+      "de": "Ab # Jahren Sätze ans Limit nur an Maschinen und Isolationsübungen, nicht bei freien Grundübungen."
+    },
+    "Questa tecnica va bene su macchine e cavi con tecnica stabile: qui meglio una discesa controllata.": {
+      "en": "This technique suits machines and cables with stable form: here a controlled lowering is better.",
+      "es": "Esta técnica va bien en máquinas y cables con técnica estable: aquí es mejor una bajada controlada.",
+      "de": "Diese Technik passt zu Maschinen und Kabelzügen mit stabiler Technik: hier ist ein kontrolliertes Ablassen besser."
+    },
+    "Sul core non serve il cedimento: conta il controllo.": {
+      "en": "On the core you do not need failure: control is what counts.",
+      "es": "En el core no hace falta llegar al fallo: lo que cuenta es el control.",
+      "de": "Beim Core braucht es kein Muskelversagen: es zählt die Kontrolle."
+    },
+    "Questa settimana tieni le tecniche leggere: le serie dure arrivano nelle ultime settimane.": {
+      "en": "This week keep the techniques light: the hard sets come in the last weeks.",
+      "es": "Esta semana mantén las técnicas ligeras: las series duras llegan en las últimas semanas.",
+      "de": "Halte die Techniken diese Woche leicht: die harten Sätze kommen in den letzten Wochen."
+    },
+    "Oggi niente serie dure: con questa prontezza meglio una seduta tranquilla.": {
+      "en": "No hard sets today: with this readiness a calm session is better.",
+      "es": "Hoy nada de series duras: con esta preparación es mejor una sesión tranquila.",
+      "de": "Heute keine harten Sätze: bei dieser Bereitschaft ist eine ruhige Einheit besser."
+    },
+    "In questo periodo niente tecniche intense: il piano resta semplice.": {
+      "en": "No intense techniques in this period: the plan stays simple.",
+      "es": "En este periodo nada de técnicas intensas: el plan se mantiene sencillo.",
+      "de": "In dieser Zeit keine intensiven Techniken: der Plan bleibt einfach."
+    },
+    "Con poco tempo questa tecnica allunga la seduta: meglio le superserie.": {
+      "en": "With little time this technique makes the session longer: supersets are better.",
+      "es": "Con poco tiempo esta técnica alarga la sesión: mejor las superseries.",
+      "de": "Bei wenig Zeit verlängert diese Technik die Einheit: besser Supersätze."
+    },
+    "Su questo esercizio niente tecniche: carica la zona del tuo fastidio.": {
+      "en": "No techniques on this exercise: it loads the area that bothers you.",
+      "es": "Nada de técnicas en este ejercicio: carga la zona de tu molestia.",
+      "de": "Keine Techniken bei dieser Übung: sie belastet die Stelle, die dir Beschwerden macht."
+    },
+    "Teniamo la tecnica più sicura tra quelle previste.": {
+      "en": "We keep the safest technique among those planned.",
+      "es": "Mantenemos la técnica más segura de las previstas.",
+      "de": "Wir behalten die sicherste der vorgesehenen Techniken."
+    },
+    "Questa tecnica non è tra quelle che il coach assegna.": {
+      "en": "This technique is not one the coach assigns.",
+      "es": "Esta técnica no es de las que asigna el coach.",
+      "de": "Diese Technik gehört nicht zu denen, die der Coach vergibt."
+    },
+    "Le parziali servono dove il muscolo è allungato: qui meglio il movimento completo.": {
+      "en": "Partial reps work where the muscle is stretched: here the full movement is better.",
+      "es": "Las parciales funcionan donde el músculo está estirado: aquí es mejor el movimiento completo.",
+      "de": "Teilwiederholungen wirken dort, wo der Muskel gedehnt ist: hier ist die volle Bewegung besser."
+    }
+  },
+  "regole": [
+    { "capitolo": 23, "riga": "- **MAV-01** (sempre accesa: salvaguardia, toglie) cancello delle tecniche: `tecnicaAdatta(tecnica, nome, brief, ctx)` (sicurezza/tecnica-adatta.js) decide se una tecnica è ammessa a questa persona su questo esercizio, con la matrice della nota (3.2 e 3.3) letta dagli attributi (classe A-F, schema, abilità, profilo, stress per zona), mai dal nome: principianti, minorenni, over 65 e modalità prudente solo tecniche leggere (superserie su esercizi non pesanti, cluster dove ammesso, «potenza» agli over 65 su macchina); dai 50 ai 64 anni le tecniche verso il cedimento solo su isolamenti (classi D ed E); classe F (core, tenute, corpo libero a zero kg) nessuna; nessun cedimento su cerniere (stacchi), spinte sopra la testa, abilità 3 o sull'esercizio che carica la zona del fastidio; con poco tempo (<= 45 minuti) niente cluster né parziali; le forzate e le negative sono solo manuali e una tecnica fuori dall'elenco non passa mai. Lo chiamano `assegnaTecniche` (stadio 13), `validaTecniche` (stadio 17: filtra anche le tecniche di metodo e tocco) e RIC-04 in seduta. Convenzione (prudenza; sull'efficienza la base è Solida, sul vantaggio di crescita non c'è)." },
+    { "capitolo": 23, "riga": "- **MAV-04** (sempre accesa: salvaguardia, toglie) la calibrazione del RIR (`calibrazione`) solo a chi può: intermedi e avanzati sotto i 65 anni, non in modalità prudente né minorenni, su un isolamento a macchina o cavo (classi D ed E, mai sul core), con prontezza almeno 50 e non nelle settimane senza tecniche del blocco; conta come la tecnica della seduta nel budget (MAV-08). Il cancello la valuta in seduta (RIC-04); la scelta dell'esercizio e la serie nuova sono di CAR-14 (W3-T3), che fino ad allora tiene il suo ponte (`segnaEsercizioTaratura`)." },
+    { "capitolo": 23, "riga": "- **MAV-05** (sempre accesa: riduce) nel tetto della seduta (RIC-04, `assegnaTecniche`, `validaTecniche`) si tiene la tecnica più sicura, non la prima della lista: prima la classe dell'esercizio (isolamento a macchina o cavo, poi libero, poi guidato, multiarticolare libero, bilanciere) e a parità le parziali, poi drop set e myo-reps, poi rest-pause, poi AMRAP e back-off (`rischioTecnica`, `scegliTecnicheSicure`); la calibrazione del RIR, che conta come la tecnica della seduta, passa per prima. Perché: «Teniamo la tecnica più sicura tra quelle previste.»" },
+    { "capitolo": 23, "riga": "- **MAV-06** (sempre accesa: testo onesto) l'AMRAP non è «più ripetizioni possibili»: «Ultima serie: arriva a 1 ripetizione dal cedimento e fermati se la velocità cala o la tecnica cede» (`TECNICHE.amrap`, coerente con BIO-03); mai sugli stacchi (cerniere), sul front squat o sulle spinte sopra la testa; sul bilanciere libero solo a intermedi e avanzati sani." },
+    { "capitolo": 23, "riga": "- **MAV-07** (sempre accesa: restringe) le parziali in allungamento (assorbe IPE-10) solo dove il muscolo è allungato: esercizi di classe D ed E (o C non di gambe) con profilo «allungato», dall'attributo e non dal nome (polpacci in piedi e alla leg press, curl su panca inclinata, curl Bayesiano, estensioni sopra la testa, alzate laterali ai cavi e inclinate, leg curl da seduto, croci con i manubri); mai sul core, sulle tenute, sul bilanciere né con un fastidio in quella zona. Testo: «A fine serie, dopo il cedimento, 3-6 ripetizioni solo nella parte in cui il muscolo è allungato. Facoltativo: non è dimostrato che batta il movimento completo». Una serie per esercizio e al massimo due esercizi per muscolo a settimana (`SOGLIE_TECNICHE.parzialiPerMuscoloSettimana`). I polpacci restano: sono i casi meglio supportati. Moderata (da verificare)." },
+    { "capitolo": 23, "riga": "- **MAV-08** (sempre accesa: riduce) budget e posizione nel blocco (`budgetTecniche(brief, settimana)`) delle tecniche verso il cedimento (drop set, myo-reps, rest-pause, AMRAP, back-off, parziali, calibrazione): principiante, minorenne, over 65 e modalità prudente 0; intermedio 1 per seduta e 2 a settimana; avanzato 2 e 6 (8 nel blocco di specializzazione); nessuna nello scarico, con prontezza sotto 50 o in un periodo di vita «senza tecniche»; settimana 1 del blocco nessuna, nelle settimane di mezzo solo le parziali (l'avanzato; nel blocco di 6 settimane anche l'intermedio), il tetto del livello nelle ultime (la 3ª del blocco di 4, la 4ª e la 5ª di quello di 6); il piano di W2-T4 (`prog.piano`, `tecniche: 'G1'`) può solo restringere. Il programma si fa una volta e vale per ogni settimana: `assegnaTecniche` rispetta il tetto per seduta e per settimana (le sedute si distanziano; una stessa tecnica sullo stesso esercizio al massimo una volta a settimana) e RIC-04 applica la posizione nel blocco a ogni apertura di seduta. Convenzione (registro C.4, riga «Tecniche»)." },
+    { "capitolo": 23, "riga": "- **MAV-09** (sempre accesa: conteggio) quanto vale una tecnica nel conteggio delle serie: drop set 2, rest-pause e myo-reps 3 (`serieEquivalentiTecnica`); `assegnaTecniche` non mette un drop set o dei myo-reps dove il muscolo arriverebbe sopra il tetto di 11 serie frazionarie per seduta (`entraNelTetto`). Il tempo che costano è di CAS-05 (volume/tempo.js, W2-T2) e il conteggio nel volume settimanale (volume.js, W2-T1) può leggere `serieEquivalentiTecnica`." },
+    { "capitolo": 23, "riga": "- **MAV-11** (spegnibile) discesa controllata di 2-3 secondi, mai tempi di 4-0-1-0: nota «Scendi piano: 2-3 secondi in discesa.» nel programma di principianti, minorenni e over 65, e nel motivo del carico dopo una pausa (RIC-05, rientro). Moderata (Schoenfeld 2015: da 0,5 a 8 secondi per ripetizione la crescita è simile)." },
+    { "capitolo": 23, "riga": "- **MAV-13** (spegnibile) myo-reps: una serie da 12-20 ripetizioni vicino al cedimento e poi 3-5 mini-serie da 3-5 ripetizioni con 10-20 secondi di pausa, come alternativa al drop set con poco tempo per intermedi e avanzati: sull'ultimo isolamento ammesso (classi D ed E), si alternano con il drop set tra le sedute della settimana (`TECNICHE.myo`). Un solo testo per rest-pause e myo-reps. Moderata (un RCT, n = 22: stessa crescita con il volume-carico circa 30% più basso). Spenta: solo il drop set, come prima." },
+    { "capitolo": 23, "riga": "- **MAV-16** (sempre accesa: testo onesto) frasi oneste sulle tecniche (assorbe IPE-11): drop set, myo-reps, rest-pause e cluster non fanno crescere di più delle serie normali a parità di volume, fanno risparmiare tempo o fatica (`TECNICHE`; nota del programma «Il drop set e i myo-reps servono a risparmiare tempo: non fanno crescere di più.»). Solida (meta-analisi 2022-2026)." },
+    { "capitolo": 19, "sostituisce": true, "riga": "- **MAV-02** (storica: sempre accesa; assorbe CAS-12; la matrice per classe è MAV-01) niente cedimento sul core, sulle tenute, a peso zero (classe F, `senzaCedimento` dall'attributo) e sulle cerniere (stacchi, ABB-09): nessuna tecnica `TECNICHE_AL_CEDIMENTO` (drop set, myo-reps, parziali, AMRAP, back-off, calibrazione, rest-pause) vi viene mai messa, nemmeno dai metodi famosi (GreySkull, GZCLP, Reddit PPL) o dai tocchi, e a corpo libero niente drop set né parziali senza zavorra. Niente cedimento neppure su front squat, spinte sopra la testa, esercizi di abilità 3 e sull'esercizio che carica la zona del fastidio dichiarato (`senzaCedimentoPer`: attributo `stress`)." },
+    { "capitolo": 19, "sostituisce": true, "riga": "- **MAV-03** (storica: sempre accesa; assorbe ETA-10, PRI-06, PRI-16) le tecniche al cedimento non si danno ai principianti, ai minorenni (13-17), agli over 65 e in modalità prudente (PAR-Q): è il gruppo G2 di `budgetTecniche` (non più `tecnicheOk`); dai 50 ai 64 anni solo su isolamenti (classi D ed E). Over 65: «potenza» solo su macchina (la libreria non ha l'alzata dalla sedia), «cluster» solo su macchine guidate, superserie solo tra macchine e cavi; i minorenni nessuna tecnica (restano le superserie antagoniste); ai principianti solo le superserie su esercizi non pesanti. I metodi con l'AMRAP nello schema lo perdono per chi non può e la loro avvertenza lo dice (`ATTENZIONE_AMRAP` in metodi-momenti.js); il tocco AMRAP non si prende per chi non può." },
+    { "capitolo": 19, "sostituisce": true, "riga": "- **ETA-02** (storica: sempre accesa, D-P9, ponte di W0-T2; matrice di W2-T3) profilo minorenne, 13-17 anni: al massimo 3 serie per esercizio, 8-15 ripetizioni, nessuna tecnica di intensità (niente AMRAP, drop set, myo-reps, parziali, cluster, potenza, piramide, 8x8: il cancello MAV-01; restano la discesa controllata, MAV-11, e le superserie antagoniste su esercizi non pesanti), niente 5x5 «fisso» né 6x3, niente metodi ad alta intensità (`sceltaMetodo` lo tratta come prudente), ripetizioni in riserva almeno 2 in ogni percorso (`rirSett` = 2, 4 nello scarico; `pavimentoRirMinorenni` in `regole-ricerca.js` (`MES_RIR.pisoMinorenni`) lo porta a 2 anche per un programma senza `rirSett`, salvato dalla v1, e dopo ogni correzione di `rirBersaglio`, anche con la tabella di W2-T4; i minorenni sono esclusi da `esigenzaEsclusa`: nessun -1 RIR dell'esigenza e nessun bilancio INT; INT-2a, M3 della revisione dell'onda 1), niente mesociclo che scende a RIR 0. Non fatto: al massimo 3 sedute con i pesi a settimana." },
+    { "capitolo": 19, "sostituisce": true, "riga": "- **RIC-04** (spegnibile) budget delle tecniche al cedimento in seduta (Robinson 2024; riscritta in W2-T3 con MAV-01, MAV-05 e MAV-08): a ogni apertura di seduta ogni tecnica del giorno passa dal cancello (`tecnicaAdatta`: persona, esercizio, scarico, prontezza sotto 50, posizione nel blocco) e delle tecniche al cedimento restano al massimo `budgetTecniche(...).perSeduta` (intermedio 1, avanzato 2, gli altri nessuna), le più sicure e non le prime della lista. Nessuna nella settimana di scarico, con prontezza sotto 50 o per chi non può. La tecnica del programma resta: per quel giorno non compare. Fase 20 dei punti 'apertura' e 'prontezza'." },
+    { "capitolo": 5, "sostituisce": true, "riga": "- **PRG-34** tecniche (dal cancello MAV-01 e dal budget MAV-08): poco tempo (<=45 min) -> superserie spinta+tirata (la prima scelta: mai con un fondamentale pesante, mai col core, oltre i 65 anni solo tra macchine e cavi) e, a chi può (intermedi e avanzati sani, non se intensità psicologica bassa), un drop set o dei myo-reps (MAV-13) sull'ultimo isolamento ammesso; over 65 -> «potenza» sul primo multiarticolare su macchina; PAR-Q positivo o over 65 (non i minorenni, non con poco tempo) -> «cluster» sui pesanti (oltre i 65 anni solo su macchine guidate); chi può andare al cedimento e primo esercizio pesante (non uno stacco) -> avanzato «back-off», intermedio «AMRAP» a 1 ripetizione dal cedimento (MAV-06; non se intensità bassa); avanzato o intermedio con intensità alta (non poco tempo): «parziali» sull'ultimo isolamento con il muscolo allungato (MAV-07). Al massimo il budget per seduta e per settimana (MAV-08). I metodi famosi e i tocchi passano dallo stesso cancello e dallo stesso budget (`validaTecniche`). (storica: sempre accesa, è una correzione)" },
+    { "capitolo": 6, "sostituisce": true, "riga": "- **TEC-07** (storica: il budget di RIC-04) le tecniche al cedimento (negative, forzate, riposo-pausa, myo-reps, oltre a drop set, AMRAP, parziali e calibrazione) contano per il budget di RIC-04 (MAV-08): intermedio 1 per seduta e 2 a settimana, avanzato 2 e 6, nessuna in scarico o con prontezza sotto 50; il back-off conta come la «seconda» dell'avanzato." }
+  ],
+  "mappaAgenti": [
+    "cancello delle tecniche: js/coach/sicurezza/tecnica-adatta.js (`tecnicaAdatta`, `budgetTecniche`, matrice per classe A-F dagli attributi) e js/coach/sicurezza/soglie-tecniche.js (i numeri); `assegnaTecniche` (stadio 13, js/coach/volume/tecniche.js) lo chiama, `validaTecniche` (stadio 17, `verificaProgramma`) filtra le tecniche di metodo e tocco, RIC-04 (fase 20 di 'apertura' e 'prontezza', js/coach/regole-nuove.js) passa dal cancello e dal budget a ogni seduta",
+    "RIR per settimana: `rirBersaglioBase` legge `rirPianoSettimana(nome, sett)` (js/coach/programma/mesociclo.js, W2-T4) se esiste, tramite `rirDalPiano` in js/coach/regole-ricerca.js; senza, i valori di prima"
+  ]
+}
