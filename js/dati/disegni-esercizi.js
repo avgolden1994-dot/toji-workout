@@ -65,7 +65,8 @@ const IMMAGINI_ESERCIZI = {
   'Abductor Machine': 'esercizi/ex-42-abductor-machine.svg',
   'Kickback ai Cavi': 'esercizi/ex-43-kickback-ai-cavi.svg',
   'Slanci Laterali a Terra': 'esercizi/ex-44-slanci-laterali-a-terra.svg',
-  'Military Press': 'esercizi/ex-45-military-press.svg'
+  'Military Press': 'esercizi/ex-45-military-press.svg',
+  'Lento Avanti Manubri': 'esercizi/ex-46-lento-avanti-manubri.svg'
 };
 window.immagineEsercizio = function(nome) {
   const pulito = String(nome).replace(EMOJI_TESTA, '');

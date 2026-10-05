@@ -180,6 +180,7 @@ const ASSETS = [
   './esercizi/ex-43-kickback-ai-cavi.svg',
   './esercizi/ex-44-slanci-laterali-a-terra.svg',
   './esercizi/ex-45-military-press.svg',
+  './esercizi/ex-46-lento-avanti-manubri.svg',
   /*FINE-ASSET*/
 
 ];
