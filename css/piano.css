@@ -135,25 +135,9 @@
 .cal-num { font-size: 1.05rem; font-weight: 900; line-height: 1.1; }
 .cal-num.vuoto { color: var(--text-dim); font-weight: 700; }
 .cal-sub { font-size: 11px; font-weight: 700; color: var(--muted); text-align: center; line-height: 1.15; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cal-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
-.cal-dot.full { background: var(--primary); }
-.cal-dot.rest { background: var(--muted); }
-.cal-dot.empty { background: transparent; border: 1px solid var(--border-strong); }
-.cal-legend { display: flex; gap: var(--sp-3); justify-content: center; flex-wrap: wrap; font-size: 0.62rem; color: var(--muted); margin-top: var(--sp-3); }
-.cal-legend span { display: flex; align-items: center; gap: 4px; }
 .cal-summary { font-size: 0.72rem; font-weight: 800; color: var(--primary); text-align: center; margin-top: var(--sp-3); }
 
-/* campi parametri nella lista Gruppi */
-.lib-row { padding: 10px 0; border-bottom: 1px solid var(--border); }
-.lib-row:last-child { border-bottom: none; }
-.lib-row-top { margin-bottom: 6px; }
-.lib-row-params { display: flex; align-items: flex-end; gap: 5px; }
-.mini-field { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
-.mini-field span { font-size: 0.6rem; color: var(--muted); text-transform: uppercase; font-weight: 800; }
-.mini-field input { padding: 6px 2px; text-align: center; font-size: 16px; }
-
 /* ======= Barra giorni ======= */
-.day-bar-wrap { display: flex; }
 .days-bar { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; width: 100%; }
 .days-bar::-webkit-scrollbar { display: none; }
 .day-chip { background: var(--card); border: 1px solid var(--border); color: var(--muted); padding: 8px 12px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0; }
@@ -193,8 +177,6 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline-offs
 .btn-main:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(50%); }
 .btn-archive { background: var(--surface-2); color: var(--accent); border: 1px solid var(--accent); padding: 10px; border-radius: 8px; font-weight: 800; font-size: 0.85rem; cursor: pointer; width: 100%; text-transform: uppercase; margin-top: 10px; }
 
-.exercise-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
-.exercise-item:last-child { border-bottom: none; }
 .ex-name { font-weight: 700; font-size: 0.95rem; }
 .ex-data { font-size: 0.8rem; line-height: var(--lh-tight); color: var(--muted); margin-top: var(--sp-1); }
 .del-btn { background: transparent; border: none; color: var(--primary); font-size: 1rem; cursor: pointer; }

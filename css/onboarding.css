@@ -78,14 +78,3 @@
 .pick-meta { font-size: 0.74rem; line-height: var(--lh-tight); color: var(--muted); margin-top: var(--sp-1); }
 .pick-check { flex-shrink: 0; font-size: 1.1rem; font-weight: 900; color: var(--border); }
 .pick-row.on .pick-check { color: var(--success); }
-
-/* tenda scorrevole per il resto degli esercizi */
-.drawer-btn {
-  width: 100%; margin-top: 8px; background: var(--surface-2); border: 1px solid var(--border);
-  color: var(--text); padding: 10px; border-radius: 8px; font-size: 0.76rem; font-weight: 800; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; gap: 6px;
-}
-.drawer-btn .caret { transition: transform .18s ease; }
-.drawer-btn.open .caret { transform: rotate(180deg); }
-.drawer-body { max-height: 0; overflow: hidden; transition: max-height .28s ease; }
-.drawer-body.open { max-height: 1400px; overflow-y: auto; }

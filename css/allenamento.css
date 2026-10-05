@@ -1,5 +1,4 @@
 /* ======= Titolo scheda del giorno ======= */
-.day-title-row { display: flex; align-items: center; gap: 4px; min-width: 0; }
 .day-title { font-size: 0.95rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* ======= Selettore schede pronte ======= */
@@ -28,7 +27,6 @@
 .workout-item { padding: 10px 0; border-bottom: 1px solid var(--border); }
 .workout-item:last-child { border-bottom: none; }
 .workout-item-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
-.flame-tag { filter: drop-shadow(0 0 4px color-mix(in srgb, var(--primary) 80%, transparent)); }
 .ss-tag { color: var(--accent); }
 .drop-btn { background: var(--surface-2); border: 1px solid var(--border); color: var(--muted); padding: 7px 10px; border-radius: 7px; font-size: 0.72rem; font-weight: 800; cursor: pointer; white-space: nowrap; }
 .drop-btn.armed { background: color-mix(in srgb, var(--danger) 18%, transparent); border-color: var(--accent); color: var(--accent); }
@@ -43,7 +41,6 @@
 .set-kg-label { color: var(--muted); font-size: 0.7rem; flex-shrink: 0; }
 .set-flame-btn { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; background: var(--surface-2); border: 1px solid var(--border); font-size: 0.85rem; cursor: pointer; opacity: 0.55; }
 .set-flame-btn.armed { background: color-mix(in srgb, var(--danger) 20%, transparent); border-color: var(--accent); opacity: 1; }
-.set-row .flame-done-tag { flex-shrink: 0; font-size: 0.8rem; }
 .set-flame-btn.flame-on { background: color-mix(in srgb, var(--accent) 22%, var(--surface-2)); border-color: var(--accent); }
 .ex-fig { display: inline-block; width: 26px; height: 26px; vertical-align: -6px; margin-right: 8px; }
 .ex-fig svg { width: 100%; height: 100%; display: block; }
@@ -52,8 +49,6 @@
 .rpe-hint b { color: var(--text); }
 .set-check { margin-left: auto; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: var(--surface-2); border: 1px solid var(--field-border); color: transparent; font-weight: 900; cursor: pointer; }
 .set-check.checked { background: var(--success); border-color: var(--success); color: var(--on-status); }
-.edit-btn { background: transparent; border: none; color: var(--accent); font-size: 0.95rem; cursor: pointer; padding: 0 2px; }
-.piano-item-actions { display: flex; align-items: center; gap: 10px; }
 #cancel-edit-btn { display: none; background: transparent; border: none; color: var(--muted); font-size: 0.75rem; text-decoration: underline; cursor: pointer; padding: 4px 0; }
 
 /* ======= Modulo Cedimento (Drop) ======= */

@@ -24,14 +24,12 @@
 .dv2-set { display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-2) var(--sp-3); border-radius: 8px; background: var(--surface-2); margin-bottom: var(--sp-1); font-size: 0.86rem; }
 .dv2-set.no { opacity: 0.5; }
 .dv2-n { width: 18px; color: var(--muted); font-weight: 800; }
-.dv2-val { flex: 1; }
 .dv2-chk { font-weight: 900; color: var(--success); }
 .dv2-set.no .dv2-chk { color: var(--muted); }
 
 /* ======= Canzone del cedimento (riassunto nella card) ======= */
 .drop-song { display: flex; align-items: center; gap: var(--sp-3); background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: var(--sp-3); margin: var(--sp-3) 0; }
 .drop-song-ico { font-size: 1.3rem; flex-shrink: 0; }
-.drop-song-btn { flex-shrink: 0; background: transparent; border: 1px solid var(--primary); color: var(--primary); border-radius: 8px; padding: 7px 12px; font-weight: 800; font-size: 0.76rem; cursor: pointer; }
 #music-sheet { z-index: 97; }
 
 /* ======= Dettaglio sessione ======= */
@@ -41,7 +39,6 @@
 .dv2-c { font-size: 0.9rem; }
 .dv2-chk { text-align: right; }
 .history-card { display: block; width: 100%; text-align: left; font: inherit; color: inherit; cursor: pointer; }
-.history-open { margin-top: var(--sp-3); font-size: 0.74rem; font-weight: 800; color: var(--primary); }
 
 /* ======= Ripetizioni: tastiera + ruota ======= */
 .num-drag { cursor: text; touch-action: manipulation; }
@@ -117,9 +114,6 @@
 .hs-tag.on { background: color-mix(in srgb, var(--primary) 18%, transparent); color: var(--primary); }
 :where(html[data-theme="light"]) .hs-tag { background: var(--accent-tint); color: var(--accent-text); }
 :where(html[data-theme="light"]) .hs-tag.on { background: var(--primary-tint); color: var(--primary-text); }
-.hs-all { width: 100%; background: none; border: none; color: var(--primary); font-weight: 800; font-size: 0.84rem; padding: var(--sp-2) 0 0; cursor: pointer; text-align: center; }
-.hs-month { font-size: 0.7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); margin: var(--sp-4) 0 var(--sp-2); }
-.hs-month:first-child { margin-top: 0; }
 .pg-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-2); }
 .pg-kpi { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 8px; text-align: center; }
 .pg-kpi b { display: block; font-size: 1.3rem; font-weight: 900; }

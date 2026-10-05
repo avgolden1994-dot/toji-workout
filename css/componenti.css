@@ -5,8 +5,6 @@
   color: var(--text); text-align: center; padding: 7px 2px; font-size: 0.85rem; width: 56px;
 }
 .num-drag:focus { border-color: var(--primary); }
-.num-drag.dragging { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-shadow); }
-.num-hint { font-size: 0.58rem; color: var(--muted); text-align: center; margin-top: 1px; }
 
 /* ======= + / - serie nella sessione ======= */
 .set-tools { display: flex; gap: 6px; margin-top: 8px; }
@@ -44,11 +42,6 @@
 @media (prefers-reduced-motion: reduce) { .busy-panel { animation: none; } .busy-chev, .busy-btn { transition: none; } }
 
 /* ======= Segnalazione "gia scelto" ======= */
-.use-tag { display: inline-block; font-size: 0.6rem; font-weight: 900; text-transform: uppercase; border-radius: 999px; padding: 2px 7px; margin-left: 6px; white-space: nowrap; }
-.use-tag.today { background: color-mix(in srgb, var(--success) 18%, transparent); color: var(--success); border: 1px solid var(--success); }
-.use-tag.week { background: color-mix(in srgb, var(--warning) 15%, transparent); color: var(--warning); border: 1px solid var(--warning); }
-.sugg-row.used-week, .lib-row.used-week { opacity: 0.72; }
-.sugg-row.used-today, .lib-row.used-today { opacity: 0.55; }
 .lib-add-btn.week { background: var(--warning); color: var(--on-status); }
 
 /* schede pronte: colore diverso se gia caricate */
@@ -60,8 +53,8 @@
 .tpl-state.fresh { background: var(--surface-2); color: var(--muted); border: 1px solid var(--border); }
 /* Chiaro: testo e tinta dedicati (token, >= 5,8:1) al posto del verde/ambra scurito col nero.
    Lo scuro resta con le velature sopra (gia sopra 5:1). */
-:where(html[data-theme="light"]) .use-tag.today, :where(html[data-theme="light"]) .tpl-state.done { background: var(--success-tint); color: var(--success-text); }
-:where(html[data-theme="light"]) .use-tag.week, :where(html[data-theme="light"]) .tpl-state.partial { background: var(--warning-tint); color: var(--warning-text); }
+:where(html[data-theme="light"]) .tpl-state.done { background: var(--success-tint); color: var(--success-text); }
+:where(html[data-theme="light"]) .tpl-state.partial { background: var(--warning-tint); color: var(--warning-text); }
 
 /* ======= Carico settimanale per gruppo: due tonalita' ======= */
 /* VERDE = gruppo gia in programma, volume dentro il range utile
@@ -124,14 +117,6 @@ body.select-mode .plan-check { display: block; }
 .plan-check.on { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
 body.select-mode .plan-card-actions, body.select-mode .reorder-arrows { display: none; }
 .plan-card.picked { border-color: var(--primary); }
-
-/* ======= Suggerimenti ======= */
-.sugg-row { display: flex; align-items: center; gap: 8px; padding: 9px 0; border-bottom: 1px solid var(--border); }
-.sugg-row:last-child { border-bottom: none; }
-.sugg-main { flex: 1; min-width: 0; }
-.sugg-name { font-weight: 700; font-size: 0.86rem; }
-.sugg-meta { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
-.sugg-more { width: 100%; margin-top: 10px; background: transparent; border: 1px dashed var(--border); color: var(--muted); padding: 9px; border-radius: 8px; font-size: 0.74rem; font-weight: 800; cursor: pointer; }
 
 /* ======= Swipe: sfondo che si rivela sotto la riga ======= */
 .swipe-host { position: relative; overflow: hidden; border-radius: 10px; }

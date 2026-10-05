@@ -19,7 +19,6 @@
 @supports not (aspect-ratio: 1) {
   .body-map-wrap { height: 288px; }
 }
-.bm-base { fill: color-mix(in srgb, var(--text) 5%, var(--surface-1)); stroke: var(--border-strong); stroke-width: 1.1; stroke-linejoin: round; }
 /* linea di separazione del colore di fondo: ogni muscolo si stacca dal vicino */
 .bm-sil { fill: color-mix(in srgb, var(--text) 16%, var(--surface-1)); }
 .bm-dark { fill: color-mix(in srgb, var(--text) 8%, var(--surface-1)); }
@@ -52,17 +51,12 @@ html[data-theme="light"] .bm-ln { stroke: var(--surface-1); stroke-width: 0.6; }
   .bm-muscle.sel { animation: none; filter: drop-shadow(0 0 3px color-mix(in srgb, var(--primary) 60%, transparent)); }
 }
 @keyframes bm-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.68; } }
-.bm-fill { fill: color-mix(in srgb, var(--text) 5%, var(--surface-1)); stroke: none; }
 .bm-muscle.active { fill: var(--primary); stroke: var(--surface-1); animation: bm-pulse 2.2s ease-in-out infinite; }
 /* sagoma e muscoli nel chiaro: toni piatti e separazioni bianche (token --map-sil / --map-muscle in base.css).
    :where() non pesa: stessa forza dei selettori di sopra, quindi .active e .load-* continuano a vincere. */
-:where(html[data-theme="light"]) .bm-base { fill: var(--map-sil); stroke: color-mix(in srgb, var(--text) 22%, var(--surface-1)); }
-:where(html[data-theme="light"]) .bm-fill { fill: var(--map-sil); }
 :where(html[data-theme="light"]) .bm-muscle { fill: var(--map-muscle); stroke: var(--surface-1); }
 .bm-label { fill: var(--muted); font-size: 8px; font-weight: 800; letter-spacing: 0.6px; text-anchor: middle; }
 .group-day-current { font-size: 0.74rem; line-height: var(--lh-tight); color: var(--accent); font-weight: 800; margin-top: var(--sp-1); }
-
-.bm-line { fill: none; stroke: rgba(0,0,0,0.25); stroke-width: 0.7; }
 
 /* ======= Gruppi muscolari ======= */
 .group-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
@@ -74,15 +68,7 @@ html[data-theme="light"] .bm-ln { stroke: var(--surface-1); stroke-width: 0.6; }
 .group-label { font-size: 0.76rem; font-weight: 800; margin-top: 4px; text-transform: uppercase; }
 .group-count { font-size: 0.66rem; color: var(--muted); margin-top: 2px; }
 
-.lib-item { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 9px 0; border-bottom: 1px solid var(--border); }
-.lib-item:last-child { border-bottom: none; }
-.lib-name { font-weight: 700; font-size: 0.88rem; }
-.lib-meta { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
-.lib-type { display: inline-block; font-size: 0.62rem; font-weight: 900; text-transform: uppercase; border-radius: 999px; padding: 1px 7px; margin-left: 6px; }
-.lib-type.compound { color: var(--primary); border: 1px solid var(--primary); }
-.lib-type.isolation { color: var(--muted); border: 1px solid var(--border); }
 .lib-add-btn { flex-shrink: 0; background: var(--primary); border: none; color: var(--on-primary); width: 32px; height: 32px; border-radius: 8px; font-size: 1.05rem; font-weight: 900; cursor: pointer; }
-.lib-add-btn.added { background: var(--success); color: var(--on-status); }
 
 /* ======= Pannello Coach ======= */
 .coach-box { margin-top: 12px; border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 10px; padding: 10px; background: var(--surface-1); }

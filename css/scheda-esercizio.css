@@ -6,7 +6,7 @@
    con lo spazio corretto tra titolo e descrizione.
    ============================================================ */
 .set-toggle-main, .pick-main, .onb-opt-main,
-.wday-main, .wk-main, .week-main, .plan-card-main, .sugg-main { display: block; min-width: 0; }
+.wday-main, .wk-main, .week-main, .plan-card-main { display: block; min-width: 0; }
 
 .set-toggle-name, .set-toggle-desc,
 .pick-name, .pick-meta,
@@ -17,16 +17,13 @@
 .track-name, .track-meta,
 .template-name, .template-desc, .template-meta,
 .coach-name, .coach-reason,
-.sugg-name, .sugg-meta,
-.ex-name, .ex-data, .plan-ex-name,
-.lib-name, .lib-meta {
+.ex-name, .ex-data, .plan-ex-name {
   display: block;
 }
 
 /* lo spazio tra titolo e sua descrizione, ovunque e sempre uguale */
 .set-toggle-desc, .pick-meta, .onb-opt-desc, .wday-meta, .wk-meta,
-.week-meta, .track-meta, .coach-reason, .sugg-meta, .ex-data,
-.lib-meta {
+.week-meta, .track-meta, .coach-reason, .ex-data {
   margin-top: var(--sp-1);
 }
 .template-desc { margin-top: var(--sp-2); }
@@ -61,17 +58,6 @@
    diventa chiaro anche lui, altrimenti il fondo semitrasparente sembra grigio sporco */
 .ex-img-slot:not(.vuoto) { background: color-mix(in srgb, var(--text) 92%, var(--surface-1)); }
 html[data-theme="light"] .ex-img-slot:not(.vuoto) { background: var(--surface-1); }
-.ex-draw { width: 100%; height: 100%; display: block; }
-/* la figura ha corpo pieno con un contorno piu marcato, cosi si legge
-   come una persona anche a schermo piccolo */
-.ex-draw .bd { fill: var(--text); fill-opacity: 0.88; stroke: var(--bg); stroke-width: 1.2; stroke-linejoin: round; }
-.ex-draw .bar { fill: var(--muted); }
-.ex-draw .plate { fill: var(--primary); }
-.ex-draw .bench { fill: var(--muted); fill-opacity: 0.45; }
-.ex-draw .ground { stroke: var(--border); }
-.ex-draw .arrow { stroke: var(--accent); }
-.ex-draw .lbl { fill: var(--accent); }
-.ex-draw .lbl2 { fill: var(--muted); }
 .ex-pattern { font-size: 0.68rem; font-weight: 900; line-height: var(--lh-tight); text-transform: uppercase; letter-spacing: 0.6px; color: var(--accent); margin: 0 0 var(--sp-5) 0; }
 .ex-block { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: var(--sp-4); margin-bottom: var(--sp-3); }
 .ex-block-title { font-size: 0.72rem; font-weight: 900; line-height: var(--lh-tight); text-transform: uppercase; letter-spacing: 0.5px; color: var(--primary); margin: 0 0 var(--sp-3) 0; }
