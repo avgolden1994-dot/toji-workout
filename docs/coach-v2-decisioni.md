@@ -705,6 +705,26 @@ L'utente ha dato carta bianca («hai carta bianca»); le decisioni 1-9 sono stat
 
 **Criteri del collaudo da aggiornare** (solo in INT, con la skill del collaudo §4 e `VERSIONE_CRITERI` alzata): INT-0: DEL-01 (principianti: scarico solo all'8ª), PAT-01 (a casa senza sbarra la tirata verticale vale con pullover o elastico), TEC-01 (anche minori e over 65); INT-1: SAF-01/SAF-02 leggono l'attributo `stress` invece della lista interna; INT-2a: VOL-01, VOL-02, DIR-01 (tabella B6), DUR-02 (B12), RIR-03 (riga principiante [3,4]); INT-2: DEL-01 (principianti 12 settimane), SPL-01 (con nota). Le soglie del cancello stanno in `tools/cancello-collaudo.json` (W0-T1).
 
+
+### E.1 Regressioni ammesse del cancello (meccanismo e voci)
+
+**Deroga datata (2026-10-05, INT-2a; richiesta dalla revisione Opus dell'onda 1, M2, e fissata dal coordinatore: il responsabile di prodotto la conferma o la toglie).** L'INT-1 introdusse nel cancello (`onde.<onda>.ammesse` in `tools/cancello-collaudo.json`) le regressioni *ammesse*: una classe può salire fino a un tetto se ha un motivo scritto. Il piano (E, INT-1) chiede che nessun criterio peggiori: il meccanismo è una **deroga**, e vale solo con queste condizioni, controllate dal cancello (`tools/cancello-collaudo.js`, autotest «regressioni ammesse con scadenza»):
+
+1. ogni voce ha un **responsabile** (`risolve`: un task che esiste nella tabella A.3 o in questa tabella E, mai un nome inventato) e una **scadenza** (`scade`: l'onda di `ordineOnde` entro cui deve sparire);
+2. valutando l'onda di scadenza (o una successiva) la voce è **scaduta**: il cancello fallisce, anche se il valore sta sotto il tetto, e la classe torna giudicata dalla tolleranza di 0,5 punti;
+3. mai per la sicurezza (SAF-01, SAF-03) e mai per un criterio con una soglia a 0 senza un compito che la porta a 0;
+4. una riga datata qui per ogni voce, e il motivo dice la causa vera (quella misurata), non una ipotesi.
+
+| Voce (onda-1) | Tetto | Responsabile | Scade | Causa (misurata) | Stato |
+|---|---|---|---|---|---|
+| VOL-02:glutei | 32,5% | **W2-T1** (volume per muscolo con gli attributi) | onda-2a (soglia 0) | i crediti dei 29 esercizi nuovi, che il volume per gruppo non vede; a INT-2a i crediti sono allineati (M4) | aperta |
+| VOL-02:tricipiti | 2,6% | **W2-T1** | onda-2a (soglia 0) | **rumore del sorteggio** (+0,56 su una tolleranza di 0,5): il motivo scritto prima (Floor Press e Panca con Pausa) era falso, non entrano in nessun programma (0 su 2.034) | aperta |
+| FRQ-02:polpacci | 8,4% | **W2-T1** (serie dirette per muscolo) | onda-2a (soglia 5) | il Calf Raise con Manubrio sul Gradino entra in una sola seduta; in parte rumore (+0,55 su 0,5) | aperta |
+| REC-02 | — | W1-T6 (stesso lavoro di W2-T5, anticipato) | — | lo stacco rumeno coi manubri a casa contato come lombare pesante: `schienaLombare` legge ora il dato degli attributi | **chiusa il 2026-10-05**: misurata 0,00%, voce tolta |
+| RID-01:quadricipiti | — | W1-T6 (anticipo di W2-T6) | — | squat, affondi e squat su scatola nella stessa seduta: `strTerzoUguale` e, a INT-2a, `strSquatDoppio` (M5) | **chiusa il 2026-10-05**: misurata 0,00%, voce tolta |
+
+Il responsabile di REC-02 e RID-01 nella versione di INT-1 era «W1-T6», un task che allora non esisteva ancora nel piano (l'onda 1 era chiusa con W1-T1..T5): è nato dopo, per questi residui, e li ha chiusi.
+
 ---
 
 ## F. Priorità reale

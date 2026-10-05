@@ -168,6 +168,17 @@ function valuta(cfg, snap, ondaId, opz) {
   /* INT-1: `onde.<onda>.ammesse` = peggioramenti giustificati e scritti, uno per classe: { "VOL-02:glutei": { "max": 32.5, "motivo": "...", "risolve": "W2-T1" } }. Una classe ammessa
      puo salire fino a `max` (non oltre: il tetto vale come una soglia) e il cancello lo dice; mai per le classi di sicurezza. Le altre classi restano giudicate dalla tolleranza. */
   const ammesse = (onda && onda.ammesse) || {};
+  /* INT-2a (M2 della revisione dell onda 1): ogni ammessa ha un RESPONSABILE (`risolve`: il task che la chiude) e una SCADENZA (`scade`: l onda entro cui deve sparire, una tra `ordineOnde`).
+     Valutando quell onda (o una dopo) l ammessa e scaduta: il cancello FALLISCE e la classe torna giudicata dalla tolleranza, anche se il valore sta sotto il tetto. Il meccanismo e la sua
+     approvazione stanno nel registro (docs/coach-v2-decisioni.md, tabella E): una riga datata per ogni voce. */
+  const iOnda = ordine.indexOf(ondaId);
+  const scaduta = (am) => !(am && am.scade && ordine.indexOf(am.scade) > iOnda);
+  Object.keys(ammesse).sort().forEach(k => {
+    const am = ammesse[k] || {};
+    if (!am.risolve) ko('ammessa ' + k + ': manca il responsabile (campo risolve: il task che la chiude)');
+    if (!am.scade || ordine.indexOf(am.scade) === -1) ko('ammessa ' + k + ': manca la scadenza (campo scade: l\'onda entro cui deve sparire, una tra ' + ordine.join(', ') + ')');
+    else if (ordine.indexOf(am.scade) <= iOnda) ko('ammessa ' + k + ' SCADUTA: doveva sparire entro ' + am.scade + ' (' + (am.risolve || 'senza responsabile') + '): ora si valuta ' + ondaId + ', la classe torna giudicata dalla tolleranza');
+  });
   chiavi.forEach(k => {
     const cod = codiceDi(k);
     if ((coperte.has(k) && !opz.contro) || riscritti.has(cod)) return;   /* contro il «prima» una soglia esplicita sostituisce il confronto; contro un'onda precedente vale sempre */
@@ -175,7 +186,7 @@ function valuta(cfg, snap, ondaId, opz) {
     const tol = sicurezza.has(cod) ? cfg.regressione.tolleranzaSicurezza : cfg.regressione.tolleranzaPunti;
     if (val(k) > valRif(k) + tol + EPS) {
       const am = ammesse[k];
-      if (am && !sicurezza.has(cod) && typeof am.max === 'number' && am.motivo) {
+      if (am && !scaduta(am) && !sicurezza.has(cod) && typeof am.max === 'number' && am.motivo) {
         if (val(k) <= am.max + EPS) { ammesseUsate++; ok('regressione AMMESSA ' + k + ': ' + f2(val(k)) + '% contro ' + f2(valRif(k)) + '% (' + rif.etichetta + '), tetto ' + am.max + '%: ' + am.motivo + (am.risolve ? ' [' + am.risolve + ']' : '')); return; }
         peggiorate++; return ko('regressione ' + k + ': ' + f2(val(k)) + '% oltre il tetto ammesso di ' + am.max + '% (contro ' + f2(valRif(k)) + '% di ' + rif.etichetta + ')');
       }
@@ -388,7 +399,7 @@ function autotest() {
   });
   prova('regressioni ammesse (INT-1): una classe con il suo tetto e il suo motivo puo salire fino al tetto, non oltre; le altre restano giudicate; la sicurezza non si ammette', () => {
     const cfg2 = JSON.parse(JSON.stringify(cfg));
-    cfg2.onde['onda-3'].ammesse = { 'RID-01:grande_gluteo': { max: 4, motivo: 'prova', risolve: 'W9-T9' }, 'SAF-01:spalle': { max: 20, motivo: 'non si puo' } };
+    cfg2.onde['onda-3'].ammesse = { 'RID-01:grande_gluteo': { max: 4, motivo: 'prova', risolve: 'W9-T9', scade: 'onda-4' }, 'SAF-01:spalle': { max: 20, motivo: 'non si puo', risolve: 'W9-T9', scade: 'onda-4' } };
     const contro = daCollaudo(istantaneaBuona(cfg2, 'onda-2', { pesata: { 'RID-01:grande_gluteo': 2 }, conteggio: { 'RID-01:grande_gluteo': 200 } }));
     const mk = (v) => istantaneaBuona(cfg2, 'onda-3', { pesata: { 'RID-01:grande_gluteo': v }, conteggio: { 'RID-01:grande_gluteo': v * 100 } });
     const valuta2 = (snapshot) => valuta(cfg2, daCollaudo(snapshot), 'onda-3', { contro });
@@ -402,6 +413,26 @@ function autotest() {
     const contro2 = daCollaudo(istantaneaBuona(cfg2, 'onda-2', { pesata: { 'SAF-01:spalle': 0 }, conteggio: { 'SAF-01:spalle': 0 } }));
     const sic = istantaneaBuona(cfg2, 'onda-3', { pesata: { 'SAF-01:spalle': 3 }, conteggio: { 'SAF-01:spalle': 300 } });
     eq(valuta(cfg2, daCollaudo(sic), 'onda-3', { contro: contro2 }).falliti >= 1, true, 'una classe di sicurezza non si ammette mai');
+  });
+  prova('regressioni ammesse con scadenza (INT-2a, M2): senza responsabile o senza scadenza fallisce, e un\'ammessa scaduta fa fallire il cancello anche sotto il tetto', () => {
+    const contro = (c) => daCollaudo(istantaneaBuona(c, 'onda-2', { pesata: { 'RID-01:grande_gluteo': 2 }, conteggio: { 'RID-01:grande_gluteo': 200 } }));
+    const conAmmessa = (am, onda) => { const c = JSON.parse(JSON.stringify(cfg)); c.onde[onda] = c.onde[onda] || {}; c.onde[onda].ammesse = { 'RID-01:grande_gluteo': am }; return c; };
+    const esito = (am, onda) => {
+      const c = conAmmessa(am, onda), snap = istantaneaBuona(c, onda, { pesata: { 'RID-01:grande_gluteo': 3.5 }, conteggio: { 'RID-01:grande_gluteo': 350 } });
+      return valuta(c, daCollaudo(snap), onda, { contro: contro(c) });
+    };
+    const buona = { max: 4, motivo: 'prova', risolve: 'W9-T9', scade: 'onda-4' };
+    eq(esito(buona, 'onda-3').falliti, 0, 'con responsabile e scadenza futura passa (+1,5 punti sotto il tetto 4)');
+    const scad = esito(Object.assign({}, buona, { scade: 'onda-3' }), 'onda-3');
+    eq(scad.falliti >= 1, true, 'scade nell\'onda che si valuta: fallisce anche sotto il tetto');
+    eq(scad.righe.some(r => r.esito === 'fallito' && /SCADUTA/.test(r.testo)), true, 'e dice SCADUTA');
+    eq(scad.righe.some(r => r.esito === 'fallito' && /regressione RID-01:grande_gluteo/.test(r.testo)), true, 'la classe torna giudicata dalla tolleranza');
+    eq(esito(Object.assign({}, buona, { scade: 'onda-2a' }), 'onda-3').falliti >= 1, true, 'scaduta da un\'onda: fallisce');
+    const senzaScade = Object.assign({}, buona); delete senzaScade.scade;
+    eq(esito(senzaScade, 'onda-3').righe.some(r => r.esito === 'fallito' && /manca la scadenza/.test(r.testo)), true, 'senza `scade` fallisce');
+    eq(esito(Object.assign({}, buona, { scade: 'onda-9' }), 'onda-3').righe.some(r => r.esito === 'fallito' && /manca la scadenza/.test(r.testo)), true, 'con un\'onda sconosciuta fallisce');
+    const senzaRisolve = Object.assign({}, buona); delete senzaRisolve.risolve;
+    eq(esito(senzaRisolve, 'onda-3').righe.some(r => r.esito === 'fallito' && /manca il responsabile/.test(r.testo)), true, 'senza `risolve` fallisce');
   });
   prova('nomi delle onde e etichette del collaudo', () => {
     eq(normalizzaOnda('INT-0', cfg), 'onda-0'); eq(normalizzaOnda('coach-v2-onda-2', cfg), 'onda-2'); eq(normalizzaOnda('2a', cfg), 'onda-2a');
