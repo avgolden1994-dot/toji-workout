@@ -21,7 +21,7 @@ Marcatori nella colonna «Fonte»:
 3. **La dose minima per chi comincia è bassa.** 2 sedute a settimana e 2-3 serie per esercizio bastano; più serie danno più crescita con rendimenti decrescenti (Pelland 2025); perfino 1 serie funziona come minimo.
 4. **Full body o split: a volume pari è uguale** (RCT su 50 donne non allenate, 12 settimane). Si sceglie in base ai giorni e alla costanza.
 5. **Macchine, manubri e bilanciere danno risultati simili ai novizi** (RCT su 36 uomini novizi, 10 settimane; trasferimento tra strumenti). In un'app senza coach dal vivo si parte da macchine, manubri e corpo libero con appoggio; il bilanciere si sblocca dopo.
-6. **Cosa fa oggi il generatore ai principianti [S].** Bilanciere o esercizio difficile al primo posto in 54 sedute su 69; affondi bulgari in 18 piani su 23; trazioni non assistite in 10 su 23; drop set in 13 piani su 23 (tutti quelli da 45 minuti o meno, anche su Dead Bug); «Coach esigente» con RIR 0 sugli isolamenti dalla seconda seduta; scarico alla settimana 4; sedute da 25-48 minuti per 30-60 dichiarati; con 2 giorni e 45 minuti ogni schema una volta a settimana.
+6. **Cosa fa oggi il generatore ai principianti [S].** Bilanciere al primo posto in 54 sedute su 69 (più 10 con gli affondi bulgari); affondi bulgari in 18 piani su 23; trazioni non assistite in 10 su 23; drop set in 13 piani su 23 (tutti quelli da 45 minuti o meno, anche su Dead Bug in 6); nota «Coach esigente» in 22 su 23, e dal codice RIR 0 sugli isolamenti dalla seconda seduta; scarico alla settimana 4; sedute da 25-48 minuti per 30-60 dichiarati; con 2 giorni e 45 minuti (massa o forza) ogni schema una volta a settimana.
 7. **Il piano proposto** (sezione 3): 12 settimane = avvicinamento (1-2), costruzione (3-8), consolidamento (9-11), verifica (12). RIR 3-4 poi 2-3; 2 serie poi 3; 8-12 ripetizioni; nessuna tecnica al cedimento; nessuno scarico a calendario prima della settimana 12; carichi con doppia progressione.
 8. **Primo giorno** (sezione 4): 35-40 minuti, 5-6 esercizi da 2 serie, RIR 3-4, carico prudente corretto dopo la prima serie, sei messaggi di competenza, nessuna tecnica, nessun confronto.
 9. **Passare a intermedio non è una data.** Serve LIV-01 positivo **e** la scala di progressione S2 su almeno 2 fondamentali su 3 **e** uno stallo che resiste ai gradini 0-2 della scala. Per quasi tutti non prima di 4-6 mesi; a 12 settimane quasi tutti sono ancora novizi.
@@ -47,7 +47,7 @@ Marcatori nella colonna «Fonte»:
 | Tema | Cosa risulta | Forza | Fonte (anno) |
 |---|---|---|---|
 | Effetto della seduta ripetuta (RBE) | Dopo una prima seduta di esercizio eccentrico, la seconda dà meno dolenzia (DOMS) e meno calo di forza; la protezione può durare fino a 24 settimane tra le due sedute | Moderata (evidenza soprattutto su esercizio eccentrico; sulle sedute di pesi di un principiante è inferenza) | PMC3967433, PMC164305, PMID 16331873, PMID 30663816 [V titoli]; riassunto [V] |
-| Bastano poche contrazioni | Due azioni eccentriche massimali del gomito (danno minimo) attenuavano il danno di 24 azioni successive, anche se meno di una prima seduta più grande; un esercizio eccentrico a basso carico fa lo stesso effetto | Moderata (un muscolo, laboratorio) | Nosaka e coll., «The repeated bout effect of reduced-load eccentric exercise on elbow flexor muscle damage», Eur J Appl Physiol 2001 [V riassunto] |
+| Bastano poche contrazioni | Secondo un riassunto su ricerche di Nosaka, due azioni eccentriche massimali del gomito (danno minimo) attenuavano il danno di 24 azioni successive, anche se meno di una prima seduta più grande; anche un esercizio eccentrico a basso carico fa da «prima seduta» | Moderata-debole (un muscolo, laboratorio; lo studio esatto della cifra «2 contro 24» non è stato identificato) | Nosaka e coll., «The repeated bout effect of reduced-load eccentric exercise on elbow flexor muscle damage», Eur J Appl Physiol 2001 [V titolo]; cifra dal riassunto [V] |
 | Quanto dura la dolenzia | Sintomi con picco a 24-48 ore dopo uno sforzo non abituale; in non allenati residui fino a 7-14 giorni | Moderata (riassunto) | Riassunto di un risultato [V], fonte primaria non vista |
 | La dolenzia non misura il danno né il progresso | La dolenzia non riflette l'entità del danno muscolare da esercizio eccentrico; la crescita può partire anche senza danno evidente | Moderata | PMID 12453160 [V titolo e riassunto]; già in `ricerca-recupero-infortuni-popolazioni.md` 1.1 [R] |
 | Rabdomiolisi da esercizio | Rara; descritta dopo sedute molto intense e non abituali in persone non allenate. Segnali: dolore e gonfiore muscolare molto forti e sproporzionati, urine scure, debolezza: pronto soccorso | Convenzione (rinvio prudente, non una regola di dose) | Conoscenza del modello (non verificata sul web) |
@@ -190,7 +190,7 @@ I dettagli dei programmi a pagamento non sono verificabili qui: solo quanto già
 | Cardio e pesi insieme | Il cardio non compromette ipertrofia e forza massimale; la forza esplosiva si attenua un po' di più se cardio e pesi sono nella stessa seduta | Solida (ipertrofia e forza massimale); Moderata (esplosiva) | Schumann 2022 [R `ricerca-cardio-nutrizione.md` 1.1] |
 | Dose per la salute | 150-300 minuti a settimana moderati; passi: beneficio che si appiattisce intorno a 6.000-8.000 oltre i 60 anni, 8.000-10.000 sotto | Solida (OMS) / Moderata (passi) | [R] stessa nota 1.2 |
 | Principiante, over 65, sovrappeso | Solo moderato (camminata); **nessun intervallo proposto** nelle prime settimane | Convenzione | [R] stessa nota 3.1 |
-| Cosa propongo per i primi 12 settimane | Camminata facile 20-30 minuti nei giorni liberi dalla settimana 1; niente intervalli prima della settimana 5, mai per sovrappeso, over 65, PAR-Q positivo; la dose OMS è una direzione, non un obbligo | Convenzione | Righe sopra |
+| Cosa propongo per le prime 12 settimane | Camminata facile 20-30 minuti nei giorni liberi dalla settimana 1; niente intervalli prima della settimana 5, mai per sovrappeso, over 65, PAR-Q positivo; la dose OMS è una direzione, non un obbligo | Convenzione | Righe sopra |
 
 ### 1.15 Infortuni e errori tecnici più comuni
 
@@ -213,7 +213,7 @@ Il rinforzo con i pesi ha un tasso di infortunio basso rispetto a molti sport; l
 | Popolazione | Cosa risulta o si fa | Forza | Fonte |
 |---|---|---|---|
 | Sovrappeso e obesi | Il lavoro con i pesi è fattibile e utile; la scelta degli esercizi conta più del volume: macchine da seduti o con appoggio, a corpo libero a basso impatto; evitare salti, transizioni a terra difficili, esercizi che richiedono di scendere e risalire dal pavimento; partire con 2 serie e salire piano; dolori a schiena e ginocchio sono frequenti: usare la matrice fastidio → modifica. Nessun consiglio su calorie | Convenzione | Conoscenza del modello (non verificata sul web); [R] `ricerca-recupero-infortuni-popolazioni.md` sezione 4 riga «Obesità» [N] |
-| Anziani sedentari | Il repo applica: max 3 serie, 8-12 ripetizioni, RIR 3-4, aumenti dimezzati, «potenza» sul primo multiarticolare, 5 minuti di equilibrio. La posizione NSCA 2019 sugli anziani (Fragala e coll.) indica carichi progressivi fino a circa il 70-85% di 1RM e allenamento della potenza: il RIR 3-4 **permanente** è più prudente delle indicazioni; per i **primi mesi** è giusto | Moderata (da verificare) | Conoscenza del modello (non verificata sul web); [R] analisi di lacune del coach (sezione 14) |
+| Anziani sedentari | Il repo applica: max 3 serie, 8-12 ripetizioni, RIR 3-4, aumenti dimezzati, «potenza» sul primo multiarticolare, 5 minuti di equilibrio. La posizione NSCA 2019 sugli anziani (Fragala e coll.) indica carichi progressivi fino a circa il 70-85% di 1RM e allenamento della potenza: il RIR 3-4 **permanente** è più prudente delle indicazioni; per i **primi mesi** è giusto | Moderata (da verificare) | Conoscenza del modello (non verificata sul web); [R] analisi di lacune del coach (documento di lavoro, non nel repo; sezione 14) |
 | Dopo riabilitazione | Fuori dall'ambito dell'app: serve il via libera del fisioterapista o del medico; poi si parte come principiante, con le zone dolenti dichiarate e nessun cedimento | Convenzione | [R] sezione 3 di `ricerca-recupero-infortuni-popolazioni.md` (matrice fastidio → modifica) |
 | Adolescenti (sotto 18) | Gli enti di S&C e le dichiarazioni internazionali (es. consenso 2014 di Lloyd e coll. nel Br J Sports Med) considerano il rinforzo sicuro e utile **con supervisione qualificata**, tecnica prima del carico, niente massimali. Nell'app oggi **nessun limite di età** (B24) | Moderata (da verificare) | Conoscenza del modello (non verificata sul web); [R] lacune B24 |
 | Ansia da palestra | Vedi 1.12; l'app ha già la domanda di disagio (`ps.disagio`: meno bilanciere, meno postazioni) | Convenzione | [R] `js/coach/programma/ricette.js:152` |
@@ -236,7 +236,7 @@ Il rinforzo con i pesi ha un tasso di infortunio basso rispetto a molti sport; l
 | D9 | **La crescita muscolare inizia presto** (Seynnes 2007) | **Gran parte dell'aumento precoce è gonfiore** (Damas 2016) | Non promettere massa nel primo mese; mostrare carico e ripetizioni (Contrastata) |
 | D10 | **La dolenzia come segnale** di recupero e feedback sul volume (RP) | **La dolenzia non misura il danno né l'efficacia** (Nosaka 2002) | Dolenzia come **segnale di recupero**, mai come prova di progresso; con dolenzia forte non si aggiungono serie [R D della nota recupero] |
 | D11 | **Quanto dura la fase di novizio**: «3-6 mesi» (Starting Strength), da 2 a 6 mesi (SBS) | **Si misura dalla velocità**, non dal calendario (Barbell Medicine, Nuckols) | Criterio doppio: calendario minimo **e** scala di progressione (PRI-13) |
-| D12 | **Stimare il RIR è poco preciso, e peggio per chi ha meno esperienza** (Zourdos 2016, citato dal repo come «livello poco rilevante» solo nel riassunto di Halperin) | **L'errore è circa 1 ripetizione per tutti** e per difetto (Halperin 2022, Refalo 2023 in riassunto) | Per i novizi si usa RIR con margine (3-4 poi 2-3) e **si tara dopo la prima serie** (PRI-09): funziona in entrambi i casi. Contrastata, e non si è potuto controllare per livello |
+| D12 | **Chi ha meno esperienza stima peggio il RIR** (ricordo di Zourdos 2016: Conoscenza del modello, non verificata sul web) | **L'errore è circa 1 ripetizione per tutti** e per difetto; il livello pesa poco (Halperin 2022, Refalo 2023, nel riassunto già nel repo [R]) | Per i novizi si usa RIR con margine (3-4 poi 2-3) e **si tara dopo la prima serie** (PRI-09): funziona in entrambi i casi. Contrastata, e non si è potuto controllare per livello |
 | D13 | **Iniziare a piena frequenza dal giorno 1** (se dici 4 giorni, 4 giorni) | **Salire di frequenza** (prima 2-3 sedute, la quarta più avanti) | Settimane 1-2: la quarta seduta è facoltativa e non penalizza l'aderenza (PRI-19). Convenzione, nessuna fonte |
 
 ---
@@ -330,16 +330,16 @@ Nelle settimane 1-2 la **quarta seduta è facoltativa** (PRI-19): chi ne fa tre 
 
 | Schema | Prima scelta (settimane 1-4) | Dopo (a criteri) | Escluso per i principianti (finché non sbloccato) |
 |---|---|---|---|
-| Gambe, ginocchio | Leg Press, Goblet Squat, Hack Squat, Squat a Corpo Libero (con appoggio) | Squat con Bilanciere (PRI-14), Front Squat no | Sissy Squat, Pistol, Pendulum con peso alto senza appoggio |
+| Gambe, ginocchio | Leg Press, Goblet Squat, Hack Squat, Squat a Corpo Libero (con appoggio) | Squat con Bilanciere (PRI-14) | Sissy Squat, Front Squat, Squat al Multipower con carichi alti da soli |
 | Cerniera d'anca | Pull-Through ai Cavi, Ponte Glutei, Hyperextension a 45°, Hip Thrust alla Macchina | Stacco Rumeno (bilanciere), Stacco con Trap Bar | Stacco da Terra, Good Morning, Stacco Sumo |
-| Spinta orizzontale | Chest Press Machine, Panca Piana Manubri, Piegamenti Inclinati | Panca Piana Bilanciere, Piegamenti a Terra | Dip alle Parallele, Piegamenti Declinati, Pectoral con carichi alti da subito |
+| Spinta orizzontale | Chest Press Machine, Panca Piana Manubri, Piegamenti Inclinati | Panca Piana Bilanciere, Piegamenti a Terra | Dip alle Parallele, Piegamenti Declinati |
 | Spinta verticale | Shoulder Press Machine, Lento Avanti Manubri da seduti, Landmine Press | Military Press | Pike Push-up, Arnold Press pesante |
 | Tirata verticale | Lat Machine, Lat Machine Presa Neutra/Triangolo | Trazioni Assistite, poi Trazioni | Trazioni alla Sbarra non assistite, Trazioni Presa Inversa libere |
 | Tirata orizzontale | Rematore alla Macchina, Pulley Basso, Rematore con Petto Appoggiato, Rematore con Manubrio con appoggio | Rematore con Bilanciere | Rematore con Bilanciere dall'inizio, T-Bar Row pesante |
 | Unilaterale/glutei | Step-up su Panca (basso), Affondi Inversi, Ponte Glutei | Affondi in Camminata | **Affondi Bulgari**, Nordic Curl |
 | Core | Plank (anche inclinato), Dead Bug, Bird Dog, Pallof Press | Plank Laterale | Ab Wheel, Hollow Hold, Leg Raise alla Sbarra, Mountain Climber, Russian Twist |
 
-**Simulazione dell'oggi [S]:** su 69 sedute da principiante, il primo esercizio era uno squat o uno stacco col bilanciere, una panca/rematore/military con bilanciere, la trap bar o gli affondi bulgari in 54 sedute (Squat con Bilanciere 20, Stacco Rumeno 16, Affondi Bulgari 10, Panca Piana Bilanciere 6, Rematore con Bilanciere 6, Trap Bar 5). Le trazioni libere compaiono in 10 piani su 23 (anche per una donna sovrappeso di 45 anni e per un uomo di 68), Nordic curl e Pike Push-up e Dip nei piani a corpo libero.
+**Simulazione dell'oggi [S]:** su 69 sedute da principiante, il primo esercizio era un bilanciere in 54 (Squat con Bilanciere 20, Stacco Rumeno 16, Panca Piana Bilanciere 6, Rematore con Bilanciere 6, Stacco con Trap Bar 5, Military Press 1) e gli Affondi Bulgari in altre 10: in tutto 64 sedute su 69 iniziano con un esercizio da tecnica. Le trazioni libere compaiono in 10 piani su 23 (anche per una donna sovrappeso di 45 anni e per un uomo di 68), Nordic curl e Pike Push-up e Dip nei piani a corpo libero.
 
 ### 3.5 Regola di progressione per il principiante (si appoggia su PGR-01/02/04)
 
@@ -350,7 +350,7 @@ A fine seduta, per ogni esercizio, sulle sole serie di lavoro:
 3. **Una o più serie sotto la base:** stesso carico e +30 secondi di pausa (CAR-09). Due volte di fila: -5% (CAR-07). Con goal massa/salute/dimagrimento **niente schema 5×3** (PRI-12).
 4. **Variante «2 per 2» (bilancieri a 3×5-8):** ultima serie con 2 o più ripetizioni oltre il bersaglio per 2 sedute di fila → + passo.
 5. **RPE ≥ bersaglio +1:** stesso carico (consolida); **RPE ≤ bersaglio -1** per due serie: aumento di 1-2 passi (AUT-01), mai oltre +10%.
-6. **Mai due aumenti sullo stesso esercizio in 2 giorni di riposo** se le prime 3 sedute di quell'esercizio hanno dolenzia forte (domanda del mattino).
+6. **Se prima della seduta il muscolo è ancora molto dolorante** (domanda del mattino già esistente), la seduta si fa a carico invariato e senza aumento.
 
 ### 3.6 Calibrazione nelle sedute 1-3
 
@@ -460,7 +460,7 @@ PAR-Q positivo, over 65, dolore, scarico reattivo, prontezza bassa (PRZ), «Mi s
 ### 5.3 Trappole nel generatore (da [S])
 
 - **Drop set a un principiante** (13 piani su 23 con ≤45 minuti: tutti): anche su Dead Bug (6 piani) e Leg Extension; non adatti a chi impara.
-- **«Coach esigente»** compare nella nota di tutti i piani principiante simulati.
+- **«Coach esigente»** compare nella nota di 22 piani su 23 (tutti tranne l'over 65).
 - **Esercizi non da principiante:** affondi bulgari (18 piani su 23), trazioni libere (10), nordic curl (2), pike push-up e dip (1 ciascuno).
 - **Sedute sottodimensionate:** 38-48 minuti con 60 dichiarati; con 2 giorni e 45 minuti (massa o forza) 3 esercizi: ogni schema una volta a settimana (contro ACSM 2026).
 - **Over 65:** «potenza» su stacco rumeno, pull-through e affondi bulgari.
@@ -469,7 +469,7 @@ PAR-Q positivo, over 65, dolore, scarico reattivo, prontezza bassa (PRZ), «Mi s
 
 ## 6. Audit delle regole esistenti
 
-Letto nel codice e confrontato con la simulazione [S] il 2026-10-05. Esito: **Giusta**, **Da correggere** (con la regola PRI che lo fa), **Non supportata**, **Manca**. Codici B1..B24 della analisi di lacune del coach (`scratchpad/lacune-coach.md`, sezione 18).
+Letto nel codice e confrontato con la simulazione [S] il 2026-10-05. Esito: **Giusta**, **Da correggere** (con la regola PRI che lo fa), **Non supportata**, **Manca**. Codici B1..B24 della analisi di lacune del coach (analisi di lacune del coach, documento di lavoro di questa sessione, non nel repo; sezione 18).
 
 | Regola e posizione | Cosa fa oggi | Confronto con la ricerca | Esito |
 |---|---|---|---|
@@ -489,7 +489,7 @@ Letto nel codice e confrontato con la simulazione [S] il 2026-10-05. Esito: **Gi
 | RIC-04 `limitaTecnicheIntense` (`regole-nuove.js:16,86-103`) | Al massimo 1 tecnica intensa per seduta | Non esclude i principianti | **Da correggere** → PRI-06 |
 | PRZ-03 +1 serie con prontezza ≥70 (`prontezza.js:~72-77`) e B18 | +1 serie sugli isolamenti (tetto 5) **anche ai principianti** | Scavalca il tetto di 3 serie; volume non pianificato | **Da correggere** → PRI-07 |
 | RIC-01 +1 serie a metà blocco (`regole-nuove.js:61-63`) | Esclusa per principianti (`cauto`) | Il principiante non riceve mai più volume dopo la settimana 8 | **Manca** una regola di volume a criteri → 3.7 |
-| Selezione degli slot (`ricette.js:140-152`, `PRIORI` `:52-68`) | +3 al bilanciere pesante al posto 0 per chi non è «cauto»; punteggi alti a Squat con Bilanciere 3, Stacco Rumeno 3, Affondi Bulgari 3, Panca Piana Bilanciere 3; variazione casuale 0-1 per i principianti | Macchine ≈ liberi nei novizi (1.5); nessun coach dal vivo; [S]: bilanciere o esercizio difficile al primo posto in 54 sedute su 69 | **Da correggere** → PRI-05 (estende SEL-06) |
+| Selezione degli slot (`ricette.js:140-152`, `PRIORI` `:52-68`) | +3 al bilanciere pesante al posto 0 per chi non è «cauto»; punteggi alti a Squat con Bilanciere 3, Stacco Rumeno 3, Affondi Bulgari 3, Panca Piana Bilanciere 3; variazione casuale 0-1 per i principianti | Macchine ≈ liberi nei novizi (1.5); nessun coach dal vivo; [S]: bilanciere al primo posto in 54 sedute su 69 e affondi bulgari in altre 10 | **Da correggere** → PRI-05 (estende SEL-06) |
 | PRG-23 copertura per regioni (`ricette.js:244-276`) e ABB-03 (`struttura-pro.js`) | Aggiunge leg curl, leg extension, alzate laterali, core al principiante in massa | Esercizi in più da imparare; un principiante cresce anche con i soli multiarticolari (Barbalho [R]) | **Da decidere**: per il principiante meno esercizi (max 6) |
 | PSI-10 primo mese (`psicologia.js:101-115`) | Contatore x/8 e «Obiettivo: 2 sedute a settimana»; a 8 «Abitudine avviata» | Il predittore dei 28 giorni è reale; «abitudine avviata» a 4 settimane è un'affermazione eccessiva (Lally: mediana 66 giorni) | **Giusta** per il contatore; **Da correggere** il testo (CST-06) |
 | ADE-01 / ESI-02 aderenza (`esigenza.js` `aderenzaMinima` 0,7) | Sotto il 70% in 14 giorni: «cosa ti frena?» e -10% di esigenza | Nelle sett. 1-4 saltare una seduta è normale; punisce chi comincia | **Da correggere** → PRI-19 |
@@ -505,7 +505,7 @@ Letto nel codice e confrontato con la simulazione [S] il 2026-10-05. Esito: **Gi
 
 ## 7. Regole proposte
 
-Codice di area **PRI** (principianti). Controllo: nessun `PRI-` in `docs/coach-mappa-regole.md`. **Attenzione: collisione di nomi** con `tools/collaudo-generatore.js` (modificato e non committato da un altro agente), che usa `PRI-01` come identificativo di un controllo sul muscolo prioritario: se quei codici restano, rinominare queste in **PRN** prima di scriverle nel cap. 19. Tutte spegnibili (`REGOLE_SPEGNIBILI`), solo con `coachAttivo()`, con motivo in italiano (frasi nuove anche in `en.js`, `es.js`, `de.js`), annullabili dove cambiano il piano; le salvaguardie (PAR-Q, over 65, dolore, scarico) hanno la precedenza. Valori in `COACH_PARAMETRI`/`COACH_PRINCIPIANTE` (3.2). Priorità: **P1** = qualità e sicurezza per quasi tutti i principianti; **P2** = importante; **P3** = rifinitura.
+Codice di area **PRI** (principianti). Controllo: nessun `PRI-` in `docs/coach-mappa-regole.md`. **Attenzione: collisione di nomi** con `tools/collaudo-generatore.js` (riga 503, già committato da un altro agente), che usa `PRI-01` come identificativo di un controllo sul muscolo prioritario: se quel codice resta, rinominare queste in **PRN** prima di scriverle nel cap. 19. Tutte spegnibili (`REGOLE_SPEGNIBILI`), solo con `coachAttivo()`, con motivo in italiano (frasi nuove anche in `en.js`, `es.js`, `de.js`), annullabili dove cambiano il piano; le salvaguardie (PAR-Q, over 65, dolore, scarico) hanno la precedenza. Valori in `COACH_PARAMETRI`/`COACH_PRINCIPIANTE` (3.2). Priorità: **P1** = qualità e sicurezza per quasi tutti i principianti; **P2** = importante; **P3** = rifinitura.
 
 | Codice | P | Quando scatta | Cosa fa | Motivo (testo per l'utente) | Forza | Rischio / salvaguardia | File / funzione |
 |---|---|---|---|---|---|---|---|
@@ -549,7 +549,7 @@ Ordine di lavoro consigliato: **PRI-01, 02, 06, 07, 05, 12** (qualità e sicurez
 12. **Dati reali:** quanti utenti principianti arrivano a 12 settimane, quanti restano principianti a 24, con che velocità (S1→S2): servono per tarare G1-G3.
 13. **Rabdomiolisi da esercizio nei principianti:** frequenza e segnali; ora solo prudenza (1.2).
 14. **Esigenza 1,0 contro 1,2:** quanto il +20% iniziale serve a qualcuno; serve una prova sullo storico, non una fonte.
-15. **Collisione di nomi PRI** con `tools/collaudo-generatore.js` (sezione 7).
+15. **Collisione di nomi PRI** con l'identificativo `PRI-01` di `tools/collaudo-generatore.js` (sezione 7).
 
 ## 9. Limiti onesti
 
