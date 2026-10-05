@@ -58,7 +58,7 @@ function profiloCoach() {
   return { livello: p.level || 'intermedio', eta: Number(p.age) || 0, prudente: !!p.parq,
            sonnoMale: !!(p.prefs && p.prefs.sonno === 'male') };
 }
-const BIL_PESANTI = /Squat con Bilanciere|Front Squat|Stacco|Panca Piana Bilanciere|Panca Inclinata Bilanciere|Panca Declinata|Military Press|Rematore con Bilanciere|T-Bar Row|Good Morning/;
+const BIL_PESANTI = /Squat con Bilanciere|Squat con Pausa|Front Squat|Stacco(?! Rumeno (?:con Manubri|a una Gamba))|Panca con Pausa|Panca Piana Bilanciere|Panca Inclinata Bilanciere|Panca Declinata|Military Press|Rematore con Bilanciere|T-Bar Row|Good Morning/;
 function tipoCarico(nome) {
   const m = findExercise(nome) || findExercise(nomeInLibreria(senzaEmoji(nome)) || '');
   if (!m || m.type !== 'compound') return 'isolamento';

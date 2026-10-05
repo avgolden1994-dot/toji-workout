@@ -16,11 +16,13 @@
 /* ---- Attrezzatura e fastidi: esercizi da evitare e con cosa sostituirli ---- */
 function attrezzoDi(nome) {
   const n = nome.toLowerCase();
+  if (/asciugamano/.test(n)) return 'corpo';   /* W1-T5: il leg curl con l asciugamano non e alla macchina */
+  if (/seal row|suitcase/.test(n)) return 'manubri';   /* W1-T5: il nome non lo dice */
   if (/piegamenti|mani rialzate/.test(n)) return 'corpo';   /* anche con le mani su una panca: niente manubri ("ri-alzate" non e "alzate") */
   if (/un piede|corpo libero|sissy|pike|sit-up|sedia romana|diamante/.test(n)) return 'corpo';
   if (/manubri|concentrazione/.test(n) && !/cavi|cavo|macchin/.test(n)) return 'manubri';   /* "Lento Avanti Manubri" non e da bilanciere */
-  if (/macchin|leg press|leg extension|leg curl|hack|pectoral|chest press|shoulder press|lat machine|pulley|cavi|cavo|abductor|adductor|smith|t-bar|multipower|pendulum|pec deck|pallof|pushdown|face pull|pulldown|woodchop|calf raise/.test(n)) return 'macchine';   /* il calf raise e alla macchina o al multipower: a corpo libero c e solo quello a un piede */
-  if (/bilanciere|stacco|good morning|squat con|front squat|rematore con b|military|lento avanti|french press|panca presa stretta|panca declinata|trap bar|landmine|hip thrust|tirate al mento|panca scott|yates/.test(n)) return 'bilanciere';
+  if (/macchin|leg press|leg extension|leg curl|hack|pectoral|chest press|shoulder press|lat machine|pulley|cavi|cavo|abductor|adductor|smith|t-bar|multipower|pendulum|pec deck|pallof|pushdown|face pull|pulldown|woodchop|calf raise|belt squat/.test(n)) return 'macchine';   /* il calf raise e alla macchina o al multipower: a corpo libero c e solo quello a un piede */
+  if (/bilanciere|stacco|good morning|squat con|front squat|rematore con b|military|lento avanti|french press|panca presa stretta|panca declinata|trap bar|landmine|hip thrust|tirate al mento|panca scott|yates|panca con pausa/.test(n)) return 'bilanciere';
   if (/manubri|goblet|squat sumo|arnold|hammer|croci|alzate|scrollate|kickback|pullover|concentrat|panca inclinata|petto appoggiato|farmer|y-raise|spider|zottman/.test(n)) return 'manubri';
   return 'corpo';
 }
@@ -32,9 +34,9 @@ function attrezzoDi(nome) {
    ampiezza senza dolore): il ginocchio dolente si modifica, non si toglie ogni lavoro per i quadricipiti. Resta fuori il resto
    dello squat e degli affondi (vedi ECCEZIONI_RISCHIO per il solo squat a corpo libero). */
 const RISCHIO = {
-  spalle: /military|lento avanti|arnold|tirate al mento|dip|panca piana bilanciere|pullover|shoulder press|pike|piegamenti declinati/i,   /* i piegamenti declinati (piedi rialzati) caricano la spalla come la panca inclinata (STRESS_ZONA.spalla): a casa restano quelli a terra e inclinati */
+  spalle: /military|lento avanti|arnold|tirate al mento|dip|panca piana bilanciere|panca con pausa|pullover|shoulder press|pike|piegamenti declinati/i,   /* i piegamenti declinati (piedi rialzati) caricano la spalla come la panca inclinata (STRESS_ZONA.spalla): a casa restano quelli a terra e inclinati */
   ginocchia: /squat|affondi|step-up|hack|bulgar|jump|salti|pistol/i,
-  schiena: /stacco|good morning|rematore con bilanciere|squat con bilanciere|hyperextension|t-bar|front squat|rematore presa inversa|yates|sit-up|russian twist|crunch a terra/i
+  schiena: /stacco|good morning|rematore con bilanciere|squat con bilanciere|squat con pausa|hyperextension|t-bar|front squat|rematore presa inversa|yates|sit-up|russian twist|crunch a terra/i
 };
 /* B33 (REC-04 ponte): con le ginocchia dolenti resta almeno un esercizio per i quadricipiti. Con le macchine c e la leg press; senza
    (a casa, o in una palestra con solo pesi liberi) lo squat a corpo libero, ad ampiezza senza dolore (la nota e in SCALE_DOLORE), passa
@@ -49,7 +51,7 @@ function senzaMacchine(prefs) {
    L attrezzo vero e il campo di DETTAGLI (dettaglioEsercizio().att); finche l utente non lo dichiara (W2-T5) quegli esercizi non entrano.
    La sbarra bassa o gli anelli (rematore inverso) restano a corpo libero: e l unica tirata orizzontale senza manubri, senza di lui
    la schiena non si allena per niente (collaudo MIS-01:schiena, sev 4 contro SAF-04, sev 2); con i manubri c e il rematore. */
-const ATTREZZI_NON_DI_CASA = /^(sbarra|parallele|sedia romana|panca per lombari|panca a 45°|ruota addominale)$/i;
+const ATTREZZI_NON_DI_CASA = /^(sbarra|parallele|sedia romana|panca per lombari|panca a 45°|ruota addominale|elastico|kettlebell|anelli)$/i;   /* W1-T5, D-P3: elastici, kettlebell e anelli finche W2-T5 non li fa dichiarare */
 const ATTREZZI_NON_CON_I_MANUBRI = /^(sbarra bassa o anelli)$/i;
 function attrezzoFisicoDi(nome) { const d = dettaglioEsercizio(nome); return d ? d.att : ''; }
 function attrezzoDiCasaMancante(nome, luogo) {

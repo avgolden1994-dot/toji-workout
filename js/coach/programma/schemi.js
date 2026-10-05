@@ -49,7 +49,7 @@ function inAllungamento(nome) { return IN_ALLUNGAMENTO.test(nome) || (regolaAtti
 function scambiAllungamento() { return regolaAttiva('RIC-03') ? SCAMBI_ALLUNGAMENTO.concat(SCAMBI_ALLUNGAMENTO_NUOVI) : SCAMBI_ALLUNGAMENTO; }
 const SCAMBI_ALLUNGAMENTO = [['Pushdown Tricipiti ai Cavi', 'Estensione Tricipiti sopra la Testa ai Cavi'], ['Leg Curl Sdraiato', 'Leg Curl Seduto'], ['French Press', 'Estensione Tricipiti sopra la Testa con Manubrio']];
 /* stimolo/fatica: al massimo uno di questi per seduta */
-const SCHIENA_PESANTE = /Stacco da Terra|Squat con Bilanciere|Rematore con Bilanciere|Good Morning|T-Bar Row|Stacco Sumo/;
+const SCHIENA_PESANTE = /Stacco da Terra|Stacco in Deficit|Squat con Bilanciere|Squat con Pausa|Rematore con Bilanciere|Good Morning|T-Bar Row|Stacco Sumo/;
 const GLUTEI_FAMIGLIE = [
   ['spinta', /hip thrust|ponte glutei/i, 'Hip Thrust'], ['squat', /squat|affondi|leg press/i, 'Affondi Bulgari'],
   ['stacco', /stacco|hyperextension|good morning/i, 'Stacco Rumeno'], ['abduzione', /abductor|slanci|kickback ai cavi/i, 'Abductor Machine']

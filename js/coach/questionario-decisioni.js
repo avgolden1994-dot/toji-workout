@@ -43,13 +43,13 @@ function zonaIl(z, nome) { return (ZONA_ART[z] || ['', ''])[1] + nome; }
 /* quali esercizi caricano di piu ogni articolazione (conoscenza del coach, Convenzione: matrice di docs/ricerca-recupero-infortuni-popolazioni.md 3;
    gomito e polso con dip e piegamenti a diamante o declinati: il peso del corpo sui polsi estesi e sui gomiti) */
 const STRESS_ZONA = {
-  spalla: ['Panca Piana Bilanciere', 'Panca Inclinata Bilanciere', 'Panca Declinata', 'Dip alle Parallele', 'Military Press', 'Lento Avanti Manubri', 'Arnold Press', 'Tirate al Mento (Upright Row)', 'Croci su Panca Manubri', 'Trazioni alla Sbarra (Pull-ups)', 'Dip su Panca', 'Pullover con Manubrio', 'Alzate Frontali', 'Piegamenti Declinati (Piedi Rialzati)'],
+  spalla: ['Panca Piana Bilanciere', 'Panca Inclinata Bilanciere', 'Panca Declinata', 'Dip alle Parallele', 'Military Press', 'Lento Avanti Manubri', 'Arnold Press', 'Tirate al Mento (Upright Row)', 'Croci su Panca Manubri', 'Trazioni alla Sbarra (Pull-ups)', 'Dip su Panca', 'Pullover con Manubrio', 'Alzate Frontali', 'Piegamenti Declinati (Piedi Rialzati)', 'Panca con Pausa', 'Trazioni Negative'],
   gomito: ['French Press', 'Curl Bilanciere Bicipiti', 'Panca Presa Stretta', 'Dip su Panca', 'Trazioni Presa Inversa (Chin-up)', 'Curl su Panca Scott', 'Dip alle Parallele', 'Piegamenti a Diamante'],
-  polso: ['Curl Bilanciere Bicipiti', 'Front Squat', 'Panca Piana Bilanciere', 'Panca Presa Stretta', 'Piegamenti a Terra (Push-up)', 'Dip su Panca', 'Dip alle Parallele', 'Piegamenti a Diamante', 'Piegamenti Declinati (Piedi Rialzati)'],
-  schiena: ['Stacco da Terra (Deadlift)', 'Rematore con Bilanciere', 'Good Morning', 'Squat con Bilanciere', 'T-Bar Row', 'Stacco Rumeno', 'Military Press', 'Stacco Sumo', 'Hyperextension (Lombari)'],
-  anca: ['Squat con Bilanciere', 'Affondi Bulgari', 'Stacco Sumo', 'Affondi in Camminata', 'Hip Thrust', 'Leg Press', 'Squat Sumo'],
-  ginocchio: ['Squat con Bilanciere', 'Front Squat', 'Hack Squat', 'Affondi Manubri', 'Affondi in Camminata', 'Affondi Bulgari', 'Step-up su Panca', 'Leg Extension', 'Leg Press', 'Goblet Squat', 'Squat Sumo'],
-  caviglia: ['Calf Raise in Piedi', 'Affondi in Camminata', 'Step-up su Panca', 'Mountain Climber', 'Squat con Bilanciere']
+  polso: ['Curl Bilanciere Bicipiti', 'Front Squat', 'Panca Piana Bilanciere', 'Panca Presa Stretta', 'Piegamenti a Terra (Push-up)', 'Dip su Panca', 'Dip alle Parallele', 'Piegamenti a Diamante', 'Piegamenti Declinati (Piedi Rialzati)', 'Panca con Pausa'],
+  schiena: ['Stacco da Terra (Deadlift)', 'Rematore con Bilanciere', 'Good Morning', 'Squat con Bilanciere', 'T-Bar Row', 'Stacco Rumeno', 'Military Press', 'Stacco Sumo', 'Hyperextension (Lombari)', 'Stacco in Deficit', 'Squat con Pausa', 'Stacco Rumeno con Manubri', 'Stacco Rumeno a una Gamba'],
+  anca: ['Squat con Bilanciere', 'Affondi Bulgari', 'Stacco Sumo', 'Affondi in Camminata', 'Hip Thrust', 'Leg Press', 'Squat Sumo', 'Squat con Pausa', 'Cossack Squat', 'Belt Squat', 'Squat su Scatola', 'Copenhagen Plank', 'Hip Thrust con Manubrio'],
+  ginocchio: ['Squat con Bilanciere', 'Front Squat', 'Hack Squat', 'Affondi Manubri', 'Affondi in Camminata', 'Affondi Bulgari', 'Step-up su Panca', 'Leg Extension', 'Leg Press', 'Goblet Squat', 'Squat Sumo', 'Squat con Pausa', 'Cossack Squat', 'Belt Squat', 'Squat su Scatola', 'Step-up Basso', 'Sit-to-Stand dalla Panca'],
+  caviglia: ['Calf Raise in Piedi', 'Affondi in Camminata', 'Step-up su Panca', 'Mountain Climber', 'Squat con Bilanciere', 'Calf Raise con Manubrio sul Gradino', 'Step-up Basso', 'Squat con Pausa', 'Belt Squat']
 };
 const senzaEmoji = (n) => String(n).replace(EMOJI_TESTA, '');
 function nomeInLibreria(pulito) {
