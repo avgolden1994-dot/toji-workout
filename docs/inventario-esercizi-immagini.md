@@ -7,20 +7,20 @@ Generato con uno script node che legge `EXERCISE_LIBRARY` (`js/dati/libreria-ese
 | Voce | Valore |
 |---|---|
 | Esercizi nel catalogo (`EXERCISE_LIBRARY`) | 140 totali (139 nel branch + 1 da altro branch) |
-| Con immagine (campo presente e file esistente) | 11 |
-| Senza immagine (mancanti) | 129 su 140 (128 nel branch + 1 da altro branch) |
+| Con immagine (campo presente e file esistente) | 12 |
+| Senza immagine (mancanti) | 128 su 140 (127 nel branch + 1 da altro branch) |
 | Di cui non ancora presenti in questo branch | 1 (n. 140 Squat Sumo, da `claude/hopeful-thompson-uthd8f`) |
-| File in `esercizi/` | 12 (tutti SVG) |
+| File in `esercizi/` | 13 (tutti SVG) |
 | File orfani (non referenziati) | 1 (`ex-02-panca-inclinata-su-a.svg`) |
-| Peso totale `esercizi/` | 473.6 KB |
-| Peso medio per file | 39.5 KB |
+| Peso totale `esercizi/` | 506.0 KB |
+| Peso medio per file | 38.9 KB |
 
 Copertura per gruppo muscolare:
 
 | Gruppo | Esercizi | Con immagine | Senza |
 |---|---|---|---|
 | Petto | 17 | 11 | 6 |
-| Schiena | 23 | 0 | 23 |
+| Schiena | 23 | 1 | 22 |
 | Gambe | 25 (24 nel branch + 1 da altro branch) | 0 | 25 (24 nel branch + 1 da altro branch) |
 | Glutei | 15 | 0 | 15 |
 | Spalle | 16 | 0 | 16 |
@@ -48,7 +48,7 @@ Il nome e' mostrato senza emoji iniziale. Percorso `img/<slug>.png` e' il ripieg
 | 9 | Croci su Panca Manubri | Petto | `esercizi/ex-09-croci-panca-manubri.svg` |
 | 10 | Pectoral Machine (Butterfly) | Petto | `esercizi/ex-10-pectoral-machine.svg` |
 | 11 | Pullover con Manubrio | Petto | `esercizi/ex-11-pullover-manubrio.svg` |
-| 12 | Stacco da Terra (Deadlift) | Schiena | nessuna (ripiego inesistente `img/stacco-da-terra.png`) |
+| 12 | Stacco da Terra (Deadlift) | Schiena | `esercizi/ex-12-stacco-da-terra.svg` |
 | 13 | Trazioni alla Sbarra (Pull-ups) | Schiena | nessuna (ripiego inesistente `img/trazioni-alla-sbarra.png`) |
 | 14 | Trazioni Presa Inversa (Chin-up) | Schiena | nessuna (ripiego inesistente `img/trazioni-presa-inversa.png`) |
 | 15 | Lat Machine | Schiena | nessuna (ripiego inesistente `img/lat-machine.png`) |
@@ -180,11 +180,10 @@ Il nome e' mostrato senza emoji iniziale. Percorso `img/<slug>.png` e' il ripieg
 
 ## 3. Esercizi senza immagine
 
-129 esercizi (128 nel branch + 1 da altro branch, l'ultimo in coda con nota). Motivo per tutti: **nessun campo** in `IMMAGINI_ESERCIZI`, quindi l'app prova `img/<slug>.png`, il file non esiste e compare il segnaposto "Immagine in arrivo". Nessun file referenziato risulta assente su disco e non ci sono placeholder file.
+128 esercizi (127 nel branch + 1 da altro branch, l'ultimo in coda con nota). Motivo per tutti: **nessun campo** in `IMMAGINI_ESERCIZI`, quindi l'app prova `img/<slug>.png`, il file non esiste e compare il segnaposto "Immagine in arrivo". Nessun file referenziato risulta assente su disco e non ci sono placeholder file.
 
 | Gruppo | Esercizio | Motivo | File atteso dal ripiego |
 |---|---|---|---|
-| Schiena | Stacco da Terra (Deadlift) | nessun campo nella mappa | `img/stacco-da-terra.png` |
 | Schiena | Trazioni alla Sbarra (Pull-ups) | nessun campo nella mappa | `img/trazioni-alla-sbarra.png` |
 | Schiena | Trazioni Presa Inversa (Chin-up) | nessun campo nella mappa | `img/trazioni-presa-inversa.png` |
 | Schiena | Lat Machine | nessun campo nella mappa | `img/lat-machine.png` |
