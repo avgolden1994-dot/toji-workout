@@ -6,9 +6,9 @@ Generato con uno script node che legge `EXERCISE_LIBRARY` (`js/dati/libreria-ese
 
 | Voce | Valore |
 |---|---|
-| Esercizi nel catalogo (`EXERCISE_LIBRARY`) | 140 totali (139 nel branch + 1 da altro branch) |
+| Esercizi nel catalogo (`EXERCISE_LIBRARY`) | 169 totali (140 + 29 nuovi di W1-T5; dei 140: 139 nel branch + 1 da altro branch) |
 | Con immagine (campo presente e file esistente) | 19 |
-| Senza immagine (mancanti) | 121 su 140 (120 nel branch + 1 da altro branch) |
+| Senza immagine (mancanti) | 150 su 169 (121 + i 29 di W1-T5, che escono senza disegno per scelta: D-P2) |
 | Di cui non ancora presenti in questo branch | 1 (n. 140 Squat Sumo, da `claude/hopeful-thompson-uthd8f`) |
 | File in `esercizi/` | 20 (tutti SVG) |
 | File orfani (non referenziati) | 1 (`ex-02-panca-inclinata-su-a.svg`) |
@@ -26,6 +26,8 @@ Copertura per gruppo muscolare:
 | Spalle | 16 | 0 | 16 |
 | Braccia | 26 | 0 | 26 |
 | Core | 18 | 0 | 18 |
+
+Dopo W1-T5 (29 esercizi in più, tutti senza immagine, vedi 3.1): Petto +3, Schiena +5, Gambe +11, Glutei +4, Spalle +5, Core +1, Braccia +0 (i quattro rinviati Wrist Curl, Reverse Wrist Curl, Reverse Nordic e Reverse Crunch non sono in libreria). La tabella sopra è il conteggio di quando è stato scritto l'inventario e non è stata rifatta.
 
 Note: gli esercizi usati in `schede-*.js` e le chiavi di `DETTAGLI` (139) coincidono con la libreria: nessun esercizio fuori catalogo. `tools/genera-catalogo.js` NON riguarda gli esercizi: genera il catalogo delle regole del coach da `docs/coach-mappa-regole.md`.
 
@@ -323,6 +325,44 @@ Il nome e' mostrato senza emoji iniziale. Percorso `img/<slug>.png` e' il ripieg
 | Passi | 1) fare il merge di `claude/hopeful-thompson-uthd8f` in questo branch prima di toccare `js/dati/disegni-esercizi.js`; 2) aggiungere la voce nella mappa; 3) `npm run sw` |
 
 Controlli: file referenziati ma assenti = 0; voci di mappa non presenti in libreria = 0.
+
+### 3.1 Esercizi nuovi di W1-T5 (D-P2: senza disegno)
+
+29 esercizi aggiunti dalla task W1-T5 (CAS-13, SEL-03, SEL-04, D-P3), numerati di seguito ai 140 della tabella 2. **Per scelta (D-P2) non hanno un disegno**: nessuna voce in `IMMAGINI_ESERCIZI`, quindi `immagineEsercizio()` torna il ripiego `img/<slug>.png`, il file non esiste, il riquadro prende la classe `vuoto` e compare il segnaposto «Immagine in arrivo» (tradotto) senza errori. Li controlla `tests/browser/disegni-mancanti.js` (it, en, es, de) e `tests/muscoli.test.js` (nessuna voce nella mappa). Quando arriva un disegno basta una riga in `IMMAGINI_ESERCIZI` e `npm run sw`.
+
+| # | Esercizio | Gruppo | File atteso dal ripiego |
+|---|---|---|---|
+| 141 | Floor Press con Manubri | Petto | `img/floor-press-con-manubri.png` |
+| 142 | Chest Press Inclinata alla Macchina | Petto | `img/chest-press-inclinata-alla-macchina.png` |
+| 143 | Panca con Pausa | Petto | `img/panca-con-pausa.png` |
+| 144 | Trazioni Negative | Schiena | `img/trazioni-negative.png` |
+| 145 | Seal Row | Schiena | `img/seal-row.png` |
+| 146 | Lat Pulldown con Elastico | Schiena | `img/lat-pulldown-con-elastico.png` |
+| 147 | Rematore agli Anelli | Schiena | `img/rematore-agli-anelli.png` |
+| 148 | Stacco in Deficit | Schiena | `img/stacco-in-deficit.png` |
+| 149 | Leg Curl con Asciugamano | Gambe | `img/leg-curl-con-asciugamano.png` |
+| 150 | Leg Curl in Piedi | Gambe | `img/leg-curl-in-piedi.png` |
+| 151 | Belt Squat | Gambe | `img/belt-squat.png` |
+| 152 | Squat con Pausa | Gambe | `img/squat-con-pausa.png` |
+| 153 | Cossack Squat | Gambe | `img/cossack-squat.png` |
+| 154 | Squat su Scatola | Gambe | `img/squat-su-scatola.png` |
+| 155 | Step-up Basso | Gambe | `img/step-up-basso.png` |
+| 156 | Sit-to-Stand dalla Panca | Gambe | `img/sit-to-stand-dalla-panca.png` |
+| 157 | Calf Raise con Manubrio sul Gradino | Gambe | `img/calf-raise-con-manubrio-sul-gradino.png` |
+| 158 | Tibialis Raise | Gambe | `img/tibialis-raise.png` |
+| 159 | Copenhagen Plank | Gambe | `img/copenhagen-plank.png` |
+| 160 | Stacco Rumeno con Manubri | Glutei | `img/stacco-rumeno-con-manubri.png` |
+| 161 | Stacco Rumeno a una Gamba | Glutei | `img/stacco-rumeno-a-una-gamba.png` |
+| 162 | Hip Thrust con Manubrio | Glutei | `img/hip-thrust-con-manubrio.png` |
+| 163 | Kettlebell Swing | Glutei | `img/kettlebell-swing.png` |
+| 164 | Alzate Laterali con Elastico | Spalle | `img/alzate-laterali-con-elastico.png` |
+| 165 | Alzate Laterali Inclinate | Spalle | `img/alzate-laterali-inclinate.png` |
+| 166 | Extrarotazione al Cavo | Spalle | `img/extrarotazione-al-cavo.png` |
+| 167 | Face Pull con Elastico | Spalle | `img/face-pull-con-elastico.png` |
+| 168 | Scrollate con Manubri | Spalle | `img/scrollate-con-manubri.png` |
+| 169 | Suitcase Carry | Core | `img/suitcase-carry.png` |
+
+Rinviati, non in libreria (il nome è preso per altro da una regex del generatore, vedi `docs/in-arrivo/w1-t5.json`): Reverse Nordic, Wrist Curl, Reverse Wrist Curl, Reverse Crunch (dati completi nel commit 494225b).
 
 ## 4. Orfani
 

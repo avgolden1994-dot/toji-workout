@@ -43,7 +43,7 @@ const r = await p.evaluate((DA_CORREGGERE) => {
   return { n: EXERCISE_LIBRARY.length, senza, sezioneStrana, subFuori, vuoti, senzaScheda, discordi, orfani, noteMancanti, conteggio, doppi, nomiDoppi: nomi,
     sezioni: org.map(s => s.sez + ':' + s.gruppi.reduce((t, g) => t + g.sottogruppi.reduce((u, x) => u + x.items.length, 0), 0)), eccezioniVere, eccezioniInutili, eccezioniMalScritte };
 }, ATTREZZO_DI_DA_CORREGGERE);
-ok(r.n >= 173, 'la libreria ha '+r.n+' esercizi');
+ok(r.n >= 169,'la libreria ha '+r.n+' esercizi');
 ok(r.nomiDoppi.length===0, 'nessun nome doppio '+r.nomiDoppi);
 ok(r.senza.length===0, 'tutti hanno i dettagli '+r.senza.join(' | '));
 ok(r.orfani.length===0, 'nessuna riga dei dettagli senza esercizio '+r.orfani.join(' | '));

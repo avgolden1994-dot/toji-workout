@@ -440,7 +440,7 @@ test('contaVolume: serie frazionarie, dirette e sedute per unita, con conti fatt
   assert.deepStrictEqual(att('petto'), { frazionarie: 7, dirette: 7, sedute: 2 });
   assert.deepStrictEqual(att('deltoide_anteriore'), { frazionarie: 3.5, dirette: 0, sedute: 2 });   /* 4 x 0,5 + 3 x 0,5 */
   assert.deepStrictEqual(att('tricipiti'), { frazionarie: 3.5, dirette: 0, sedute: 2 });
-  assert.deepStrictEqual(att('dorsali'), { frazionarie: 3, dirette: 3, sedute: 1 });
+  assert.deepStrictEqual(att('dorsali'), { frazionarie: 3 + 1.5, dirette: 3, sedute: 2 });   /* lat machine 3 il lunedi + il rematore (pulley basso 3 x 0,5) il venerdi: W1-T5, i rematori danno 0,5 ai dorsali */
   assert.deepStrictEqual(att('schiena_spessore'), { frazionarie: 3, dirette: 3, sedute: 1 });
   assert.deepStrictEqual(att('bicipiti'), { frazionarie: 5, dirette: 2, sedute: 2 });   /* lat 1,5 + pulley 1,5 + curl 2; il lunedi 1,5 e il venerdi 3,5 */
   assert.deepStrictEqual(att('deltoide_laterale'), { frazionarie: 3, dirette: 3, sedute: 1 });
