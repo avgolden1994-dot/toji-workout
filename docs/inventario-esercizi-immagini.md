@@ -395,3 +395,15 @@ Illustrazioni vettoriali di una figura umana che esegue l'esercizio, in due pose
 - Per prompt coerenti: chiedere "pose basse e alte dello stesso esercizio, stessa inquadratura e stessa posizione dell'attrezzo, fondo trasparente, nessun testo, tratto scuro sottile, colori grigio freddo + pelle calda".
 
 File di esempio: `esercizi/ex-01-panca-piana.svg` (profilo, 2 fotogrammi, 400x300), `esercizi/ex-08-croci-cavi.svg` (frontale, torri allineate), `esercizi/ex-07-push-up.svg` (profilo a terra, il piu' leggero, 25.1 KB).
+
+## Da rivedere a fine lavoro
+
+Elenco delle illustrazioni da rivedere o rifare a fine lavoro. La lista si aggiorna man mano e l'utente decide alla fine quali rifare.
+
+| Esercizio | File | Motivo | Stato |
+|---|---|---|---|
+| 19 - T-Bar Row | `esercizi/ex-19-t-bar-row.svg` | Segnato dall'utente come "non convince del tutto"; da rivedere/rifare alla fine con gli altri. Difetti noti: pelle grigio-beige scura, in END il disco sfiora la maniglia, romboidi non distinti dal trapezio. Alternative: bozze a, b, c, d in `esercizi-bozze/` (usata la d; la c e' buona ma ha la barra curva in END). | Da rivedere |
+| 15 - Lat Machine | `esercizi/ex-15-lat-machine.svg` | In END barra un po' alta, gola/clavicole. | Difetto lieve, da valutare |
+| 16 - Lat Machine Presa Inversa | `esercizi/ex-16-lat-machine-presa-inversa.svg` | Presa supina poco leggibile di profilo; poco arancione sui dorsali in END. | Difetto lieve, da valutare |
+| 17 - Rematore con Bilanciere | `esercizi/ex-17-rematore-bilanciere.svg` | In END anca un po' piu' arretrata/alta che in START. | Difetto lieve, da valutare |
+| 18 - Rematore con Manubrio | `esercizi/ex-18-rematore-manubrio.svg` | Arancione piu' marcato in START che in END. | Difetto lieve, da valutare |
