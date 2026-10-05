@@ -165,20 +165,3 @@ window.htmlCommentoIA = function(id, interno) {
   return '<div class="ia-card">' + testa + (err ? '<div class="ia-meta">' + escapeHtml(err) + '</div>' : '') +
     '<button class="ia-btn" onclick="delete window.iaErrore[' + id + ']; commentaSeduta(' + id + ', false)">Chiedi il commento al coach</button></div>';
 };
-
-/* dalla sezione Allenamenti completati */
-window.openHistoryDetail = function(i) {
-  const x = loadHistory()[i];
-  if (!x) return;
-  const fatte = x.exercises.reduce((a, e) => a + e.doneSets, 0);
-  const tot = x.exercises.reduce((a, e) => a + e.totalSets, 0);
-  mostraSessione({
-    title: getDayTitle(x.day), day: x.day, doneAt: x.date,
-    summary: fatte + ' di ' + tot + ' serie' + (x.berserk ? ' \u2022 con cedimento' : ''),
-    sessione: x.sessione || null, esercizi: x.exercises, id: x.id
-  });
-};
-
-window.closeDoneView = function() {
-  document.getElementById('done-view-sheet').classList.add('hidden');
-};
