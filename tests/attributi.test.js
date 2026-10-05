@@ -380,8 +380,6 @@ const DIFFERENZE = [
   ['STRESS_ZONA', 'Woodchop ai Cavi (Rotazioni)', 'schiena: assente → stress 1', 'elenco esperto del collaudo (cautela)'],
   ['STRESS_ZONA', 'Leg Raise alla Sedia Romana', 'schiena: assente → stress 1', 'elenco esperto del collaudo (cautela)'],
   ['STRESS_ZONA', 'Sit-up a Ginocchia Piegate', 'schiena: assente → stress 1', 'elenco esperto del collaudo (cautela)'],
-  /* dopo l'unione dell'onda 0 (W0-T5, B25): RISCHIO.spalle toglie anche i piegamenti declinati (caricano la spalla come la panca inclinata); l'elenco del collaudo li tiene in cautela */
-  ['RISCHIO', 'Piegamenti Declinati (Piedi Rialzati)', 'spalla: lo toglie → stress 1', 'W0-T5: RISCHIO.spalle toglie i piegamenti declinati (caricano la spalla come la panca inclinata); l’elenco esperto del collaudo li tiene in cautela'],
   /* INT-2a (M1 della revisione dell onda 1): il confronto vale ora per tutti i 169 esercizi, non solo per i 140 di W1-T2; ecco le differenze degli esercizi di W1-T5, ognuna con il suo motivo */
   ['RISCHIO', 'Panca con Pausa', 'spalla: lo toglie → stress 1', 'W1-T5: stessi crediti e stesso stress della Panca Piana Bilanciere (cautela, non divieto: l’elenco del collaudo la tiene in cautela per la spalla); RISCHIO.spalle la toglie come la panca piana'],
   ['RISCHIO', 'Squat su Scatola', 'ginocchio: lo toglie → stress 1', 'W1-T5, D-P3: ginocchio 1 invece di 2 (lo squat alto e per le ginocchia delicate); RISCHIO.ginocchia lo toglie ancora per il nome (preferenza prudente come per lo Squat a Corpo Libero, B13: nessuna eccezione in ECCEZIONI_RISCHIO)'],
@@ -427,6 +425,7 @@ test('confronto con tipoCarico, stabile, attrezzoDi, RISCHIO e STRESS_ZONA: le d
   assert.deepStrictEqual(veri.filter(k => scritti.indexOf(k) === -1), [], 'differenze non spiegate (aggiungerle a DIFFERENZE con il motivo)');
   assert.deepStrictEqual(scritti.filter(k => veri.indexOf(k) === -1), [], 'differenze scritte che non esistono piu');
   DIFFERENZE.forEach(r => assert.ok(r.length === 4 && r[3].length > 10, 'motivo mancante: ' + chiave(r)));
+  assert.strictEqual(new Set(DIFFERENZE.map(chiave)).size, DIFFERENZE.length, 'una riga ciascuna: niente righe doppie (INT-2a, m4 della revisione dell onda 1)');
   /* due righe note: tipoCarico non vedeva i bilancieri liberi che non stanno nell'elenco */
   assert.ok(DIFFERENZE.some(r => r[0] === 'tipoCarico' && r[1] === 'Rematore Presa Inversa (Yates)'));
 });

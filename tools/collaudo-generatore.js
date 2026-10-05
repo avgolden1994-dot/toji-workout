@@ -209,7 +209,8 @@ const CONTROINDICAZIONI = {
 function stressZona(nome, fastidio) {
   let dato = null;
   try { dato = G.stressArticolare; } catch (e) { dato = null; }   /* G legge i nomi dal mondo dell'app: un nome che non c'e lancia ReferenceError */
-  if (typeof dato === 'function') { const s = dato(nome, fastidio); return typeof s === 'number' ? s : 0; }
+  /* INT-2a (m5 della revisione dell onda 1): un esercizio senza attributi (fuori libreria: `stressArticolare` da null) non e «sicuro»: ricade sul parere del collaudo, per nome */
+  if (typeof dato === 'function') { const s = dato(nome, fastidio); if (typeof s === 'number') return s; }
   const c = CONTROINDICAZIONI[fastidio], n = G.senzaEmoji(nome);
   return !c ? 0 : (c.forte.test(n) ? 2 : (c.cautela.test(n) ? 1 : 0));
 }
@@ -1248,6 +1249,9 @@ function autotest() {
   });
   const err = CRITERI[0].check({ errori: ['x'] });
   (err.length === 1 ? ok++ : ko++); console.log((err.length === 1 ? '  ok   ' : '  MALE ') + 'ERR-01 segnala un errore del generatore');
+  /* m5 (INT-2a): senza attributi lo stress non vale 0 (sicuro) ma segue l elenco del collaudo, per nome */
+  const sz = [stressZona('Pike Push-up su Sedia', 'spalle'), stressZona('Pike Push-up', 'spalle'), stressZona('Esercizio Inventato', 'spalle')], szOk = sz[0] === 2 && sz[1] === 2 && sz[2] === 0;
+  (szOk ? ok++ : ko++); console.log((szOk ? '  ok   ' : '  MALE ') + 'stressZona: un esercizio fuori libreria segue l\'elenco del collaudo (' + sz.join(', ') + '), non vale 0');
   const coperti = new Set(['ERR-01']); FIXTURES.forEach(f => f.attese.forEach(x => coperti.add(x)));
   const senza = CRITERI.filter(cr => !coperti.has(cr.id)).map(cr => cr.id);
   console.log('Autotest: ' + ok + ' ok, ' + ko + ' falliti. Criteri senza una prova che li faccia scattare: ' + (senza.join(', ') || 'nessuno'));

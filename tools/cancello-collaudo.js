@@ -162,7 +162,8 @@ function valuta(cfg, snap, ondaId, opz) {
   if (opz.contro) Object.keys(snap.modello).sort().forEach(id => { if (rif.modello[id] === 'ok' && snap.modello[id] !== 'ok') ko('verifica del modello ' + id + ': era «ok» in «' + rif.etichetta + '», ora «' + snap.modello[id] + '»'); });
 
   /* -- 7. regressione: nessuna classe peggiora (rispetto al «prima», o a --contro); i criteri riscritti non si confrontano col «prima» -- */
-  const riscritti = opz.contro ? new Set((onda.riscritti || [])) : unione(ordine, cfg.onde, ondaId, 'riscritti');
+  /* INT-2a (m1 della revisione dell onda 1): con --contro i criteri riscritti non si confrontano SOLO se le due istantanee hanno versioni dei criteri diverse; a pari versione si confrontano tutti */
+  const riscritti = opz.contro ? (snap.criteri === rif.criteri ? new Set() : new Set((onda.riscritti || []))) : unione(ordine, cfg.onde, ondaId, 'riscritti');
   const sicurezza = new Set(cfg.regressione.sicurezza);
   let controllate = 0, peggiorate = 0, ammesseUsate = 0;
   /* INT-1: `onde.<onda>.ammesse` = peggioramenti giustificati e scritti, uno per classe: { "VOL-02:glutei": { "max": 32.5, "motivo": "...", "risolve": "W2-T1" } }. Una classe ammessa
@@ -433,6 +434,14 @@ function autotest() {
     eq(esito(Object.assign({}, buona, { scade: 'onda-9' }), 'onda-3').righe.some(r => r.esito === 'fallito' && /manca la scadenza/.test(r.testo)), true, 'con un\'onda sconosciuta fallisce');
     const senzaRisolve = Object.assign({}, buona); delete senzaRisolve.risolve;
     eq(esito(senzaRisolve, 'onda-3').righe.some(r => r.esito === 'fallito' && /manca il responsabile/.test(r.testo)), true, 'senza `risolve` fallisce');
+  });
+  prova('criteri riscritti (INT-2a, m1): con --contro si confrontano a pari versione dei criteri, non quando la versione cambia', () => {
+    const c0 = JSON.parse(JSON.stringify(cfg));
+    c0.onde['onda-3'].riscritti = ['RID-01'];   /* RID-01 e riscritto dall onda: non e una classe di sicurezza */
+    const contro = (ver) => daCollaudo(istantaneaBuona(c0, 'onda-2', { criteri: ver, pesata: { 'RID-01:grande_gluteo': 1 }, conteggio: { 'RID-01:grande_gluteo': 100 } }));
+    const peggio = (ver) => istantaneaBuona(c0, 'onda-3', { criteri: ver, pesata: { 'RID-01:grande_gluteo': 4 }, conteggio: { 'RID-01:grande_gluteo': 400 } });
+    eq(valuta(c0, daCollaudo(peggio('9.9')), 'onda-3', { contro: contro('9.8') }).righe.some(r => r.esito === 'fallito' && /regressione RID-01/.test(r.testo)), false, 'versioni diverse: un criterio riscritto non si confronta');
+    eq(valuta(c0, daCollaudo(peggio('9.9')), 'onda-3', { contro: contro('9.9') }).righe.some(r => r.esito === 'fallito' && /regressione RID-01/.test(r.testo)), true, 'stessa versione: si confronta, e peggiora di 3 punti');
   });
   prova('nomi delle onde e etichette del collaudo', () => {
     eq(normalizzaOnda('INT-0', cfg), 'onda-0'); eq(normalizzaOnda('coach-v2-onda-2', cfg), 'onda-2'); eq(normalizzaOnda('2a', cfg), 'onda-2a');

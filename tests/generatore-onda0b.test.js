@@ -306,7 +306,8 @@ test('M4 (revisione onda 0): limitaVolumePerMuscolo taglia gli altri esercizi e 
      programmi a 5 giorni (e una Lower a 4 giorni con il forza e 90 minuti, dove il primo multiarticolare e lo stacco con la trap bar): il tetto di serie per muscolo dell intera settimana
      le porta a 2 serie. Non e un difetto dei nuovi esercizi (con la libreria di prima il motivo era lo stesso): lo risolve il motore del volume di W2-T1. Qui il 3% era un rapporto sul
      campione, non una regola: sale al 4% e si controlla che le sedute sotto 3 serie siano solo di gambe (nessuna seduta di parte alta). */
-  assert.ok(sotto / nSedute <= 0.04, 'sedute con il fondamentale sotto 3 serie: ' + sotto + ' su ' + nSedute);
+    /* INT-2a (m2 della revisione dell onda 1): dopo W1-T6 e le correzioni di INT-2a il campione e a 5 sedute su 192 (2,6%): la soglia torna al 3% (INT-1 l aveva alzata al 4% per 6 su 192) */
+  assert.ok(sotto / nSedute <= 0.03, 'sedute con il fondamentale sotto 3 serie: ' + sotto + ' su ' + nSedute);
   assert.deepStrictEqual(soloGambe, [], 'il fondamentale sotto 3 serie solo nelle sedute di gambe');
 });
 
