@@ -19,7 +19,8 @@ const AMMESSI = ['js/dati/disegni-esercizi.js', 'js/dati/scheda-unica.js', 'js/d
 ok(JSON.stringify(consumatori) === JSON.stringify(AMMESSI), 'solo ' + AMMESSI.join(', ') + ' leggono il disegno (trovati: ' + consumatori.join(', ') + '): un consumatore nuovo va controllato');
 const disegniSrc = fs.readFileSync(path.join(R, 'js/dati/disegni-esercizi.js'), 'utf8');
 ok(/function slotImmagine/.test(disegniSrc) && /onerror="this\.closest\(\\'\.ex-img-slot\\'\)\.classList\.add\(\\'vuoto\\'\)/.test(disegniSrc), 'slotImmagine aggiunge la classe vuoto con onerror quando il file manca');
-ok(/immagineEsercizio\(nome\)/.test(fs.readFileSync(path.join(R, 'js/dati/schede-tecniche.js'), 'utf8')) === false && /slotImmagine\(name\)/.test(fs.readFileSync(path.join(R, 'js/dati/schede-tecniche.js'), 'utf8')), 'la scheda esercizio passa solo da slotImmagine');
+const schedeSrc = fs.readFileSync(path.join(R, 'js/dati/schede-tecniche.js'), 'utf8');
+ok(/slotImmagine\(name\)/.test(schedeSrc) && !/immagineEsercizio\(/.test(schedeSrc), 'la scheda esercizio passa solo da slotImmagine');
 ok(/typeof immagineEsercizio === 'function' \? immagineEsercizio\(nome\) : null/.test(fs.readFileSync(path.join(R, 'js/dati/scheda-unica.js'), 'utf8')), 'schedaUnica prende il percorso senza aprire il file');
 
 (async () => {
@@ -64,7 +65,7 @@ ok(/typeof immagineEsercizio === 'function' \? immagineEsercizio\(nome\) : null/
         if (!slot) return { slot: false };
         const hint = slot.querySelector('.ex-img-hint');
         return { slot: true, vuoto: slot.classList.contains('vuoto'), img: !!slot.querySelector('img'), testo: hint ? hint.textContent.trim() : '', visibile: hint ? getComputedStyle(hint).display !== 'none' : false,
-          atteso: window.tr('Immagine in arrivo'), titolo: document.getElementById('ex-info-title').innerText };
+          atteso: window.tr('Immagine in arrivo'), titolo: document.getElementById('ex-info-title').textContent };
       });
       const haFile = conDisegno.some(x => x.n === d.n);
       if (!esito.slot) male.push(d.n + ': nessun riquadro');
