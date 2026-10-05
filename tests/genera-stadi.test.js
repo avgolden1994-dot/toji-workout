@@ -172,10 +172,13 @@ test('vincoliSicurezza: oggi le regole di prima: Nordic Curl, serie massime, tec
   assert.strictEqual(adulto.serieMaxEsercizio, null);
   assert.ok(adulto.gruppiTecniche.indexOf('G2') !== -1 && adulto.gruppiTecniche.indexOf('G2b') !== -1);
   assert.strictEqual(adulto.tettoCarico, 1);
-  [{ level: 'principiante' }, { age: 70 }, { age: 16 }, { parq: 'si' }, { fastidi: ['ginocchia'] }].forEach(d => {
+  /* INT-2a (M1 della revisione dell onda 1): lo Stacco Rumeno a una Gamba (abilita 3) non e per i prudenti ne per chi inizia; le ginocchia dolenti toglierebbero solo il Nordic Curl */
+  const unaGamba = app().g("nomeInLibreria('Stacco Rumeno a una Gamba')");
+  [{ level: 'principiante' }, { age: 70 }, { age: 16 }, { parq: 'si' }].forEach(d => {
     const r = v(Object.assign({ level: 'avanzato' }, d));
-    assert.deepStrictEqual(Object.keys(r.vietati), [nordic], 'Nordic Curl vietato per ' + stringa(d));
+    assert.deepStrictEqual(Object.keys(r.vietati), [nordic, unaGamba], 'Nordic Curl e Stacco Rumeno a una Gamba vietati per ' + stringa(d));
   });
+  assert.deepStrictEqual(Object.keys(v({ level: 'avanzato', fastidi: ['ginocchia'] }).vietati), [nordic], 'Nordic Curl vietato per le ginocchia dolenti');
   [{ level: 'principiante' }, { age: 70 }, { age: 16 }, { parq: 'si' }].forEach(d => {
     const r = v(Object.assign({ level: 'avanzato' }, d));
     assert.strictEqual(r.serieMaxEsercizio, 3, 'al massimo 3 serie per ' + stringa(d));
@@ -186,7 +189,7 @@ test('vincoliSicurezza: oggi le regole di prima: Nordic Curl, serie massime, tec
   assert.deepStrictEqual(v({}).rirMin, {});
   /* i vincoli arrivano a consentito(): prefs.esclusi li legge */
   const p = costruisci({ level: 'principiante' });
-  assert.deepStrictEqual(p.prefs.esclusi, [nordic]);
+  assert.deepStrictEqual(p.prefs.esclusi, [nordic, unaGamba]);
   assert.ok(!p.sedute.some(sd => sd.esercizi.some(e => /nordic/i.test(e.name))));
 });
 

@@ -28,9 +28,9 @@ function vincoliSicurezza(brief) {
   }
   /* INT-2a (M1 della revisione dell onda 1): lo Stacco Rumeno a una Gamba e un esercizio di abilita 3 (equilibrio e cerniera su un piede: la sua scheda dice di
      appoggiare una mano) e prima, letto come bilanciere, finiva in 225 programmi su 263 di persone prudenti; per i prudenti resta fuori finche la scelta non leggera
-     l abilita (W2-T6): hanno lo Stacco Rumeno con Manubri (abilita 2) */
+     l abilita (W2-T6); lo stesso vale per chi inizia (SEL-06: abilita 3 non e per i principianti). Hanno lo Stacco Rumeno con Manubri (abilita 2) */
   const unaGamba = nomeInLibreria('Stacco Rumeno a una Gamba');
-  if (unaGamba && chi.cauto) vincoli.vietati[unaGamba] = 'abilita 3 (equilibrio su un piede): non per i prudenti, finche la scelta non legge l abilita';
+  if (unaGamba && (chi.cauto || chi.principiante)) vincoli.vietati[unaGamba] = 'abilita 3 (equilibrio su un piede): non per i prudenti ne per chi inizia, finche la scelta non legge l abilita';
   if (chi.principiante || chi.cauto) vincoli.serieMaxEsercizio = COACH_PARAMETRI.serieMaxPrudente;   /* 2-3 serie impegnative (Barbell Medicine); CAS-14, femorali, riempimento */
   /* MAV-03: niente tecniche al cedimento a chi inizia, ai minorenni, agli over 65 e in modalita prudente */
   if (!chi.principiante && !chi.cauto) vincoli.gruppiTecniche.push('G2', 'G2b');

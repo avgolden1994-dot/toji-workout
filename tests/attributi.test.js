@@ -378,13 +378,25 @@ const DIFFERENZE = [
   ['STRESS_ZONA', 'Leg Raise alla Sedia Romana', 'schiena: assente → stress 1', 'elenco esperto del collaudo (cautela)'],
   ['STRESS_ZONA', 'Sit-up a Ginocchia Piegate', 'schiena: assente → stress 1', 'elenco esperto del collaudo (cautela)'],
   /* dopo l'unione dell'onda 0 (W0-T5, B25): RISCHIO.spalle toglie anche i piegamenti declinati (caricano la spalla come la panca inclinata); l'elenco del collaudo li tiene in cautela */
-  ['RISCHIO', 'Piegamenti Declinati (Piedi Rialzati)', 'spalla: lo toglie → stress 1', 'W0-T5: RISCHIO.spalle toglie i piegamenti declinati (caricano la spalla come la panca inclinata); l’elenco esperto del collaudo li tiene in cautela']
+  ['RISCHIO', 'Piegamenti Declinati (Piedi Rialzati)', 'spalla: lo toglie → stress 1', 'W0-T5: RISCHIO.spalle toglie i piegamenti declinati (caricano la spalla come la panca inclinata); l’elenco esperto del collaudo li tiene in cautela'],
+  /* INT-2a (M1 della revisione dell onda 1): il confronto vale ora per tutti i 169 esercizi, non solo per i 140 di W1-T2; ecco le differenze degli esercizi di W1-T5, ognuna con il suo motivo */
+  ['RISCHIO', 'Panca con Pausa', 'spalla: lo toglie → stress 1', 'W1-T5: stessi crediti e stesso stress della Panca Piana Bilanciere (cautela, non divieto: l’elenco del collaudo la tiene in cautela per la spalla); RISCHIO.spalle la toglie come la panca piana'],
+  ['RISCHIO', 'Squat su Scatola', 'ginocchio: lo toglie → stress 1', 'W1-T5, D-P3: ginocchio 1 invece di 2 (lo squat alto e per le ginocchia delicate); RISCHIO.ginocchia lo toglie ancora per il nome (preferenza prudente come per lo Squat a Corpo Libero, B13: nessuna eccezione in ECCEZIONI_RISCHIO)'],
+  ['RISCHIO', 'Step-up Basso', 'ginocchio: lo toglie → stress 1', 'W1-T5, D-P3: ginocchio 1 invece di 2 (il gradino basso e per le ginocchia delicate); RISCHIO.ginocchia lo toglie ancora per il nome (preferenza prudente)'],
+  ['STRESS_ZONA', 'Kettlebell Swing', 'schiena: assente → stress 1', 'W1-T5: lo swing e il ramo balistico dell’hinge; l’elenco del collaudo non lo conosceva (cautela)'],
+  ['STRESS_ZONA', 'Scrollate con Manubri', 'collo: zona nuova → stress 1', 'ricerca-recupero §3 (collo): come le Scrollate (Shrug), versioni supportate o carichi ridotti'],
+  ['stabile', 'Hip Thrust con Manubrio', 'false → stabilita 1', 'W1-T5: il manubrio sul bacino si lascia cadere di lato e la schiena è appoggiata alla panca: cedimento accettabile (il vecchio stabile() vede solo il multiarticolare libero)'],
+  ['stabile', 'Lat Pulldown con Elastico', 'false → stabilita 1', 'INT-2a: attrezzoDi dice ora «corpo» per l’elastico (prima «macchine»: stabile per errore); l’attributo dice 1 (si tira da fermi, nessun equilibrio) e il vecchio stabile() lo vede solo se è una macchina'],
+  ['stabile', 'Seal Row', 'false → stabilita 1', 'bio §5.5: petto e pancia appoggiati sulla panca, nessun carico sui lombari e nessun equilibrio: cedimento accettabile'],
+  ['stabile', 'Sit-to-Stand dalla Panca', 'false → stabilita 1', 'età §6: l’alzata dalla panca con un appoggio vicino: il vecchio stabile() la vede libera perché multiarticolare a corpo libero'],
+  ['stabile', 'Squat su Scatola', 'false → stabilita 1', 'D-P3: la scatola e la sedia danno il punto d’arrivo e l’appoggio: cedimento accettabile (il vecchio stabile() vede solo le macchine)'],
+  ['stabile', 'Suitcase Carry', 'true → stabilita 2', 'bio §5.5: un trasporto con un solo carico (anti-flessione laterale) e un esercizio di equilibrio: almeno 1-2 ripetizioni in riserva; il vecchio stabile() lo vede stabile perche non e multiarticolare']
 ];
 
 function differenzeVere() {
   const out = [];
   const SZ = J('STRESS_ZONA'), RISCHIO = { spalle: g('RISCHIO.spalle'), ginocchia: g('RISCHIO.ginocchia'), schiena: g('RISCHIO.schiena') };
-  LIB.filter(e => NOMI_W1T2.indexOf(pulito(e.name)) !== -1).forEach(e => {
+  LIB.forEach(e => {   /* INT-2a (M1 della revisione dell onda 1): tutti i 169 esercizi, non solo i 140 di W1-T2: la patch di W1-T5 non aveva visto lo Stacco Rumeno a una Gamba letto come bilanciere */
     const n = pulito(e.name), a = attr(n);
     const carico = g('tipoCarico')(e.name);
     if ({ pesante: ['A'], macchina: ['B', 'C'], isolamento: ['D', 'E', 'F'] }[carico].indexOf(a.classe) === -1) out.push(['tipoCarico', n, carico + ' → classe ' + a.classe]);
