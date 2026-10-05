@@ -227,7 +227,8 @@ function fattoreTempo() {
 function classePausa(nome) { const i = infoTempo(nome); return i.nordic ? 'E' : i.classe; }
 function limitiPausa(nome, ctx) {
   const o = ctx || {}, ob = o.obiettivo || 'ipertrofia', tab = sogliaTempo('pausa')[ob], i = infoTempo(nome), cl = classePausa(nome);
-  const cella = tab[cl] || tab.B, base = sogliaTempo('pausaMinimo'), alzato = sogliaTempo('pausaMinimoAlzato')[ob] || {}, minimi = {};
+  /* minimiDa: l obiettivo del PROGRAMMA per i minimi alzati (la forza ha B e C a 90 s anche nel giorno di ipertrofia del PHUL, che per il resto ha le pause della massa: B2) */
+  const cella = tab[cl] || tab.B, base = sogliaTempo('pausaMinimo'), alzato = sogliaTempo('pausaMinimoAlzato')[o.minimiDa || ob] || {}, minimi = {};
   Object.keys(base).forEach(k => { minimi[k] = Math.max(base[k], alzato[k] || 0); });
   let v = cella[0], max = cella[1], lo = cella[2] !== undefined ? cella[2] : minimi[cl];
   if (cl === 'B' && i.attrezzo === 'corpo' && ob !== 'forza') { v = Math.min(v, sogliaTempo('pausaCorpoLibero')); }
@@ -237,6 +238,8 @@ function limitiPausa(nome, ctx) {
     v = Math.min(v, Math.max(round15(v * d.fattore), d.minimi[cl]));
     lo = Math.min(lo, v);
   }
+  /* i minimi alzati dell obiettivo del programma (forza: B e C a 90 s, F a 45) valgono anche nel giorno di ipertrofia del PHUL (corpo libero a 75 s) e per le donne: la fascia del recupero e quella dell obiettivo (RX-02) */
+  if (alzato[cl]) { v = Math.max(v, alzato[cl]); lo = Math.max(lo, alzato[cl]); }
   let taglio = ob === 'forza' && cl === 'A' ? v : Math.min(v, minimi[cl]);
   const p65 = sogliaTempo('pausaOltre65')[cl];
   if (o.over65 && p65) { v = Math.max(v, p65); lo = Math.max(lo, p65); taglio = Math.max(taglio, p65); }
@@ -251,7 +254,7 @@ function pausePerClasse(brief, sedute) {
   const chi = brief.chi, donna = chi.donna && regolaAttiva('PRG-20');
   let accorciate = false;
   sedute.forEach((sd, i) => sd.esercizi.forEach(e => {
-    const ctx = { obiettivo: obiettivoDellaSeduta(brief, i), reps: e.reps, donna: donna, parq: chi.parq, over65: chi.over65 };
+    const ctx = { obiettivo: obiettivoDellaSeduta(brief, i), minimiDa: tipoObiettivoDi(brief.obiettivi.lista), reps: e.reps, donna: donna, parq: chi.parq, over65: chi.over65 };
     const lim = limitiPausa(e.name, ctx);
     if (donna && lim.v < limitiPausa(e.name, Object.assign({}, ctx, { donna: false })).v) accorciate = true;
     if (!(e.rest >= 0)) e.rest = lim.v;
@@ -332,7 +335,7 @@ function scalaDelTempo(brief, sd, sedute, opz, minutiEff, passi) {
   if (T() <= limite) return;
   const comp = (e) => infoTempo(e.name).compound, group = (e) => (findExercise(e.name) || {}).group, isPrio = (e) => prio.indexOf(group(e)) !== -1;
   /* 1) le pause verso il minimo della classe, 15 secondi alla volta, sempre a quella piu lunga sopra il suo minimo, finche la seduta sta nei minuti (non un taglio secco di tutte: il recupero si toglie solo quanto serve) */
-  const donnaPausa = chi.donna && regolaAttiva('PRG-20'), taglio = (e) => limitiPausa(e.name, { obiettivo: ob, reps: e.reps, donna: donnaPausa, parq: chi.parq, over65: chi.over65 }).taglio;
+  const donnaPausa = chi.donna && regolaAttiva('PRG-20'), taglio = (e) => limitiPausa(e.name, { obiettivo: ob, minimiDa: tipoObiettivoDi(goals), reps: e.reps, donna: donnaPausa, parq: chi.parq, over65: chi.over65 }).taglio;
   let cambiato = false;
   for (let g = 0; g < 200 && T() > limite; g++) {
     const c = sd.esercizi.map(e => ({ e: e, sopra: e.rest - taglio(e) })).filter(x => x.sopra > 0).sort((a, b) => b.sopra - a.sopra)[0];
@@ -352,7 +355,7 @@ function scalaDelTempo(brief, sd, sedute, opz, minutiEff, passi) {
   }
   /* 3) il core e le braccia dirette (P6 e P5), uno alla volta: non i protetti, non sotto i pavimenti */
   const via = (sel) => {
-    for (let g = 0; g < 12 && T() > limite; g++) {
+    for (let g = 0; g < 12 && T() > limite && sd.esercizi.length > 3; g++) {   /* mai sotto 3 esercizi (EXN-01) */
       const c = sd.esercizi.filter(sel).filter(e => !e.fisso && !e.protetto && pavimentoOk(brief, sedute, e, e.sets)).pop();
       if (!c) break;
       togliEsercizio(sd, c); passi.tagli++;
@@ -382,6 +385,18 @@ function scalaDelTempo(brief, sd, sedute, opz, minutiEff, passi) {
     if (!protette.length) break;
     togliEsercizio(sd, protette[protette.length - 1]); passi.tagli++;
   }
+  /* e se ancora non entra (30 minuti e 2 giorni con i glutei come obiettivo: i quattro schemi base a due serie piu la spinta d anca non stanno in 33 minuti) l ultimo esercizio fuori dai quattro schemi base
+     (la spinta d anca, un secondo schema) lascia il posto, se la settimana non va sotto i pavimenti: gli schemi di base restano sempre, la seduta non ne ha mai meno di 4 */
+  const SCHEMI_BASE = ['squat', 'hinge', 'spintaO', 'tirataO'], PIANI = ['spintaV', 'tirataV'];
+  /* un piano di spinta o di tirata (verticale) non sparisce dalla settimana: lascia il posto solo se un altra seduta lo tiene (EQ-02) */
+  const unicoNellaSettimana = (e) => PIANI.indexOf(schemaDi(e.name)) !== -1 && !sedute.some(o => o !== sd && o.esercizi.some(x => schemaDi(x.name) === schemaDi(e.name)));
+  for (let g = 0; g < 4 && T() > minutiEff * 1.10 && sd.esercizi.length > 4; g++) {
+    const fuori = sd.esercizi.filter(e => !e.fisso && SCHEMI_BASE.indexOf(schemaDi(e.name)) === -1 && group(e) !== 'core' && !unicoNellaSettimana(e) && pavimentoOk(brief, sedute, e, e.sets));
+    if (!fuori.length) break;
+    /* tra spinte e tirate si toglie dal lato che pesa di piu (ABB-04: le tirate almeno pari alle spinte) */
+    const lato = strSerie(sedute, strEspinta) >= strSerie(sedute, strEtirata) ? fuori.filter(strEspinta) : fuori.filter(strEtirata), scelta = lato.length ? lato : fuori;
+    togliEsercizio(sd, scelta[scelta.length - 1]); passi.tagli++;
+  }
   /* e solo alla fine anche il 5x5 fisso della forza perde serie, fino a 3 (5 serie da 5 con 2-3 minuti di pausa non stanno in una seduta da 30 minuti) */
   for (let g = 0; g < 6 && T() > minutiEff * 1.10; g++) {
     const f = sd.esercizi.filter(e => e.fisso && e.sets > 3).sort((a, b) => b.sets - a.sets)[0];
@@ -391,8 +406,8 @@ function scalaDelTempo(brief, sd, sedute, opz, minutiEff, passi) {
 }
 
 /* CAS-07 passo finale e CAS-08 (D-P10: il tempo e un tetto): se in una seduta resta tempo, una serie in piu SOLO dove un muscolo e sotto la sua fascia settimanale (volumeMin: il minimo del livello e dell obiettivo),
-   all isolamento che piu lo copre, dentro i massimi di volume, il tetto di serie per esercizio, le 48 ore e i minuti dichiarati (senza tolleranza); se nessun esercizio puo prenderla, un isolamento nuovo del muscolo
-   piu in difetto. Senza muscoli sotto fascia la seduta resta com e, anche se corta. Ponte: il solutore per unita di W2-T1 (aggiungiSerieUtile, volume.js) lo sostituisce con la tabella B6; qui il minimo e quello di sempre. */
+   all isolamento che piu lo copre (se non c e, a un multiarticolare non di spalle: dentro i 3-4 serie, una spinta solo se le tirate la pareggiano, ABB-04), dentro i massimi di volume, il tetto di serie per esercizio,
+   le 48 ore e i minuti dichiarati (senza tolleranza); se nessun esercizio puo prenderla, un isolamento nuovo del muscolo piu in difetto. Senza muscoli sotto fascia la seduta resta com e, anche se corta. Ponte: il solutore per unita di W2-T1 (aggiungiSerieUtile, volume.js) lo sostituisce con la tabella B6; qui il minimo e quello di sempre. */
 function sottoFascia(sedute, c) {
   const sett = frazionarieSettimana(sedute);
   return Object.keys(GRUPPI_FRAZIONARI).map(g => ({ gruppo: g, mancano: c.volumeMin[GRUPPI_FRAZIONARI[g].classe] - (sett[g] || 0) })).filter(x => x.mancano > 0);
@@ -404,9 +419,14 @@ function serieSottoFascia(brief, sedute, opz, minutiEff, c) {
     if (!sotto.length) break;
     const sett = frazionarieSettimana(sedute), mancano = {};
     sotto.forEach(x => { mancano[x.gruppo] = x.mancano; });
-    let migliore = null;
+    let migliore = null, miglioreComp = null;
+    const spinte = strSerie(sedute, strEspinta), tirate = strSerie(sedute, strEtirata);
     sedute.forEach(sd => sd.esercizi.forEach((e, i) => {
-      if (infoTempo(e.name).compound || e.fisso || isTimeBased(e.name) || e.sets >= c.maxSerie || !group(e) || group(e) === 'core' || group(e) === 'spalle') return;
+      const comp = infoTempo(e.name).compound;
+      /* un multiarticolare prende la serie solo se non c e un isolamento che copra il muscolo (secondo giro): dentro il tetto di 3-4 serie, i 3 serie degli stacchi pesanti (ABB-09), e una spinta solo se le tirate la pareggiano (ABB-04) */
+      const tetto = comp ? Math.min(c.maxSerie, c.principiante ? COACH_PARAMETRI.serieMaxPrudente : 4, STR_FATICA.test(e.name) ? 3 : 4) : c.maxSerie;
+      if (e.fisso || isTimeBased(e.name) || e.sets >= tetto || !group(e) || group(e) === 'core' || group(e) === 'spalle') return;
+      if (comp && strEspinta(e) && spinte + 1 > tirate) return;
       if (e.superset || (sd.esercizi[i + 1] && sd.esercizi[i + 1].superset)) return;   /* in coppia i giri sono quelli dell esercizio con piu serie */
       const cr = creditoSerie(e.name);
       if (!Object.keys(cr).every(g => (sett[g] || 0) + cr[g] <= c.volumeMax[GRUPPI_FRAZIONARI[g].classe])) return;
@@ -415,9 +435,11 @@ function serieSottoFascia(brief, sedute, opz, minutiEff, c) {
       e.sets++;
       const ok = tempoOk(sd);
       e.sets--;
-      if (ok && (!migliore || score > migliore.score || (score === migliore.score && e.sets < migliore.e.sets))) migliore = { e: e, score: score };
+      const m = comp ? miglioreComp : migliore;
+      if (ok && (!m || score > m.score || (score === m.score && e.sets < m.e.sets))) { if (comp) miglioreComp = { e: e, score: score }; else migliore = { e: e, score: score }; }
     }));
-    if (migliore) { migliore.e.sets++; continue; }
+    const scelto = migliore || miglioreComp;
+    if (scelto) { scelto.e.sets++; continue; }
     /* nessuna serie utile: un isolamento nuovo, dove c e posto e tempo, del muscolo piu in difetto (non un multiarticolare: spinte e tirate restano in equilibrio, ABB-04) */
     let fatto = false;
     for (const sd of sedute.slice().sort((a, b) => durataSeduta(a.esercizi, opz) - durataSeduta(b.esercizi, opz))) {
@@ -486,7 +508,7 @@ function adattaAlTempo(brief, sedute) {
     minimo: PARAM_TEMPO.volumeMin[ob][level][0] });
   if (!metodoAttivo) {
     const c = { minuti: minutiEff, maxSerie: vincoli.serieMaxEsercizio || 4, maxEsercizi: maxEsSeduta, volumeMax: PARAM_TEMPO.volumeMax[ob][level], volumeMin: PARAM_TEMPO.volumeMin[ob][level], prefs: prefs, reps: scheme.reps,
-      obiettivoTipo: ob, donna: chi.donna && regolaAttiva('PRG-20'), parq: chi.parq, over65: chi.over65 };
+      obiettivoTipo: ob, donna: chi.donna && regolaAttiva('PRG-20'), parq: chi.parq, over65: chi.over65, principiante: level === 'principiante' };
     const sotto = serieSottoFascia(brief, sedute, opz, minutiEff, c);
     L.sottoFascia = sotto;
     if (typeof aggiungiSerieUtile === 'function') aggiungiSerieUtile(brief, sedute, sotto);   /* W2-T1: la stessa idea sulle unita fini con la tabella B6 (oggi non fa niente) */
@@ -513,6 +535,16 @@ function rifinisciAlTempo(brief, sedute) {
       cand.sets--;
     }
   });
+  /* ABB-04: dopo il taglio le tirate possono essere rimaste sotto il 90% delle spinte (il taglio toglie serie alle tirate come alle spinte, e il fondamentale di una seduta, di spinta, non si tocca): ultimo giro, solo
+     tolte, mai aggiunte (il tempo e gia contato): una serie alla spinta con piu serie, il fondamentale per ultimo, mai sotto 3 serie per il fondamentale e 2 per il resto, mai sotto i pavimenti */
+  const spinte = () => strSerie(sedute, strEspinta), tirate = () => strSerie(sedute, strEtirata), sbilanciata = () => spinte() + tirate() >= 8 && tirate() < spinte() * 0.9;
+  for (let g = 0; g < 6 && sbilanciata(); g++) {
+    const fondamentali = sedute.map(sd => sd.esercizi.find(e => (findExercise(e.name) || {}).type === 'compound' && !isTimeBased(e.name)));
+    const spinteOk = sedute.reduce((t, sd) => t.concat(sd.esercizi.filter(e => strEspinta(e) && !e.fisso && !isTimeBased(e.name) && e.sets > (fondamentali.indexOf(e) !== -1 ? 3 : 2) && pavimentoOk(brief, sedute, e, 1))), []);
+    const c = spinteOk.sort((a, b) => (fondamentali.indexOf(a) !== -1) - (fondamentali.indexOf(b) !== -1) || b.sets - a.sets)[0];
+    if (!c) break;
+    c.sets--;
+  }
   return sedute;
 }
 
@@ -549,7 +581,7 @@ function riallineaPause(brief, sedute) {
   const chi = brief.chi, donna = chi.donna && regolaAttiva('PRG-20');
   let cambiate = 0;
   sedute.forEach((sd, i) => sd.esercizi.forEach(e => {
-    const lim = limitiPausa(e.name, { obiettivo: obiettivoDellaSeduta(brief, i), reps: e.reps, donna: donna, parq: chi.parq, over65: chi.over65 });
+    const lim = limitiPausa(e.name, { obiettivo: obiettivoDellaSeduta(brief, i), minimiDa: tipoObiettivoDi(brief.obiettivi.lista), reps: e.reps, donna: donna, parq: chi.parq, over65: chi.over65 });
     let r = Number(e.rest);
     if (e.originale && e.originale !== e.name) r = Math.max(Math.min(r, lim.v), Math.min(lim.taglio, lim.v));
     if (r > lim.max) r = lim.max;

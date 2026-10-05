@@ -267,6 +267,42 @@ test('PRG-20: nei programmi le donne hanno pause piu corte solo dove D-P7 lo amm
   assert.ok(uguali > 0, 'non tutte: solo D, E e B, C con 8 ripetizioni o piu (la classe A e il core restano uguali)');
 });
 
+test('PRG-13 (RX-02): la forza ha i minimi di B e C a 90 s anche nel giorno di ipertrofia del PHUL (corpo libero a 75 s no), e una variante senza bilanciere porta la pausa della sua classe (non i 150 s della panca)', () => {
+  const a = app();
+  /* nel giorno di ipertrofia di un programma di forza: pausa della massa, ma il pavimento e quello della forza */
+  const ip = limiti('Squat a Corpo Libero', { obiettivo: 'ipertrofia', minimiDa: 'forza', reps: 10 }), solo = limiti('Squat a Corpo Libero', { obiettivo: 'ipertrofia', reps: 10 });
+  assert.strictEqual(solo.v, 75, 'con la massa come obiettivo il corpo libero aspetta 75 s');
+  assert.strictEqual(ip.v, 90); assert.strictEqual(ip.lo, 90); assert.ok(ip.taglio >= 90);
+  /* le donne non scendono sotto il pavimento dell obiettivo del programma: la forza (B, C a 90 s) vince su D-P7 */
+  assert.ok(limiti('Chest Press Machine', { obiettivo: 'ipertrofia', minimiDa: 'forza', reps: 10, donna: true }).v >= 90);
+  /* il programma: nessuna pausa sotto 90 s su B e C in un programma di forza (fuori dai metodi), anche nel giorno di ipertrofia */
+  const colpe = [];
+  [['corpo', 'principiante'], ['manubri', 'intermedio'], ['palestra', 'intermedio'], ['corpo', 'avanzato']].forEach(([luogo, level], k) => [30, 45, 60].forEach(minutes => {
+    const prog = costruisci(Object.assign({}, BASE, { goals: ['forza'], level, luogo, days: 4, minutes, seme: 'min90-' + k + minutes }));
+    prog.sedute.forEach(sd => sd.esercizi.forEach(e => { const cl = a.chiama('classePausa', e.name); if ((cl === 'B' || cl === 'C') && !e.superset && e.rest < 90) colpe.push(luogo + level + minutes + ' ' + e.name + ' ' + e.rest + ' s'); }));
+  }));
+  assert.deepStrictEqual(colpe, []);
+  /* una panca con il bilanciere (A, 150 s) cambiata in chest press (C) dopo il tempo: riallineaPause la porta alla pausa di C (105 s a 8 ripetizioni) e non tocca le pause gia tagliate */
+  a.ctx.__d = Object.assign({}, BASE, { seme: 'riallinea' });
+  a.g('(function(){ const b = briefCoach(__d, {}); window.__brief = b; })()');
+  a.ctx.__s = [{ tipo: 'push', esercizi: [Object.assign(E('Chest Press Machine', 3, 8, 150), { originale: N('Panca Piana Bilanciere') }), E('Leg Extension', 3, 12, 45)] }];
+  assert.strictEqual(a.g('riallineaPause(__brief, __s)'), 1);
+  assert.deepStrictEqual(a.dati(a.g('__s[0].esercizi.map(e => e.rest)')), [105, 45]);
+});
+
+test('CAS-07 (D-P10): il riempimento con le serie va prima agli isolamenti, poi ai multiarticolari del muscolo sotto fascia, e una spinta solo se le tirate la pareggiano (ABB-04)', () => {
+  const a = app();
+  /* due sedute: petto sotto il minimo (10 serie frazionarie per l intermedio della massa); una chest press (3 serie) e una panca (3), le tirate 4 + 4: si puo dare una serie alla spinta finche le tirate la pareggiano */
+  a.ctx.__d = Object.assign({}, BASE, { minutes: 90, days: 2, seme: 'riempi' });
+  a.ctx.__e1 = [E('Panca Piana Bilanciere', 3, 8, 120), E('Rematore con Bilanciere', 4, 8, 120), E('Leg Press', 3, 10, 90)];
+  a.ctx.__e2 = [E('Chest Press Machine', 3, 10, 90), E('Lat Machine', 4, 10, 90), E('Leg Curl Seduto', 3, 12, 60)];
+  a.g('(function(){ const b = briefCoach(__d, {}); b.sicurezza.vincoli = vincoliSicurezza(b); risolviMetodo(b); b.lavoro.prefs = prefsDelBrief(b); window.__brief = b; window.__sed = [{ giorno: "Lunedì", tipo: "fullbody", titolo: "A", esercizi: JSON.parse(JSON.stringify(__e1)) }, { giorno: "Giovedì", tipo: "fullbody", titolo: "B", esercizi: JSON.parse(JSON.stringify(__e2)) }]; })()');
+  a.g('adattaAlTempo(__brief, __sed)');
+  const sedute = a.dati(a.g('__sed')), spinte = sedute.reduce((t, sd) => t + sd.esercizi.filter(e => a.chiama('strEspinta', e)).reduce((x, e) => x + e.sets, 0), 0), tirate = sedute.reduce((t, sd) => t + sd.esercizi.filter(e => a.chiama('strEtirata', e)).reduce((x, e) => x + e.sets, 0), 0);
+  assert.ok(spinte <= tirate, 'spinte ' + spinte + ' tirate ' + tirate);
+  sedute.forEach(sd => assert.ok(a.chiama('durataSeduta', sd.esercizi, a.dati(a.chiama('opzioniTempo', a.g('__brief')))) <= 90, 'dentro i minuti dichiarati'));
+});
+
 /* ============================================================ CAS-06: la capacita ============================================================ */
 test('CAS-06: stimaEsercizi: minimo 4 (i quattro schemi base), massimo 8, principianti 4-6 e al massimo 50 minuti; la forza con le pause lunghe ne tiene meno', () => {
   const a = app();
@@ -301,9 +337,10 @@ test('PRI-08 / D-P10: chi comincia dichiara 90 minuti e la seduta non supera i 5
 
 /* ============================================================ CAS-07, CAS-08: la scala del taglio ============================================================ */
 /* una settimana di tre sedute full body uguali (i pavimenti dei grandi muscoli sono rispettati) e il brief del profilo: adattaAlTempo sul piano finto */
-function scala(minuti, livello) {
+function scala(minuti, livello, ricca) {
   const a = app();
-  const lista = [E('Squat con Bilanciere', 3, 8, 150), E('Panca Piana Bilanciere', 3, 8, 150), E('Rematore con Bilanciere', 3, 8, 150), E('Stacco Rumeno', 3, 8, 150), E('Lat Machine', 3, 10, 105),
+  /* ricca: quattro serie sui fondamentali, tre sul resto: i muscoli sono nella fascia (nessun lavoro utile da aggiungere) */
+  const lista = [E('Squat con Bilanciere', ricca ? 4 : 3, 8, 150), E('Panca Piana Bilanciere', ricca ? 4 : 3, 8, 150), E('Rematore con Bilanciere', ricca ? 4 : 3, 8, 150), E('Stacco Rumeno', ricca ? 4 : 3, 8, 150), E('Lat Machine', 3, 10, 105),
     E('Curl su Panca Inclinata', 3, 12, 75), E('Estensione Tricipiti sopra la Testa ai Cavi', 3, 12, 75), E('Alzate Laterali ai Cavi', 3, 15, 60), E('Plank', 3, 45, 45)];
   a.ctx.__d = Object.assign({}, BASE, { minutes: minuti, level: livello || 'intermedio', seme: 'scala' });
   a.ctx.__e = lista;
@@ -312,7 +349,7 @@ function scala(minuti, livello) {
   a.g('adattaAlTempo(__brief, __sed)');
   const dopo = a.dati(a.g('__sed[0].esercizi')), passi = a.dati(a.g('__brief.lavoro.tempoPassi')), note = a.dati(a.g('__brief.lavoro.note'));
   const T = a.g('durataSeduta')(a.g('__sed[0].esercizi'), a.g('opzioniTempo(__brief)'));
-  return { prima, dopo, passi, note, T, nome: n => dopo.find(e => e.name === N(n)) };
+  return { prima, dopo, passi, note, T, tutte: a.dati(a.g('__sed')), sotto: a.dati(a.g('__brief.lavoro.sottoFascia')), nome: n => dopo.find(e => e.name === N(n)) };
 }
 const schemi = (r) => r.dopo.map(e => app().chiama('schemaDi', e.name)).filter(Boolean);
 
@@ -356,17 +393,31 @@ test('CAS-07 passi 3-5: poi via il core e le braccia dirette, le serie da 3 a 2 
   assert.strictEqual(r.nome('Rematore con Bilanciere').sets, 3);
   assert.strictEqual(r.nome('Squat con Bilanciere').sets, 3, 'il fondamentale e l ultimo a perdere serie');
   assert.ok(r.T <= 45 * 1.05 + 1e-9, 'a 45 minuti: ' + r.T.toFixed(1));
-  assert.strictEqual(t.dopo.length, 5, 'a 30 minuti restano i cinque esercizi di base');
+  /* a 30 minuti i quattro schemi base a due serie non entrano ancora (DUR-01): l ultima risorsa toglie l esercizio fuori dai quattro (la tirata verticale) dalle prime sedute, non dall ultima: nella
+     settimana un piano di tirata resta (EQ-02) */
+  assert.strictEqual(t.dopo.length, 4, 'a 30 minuti restano i quattro schemi di base');
   t.dopo.forEach(e => assert.strictEqual(e.sets, 2, e.name + ' a 30 minuti'));
+  assert.ok(t.tutte[2].esercizi.some(e => /Lat Machine/.test(e.name)), 'la tirata verticale resta in una seduta della settimana');
+  assert.ok(t.tutte.every(sd => sd.esercizi.length >= 4), 'mai meno di 4 esercizi: EXN-01 (minimo 3) con margine');
+});
+
+test('EXN-01: la scala del taglio non porta mai una seduta sotto i 3 esercizi (nemmeno togliendo il core e le braccia dirette), e a 30 minuti con 5 giorni la seduta «upper forza» ne tiene 3', () => {
+  const prog = costruisci({ goals: ['forza'], level: 'intermedio', days: 5, minutes: 30, luogo: 'manubri', fastidi: ['spalle', 'schiena'], sex: 'M', age: 45, sonno: 'bene', attrezzi: 'indifferente', freq: 'auto', parq: 'no', priorita: [], psico: 'nessuno', attrezziPalestra: null, seme: 'collaudo|forza|intermedio|5|30|manubri|spalle+schiena|M|adulto|2' });
+  prog.sedute.forEach(sd => assert.ok(sd.esercizi.length >= 3, sd.titolo + ': ' + sd.esercizi.length + ' esercizi'));
 });
 
 test('D-P10: il tempo e un tetto: a 90 minuti niente si allunga (nessuna pausa piu lunga della tabella, nessuna serie in piu dove i muscoli sono nella fascia) e riempiTempo non esiste piu', () => {
   const a = app();
   assert.strictEqual(a.g('typeof riempiTempo'), 'undefined', 'il riempimento di prima non e tornato');
-  const r = scala(90);
+  const r = scala(90, 'intermedio', true);
   assert.deepStrictEqual(r.passi, { pause: 0, coppie: 0, tagli: 0 });
+  assert.deepStrictEqual(r.sotto.map(x => x.gruppo).filter(g => ['petto', 'schiena', 'quadricipiti', 'glutei'].indexOf(g) !== -1), [], 'i muscoli grandi di questa settimana sono nella fascia (restano sotto solo i femorali, i deltoidi laterali e i polpacci: senza posto per un esercizio in piu, EXN-02)');
   r.dopo.forEach(e => { const p = r.prima.find(x => x.name === e.name); assert.ok(p, e.name + ': nessun esercizio nuovo'); assert.ok(e.sets <= p.sets, e.name + ': serie ' + e.sets + ' contro ' + p.sets); assert.ok(e.rest <= p.rest, e.name + ': pausa non allungata'); });
-  assert.ok(r.T < 90 * 0.95, 'la seduta resta piu corta dei minuti: ' + r.T.toFixed(1));
+  assert.ok(r.T <= 90 * 1.05, 'sta nei minuti: ' + r.T.toFixed(1));
+  /* con i muscoli sotto la fascia (tre serie sui fondamentali) il tempo che resta serve a una serie in piu, ma mai oltre i minuti dichiarati e solo dove manca lavoro */
+  const povera = scala(90);
+  assert.ok(povera.T <= 90, 'il riempimento sta nei minuti dichiarati: ' + povera.T.toFixed(1));
+  povera.dopo.forEach(e => { const p = povera.prima.find(x => x.name === e.name); assert.ok(p, e.name + ': nessun esercizio nuovo'); assert.ok(e.sets <= p.sets + 1, e.name + ': al massimo una serie in piu'); assert.ok(e.rest <= p.rest, e.name + ': pausa non allungata'); });
   /* sui programmi veri: a 90 minuti la durata media e molto sotto i minuti dichiarati (il lavoro utile sta in meno tempo) e nessuna pausa e piu lunga del massimo di classe */
   let somma = 0, n = 0;
   [2, 3, 4].forEach(days => ['massa', 'salute'].forEach(g => {

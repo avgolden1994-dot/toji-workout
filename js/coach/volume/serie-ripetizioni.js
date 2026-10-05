@@ -62,7 +62,7 @@ function prescriviSeduta(brief, base, tipoGiorno) {
     if (RX_NORDIC.test(senzaEmoji(e.name))) { sets = Math.min(sets, PARAM_NORDIC.serieMax); reps = ripetizioniFlessione(e.name); }   /* B1: al massimo 3 serie da 3-6 ripetizioni */
     /* PRG-13 (B8, B34): la pausa e quella della CLASSE dell esercizio e dell obiettivo (tabella in soglie-tempo.js): Hyperextension e Ponte Glutei non hanno piu 158 s. PRG-20 (D-P7, Convenzione): le donne
        -15% solo su D, E e su B, C con 8 ripetizioni o piu; oltre i 65 anni almeno 90/120 s. Il 5x5 e il 6x3 della forza restano a 180 s (la classe A della forza va da 180 a 240) */
-    const lim = limitiPausa(e.name, { obiettivo: tipoGiorno === 'ipertrofia' ? 'ipertrofia' : ob, reps: reps, donna: donna, parq: parqSi, over65: over65 });   /* il giorno di ipertrofia del PHUL ha le pause della massa anche con la forza come obiettivo (B2) */
+    const lim = limitiPausa(e.name, { obiettivo: tipoGiorno === 'ipertrofia' ? 'ipertrofia' : ob, minimiDa: ob, reps: reps, donna: donna, parq: parqSi, over65: over65 });   /* il giorno di ipertrofia del PHUL ha le pause della massa anche con la forza come obiettivo (B2) */
     let rest = lim.v;
     if (tipoGiorno === 'forza' && tipo === 'pesante') rest = giornoForzaCorto ? Math.min(lim.max, sogliaTempo('giornoForzaCorto').pausa) : (ob === 'ipertrofia' ? lim.max : lim.v);
     if (fisso || (forzaGoal && level !== 'principiante' && tipo === 'pesante' && sets === 6)) rest = Math.min(lim.max, Math.max(lim.lo, 180));
