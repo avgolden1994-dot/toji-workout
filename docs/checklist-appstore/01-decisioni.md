@@ -24,7 +24,7 @@ Piano: [sezione 1](../piano-lancio-appstore.md#1-decisioni-prese-e-questioni-ape
 - [ ] D7d Icona 1024x1024: stile deciso; asset Quiver con data, prompt e termini conservati
 - [ ] D7e Rinomina "Toji" → "3in" dove visibile (lavoro futuro; l'id `'toji'` e le chiavi `_toji` NON si toccano; vedi piano 1.3)
 - [x] D8 Solo iPhone (2026-10-05); Targeted Device Family = iPhone
-- [x] D9 Coach IA: **da togliere o disattivare con flag nella v1 iOS** (2026-10-05); lavoro di codice solo con l'OK dell'utente (piano 3.7)
+- [x] D9 Coach IA: **eseguita: rimosso per intero il 2026-10-05** (era: da togliere o disattivare con flag nella v1 iOS; piano 3.7). Resta da verificare dal proprietario: Worker Cloudflare (fuori dal repo) da disattivare o cancellare, con i suoi dati e log
 - [x] D10 Privacy: sezione 9 del piano e [bozza](../privacy-policy-bozza.md) (2026-10-05)
 - [ ] D10b Titolare e URL privacy policy (GitHub Pages; nome repo scelto prima)
 - [x] D11 Contenuti: asset Quiver creati dall'utente (registro con data/prompt/termini); YouTube: ricerca generica + embed del link incollato (2026-10-05)

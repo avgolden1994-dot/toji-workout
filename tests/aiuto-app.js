@@ -55,10 +55,11 @@ const PRELUDIO = `(function () {
 
 const aTempo = x => (x === null || x === undefined) ? null : (x instanceof Date ? x.getTime() : (typeof x === 'number' ? x : new Date(x).getTime()));
 
-/* Opzioni: ora (data/ISO/ms; default: l'ora vera), consenso (default true: coachAttivo()), lingua ('it'), modalita ('toji'),
-   casuale (seme di Math.random; false = quello vero), fixture (nome di un file di tests/fixture/programmi-v1, o l'oggetto) */
+/* Opzioni: ora (data/ISO/ms; default: l'ora vera), consenso (default true: coachAttivo(); false = 'no'; null = non toccare tz_consenso, resta quello di chiaviIniziali), lingua ('it'), modalita ('toji'),
+   casuale (seme di Math.random; false = quello vero), fixture (nome di un file di tests/fixture/programmi-v1, o l'oggetto),
+   chiaviIniziali (oggetto chiave -> valore messo nello store PRIMA di caricare gli script: per le pulizie che girano al caricamento) */
 function caricaApp(opz) {
-  const o = Object.assign({ ora: null, consenso: true, lingua: 'it', modalita: 'toji', casuale: 1, fixture: null }, opz || {});
+  const o = Object.assign({ ora: null, consenso: true, lingua: 'it', modalita: 'toji', casuale: 1, fixture: null, chiaviIniziali: null }, opz || {});
   const nulla = new Proxy(function () {}, { get: (t, k) => k === Symbol.toPrimitive ? () => '' : nulla, apply: () => nulla, construct: () => nulla });
   const store = {}, errori = [];
   const ctx = {
@@ -70,11 +71,13 @@ function caricaApp(opz) {
     __ora: { t: aTempo(o.ora) }, __seme: o.casuale === false ? null : Number(o.casuale)
   };
   ctx.window = ctx; ctx.self = ctx; ctx.globalThis = ctx;
+  if (o.chiaviIniziali) Object.keys(o.chiaviIniziali).forEach(k => { store[k] = String(o.chiaviIniziali[k]); });
   vm.createContext(ctx);
   vm.runInContext(PRELUDIO, ctx, { filename: 'aiuto-app:prelud' });
   const erroriCaricamento = [];
   sorgenti().forEach(s => { try { vm.runInContext(s.testo, ctx, { filename: s.file }); } catch (e) { erroriCaricamento.push(s.file + ': ' + e.message); } });
-  store.tz_consenso = o.consenso ? 'si' : 'no'; store.tz_lingua = o.lingua; store.tz_app_mode = o.modalita;
+  if (o.consenso !== null) store.tz_consenso = o.consenso ? 'si' : 'no';   /* consenso: null = lascia quello seminato in chiaviIniziali */
+  store.tz_lingua = o.lingua; store.tz_app_mode = o.modalita;
   vm.runInContext('currentMode = ' + JSON.stringify(o.modalita), ctx);
 
   const g = s => vm.runInContext(s, ctx);

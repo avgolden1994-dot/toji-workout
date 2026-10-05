@@ -14,10 +14,12 @@ Stato: fasi 1-4 fatte; la 5 (App Store) è rimandata. Le prossime modifiche part
 - Ancora da fare: soglie minori dentro le funzioni (mappa, n. 8 e n. 3) e interruttori per le regole storiche.
 
 ## Fase 3 — Nuove regole del coach (fatta)
-RIC-01…05 (serie in più nel blocco, pausa prima di abbassare il carico, posizione allungata, tetto alle tecniche al cedimento, rientro del piano), tutte spegnibili e provate in `tests/browser/regole-nuove.js`. Dettagli nel capitolo 19 della mappa. Il Coach IA **non** influisce ancora sulle decisioni (da decidere dopo la verifica del Worker).
+RIC-01…05 (serie in più nel blocco, pausa prima di abbassare il carico, posizione allungata, tetto alle tecniche al cedimento, rientro del piano), tutte spegnibili e provate in `tests/browser/regole-nuove.js`. Dettagli nel capitolo 19 della mappa. Il Coach IA **non** influisce ancora sulle decisioni (da decidere dopo la verifica del Worker). Aggiornato il 2026-10-05: il Coach IA è stato rimosso per intero; la questione è chiusa, il coach a regole non ha mai letto nulla da lì.
 
-## Fase 4 — Coerenza del Coach IA (fatta nell'app)
+## Fase 4 — Coerenza del Coach IA (fatta nell'app; superata il 2026-10-05: il Coach IA è stato rimosso)
 Il consenso elenca tutto ciò che esce dal telefono (`TESTI_IA`), tradotto in en/es/de e controllato da un test. **Resta da fare lato server**: verificare nel Worker Cloudflare se i dati della seduta vengono conservati; il testo non promette più «non vengono salvati».
+
+Aggiornato il 2026-10-05, decisione del proprietario: il Coach IA è **rimosso per intero** (client `js/coach/coach-ia.js`, consenso `tz_consenso_ia`, voce del Worker nella CSP). Il consenso IA di questa fase (`TESTI_IA`) non esiste più e la verifica lato server non serve più all'app; resta da verificare dal proprietario il Worker Cloudflare, che sta fuori dal repo (disattivarlo o cancellarlo, con i suoi dati e log). Il consenso del coach locale (`coachAttivo()`, `tz_consenso`) non cambia. Le chiavi `tz_consenso_ia`, `tz_device_ia`, `tz_ia_uso` orfane si ripuliscono all'avvio; i commenti già salvati (`commentoIA`) restano nei dati e nei backup ma non vengono più mostrati.
 
 ## Fase 4b — Struttura professionale e intensità del coach (fatta)
 - **Abbinamenti e struttura (ABB)**: ordine della seduta, niente esercizi doppi, copertura settimanale (polpacci, deltoidi posteriori, core, braccia), tirate non meno delle spinte, superserie solo tra antagonisti, 3 giorni = Upper / Lower / Full Body. `js/coach/programma/struttura-pro.js`, `tests/browser/coerenza-schede.js` (735 profili).

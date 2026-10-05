@@ -167,10 +167,6 @@ window.endWorkout = function() {
   fermaTempoSeduta(true);
 
   if (coachAttivo() && !sedutaInterrotta && !historyEntry.passata) { try { imparaDallaSeduta(activeList); } catch (err) {} }
-  /* coach IA: commento a fine seduta, in background (non blocca nulla) */
-  if (anySetChecked && !sedutaInterrotta && !historyEntry.passata && typeof coachIAAttivo === 'function' && coachIAAttivo()) {
-    try { commentaSeduta(historyEntry.id, true); } catch (err) {}
-  }
   ripristinaSostituzioni(list);   /* macchinario occupato: l esercizio previsto torna nel piano */
   impostaOccupato(null);
   list.forEach(e => {

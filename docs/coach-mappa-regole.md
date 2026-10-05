@@ -26,7 +26,7 @@ Scelte rispetto alla tabella B.1 del piano, che metteva alcuni codici in due rig
 | `sentinella` | **La Sentinella** | «Controllo che ti alleni al sicuro e che recuperi: dolori, fatica, scarichi, età e salute.» | PRG-07, PRZ-01..05, DEC-01..10, DOL-01, BIO-02..03, BIO-06, INT-01..03, CAR-03, CAR-08, CAR-10, RIC-04..05, STR-01, MAV-01..11, MAV-13..14, MAV-16, REC-01..09, REC-12, ETA-01..05, ETA-07..08, ETA-11..13, ETA-17..18, DON-13, MES-05, MES-07..08, MES-10, MES-19, ALG-12, SEL-11, PCO-08, CST-01..02, CST-07, CST-09, DCA-01 | `prontezza.js`, `questionario-decisioni.js`, `mi-sento-male.js`, `intensita.js` (INT-01..03) → `js/coach/sicurezza/` |
 | `tecnico` | **Il Tecnico** | «Conosco gli esercizi: muscoli, varianti, esecuzione, riscaldamento.» | SUG-01..08, BIO-01, BIO-04..05, BIO-07, TEC-01..07, SEL-02, SEL-12, RIS-01..13 | `js/dati/*`, `biomeccanica.js`, `suggeritore.js`, `pannello.js`, `motore.js` (alternative) → `js/coach/tecnica/` |
 | `preparatore` | **Il Preparatore** | «Penso al resto della settimana: cardio, passi, peso e composizione, solo come informazione.» | COR-01..03, BIA-01..03, MET-03, PRG-26, AER-01..04, NUT-01..02, PES-01..04, DCA-02..03, OBI-02, OBI-05..08, OBI-11, OBI-17 | `js/coach/bia/*`, `repertorio.js` (corpoCoach), `compone.js` (fattoreFisico) → `js/coach/corpo/` |
-| `motivatore` | **Il Motivatore** | «Ti conosco: come ti alleni meglio, cosa fare quando salti, il periodo che stai vivendo.» | PSI-01..12, MOM-01..06, SAL-01, ADE-01, ORA-01, IA-01..05, PRG-36, CST-03..06, CST-08, CST-10..12, OBI-18, PRN-19 | `psicologia.js`, `metodi-momenti.js` (MOMENTI), `stato.js`, `coach-ia.js` → `js/coach/mente/` |
+| `motivatore` | **Il Motivatore** | «Ti conosco: come ti alleni meglio, cosa fare quando salti, il periodo che stai vivendo.» | PSI-01..12, MOM-01..06, SAL-01, ADE-01, ORA-01, PRG-36, CST-03..06, CST-08, CST-10..12, OBI-18, PRN-19 | `psicologia.js`, `metodi-momenti.js` (MOMENTI), `stato.js` → `js/coach/mente/` |
 | `specialista` | **Lo Specialista** | «Se vuoi forza da powerlifting o un fisico da bodybuilding, preparo il percorso dedicato.» | FRZ-01..10, TAP-01, EST-01..06, MAV-15 | → `js/coach/specialita/` |
 
 ## 1. Come leggere la mappa
@@ -49,7 +49,7 @@ Ogni regola ha un **codice** (tre lettere e un numero): il codice indica l'area,
 | ESI | Esigenza del coach | ogni lunedi | `aggiornaEsigenza` |
 | PSI | Psicologia: chi ha davanti il coach | in tutto il resto | `psicoCoach`, `ritrattoCoach` |
 | MOM | Momenti di vita | in tutto il resto | `MOMENTI`, `setMomento` |
-| IA | Coach IA (commenti scritti) | fine seduta | `commentaSeduta` |
+| IA | Coach IA (commenti scritti): rimosso il 2026-10-05, vedi capitolo 13 | (era: fine seduta) | `commentaSeduta` (eliminata) |
 | ABB, INT, EPO, TEC, RIC | Struttura professionale, intensità dal corpo, epoca d'oro, tecniche, regole dalla ricerca | creazione del programma e seduta | `struttura-pro.js`, `intensita.js`, `metodi-epoca-oro.js`, `regole-nuove.js` |
 | ALG, MES, PRN, STD | Carico di riferimento e ripresa dopo lo scarico (ALG-02, MES-06, MES-09), RIR di partenza e scarico fuori dalle analisi (MES-02, MES-10..12), principiante (PRN-01), tabelle di forza (STD-01) | onda 0 del coach v2 | `caricoRiferimento`, `rirBersaglioBase`, `inScarico`, `livelloStandardForza` |
 | MAV, ETA, CAS | Tecniche al cedimento vietate a chi non può (MAV-02, MAV-03), età e minorenni (ETA-01..04, ETA-18), casa senza sbarra (CAS-14) | creazione del programma, onboarding, corpo | `senzaCedimento`, `etaPerProgramma`, `corpoCoach` |
@@ -81,9 +81,9 @@ FINE SEDUTA        DEC + DOL  (4 domande -> decisioni annullabili; la mattina do
 CONTROLLI          ESI, STA, STR, LIV, SAL, ADE, CIC  (esigenza, stalli, carico settimanale, aderenza, nuovo ciclo)
 ```
 
-**Consenso.** Tutto il coach si spegne senza il consenso ai dati (`coachAttivo()`): niente questionario, prontezza, carico progressivo o consigli; l'app resta utilizzabile a mano. I dati restano sul telefono. L'unica parte che esce dal telefono e il **Coach IA**, con un consenso separato (capitolo 13).
+**Consenso.** Tutto il coach si spegne senza il consenso ai dati (`coachAttivo()`): niente questionario, prontezza, carico progressivo o consigli; l'app resta utilizzabile a mano. I dati restano sul telefono. Fino al 2026-10-04 l'unica parte che usciva dal telefono era il **Coach IA**, con un consenso separato; e stato rimosso il 2026-10-05 (capitolo 13): oggi nessun dato dell'allenamento esce dal telefono.
 
-**Principio dichiarato nel codice:** il coach e un sistema di regole, non una rete neurale; ogni suggerimento ha il suo motivo scritto (campo `motivo`/`reason`) ed e annullabile. Il Coach IA commenta ma "i numeri li decide sempre il coach delle regole".
+**Principio dichiarato nel codice:** il coach e un sistema di regole, non una rete neurale; ogni suggerimento ha il suo motivo scritto (campo `motivo`/`reason`) ed e annullabile. Il Coach IA (rimosso il 2026-10-05, capitolo 13) commentava ma "i numeri li decide sempre il coach delle regole".
 
 ## 3. Cosa sa il coach di te (ingressi)
 
@@ -485,18 +485,17 @@ Elenco dei 10 periodi (volume = fattore sulle serie di TUTTO il piano; RIR = rip
 - **MOM-06** settimana pesante: se la prontezza media degli ultimi 8 giorni (>=3 misure) e <50, il coach chiede "Cosa succede?" e propone di segnare un periodo (Hooper: >7 giorni = segnale).
 
 
-## 13. Coach IA
+## 13. Coach IA (rimosso il 2026-10-05, decisione del proprietario)
 
-- **IA-01** serve un consenso a parte (tz_consenso_ia) oltre a quello ai dati; attivabile solo se il coach (consenso ai dati) e attivo.
+**Stato: rimosso il 2026-10-05 (decisione del proprietario).** Il capitolo resta come storia di cosa faceva il Coach IA; nulla di quanto segue e piu nel codice. I cinque codici `IA-01`..`IA-05` **non sono piu regole**: non hanno una riga nell'elenco delle regole di questa mappa, non sono nel catalogo (`js/coach/catalogo-regole.js`) e non sono assegnati a nessun sotto-coach nel capitolo 0; sono codici ritirati nel registro `docs/coach-v2-decisioni.md` (A.3, «rimosso il 2026-10-05»), quindi `npm run catalogo -- --check` rifiuta una riga che li riusasse. Il Motivatore non ha piu nessun codice IA.
 
-- **IA-02** un solo tipo di richiesta oggi: 'commento' (due righe da allenatore dopo la seduta, anche in automatico a fine seduta se non interrotta e non "passata"). Server: Worker Cloudflare (coach-allenamento.avgolden1994.workers.dev) che nasconde la chiave e conta i consulti (limite mensile mostrato nelle Opzioni: usati/limite).
+**Cosa e stato tolto.** Il client del Worker Cloudflare (`js/coach/coach-ia.js`, con la sua riga in `index.html` e la voce nella CSP), il consenso a parte `tz_consenso_ia`, l'invio di serie, RPE, obiettivi, livello, fase del corpo, esito del PAR-Q, prontezza, lingua e codice anonimo del dispositivo per ottenere un commento, il riquadro con il commento a fine seduta, la riga «Coach IA» nelle impostazioni, l'eccezione nell'informativa sulla privacy e le frasi e gli stili usati solo da lui. Da questo momento dal telefono non esce piu nessun dato dell'allenamento verso un servizio esterno.
 
-- **IA-03** cosa viene inviato (contestoSeduta): obiettivi, livello, fase del corpo (deficit/massa...), "Modalita prudente attiva (questionario di salute)" se il PAR-Q e positivo, settimana del programma, titolo/data/durata della seduta, punteggio di prontezza, esercizi saltati, per ogni esercizio le serie fatte (ripetizioni x carico, RPE, cedimento) e la volta precedente; lingua dell'app; un identificativo anonimo casuale del dispositivo (UUID). Niente nome, niente BIA.
+**Cosa resta.** I commenti IA gia salvati nello storico (campo `commentoIA` della seduta) restano nei dati e nei backup, ma non vengono piu mostrati. Le chiavi orfane `tz_consenso_ia`, `tz_consenso_ia_data`, `tz_device_ia` e `tz_ia_uso` vengono ripulite in silenzio a ogni avvio (`ripulisciChiaviCoachIA` in `js/core/storage.js`); un backup vecchio che le contiene non le rimette (`js/core/backup.js`).
 
-- **IA-04** COERENZA CON IL CONSENSO (da decidere): il testo che l'utente accetta dice "serie fatte, obiettivi e livello, niente nome e niente BIA". Il codice invia anche: fase del corpo, stato "modalita prudente" (deriva dal questionario di salute PAR-Q), punteggio di prontezza, durata, settimana del programma, identificativo del dispositivo. Il dato legato alla salute (modalita prudente) non e citato nel consenso.
+**Perche le regole del coach non cambiano.** Il coach a regole (`js/coach/`) non leggeva nulla dal Coach IA: la relazione andava in un solo senso, il Coach IA leggeva la seduta gia svolta e scriveva solo `commentoIA`. Nessuna regola (PRG, CAR, PRO, DEC, ESI e le altre) dipendeva da quel campo o dal consenso `tz_consenso_ia`; per questo nessun altro codice del catalogo e stato toccato e il generatore delle schede e i carichi producono gli stessi numeri di prima (prove: i golden dei carichi e dei programmi).
 
-- **IA-05** errori mai bloccanti: offline, rete, formato; timeout 25 s; il commento si puo richiedere a mano dalla seduta.
-
+**Storia (com'era fino al 2026-10-04, non piu in vigore).** `IA-01`: serviva un consenso a parte (`tz_consenso_ia`) oltre a quello ai dati, attivabile solo con il coach attivo. `IA-02`: un solo tipo di richiesta, il «commento» (due righe da allenatore dopo la seduta, anche in automatico a fine seduta se non interrotta e non «passata»), a un Worker Cloudflare (`coach-allenamento.avgolden1994.workers.dev`) che nascondeva la chiave e contava i consulti (limite mensile mostrato nelle Opzioni). `IA-03`: cosa veniva inviato (obiettivi, livello, fase del corpo, «modalita prudente» se il PAR-Q era positivo, settimana, titolo, data e durata della seduta, prontezza, esercizi saltati, serie fatte con RPE e cedimento e la volta precedente, lingua dell'app, un identificativo anonimo casuale del dispositivo; niente nome, niente BIA). `IA-04`: la coerenza con il testo del consenso era da decidere (il testo non citava la modalita prudente). `IA-05`: errori mai bloccanti (offline, rete, formato; timeout 25 s; il commento si poteva richiedere a mano).
 
 ## 14. Salvaguardie e messaggi di salute
 
@@ -516,7 +515,7 @@ Dove il coach si ferma, rallenta o invia dal medico (utile per una revisione di 
 
 | Chiave | Contenuto |
 |---|---|
-| `tz_consenso`, `tz_consenso_ia` | consenso ai dati / al Coach IA (con data e versione) |
+| `tz_consenso`, `tz_consenso_ia` | consenso ai dati / al Coach IA (con data e versione); `tz_consenso_ia` e rimossa il 2026-10-05 e ripulita a ogni avvio (capitolo 13) |
 | `tz_onboarded` | questionario iniziale gia fatto o saltato |
 | `coach_plus_profile_<modalita>` | profilo: obiettivi, livello, fastidi, prove, psicologia, momento di vita, esigenza (valore e storia), orario, fase, cicli |
 | `coach_plus_programma_<modalita>` | programma attivo: sedute, settimane, blocchi, fasi, RIR per settimana, inizio |
@@ -563,7 +562,7 @@ Tassonomie diverse per le zone del corpo: i **fastidi** del questionario sono 3 
 
 Elenco in ordine di importanza. Sono fatti letti nel codice, non ancora corretti.
 
-1. ~~Consenso del Coach IA incompleto~~ — risolto: il testo elenca tutto ciò che esce dal telefono (`TESTI_IA` in `js/coach/coach-ia.js`) e un test controlla che sia tradotto. Resta da verificare lato Worker se i dati vengono conservati.
+1. ~~Consenso del Coach IA incompleto~~ — risolto: il testo elenca tutto ciò che esce dal telefono (`TESTI_IA` in `js/coach/coach-ia.js`) e un test controlla che sia tradotto. Resta da verificare lato Worker se i dati vengono conservati. (Poi il Coach IA e stato rimosso per intero il 2026-10-05: il punto non serve piu.)
 2. **Conoscenza degli esercizi ripetuta** in 14 tabelle (capitolo 16). ~~Due tabelle mai usate, `STANDARD_FORZA` e `ALZATE_BASE`~~ — risolto nell'onda 0: le legge STD-01 (`livelloStandardForza`) come controllo di coerenza del livello. In parte risolta anche la ripetizione: hip thrust e ponte glutei non sono più nell'hinge, i femorali non sono più tra i secondari di squat e leg press (dati e scheda tecnica), il Pullover con Manubrio ha bersaglio dorsali (SEL-02). La scheda tecnica con muscoli primari e secondari (`TECNICA`) e usata solo per mostrare la scheda dell'esercizio, non dalle regole.
 3. **Soglie diverse per lo stesso concetto.**
    - Massa grassa alta nelle donne: 30% e 35% in `analyzeBia`, 32% in `fattoreFisico` e nella ricomposizione (BIA, MET-03, COR-02).
@@ -585,7 +584,7 @@ Elenco in ordine di importanza. Sono fatti letti nel codice, non ancora corretti
 ## 18. Come usare questa mappa
 
 1. Leggila e segna le regole da **tenere**, **cambiare** o **togliere** (ad esempio con T / C / X accanto al codice).
-2. Decidi i punti del capitolo 17, a cominciare dall'1 (consenso del Coach IA).
+2. Decidi i punti del capitolo 17, a cominciare dall'1 (consenso del Coach IA: punto superato, il Coach IA e stato rimosso il 2026-10-05).
 3. Il riordino consigliato parte da qui: una scheda per esercizio al posto delle tabelle (capitolo 16), un catalogo unico di regole con i parametri in una tabella, e test sui casi noti. Questa mappa diventa l'elenco dei casi da provare.
 
 ## 19. Regole aggiunte dalla ricerca (RIC)
@@ -634,7 +633,7 @@ Cinque regole nuove, ognuna spegnibile (`regolaAttiva`, vedi `js/coach/parametri
 | Dati del corpo (BIA) | `js/coach/bia/lettore.js`, `opzioni.js` |
 | Biomeccanica, esigenza, psicologia, metodi e momenti | `js/coach/biomeccanica.js`, `esigenza.js`, `psicologia.js`, `metodi-momenti.js`, `compone.js` |
 | Stato e pannello del coach | `js/coach/stato.js`, `pannello.js` |
-| Coach IA (IA) | `js/coach/coach-ia.js` |
+| Coach IA (IA), rimosso il 2026-10-05 | `js/coach/coach-ia.js` (eliminato) |
 
 ## 21. Volume e tempo (IPE, CAS)
 

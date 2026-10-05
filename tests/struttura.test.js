@@ -57,14 +57,6 @@ test('manifest e toji.html (vecchio indirizzo) puntano a index.html', () => {
   assert.strictEqual(JSON.parse(leggi('manifest.json')).start_url, './index.html');
   assert.match(leggi('toji.html'), /index\.html/);
 });
-test('il consenso del Coach IA e tradotto in ogni lingua', () => {
-  global.window = {};
-  ['en', 'es', 'de'].forEach(l => new Function(leggi('js/lingue/' + l + '.js')).call(global));
-  const blocco = leggi('js/coach/coach-ia.js').match(/const TESTI_IA = \{([\s\S]*?)\n\};/)[1];
-  const frasi = [...blocco.matchAll(/^  \w+: '(.*)',?$/gm)].map(m => m[1].replace(/\\'/g, "'"));
-  assert.ok(frasi.length >= 6);
-  ['en', 'es', 'de'].forEach(l => frasi.forEach(f => assert.ok(window.I18N[l][f], l + ' non traduce: ' + f.slice(0, 50))));
-});
 test('l audio degli altri non si blocca: niente sblocco al primo tocco, niente playback fuori dal cedimento', () => {
   const js = scripts.filter(f => !f.includes('lingue/'));
   const CED = 'js/ui/allenamento/cedimento.js', MUS = 'js/core/musica-altre-app.js';

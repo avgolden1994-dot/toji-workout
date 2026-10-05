@@ -148,7 +148,6 @@ const ASSETS = [
   './js/ui/calendario/copia-settimana.js',
   './js/ui/menu-settimana.js',
   './js/ui/sessione-completata.js',
-  './js/coach/coach-ia.js',
   './js/ui/esporta-ics.js',
   './js/avvio.js',
   './esercizi/ex-01-panca-piana.svg',

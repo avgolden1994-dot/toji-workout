@@ -5,8 +5,10 @@
 /* ============ 2. BACKUP E RIPRISTINO ============ */
 const CHIAVI_APP = /^(coach_plus|tz_)/;
 const CHIAVI_TEMPORANEE = /^(tz_seduta_inizio|tz_seduta_speciale|tz_guida_backup)$|_rotto_/;
-/* un file di backup non puo dare i consensi al posto dell utente (ne quello ai dati ne quello al Coach IA) ne cambiare l identificativo del dispositivo */
-const CHIAVI_NON_RIPRISTINABILI = /^(tz_consenso|tz_device_ia)/;
+/* un file di backup non puo dare il consenso al posto dell utente (tz_consenso, con data e versione). Le chiavi del vecchio Coach IA, rimosso
+   (tz_consenso_ia, tz_device_ia, tz_ia_uso: vedi CHIAVI_COACH_IA_RIMOSSO in storage.js), possono stare ancora in un backup vecchio:
+   non si rimettono, cosi non tornano orfane sul telefono fino al prossimo avvio */
+const CHIAVI_NON_RIPRISTINABILI = /^(tz_consenso|tz_consenso_ia|tz_device_ia|tz_ia_uso)/;
 /* testi di un backup: via < e > da ogni valore, cosi un file manomesso non puo iniettare codice nelle schermate */
 function valorePulito(v) {
   try { const j = JSON.parse(v); if (j && typeof j === 'object') return JSON.stringify(pulisciDeep(j)); } catch (e) {}

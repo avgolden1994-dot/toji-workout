@@ -22,7 +22,6 @@ function mostraSessione(s) {
   let html = '<div class="mc-done-box"><div class="mc-done-t">\u2713 Completato</div>' +
     '<div class="dv-meta">' + escapeHtml(s.doneAt || '') + '</div>' +
     (vol > 0 ? '<div class="dv2-tot">Volume totale <b>' + fmt(vol) + ' kg</b></div>' : '') + '</div>';
-  html += '<div id="ia-box">' + htmlCommentoIA(s.id) + '</div>';
 
   if (conDettaglio) {
 
@@ -76,4 +75,21 @@ window.openDoneView = function(k) {
     esercizi: h0 ? h0.exercises : null, items: v.items,
     id: v.historyId || (h0 && h0.id) || null
   });
+};
+
+/* dalla sezione Allenamenti completati */
+window.openHistoryDetail = function(i) {
+  const x = loadHistory()[i];
+  if (!x) return;
+  const fatte = x.exercises.reduce((a, e) => a + e.doneSets, 0);
+  const tot = x.exercises.reduce((a, e) => a + e.totalSets, 0);
+  mostraSessione({
+    title: getDayTitle(x.day), day: x.day, doneAt: x.date,
+    summary: fatte + ' di ' + tot + ' serie' + (x.berserk ? ' \u2022 con cedimento' : ''),
+    sessione: x.sessione || null, esercizi: x.exercises, id: x.id
+  });
+};
+
+window.closeDoneView = function() {
+  document.getElementById('done-view-sheet').classList.add('hidden');
 };

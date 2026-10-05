@@ -22,7 +22,7 @@
 - [0. Analisi dell'architettura attuale e cosa cambia con un wrapper nativo](#0-analisi-dellarchitettura-attuale-e-cosa-cambia-con-un-wrapper-nativo)
 - [1. Decisioni prese e questioni aperte](#1-decisioni-prese-e-questioni-aperte)
 - [2. Preparazione tecnica iOS](#2-preparazione-tecnica-ios)
-- [3. Sicurezza e privacy](#3-sicurezza-e-privacy) (3.7 rimozione del Coach IA)
+- [3. Sicurezza e privacy](#3-sicurezza-e-privacy) (3.7 rimozione del Coach IA: eseguita il 2026-10-05)
 - [4. Conformità alle Review Guidelines](#4-conformità-alle-review-guidelines)
 - [5. Qualità e test](#5-qualità-e-test)
 - [6. Rilascio e dopo](#6-rilascio-e-dopo)
@@ -44,7 +44,7 @@ Legenda responsabile: **U** = Utente, **C** = Claude, **U+C** = entrambi.
 
 **Obiettivo.** Capire cosa funziona così com'è, cosa si rompe e cosa va aggiunto quando la PWA gira in una WKWebView (Capacitor) invece che in Safari/da schermata Home.
 
-**Stato attuale in sintesi** (dall'analisi del repo, 2026-10-05): JavaScript ES5 vanilla, nessun build né bundler, script globali ordinati in `index.html`; 13 file CSS; `js/dati`, `js/coach` (motore a regole), `js/ui`, `js/core`. Nessun backend nel repo; Coach IA opzionale tramite un Worker Cloudflare (da togliere nella build iOS v1, D9). Nessun analytics. 25 file di test in `tests/` più `tests/browser`. Esiste già `js/core/nativo.js`, che rileva `window.Capacitor.isNativePlatform()` e prepara notifiche locali (id 7001), il plugin custom `RestTimerActivity` (Live Activity, NON incluso: la parte Swift va scritta) e le haptics con fallback `navigator.vibrate(200)`. Non esistono `capacitor.config.*` né la cartella `ios/`.
+**Stato attuale in sintesi** (dall'analisi del repo, 2026-10-05): JavaScript ES5 vanilla, nessun build né bundler, script globali ordinati in `index.html`; 13 file CSS; `js/dati`, `js/coach` (motore a regole), `js/ui`, `js/core`. Nessun backend nel repo; Coach IA opzionale tramite un Worker Cloudflare (da togliere nella build iOS v1, D9; aggiornato il 2026-10-05: rimosso per intero dal codice, D9 eseguita). Nessun analytics. 25 file di test in `tests/` più `tests/browser`. Esiste già `js/core/nativo.js`, che rileva `window.Capacitor.isNativePlatform()` e prepara notifiche locali (id 7001), il plugin custom `RestTimerActivity` (Live Activity, NON incluso: la parte Swift va scritta) e le haptics con fallback `navigator.vibrate(200)`. Non esistono `capacitor.config.*` né la cartella `ios/`.
 
 | Componente | Oggi (PWA) | In iOS nativo (WKWebView/Capacitor) | Azione |
 |---|---|---|---|
@@ -61,9 +61,9 @@ Legenda responsabile: **U** = Utente, **C** = Claude, **U+C** = entrambi.
 | Storage `localStorage` (`coach_plus_*`, `tz_*`, consensi, BIA) | Persistente salvo pulizia utente | Può essere sfrattato dall'OS (guida Capacitor storage); caso di dati azzerati in un upgrade 5 to 6 (issue #7548) (da verificare, consultato 2026-10-05) | Backup dei dati critici su Preferences/Filesystem, test di migrazione. NON rinominare `coach_plus_*`, `tz_*`, suffisso `_toji` |
 | IndexedDB (MP3 `tz_audio_db`, foto progressi) | Persistente | Stessa fragilità; foto = permesso/Info.plist | Valutare Filesystem per file grandi, test di eviction |
 | Import/export (JSON/CSV/ICS) | `<input type=file>` e download | Download via blob spesso non funziona in WKWebView | `@capacitor/share` + `@capacitor/filesystem` (sez. 2.10) |
-| CSP in `index.html` | `script-src 'self' 'unsafe-inline' cdnjs/youtube/spotify`; `connect-src` Worker | Origine `capacitor://localhost`; serve controllare che nulla venga bloccato | Adattare e testare; piano per ridurre `unsafe-inline` (sez. 3) |
+| CSP in `index.html` | `script-src 'self' 'unsafe-inline' cdnjs/youtube/spotify`; `connect-src` Worker (aggiornato il 2026-10-05: voce del Worker tolta, `connect-src` resta `'self' blob: data:` e cdnjs) | Origine `capacitor://localhost`; serve controllare che nulla venga bloccato | Adattare e testare; piano per ridurre `unsafe-inline` (sez. 3) |
 | Google Fonts / cdnjs (pdf.js con SRI, worker senza SRI) | Da CDN | Dipendenza di rete: peggiora offline e privacy | Includere localmente nel bundle (sez. 2.6, 3) |
-| Coach IA (Worker Cloudflare) | `fetch` verso `coach-allenamento.avgolden1994.workers.dev`; invia serie/carichi/RPE/livello | **Decisione D9: tolto o disattivato con flag nella build iOS v1** | Punti di codice in 3.7; niente App Privacy per dati inviati, niente demo 2.1 |
+| Coach IA (Worker Cloudflare) | `fetch` verso `coach-allenamento.avgolden1994.workers.dev`; invia serie/carichi/RPE/livello | **Decisione D9: eseguita, rimosso per intero il 2026-10-05** (era: tolto o disattivato con flag nella build iOS v1) | Punti di codice in 3.7 (storico); niente App Privacy per dati inviati, niente demo 2.1; il Worker sta fuori dal repo: il proprietario può disattivarlo o cancellarlo |
 | Dark mode | `data-theme` | Va coordinata con tema di sistema e status bar | Test; `@capacitor/status-bar` |
 | Safe area | `viewport-fit=cover` + `env(safe-area-inset-*)` | Già adatto, incluso Dynamic Island | Test su dispositivi con notch |
 | i18n it/en/es/de | Dizionari nel codice | Uguale; servono anche i metadati ASC e i testi `Info.plist` localizzati | Localizzare metadati e usage strings |
@@ -99,7 +99,7 @@ Legenda responsabile: **U** = Utente, **C** = Claude, **U+C** = entrambi.
 | D6 | Account Apple | **Individuale.** Il nome legale dell'utente comparirà come venditore | 1.3, 8 |
 | D7 | Nome | **"3in"** (sostituisce "Toji Workout": il rischio Jujutsu Kaisen sparisce). Da fare: nome libero in ASC (i nomi sono unici), ricerca marchi EUIPO/TMview e USPTO, sottotitolo (max 30 caratteri), parole chiave, bundle id. Vedi 1.3 | 1.3, 4.6 |
 | D8 | Dispositivi | **Solo iPhone** per ora: niente screenshot iPad 13", in Xcode Targeted Device Family = iPhone | 2.11, 4.4 |
-| D9 | Coach IA | **Da togliere dalla build iOS v1** (o disattivare con un flag): l'app è guidata dal coach a regole. Niente `connect-src` verso il Worker Cloudflare, niente consenso IA, niente "AI di terzi" (5.1.2), nessun requisito 2.1 sul backend attivo. Punti di codice in 3.7 (lavoro futuro, solo con l'OK dell'utente) | 3.7 |
+| D9 | Coach IA | **Eseguita: rimosso per intero il 2026-10-05** (decisione del proprietario; era: da togliere dalla build iOS v1 o disattivare con un flag). L'app è guidata dal coach a regole. Niente `connect-src` verso il Worker Cloudflare, niente consenso IA, niente "AI di terzi" (5.1.2), nessun requisito 2.1 sul backend attivo. Punti di codice in 3.7 (ora storico) | 3.7 |
 | D10 | Privacy | **Capirne di più:** sezione 9 (in parole semplici) e bozza in [`privacy-policy-bozza.md`](privacy-policy-bozza.md), da ospitare gratis con GitHub Pages | 3.6, 9 |
 | D11 | Contenuti | Le immagini Quiver.ai le crea l'utente: per ogni asset si conservano data, prompt e copia dei termini Quiver (https://quiver.ai/legal/terms/, sez. 5.2 sull'uso commerciale e piano usato: da verificare, consultato 2026-10-05). YouTube: vedi 3.3 e 4.6 | 3.3, 4.6 |
 | D12 | Tempi e rischio | **APERTA** ("dipende"): la stima ha due scenari | 1.2, 7.1 |
@@ -206,7 +206,7 @@ Fonte: https://mas.owasp.org/MASVS/ (non raggiunta nella ricerca: gruppi e contr
 | MASVS-STORAGE | Sì, alta | `localStorage`/IndexedDB contengono BIA (peso, altezza, massa grassa/magra, ECW, TBW, BMR) in chiaro; verificare che nessun dato finisca in log, in backup non voluti, in cache, in screenshot dello switcher. Valutare Keychain/cifratura per i dati BIA e per eventuali token. Controllare i file nel container (`Library`, `Documents`) dopo un uso tipico |
 | MASVS-CRYPTO | Limitata | Nessuna crittografia propria: se si cifra, usare API di sistema (CryptoKit/WebCrypto), mai algoritmi fatti in casa. Export compliance: solo HTTPS, `ITSAppUsesNonExemptEncryption=false` |
 | MASVS-AUTH | Non applicabile (nessun account) | Documentare che non c'è autenticazione; se in futuro si aggiunge, rivedere |
-| MASVS-NETWORK | Sì | Solo HTTPS (ATS di default); `connect-src` senza host esterni dopo la rimozione del Coach IA (D9, 3.7); valutare certificate pinning (probabilmente sproporzionato). Provare con proxy (mitmproxy) che nessun dato extra esca |
+| MASVS-NETWORK | Sì | Solo HTTPS (ATS di default); `connect-src` senza host esterni dopo la rimozione del Coach IA (D9, 3.7; aggiornato il 2026-10-05: eseguita; resta solo cdnjs per pdf.js, da togliere in nativo); valutare certificate pinning (probabilmente sproporzionato). Provare con proxy (mitmproxy) che nessun dato extra esca |
 | MASVS-PLATFORM | Sì, alta | WebView: no `allowsInlineMediaPlayback` inutili, nessun bridge esposto oltre i plugin necessari, `limitsNavigationsToAppBoundDomains` valutato, schemi URL/deep link assenti o validati, `target=_blank` verso Safari, iframe YouTube/Spotify isolati. Test su XSS (3.2) e su apertura di URL arbitrari |
 | MASVS-CODE | Sì | `npm audit`, aggiornamenti Capacitor/plugin, nessun codice scaricato dopo l'installazione (2.5.2), scansione segreti nel repo (gitleaks o simile) e nella history, build di release senza `debuggable` / `webContentsDebuggingEnabled` |
 | MASVS-RESILIENCE | Bassa priorità | App non critica: niente jailbreak detection. Verificare solo che l'app non esponga debug in release |
@@ -215,7 +215,7 @@ Fonte: https://mas.owasp.org/MASVS/ (non raggiunta nella ricerca: gruppi e contr
 ### 3.2 Dati sul dispositivo, import e XSS
 - BIA in chiaro in `localStorage`: definire se accettabile (dati solo locali, sul dispositivo dell'utente) oppure migrare in Keychain/Preferences cifrate. Raccomandazione: accettare per la v1 dopo documentazione, ma valutare la migrazione (rischio proporzionato: nessun account, nessun cloud).
 - Import CSV/JSON: difese esistenti `nomeSicuro`, `jsArg`, `pulisciDeep`. Aggiungere test con payload XSS in tutti i campi importati (nomi esercizi, note, link) e in ogni punto di render `innerHTML`.
-- CSP: oggi `script-src 'self' 'unsafe-inline'` + cdnjs/youtube/spotify. Piano per ridurlo: (1) spostare gli script inline in file; (2) rimuovere gli handler `onclick=` inline a favore di `addEventListener`; (3) usare hash/nonce se serve; (4) in nativo, includere pdf.js localmente e togliere cdnjs. Attenzione: in nativo l'origine è `capacitor://localhost`; con il Coach IA tolto (3.7) il `connect-src` non deve più citare il Worker Cloudflare; testare ogni schermata dopo le modifiche.
+- CSP: oggi `script-src 'self' 'unsafe-inline'` + cdnjs/youtube/spotify. Piano per ridurlo: (1) spostare gli script inline in file; (2) rimuovere gli handler `onclick=` inline a favore di `addEventListener`; (3) usare hash/nonce se serve; (4) in nativo, includere pdf.js localmente e togliere cdnjs. Attenzione: in nativo l'origine è `capacitor://localhost`; con il Coach IA tolto (3.7; aggiornato il 2026-10-05: fatto, `connect-src` non cita più il Worker Cloudflare); testare ogni schermata dopo le modifiche.
 - Limiti già noti in [`SICUREZZA.md`](SICUREZZA.md): `unsafe-inline`, dati in chiaro, worker pdf.js senza SRI, servizi video esterni.
 
 ### 3.3 Servizi esterni
@@ -233,15 +233,17 @@ Usage strings localizzate (it/en/es/de) solo per ciò che serve davvero: foto pr
 - Minori: l'app non è per bambini (non Kids Category, 1.3/5.1.4); valutare età minima e il testo del consenso; il questionario età (sez. 4) va compilato coerentemente.
 
 ### 3.6 Privacy policy, App Privacy labels, Privacy Manifest
-- **Privacy policy** a URL pubblico in App Store Connect e raggiungibile in app (5.1.1(i)). Deve descrivere dati raccolti (con D3 e D9: solo locali, più l'email di feedback), servizi di terzi facoltativi (YouTube/Spotify), acquisti IAP, conservazione, diritti GDPR, contatti.
-- **App Privacy labels** (nutrition labels): obbligatorie; pagina d'aiuto non raggiunta (da verificare, consultato 2026-10-05). Con dati solo locali (D3), Coach IA tolto (D9) e feedback via `mailto:`, l'etichetta "Data Not Collected" resta plausibile (da verificare, consultato 2026-10-05). Una vera chat con backend cambierebbe le etichette. Il tip jar IAP non aggiunge dati raccolti dallo sviluppatore, ma da rivedere se si usa un SDK di terzi.
+- **Privacy policy** a URL pubblico in App Store Connect e raggiungibile in app (5.1.1(i)). Deve descrivere dati raccolti (con D3 e D9: solo locali, più l'email di feedback), servizi di terzi facoltativi (YouTube/Spotify; aggiornato il 2026-10-05: anche pdf.js da cdnjs e il link a Google Calendar finché restano nel codice), acquisti IAP, conservazione, diritti GDPR, contatti.
+- **App Privacy labels** (nutrition labels): obbligatorie; pagina d'aiuto non raggiunta (da verificare, consultato 2026-10-05). Con dati solo locali (D3), Coach IA tolto (D9) e feedback via `mailto:`, l'etichetta "Data Not Collected" resta plausibile (da verificare, consultato 2026-10-05). Aggiornato il 2026-10-05, D9 eseguita: nel codice non resta nessun invio a server del titolare; **PUNTO DA VERIFICARE a mano in App Store Connect**: come Apple tratta i player YouTube/Spotify incorporati, pdf.js da cdnjs (se non incluso in locale) e i link a Google Calendar/YouTube rispetto alla dichiarazione di terzi (non dimostrato qui). Una vera chat con backend cambierebbe le etichette. Il tip jar IAP non aggiunge dati raccolti dallo sviluppatore, ma da rivedere se si usa un SDK di terzi.
 - **URL della policy:** GitHub Pages (gratis, URL stabile); il nome del repository finisce nell'URL (vedi 1.3). Bozza in [`privacy-policy-bozza.md`](privacy-policy-bozza.md); spiegazione semplice in sezione 9.
 - **Privacy Manifest `PrivacyInfo.xcprivacy`**: obbligatorio per le "required reason APIs" dal 1/5/2024 (https://developer.apple.com/documentation/bundleresources/describing-use-of-required-reason-api). `UserDefaults` richiede il motivo `CA92.1`; verificare se Capacitor e i plugin includono già un proprio manifest e se serve quello dell'app (da verificare, consultato 2026-10-05). `NSPrivacyTracking=false`.
 - **ATT** (App Tracking Transparency): non necessario senza tracking (5.1.2).
-- **GDPR art. 9**: il BIA è dato relativo alla salute; base giuridica consenso esplicito art. 9(2)(a), già presente in app (`tz_consenso`, `tz_consenso_ia`) con informativa in 4 lingue. Con app solo locale e senza Coach IA, lo sviluppatore in genere non è titolare di quei dati; lo resta per l'email di feedback e lo diventerebbe con analytics o cloud (da verificare con un legale, consultato 2026-10-05). Il consenso IA (`tz_consenso_ia`) sparisce con il Coach IA (3.7).
+- **GDPR art. 9**: il BIA è dato relativo alla salute; base giuridica consenso esplicito art. 9(2)(a), già presente in app (`tz_consenso`, `tz_consenso_ia`) con informativa in 4 lingue. Con app solo locale e senza Coach IA, lo sviluppatore in genere non è titolare di quei dati; lo resta per l'email di feedback e lo diventerebbe con analytics o cloud (da verificare con un legale, consultato 2026-10-05). Il consenso IA (`tz_consenso_ia`) è sparito con il Coach IA (3.7; aggiornato il 2026-10-05: rimosso, le chiavi orfane si ripuliscono all'avvio); resta `tz_consenso`.
 - **1.4.1 e 5.1.3**: nessuna promessa medica; disclaimer; nessun dato sanitario in iCloud; nessuna pubblicità basata su dati di salute; se HealthKit, niente dati falsi.
 
 ### 3.7 Rimozione del Coach IA dalla build iOS v1 (D9): punti di codice
+
+**Aggiornato il 2026-10-05: eseguita, nel modo (2) sotto (eliminazione definitiva dal repository), per decisione del proprietario.** Tolti `js/coach/coach-ia.js`, il tag e la voce `connect-src` in `index.html`, il riquadro del commento, la riga nelle impostazioni, il consenso IA e quanto vi era collegato; le chiavi orfane `tz_consenso_ia`, `tz_device_ia`, `tz_ia_uso` sono ripulite all'avvio; i commenti già salvati (`commentoIA`) restano nei dati ma non sono più mostrati. Il Worker Cloudflare sta fuori dal repo: disattivarlo o cancellarlo (con dati e log) spetta al proprietario (da verificare dal proprietario). L'elenco qui sotto è la mappa originale, tenuta come storico: numeri di riga e nomi non esistono più.
 
 Decisione D9: togliere il Coach IA (o disattivarlo con un flag) nella v1 iOS. Effetti: nessun `connect-src` verso il Worker, nessun consenso IA, nessuna dichiarazione di AI di terzi (5.1.2), nessun requisito 2.1 sul backend attivo. **Questa è solo la mappa: il lavoro sul codice si fa solo con l'OK dell'utente.** Elenco ottenuto con grep il 2026-10-05:
 
@@ -282,7 +284,7 @@ Appoggiarsi anche al fatto che l'app ha un motore di coaching a regole proprio, 
 Timer/fitness sono categorie piene (i timer sono citati tra le categorie sature, da verificare). Differenziatori da evidenziare: coach a regole con struttura professionale e intensità dal corpo (BIA), schede "epoca d'oro", tutto locale e senza account, multilingua it/en/es/de. Evitare copie di template o di altre app.
 
 ### 4.3 Completezza (2.1)
-Senza Coach IA nella v1 (D9) non serve backend attivo né demo per la review. Restano: nessun placeholder, nessun link rotto, nessuna schermata vuota senza rete; le mance IAP devono funzionare in sandbox e il revisore deve poterle provare.
+Senza Coach IA nella v1 (D9, eseguita il 2026-10-05) non serve backend attivo né demo per la review. Restano: nessun placeholder, nessun link rotto, nessuna schermata vuota senza rete; le mance IAP devono funzionare in sandbox e il revisore deve poterle provare.
 
 ### 4.4 Metadata e screenshot (2.3)
 - 2.3.3: screenshot che mostrino l'app in uso reale. 2.3.6: fascia d'età onesta. 2.3.7: nome max 30 caratteri, niente marchi altrui in keyword. 2.3.9: diritti su tutti i materiali.
@@ -382,7 +384,7 @@ URL di supporto obbligatorio, email di contatto, FAQ; tempi di risposta indicati
 ## 7. Stima, dipendenze e prossimi passi
 
 ### 7.1 Stima per fase (indicativa, settimane lavorative)
-La fase "account Apple + Mac" non è più una riga: il Mac c'è già e l'iscrizione individuale è breve (attesa di verifica da verificare, consultato 2026-10-05); è contata nella fase 1. Sono state aggiunte la rimozione del Coach IA e la monetizzazione.
+La fase "account Apple + Mac" non è più una riga: il Mac c'è già e l'iscrizione individuale è breve (attesa di verifica da verificare, consultato 2026-10-05); è contata nella fase 1. Sono state aggiunte la rimozione del Coach IA (aggiornato il 2026-10-05: la parte Coach IA è eseguita; resta il pulsante `mailto:`) e la monetizzazione.
 
 Due scenari. **Standard** = un solo sviluppatore + Claude, circa 20 ore/settimana dell'utente. **Ritmo tranquillo (tempo libero)** = circa 5-8 ore/settimana: la parte di Claude non rallenta, ma ogni passo che richiede il Mac o l'iPhone dell'utente (build, prove audio, ASC, TestFlight) si dilata, e le attese tra un'iterazione e l'altra raddoppiano circa. D12 è aperta: i numeri sono indicazioni, non impegni.
 
@@ -392,7 +394,7 @@ Due scenari. **Standard** = un solo sviluppatore + Claude, circa 20 ore/settiman
 | 1 Decisioni residue + iscrizione Apple individuale + nome/marchio "3in" | 0,5-1 | 1-2 | D4, D12 | 2, 6.1 |
 | 2 Tecnica iOS (progetto Capacitor, `www`, haptics, notifiche, storage) | 2-3 | 4-6 | 1, Xcode 26 | 5, 6 |
 | 2.5 Audio session + Live Activity (Swift) | 2-3 | 4-6 | 2, iPhone | go/no-go |
-| 3.7 Rimozione Coach IA + feedback `mailto:` | 0,5 | 1 | OK utente (D9), 2 | 3, 4 |
+| 3.7 Rimozione Coach IA (fatta il 2026-10-05) + feedback `mailto:` (da fare) | 0,5 | 1 | OK utente (D9), 2 | 3, 4 |
 | 8 Monetizzazione/IAP: tip jar (StoreKit via plugin) + configurazione ASC + prove sandbox | 1-1,5 | 2-3 | 2, account Apple | 6.1 |
 | 3 Sicurezza e privacy (prove, policy, manifest) | 1-2 (parallela) | 2-4 | 1, 3.7 | 6.1 |
 | 4 Conformità/metadata/screenshot (solo iPhone, 4 lingue) | 1-2 | 2-4 | build funzionante | 6.1 |
@@ -426,7 +428,7 @@ Cosa blocca cosa: senza bundle id e account non si crea il progetto firmato né 
 1. **U** si iscrive all'Apple Developer Program come individuale (99 USD/anno; prezzo in euro da verificare) e avvia la **ricerca marchio/nome "3in"** (ASC, EUIPO/TMview, USPTO).
 2. **C** crea il progetto Capacitor/iOS e lo script di copia `www` (`tools/prepara-www.js`, `capacitor.config.ts`, con test e `npm run controlla` verde); **U** compila e apre il progetto sul Mac.
 3. **U** decide **D4** (funzioni native); **C** scrive il plugin audio session e **U** lo prova su iPhone con Spotify (checklist 03).
-4. **C**, con l'OK dell'utente, rimuove (o disattiva con flag) il Coach IA e aggiunge il pulsante di feedback `mailto:` (codice; punti in 3.7).
+4. ~~**C**, con l'OK dell'utente, rimuove (o disattiva con flag) il Coach IA~~ (eseguito il 2026-10-05: rimosso per intero) e **C** aggiunge il pulsante di feedback `mailto:` (codice; non ancora presente).
 5. **U+C** pubblicano la privacy policy (GitHub Pages, URL stabile) e **U** configura il tip jar in App Store Connect (contratto "Paid Apps", Small Business Program, DSA, tre prodotti consumabili).
 
 ---
@@ -493,11 +495,11 @@ Con tre tagli di mancia mescolati il fabbisogno cambia (la media sale). Con una 
 
 **Cosa chiede il GDPR.** Chi tratta dati personali di persone nell'UE deve dire chi è, quali dati, perché, per quanto tempo, e rispettare i diritti (accesso, cancellazione). I dati sulla salute (come il BIA) hanno regole più severe (art. 9, consenso esplicito).
 
-**Perché con solo dati locali e senza Coach IA tutto diventa molto più leggero.** Se programmi, storico, foto e dati BIA restano sul telefono e non arrivano mai allo sviluppatore, lo sviluppatore non li "raccoglie": niente trasferimenti a server, niente account, niente cancellazione da backend. Senza Coach IA non c'è nessun servizio esterno che riceve dati di allenamento, quindi niente consenso IA e niente dichiarazione di AI di terzi. L'etichetta "Data Not Collected" diventa plausibile (da verificare, consultato 2026-10-05). I dati BIA restano sul telefono.
+**Perché con solo dati locali e senza Coach IA tutto diventa molto più leggero.** Se programmi, storico, foto e dati BIA restano sul telefono e non arrivano mai allo sviluppatore, lo sviluppatore non li "raccoglie": niente trasferimenti a server, niente account, niente cancellazione da backend. Senza Coach IA (rimosso il 2026-10-05) non c'è nessun servizio del titolare che riceve dati di allenamento, quindi niente consenso IA e niente dichiarazione di AI di terzi; restano solo i servizi di terzi facoltativi qui sotto. L'etichetta "Data Not Collected" diventa plausibile (da verificare, consultato 2026-10-05). I dati BIA restano sul telefono.
 
 **Cosa cambia con l'email di feedback.** Con il pulsante "Scrivici" (`mailto:`) si apre il client di posta dell'utente: l'app non invia nulla. Ma quando l'utente scrive, lo sviluppatore riceve email, nome e il testo del messaggio: per quei dati lo sviluppatore è titolare e va scritto nella privacy policy (finalità, conservazione, diritti).
 
-**Servizi di terzi facoltativi.** Se l'utente incolla un link YouTube o Spotify, l'app incorpora il loro player: quei servizi ricevono dati (per esempio l'indirizzo IP) secondo le loro policy. Va detto nella policy.
+**Servizi di terzi facoltativi.** Se l'utente incolla un link YouTube o Spotify, l'app incorpora il loro player: quei servizi ricevono dati (per esempio l'indirizzo IP) secondo le loro policy. Va detto nella policy. Aggiornato il 2026-10-05: lo stesso vale per pdf.js caricato da cdnjs quando si importa un PDF (il file resta sul dispositivo) e per il link "Aggiungi solo questo a Google Calendar", che apre una pagina Google con titolo, data ed esercizi nel link.
 
 **Acquisti.** I pagamenti li gestisce Apple; lo sviluppatore non vede dati di pagamento.
 
@@ -508,6 +510,7 @@ Con tre tagli di mancia mescolati il fabbisogno cambia (la media sale). Con una 
 ## Registro delle modifiche
 - 2026-10-05: prima stesura del piano e delle checklist.
 - 2026-10-05: integrate le decisioni dell'utente (D1-D3, D5-D11): nome "3in", Capacitor 8 con Mac, Coach IA da togliere, dati solo locali, solo iPhone, account individuale. Nuove sezioni 3.7, 8, 9; nuova checklist 08; bozza privacy policy; stima a due scenari. Aperte D4 e D12.
+- 2026-10-05: D9 eseguita: il Coach IA è rimosso per intero dal codice (decisione del proprietario). Aggiornate la bozza della policy, `SICUREZZA.md`, `PIANO.md`, `ARCHITETTURA.md`, la mappa per agenti e le checklist. Da verificare dal proprietario: Worker Cloudflare (disattivazione, dati e log) e dichiarazioni App Privacy per i servizi di terzi.
 
 ---
 

@@ -171,7 +171,6 @@ function renderSettings() {
 
     setGroup('Privacy e dati',
       setRow('shield', coachAttivo() ? 'c-success' : 'c-muted', 'Consenso ai dati', coachAttivo() ? 'Attivo' : 'Non dato', 'openSetPage(\'privacy\')') +
-      setRow('spark', coachIAAttivo() ? 'c-accent' : 'c-muted', 'Coach IA', coachIAAttivo() ? 'Attivo' : 'Spento', 'openSetPage(\'privacy\')') +
       setRow('doc', 'c-muted', 'Informativa sui dati', '', 'openConsentText()')) +
 
     setGroup('Supporto',
@@ -264,8 +263,7 @@ function renderSetPage() {
       setGroup('', setRow('doc', 'c-muted', 'Leggi l’informativa', '', 'openConsentText()')) +
       setGroup('', coachAttivo()
         ? '<button class="sr-row danger" onclick="revocaConsenso()"><span class="sr-name">Revoca il consenso</span></button>'
-        : '<button class="sr-row" onclick="setConsenso(true, false); renderSettings();"><span class="sr-name sr-primary">Acconsento all’uso dei miei dati</span></button>') +
-      htmlPrivacyIA();
+        : '<button class="sr-row" onclick="setConsenso(true, false); renderSettings();"><span class="sr-name sr-primary">Acconsento all’uso dei miei dati</span></button>');
   } else if (setPagina === 'guida') {
     const voci = [
       ['Oggi', 'L’allenamento del giorno, la settimana a colpo d’occhio e gli obiettivi di serie per spinta, tirata e gambe.'],

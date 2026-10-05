@@ -37,7 +37,7 @@ Piano: [sezione 5](../piano-lancio-appstore.md#5-qualità-e-test). Audio: [03-au
 - [ ] Checklist audio senza bug bloccanti
 - [ ] Zero crash in 7 giorni di beta
 - [ ] Nessuna perdita di dati in migrazione
-- [ ] Privacy e App Privacy coerenti
+- [ ] Privacy e App Privacy coerenti (stato reale al 2026-10-05 e punti da verificare a mano: vedi 04)
 - [ ] Asset con licenza verificata; nome/marchio verificato
 - [ ] Metadata e screenshot pronti
 - [ ] Nota per il revisore pronta
