@@ -1,10 +1,14 @@
 # Ricerca: cosa fanno e dicono davvero i coach (schede, regole pratiche, euristiche)
 
+Copertura: 37 ricerche web riuscite; il resto da conoscenza del modello.
+
 Ambito: schede e metodi dei coach più seguiti (Renaissance Periodization, Nippard, Helms, Henselmans, Stronger By Science, Wendler, GZCL, nSuns, Candito, Sheiko, RTS, Barbell Medicine, PHUL/PHAT, Starting Strength e simili, Lyle McDonald, Dan John, Pavel, Cressey, Thibaudeau, Beardsley, calisthenics) e le **euristiche di decisione** che usano (come scelgono lo split, gli esercizi, come gestiscono stalli, scarico, principianti, tempo poco). Tocca le aree PRG (cap. 5), MET/EPO (cap. 6), CAR/STA/RIC (cap. 8, 10, 11, 19) di `docs/coach-mappa-regole.md`. Le schede dell'epoca d'oro, le regole ABB e INT **non sono rifatte** (sono in `docs/ricerca-struttura-e-intensita.md`). Codice area delle regole proposte: **PCO** (pratiche dei coach; verificato libero con grep su docs/ e js/).
 
 Data della ricerca: 2026-10-05. Forza dell'evidenza come in `ricerca-struttura-e-intensita.md`: **Solida** / **Moderata** / **Convenzione**, più la bandiera **Contrastata**. Regola di questa nota: quasi tutto ciò che dicono i coach è **Convenzione** (pratica o opinione senza prova diretta); sale di grado solo dove ho visto uno studio. Tutto ciò che viene da video, podcast, siti di terzi è «riportato da ..., da verificare».
 
-**Limite di rete e di budget (leggi prima):** in questa sessione WebSearch è l'unico canale (rete.md) e il contatore di sessione (200 ricerche) si è esaurito dopo **37 ricerche riuscite**; le ultime 4 sono state rifiutate dallo strumento. Quindi **non coperti da ricerca nuova**: donne contro uomini, over 65, regole sul riposo tra le serie oltre al già noto, «junk volume» come parola, velocità di sovraccarico progressivo, consenso sullo scarico (Bell 2024), Arnold e Yates/Mentzer rispetto al giudizio moderno (già in `ricerca-struttura-e-intensita.md`), PPL di Nippard. Per questi temi uso solo ciò che il repo già documenta, oppure lo scrivo come «non ricercato» (sezione 7 con le query pronte da lanciare).
+**Limite di rete e di budget (leggi prima):** in questa sessione WebSearch è l'unico canale (rete.md) e il contatore di sessione (200 ricerche) si è esaurito dopo **37 ricerche riuscite**; le ultime 4 sono state rifiutate dallo strumento. Quindi **non coperti da ricerca nuova**: donne contro uomini, over 65, pause tra le serie oltre al già noto, «junk volume», velocità di sovraccarico progressivo, consenso sullo scarico (Bell 2024), struttura esatta di diversi programmi (Starting Strength, StrongLifts, Texas Method, Westside e altri), PPL di Nippard. Per questi temi la sezione 1.3, la sezione 2.20 e le regole H-36..H-50 usano la **«Conoscenza del modello (non verificata sul web)»**, con forza Convenzione o Moderata (da verificare); dove non ricordo un dettaglio con sicurezza lo scrivo come incerto e non lo invento. Le query per verificarle sono nell'**Appendice A**.
+
+**Colonna «Origine» (usata dove serve):** **Web** = visto nei risultati di WebSearch di questa sessione (riassunti di siti di terzi, titoli di studi); **Repo** = già documentato in `docs/` o nel codice di 3in; **Modello** = Conoscenza del modello (non verificata sul web). Nessuna citazione di persone, DOI o numeri precisi è stata aggiunta senza averla vista.
 
 ## 1. Cosa dicono le fonti
 
@@ -49,6 +53,23 @@ I riassunti sono di siti di terzi (Lift Vault, Boostcamp, Legion, Coachway, siti
 | «Junk volume» | Il termine non compare nei risultati. L'idea equivalente: oltre il tetto per seduta (Henselmans circa 9-13, Pelland circa 11) le serie in più rendono poco; una critica a nSuns dice «un programma upper/lower tipico ha 3-10 serie di lavoro per seduta» | Convenzione | Henselmans; Pelland (nel repo); recensione di nSuns (characterstrength.co.uk) |
 | Rotazione degli esercizi | Un solo RCT visto (Baz-Valle 2019): variare non migliora la crescita ma migliora la motivazione. I coach consigliano di cambiare angolo, ROM o variante quando uno stallo dura | Moderata (RCT piccolo) | Baz-Valle 2019; Dr. Muscle |
 | Donne contro uomini, over 65 | **Non ricercato** (budget esaurito). Resta quanto già nel repo (pause -15% per le donne, PeerJ 2025; over 65 più prudenti, ACSM 2026) | n.d. | vedi sezione 7 |
+
+### 1.3 Temi non ricercati sul web: Conoscenza del modello (non verificata sul web)
+
+Tabella scritta senza fonti viste: ogni riga è Convenzione o Moderata (da verificare). Non contiene numeri precisi di studi, né citazioni.
+
+| Tema | Cosa so | Dubbi / cosa non ricordo | Forza | Origine |
+|---|---|---|---|---|
+| Donne e uomini | Stessa struttura di programma, stesse fasce di ripetizioni, stessa logica di volume. In letteratura l'ipertrofia relativa è simile, la forza assoluta della parte alta è inferiore, e a pari carico relativo le donne si affaticano meno e recuperano spesso più in fretta tra le serie (quindi pause un po' più brevi vanno bene). Il ciclo mestruale: il repo lo tratta come sonno e stress (Colenso-Semple 2023) | Entità delle differenze e qualità degli studi (pochi, quasi tutti brevi): non ricordo numeri | Moderata (da verificare) | Modello + Repo (PRG-20, PRZ-01) |
+| Over 65 | Le linee guida abituali (NSCA, ACSM, OMS) chiedono 2-3 sedute a settimana sui grandi gruppi, 1-3 serie, intensità moderata che cresce piano, lavoro di potenza leggero e veloce quando è sicuro, equilibrio, più riposo e proteine adeguate | Percentuali di 1RM e ripetizioni esatte non le riporto | Moderata (da verificare) | Modello + Repo (ACSM 2026, PRG-19) |
+| «Junk volume» | Termine di pratica per il volume che non stimola: serie lontane dal cedimento (oltre circa 4-5 ripetizioni in riserva) o oltre il tetto per seduta. È coerente con le meta-regressioni sulla prossimità al cedimento (Robinson 2024: solo titolo visto) | Soglia esatta di RIR oltre la quale una serie «non conta» | Convenzione | Modello + Web (titolo) |
+| Pause tra le serie | Pesanti 2-3 minuti; macchine 90-120 s; isolamenti 60-90 s; sotto 60 s si perdono ripetizioni nelle serie successive; per la massa oltre 60-90 s la differenza è piccola (Singer 2024: già nel repo) | Cifre per la forza massima | Moderata (da verificare) | Modello + Repo |
+| Velocità di sovraccarico | Principiante: aumenti a ogni seduta o ogni settimana per mesi; intermedio: ogni 1-4 settimane; avanzato: ogni mesi. Passi piccoli (2,5 kg al bilanciere, 1-2 kg ai manubri), doppia progressione sugli isolamenti | Tempi esatti di rallentamento | Convenzione | Modello (+ Rippetoe, web, per seduta/settimana/mese) |
+| Scarico | Ogni 4-8 settimane negli intermedi e avanzati, o quando compaiono segnali (prestazioni in calo, dolori articolari, sonno peggiore, voglia a zero); riduzione di volume del 30-50% tenendo i carichi, oppure carico -10% | Consenso formale (Bell 2024 è nel repo: non riletto qui) | Moderata (da verificare) | Modello + Repo (CAR-03) |
+| Età cronologica e di allenamento | La cronologica decide recupero, prudenza e scelta delle articolazioni; quella di allenamento (anni di costanza e velocità di progresso) decide struttura e volume. Un 50enne che comincia è principiante; chi riprende dopo anni sale in fretta nelle prime settimane | Nessuna misura | Convenzione | Modello |
+| Esercizi con un infortunio | Si sostituiscono con varianti che caricano meno l'articolazione (carico guidato, ampiezza dolce, presa neutra, unilaterale) tenendo il resto dell'allenamento; dolore accettabile fino a circa 3/10 se non peggiora il giorno dopo (Silbernagel 2007, già in DEC-01); oltre soglia: rinvio a un professionista | Tabella per articolazione (già in SOSTITUZIONI) | Moderata (nel repo) | Repo + Modello |
+| Attrezzatura limitata | Si coprono comunque i 6 schemi di movimento: macchine guidate per chi comincia; con elastici o manubri leggeri si alzano le ripetizioni, si accorciano le pause e si rallenta la discesa | Equivalenze di carico | Convenzione | Modello |
+| Dimagrimento | Si mantengono carichi e un volume di mantenimento (non si riduce a zero), proteine adeguate e più passi: il lavoro di forza protegge la massa | Entità del deficit (informazione, non prescrizione: COR-03) | Moderata (da verificare) | Modello + Repo (COR-01/03) |
 
 ## 2. Schede e metodi: struttura esatta
 
@@ -298,54 +319,86 @@ Ogni tabella: cosa risulta dai riassunti di terzi (non dai libri). Dove il repo 
 | Progressione | **3 serie da 5-8 ripetizioni** (pausa circa 90 s); quando si fanno 3x8 con buona tecnica si passa alla progressione più difficile e si riparte da 3x5 | Passare di gradino a standard fissi |
 | Pregi | Regola chiara; il passo di progressione è piccolo; coppie antagoniste = tempo | Tempo lento e passi piccoli aiutano i tendini (aneddotico) |
 | Difetti | Serve una sbarra per le trazioni | Critiche: alcuni gradini sono insensati o rischiosi (dal piegamento a una mano alla trazione a una mano il salto è troppo grande; squat considerato il più debole); per un principiante settimane o mesi restano sul gradino più facile |
-| Verdetto 3in | **RR già nel repo (`rr`) con la stessa regola 3x5-8**: adottare la regola di passaggio (3x8 → variante più difficile) come regola per tutto il corpo libero (PCO-06). Convict Conditioning: usare solo come fonte di nomi di varianti, mai come piano |
+| Verdetto 3in | **RR già nel repo (`rr`) con la stessa regola 3x5-8**: adottare la regola di passaggio (3x8 → variante più difficile) come regola per tutto il corpo libero (PCO-06) | Usare solo come fonte di nomi di varianti, mai come piano |
 | Forza | Convenzione (RR è la «scheda» di una comunità, nessuno studio) | Convenzione |
 
 ### 2.19 Già noti (non rifatti)
 
 Golden Six, 5x5 di Reg Park, Reeves, Arnold a 6 giorni, Gironda 8x8, Mentzer (HIT), Yates: vedi `ricerca-struttura-e-intensita.md` cap. 2 e `metodi-epoca-oro.js`. Starting Strength, StrongLifts, GreySkull, GZCLP, PHUL, GBR, Hatfield, Reddit PPL, Dose minima, Mantenimento, RR, HIT: in `metodi-momenti.js`.
 
+### 2.20 Altri programmi: struttura dalla Conoscenza del modello (non verificata sul web)
+
+Descrivo solo ciò che ricordo con sicurezza; i dettagli incerti sono nella colonna dedicata. Forza di tutte le righe: Convenzione. Nessuna fonte vista in questa sessione per questa tabella.
+
+| Programma | Per chi e giorni | Struttura che conosco | Progressione e stallo | Dettagli incerti | Verdetto 3in |
+|---|---|---|---|---|---|
+| Starting Strength (Rippetoe) | Principianti; 3 giorni non consecutivi, sedute A e B alternate | A: squat 3x5, panca 3x5, stacco 1x5. B: squat 3x5, press 3x5, stacco 1x5 (o power clean in alternativa) | Aumento a ogni seduta (di solito più piccolo alle spinte, più grande a squat e stacco); dopo fallimenti ripetuti reset di circa il 10% | Alternanza esatta panca/press; entità dei salti; quante mancate prima del reset (il repo scrive «due mancate = -5%») | Già `startingstrength` |
+| StrongLifts 5x5 (Mehdi) | Principianti; 3 giorni | A: squat, panca, rematore col bilanciere 5x5. B: squat, military press 5x5, stacco 1x5 | +2,5 kg a seduta (stacco +5 kg); dopo 3 fallimenti allo stesso peso -10% | Passi più piccoli dopo i primi mesi; accessori facoltativi | Già `stronglifts` |
+| GreySkull LP (Sheaffer) | Principianti; 3 giorni, sedute A/B | Panca e press alternati, squat, stacco; **due serie da 5 e una serie finale AMRAP (5+)**; accessori a 8-12 ripetizioni | Aumenti piccoli; se nell'AMRAP si fanno 10 ripetizioni o più l'aumento è doppio; stallo: -10% e si riparte | Serie esatte dello stacco e delle trazioni; regola esatta del raddoppio | Già `greyskull` |
+| Texas Method | Intermedi appena finita la progressione lineare; 3 giorni | Lunedì volume (5x5 circa al 90% del proprio 5RM); mercoledì recupero (carico e volume ridotti); venerdì intensità (una serie da 5 al massimo, il record della settimana) | Il record del venerdì sale ogni settimana; quando si ferma: cambiare schema | Percentuali esatte e quanto leggero è il mercoledì | Nel repo è `madcow` («solo ispirazione»); la logica pesante/leggera è già in PHUL e GZCLP |
+| Madcow 5x5 | Intermedi; 3 giorni | Lunedì serie crescenti 5x5 (rampa fino a una serie top); mercoledì più leggero; venerdì rampa con una serie top da 3 e un back-off da 8 | Il carico sale a settimana | Tutta la parte del venerdì | Come sopra |
+| Reddit PPL (Metallicadpa) | Principianti e intermedi; 6 giorni (Pull, Push, Legs due volte) o 3 | Pull: stacco 1x5+, rematori, trazioni o lat machine, curl. Push: panca e press. Legs: squat. Fondamentale a serie da 5 con ultima serie AMRAP; accessori 3x8-12 | +2,5 kg a seduta sui fondamentali; doppia progressione sugli accessori | Serie ed esercizi esatti di ogni giorno | Già `redditppl` |
+| Wendler 5/3/1, incrementi | Intermedi e avanzati; 3-4 giorni | Vedi 2.7 (onda di 4 settimane) | **+2,5 kg alla parte alta e +5 kg alle gambe per ciclo** sul training max; se non si fanno le ripetizioni minime ci si ferma e si scende del 10% | La regola esatta del reset | Ispirazione (2.7) |
+| Westside, metodo coniugato (Louie Simmons) | Avanzati di powerlifting; 4 giorni | Massimale su parte bassa, massimale su parte alta, giorno dinamico (velocità) su parte bassa e alta; varianti dei fondamentali per i massimali ruotate ogni 1-3 settimane; accessori sui punti deboli | Si cerca un nuovo massimale della variante; si cambia variante per evitare lo stallo | Serie x ripetizioni dei giorni dinamici; uso di bande e catene | Ispirazione (`conjugate`): prove dirette scarse (fonti.md) |
+| Nippard PPL e powerbuilding | Intermedi | So che Nippard pubblica schede split e PPL con circa 3 serie per esercizio e RIR indicato; **non ricordo la struttura esatta** | n.d. | Tutto | Nessuno |
+| Dan John, Mass Made Simple; Candito Linear; PHAT (esercizi e serie) | n.d. | **Non ricordo la struttura con sicurezza**: non la descrivo | n.d. | Tutto | Nessuno |
+
 ## 3. Regole pratiche dei coach (SE ... ALLORA ..., usabili dal generatore)
 
-Colonna «In 3in»: già implementato (codice) o manca. Forza = di chi lo dice, non del mio giudizio.
+Colonna «In 3in»: già implementato (codice) o manca. Forza = di chi lo dice, non del mio giudizio. Colonna «Origine»: Web, Repo o Modello (vedi in testa alla nota); H-36..H-50 sono in gran parte Conoscenza del modello (non verificata sul web).
 
-| # | SE | ALLORA | Forza | Chi lo dice | In 3in |
-|---|---|---|---|---|---|
-| H-01 | Giorni a settimana 2 o 3, oppure principiante, oppure dorme male o è stressato | Full body (ogni muscolo 2-3 volte con poche sedute piene) | Convenzione (la frequenza 2 minima è Solida: ACSM 2026) | Coachway/NASM; Henselmans | Sì: PRG-02, ABB-05 |
-| H-02 | 4 giorni | Upper/Lower due volte | Convenzione | Nippard (FH 4 giorni), Lyle McDonald, PHUL | Sì: PRG-02 |
-| H-03 | 5-6 giorni | PPL (o PPL+UL), ogni muscolo circa 2 volte | Convenzione | Coachway, Nippard (5 giorni split) | Sì: PRG-02 |
-| H-04 | Due strutture hanno quasi lo stesso punteggio | Scegli quella con **più probabilità di essere seguita** (meno giorni, sedute più corte, esercizi graditi) | Convenzione (la piramide mette l'aderenza alla base) | Helms; Coachway | Parziale (psicologia in MET-02): spareggio esplicito PCO-09 |
-| H-05 | Un muscolo supererebbe 9-13 serie in una seduta | Sposta il volume in un'altra seduta | Moderata (circa 11, preprint Pelland) | Henselmans; Pelland | Sì: PRG-30 |
-| H-06 | A parità di muscolo si può scegliere tra esercizi diversi | Prendi quello con **miglior stimolo/fatica**: macchine, supporto, unilaterali; stacchi da terra e rack pull ridotti (al massimo 3 serie) | Convenzione (SFR è «teorico») | Israetel (riassunti di terzi) | Sì: PRIORI, ABB-09 |
-| H-07 | Un esercizio è fermo da settimane o dà fastidio | Cambia variante: angolo, ROM, posizione allungata | Convenzione (allungamento: Moderata, Maeo) | Dr. Muscle; repo | Sì: STA-02, PRG-10 |
-| H-08 | Fastidio alla spalla | Alterna spinte a scapola libera e fissa (piegamenti, landmine, cavi) e aggiungi rotazione esterna della cuffia almeno una volta a settimana, 3 serie | Convenzione | Cressey | No: PCO-08 |
-| H-09 | In ogni seduta | Il lavoro più importante per primo | Solida (forza) / Convenzione | Cressey; ACSM 2009; Nunes 2021 (nel repo) | Sì: ABB-01 |
-| H-10 | Solo manubri a casa | Gambe: goblet squat, affondi/step-up, stacco rumeno con manubri; spinta orizzontale con manubri o piegamenti; rematore a un braccio; press sopra la testa; isolamenti (alzate laterali, curl, tricipiti) | Convenzione (**non visto nei risultati**: pratica comune, da verificare) | Siti di terzi | Sì: libreria + PRG-07 |
-| H-11 | Si imposta il volume iniziale | Parti dal minimo efficace (6-8 serie per muscolo per la maggioranza) e sali durante il mesociclo | Convenzione | RP (riassunti di terzi) | Sì: PRG-25, ESI-01 |
-| H-12 | La dolenzia è guarita prima della seduta successiva dello stesso muscolo, il pump è buono, il carico è gestibile | **Aggiungi** serie la settimana dopo (fino al massimo del livello); se la dolenzia resta o le prestazioni calano: tieni o **togli** | Convenzione | RP Hypertrophy App (riportato) | Parziale: solo +1 e solo sui prioritari (RIC-01); manca il taglio. PCO-03 |
-| H-13 | Con 1-2 serie per esercizio (dose minima) | Le serie devono essere dure (RIR 0-2) e il carico al 70-85% di 1RM; 2-3 giorni a settimana | Moderata (forza, uomini allenati) | Androulakis-Korakakis; Nippard | Parziale: `minimo` ha 2 serie ma RIR di tipo. PCO-04 |
-| H-14 | 10 o più serie per muscolo a settimana | Cresce più che con meno di 5 (rendimenti decrescenti) | Solida | Pelland 2025 (nel repo) | Sì: PRG-25/28 |
-| H-15 | Mesociclo di 4-6 settimane | RIR 3 → 2 → 1 → 0-1 (o 4 → 1) e poi scarico | Convenzione | RP | Parziale: solo avanzati (PRG-38). PCO-02 |
-| H-16 | Si programma il cedimento | Non serve in generale (vantaggio banale, 0,19); tienilo per l'ultima serie di isolamenti e macchine; limita le serie a cedimento (più fatica a pari risultato) | Solida (vantaggio) / Convenzione (come usarlo) | Refalo 2023; SFR | Sì: RIR_TIPO, RIC-04 |
-| H-17 | Carichi leggeri (casa, manubri) | Vanno bene vicino al cedimento: efficaci tra circa 6 e 30 ripetizioni | Solida (30-100% di 1RM, ACSM 2026 nel repo) / Moderata (Beardsley) | ACSM 2026; Beardsley | Parziale. PCO-06 |
-| H-18 | Principiante con bilanciere e obiettivo forza | Progressione lineare: aumenta a ogni seduta finché riesce (3-9 mesi) | Convenzione | Rippetoe, StrongLifts, GZCLP | Parziale (progressione unica, vedi cap. 17 punto 5) |
-| H-19 | Isolamenti e macchine, obiettivo massa | Doppia progressione: sali nelle ripetizioni fino al tetto (con 1-2 RIR) e **poi** aggiungi peso | Convenzione | Lyle McDonald; Dr. Muscle; siti di app | Sì: CAR-06 |
-| H-20 | Una serie finale AMRAP | La tabella delle ripetizioni in più decide il salto di carico | Convenzione | nSuns; SBS (RTF) | Sì: CAR-06 |
-| H-21 | Una serie mancata | Stesso peso, punta a più ripetizioni; due volte di fila: cambia schema o torna indietro del 5-10% | Convenzione | GZCLP; Rippetoe | Sì: CAR-07/09 (solo reset); PCO-01 aggiunge lo schema |
-| H-22 | Dopo 4-6 settimane da intermedio/avanzato | Settimana di scarico programmata | Convenzione | RP; Wendler (settimana 4); Candito (settimana 6) | Sì: PRG-01 |
-| H-23 | Stallo di un esercizio | Scarico mirato: serie -50% e peso -10% (Rippetoe e Baker 2014; Pritchard 2015: volume -30/-70% per 1-4 settimane, riportati da Dr. Muscle) | Convenzione | Dr. Muscle (riportato) | Sì: CAR-08/CAR-03 |
-| H-24 | Principiante, prime settimane | 2-3 serie per esercizio, RIR 3-4, ripetizioni fisse, nessun cedimento | Convenzione | Barbell Medicine; siti di terzi | Parziale: INT-04/05 (solo prima volta e prime due sedute). PCO-07 |
-| H-25 | La progressione lineare del principiante non regge più | Prima controlla cibo, sonno, tecnica; poi passi più piccoli; poi 5x3 invece di 3x5; poi giorno pesante/leggero; solo infine programma da intermedio | Convenzione | Rippetoe e riassunti | Parziale (vedi scala 5.1) |
-| H-26 | Poco tempo (≤ 45 min) | Superserie antagoniste (stesso volume in circa un terzo di tempo in meno); sedute full body; 1-2 serie dure per esercizio | Solida (superserie, meta-analisi 2025 nel repo) / Convenzione | Meta-analisi 2025; Nippard | Sì: ABB-06, PRG-34 |
-| H-27 | Scelta della pausa | 3 min per 6-8 ripetizioni; 2 min per 10-12; 90 s per 12-15 | Moderata (>60-90 s poca differenza, Singer 2024) / Convenzione | Lyle McDonald; Singer 2024 | Sì: PRG-13 |
-| H-28 | Inizio della seduta | Riscaldamento breve (RAMP 3-5 minuti: alza, mobilita) e **serie di avvicinamento** al primo fondamentale (50% x 8, 60% x 5, 70% x 3, 80% x 1 nei pesanti) | Convenzione | Jeffreys 2007; Cressey | Parziale: 3 serie di riscaldamento (50/70/85%) già in `seduta.js`; nota generale PCO-10 |
-| H-29 | Fine seduta | Defaticamento facoltativo: 3-5 minuti a bassa intensità e stretching a piacere; non promette crescita né meno dolenzia con prove solide | Convenzione | Meta-analisi su stretching (qualità bassa) | Sì: `termina-e-cardio.js` |
-| H-30 | Fine blocco, utente con alta motivazione al cambiamento | Ruota gli accessori, **non** i fondamentali; la crescita non cambia ma la motivazione sì | Moderata | Baz-Valle 2019 | Sì: STA-03 (sempre a inizio blocco). PCO-05 la rende condizionata |
-| H-31 | Giorni dichiarati ma ci si salta delle sedute | Meno giorni o sedute più corte prima che più varietà | Convenzione | Helms (aderenza) | Sì: ADE-01 |
-| H-32 | Valutare il livello | Per tecnica costante e velocità di progressione (seduta a seduta = principiante, settimana a settimana = intermedio, mese a mese = avanzato), non per età né per dichiarazione | Convenzione | Rippetoe; Nuckols | Sì: LIV-01 (sedute e mesi regolari) |
-| H-33 | Un coach vuole usare l'RPE | Calibra l'utente: l'errore di stima è circa 1 ripetizione, minore vicino al cedimento e sotto 12 ripetizioni | Moderata | Halperin 2022; Refalo 2023 (nel repo) | Sì: CAR-14 |
-| H-34 | Si usa il back-off | Meno 5% dopo la serie principale (fatigue percent moderato) | Convenzione | RTS | Sì: CAR-13 |
-| H-35 | Obiettivo solo mantenere (periodo difficile) | Pochi esercizi, 1-2 sedute, stessi carichi: i muscoli restano con molto meno volume | Moderata (Bickel 2011, già nel repo) | Bickel 2011; Dan John (idea simile) | Sì: `mantenimento` |
+| # | SE | ALLORA | Forza | Chi lo dice | In 3in | Origine |
+|---|---|---|---|---|---|---|
+| H-01 | Giorni a settimana 2 o 3, oppure principiante, oppure dorme male o è stressato | Full body (ogni muscolo 2-3 volte con poche sedute piene) | Convenzione (la frequenza 2 minima è Solida: ACSM 2026) | Coachway/NASM; Henselmans | Sì: PRG-02, ABB-05 | Web + Repo |
+| H-02 | 4 giorni | Upper/Lower due volte | Convenzione | Nippard (FH 4 giorni), Lyle McDonald, PHUL | Sì: PRG-02 | Web |
+| H-03 | 5-6 giorni | PPL (o PPL+UL), ogni muscolo circa 2 volte | Convenzione | Coachway, Nippard (5 giorni split) | Sì: PRG-02 | Web |
+| H-04 | Due strutture hanno quasi lo stesso punteggio | Scegli quella con **più probabilità di essere seguita** (meno giorni, sedute più corte, esercizi graditi) | Convenzione (la piramide mette l'aderenza alla base) | Helms; Coachway | Parziale (psicologia in MET-02): spareggio esplicito PCO-09 | Web |
+| H-05 | Un muscolo supererebbe 9-13 serie in una seduta | Sposta il volume in un'altra seduta | Moderata (circa 11, preprint Pelland) | Henselmans; Pelland | Sì: PRG-30 | Web + Repo |
+| H-06 | A parità di muscolo si può scegliere tra esercizi diversi | Prendi quello con **miglior stimolo/fatica**: macchine, supporto, unilaterali; stacchi da terra e rack pull ridotti (al massimo 3 serie) | Convenzione (SFR è «teorico») | Israetel (riassunti di terzi) | Sì: PRIORI, ABB-09 | Web |
+| H-07 | Un esercizio è fermo da settimane o dà fastidio | Cambia variante: angolo, ROM, posizione allungata | Convenzione (allungamento: Moderata, Maeo) | Dr. Muscle; repo | Sì: STA-02, PRG-10 | Web + Repo |
+| H-08 | Fastidio alla spalla | Alterna spinte a scapola libera e fissa (piegamenti, landmine, cavi) e aggiungi rotazione esterna della cuffia almeno una volta a settimana, 3 serie | Convenzione | Cressey | No: PCO-08 | Web |
+| H-09 | In ogni seduta | Il lavoro più importante per primo | Solida (forza) / Convenzione | Cressey; ACSM 2009; Nunes 2021 (nel repo) | Sì: ABB-01 | Web + Repo |
+| H-10 | Solo manubri a casa | Gambe: goblet squat, affondi/step-up, stacco rumeno con manubri; spinta orizzontale con manubri o piegamenti; rematore a un braccio; press sopra la testa; isolamenti (alzate laterali, curl, tricipiti) | Convenzione (**non visto nei risultati**: pratica comune, da verificare) | Siti di terzi | Sì: libreria + PRG-07 | Modello |
+| H-11 | Si imposta il volume iniziale | Parti dal minimo efficace (6-8 serie per muscolo per la maggioranza) e sali durante il mesociclo | Convenzione | RP (riassunti di terzi) | Sì: PRG-25, ESI-01 | Web |
+| H-12 | La dolenzia è guarita prima della seduta successiva dello stesso muscolo, il pump è buono, il carico è gestibile | **Aggiungi** serie la settimana dopo (fino al massimo del livello); se la dolenzia resta o le prestazioni calano: tieni o **togli** | Convenzione | RP Hypertrophy App (riportato) | Parziale: solo +1 e solo sui prioritari (RIC-01); manca il taglio. PCO-03 | Web |
+| H-13 | Con 1-2 serie per esercizio (dose minima) | Le serie devono essere dure (RIR 0-2) e il carico al 70-85% di 1RM; 2-3 giorni a settimana | Moderata (forza, uomini allenati) | Androulakis-Korakakis; Nippard | Parziale: `minimo` ha 2 serie ma RIR di tipo. PCO-04 | Web |
+| H-14 | 10 o più serie per muscolo a settimana | Cresce più che con meno di 5 (rendimenti decrescenti) | Solida | Pelland 2025 (nel repo) | Sì: PRG-25/28 | Repo |
+| H-15 | Mesociclo di 4-6 settimane | RIR 3 → 2 → 1 → 0-1 (o 4 → 1) e poi scarico | Convenzione | RP | Parziale: solo avanzati (PRG-38). PCO-02 | Web |
+| H-16 | Si programma il cedimento | Non serve in generale (vantaggio banale, 0,19); tienilo per l'ultima serie di isolamenti e macchine; limita le serie a cedimento (più fatica a pari risultato) | Solida (vantaggio) / Convenzione (come usarlo) | Refalo 2023; SFR | Sì: RIR_TIPO, RIC-04 | Web + Repo |
+| H-17 | Carichi leggeri (casa, manubri) | Vanno bene vicino al cedimento: efficaci tra circa 6 e 30 ripetizioni | Solida (30-100% di 1RM, ACSM 2026 nel repo) / Moderata (Beardsley) | ACSM 2026; Beardsley | Parziale. PCO-06 | Repo + Web |
+| H-18 | Principiante con bilanciere e obiettivo forza | Progressione lineare: aumenta a ogni seduta finché riesce (3-9 mesi) | Convenzione | Rippetoe, StrongLifts, GZCLP | Parziale (progressione unica, vedi cap. 17 punto 5) | Web |
+| H-19 | Isolamenti e macchine, obiettivo massa | Doppia progressione: sali nelle ripetizioni fino al tetto (con 1-2 RIR) e **poi** aggiungi peso | Convenzione | Lyle McDonald; Dr. Muscle; siti di app | Sì: CAR-06 | Web |
+| H-20 | Una serie finale AMRAP | La tabella delle ripetizioni in più decide il salto di carico | Convenzione | nSuns; SBS (RTF) | Sì: CAR-06 | Web |
+| H-21 | Una serie mancata | Stesso peso, punta a più ripetizioni; due volte di fila: cambia schema o torna indietro del 5-10% | Convenzione | GZCLP; Rippetoe | Sì: CAR-07/09 (solo reset); PCO-01 aggiunge lo schema | Web |
+| H-22 | Dopo 4-6 settimane da intermedio/avanzato | Settimana di scarico programmata | Convenzione | RP; Wendler (settimana 4); Candito (settimana 6) | Sì: PRG-01 | Web |
+| H-23 | Stallo di un esercizio | Scarico mirato: serie -50% e peso -10% (Rippetoe e Baker 2014; Pritchard 2015: volume -30/-70% per 1-4 settimane, riportati da Dr. Muscle) | Convenzione | Dr. Muscle (riportato) | Sì: CAR-08/CAR-03 | Web |
+| H-24 | Principiante, prime settimane | 2-3 serie per esercizio, RIR 3-4, ripetizioni fisse, nessun cedimento | Convenzione | Barbell Medicine; siti di terzi | Parziale: INT-04/05 (solo prima volta e prime due sedute). PCO-07 | Web |
+| H-25 | La progressione lineare del principiante non regge più | Prima controlla cibo, sonno, tecnica; poi passi più piccoli; poi 5x3 invece di 3x5; poi giorno pesante/leggero; solo infine programma da intermedio | Convenzione | Rippetoe e riassunti | Parziale (vedi scala 5.1) | Web |
+| H-26 | Poco tempo (≤ 45 min) | Superserie antagoniste (stesso volume in circa un terzo di tempo in meno); sedute full body; 1-2 serie dure per esercizio | Solida (superserie, meta-analisi 2025 nel repo) / Convenzione | Meta-analisi 2025; Nippard | Sì: ABB-06, PRG-34 | Repo + Web |
+| H-27 | Scelta della pausa | 3 min per 6-8 ripetizioni; 2 min per 10-12; 90 s per 12-15 | Moderata (>60-90 s poca differenza, Singer 2024) / Convenzione | Lyle McDonald; Singer 2024 | Sì: PRG-13 | Web + Repo |
+| H-28 | Inizio della seduta | Riscaldamento breve (RAMP 3-5 minuti: alza, mobilita) e **serie di avvicinamento** al primo fondamentale (50% x 8, 60% x 5, 70% x 3, 80% x 1 nei pesanti) | Convenzione | Jeffreys 2007; Cressey | Parziale: 3 serie di riscaldamento (50/70/85%) già in `seduta.js`; nota generale PCO-10 | Web |
+| H-29 | Fine seduta | Defaticamento facoltativo: 3-5 minuti a bassa intensità e stretching a piacere; non promette crescita né meno dolenzia con prove solide | Convenzione | Meta-analisi su stretching (qualità bassa) | Sì: `termina-e-cardio.js` | Web |
+| H-30 | Fine blocco, utente con alta motivazione al cambiamento | Ruota gli accessori, **non** i fondamentali; la crescita non cambia ma la motivazione sì | Moderata | Baz-Valle 2019 | Sì: STA-03 (sempre a inizio blocco). PCO-05 la rende condizionata | Web |
+| H-31 | Giorni dichiarati ma ci si salta delle sedute | Meno giorni o sedute più corte prima che più varietà | Convenzione | Helms (aderenza) | Sì: ADE-01 | Web |
+| H-32 | Valutare il livello | Per tecnica costante e velocità di progressione (seduta a seduta = principiante, settimana a settimana = intermedio, mese a mese = avanzato), non per età né per dichiarazione | Convenzione | Rippetoe; Nuckols | Sì: LIV-01 (sedute e mesi regolari) | Web |
+| H-33 | Un coach vuole usare l'RPE | Calibra l'utente: l'errore di stima è circa 1 ripetizione, minore vicino al cedimento e sotto 12 ripetizioni | Moderata | Halperin 2022; Refalo 2023 (nel repo) | Sì: CAR-14 | Repo |
+| H-34 | Si usa il back-off | Meno 5% dopo la serie principale (fatigue percent moderato) | Convenzione | RTS | Sì: CAR-13 | Web |
+| H-35 | Obiettivo solo mantenere (periodo difficile) | Pochi esercizi, 1-2 sedute, stessi carichi: i muscoli restano con molto meno volume | Moderata (Bickel 2011, già nel repo) | Bickel 2011; Dan John (idea simile) | Sì: `mantenimento` | Repo |
+| H-36 | Cliente donna | Stessa struttura, stesse fasce di ripetizioni e stessa logica di volume degli uomini; carichi guidati da RIR e prestazioni, non «più leggeri per principio»; pause un po' più brevi vanno bene; niente programmazione per fase del ciclo salvo richiesta | Moderata (da verificare) | Conoscenza del modello (pratica comune dei coach basati sull'evidenza, nessun nome verificato); repo: pause -15% (PeerJ 2025), ciclo come sonno e stress (Colenso-Semple 2023) | Sì: PRG-20, PRZ-01 | Modello + Repo |
+| H-37 | Over 65 | 2-3 sedute a settimana, 1-3 serie da 8-12 ripetizioni a carico moderato, lavoro di potenza leggero e veloce solo se sicuro, equilibrio, progressione lenta, più riposo | Moderata (da verificare) | Conoscenza del modello (linee guida su adulti anziani, non verificate sul web); repo: ACSM 2026 | Sì: PRG-19, PRG-34, PRG-37 | Modello + Repo |
+| H-38 | Principiante adulto (40+ o dopo anni di stop) | Meno serie e più RIR all'inizio, aumenti ogni 1-2 settimane invece che a ogni seduta | Convenzione | Conoscenza del modello | Parziale: CAR-04, RIC-05, INT-04 | Modello |
+| H-39 | Serie lontane dal cedimento (oltre circa 4-5 RIR) o oltre il tetto per seduta | Non contarle come volume utile: meglio meno serie vicine al cedimento che molte facili | Convenzione (Robinson 2024: solo titolo visto) | Conoscenza del modello; Robinson 2024 (titolo) | Parziale: PRG-30 conta il tetto per seduta, non la prossimità al cedimento | Modello + Web |
+| H-40 | Scelta delle pause | Pesanti 2-3 minuti, macchine 90-120 s, isolamenti 60-90 s | Moderata (da verificare) | Conoscenza del modello; Singer 2024 (titolo, repo) | Sì: PRG-13 | Modello + Repo |
+| H-41 | Velocità di progresso attesa | Principiante: sale a ogni seduta o ogni settimana per mesi; intermedio: ogni 1-4 settimane; avanzato: ogni mesi. Un principiante che non sale: prima recupero, tecnica e cibo, poi il programma | Convenzione | Conoscenza del modello; Rippetoe (seduta/settimana/mese, riassunti web) | Sì: STA-01 (soglie 2 sedute, 4 settimane, 8 settimane) | Modello + Web |
+| H-42 | Frequenza dello scarico | Ogni 4-8 settimane per intermedi e avanzati, o su segnali (prestazioni in calo, dolori articolari, sonno peggiore, zero voglia); volume -30/-50% tenendo i carichi, oppure carico -10% | Moderata (da verificare) | Conoscenza del modello; RP (web); Bell 2024 (repo) | Sì: PRG-01, PRZ-04, DEC-06, STR-01 | Modello + Web + Repo |
+| H-43 | Dolore durante un esercizio | Cambia variante o ampiezza nella zona senza dolore e continua il resto; accettabile fino a circa 3/10 se non peggiora il giorno dopo; oltre soglia, rinvio a un professionista | Moderata (Silbernagel 2007, nel repo) | Repo | Sì: DEC-01..04, DOL-01 | Repo |
+| H-44 | Attrezzatura limitata (solo macchine, solo bilanciere e rack, solo elastici) | Copri i 6 schemi di movimento con ciò che c'è; macchine guidate per chi comincia; con carichi leggeri alza ripetizioni, accorcia le pause, rallenta la discesa | Convenzione | Conoscenza del modello | Sì: PRG-07 | Modello |
+| H-45 | Obiettivo dimagrimento | Mantieni carichi e un volume di mantenimento (non ridurre a zero), proteine adeguate, più passi: il lavoro di forza protegge la massa | Moderata (da verificare) | Conoscenza del modello; repo COR-01/COR-03 | Sì | Modello + Repo |
+| H-46 | Seduta da 20 minuti (piano B) | 3-4 multiarticolari in superserie, 2 serie, RIR 1-2, niente isolamenti | Convenzione | Conoscenza del modello | Sì: SAL-01 | Modello |
+| H-47 | Ritorno dopo una pausa | Riparti dal 70-90% dei carichi e da meno volume; risali in 1-3 settimane | Moderata (da verificare) | Conoscenza del modello; repo CAR-04, RIC-05 | Sì | Modello + Repo |
+| H-48 | Età cronologica e di allenamento | La cronologica decide recupero, prudenza e articolazioni; la di allenamento (anni di costanza e velocità di progresso) decide struttura e volume | Convenzione | Conoscenza del modello | Sì: LIV-01 (training age) e PRG-19/PAR-02 (età) sono già separati | Modello |
+| H-49 | Esercizi in posizione allungata | A pari fatica preferisci varianti che caricano il muscolo allungato | Moderata (Maeo 2021-2023, Pedrosa 2025: nel repo) | Repo | Sì: PRG-10, RIC-03 | Repo |
+| H-50 | Principiante che vuole «un programma qualunque» | Full body 3 volte, un esercizio per schema, 2-3 serie, 8-12 ripetizioni, carico che sale piano: la costanza conta più della scheda | Convenzione | Conoscenza del modello; Helms (aderenza, web) | Sì: PRG-02, PRG-18 | Modello + Web |
 
 ## 4. Dove i coach non concordano
 
@@ -412,7 +465,7 @@ Colonna «In 3in»: già implementato (codice) o manca. Forza = di chi lo dice, 
 
 ### 5.4 Prime 4 settimane del principiante (modello di lavoro)
 
-Fonti: Barbell Medicine (2-3 serie impegnative), siti di terzi (RIR 3-4 all'inizio, ripetizioni fisse nei primi mesi), ACSM 2009/2026 nel repo (8-12 ripetizioni massime, 2-3 sedute, aumenti del 2-10% quando si fanno 1-2 ripetizioni sopra il bersaglio). Il modello sotto è una **mia composizione**: Convenzione.
+Fonti: Barbell Medicine (2-3 serie impegnative), siti di terzi (RIR 3-4 all'inizio, ripetizioni fisse nei primi mesi), ACSM 2009/2026 nel repo (8-12 ripetizioni massime, 2-3 sedute, aumenti del 2-10% quando si fanno 1-2 ripetizioni sopra il bersaglio). Il modello sotto è una **mia composizione (Conoscenza del modello, non verificata sul web)**: Convenzione.
 
 | Settimana | Serie per esercizio | RIR | Carico | Note |
 |---|---|---|---|---|
@@ -438,7 +491,7 @@ Aspettative oneste da dire all'utente: con 2 giorni da 30 minuti si raggiunge il
 
 ### 5.6 Casa: manubri e corpo libero
 
-Manubri (3 giorni full body A/B/A, B/A/B; Convenzione, schema di lavoro mio): A: goblet squat, stacco rumeno con manubri, panca/pavimento o piegamenti, rematore a un braccio, press sopra la testa, plank; B: affondi o step-up, hip thrust a terra o ponte, piegamenti inclinati o declinati, rematore inverso/chinato, alzate laterali + curl, core. 3 serie, 8-12 ripetizioni (doppia progressione), RIR 1-3.
+Manubri (3 giorni full body A/B/A, B/A/B; **Conoscenza del modello, non verificata sul web**: schema di lavoro mio, Convenzione): A: goblet squat, stacco rumeno con manubri, panca/pavimento o piegamenti, rematore a un braccio, press sopra la testa, plank; B: affondi o step-up, hip thrust a terra o ponte, piegamenti inclinati o declinati, rematore inverso/chinato, alzate laterali + curl, core. 3 serie, 8-12 ripetizioni (doppia progressione), RIR 1-3.
 
 Quando il manubrio più pesante non basta (tutte le serie al tetto delle ripetizioni): (1) sali di ripetizioni fino a 15-20 vicino al cedimento (ACSM 2026: l'ipertrofia si ottiene dal 30% al 100% di 1RM); (2) poi variante più difficile o unilaterale (goblet squat → bulgaro, piegamenti → piedi rialzati); (3) tempo lento in discesa (3 s) e pause. L'ordine è Convenzione; il passo (1) è Solido (ACSM 2026). Va chiesto il manubrio più pesante all'utente (PCO-06).
 
@@ -463,13 +516,7 @@ Tutte spegnibili (`REGOLE_SPEGNIBILI`), con consenso, non per cauto, over 65, PA
 
 ## 7. Domande aperte
 
-1. **Temi non ricercati per esaurimento del budget WebSearch (200/200).** Query pronte per quando il limite sarà alzato (`CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`):
-   - Donne contro uomini: `sex differences resistance training hypertrophy women recovery volume systematic review`; `split-body versus full-body women randomized trial` (PMC9107721, titolo visto).
-   - Over 65 e anziani: `NSCA position statement resistance training older adults Fragala 2019`; `ACSM 2026 older adults resistance training` (Phillips; sarcopenia).
-   - Scarico: `deloading Bell 2024 consensus Delphi` (già in repo, riletto), `Pritchard 2015 deload volume reduction`.
-   - Velocità di progressione: `Stronger By Science how fast should you progress` (allowed_domains strongerbyscience.com).
-   - Pause e «junk volume»: `Singer 2024 inter-set rest hypertrophy`; `junk volume Israetel`.
-   - Arnold, Yates, PPL di Nippard: `Nippard push pull legs program structure`.
+1. **Temi non ricercati per esaurimento del budget WebSearch (200/200).** Donne contro uomini, over 65, pause, junk volume, velocità di progressione, scarico, struttura esatta di Starting Strength, StrongLifts, Texas Method, Westside, Nippard PPL, PHAT: sezione 1.3, 2.20 e H-36..H-50 sono Conoscenza del modello. Le query per verificarle sono nell'**Appendice A**.
 2. **Scarico programmato per i principianti.** SS, StrongLifts e GZCLP non lo programmano; RP, 5/3/1 e Candito lo prevedono per gli intermedi; nessuno studio visto sui novizi. Da cercare: `deload novice trainees randomized`.
 3. **Landmark RP per muscolo.** Servirebbe il testo di RP (rpstrength.com «Training volume landmarks», non apribile) per sapere come sono stati ricavati e se hanno un autore o un anno. Finché non si legge, restano euristiche.
 4. **Video e podcast.** Visti solo i titoli: Nippard «The Best Science-Based Minimalist Workout Plan (Under 45 Mins)» (YouTube), Legion Athletics ep. 604 «Menno Henselmans on the Benefits of Full-Body Workouts». Tutto ciò che si dice di loro è «riportato da ..., da verificare»: mancano trascrizioni (rete.md, sezione 4).
@@ -479,6 +526,7 @@ Tutte spegnibili (`REGOLE_SPEGNIBILI`), con consenso, non per cauto, over 65, PA
 
 ## 8. Limiti onesti
 
+- **Copertura:** 37 ricerche web riuscite; il resto è Conoscenza del modello (non verificata sul web), marcata come tale (sezioni 1.3, 2.20, H-36..H-50, 5.4, 5.6, colonna «Origine»).
 - **Una sola via di ricerca (WebSearch)** e 37 ricerche utili: ogni numero è il riassunto di un risultato scritto da un modello su snippet di siti di terzi (Lift Vault, Boostcamp, Legion, Coachway, siti di app); mai un testo dell'autore. I numeri sono citati come comparivano.
 - **Quasi tutto è Convenzione**: le schede dei coach non sono esiti di studi. Gli unici studi visti sono Refalo 2023, Androulakis-Korakakis (PMID 31797219), Baz-Valle 2019 e titoli (Singer 2024, Pelland, periodizzazione, stretching), tutti in forma di riassunto di un risultato.
 - **Programmi a pagamento** (Nippard, RP, Barbell Medicine): dei risultati sono comparsi anche PDF diffusi senza autorizzazione; non li ho usati né li cito, e i dettagli di esercizi e progressione dei programmi commerciali non sono ripresi qui.
@@ -486,3 +534,50 @@ Tutte spegnibili (`REGOLE_SPEGNIBILI`), con consenso, non per cauto, over 65, PA
 - **Popolazione**: quasi tutto riguarda uomini giovani allenati; per donne e over 65 la nota non aggiunge nulla (sezione 7).
 - **Cifre di Pritchard 2015 e Rippetoe e Baker 2014** compaiono solo come citazioni riportate da Dr. Muscle: non viste.
 - **Il modello di tempo della sezione 5.5** è calcolo mio sul codice, non fonte esterna.
+
+## Appendice A. Query pronte (da lanciare in una sessione con il tetto alzato)
+
+Metodo come in `.claude/skills/ricerca-fitness/SKILL.md`: prima senza filtri per orientarsi, poi con `allowed_domains` PubMed/PMC per identificare lo studio, poi `["youtube.com"]` per titoli di video. Per ogni risultato annotare n, popolazione, effetto, anno, conflitti. «Chiarisce» = cosa deve confermare o smentire la query.
+
+| # | Query | Dominio consigliato | Chiarisce | Tocca |
+|---|---|---|---|---|
+| 1 | `Renaissance Periodization hypertrophy template male physique exercises sets reps` | rpstrength.com | Struttura esatta dei template RP, livelli | 2.1 |
+| 2 | `Renaissance Periodization volume landmarks how derived MEV MAV MRV Israetel` | rpstrength.com | Origine dei landmark, autore, anno | H-11, PRG-25 |
+| 3 | `RP Hypertrophy App soreness pump workload feedback add remove sets algorithm` | rpstrength.com | Regola esatta del feedback 1/0/-1 | PCO-03 |
+| 4 | `Jeff Nippard push pull legs program structure sets reps RIR` | jeffnippard.com | Struttura PPL e powerbuilding | 2.20 |
+| 5 | `Jeff Nippard Fundamentals Hypertrophy progression deload weeks` | jeffnippard.com | Progressione e scarico | 2.2 |
+| 6 | `Eric Helms RIR RPE recommendations beginners intermediates 3DMJ` | senza filtro | Quando usare RIR con i principianti | PCO-07, H-24 |
+| 7 | `Henselmans full body versus split training frequency recommendation` | mennohenselmans.com | Regola su frequenza e split | H-01, H-05 |
+| 8 | `Stronger By Science how fast should you progress rate of progress intermediates` | strongerbyscience.com | Velocità di sovraccarico per livello | H-41 |
+| 9 | `Stronger By Science novice hypertrophy program structure linear progression` | strongerbyscience.com | Struttura dei programmi per principianti | 2.6 |
+| 10 | `Wendler 5/3/1 progression increments reset rules` | senza filtro | Incrementi e regola di reset | 2.7 |
+| 11 | `GZCL Jacked and Tan 2.0 structure` | senza filtro | Metodo GZCL oltre GZCLP | 2.8 |
+| 12 | `nSuns 5/3/1 LP original rules deload` | senza filtro | Scarico e tabella AMRAP originale | 2.9, CAR-06 |
+| 13 | `Candito linear program novice structure` | senza filtro | Struttura | 2.10 |
+| 14 | `Sheiko routine 29 sets percentages structure` | senza filtro | Struttura e percentuali | 2.11 |
+| 15 | `RTS General Intermediate program structure RPE ranges fatigue percent` | reactivetrainingsystems.com | Struttura e regole di carico | 2.12 |
+| 16 | `Barbell Medicine Powerlifting Basics template structure` | barbellmedicine.com | Struttura e RPE per livello | 2.13 |
+| 17 | `PHAT workout exercises sets reps power day hypertrophy day` | senza filtro | Esercizi e serie esatti | 2.14 |
+| 18 | `Starting Strength novice program exact sets reps progression reset rules` | startingstrength.com | Struttura e passi di carico esatti | 2.15, 2.20 |
+| 19 | `StrongLifts 5x5 progression deload rules` | stronglifts.com | Regole di fallimento e scarico | 2.20 |
+| 20 | `GreySkull LP rules AMRAP double increment` | senza filtro | Regola del raddoppio | 2.20 |
+| 21 | `Texas Method percentages volume day recovery day intensity day` | senza filtro | Percentuali | 2.20 |
+| 22 | `Reddit PPL Metallicadpa exact program days exercises` | senza filtro | Esercizi e serie | 2.20 |
+| 23 | `Westside conjugate method dynamic effort sets reps percentages` | senza filtro | Giorni dinamici | 2.20 |
+| 24 | `Dan John Mass Made Simple program structure` | senza filtro | Struttura | 2.17, 2.20 |
+| 25 | `sex differences resistance training hypertrophy women recovery volume systematic review` | PubMed/PMC/Europe PMC | Differenze reali, n, effetto | H-36 |
+| 26 | `split-body versus full-body resistance training women randomized trial` | PubMed/PMC | Esito di PMC9107721 | H-36, H-01 |
+| 27 | `NSCA position statement resistance training older adults Fragala 2019` | PubMed/PMC | Raccomandazioni su serie, frequenza, potenza | H-37 |
+| 28 | `resistance training older adults power training meta-analysis sarcopenia Phillips` | PubMed/PMC | Prove per over 65 | H-37, PRG-19 |
+| 29 | `deloading Bell 2024 Delphi consensus strength conditioning` | PubMed/PMC | Frequenza e dose di scarico | H-42, CAR-03 |
+| 30 | `Pritchard 2015 deloading volume reduction review` | PubMed/PMC | Cifra «volume -30/-70%» | 5.1 gradino 5 |
+| 31 | `deload novice trainees linear progression randomized` | PubMed/PMC | Scarico programmato per principianti | Domande aperte 2 |
+| 32 | `inter-set rest interval hypertrophy Bayesian meta-analysis Singer 2024` | PubMed/PMC | Soglie di pausa | H-27, H-40 |
+| 33 | `Robinson 2024 meta-regression proximity to failure hypertrophy strength` | PubMed/PMC | Effetto per RIR | H-16, H-39, PCO-02 |
+| 34 | `systematically varying resistance exercises muscle hypertrophy strength 2024` | PubMed/PMC (PMID 39388663) | Esito della variazione | PCO-05 |
+| 35 | `minimal dose resistance training Iversen 2021 time-efficient hypertrophy` | PubMed/PMC | Base di `minimo` | PCO-04 |
+| 36 | `RAMP warm-up meta-analysis injury prevention 2023` | PubMed/PMC | Verifica del «-20% infortuni» | PCO-10 |
+| 37 | `post-exercise stretching delayed onset muscle soreness meta-analysis results` | PubMed/PMC (PMC8133317) | Esito reale sullo stretching | H-29 |
+| 38 | `training age definition novice intermediate advanced strength progression` | strongerbyscience.com | Definizione di livello | H-32, H-48 |
+| 39 | `heavy versus light loads hypertrophy trained dumbbell home training` | PubMed/PMC | Carichi leggeri a casa | PCO-06, H-17 |
+| 40 | Titoli video: `Jeff Nippard minimalist workout`, `Mike Israetel how to program volume`, `Eric Helms RPE autoregulation`, `Menno Henselmans full body` | youtube.com | Solo titoli e URL: ogni affermazione resta «riportato da ..., da verificare» | 2.3, 1.2 |

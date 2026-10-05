@@ -12,6 +12,7 @@
    npm run collaudo:schede -- --profilo '{"level":"intermedio","days":3,"goals":["massa"],"minutes":60}'
    npm run collaudo:schede -- --confronta prima.json dopo.json
    Opzioni: --solo COD1,COD2 (solo quei criteri)  --esempi N (default 3)  --top N (classi con esempi, default 14)  --quiet
+            --pesi uniformi (ogni profilo vale uno; default: pesi plausibili della popolazione, vedi PESI_POPOLAZIONE)
    Come si legge e come si estende: .claude/skills/collaudo-generatore-schede/SKILL.md */
 'use strict';
 const fs = require('fs'), path = require('path'), vm = require('vm'), os = require('os');
@@ -33,13 +34,15 @@ const SECONDARI_NON_CONTATI = ['stabilita', 'avambracci', 'flessori_anca'];
 /* Nello squat e nella leg press i femorali lavorano quasi nulla (Kubo 2019, citato in dettagli-esercizi.js: Moderata): non si contano */
 const FEMORALI_NON_CONTATI_NELLO_SQUAT = true;
 /* Serie frazionarie a settimana per muscolo. [minimo, massimo]. "grande" = petto, schiena, quadricipiti, femorali, glutei;
-   "piccolo" = deltoidi, braccia, polpacci. Base: Pelland 2025 (da 10 serie in su si cresce piu che sotto 5; rendimenti decrescenti oltre
-   le 12 frazionarie: Solida/Moderata) e VOLUME_LIVELLO del coach (8-10 / 10-14 / 14-20 dirette: Convenzione). Per la forza bastano meno serie
-   (2-3 serie per esercizio, ACSM 2026: Solida; i numeri per livello sono Convenzione). Generale = salute e dimagrimento (ACSM 2026: circa 10 serie, 2 volte a settimana: Solida). */
+   "piccolo" = deltoidi, braccia, polpacci (prendono molto dai multiarticolari, per questo il minimo e piu basso).
+   Ipertrofia e generale: docs/ricerca-ipertrofia-programmazione.md 3.2 (principiante 6-10 / 4-8, intermedio 10-16 / 6-10, avanzato 12-20 / 8-12;
+   Pelland 2025: da 10 serie in su si cresce piu che sotto 5, rendimenti decrescenti oltre le 12 frazionarie: Solida/Moderata; ACSM 2026 per la salute: Solida;
+   Iversen 2021, Baz-Valle 2022 per il tetto: Moderata). Forza: 2-3 serie per esercizio (ACSM 2026: Solida); i numeri per livello sono Convenzione.
+   Fascia "piccolo": Convenzione (stessa logica, meno serie perche i sinergisti contano). */
 const VOLUME_SETT = {
-  ipertrofia: { principiante: { grande: [6, 12], piccolo: [4, 10] }, intermedio: { grande: [10, 18], piccolo: [6, 14] }, avanzato: { grande: [12, 22], piccolo: [8, 18] } },
+  ipertrofia: { principiante: { grande: [6, 10], piccolo: [4, 10] }, intermedio: { grande: [10, 16], piccolo: [6, 14] }, avanzato: { grande: [12, 20], piccolo: [8, 18] } },
   forza:      { principiante: { grande: [4, 10], piccolo: [2, 8] },  intermedio: { grande: [6, 14], piccolo: [3, 10] },  avanzato: { grande: [8, 18], piccolo: [4, 12] } },
-  generale:   { principiante: { grande: [4, 10], piccolo: [2, 8] },  intermedio: { grande: [6, 14], piccolo: [3, 10] },  avanzato: { grande: [6, 14], piccolo: [3, 10] } }
+  generale:   { principiante: { grande: [4, 8], piccolo: [2, 8] },   intermedio: { grande: [6, 10], piccolo: [3, 10] },  avanzato: { grande: [8, 12], piccolo: [3, 10] } }
 };
 /* Obiettivo glutei: il gluteo ha il suo intervallo (il coach scrive 9-15 serie: onboarding.js ONB_GOALS; il resto e Convenzione) */
 const VOLUME_GLUTEI_OBIETTIVO = { principiante: [8, 16], intermedio: [10, 20], avanzato: [12, 24] };
@@ -49,8 +52,17 @@ const TOLLERANZA_VOLUME_ALTO = 0.15;
 const TOLLERANZA_VOLUME_BASSO = 0.10;
 /* Sotto 2 serie frazionarie a settimana un muscolo e di fatto non allenato (Convenzione) */
 const ASSENTE_FRAZ = 2;
-/* Almeno un esercizio diretto (2 serie) a settimana per polpacci, deltoidi laterali e posteriori quando si cerca ipertrofia (Convenzione) */
-const DIRETTE_MIN = 2;
+/* Serie DIRETTE minime a settimana (intermedio, avanzato) per i muscoli che i multiarticolari allenano poco, nell ipertrofia:
+   docs/ricerca-ipertrofia-programmazione.md 3.2 (Moderata per tricipiti e bicipiti: Maeo 2023, Baz-Valle 2022; Convenzione per deltoidi e polpacci).
+   Per i femorali la flessione del ginocchio e controllata da EQ-03 (Maeo 2021: Moderata). */
+const DIRETTE_MIN_MUSCOLO = {
+  tricipiti: { intermedio: 4, avanzato: 6 }, bicipiti: { intermedio: 4, avanzato: 6 }, deltoidi_laterali: { intermedio: 4, avanzato: 6 },
+  deltoidi_posteriori: { intermedio: 3, avanzato: 4 }, polpacci: { intermedio: 6, avanzato: 8 }
+};
+/* Avambracci: un esercizio diretto (2 serie) solo per avanzati in ipertrofia (docs 3.2: 0-4 serie, opzionali: Convenzione) */
+const DIRETTE_AVAMBRACCI = 2;
+/* Muscoli piccoli: serie dirette in almeno 2 sedute a settimana (docs/ricerca-ipertrofia-programmazione.md 3.3: Convenzione) */
+const SEDUTE_DIRETTE_PICCOLI_MIN = 2;
 /* Le richieste sui muscoli piccoli valgono da 3 giorni, 45 minuti e non per i principianti (come fa il coach: strCopri; Convenzione) */
 const PICCOLI_GIORNI_MIN = 3, PICCOLI_MINUTI_MIN = 45;
 
@@ -246,9 +258,9 @@ const CRITERI = [
   { id: 'VOL-02', nome: 'Volume settimanale sopra il massimo del livello (serie frazionarie)', sev: 3, forza: 'Moderata', fonte: 'Pelland 2025 (rendimenti decrescenti oltre 12); Convenzione per i tetti',
     dove: [RICETTE_JS + ': buildProgram (blocco "volume per muscolo": le sinergie sono per gruppo, non per muscolo; bonus priorita)', STRUTTURA_JS + ': strCopri / strBilancia (serie aggiunte dopo il tetto)'],
     check: (m, c) => volumeGruppi(m, c).filter(x => x.tipo === 'sopra').map(x => ({ sub: x.g, sev: x.classe === 'grande' ? 3 : 2, msg: x.g + ': ' + r1(x.v) + ' serie frazionarie a settimana, massimo ' + x.max + ' (' + c.tipoObiettivo + ', ' + c.level + ')', gravita: (x.v - x.max) / x.max * 10 })) },
-  { id: 'DIR-01', nome: 'Nessun esercizio diretto per polpacci, deltoidi (laterali, posteriori) o avambracci nell ipertrofia', sev: 3, forza: 'Convenzione', fonte: 'pratica dei coach; docs/ricerca-struttura-e-intensita.md 1.2 (braccia dirette: Moderata)',
+  { id: 'DIR-01', nome: 'Poche serie dirette per tricipiti, bicipiti, deltoidi (laterali, posteriori), polpacci o avambracci nell ipertrofia', sev: 3, forza: 'Convenzione', fonte: 'docs/ricerca-ipertrofia-programmazione.md 3.2 (Maeo 2023, Baz-Valle 2022: Moderata; deltoidi e polpacci: Convenzione)',
     dove: [STRUTTURA_JS + ': strCopri (aggiunge solo con 3+ giorni e non principianti)', RICETTE_JS + ': buildProgram (aggiungiRegione per le alzate laterali)'],
-    check: (m, c) => volumeGruppi(m, c).filter(x => x.tipo === 'diretto').map(x => ({ sub: x.g, sev: x.g === 'avambracci' ? 1 : 3, msg: x.g + ': solo ' + r1(x.d) + ' serie dirette a settimana (frazionarie ' + r1(x.v) + ')', gravita: 3 - x.d })) },
+    check: (m, c) => volumeGruppi(m, c).filter(x => x.tipo === 'diretto').map(x => ({ sub: x.g, sev: x.g === 'avambracci' ? 1 : (['bicipiti', 'tricipiti'].indexOf(x.g) !== -1 ? 2 : 3), msg: x.g + ': ' + r1(x.d) + ' serie dirette a settimana, minimo ' + x.min + ' (frazionarie ' + r1(x.v) + ')', gravita: (x.min - x.d) / x.min * 10 })) },
   { id: 'FRQ-01', nome: 'Grande gruppo allenato meno di 2 volte a settimana', sev: 4, forza: 'Solida', fonte: 'ACSM 2026 (137 revisioni): ogni grande gruppo almeno 2 sedute a settimana',
     dove: [ONB_JS + ': splitFor / splitPerFrequenza', RICETTE_JS + ': RICETTE (ricette per tipo di giorno) e buildProgram (nEs: pochi esercizi per seduta)', 'js/coach/metodi-momenti.js: METODI (split dei metodi famosi)'],
     check: (m, c) => {
@@ -570,18 +582,20 @@ function volumeGruppi(m, c) {
     const piccolo = def.classe !== 'grande';
     const applicabile = !piccolo || (def.classe === 'core' ? c.days >= 3 : (c.days >= PICCOLI_GIORNI_MIN && c.minutes >= PICCOLI_MINUTI_MIN && c.level !== 'principiante'));
     if (!applicabile) return;
-    if (def.soloDiretto) {   /* avambracci: solo la presenza di un esercizio diretto, per avanzati in ipertrofia con tempo (Convenzione) */
-      if (c.tipoObiettivo === 'ipertrofia' && c.level === 'avanzato' && c.days >= 4 && c.minutes >= 60 && d < DIRETTE_MIN) out.push({ g, tipo: 'diretto', v, d, classe: def.classe });
+    if (def.soloDiretto) {   /* avambracci: solo la presenza di un esercizio diretto, per avanzati in ipertrofia con tempo */
+      if (c.tipoObiettivo === 'ipertrofia' && c.level === 'avanzato' && c.days >= 4 && c.minutes >= 60 && d < DIRETTE_AVAMBRACCI) out.push({ g, tipo: 'diretto', v, d, classe: def.classe, min: DIRETTE_AVAMBRACCI });
       return;
     }
     let range = def.classe === 'core' ? null : VOLUME_SETT[c.tipoObiettivo][c.level][def.classe];
     if (g === 'glutei' && c.goals.indexOf('glutei') !== -1) range = VOLUME_GLUTEI_OBIETTIVO[c.level];
     const richiesto = req.indexOf(g) !== -1;
     if (richiesto && v < ASSENTE_FRAZ) { out.push({ g, tipo: 'mis', v, d, classe: def.classe }); return; }
-    if (richiesto && def.diretto && c.tipoObiettivo === 'ipertrofia' && d < DIRETTE_MIN) out.push({ g, tipo: 'diretto', v, d, classe: def.classe });
+    const tab = c.tipoObiettivo === 'ipertrofia' && c.level !== 'principiante' ? DIRETTE_MIN_MUSCOLO[g] : null;
+    const pavimento = tab ? tab[c.level] : null;
+    const direttoBasso = pavimento !== null && d < pavimento;
+    if (direttoBasso) out.push({ g, tipo: 'diretto', v, d, classe: def.classe, min: pavimento });
     if (!range) return;
-    if (richiesto && !def.soloMax && !def.diretto && v < range[0] * (1 - TOLLERANZA_VOLUME_BASSO)) out.push({ g, tipo: 'sotto', v, d, min: range[0], classe: def.classe });
-    else if (richiesto && def.diretto && v < range[0] * (1 - TOLLERANZA_VOLUME_BASSO) && d >= DIRETTE_MIN) out.push({ g, tipo: 'sotto', v, d, min: range[0], classe: def.classe });
+    if (richiesto && !def.soloMax && !direttoBasso && v < range[0] * (1 - TOLLERANZA_VOLUME_BASSO)) out.push({ g, tipo: 'sotto', v, d, min: range[0], classe: def.classe });
     if (v > range[1] * (1 + TOLLERANZA_VOLUME_ALTO)) out.push({ g, tipo: 'sopra', v, d, max: range[1], classe: def.classe });
   });
   m._volGruppi = out;
@@ -881,6 +895,8 @@ function verificheModello(risultato) {
   /* 10. funzioni di progressione presenti */
   const funz = ['caricoProssimo', 'incrementoPer', 'rirBersaglio', 'rirBersaglioBase', 'applicaCaricoProgressivo'].map(n => n + ': ' + (typeof ENV.ctx[n] === 'function' ? 'si' : 'NO'));
   v.push({ id: 'MOD-10', esito: 'info', titolo: 'Regola di progressione presente', nota: funz.join(', ') });
+  const att = (cod) => { try { return !!ENV.ctx.regolaAttiva(cod); } catch (e) { return false; } };
+  v.push({ id: 'MOD-11', esito: att('INT-04') && att('INT-05') ? 'ok' : 'manca', titolo: 'Calibrazione delle prime sedute (principianti)', nota: 'INT-04 (prima volta con un esercizio: -1 serie e +1 RIR) e INT-05 (bilancio delle prime due sedute) sono regole del coach a runtime: INT-04 ' + (att('INT-04') ? 'attiva' : 'spenta') + ', INT-05 ' + (att('INT-05') ? 'attiva' : 'spenta') + '. Scattano solo con il consenso ai dati (coachAttivo) e non compaiono nel programma generato: il collaudo le vede solo come funzioni (bilancioPrimeSedute: ' + (typeof ENV.ctx.bilancioPrimeSedute === 'function' ? 'presente' : 'assente') + ').' });
   return v;
 }
 
@@ -916,22 +932,22 @@ function mdReport(profili, ris, opz, meta, verifiche) {
   L.push('| Profili provati | ' + tot.profili + ' |');
   L.push('| Generatore in errore | ' + tot.errori + ' |');
   L.push('| Programmi con almeno un fallimento | ' + tot.conFallimenti + ' (' + pct(tot.conFallimenti, tot.profili) + ') |');
-  L.push('| Programmi con almeno un fallimento di severita alta o critica (>= 4) | ' + tot.conGravi + ' (' + pct(tot.conGravi, tot.profili) + ') |');
+  L.push('| Programmi con almeno un fallimento di severita alta o critica (>= 4) | ' + tot.conGravi + ' (' + pct(tot.conGravi, tot.profili) + ' della matrice; ' + pct(tot.pesoGravi || 0, tot.pesoTotale) + ' pesata) |');
   L.push('| Fallimenti (classi per programma) in tutto | ' + tot.fallimentiTotali + ' (media ' + (tot.fallimentiTotali / Math.max(1, tot.profili)).toFixed(1) + ' per programma) |');
   L.push('| Programmi con un metodo famoso scelto dal coach | ' + tot.conMetodo + ' (' + pct(tot.conMetodo, tot.profili) + '): ' + (Object.keys(tot.perMetodo).map(k => k + ' ' + tot.perMetodo[k]).join(', ') || 'nessuno') + ' |', '');
   const perSev = {}; elenco.forEach(cl => { perSev[cl.sev] = (perSev[cl.sev] || 0) + 1; });
   L.push('Classi di fallimento trovate: ' + elenco.length + ' (' + [5, 4, 3, 2, 1].filter(s => perSev[s]).map(s => perSev[s] + ' di severita ' + s + ' ' + NOME_SEV[s]).join(', ') + ').', '');
 
   L.push('## Classi di fallimento per impatto', '');
-  L.push('Impatto = percentuale di programmi colpiti x peso della severita (1, 2, 4, 8, 16). Una classe e un criterio, con il muscolo o lo schema dopo i due punti dove serve. "Colpiti" conta i programmi, non le occorrenze.', '');
-  L.push('| # | Classe | Sev | Forza prova | Programmi | % | Impatto | Dove guardare nel generatore |', '|---|---|---|---|---|---|---|---|');
-  elenco.slice(0, Math.max(opz.top + 10, 25)).forEach((cl, i) => L.push('| ' + (i + 1) + ' | **' + cl.codice + (cl.sub ? ':' + cl.sub : '') + '** ' + cl.nome + ' | ' + cl.sev + ' | ' + cl.forza + ' | ' + cl.n + ' | ' + cl.pct.toFixed(1) + '% | ' + cl.impatto.toFixed(1) + ' | ' + cl.dove.slice(0, 2).join('; ') + ' |'));
+  L.push('Impatto = percentuale PESATA di programmi colpiti x peso della severita (1, 2, 4, 8, 16). La percentuale pesata usa PESI_POPOLAZIONE (assunzioni del collaudo: ' + (PESI_UNIFORMI ? 'spente con --pesi uniformi' : 'attive') + '); "% matrice" conta ogni profilo uno. Una classe e un criterio, con il muscolo o lo schema dopo i due punti dove serve. "Colpiti" conta i programmi, non le occorrenze.', '');
+  L.push('| # | Classe | Sev | Forza prova | Programmi | % matrice | % pesata | Impatto | Dove guardare nel generatore |', '|---|---|---|---|---|---|---|---|---|');
+  elenco.slice(0, Math.max(opz.top + 10, 25)).forEach((cl, i) => L.push('| ' + (i + 1) + ' | **' + cl.codice + (cl.sub ? ':' + cl.sub : '') + '** ' + cl.nome + ' | ' + cl.sev + ' | ' + cl.forza + ' | ' + cl.n + ' | ' + cl.pct.toFixed(1) + '% | ' + cl.pctPesata.toFixed(1) + '% | ' + cl.impatto.toFixed(1) + ' | ' + cl.dove.slice(0, 2).join('; ') + ' |'));
   L.push('');
 
   L.push('## Esempi per le classi principali', '');
   elenco.slice(0, opz.top).forEach((cl, i) => {
     L.push('### ' + (i + 1) + '. ' + cl.codice + (cl.sub ? ':' + cl.sub : '') + ' ' + cl.nome, '');
-    L.push('Severita ' + cl.sev + ' (' + NOME_SEV[cl.sev] + '), forza della prova: ' + cl.forza + '. Fonte: ' + cl.fonte + '. Colpisce ' + cl.n + ' programmi su ' + tot.profili + ' (' + cl.pct.toFixed(1) + '%).');
+    L.push('Severita ' + cl.sev + ' (' + NOME_SEV[cl.sev] + '), forza della prova: ' + cl.forza + '. Fonte: ' + cl.fonte + '. Colpisce ' + cl.n + ' programmi su ' + tot.profili + ' (' + cl.pct.toFixed(1) + '% della matrice, ' + cl.pctPesata.toFixed(1) + '% pesata).');
     L.push('Dove guardare: ' + cl.dove.join('; ') + '.');
     const dimTop = ['livello', 'minuti', 'luogo', 'giorni'].map(d => { const o = cl.perDim[d] || {}; return d + ': ' + Object.keys(o).sort((a, b) => o[b] - o[a]).slice(0, 3).map(k => k + ' ' + o[k]).join(', '); }).join(' | ');
     L.push('Dove cade di piu: ' + dimTop + '.', '');
@@ -961,9 +977,9 @@ function mdReport(profili, ris, opz, meta, verifiche) {
 }
 
 function riepilogoCompatto(ris, meta) {
-  const per = {};
-  ris.elenco.forEach(cl => { per[cl.chiave] = cl.n; });
-  return { criteri: VERSIONE_CRITERI, commit: meta.commit, data: meta.data, matrice: meta.matrice, profili: ris.tot.profili, errori: ris.tot.errori, conFallimenti: ris.tot.conFallimenti, conGravi: ris.tot.conGravi, conMetodo: ris.tot.conMetodo, classi: per };
+  const per = {}, pesata = {};
+  ris.elenco.forEach(cl => { per[cl.chiave] = cl.n; pesata[cl.chiave] = Number(cl.pctPesata.toFixed(2)); });
+  return { criteri: VERSIONE_CRITERI, commit: meta.commit, data: meta.data, matrice: meta.matrice, pesi: PESI_UNIFORMI ? 'uniformi' : 'popolazione', profili: ris.tot.profili, errori: ris.tot.errori, conFallimenti: ris.tot.conFallimenti, conGravi: ris.tot.conGravi, gravi_pesata: Number(((ris.tot.pesoGravi || 0) / ris.tot.pesoTotale * 100).toFixed(2)), conMetodo: ris.tot.conMetodo, classi: per, classi_pesata: pesata };
 }
 
 /* =====================================================================================================
@@ -972,15 +988,16 @@ function riepilogoCompatto(ris, meta) {
 function confronta(fa, fb) {
   const A = JSON.parse(fs.readFileSync(fa, 'utf8')).riepilogo, B = JSON.parse(fs.readFileSync(fb, 'utf8')).riepilogo;
   const L = [];
-  if (A.criteri !== B.criteri) L.push('ATTENZIONE: versione dei criteri diversa (' + A.criteri + ' contro ' + B.criteri + '): i numeri non sono confrontabili del tutto.');
+  if (A.criteri !== B.criteri) L.push('ATTENZIONE: versione dei criteri diversa (' + A.criteri + ' contro ' + B.criteri + '): i numeri non sono del tutto confrontabili.');
   if (A.matrice !== B.matrice || A.profili !== B.profili) L.push('ATTENZIONE: matrice diversa (' + A.matrice + ' ' + A.profili + ' contro ' + B.matrice + ' ' + B.profili + '): confronta le percentuali, non i conteggi.');
+  if (A.pesi !== B.pesi) L.push('ATTENZIONE: pesi diversi (' + A.pesi + ' contro ' + B.pesi + '): confronta la colonna "matrice".');
   const pa = (n) => (n / A.profili * 100), pb = (n) => (n / B.profili * 100);
   L.push('Prima: ' + A.commit + ' (' + A.data + ')  Dopo: ' + B.commit + ' (' + B.data + ')');
-  L.push('Programmi con fallimenti gravi (sev >= 4): ' + pa(A.conGravi).toFixed(1) + '% -> ' + pb(B.conGravi).toFixed(1) + '%');
+  L.push('Programmi con fallimenti gravi (sev >= 4): ' + pa(A.conGravi).toFixed(1) + '% -> ' + pb(B.conGravi).toFixed(1) + '% (pesata ' + A.gravi_pesata + '% -> ' + B.gravi_pesata + '%)');
   L.push('Programmi con almeno un fallimento: ' + pa(A.conFallimenti).toFixed(1) + '% -> ' + pb(B.conFallimenti).toFixed(1) + '%', '');
-  L.push('Classe'.padEnd(34) + 'prima'.padStart(8) + 'dopo'.padStart(8) + 'variaz.'.padStart(9));
+  L.push('Classe'.padEnd(40) + 'matrice prima'.padStart(14) + 'dopo'.padStart(8) + 'pesata prima'.padStart(14) + 'dopo'.padStart(8));
   const chiavi = [...new Set(Object.keys(A.classi).concat(Object.keys(B.classi)))].sort((x, y) => Math.abs(pb(B.classi[y] || 0) - pa(A.classi[y] || 0)) - Math.abs(pb(B.classi[x] || 0) - pa(A.classi[x] || 0)));
-  chiavi.forEach(k => { const a = pa(A.classi[k] || 0), b = pb(B.classi[k] || 0); L.push(k.padEnd(34) + (a.toFixed(1) + '%').padStart(8) + (b.toFixed(1) + '%').padStart(8) + ((b - a >= 0 ? '+' : '') + (b - a).toFixed(1)).padStart(9)); });
+  chiavi.forEach(k => L.push(k.padEnd(40) + (pa(A.classi[k] || 0).toFixed(1) + '%').padStart(14) + (pb(B.classi[k] || 0).toFixed(1) + '%').padStart(8) + (((A.classi_pesata || {})[k] || 0).toFixed(1) + '%').padStart(14) + (((B.classi_pesata || {})[k] || 0).toFixed(1) + '%').padStart(8)));
   return L.join('\n');
 }
 
@@ -994,7 +1011,7 @@ function opzioni(argv) {
     if (a === '--out') o.out = v(); else if (a === '--matrice') o.matrice = v(); else if (a === '--etichetta') o.etichetta = v();
     else if (a === '--solo') o.solo = String(v()).split(',').map(s => s.trim().toUpperCase()).filter(Boolean);
     else if (a === '--esempi') o.esempi = Number(v()) || 3; else if (a === '--top') o.top = Number(v()) || 14; else if (a === '--quiet') o.quiet = true;
-    else if (a === '--profilo') o.profilo = v(); else if (a === '--confronta') { o.confronta = [v(), v()]; }
+    else if (a === '--pesi') o.pesi = v(); else if (a === '--profilo') o.profilo = v(); else if (a === '--confronta') { o.confronta = [v(), v()]; }
     else if (a === '--help' || a === '-h') o.aiuto = true; else o.sconosciuta = a;
   }
   return o;
@@ -1010,9 +1027,9 @@ function stampaRiepilogo(ris, meta, file) {
   const L = [];
   L.push('=== Collaudo del generatore (criteri v' + VERSIONE_CRITERI + ', commit ' + meta.commit + ') ===');
   L.push('Matrice ' + meta.matrice + ': ' + ris.tot.profili + ' profili in ' + ris.tot.secondi.toFixed(1) + ' s | in errore: ' + ris.tot.errori + ' | con metodo famoso: ' + ris.tot.conMetodo);
-  L.push('Programmi con fallimenti: ' + ris.tot.conFallimenti + ' (' + (ris.tot.conFallimenti / ris.tot.profili * 100).toFixed(1) + '%), gravi (sev >= 4): ' + ris.tot.conGravi + ' (' + (ris.tot.conGravi / ris.tot.profili * 100).toFixed(1) + '%)');
-  L.push('Prime 12 classi per impatto (sev, programmi colpiti):');
-  ris.elenco.slice(0, 12).forEach((cl, i) => L.push(('  ' + (i + 1)).slice(-3) + '. ' + (cl.codice + (cl.sub ? ':' + cl.sub : '')).padEnd(26) + ' sev ' + cl.sev + '  ' + String(cl.n).padStart(6) + ' (' + cl.pct.toFixed(1).padStart(5) + '%)  ' + cl.nome.slice(0, 60)));
+  L.push('Programmi con fallimenti: ' + ris.tot.conFallimenti + ' (' + (ris.tot.conFallimenti / ris.tot.profili * 100).toFixed(1) + '%), gravi (sev >= 4): ' + ris.tot.conGravi + ' (' + (ris.tot.conGravi / ris.tot.profili * 100).toFixed(1) + '% matrice, ' + ((ris.tot.pesoGravi || 0) / ris.tot.pesoTotale * 100).toFixed(1) + '% pesata)');
+  L.push('Prime 12 classi per impatto (sev, programmi colpiti, % matrice / % pesata):');
+  ris.elenco.slice(0, 12).forEach((cl, i) => L.push(('  ' + (i + 1)).slice(-3) + '. ' + (cl.codice + (cl.sub ? ':' + cl.sub : '')).padEnd(26) + ' sev ' + cl.sev + '  ' + String(cl.n).padStart(6) + ' (' + cl.pct.toFixed(1).padStart(5) + '% / ' + cl.pctPesata.toFixed(1).padStart(5) + '%)  ' + cl.nome.slice(0, 56)));
   if (file) L.push('Report: ' + file.md, 'Dati:   ' + file.json);
   console.log(L.join('\n'));
 }
@@ -1021,6 +1038,7 @@ function main() {
   const o = opzioni(process.argv.slice(2));
   if (o.aiuto || o.sconosciuta) { console.log((o.sconosciuta ? 'Opzione sconosciuta: ' + o.sconosciuta + '\n' : '') + fs.readFileSync(__filename, 'utf8').split('\n').slice(1, 17).join('\n')); return; }
   if (o.confronta) { console.log(confronta(o.confronta[0], o.confronta[1])); return; }
+  PESI_UNIFORMI = o.pesi === 'uniformi';
   ENV = creaAmbiente(); G = new Proxy({}, { get: (t, k) => { if (!(k in t)) t[k] = ENV.g(String(k)); return t[k]; } });
   if (!o.quiet && ENV.erroriCaricamento.length) process.stderr.write('Avviso: errori nel caricamento degli script: ' + ENV.erroriCaricamento.join(' | ') + '\n');
   if (o.profilo) {
@@ -1043,7 +1061,7 @@ function main() {
   const file = dirUscita(o);
   fs.mkdirSync(path.dirname(file.md), { recursive: true });
   fs.writeFileSync(file.md, mdReport(profili, ris, o, meta, verifiche));
-  const json = { meta, riepilogo: riepilogoCompatto(ris, meta), totali: ris.tot, perDimensione: ris.dimensioni, classi: ris.elenco.map((cl, i) => ({ rango: i + 1, chiave: cl.chiave, codice: cl.codice, sub: cl.sub, nome: cl.nome, sev: cl.sev, forza: cl.forza, fonte: cl.fonte, dove: cl.dove, programmiColpiti: cl.n, percentuale: Number(cl.pct.toFixed(2)), occorrenze: cl.occorrenze, impatto: Number(cl.impatto.toFixed(2)), perDimensione: cl.perDim,
+  const json = { meta, riepilogo: riepilogoCompatto(ris, meta), totali: ris.tot, perDimensione: ris.dimensioni, classi: ris.elenco.map((cl, i) => ({ rango: i + 1, chiave: cl.chiave, codice: cl.codice, sub: cl.sub, nome: cl.nome, sev: cl.sev, forza: cl.forza, fonte: cl.fonte, dove: cl.dove, programmiColpiti: cl.n, percentuale: Number(cl.pct.toFixed(2)), percentualePesata: Number(cl.pctPesata.toFixed(2)), occorrenze: cl.occorrenze, impatto: Number(cl.impatto.toFixed(2)), perDimensione: cl.perDim,
     esempi: i < o.top ? sceglieEsempi(cl, o.esempi).map(e => ({ profilo: e.profilo, metodo: e.metodo, cosaNonVa: e.msg, settimana: e.tabella })) : undefined })),
     criteri: CRITERI.map(c => ({ id: c.id, nome: c.nome, sev: c.sev, forza: c.forza, fonte: c.fonte, dove: c.dove })), verificheModello: verifiche };
   fs.writeFileSync(file.json, JSON.stringify(json, null, 1));
