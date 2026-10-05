@@ -396,7 +396,7 @@ File di esempio: `esercizi/ex-01-panca-piana.svg` (profilo, 2 fotogrammi, 400x30
 
 ## Da rivedere a fine lavoro
 
-Nota formato: da ex-40 in poi le animazioni sono a 3 pose (START/MID/END, ciclo CSS di 6.4 s, gruppi `#f-giu`/`#f-mid`/`#f-su`, crossfade lineare START > MID > END > MID > START). Gli esercizi ex-15...ex-39 sono a 2 pose (START/END, ciclo 3.2 s): candidati a un eventuale rifacimento a 3 pose a fine lavoro.
+Nota formato: da ex-40 in poi le animazioni sono a 3 pose (START/MID/END, gruppi `#f-giu`/`#f-mid`/`#f-su` con classe `.fr`, ciclo START > MID > END > MID > START). Standard di animazione (da riusare per ex-41 in poi, validato su ex-40): durata 6 s, `.fr{animation:6s cubic-bezier(.45,0,.55,1) infinite}` (easing ease-in-out simmetrico, applicato a ogni intervallo), hold di circa 0.7 s su START (0-6% e 94-100%) e su END (44-56%), transizioni da 19% (circa 1.14 s) ciascuna, crossfade con opacita' complementari (somma = 1 in ogni istante, la posa uscente scende con la stessa curva con cui quella entrante sale). Keyframes: `giu{0%,6%{opacity:1}25%,75%{opacity:0}94%,100%{opacity:1}}`, `mid{0%,6%{opacity:0}25%{opacity:1}44%,56%{opacity:0}75%{opacity:1}94%,100%{opacity:0}}`, `su{0%,25%{opacity:0}44%,56%{opacity:1}75%,100%{opacity:0}}`; `@media (prefers-reduced-motion:reduce){.fr{animation:none}#f-mid,#f-su{opacity:0}}` (solo START visibile). Gli esercizi ex-15...ex-39 sono a 2 pose (START/END, ciclo 3.2 s): candidati a un eventuale rifacimento a 3 pose a fine lavoro.
 
 Elenco delle illustrazioni da rivedere o rifare a fine lavoro. La lista si aggiorna man mano e l'utente decide alla fine quali rifare.
 
