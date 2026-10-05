@@ -4,32 +4,14 @@
 /* ============================================================
    COACH ENGINE: costruzione del programma
    Dalla ricerca:
-   - un blocco di lavoro dura 4-8 settimane, con uno SCARICO ogni 4-8;
-     il principiante non prudente fa 8 settimane con un solo scarico, all 8a
-     (PRN-03 ponte, registro B4: nei sani lo scarico a calendario non ha un
-     vantaggio provato); i prudenti (over 65, PAR-Q, minorenni) restano a 3+1
-   - nello scarico si tagliano le serie del 30-50% e si alleggerisce il carico
+   - un blocco di lavoro dura 4-8 settimane, con uno SCARICO ogni 4-8 (mesociclo.js)
    - piu obiettivi insieme: uno guida, gli altri correggono. Massimizzare
      tutto nello stesso blocco non funziona meglio che alternare.
    Sicurezza e segnali (onda 0, W0-T5): RISCHIO e consentito sotto (SAF-01, SEL-11,
    REC-04 ponte per il ginocchio, CAS-01 guardia degli attrezzi di casa).
    ============================================================ */
 
-/* Durata e struttura in base all esperienza.
-   PRN-03 (ponte, D-P5): principiante = 8 settimane e scarico solo all 8a, SOLO per i programmi creati da ora
-   (un programma salvato tiene le sue fasi: stanno in prog.fasi). `prudente` (over 65, PAR-Q positivo, minorenne):
-   blocchi 3+1 come prima; chi chiama (buildProgram) deve passarlo: over65, PAR-Q positivo o eta tra 1 e 17 anni. */
-function strutturaProgramma(level, prudente) {
-  if (level === 'principiante') return prudente ? { settimane: 8, blocco: 4 } : { settimane: 8, blocco: 8 };   /* prudente: 2 blocchi da 3+1; altri: 7 di carico + 1 di scarico */
-  if (level === 'avanzato') return { settimane: 12, blocco: 6 };       /* 2 blocchi da 5+1 */
-  return { settimane: 12, blocco: 4 };                                 /* 3 blocchi da 3+1 */
-}
-
-function fasiProgramma(struttura) {
-  const fasi = [];
-  for (let w = 1; w <= struttura.settimane; w++) fasi.push(w % struttura.blocco === 0 ? 'scarico' : 'carico');
-  return fasi;
-}
+/* Durata e struttura del programma (strutturaProgramma, fasiProgramma, pianoMesociclo): js/coach/programma/mesociclo.js dal generatore a stadi (W1-T4). */
 
 /* ---- Attrezzatura e fastidi: esercizi da evitare e con cosa sostituirli ---- */
 function attrezzoDi(nome) {

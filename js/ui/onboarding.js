@@ -82,6 +82,11 @@ function splitPerFrequenza(level, days, freq) {
   }
   return splitFor(level, days);
 }
+/* scegliSplit(brief): la divisione della settimana dal livello, dai giorni e dalla frequenza scelta (stadio 5 del generatore, piano B.3). Oggi e splitPerFrequenza;
+   un metodo famoso o la modalita forza/estetica (specialitaStruttura) possono sostituirla in regia/genera.js; la riscrive W2-T5. */
+function scegliSplit(brief) {
+  return splitPerFrequenza(brief.chi.livello, brief.agenda.giorni, brief.agenda.freqScelta);
+}
 /* giorno dei punti deboli: i muscoli su cui punti, altrimenti i piccoli gruppi */
 const SLOT_PRIORITA = { petto: ['spintaO', 'isoPetto'], schiena: ['tirataV', 'tirataO'], spalle: ['isoDeltL', 'spintaV', 'isoDeltP'],
   braccia: ['isoBic', 'isoTri'], gambe: ['isoQuad', 'isoFem', 'isoPolp'], glutei: ['glutSpinta', 'unilaterale'], core: ['core'] };
@@ -106,39 +111,11 @@ function schemeFor(goal) {
   return { sets: 3, reps: 10, restCompound: 90, restIso: 60, settimane: 8, nota: 'Tutti i gruppi due volte a settimana, lasciando 2-3 ripetizioni in riserva: il programma migliore e quello che segui.' };
 }
 
-/* PRG-03 (B1, ponte di W0-T2; il risolutore e W2-T2): quanti esercizi per seduta, senza sforare i minuti dichiarati.
-   Si contano le serie che davvero si faranno (chi inizia, il minorenne, l over 65 e chi e in modalita prudente ne fa al massimo 3:
-   COACH_PARAMETRI.serieMaxPrudente) e la pausa media dei tre tipi di esercizio (fondamentale, macchina, isolamento), non quella del solo
-   fondamentale: prima la stima era per eccesso e le sedute restavano mezze vuote (collaudo DUR-02). Le quote dei tipi sono Convenzione. */
-const PARAM_NUMERO_ESERCIZI = {
-  minutiFissi: 8,                                                      /* riscaldamento e cambi di attrezzo: gli stessi 8 minuti di minutiDi in buildProgram */
-  quotaTipi: { pesante: 0.25, macchina: 0.35, isolamento: 0.40 },      /* in una seduta tipo: 1 esercizio su 4 e un fondamentale col bilanciere, 1 su 3 una macchina o un libero, il resto isolamenti */
-  serieMedie: 3, serieMedieForza: 3.5,                                 /* serie per esercizio realmente fatte, in media */
-  min: 3, max: 7, maxPrincipiante: 5,
-  maxSeduta: 8, maxSedutaPrincipiante: 6                               /* tetto assoluto dopo le aggiunte (collaudo EXN-02: oltre 8, oltre 6 per chi inizia) */
-};
-/* serie per esercizio che il generatore fara davvero con questo schema e questo livello: le serie dello schema (4 per la massa, 5 per la forza)
-   sono il punto di partenza, ma il volume per muscolo e il taglio per il tempo le portano in media a 3 (3,5 per la forza; misurato su 1.800 programmi) */
-function serieEffettive(scheme, opzioni) {
-  const o = opzioni || {};
-  let sets = Math.min(scheme.sets, scheme.tettoSerie || 99, scheme.restCompound >= 210 ? PARAM_NUMERO_ESERCIZI.serieMedieForza : PARAM_NUMERO_ESERCIZI.serieMedie);
-  if (o.level === 'principiante' || o.prudente) sets = Math.min(sets, COACH_PARAMETRI.serieMaxPrudente);
-  return sets;
-}
-/* pausa media (secondi) tra le serie: stessa regola per tipo di buildProgram (fondamentale = restCompound, macchina = 3/4 con minimo 90, isolamento minimo 60) */
-function pausaMediaPerTipo(scheme) {
-  const q = PARAM_NUMERO_ESERCIZI.quotaTipi;
-  return q.pesante * scheme.restCompound + q.macchina * Math.max(90, Math.round(scheme.restCompound * 0.75)) + q.isolamento * Math.max(60, scheme.restIso);
-}
-function exerciseCountFor(minutes, scheme, opzioni) {
-  const o = opzioni || {};
-  const perEsercizio = serieEffettive(scheme, o) * (35 + pausaMediaPerTipo(scheme)) / 60;
-  const n = Math.floor(((Number(minutes) || 60) - PARAM_NUMERO_ESERCIZI.minutiFissi) / perEsercizio);
-  return Math.max(PARAM_NUMERO_ESERCIZI.min, Math.min(o.level === 'principiante' ? PARAM_NUMERO_ESERCIZI.maxPrincipiante : PARAM_NUMERO_ESERCIZI.max, n));
-}
+/* PRG-03 (B1, ponte di W0-T2): quanti esercizi per seduta (PARAM_NUMERO_ESERCIZI, serieEffettive, pausaMediaPerTipo, stimaEsercizi; il sinonimo exerciseCountFor)
+   stanno in js/coach/volume/tempo.js dal generatore a stadi (W1-T4): il tempo e un tetto e li decide il Dosatore. */
 
 /* ETA-01 (D-P9, ponte di W0-T2; assorbe REC-11): l eta e obbligatoria prima del programma; sotto 13 anni nessun programma;
-   13-17 anni profilo minorenne (ETA-02, ETA-03: ricette.js). Una sola funzione per l onboarding, per Opzioni e per buildProgram.
+   13-17 anni profilo minorenne (ETA-02, ETA-03: brief.js e prescriviSerie). Una sola funzione per l onboarding, per Opzioni e per buildProgram.
    Soglia 13 = decisione dell utente; la soglia legale dei dati (14 in Italia) e un tema separato (registro G.1). */
 const PARAM_ETA = { min: 13, max: 99, maggiorenne: 18 };
 const MSG_ETA_SOTTO_MINIMO = 'Sotto i 13 anni il coach non crea programmi: allenati con un adulto esperto.';
