@@ -53,13 +53,24 @@ function faseCorpo(prof) {
   return faseDaObiettivi(p.goals || (p.goal ? [p.goal] : []));
 }
 
+/* INT-2a (m9 della revisione dell onda 1): un livello che il coach non conosce (per esempio «esperto», da un backup o da un altra app) non fa piu lanciare buildProgram («reading '1'» in volume.js):
+   ricade sul piu vicino dei tre noti (esperto, pro, elite -> avanzato; inizio, novizio, base -> principiante; il resto -> intermedio). Un livello mancante resta «intermedio» come prima */
+const LIVELLI_NOTI = ['principiante', 'intermedio', 'avanzato'];
+function livelloConosciuto(livello) {
+  const l = String(livello || '').toLowerCase();
+  if (LIVELLI_NOTI.indexOf(l) !== -1) return l;
+  if (/avanz|esper|expert|advanced|pro|elite|agonist/.test(l)) return 'avanzato';
+  if (/princip|inizi|novizi|beginner|base|neofit/.test(l)) return 'principiante';
+  return 'intermedio';
+}
+
 /* chi sei: eta (0 = non detta), minorenne, over 65, livello, PAR-Q, prudente. Una sola definizione per il brief del programma e per quello di oggi. */
 function chiDa(d) {
   const eta = Number(d.age) || 0;
   const over65 = eta >= 65;
   const minorenne = eta >= PARAM_ETA.min && eta < PARAM_ETA.maggiorenne;   /* ETA-02 e ETA-03: profilo minorenne (assorbe REC-11); un eta non detta resta «adulto» per i programmi gia salvati */
   const parq = d.parq === 'si' || d.parq === true;
-  const livello = d.level || 'intermedio';
+  const livello = livelloConosciuto(d.level);
   const sesso = d.sex === 'F' || d.sex === 'donna' ? 'F' : (d.sex === 'M' || d.sex === 'uomo' ? 'M' : null);
   return { sesso: sesso, donna: d.sex === 'F' || d.sex === 'donna', eta: eta, minorenne: minorenne, over65: over65, livello: livello, principiante: livello === 'principiante',
     parq: parq, cauto: over65 || parq || minorenne };

@@ -159,3 +159,27 @@ test('M3: la frase che legge il minorenne dice 2-3 ripetizioni in riserva, mai 0
   const adulto = telefono(30, 1.25, null), ra = adulto.dati(adulto.chiama('caricoProssimo', ISOLAMENTO, 8, 12, 3));
   assert.ok(/lascia 0–0 ripetizioni in riserva/.test(ra.motivo), 'l adulto resta come prima: ' + ra.motivo);
 });
+
+/* ============================================================================================================ minori */
+test('m8: l id di un obiettivo sconosciuto passa da escapeHtml nel risultato dell onboarding (sicurezza)', () => {
+  const html = (goals) => { app.ctx.__d = JSON.parse(JSON.stringify(Object.assign({}, BASE, { goals, bia: null, seme: 'm8' }))); return app.g('(function(){ onbData = __d; return renderOnbResult(); })()'); };
+  const cattivo = '<img src=x onerror=alert(1)>';
+  const h = html([cattivo, 'massa']);
+  assert.ok(h.indexOf(cattivo) === -1, 'l id sconosciuto non deve comparire come HTML');
+  assert.ok(h.indexOf('&lt;img src=x onerror=alert(1)&gt;') !== -1, 'compare come testo');
+  assert.ok(html(['massa']).indexOf('Massa') !== -1 || html(['massa']).indexOf('massa') !== -1, 'un obiettivo noto resta com era');
+});
+
+test('m9: un livello sconosciuto («esperto») non fa lanciare buildProgram: ricade sul livello piu vicino', () => {
+  /* prima: TypeError «reading '1'» in volume.js */
+  const p = livello => costruisci({ level: livello, seme: 'm9' });
+  const forma = prog => JSON.stringify({ settimane: prog.settimane, blocco: prog.blocco, fasi: prog.fasi, rirSett: prog.rirSett, split: prog.split.nome, sedute: prog.sedute.map(sd => sd.esercizi.length) });
+  assert.strictEqual(forma(p('esperto')), forma(p('avanzato')), 'esperto: struttura da avanzato (12 settimane, blocchi da 6, rampa del RIR)');
+  assert.strictEqual(forma(p('Principiante assoluto')), forma(p('principiante')));
+  assert.strictEqual(forma(p('boh')), forma(p('intermedio')), 'un livello che non si capisce vale intermedio');
+  assert.strictEqual(forma(p(undefined)), forma(p('intermedio')), 'un livello mancante vale intermedio, come prima');
+  assert.strictEqual(JSON.stringify(p('esperto').sedute), JSON.stringify(p('avanzato').sedute), 'esperto e avanzato: le stesse sedute (anche il metodo famoso lo sceglie il livello normalizzato)');
+  assert.strictEqual(p('esperto').settimane, 12);
+  assert.ok(Array.isArray(p('esperto').rirSett), 'la rampa del RIR degli avanzati');
+  assert.deepStrictEqual(['principiante', 'intermedio', 'avanzato', 'esperto', '', null, 'Principiante assoluto'].map(l => app.g('livelloConosciuto')(l)), ['principiante', 'intermedio', 'avanzato', 'avanzato', 'intermedio', 'intermedio', 'principiante']);
+});

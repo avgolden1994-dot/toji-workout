@@ -80,7 +80,7 @@ function metodiPerTe(prof) {
   prof = prof || {};
   const ps = psicoCoach(prof.psico);
   const mo = prof.momento && momentoDa(prof.momento.id);
-  const level = prof.level || 'intermedio', days = Number(prof.days) || 3, minuti = Number(prof.minutes) || 60;
+  const level = livelloConosciuto(prof.level), days = Number(prof.days) || 3, minuti = Number(prof.minutes) || 60;
   const luogo = prof.luogo || (prof.prefs && prof.prefs.luogo) || 'palestra';
   const goals = prof.goals || [prof.goal || 'salute'];
   return METODI.map(m => {

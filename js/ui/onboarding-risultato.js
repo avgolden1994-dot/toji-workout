@@ -5,7 +5,7 @@
 function renderOnbResult() {
   const prog = buildProgram(onbData);
   const an = analyzeBia(onbData.bia, onbData.sex);
-  const nomiObiettivi = prog.goals.map((id, i) => { const g = ONB_GOALS.find(x => x.id === id); return (i === 0 ? '<b>' : '<span>') + (g ? g.name : id) + (i === 0 ? '</b>' : '</span>'); }).join(' + ');
+  const nomiObiettivi = prog.goals.map((id, i) => { const g = ONB_GOALS.find(x => x.id === id); return (i === 0 ? '<b>' : '<span>') + escapeHtml(g ? g.name : id) + (i === 0 ? '</b>' : '</span>');   /* INT-2a (m8 della revisione dell onda 1): l id di un obiettivo sconosciuto (D-P6 lo tiene) non va in HTML com e */ }).join(' + ');
   const scarichi = prog.fasi.map((f, i) => f === 'scarico' ? i + 1 : null).filter(Boolean);
 
   let html = '<div class="onb-q">Il tuo programma</div>' +
