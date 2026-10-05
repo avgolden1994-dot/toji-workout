@@ -7,13 +7,13 @@ Generato con uno script node che legge `EXERCISE_LIBRARY` (`js/dati/libreria-ese
 | Voce | Valore |
 |---|---|
 | Esercizi nel catalogo (`EXERCISE_LIBRARY`) | 140 totali (139 nel branch + 1 da altro branch) |
-| Con immagine (campo presente e file esistente) | 36 (di cui 1 con immagine condivisa: ex-29 usa il file di ex-28) |
-| Senza immagine (mancanti) | 104 su 140 (103 nel branch + 1 da altro branch) |
+| Con immagine (campo presente e file esistente) | 37 (di cui 1 con immagine condivisa: ex-29 usa il file di ex-28) |
+| Senza immagine (mancanti) | 103 su 140 (102 nel branch + 1 da altro branch) |
 | Di cui non ancora presenti in questo branch | 1 (n. 140 Squat Sumo, da `claude/hopeful-thompson-uthd8f`) |
-| File in `esercizi/` | 36 (tutti SVG) |
+| File in `esercizi/` | 37 (tutti SVG) |
 | File orfani (non referenziati) | 1 (`ex-02-panca-inclinata-su-a.svg`) |
-| Peso totale `esercizi/` | 930.8 KB |
-| Peso medio per file | 25.9 KB |
+| Peso totale `esercizi/` | 942.9 KB |
+| Peso medio per file | 25.5 KB |
 
 Copertura per gruppo muscolare:
 
@@ -22,14 +22,14 @@ Copertura per gruppo muscolare:
 | Petto | 17 | 11 | 6 |
 | Schiena | 23 | 11 | 12 |
 | Gambe | 25 (24 nel branch + 1 da altro branch) | 13 | 12 (11 nel branch + 1 da altro branch) |
-| Glutei | 15 | 1 | 14 |
+| Glutei | 15 | 2 | 13 |
 | Spalle | 16 | 0 | 16 |
 | Braccia | 26 | 0 | 26 |
 | Core | 18 | 0 | 18 |
 
 Note: gli esercizi usati in `schede-*.js` e le chiavi di `DETTAGLI` (139) coincidono con la libreria: nessun esercizio fuori catalogo. `tools/genera-catalogo.js` NON riguarda gli esercizi: genera il catalogo delle regole del coach da `docs/coach-mappa-regole.md`.
 
-Le bozze Quiver non finali (varianti a-d degli esercizi 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27 e 28, 30, 31, 32, 33, 34, 35 e 36, di cui la b per il 10, la d per l'11, la d per il 13, la a per il 14, la a per il 15, identica alla d, la d per il 16 e la c per il 17 e la d per il 18 e la d per il 19 e la c per il 20 e la d per il 21 e la d per il 22 e la a per il 23 e la a per il 24 e la c per il 25 e la a per il 26 e la d per il 27 e la a per il 28 e la c per il 30 e la a per il 31 e la a per il 32 e la b per il 33 e la c per il 34 e la b per il 35 e la b per il 36, sono state usate per il finale) stanno in `esercizi-bozze/`, fuori da `esercizi/` e dalla cache del service worker.
+Le bozze Quiver non finali (varianti a-d degli esercizi 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27 e 28, 30, 31, 32, 33, 34, 35, 36 e 37, di cui la b per il 10, la d per l'11, la d per il 13, la a per il 14, la a per il 15, identica alla d, la d per il 16 e la c per il 17 e la d per il 18 e la d per il 19 e la c per il 20 e la d per il 21 e la d per il 22 e la a per il 23 e la a per il 24 e la c per il 25 e la a per il 26 e la d per il 27 e la a per il 28 e la c per il 30 e la a per il 31 e la a per il 32 e la b per il 33 e la c per il 34 e la b per il 35 e la b per il 36 e la b per il 37, sono state usate per il finale) stanno in `esercizi-bozze/`, fuori da `esercizi/` e dalla cache del service worker.
 
 ## 2. Tabella completa
 
@@ -73,7 +73,7 @@ Il nome e' mostrato senza emoji iniziale. Percorso `img/<slug>.png` e' il ripieg
 | 34 | Calf Raise in Piedi | Gambe | `esercizi/ex-34-calf-raise-in-piedi.svg` |
 | 35 | Calf Raise Seduto | Gambe | `esercizi/ex-35-calf-raise-seduto.svg` |
 | 36 | Hip Thrust | Glutei | `esercizi/ex-36-hip-thrust.svg` |
-| 37 | Stacco Rumeno | Glutei | nessuna (ripiego inesistente `img/stacco-rumeno.png`) |
+| 37 | Stacco Rumeno | Glutei | `esercizi/ex-37-stacco-rumeno.svg` |
 | 38 | Stacco Sumo | Glutei | nessuna (ripiego inesistente `img/stacco-sumo.png`) |
 | 39 | Affondi Bulgari | Glutei | nessuna (ripiego inesistente `img/affondi-bulgari.png`) |
 | 40 | Good Morning | Glutei | nessuna (ripiego inesistente `img/good-morning.png`) |
@@ -180,11 +180,10 @@ Il nome e' mostrato senza emoji iniziale. Percorso `img/<slug>.png` e' il ripieg
 
 ## 3. Esercizi senza immagine
 
-106 esercizi (105 nel branch + 1 da altro branch, l'ultimo in coda con nota). Motivo per tutti: **nessun campo** in `IMMAGINI_ESERCIZI`, quindi l'app prova `img/<slug>.png`, il file non esiste e compare il segnaposto "Immagine in arrivo". Nessun file referenziato risulta assente su disco e non ci sono placeholder file.
+105 esercizi (104 nel branch + 1 da altro branch, l'ultimo in coda con nota). Motivo per tutti: **nessun campo** in `IMMAGINI_ESERCIZI`, quindi l'app prova `img/<slug>.png`, il file non esiste e compare il segnaposto "Immagine in arrivo". Nessun file referenziato risulta assente su disco e non ci sono placeholder file.
 
 | Gruppo | Esercizio | Motivo | File atteso dal ripiego |
 |---|---|---|---|
-| Glutei | Stacco Rumeno | nessun campo nella mappa | `img/stacco-rumeno.png` |
 | Glutei | Stacco Sumo | nessun campo nella mappa | `img/stacco-sumo.png` |
 | Glutei | Affondi Bulgari | nessun campo nella mappa | `img/affondi-bulgari.png` |
 | Glutei | Good Morning | nessun campo nella mappa | `img/good-morning.png` |
@@ -372,8 +371,9 @@ Controlli: file referenziati ma assenti = 0; voci di mappa non presenti in libre
 | `ex-34-calf-raise-in-piedi.svg` | 13.4 | 115.25 -20 413.1 309.8 |
 | `ex-35-calf-raise-seduto.svg` | 9.3 | 193.32 42.72 267.7 200.8 |
 | `ex-36-hip-thrust.svg` | 10.2 | 249.89 95.55 148.40 111.30 |
+| `ex-37-stacco-rumeno.svg` | 12.1 | 172.02 23.48 325.40 244.05 |
 
-Formato SVG vettoriale (nessun PNG/WebP); peso medio 25.9 KB, totale 930.8 KB (36 file con l'orfano). Il viewBox base e' 400x300 (rapporto 4:3); gli altri sono ritagli sulla figura (rapporti diversi, da 40x30 a 388x291). Nessun attributo width/height (tranne l'orfano 400x300): scalano al riquadro CSS `.ex-img` (`object-fit: contain`, rapporto 300/165).
+Formato SVG vettoriale (nessun PNG/WebP); peso medio 25.5 KB, totale 942.9 KB (37 file con l'orfano). Il viewBox base e' 400x300 (rapporto 4:3); gli altri sono ritagli sulla figura (rapporti diversi, da 40x30 a 388x291). Nessun attributo width/height (tranne l'orfano 400x300): scalano al riquadro CSS `.ex-img` (`object-fit: contain`, rapporto 300/165).
 
 ### Convenzione nome file
 
@@ -422,3 +422,4 @@ Elenco delle illustrazioni da rivedere o rifare a fine lavoro. La lista si aggio
 | 34 - Calf Raise in Piedi | `esercizi/ex-34-calf-raise-in-piedi.svg` | Bozza c, la migliore (tutte e 4 le bozze mostrano una vera differenza di posa START/END). Alzata allargata a mano (senza Quiver): ora testa/busto/cuscino/impugnature salgono di circa 32 unita' su 275 (~11.7%, prima ~9-12 unita', ~4%); piedi in punta sul gradino con tallone alzato (scarpa ruotata di altri 10 gradi attorno alla punta), leggings, stinco e soleo allungati in verticale (circa +10%) per raccordare ginocchio e caviglia; viewBox allargato 4:3 per contenere la testa in END. Difetti lievi: gamba un po' piu' lunga in END, piede quasi verticale; nella bozza la macchina differisce un poco tra i frame (gradino a due livelli in START, blocco unico in END): usata quella di START, pavimento e gradino allineati (traslazione END 157.9,0); in START il tallone e' solo appena sotto il bordo del gradino. Rimossi rect bianco, 2 ombre (ne resta una statica) e 20 tratti decorativi #DADADA. Alternative: bozze a, b, d in `esercizi-bozze/` (a: colonna piu' bassa in START e piedi piatti sul gradino; b: colonna dietro la schiena, macchina diversa e due impugnature; d: pantaloncini, cuscino piccolo, colonna di altezza diversa tra i frame). | Difetto lieve, da valutare |
 | 35 - Calf Raise Seduto | `esercizi/ex-35-calf-raise-seduto.svg` | Bozza b, la migliore (atleta uomo a torso nudo; a: macchina diversa tra i frame con gradino basso in START e alto in END; c: pelle grigia, cuscino ridisegnato a macchia in END; d: pelle tutta arancione, tratti vaganti e cerchio di sfondo). In tutte le bozze START ed END differivano di poco (testa su di 1-3 unita' su 157) e c'erano le etichette START/END. Alzata allargata a mano (senza Quiver): testa su di circa 14.5 unita' su 157 (~9.2%), cuscino/ginocchia circa 14 (~8.9%), bacino circa 4, leva del cuscino ricalcolata; in START tallone appena sotto il bordo della pedana (scarpa ruotata di circa 8 gradi), in END punta sul bordo con tallone ben alzato (scarpa ruotata di altri 12 gradi, piede molto inclinato); coscia inclinata, stinco e polpacci allungati di circa 10% per raccordare ginocchio e caviglia. Difetti lievi: bacino staccato dal sedile di circa 4 unita' in END e pantaloncini un po' allungati; coscia visibilmente inclinata; piccola fessura bianca tra stinco e scarpa e striscia chiara sul collo (gia' nella bozza); piede quasi verticale in END. Rimosse le etichette START/END (8 path di lettere), rect di sfondo, 2 ombre (ne resta una statica); pelle uniformata a #DBC0A8. | Difetto lieve, da valutare |
 | 36 - Hip Thrust | `esercizi/ex-36-hip-thrust.svg` | Bozza b, la migliore (atleta donna, panca, bilanciere con un disco nero). Tutte e 4 le bozze mostrano una vera differenza di posa START/END; nessuna ha etichette di testo START/END (verificato: 0 elementi `<text>` e nessun path a forma di lettera, il divieto rafforzato ha funzionato). a: decine di tratti decorativi grigi e piccoli segni di movimento; c: due scarpe sovrapposte, tratti vaganti e segni di movimento; d: disco grigio invece che nero, ~30 strisce di sfondo. Rimossi rect di sfondo, 2 ombre (ne resta una statica), panca statica da START; pelle uniformata a #DBC0A8, glutei #fb8b3c, quadricipiti/femorali #fdba8c. Difetti lievi: scarpa in END circa 1,5 unita' piu' a sinistra che in START (offset 152.5); testa/busto in END circa 6 unita' piu' a sinistra rispetto alla panca; striscia di tonalita' diversa sul busto/avambraccio in END; glutei a forma di cerchio; in START gomito e mano in parte coperti dal disco. | Difetto lieve, da valutare |
+| 37 - Stacco Rumeno | `esercizi/ex-37-stacco-rumeno.svg` | Bozza b, la migliore (atleta uomo, bilanciere con un disco nero). Tutte e 4 le bozze mostrano una vera cerniera dell'anca (busto START verticale, END circa 20-30 gradi sopra l'orizzontale, anche indietro, ginocchia quasi tese, braccia verticali); nessuna ha etichette di testo (0 elementi `<text>`, il divieto rafforzato ha funzionato). a: puntini e tratti grigi vaganti, vuoto bianco sul torso in START, mani sul disco poco chiare; c: in END due dischi sovrapposti (disegno doppio) e pelle grigia scura; d: pelle chiara ma disco piu' alto da terra e ritocchi arancio meno leggibili. Rimossi rect di sfondo, 2 ombre (ne resta una statica), ~20 tratti vaganti; scarpe statiche da START; pelle uniformata a #DBC0A8, glutei/femorali #fb8b3c, erettori/adduttori #fdba8c. Difetti lievi: in END il disco resta circa 0,6 diametri sopra il pavimento (non proprio "appena sopra"); in START il disco copre le mani; in END i femorali sono resi con una larga striscia #fdba8c; ciuffo di capelli un po' frastagliato. | Difetto lieve, da valutare |
