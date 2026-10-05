@@ -3,7 +3,8 @@
 Piano: [sezione 2](../piano-lancio-appstore.md#2-preparazione-tecnica-ios). Audio: vedi [03-audio.md](03-audio.md).
 
 ## Progetto e build
-- [ ] (U) Mac con Xcode 26 e SDK iOS 26 (obbligatori dal 28/04/2026; da verificare, consultato 2026-10-05)
+- [ ] (U) Xcode 26 e SDK iOS 26 sul Mac (il Mac c'è; obbligatori dal 28/04/2026; da verificare, consultato 2026-10-05)
+- [ ] (U) Opzionale: Codemagic (piano individuale gratuito, 500 min/mese; da verificare) come build CI di riserva; Appflow scartato
 - [ ] (C) `capacitor.config.ts` (appId, appName, webDir `www`) e `npx cap add ios` (Capacitor 8; versione 8.x esatta e plugin compatibili da verificare)
 - [ ] (C) Deployment target iOS 15 (o superiore, deciso); gestione dipendenze con SPM
 - [ ] (C) `tools/prepara-www.js`: copia statica in `www/`, esclude tests/docs/node_modules, con test
@@ -16,13 +17,14 @@ Piano: [sezione 2](../piano-lancio-appstore.md#2-preparazione-tecnica-ios). Audi
 - [ ] (C) In nativo non registrare/ignorare `sw.js` (SW non affidabile in WKWebView salvo App-Bound Domains; da verificare)
 - [ ] (C) Tutte le risorse nel bundle (font, pdf.js e worker, icone, esercizi): nessuna richiesta a CDN
 - [ ] (C) Nessun aggiornamento di contenuti/codice scaricato: solo nuova build (2.5.2)
-- [ ] (U) Prova in modalità aereo: ogni schermata si apre, Coach IA degrada con messaggio chiaro
+- [ ] (U) Prova in modalità aereo: ogni schermata si apre, il player YouTube/Spotify dà un messaggio chiaro offline (il Coach IA non c'è nella v1)
 
 ## Funzioni native
 - [ ] (C) Haptics: percorso nativo `@capacitor/haptics` provato su iPhone; fallback vibrate non rompe
 - [ ] (C) Notifiche locali id 7001: permesso, programmazione, annullo; app chiusa; Basso consumo; Focus
 - [ ] (C) Schermo acceso: Wake Lock in WKWebView verificato (iOS 15 e 26); altrimenti `@capacitor-community/keep-awake`
 - [ ] (C) Plugin `RestTimerActivity` (Swift) + Widget Extension + `NSSupportsLiveActivities`; prova su dispositivo reale
+- [ ] (C) Pulsante "Scrivici" con `mailto:` (D3) che apre il client di posta
 - [ ] (C) Share/Filesystem per export JSON/CSV/ICS e import file
 - [ ] (C) `@capacitor/status-bar` e splash coerenti con #08080a e dark mode
 
@@ -36,6 +38,6 @@ Piano: [sezione 2](../piano-lancio-appstore.md#2-preparazione-tecnica-ios). Audi
 - [ ] (U+C) Safe area con Dynamic Island e home indicator
 - [ ] (U+C) Dark mode e status bar
 - [ ] (U+C) VoiceOver e Dynamic Type sulle schermate principali
-- [ ] (C) iPad: escluso dal target oppure layout adattato (secondo D8)
+- [ ] (C) iPad escluso: Targeted Device Family = iPhone (D8)
 - [ ] (C) Icona 1024x1024 senza alpha (da verificare) e launch screen
 - [ ] (U) Avvio a freddo accettabile su iPhone SE 3a gen
