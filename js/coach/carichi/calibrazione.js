@@ -9,7 +9,7 @@
 
    A CHI: gli esercizi del piano con carico stimato (e.stimato, scritto da applicaPartenze e da pesoPartenza) di tutti i principianti, uomini compresi (D-P1),
    e delle donne intermedie con il fattore di partenza bassa attivo. Non ai minorenni (una regola che alza i carichi non li spinge). Solo col consenso.
-   PER QUANTO: le prime 4 esposizioni (sedute con l esercizio, dallo storico) e finche non «si chiude»; alla quarta si chiude comunque.
+   PER QUANTO: le prime 4 esposizioni (sedute con l esercizio, dallo storico) e finche non «si chiude»: i salti si decidono dopo le esposizioni 1-4, alla quinta e chiusa comunque.
    COME: lo scarto = RPE bersaglio (8: il carico e giusto, stop al primo RPE 8) meno l RPE segnato; l RPE e quello piu alto tra le serie segnate (la serie piu dura:
    con il tocco a 3 scelte di W3-T3, D-P16, e la sola prima serie), corretto da rirBias. La scala dell app parte da 6 (facile = quattro o piu ripetizioni di
    riserva): 6 vale come scarto 2. Con tutte le serie fatte alle ripetizioni previste:
@@ -82,9 +82,9 @@ function pesoDopoSalto(m, pesoUltimo, pct) {
   return w;
 }
 /* cosa decide la tabella dopo una esposizione: { azione: 'salta' | 'chiude' | 'tieni' | 'mancato', pct, nuovo, pesoUltimo, rpe, scarto, cieco, forzata }
-   `ultima`: e la quarta esposizione, la calibrazione si chiude comunque; `cieche`: quanti salti senza RPE ha gia fatto. Il salto e gia dimezzato per chi e prudente
+   `cieche`: quanti salti senza RPE ha gia fatto. Il salto e gia dimezzato per chi e prudente
    (PAR-Q, sonno scarso, da 65 anni) e vale nuovo kg; se un passo dell attrezzo supera gia il +25% non c e salto (azione 'tieni': si sale con le ripetizioni) */
-function decisioneCalibrazione(ex, repsTarget, m, persona, cieche, ultima) {
+function decisioneCalibrazione(ex, repsTarget, m, persona, cieche) {
   const bias = Number((aggiustiCoach() || {}).rirBias) || 0;
   const rpe = rpeCalibrazione(ex, bias);
   const fatte = (ex.sets || []).filter(s => s.done);
@@ -94,7 +94,6 @@ function decisioneCalibrazione(ex, repsTarget, m, persona, cieche, ultima) {
   const bers = sogliaPartenza('calibrazioneBersaglioRpe'), tol = sogliaPartenza('calibrazioneTolleranzaRpe');
   if (rpe !== null) base.scarto = bers - rpe;
   if (rpe !== null && bers - rpe <= tol + 1e-9) return Object.assign(base, { azione: 'chiude', tarato: Math.abs(bers - rpe) <= tol + 1e-9 });   /* nel bersaglio (tarato) o sopra (nessun salto, si chiude) */
-  if (ultima) return Object.assign(base, { azione: 'chiude', forzata: true });   /* la quarta esposizione chiude comunque, senza dire che il carico e tarato */
   const cieco = rpe === null;
   if (cieco && cieche >= sogliaPartenza('calibrazioneSenzaRpe').volteMax) return Object.assign(base, { azione: 'tieni' });
   const pct = percentualeSalto(persona, classePartenza(m), cieco ? null : bers - rpe) * (persona.cauto ? sogliaPartenza('calibrazioneCauto') : 1);
@@ -124,7 +123,7 @@ function storiaCalibrazione(nome, repsTarget) {
     ultima = null; chiusaOra = false;
     if (aperta) {
       const reps = x.ex.obiettivo && Number(x.ex.obiettivo.reps) > 0 ? Number(x.ex.obiettivo.reps) : repsTarget;
-      ultima = decisioneCalibrazione(x.ex, reps, m, persona, cieche, i + 1 >= E);
+      ultima = decisioneCalibrazione(x.ex, reps, m, persona, cieche);
       if (ultima.azione === 'salta' && ultima.cieco) cieche++;
       if (ultima.azione === 'chiude' || ultima.azione === 'mancato') { chiusa = true; chiusaOra = true; }
     } else chiusa = true;
@@ -176,7 +175,7 @@ function faseCalibrazione(r, c) {
     }
     if (st.ultima && st.ultima.azione === 'chiude' && st.ultima.tarato) {   /* un mancato lo gestisce CAR-17, sopra il bersaglio e alla quarta esposizione si chiude senza dire «tarato» */
       /* il carico tarato si ripete una volta (consolida): la progressione normale riparte dalla seduta dopo, invece di aggiungere subito un passo a un carico appena trovato */
-      if (st.ultima.pesoUltimo > 0 && r.weight > st.ultima.pesoUltimo) { r.weight = st.ultima.pesoUltimo; r.reps = Number(c.repsTarget) || r.reps; r.tipo = 'fermo'; r.motivo = ''; }
+      if (st.ultima.pesoUltimo > 0 && (r.weight > st.ultima.pesoUltimo || r.tipo === 'su')) { r.weight = st.ultima.pesoUltimo; r.reps = Number(c.repsTarget) || r.reps; r.tipo = 'fermo'; r.motivo = ''; }
       r.motivo = (r.motivo ? r.motivo + ' • ' : '') + FRASE_CARICO_TARATO;
       aggiungiPerche(r, 'CAR-18', FRASE_CARICO_TARATO, { forza: forza });
     }
@@ -186,7 +185,14 @@ function faseCalibrazione(r, c) {
   const u = st.ultima;
   const senzaRpe = u.rpe === null;
   if (u.azione === 'tieni') {
-    if (senzaRpe) { r.motivo = (r.motivo ? r.motivo + ' • ' : '') + FRASE_PROMEMORIA_RPE; aggiungiPerche(r, 'CAR-19', FRASE_PROMEMORIA_RPE, { forza: forza }); }
+    /* mai oltre +25% in una volta, nemmeno con la progressione di prima (CAR-16): se un passo supera il tetto (manubrio da 3 kg) si sale con le ripetizioni */
+    const tetto = sogliaPartenza('calibrazioneTettoSalto');
+    if (u.pesoUltimo > 0 && r.weight > u.pesoUltimo * (1 + tetto) + 1e-9) {
+      const salto = Math.round((r.weight / u.pesoUltimo - 1) * 100), passo = Math.round((r.weight - u.pesoUltimo) * 10) / 10;
+      r.weight = u.pesoUltimo; r.reps = (Number(c.repsTarget) || r.reps) + 1; r.tipo = 'su';
+      r.motivo = '+' + virgola(passo) + ' kg sarebbe un salto del ' + salto + '%: prima una ripetizione in piu (' + r.reps + ')';
+    }
+    if (senzaRpe && regolaAttiva('CAR-19')) { r.motivo = (r.motivo ? r.motivo + ' • ' : '') + FRASE_PROMEMORIA_RPE; aggiungiPerche(r, 'CAR-19', FRASE_PROMEMORIA_RPE, { forza: forza }); }
     return r;
   }
   if (u.azione !== 'salta') return r;
@@ -202,9 +208,10 @@ function faseCalibrazione(r, c) {
   const quanto = Math.round((nuovo / u.pesoUltimo - 1) * 100);
   const frase = senzaRpe ? 'Calibrazione: serie complete, +' + virgola(Math.round((nuovo - u.pesoUltimo) * 10) / 10) + ' kg'
     : 'Calibrazione: RPE ' + virgola(u.rpe) + ' contro ' + virgola(sogliaPartenza('calibrazioneBersaglioRpe')) + ' previsto, si sale a ' + virgola(nuovo) + ' kg (+' + quanto + '%)';
-  r.motivo = frase + (senzaRpe ? ' • ' + FRASE_PROMEMORIA_RPE : '');
+  const promemoria = senzaRpe && regolaAttiva('CAR-19');
+  r.motivo = frase + (promemoria ? ' • ' + FRASE_PROMEMORIA_RPE : '');
   aggiungiPerche(r, 'CAR-18', frase, { forza: forza });
-  if (senzaRpe) aggiungiPerche(r, 'CAR-19', FRASE_PROMEMORIA_RPE, { forza: forza });
+  if (promemoria) aggiungiPerche(r, 'CAR-19', FRASE_PROMEMORIA_RPE, { forza: forza });
   return r;
 }
 registraFase('carico', 15, 'CAR-18', faseCalibrazione);

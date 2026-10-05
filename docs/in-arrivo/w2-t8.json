@@ -1,0 +1,120 @@
+{
+  "task": "W2-T8",
+  "script": [
+    { "src": "js/coach/carichi/soglie-partenza.js", "dopo": "js/coach/carichi/e1rm.js" },
+    { "src": "js/coach/carichi/calibrazione.js", "dopo": "js/coach/carichi/partenza.js" }
+  ],
+  "frasi": {
+    "Oggi si parte leggeri apposta: non è un test. L’obiettivo è finire con #-# ripetizioni in più": {
+      "en": "Today you start light on purpose: it’s not a test. The goal is to finish with #-# reps to spare",
+      "es": "Hoy empiezas ligero a propósito: no es una prueba. El objetivo es terminar con #-# repeticiones de reserva",
+      "de": "Heute startest du mit Absicht leicht: Das ist kein Test. Ziel ist es, am Ende noch #-# Wiederholungen in Reserve zu haben"
+    },
+    "Partenza bassa voluta: impari il movimento, poi si sale in fretta": {
+      "en": "Low start on purpose: you learn the movement, then you move up fast",
+      "es": "Inicio bajo a propósito: aprendes el movimiento y luego se sube rápido",
+      "de": "Bewusst niedriger Start: Du lernst die Bewegung, danach geht es schnell nach oben"
+    },
+    "Carico di partenza prudente per chi inizia: non conosco il tuo peso, si regola nelle prime sedute": {
+      "en": "Cautious starting load for beginners: I don’t know your weight, it adjusts over the first sessions",
+      "es": "Carga de partida prudente para quien empieza: no conozco tu peso, se ajusta en las primeras sesiones",
+      "de": "Vorsichtiges Startgewicht für Einsteigerinnen und Einsteiger: Ich kenne dein Gewicht nicht, es passt sich in den ersten Einheiten an"
+    },
+    "Carichi di partenza prudenti per chi inizia: non conosco il tuo peso, si regolano nelle prime sedute.": {
+      "en": "Cautious starting loads for beginners: I don’t know your weight, they adjust over the first sessions.",
+      "es": "Cargas de partida prudentes para quien empieza: no conozco tu peso, se ajustan en las primeras sesiones.",
+      "de": "Vorsichtige Startgewichte für Einsteigerinnen und Einsteiger: Ich kenne dein Gewicht nicht, sie passen sich in den ersten Einheiten an."
+    },
+    "Carichi di partenza bassi di proposito: le prime sedute servono a imparare il movimento, poi il coach sale in fretta.": {
+      "en": "Starting loads are low on purpose: the first sessions are for learning the movement, then the coach moves up fast.",
+      "es": "Las cargas de partida son bajas a propósito: las primeras sesiones sirven para aprender el movimiento, luego el coach sube rápido.",
+      "de": "Die Startgewichte sind bewusst niedrig: Die ersten Einheiten dienen dazu, die Bewegung zu lernen, danach steigert der Coach schnell."
+    },
+    "Per ora basta il bilanciere vuoto: poche ripetizioni, tecnica pulita": {
+      "en": "For now the empty barbell is enough: few reps, clean technique",
+      "es": "Por ahora basta la barra vacía: pocas repeticiones, técnica limpia",
+      "de": "Für den Anfang reicht die leere Stange: wenige Wiederholungen, saubere Technik"
+    },
+    "Il bilanciere vuoto pesa # kg: per iniziare lo stesso movimento con i manubri o con la macchina": {
+      "en": "The empty barbell weighs # kg: to start, do the same movement with dumbbells or on the machine",
+      "es": "La barra vacía pesa # kg: para empezar, haz el mismo movimiento con mancuernas o en la máquina",
+      "de": "Die leere Stange wiegt # kg: Starte dieselbe Bewegung mit Kurzhanteln oder an der Maschine"
+    },
+    "Versione facilitata per partire: si passa alla completa a #-# ripetizioni pulite": {
+      "en": "Easier version to start with: you move on to the full one at #-# clean reps",
+      "es": "Versión facilitada para empezar: se pasa a la completa con #-# repeticiones limpias",
+      "de": "Erleichterte Variante zum Einstieg: Zur vollen Variante geht es bei #-# sauberen Wiederholungen"
+    },
+    "Calibrazione: RPE # contro # previsto, si sale a # kg (+#%)": {
+      "en": "Calibration: RPE # against # expected, going up to # kg (+#%)",
+      "es": "Calibración: RPE # frente a # previsto, se sube a # kg (+#%)",
+      "de": "Kalibrierung: RPE # statt der erwarteten #, weiter auf # kg (+#%)"
+    },
+    "Calibrazione: serie complete, +# kg": {
+      "en": "Calibration: sets completed, +# kg",
+      "es": "Calibración: series completas, +# kg",
+      "de": "Kalibrierung: Sätze geschafft, +# kg"
+    },
+    "Segna quanto è stata dura la prima serie (RPE): con il dato il carico sale più in fretta": {
+      "en": "Log how hard the first set was (RPE): with that number the load goes up faster",
+      "es": "Anota lo dura que fue la primera serie (RPE): con ese dato la carga sube más rápido",
+      "de": "Trage ein, wie hart der erste Satz war (RPE): Mit dieser Angabe steigt das Gewicht schneller"
+    },
+    "Carico tarato: da qui la progressione normale": {
+      "en": "Load calibrated: from here on, normal progression",
+      "es": "Carga calibrada: a partir de aquí, la progresión normal",
+      "de": "Gewicht eingestellt: ab hier die normale Progression"
+    },
+    "Il salto era troppo grande: si torna a # kg, da qui la progressione normale": {
+      "en": "That jump was too big: going back to # kg, from here on normal progression",
+      "es": "El salto fue demasiado grande: se vuelve a # kg, a partir de aquí la progresión normal",
+      "de": "Der Sprung war zu groß: zurück auf # kg, ab hier die normale Progression"
+    }
+  },
+  "regole": [
+    {
+      "capitolo": 8,
+      "sostituisce": true,
+      "riga": "- **PAR-01** (sempre accesa: guardia e riferimento) dati del corpo (`contestoCarichi`): si usano i dati appena inseriti, altrimenti l'ultima BIA salvata. Ordine di preferenza: massa muscolare scheletrica (SMM, riferimento 34 kg) > massa magra (FFM, riferimento 61,5 kg) > peso x massa grassa % > solo peso (x0,82 uomini, x0,74 donne). Valori fuori scala vengono ignorati. **Il livello mancante conta come principiante** nelle stime di carico (D-P12; prima «intermedio», x1,3): una guardia, non cambia i carichi di chi ha un profilo. Per le donne con il fattore di PAR-06 la BIA (massa muscolare o magra) sposta la massa al massimo del ±15% rispetto a quella dal solo peso (DON-01): è una bandiera di prudenza, non il motore; una donna che non ha detto il peso parte dalla donna di riferimento di 59 kg (nota donne §1.3: Provvisoria), non dal valore della libreria pensato per un uomo di 75 kg. Gli uomini: come prima."
+    },
+    {
+      "capitolo": 8,
+      "sostituisce": true,
+      "riga": "- **PAR-05** (sempre accesa: messaggio e dove si applica) dove si applica: creazione del programma (tutte le sedute, comprese le aggiunte per schemi mancanti, regioni e glutei), esercizi nuovi o sostituiti dal coach (dolore, azione \"cambia variante\", rotazione accessori), \"Macchinario occupato\", seduta libera e aggiunta dalla libreria. Senza consenso ai dati o senza dati del corpo resta il valore di libreria (salvo la donna di PAR-06, che senza il peso parte da quella di riferimento). Il record porta il segno `stimato` (la fonte della stima, con il suffisso «Bassa» se c'è lo sconto di PAR-06) e la nota alla prima seduta, **per tutti**: «Oggi si parte leggeri apposta: non è un test. L’obiettivo è finire con 3-4 ripetizioni in più» (ex DON-07); con la partenza bassa anche «Partenza bassa voluta: impari il movimento, poi si sale in fretta»; il programma lo dice una volta («Carichi di partenza bassi di proposito...»)."
+    },
+    {
+      "capitolo": 8,
+      "riga": "- **PAR-06** (spegnibile) fattore di partenza bassa per le donne fino al livello intermedio (W2-T8, ex DON-01; `fattorePartenza` in `js/coach/carichi/partenza.js`, numeri in `js/coach/carichi/soglie-partenza.js`): donne (sesso F o donna) di livello principiante o intermedio (livello mancante = principiante); gli uomini e le avanzate come prima (D-P1: i carichi di partenza degli uomini non cambiano). Il fattore si applica DOPO il limite 0,45-1,8 del fattore dal corpo (il limite non lo annulla) e solo a un carico STIMATO (creazione del programma, esercizi nuovi o sostituiti, «Macchinario occupato», seduta libera, aggiunta dalla libreria), mai a quello che viene dallo storico dello stesso esercizio. Per distretto (alto = tutto tranne gambe e glutei, come `sessoParteAlta` di PAR-02, che resta) e tipo: multiarticolari della parte alta e stacco da terra 0,60 (principiante) o 0,85 (intermedia); multiarticolari di gambe e glutei 0,65 o 0,85; isolamenti 0,75 o 0,85; core, tempi e corpo libero nessun fattore (PAR-09). Arrotondamento per difetto sui passi veri (PAR-04). Motivo: con PAR di oggi una donna principiante riceveva l'85-120% di un massimale tipico sulla parte alta per serie da 8-12 ripetizioni (nota donne §0 e §3.2). Forza: Decisione dell'utente per chi parte basso (2026-10-05), Convenzione (±25%, calcolo su àncore di terzi) per i numeri; registro B1."
+    },
+    {
+      "capitolo": 8,
+      "riga": "- **PAR-07** (spegnibile) lo storico personale assorbe lo sconto di PAR-06 (W2-T8, ex DON-05): fEff = 1 − (1 − fD) × (1 − w), con w = esercizi in storico / 4 (`PARAM_PARTENZA.storicoAPieno`): con 2 esercizi lo sconto è dimezzato, con 4 sparisce. Per le donne con il fattore il rapporto dallo storico (PAR-03) conta solo gli esercizi con la calibrazione chiusa (CAR-18) o con RPE medio di almeno 7 (con molta riserva il massimale dalle ripetizioni sottostima) e ha due mediane, alto e basso, se ci sono almeno 2 esercizi per lato. Gli uomini: come prima. Forza: Convenzione."
+    },
+    {
+      "capitolo": 8,
+      "riga": "- **PAR-08** (spegnibile) bilanciere sotto 0,9 × la barra da 20 kg (W2-T8, ex DON-03; PAR-04 resta il pavimento per tutti gli altri): se per questa persona il carico stimato di un esercizio col bilanciere è sotto 18 kg (solo con lo sconto di PAR-06: gli uomini restano come prima), il generatore lo scambia con la variante con manubri o macchina dello stesso muscolo (stesso bersaglio, stesso movimento se c'è: `alternativeStessoMuscolo`, non più di due volte nel programma; lo scambio compare tra gli adattamenti). Se il bilanciere resta (obiettivo o modalità forza, 5x5 fisso, metodo famoso, esercizio gradito) parte dalla barra vuota: per l'esercizio gradito con 6-8 ripetizioni e una serie in meno, per forza e metodi con la loro prescrizione (B34, B19); nota «Per ora basta il bilanciere vuoto: poche ripetizioni, tecnica pulita». `penalitaPartenza(x, brief)` = −3 al bilanciere in quel posto nella scelta degli esercizi (non un'esclusione: la legge `ricette.js` di W2-T6 con `typeof`). Per le stime fuori dalla generazione (`pesoPartenza`: sostituzioni, «Macchinario occupato», seduta libera, libreria) il peso è la barra vuota e il motivo lo dice. Nessun campo «barra più leggera» (D-P13). Forza: Convenzione."
+    },
+    {
+      "capitolo": 8,
+      "riga": "- **PAR-09** (spegnibile) corpo libero facilitato per le principianti con il fattore (W2-T8, ex DON-09): i piegamenti a terra partono dai Piegamenti Inclinati (mani rialzate), le trazioni alla sbarra dalle Trazioni Assistite alla macchina o dalla Lat Machine (se l'attrezzo c'è), con la nota «Versione facilitata per partire: si passa alla completa a 10-15 ripetizioni pulite» (la scala di salita è CAS-02, di W3-T1). Non per le intermedie né per gli uomini. Forza: Convenzione (nota donne §1.8)."
+    },
+    {
+      "capitolo": 8,
+      "riga": "- **CAR-18** (spegnibile) calibrazione rapida del carico stimato (W2-T8, ex DON-04 e PRI-09; fase 15 della catena `'carico'`, `js/coach/carichi/calibrazione.js`; sostituisce CAR-16 per questi esercizi, CAR-17 resta): vale per gli esercizi del piano con carico stimato (`stimato`) di tutti i principianti, uomini compresi (D-P1), e delle donne intermedie con il fattore di PAR-06, adulti, col consenso; per le prime 4 esposizioni (dallo storico: i salti si decidono dopo le esposizioni 1-4) e finché non «si chiude». Lo scarto è RPE bersaglio 8 (stop al primo RPE 8) meno l'RPE della serie più dura (con il tocco a 3 scelte di W3-T3 la prima serie, se è l'unica), corretto da `rirBias`; la scala dell'app parte da 6 (6 vale come scarto 2). A serie complete: scarto da 3: +20% / +25% / +20% (alto, basso, isolamento), da 2: +15% / +20% / +15%, da 1: +10% (partenza bassa, le donne); +10% / +7,5% / +5% (partenza normale, i principianti uomini); dentro ±0,5 di RPE: si chiude, «Carico tarato: da qui la progressione normale» e il carico si ripete una volta; sopra il bersaglio: nessun salto e si chiude; senza RPE: +10% / +15% / +10% (+5%) al massimo 2 volte (CAR-19); serie mancate: CAR-17 come prima e si chiude, e subito dopo un salto della calibrazione si torna al carico che aveva completato («Il salto era troppo grande»). Ogni salto vale almeno un passo dell'attrezzo, per difetto, e non supera il +25% (se un solo passo lo supera, per esempio un manubrio da 3 kg, si sale con le ripetizioni). Salvaguardie: PAR-Q, sonno scarso o da 65 anni salti dimezzati; dolore su quell'esercizio, scarico del coach, freno della BIA, prontezza sotto 50 oggi, ripresa dopo uno scarico e rientro dopo una pausa: nessun salto; mai ai minorenni. INT-05 ed ESI-02 non contano come «serie facili» quelle degli esercizi in calibrazione (contano per il completamento). Motivo: con il RIR contato al massimo 4 uno scarto vale 1-2 ripetizioni, cioè 3-6% di carico per volta (Epley): troppo poco per restituire uno sconto del 25-40%; la tabella è una scelta di prodotto. Forza: Decisione dell'utente per chi (2026-10-05, D-P1), Convenzione per la tabella e i tetti (registro B1)."
+    },
+    {
+      "capitolo": 8,
+      "riga": "- **CAR-19** (spegnibile) promemoria dell'RPE (W2-T8, ex PRI-09): finché l'esercizio è in calibrazione e l'ultima esposizione non ha RPE, la nota dice «Segna quanto è stata dura la prima serie (RPE): con il dato il carico sale più in fretta»; con l'RPE il salto passa dalla tabella di CAR-18 e il promemoria non c'è. Forza: Convenzione."
+    }
+  ],
+  "squadra": [
+    { "sottoCoach": "bilancia", "codici": "PAR-06..09" },
+    { "sottoCoach": "bilancia", "codici": "CAR-18..19" }
+  ],
+  "mappaAgenti": [
+    "partenza bassa per le donne e carichi stimati: js/coach/carichi/partenza.js (PAR-01, PAR-05..09, penalitaPartenza; numeri e forza in js/coach/carichi/soglie-partenza.js)",
+    "calibrazione rapida del carico stimato: js/coach/carichi/calibrazione.js (fase 'carico' 15, CAR-18/19; calibrazioneNellaSeduta serve a INT-05 in intensita.js e a ESI-02 in esigenza.js)",
+    "atleta virtuale per le prove dei carichi: tests/aiuto-atleta.js (capacità dalle àncore delle note di ricerca; simulaNellApp lo porta dentro l'app vera)"
+  ],
+  "nota": "W2-T8: partenza bassa per le donne fino al livello intermedio e calibrazione rapida (piano capitolo D, registro B1, D-P1, D-P12, D-P13, D-P16). Le righe della mappa vanno nel capitolo 8 insieme a CAR-16/17. Nessun file condiviso toccato oltre a questo JSON."
+}

@@ -94,7 +94,8 @@ function contestoCarichi(d, prof) {
   else if (peso && fm && fm > 3 && fm < 60) massa = { v: peso * (1 - fm / 100), rif: P.rifFfm, tipo: 'ffm' };
   else if (peso && peso >= 35 && peso <= 200) massa = { v: peso * P.fracMagra[donna ? 'F' : 'M'], rif: P.rifFfm, tipo: 'peso' };
   else if (partenzaBassa) massa = { v: sogliaPartenza('pesoDonnaSenzaDati') * P.fracMagra.F, rif: P.rifFfm, tipo: 'tipico' };   /* nessun peso: la donna di riferimento, non l uomo di 75 kg */
-  return { massa: massa, massaPeso: massaPeso, donna: donna, partenzaBassa: partenzaBassa, eta: Number(d.age || prof.age) || 0, livello: livello,
+  /* PAR-07: lo storico delle donne con il fattore si legge solo con gli esercizi affidabili e assorbe lo sconto (se la regola e accesa) */
+  return { massa: massa, massaPeso: massaPeso, donna: donna, partenzaBassa: partenzaBassa, storicoFiltrato: partenzaBassa && regolaAttiva('PAR-07'), eta: Number(d.age || prof.age) || 0, livello: livello,
     cauto: !!(d.parq === 'si' || d.parq === true || prof.parq) };
 }
 /* PAR-06: il fattore di partenza bassa di un esercizio (1 = nessuno): per livello, distretto (alto = tutto tranne gambe e glutei) e tipo (multiarticolare o isolamento).
@@ -193,7 +194,7 @@ window.stimaCaricoIniziale = function(nome, ctx) {
   if (!m || !(Number(m.weight) > 0) || isTimeBased(nome) || corpoLibero(nome)) return null;
   const P = PARAM_PARTENZA;
   const kC = scalaDaCorpo(m, ctx);
-  const sto = ctx && ctx.storico !== undefined ? ctx.storico : scalaDaStorico({ donne: !!(ctx && ctx.partenzaBassa) });
+  const sto = ctx && ctx.storico !== undefined ? ctx.storico : scalaDaStorico({ donne: !!(ctx && ctx.storicoFiltrato) });
   if (kC === null && !sto) return null;
   let k, fonte, w = 0;
   if (sto) {
@@ -206,13 +207,13 @@ window.stimaCaricoIniziale = function(nome, ctx) {
   /* PAR-06/07: il fattore, dopo il limite; mai su un carico che viene dalla storia dello stesso esercizio (ultimeSessioni) */
   let fD = fattorePartenza(m, ctx);
   if (fD < 1 && ultimeSessioni(nome, 1).length) fD = 1;
-  const fEff = 1 - (1 - fD) * (1 - w);
+  const fEff = 1 - (1 - fD) * (1 - (regolaAttiva('PAR-07') ? w : 0));
   const grezzo = m.weight * k * fEff;
   const bassa = fEff < 1;
   const out = { peso: arrotondaPartenza(m, grezzo, bassa ? 'giu' : undefined), k: k, fonte: fonte + (bassa ? 'Bassa' : ''), fD: fD, fEff: fEff };
   out.motivo = MOTIVI_STIMA[out.fonte];
   /* PAR-08: sotto 0,9 × la barra il bilanciere non si propone (solo con lo sconto: gli uomini restano come prima) */
-  if (bassa && attrezzoDi(m.name) === 'bilanciere') {
+  if (bassa && attrezzoDi(m.name) === 'bilanciere' && regolaAttiva('PAR-08')) {
     const barra = Math.min(sogliaPartenza('barraKg'), Number(m.weight) || sogliaPartenza('barraKg'));
     if (grezzo < sogliaPartenza('sottoBarra') * barra) { out.sottoBarra = true; out.barra = barra; out.peso = barra; }
   }
@@ -245,7 +246,7 @@ function penalitaPartenza(x, brief) {
   if (!cc) {
     const g = (brief && brief.grezzo) || {};
     cc = contestoCarichi(g.d, g.prof0);
-    cc.storico = scalaDaStorico({ donne: cc.partenzaBassa });
+    cc.storico = scalaDaStorico({ donne: cc.storicoFiltrato });
     if (brief && typeof brief === 'object') _PARTENZA_PER_BRIEF.set(brief, cc);
   }
   let s = null;
@@ -285,7 +286,7 @@ function applicaPartenze(brief, sedute) {
   const d = brief.grezzo.d, prof0 = brief.grezzo.prof0, L = brief.lavoro, note = L.note;
   if (coachAttivo()) {
     const cc = contestoCarichi(d, prof0);
-    cc.storico = scalaDaStorico({ donne: cc.partenzaBassa });
+    cc.storico = scalaDaStorico({ donne: cc.storicoFiltrato });
     const forza = brief.obiettivi && (brief.obiettivi.modalita === 'forza' || (brief.obiettivi.lista || [])[0] === 'forza');
     const graditi = (L.prefs && L.prefs.graditi) || [];
     let stimati = 0, fonteStima = null, basse = false, barraVuota = false, senzaBarra = false, facilitati = false;

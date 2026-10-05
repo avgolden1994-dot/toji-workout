@@ -48,11 +48,13 @@ const PARTE_BASSA = /Squat|Leg |Hip Thrust|Affondi|Abductor|Calf/;
 const RAPPORTO_UOMO_DONNA = { alta: 0.56 / 0.42, bassa: 0.75 / 0.62, stacchi: 0.86 / 0.73 };
 const SCALA_LIVELLO = { principiante: 1, intermedio: 1.8, avanzato: 2.4 };   /* dal rapporto panca delle donne 0,75 (intermedia) / 0,42 (non allenata), Strength Level: nota §1.3; avanzata 1,10/0,42 limitata */
 
+/* le tre àncore vere (frazione del peso corporeo, donna non allenata: Symmetric Strength, nota §1.3): sono esatte, la tabella in kg e arrotondata */
+const ANCORE_VERE_DONNE = { '💪 Panca Piana Bilanciere': 0.42, '🦵 Squat con Bilanciere': 0.62, '🏹 Stacco da Terra (Deadlift)': 0.73 };
 function ancora(nome, sesso) {
   const n = SINONIMI_ANCORE[nome] || nome;
   const kg65 = ANCORE_DONNE_KG65[n];
   if (!kg65) return null;
-  let r = kg65 / NOMI_PER_PESO;
+  let r = ANCORE_VERE_DONNE[n] || kg65 / NOMI_PER_PESO;
   if (sesso === 'M') r *= /Stacco/.test(n) ? RAPPORTO_UOMO_DONNA.stacchi : (PARTE_BASSA.test(n) ? RAPPORTO_UOMO_DONNA.bassa : RAPPORTO_UOMO_DONNA.alta);
   return r;
 }
@@ -115,4 +117,64 @@ function atletaVirtuale(opz) {
   return atleta;
 }
 
-module.exports = { atletaVirtuale, ancora, nomiConAncora, ANCORE_DONNE_KG65, SINONIMI_ANCORE, RAPPORTO_UOMO_DONNA, SCALA_LIVELLO, mulberry32 };
+/* ---------------------------------------------------------------------------------------------------------------------------------
+   L atleta DENTRO L APP VERA (tests/aiuto-app.js): stima di partenza (stimaCaricoIniziale), piano con il segno `stimato`, caricoProssimo di ogni seduta (cioe tutta la
+   catena: progressione, CAR-18, aggiusti, RIC, INT), la seduta che l atleta svolge e il suo storico, esposizione dopo esposizione, ogni tre giorni.
+   opz: sesso 'F'|'M', livello, pesoCorpo, seme, esercizi (nomi della libreria con una àncora), esposizioni (6), rumoreRpe, quotaSenzaRpe, senzaCar18 (toglie la fase 15:
+   serve a confrontare con la sola progressione di prima). Ritorna { atleta, nomi, reg: { nome: { start, esp: [{ w, tipo, motivo, giusto, cap, cap0, rirPrima, completa }] } } }.
+   `giusto` = il carico con cui farebbe le ripetizioni con 3,5 in riserva (il RIR bersaglio dei principianti), `cap` = il massimo con cui ne ha ancora (RIR bersaglio della seduta - 1)
+   (la «capacita al RIR bersaglio - 1» di D.8.9), `cap0` = il massimo con cui finisce le ripetizioni (RIR 0). Una prescrizione sopra `cap` e piu pesante del bersaglio di oltre un RIR. */
+const CONTROLLO = ['💪 Chest Press Machine', '🏹 Lat Machine', '🦵 Leg Press', '🦵 Squat con Bilanciere', '🦵 Goblet Squat', '🏹 Rematore con Manubrio'];
+const GIORNI_PIANO = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì'];
+function simulaNellApp(app, opz) {
+  const o = Object.assign({ sesso: 'F', livello: 'principiante', pesoCorpo: 65, seme: 1, esercizi: CONTROLLO, esposizioni: 6, rumoreRpe: 1, quotaSenzaRpe: 0.3, senzaCar18: false }, opz || {});
+  const atleta = atletaVirtuale({ sesso: o.sesso, livello: o.livello, pesoCorpo: o.pesoCorpo, seme: o.seme, rumoreRpe: o.rumoreRpe, quotaSenzaRpe: o.quotaSenzaRpe });
+  Object.keys(app.store).forEach(k => delete app.store[k]);
+  app.consenso(true);
+  if (o.senzaCar18) app.g('FASI_PUNTI.carico = FASI_PUNTI.carico.filter(f => f.codice !== "CAR-18")');
+  app.profilo({ level: o.livello, sex: o.sesso, age: 30, weight: o.pesoCorpo, goals: ['massa'] });
+  const nomi = o.esercizi.filter(n => atleta.haAncora(n));
+  const ctxCorpo = 'contestoCarichi({ sex: ' + JSON.stringify(o.sesso) + ', level: ' + JSON.stringify(o.livello) + ', age: 30, weight: ' + o.pesoCorpo + ' }, {})';
+  const reg = {}, dati = {};
+  nomi.forEach((n, i) => {
+    const s = app.g('(() => { const c = ' + ctxCorpo + '; c.storico = null; return stimaCaricoIniziale(' + JSON.stringify(n) + ', c); })()');
+    const m = app.json('findExercise(' + JSON.stringify(n) + ')');
+    reg[n] = { start: s.peso, base: s.peso, reps: m.reps, sets: 3, esp: [] };
+    (dati[GIORNI_PIANO[i % 4]] = dati[GIORNI_PIANO[i % 4]] || []).push({ name: n, sets: 3, reps: m.reps, weight: s.peso, rest: 90, stimato: s.fonte });
+  });
+  app.scrivi(app.chiave('dataKey'), dati);
+  const storia = [], T0 = Date.parse('2026-10-05T10:00:00');
+  for (let t = 0; t < o.esposizioni; t++) {
+    app.ora(T0 + t * 3 * 86400000);
+    const voci = nomi.map(n => ({ n: n, r: app.dati(app.chiama('caricoProssimo', n, reg[n].base, reg[n].reps, reg[n].sets)), rir: app.json('rirBersaglio(' + JSON.stringify(n) + ')') }));
+    const prima = voci.map(v => ({ giusto: atleta.caricoGiusto(v.n, reg[v.n].reps, 3.5), cap: atleta.caricoAlRir(v.n, reg[v.n].reps, (v.rir[0] + v.rir[1]) / 2 - 1), cap0: atleta.caricoAlRir(v.n, reg[v.n].reps, 0) }));
+    const fatte = atleta.eseguiSeduta(voci.map(v => ({ nome: v.n, weight: v.r.weight, reps: v.r.reps, sets: v.r.sets })));
+    fatte.forEach((f, i) => reg[voci[i].n].esp.push({ w: voci[i].r.weight, tipo: voci[i].r.tipo, motivo: voci[i].r.motivo, giusto: prima[i].giusto, cap: prima[i].cap, cap0: prima[i].cap0,
+      rirPrima: f.rirPrima, completa: f.completa, senzaRpe: f.senzaRpe }));
+    storia.unshift({ id: app.ora(), day: 'Lunedì', date: app.g('formatNow()'), minuti: 50, prontezza: 80, exercises: [],
+      sessione: fatte.map((f, i) => ({ name: f.nome, rest: 90, sets: f.serie.map(x => ({ weight: x[0], reps: x[1], done: x[2], wasBerserk: false, rpe: x[3] })),
+        obiettivo: { reps: voci[i].r.reps, sets: voci[i].r.sets, rir: voci[i].rir, coachTipo: voci[i].r.tipo } })) });
+    app.storia(storia);
+  }
+  return { atleta: atleta, nomi: nomi, reg: reg };
+}
+/* il riassunto di D.8.9 su tante atlete: `risultati` = elenco di simulaNellApp(...). Esposizioni per arrivare entro ±10% del carico giusto (99 = mai nelle esposizioni
+   simulate), prescrizioni sopra la capacita al RIR bersaglio - 1 (`sopra`) e oltre il massimo, cioe che non finisce le ripetizioni (`oltre`): la prima esposizione a parte
+   (e il carico di partenza, deciso dalla tabella) e dalla seconda in poi (quelle che decide il coach) */
+function riassunto(risultati) {
+  const esp = [], q = { primo: { sopra: 0, oltre: 0, n: 0 }, dopo: { sopra: 0, oltre: 0, n: 0 } };
+  risultati.forEach(r => r.nomi.forEach(n => {
+    let arrivo = null;
+    r.reg[n].esp.forEach((e, t) => {
+      if (arrivo === null && Math.abs(e.w / e.giusto - 1) <= 0.10) arrivo = t + 1;
+      if (t < 5) { const k = t === 0 ? q.primo : q.dopo; k.n++; if (e.w > e.cap + 1e-9) k.sopra++; if (e.w > e.cap0 + 1e-9) k.oltre++; }
+    });
+    esp.push(arrivo === null ? 99 : arrivo);
+  }));
+  esp.sort((a, b) => a - b);
+  const pc = x => Math.round(1000 * x) / 10;
+  return { n: esp.length, mediana: esp[Math.floor(esp.length / 2)], p95: esp[Math.floor(esp.length * 0.95)], mai: esp.filter(x => x === 99).length / esp.length,
+    primoSopra: q.primo.sopra / q.primo.n, primoOltre: q.primo.oltre / q.primo.n, dopoSopra: q.dopo.sopra / q.dopo.n, dopoOltre: q.dopo.oltre / q.dopo.n, pc: pc };
+}
+
+module.exports = { atletaVirtuale, ancora, nomiConAncora, ANCORE_DONNE_KG65, SINONIMI_ANCORE, RAPPORTO_UOMO_DONNA, SCALA_LIVELLO, mulberry32, simulaNellApp, riassunto, CONTROLLO };
