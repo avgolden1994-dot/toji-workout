@@ -49,7 +49,8 @@ const IMMAGINI_ESERCIZI = {
   'Hack Squat': 'esercizi/ex-26-hack-squat.svg',
   'Leg Press': 'esercizi/ex-27-leg-press.svg',
   'Affondi Manubri': 'esercizi/ex-28-affondi-manubri.svg',
-  'Affondi in Camminata': 'esercizi/ex-28-affondi-manubri.svg'
+  'Affondi in Camminata': 'esercizi/ex-28-affondi-manubri.svg',
+  'Step-up su Panca': 'esercizi/ex-30-step-up-su-panca.svg'
 };
 window.immagineEsercizio = function(nome) {
   const pulito = String(nome).replace(EMOJI_TESTA, '');
