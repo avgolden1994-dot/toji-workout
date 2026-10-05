@@ -7,20 +7,20 @@ Generato con uno script node che legge `EXERCISE_LIBRARY` (`js/dati/libreria-ese
 | Voce | Valore |
 |---|---|
 | Esercizi nel catalogo (`EXERCISE_LIBRARY`) | 140 totali (139 nel branch + 1 da altro branch) |
-| Con immagine (campo presente e file esistente) | 12 |
-| Senza immagine (mancanti) | 128 su 140 (127 nel branch + 1 da altro branch) |
+| Con immagine (campo presente e file esistente) | 13 |
+| Senza immagine (mancanti) | 127 su 140 (126 nel branch + 1 da altro branch) |
 | Di cui non ancora presenti in questo branch | 1 (n. 140 Squat Sumo, da `claude/hopeful-thompson-uthd8f`) |
-| File in `esercizi/` | 13 (tutti SVG) |
+| File in `esercizi/` | 14 (tutti SVG) |
 | File orfani (non referenziati) | 1 (`ex-02-panca-inclinata-su-a.svg`) |
-| Peso totale `esercizi/` | 506.0 KB |
-| Peso medio per file | 38.9 KB |
+| Peso totale `esercizi/` | 530.8 KB |
+| Peso medio per file | 37.9 KB |
 
 Copertura per gruppo muscolare:
 
 | Gruppo | Esercizi | Con immagine | Senza |
 |---|---|---|---|
 | Petto | 17 | 11 | 6 |
-| Schiena | 23 | 1 | 22 |
+| Schiena | 23 | 2 | 21 |
 | Gambe | 25 (24 nel branch + 1 da altro branch) | 0 | 25 (24 nel branch + 1 da altro branch) |
 | Glutei | 15 | 0 | 15 |
 | Spalle | 16 | 0 | 16 |
@@ -29,7 +29,7 @@ Copertura per gruppo muscolare:
 
 Note: gli esercizi usati in `schede-*.js` e le chiavi di `DETTAGLI` (139) coincidono con la libreria: nessun esercizio fuori catalogo. `tools/genera-catalogo.js` NON riguarda gli esercizi: genera il catalogo delle regole del coach da `docs/coach-mappa-regole.md`.
 
-Le bozze Quiver non finali (varianti a-d degli esercizi 10 e 11, di cui la b per il 10 e la d per l'11 sono state usate per il finale) stanno in `esercizi-bozze/`, fuori da `esercizi/` e dalla cache del service worker.
+Le bozze Quiver non finali (varianti a-d degli esercizi 10, 11, 12 e 13, di cui la b per il 10, la d per l'11 e la d per il 13 sono state usate per il finale) stanno in `esercizi-bozze/`, fuori da `esercizi/` e dalla cache del service worker.
 
 ## 2. Tabella completa
 
@@ -49,7 +49,7 @@ Il nome e' mostrato senza emoji iniziale. Percorso `img/<slug>.png` e' il ripieg
 | 10 | Pectoral Machine (Butterfly) | Petto | `esercizi/ex-10-pectoral-machine.svg` |
 | 11 | Pullover con Manubrio | Petto | `esercizi/ex-11-pullover-manubrio.svg` |
 | 12 | Stacco da Terra (Deadlift) | Schiena | `esercizi/ex-12-stacco-da-terra.svg` |
-| 13 | Trazioni alla Sbarra (Pull-ups) | Schiena | nessuna (ripiego inesistente `img/trazioni-alla-sbarra.png`) |
+| 13 | Trazioni alla Sbarra (Pull-ups) | Schiena | `esercizi/ex-13-trazioni-sbarra.svg` |
 | 14 | Trazioni Presa Inversa (Chin-up) | Schiena | nessuna (ripiego inesistente `img/trazioni-presa-inversa.png`) |
 | 15 | Lat Machine | Schiena | nessuna (ripiego inesistente `img/lat-machine.png`) |
 | 16 | Lat Machine Presa Inversa | Schiena | nessuna (ripiego inesistente `img/lat-machine-presa-inversa.png`) |
@@ -180,11 +180,10 @@ Il nome e' mostrato senza emoji iniziale. Percorso `img/<slug>.png` e' il ripieg
 
 ## 3. Esercizi senza immagine
 
-128 esercizi (127 nel branch + 1 da altro branch, l'ultimo in coda con nota). Motivo per tutti: **nessun campo** in `IMMAGINI_ESERCIZI`, quindi l'app prova `img/<slug>.png`, il file non esiste e compare il segnaposto "Immagine in arrivo". Nessun file referenziato risulta assente su disco e non ci sono placeholder file.
+127 esercizi (126 nel branch + 1 da altro branch, l'ultimo in coda con nota). Motivo per tutti: **nessun campo** in `IMMAGINI_ESERCIZI`, quindi l'app prova `img/<slug>.png`, il file non esiste e compare il segnaposto "Immagine in arrivo". Nessun file referenziato risulta assente su disco e non ci sono placeholder file.
 
 | Gruppo | Esercizio | Motivo | File atteso dal ripiego |
 |---|---|---|---|
-| Schiena | Trazioni alla Sbarra (Pull-ups) | nessun campo nella mappa | `img/trazioni-alla-sbarra.png` |
 | Schiena | Trazioni Presa Inversa (Chin-up) | nessun campo nella mappa | `img/trazioni-presa-inversa.png` |
 | Schiena | Lat Machine | nessun campo nella mappa | `img/lat-machine.png` |
 | Schiena | Lat Machine Presa Inversa | nessun campo nella mappa | `img/lat-machine-presa-inversa.png` |
@@ -340,7 +339,7 @@ Controlli: file referenziati ma assenti = 0; voci di mappa non presenti in libre
 ## 5. Precache sw.js
 
 - Cache: `CACHE_NAME = '3in-v10'` (cambiare il nome butta le copie vecchie).
-- Le immagini SONO nel precache: elenco **statico** tra i marcatori `/*INIZIO-ASSET*/ ... /*FINE-ASSET*/`, con 12 righe `./esercizi/*.svg` (compreso l'orfano).
+- Le immagini SONO nel precache: elenco **statico** tra i marcatori `/*INIZIO-ASSET*/ ... /*FINE-ASSET*/`, con 14 righe `./esercizi/*.svg` (compreso l'orfano).
 - L'elenco e' rigenerato da `tools/genera-sw.js` (`npm run sw`, `-- --check` per verificarlo): fa un glob di `esercizi/*.svg` (solo `.svg`, ordinato), piu' index, manifest, icone e i riferimenti di `index.html`. Quindi un nuovo SVG in `esercizi/` entra nel precache dopo `npm run sw`; PNG/WebP no (andrebbe esteso il filtro).
 - Install: `Promise.allSettled(ASSETS.map(cache.add))`, un file mancante non blocca gli altri.
 - Fetch: network-first con fallback alla cache, e le risposte vengono messe in cache a runtime (`cache.put`). Per immagini non trovate (png/jpg/jpeg/webp/svg) risponde 404 pulito, cosi si vede il segnaposto.
@@ -373,8 +372,10 @@ Controlli: file referenziati ma assenti = 0; voci di mappa non presenti in libre
 | `ex-09-croci-panca-manubri.svg` | 37.8 | 170 30 300 225 |
 | `ex-10-pectoral-machine.svg` | 31.4 | 147.5 8 360.0 270 |
 | `ex-11-pullover-manubrio.svg` | 16.2 | 220.5 54 201 150.75 |
+| `ex-12-stacco-da-terra.svg` | 32.4 | 150.8 10.3 363.6 272.7 |
+| `ex-13-trazioni-sbarra.svg` | 24.9 | 132 3 388 291 |
 
-Formato SVG vettoriale (nessun PNG/WebP); peso medio 42.6 KB, totale 426.0 KB. Il viewBox base e' 400x300 (rapporto 4:3); gli altri sono ritagli sulla figura (rapporti diversi, da 40x30 a 387x290). Nessun attributo width/height (tranne l'orfano 400x300): scalano al riquadro CSS `.ex-img` (`object-fit: contain`, rapporto 300/165).
+Formato SVG vettoriale (nessun PNG/WebP); peso medio 37.9 KB, totale 530.8 KB (14 file). Il viewBox base e' 400x300 (rapporto 4:3); gli altri sono ritagli sulla figura (rapporti diversi, da 40x30 a 388x291). Nessun attributo width/height (tranne l'orfano 400x300): scalano al riquadro CSS `.ex-img` (`object-fit: contain`, rapporto 300/165).
 
 ### Convenzione nome file
 
