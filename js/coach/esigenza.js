@@ -11,6 +11,7 @@
    Onda 0 del coach v2 (W0-T4):
    - PRN-01 il principiante non ha l esigenza del 120%: parte da 100%, non sale oltre e non vede il "Coach esigente" (riceve la
      scheda con il volume del suo livello, vicino al cedimento mai).
+   - W2-T8 (ESI-02): le serie facili degli esercizi in calibrazione (CAR-18) non alzano l esigenza: la partenza bassa era voluta (calibrazioneNellaSeduta).
    - MES-10 / MES-11 la settimana di scarico non e un dato di forma: l esigenza non cambia per le serie e per lo sforzo di quella
      settimana (le serie facili di uno scarico non la alzano) e la prima settimana dopo lo scarico non conta "RPE sopra il bersaglio"
      (i carichi di rientro); lo sforzo si confronta con il RIR bersaglio che valeva in quella seduta, non con quello di oggi.
@@ -61,9 +62,11 @@ window.aggiornaEsigenza = function() {
   if (!settScarico) sed.forEach(h => (h.sessione || []).forEach(x => {
     if (inScarico(h, x, prog)) return;
     const bers = rpeBersaglioSeduta(h, x);
+    /* W2-T8 (ESI-02, piano D.6): le serie facili di un esercizio in calibrazione (CAR-18) non alzano l esigenza: la partenza bassa era voluta; contano per il completamento */
+    const inCalibrazione = typeof calibrazioneNellaSeduta === 'function' && calibrazioneNellaSeduta(h, x);
     (x.sets || []).forEach(st => {
       if (!st.done) { tutte = false; return; }
-      if (Number(st.rpe) > 0) scarti.push(Number(st.rpe) - bers);
+      if (Number(st.rpe) > 0 && !inCalibrazione) scarti.push(Number(st.rpe) - bers);
     });
   }));
   const media = scarti.length ? scarti.reduce((t, x) => t + x, 0) / scarti.length : 0;
