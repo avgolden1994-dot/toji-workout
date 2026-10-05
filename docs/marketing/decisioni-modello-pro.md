@@ -8,36 +8,40 @@ Data: 2026-10-05. Stato: decisioni dell'utente registrate; punti aperti in fondo
 |---|---|---|
 | 1 | Modello | **Pro** (non più «gratis + tip jar») |
 | 2 | Prodotti | **Abbonamento annuale + lifetime**, entrambi |
-| 3 | Prova gratuita | **Introductory offer di Apple.** Durata: 2 settimane se App Store Connect la consente (DA CONFERMARE); alternative 1 settimana o 1 mese |
+| 3 | Prova gratuita | **Prova Pro di 2 settimane** come introductory offer di Apple; poi si acquista. Se App Store Connect non la consente (DA CONFERMARE): 1 settimana o 1 mese |
 | 4 | PWA web | Per ora **tutta gratuita** e non ancora condivisa con nessuno |
 | 5 | Tip jar | **Tolta dalla v1** |
 | 6 | Pagamenti esterni | **Nessun link** a pagamenti esterni |
 | 7 | Analisi | **Nessun analytics.** Le metriche vengono da App Store Connect e dal riscatto dei codici |
 | 8 | Tecnica | StoreKit 2 con il plugin `@capgo/native-purchases` (v8.8.1 al 22/09/2026, licenza MPL-2.0, Capacitor 8 o superiore); controllo dei diritti solo sul dispositivo |
 | 9 | Terzi | **Niente RevenueCat**: è un SDK/server di terzi, rompe «Data Not Collected»; il sito non era raggiungibile, non verificato |
-| 10 | Famiglia | «Family Sharing sì, sconto fino al 90% con codice famiglia, fino a 3 persone»: ambiguo, vedi sez. 4 |
+| 10 | Annuale | **19,99 € prezzo pieno.** Lancio: **6,99 € il primo anno** via offer code «Pay up front», poi rinnovo a 19,99 € (netti 13,93 € pieno, 4,87 € lancio; formula prezzo/1,22*0,85). Il paywall deve dire «6,99 € il primo anno, poi 19,99 €/anno» (3.1.2). Prezzo di lancio onesto e a tempo limitato; prezzo barrato falso vietato (normativa UE sulle riduzioni di prezzo, citata a memoria, non verificata) |
+| 11 | Lifetime | Si vende **insieme all'annuale**. **Prezzo APERTO** (vedi sez. 4): i numeri 19,99 pieno / 6,99 lancio sono stati detti in modo ambiguo e, se validi anche per il lifetime, lo rendono identico all'annuale |
+| 12 | Famiglia | **Sì al prodotto «Lifetime Famiglia» a +30%** con Family Sharing (condivisione fino a 6 persone: limite Apple, non limitabile a 3; link di condivisione propri non ammessi, 3.1.1). Il **lifetime singolo senza Family Sharing**. Il codice famiglia -90% è **abbandonato** |
+| 13 | Codici | **-80% solo per recensori/palestre/trainer**, in numero limitato. Per il pubblico il codice di lancio è quello a 6,99 € primo anno |
 
 **Lavoro stimato** (STIMA, da un'analisi): 15-25 h di sviluppo + circa 4 h in App Store Connect.
 
 **Sequenza raccomandata.** Il contesto finanziario dell'utente è difficile: **spesa zero fino al segnale dei 30 giorni.** Non scrivere il codice di acquisto e non pagare i 99 $ dell'Apple Developer Program prima del segnale: **150 iscritti alla lista d'attesa oppure 300 utenti PWA con buon ritorno a 7 giorni** (soglie della metodologia, sez. 5, stime non verificate). Fino ad allora: contenuti, lista d'attesa, misura. Se il segnale non arriva, non si è speso nulla.
 
-## 2. Perimetro gratis / Pro (secondo l'utente)
+## 2. Perimetro gratis / Pro (decisione dell'utente)
 
 **GRATIS (sempre)**
-- Registrazione delle sedute, timer, Live Activity, notifiche, libreria esercizi, programma base.
+- Base: registrazione delle sedute, timer, Live Activity, notifiche, libreria esercizi, programma base.
+- Assaggio dei punti forti: cedimento base, 1 sostituzione di macchinario occupato per seduta.
+- Fino a **2 piani generati in tutto.**
 - Export e cancellazione dei dati: **mai a pagamento.**
-- Funzioni native: devono restare gratuite (guideline 4.2: un'app che è solo un sito impacchettato rischia il rifiuto; le funzioni native sono il valore dell'app anche senza Pro).
-- Fino a **2 allenamenti/piani generati.**
+- Funzioni native: devono restare gratuite (guideline 4.2: un'app che è solo un sito impacchettato rischia il rifiuto).
 
 **PRO**
-- Generazione illimitata di allenamenti/piani.
-- Calendario, uso del calendario BIA, progressione dei carichi, statistiche avanzate.
-- Nuove funzioni Pro che arrivano di settimana in settimana e a lungo termine. Il valore continuo serve contro il rischio 3.1.2(a) (un abbonamento deve dare valore ricorrente, non un solo sblocco).
+- Cedimento completo, calendario, coach progressivo, alternative illimitate per macchinario occupato, piani illimitati.
+- Calendario BIA: dati solo locali, pochi, usati dal coach; «Data Not Collected» resta valido; il BIA è una stima indicativa.
+- Nuove funzioni Pro ogni settimana e a lungo termine (valore ricorrente, contro il rischio 3.1.2(a)).
+- **Massimo 5 punti di blocco** nell'app.
 
-**Da chiarire con l'utente**
-1. Cosa significa «2 allenamenti»: 2 piani generati in tutto, oppure 2 al mese? (Raccomandazione: 2 in tutto per la v1, più semplice da spiegare nel paywall e da provare in sandbox; da decidere.)
-2. Cosa succede ai dati di calendario/BIA già inseriti quando la prova o l'abbonamento scade. **Raccomandazione:** restano visibili ed esportabili in sola lettura, mai dati «in ostaggio» (coerente con «export mai a pagamento» e con il GDPR art. 9 per il BIA).
-3. La PWA gratuita non deve contraddire i testi che dicono «Pro»: separare le formule «versione iOS» e «versione web» (nessun «Pro» nei testi web, o nota chiara «su iPhone»).
+**Alla scadenza** (prova o abbonamento): i dati restano visibili ed esportabili in sola lettura, mai in ostaggio (coerente con «export mai a pagamento» e con il GDPR art. 9 per il BIA).
+
+**Resta da curare:** la PWA gratuita non deve contraddire i testi che dicono «Pro»: separare «versione iOS» e «versione web» (nessun «Pro» nei testi web, o nota chiara «su iPhone»).
 
 ## 3. Rischi e regole Apple
 
@@ -58,34 +62,31 @@ Fonti Apple lette (analisi del 05/10/2026): App Review Guidelines 3.1.1, 3.1.2, 
 - [ ] Family Sharing deciso prima della creazione dei prodotti.
 - [ ] Prove sandbox: acquisto, annullamento, scadenza, ripristino, offline, codice riscattato.
 
-## 4. Famiglia: punto da chiarire e tre opzioni
+## 4. Prezzi, lifetime e famiglia
 
-**Il nodo.** L'utente ha detto «Family Sharing sì, sconto fino al 90% con codice famiglia, fino a 3 persone». Sono **due meccanismi distinti** e si sovrappongono:
-- **Family Sharing di Apple** condivide l'acquisto con i membri del nucleo familiare (fino a 5) senza pagare di nuovo.
-- **Offer code personalizzato** = sconto per chi lo riscatta. Lotti fino a 25.000; il numero di riscatti si imposta (DA VERIFICARE in App Store Connect che si possa limitare a 3 riscatti per codice).
-Un «codice famiglia -90% per 3 persone» cannibalizza Family Sharing: se la famiglia può già condividere un acquisto, vendere 3 copie scontate rende meno di 1 copia piena condivisa.
-Per quanto ricordato, **Family Sharing potrebbe essere irreversibile** una volta attivato su un prodotto (DA VERIFICARE): decidere prima di creare i prodotti.
+**Formula netti:** netto = prezzo / 1,22 x 0,85 (IVA 22%, commissione 15%, imposte sul reddito escluse; per abbonamenti, valido per la prima annualità).
 
-**Netti** (netto = prezzo / 1,22 x 0,85; IVA 22%, commissione 15%, imposte sul reddito escluse; per abbonamenti, valido per la prima annualità)
+| Prodotto | Prezzo | Netto |
+|---|---|---|
+| Annuale, pieno | 19,99 | 13,93 |
+| Annuale, lancio primo anno (Pay up front; poi 19,99) | 6,99 | 4,87 |
+| Lifetime, pieno (PROPOSTA, non decisa) | 39,99 | 27,86 |
+| Lifetime, lancio a posti limitati (PROPOSTA, non decisa) | 19,99 | 13,93 |
+| Lifetime Famiglia, +30% su 39,99 (esempio) | 51,99 | ~36,2 |
+| Codice -80% (recensori/palestre/trainer) su annuale 19,99 | 4,00 | 2,79 |
 
-| Prodotto | Prezzo | Netto pieno | Netto -80% | Netto -90% |
-|---|---|---|---|---|
-| Annuale | 6,99 | 4,87 | 0,97 | 0,49 |
-| Annuale | 9,99 | 6,96 | 1,39 | 0,70 |
-| Lifetime | 14,99 | 10,44 | 2,09 | 1,04 |
-| Lifetime | 19,99 | 13,93 | 2,79 | 1,39 |
+**Annuale:** deciso. Il paywall dice chiaramente «6,99 € il primo anno, poi 19,99 €/anno». Il prezzo di lancio è onesto e a tempo limitato; il prezzo barrato falso è vietato.
 
-**Opzioni**
-- **A) Family Sharing attivo solo sul lifetime + codici -80% solo per lancio, recensori, palestre.** Una famiglia di 5 paga una volta sola il lifetime; l'annuale resta individuale. Nessun codice famiglia.
-- **B) Family Sharing su entrambi, senza codice famiglia.** Il più generoso e semplice da spiegare; ma l'annuale condiviso con 5 persone riduce il ricavo per utente e non si torna indietro (se irreversibile).
-- **C) Family Sharing spento + codice famiglia -90% limitato a 3 riscatti.** Realizza alla lettera la frase dell'utente, ma 3 riscatti a -90% su un lifetime da 14,99 danno 3 x 1,04 = 3,12 netti, meno di una sola vendita piena (10,44); richiede inoltre di verificare il limite di 3 riscatti e di distribuire i codici a mano.
+**PROBLEMA sul lifetime (prezzo APERTO).** L'utente ha detto «lifetime e annuale insieme» e «lifetime 19,99 con prezzo sconto lancio», poi «fa 19,99 pieno e 6,99 di lancio»: non è chiaro se i numeri valgano per l'annuale, per il lifetime o per entrambi. Se il lifetime costasse 19,99 come l'annuale, sarebbe sempre preferibile e l'annuale diventerebbe inutile. **Proposta (non decisa):** lifetime 39,99 pieno / 19,99 di lancio a posti limitati (netti 27,86 / 13,93). **La scelta è dell'utente.**
 
-**Raccomandazione: A.** Motivi: (1) la famiglia è servita da Family Sharing sul lifetime, che è il prodotto «una volta e basta» più adatto a una famiglia; (2) niente sovrapposizione fra i due meccanismi; (3) l'annuale conserva un valore individuale e un ricavo ricorrente; (4) non dipende dalla verifica dei «3 riscatti»; (5) i codici -80% restano uno strumento di canale con durata limitata, come già deciso. Il -90% resta solo un'opzione non decisa (caso famiglia, opzione C). **La scelta finale è dell'utente.**
+**Famiglia (deciso).** Prodotto separato **«Lifetime Famiglia»** a +30% con Family Sharing, anche se la condivisione arriva fino a 6 persone (limite Apple, non limitabile a 3; link di condivisione propri non ammessi, 3.1.1). Il lifetime singolo resta senza Family Sharing. Il codice famiglia -90% è abbandonato. Esempio: su 39,99 il +30% dà 51,99 (netto ~36,2); **da ricalcolare quando il prezzo del lifetime è deciso**. Family Sharing potrebbe essere irreversibile una volta attivato su un prodotto (DA VERIFICARE): per questo i due lifetime sono prodotti distinti.
+
+**Codici:** -80% solo per recensori, palestre e trainer, in numero limitato; per il pubblico vale il codice di lancio a 6,99 € primo anno.
 
 ## 5. Cosa si tiene dal piano precedente
 
-- Prova: la scelta di durata si decide dopo aver letto in App Store Connect le durate ammesse per la introductory offer (DA VERIFICARE); i benchmark RevenueCat (trial più lunghi convertono meglio) sono VIA TERZI, fonte non letta.
-- Prezzi: nessun prezzo fissato. Gli esempi sopra servono ai conti; il prezzo si fissa prima del TestFlight pubblico in base alla fascia del pubblico (metodologia, sez. 6).
+- Prova: 2 settimane decise; da confermare in App Store Connect le durate ammesse per la introductory offer (DA VERIFICARE); i benchmark RevenueCat (trial più lunghi convertono meglio) sono VIA TERZI, fonte non letta.
+- Prezzi: annuale deciso (19,99 pieno, 6,99 lancio primo anno); lifetime APERTO (sez. 4). La tabella per fascia di pubblico della metodologia sez. 6 resta come ordine di grandezza.
 - Obiettivo di rientro: circa 350 € nel piano di lancio contro circa 485 € nella skill (285 € costi vivi + 20 h a 10 €/h): da riconciliare in un'unica cifra.
 
 ## 6. Modifiche da fare ai docs (NON eseguite; i riferimenti sono stati verificati leggendo i file)
@@ -113,12 +114,11 @@ Per quanto ricordato, **Family Sharing potrebbe essere irreversibile** una volta
 **`01-decisioni.md`**: riga 6 (D2).
 **`privacy-policy-bozza.md`**: riga 26 («Acquisti (mance)»).
 
-## 7. Da verificare / da fare
-- Schedule 2 della licenza (non letto).
-- Durate ammesse della prova (introductory offer) in App Store Connect.
-- Irreversibilità di Family Sharing e limite di 3 riscatti per codice.
-- Attachment 14 UE (dal 01/10/2026), letto solo in sintesi.
-- Se il plugin verifica il JWS e ascolta `Transaction.updates` (altrimenti vanno gestiti a parte).
-- Categoria d'età.
-- Riscatto codici: percorso App Store/URL + `getPurchases` all'avvio, da provare in sandbox.
-- Risposte dell'utente ai punti della sez. 2 e scelta A/B/C della sez. 4.
+## 7. Aperti
+- **Prezzo del lifetime** (e di conseguenza del Lifetime Famiglia): proposta 39,99 / 19,99 lancio, non decisa.
+- **Durata della prova da confermare in App Store Connect** (2 settimane; alternative 1 settimana o 1 mese).
+- **Irreversibilità di Family Sharing** (da verificare).
+- **Limiti di riscatti per codice** (recensori/palestre/trainer, numero limitato) da verificare in App Store Connect.
+- **Schedule 2** della licenza (non letto).
+
+Verifiche tecniche non legate alle decisioni (invariate): Attachment 14 UE (letto in sintesi), JWS e `Transaction.updates` nel plugin, categoria d'età, riscatto codici in sandbox.

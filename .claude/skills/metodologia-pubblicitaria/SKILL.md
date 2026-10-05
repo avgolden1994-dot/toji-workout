@@ -166,11 +166,19 @@ Esclude imposte sul reddito e commercialista.
 | 10.000-50.000 | 14,99 / 34,99 | 47 / 20 | 20.000 | 21-87 | Forse (circa 220-900 € annuali) |
 | > 50.000 | 19,99 / 49,99 | 35 / 14 | 100.000 | 105-435 | Sì |
 
+**Nota (2026-10-05)**: i prezzi per fascia qui sotto sono ordini di grandezza precedenti; i prezzi DECISI sono sotto («Modello DECISO») e prevalgono.
+
 **Controllo dei numeri**: i prezzi suggeriti non cambiano, ma i conti mostrano che sotto circa 10.000 di pubblico il rientro di 485 € con le vendite dirette è molto improbabile (servono 70+ pagatori; il modello ne prevede una manciata). Dillo chiaramente all'utente: sotto quella soglia 3in è un progetto personale, non un investimento, e il motivo per pubblicare resta il valore dell'app, non il rientro. I rinnovi annuali aggiungono ricavi dal secondo anno (retention annuale 23-36%, VIA TERZI). Le conversioni con prova Pro di 2 settimane possono differire dai benchmark (trial più lunghi convertono meglio: 17-32 giorni 42,5% contro <4 giorni 25,5%, blog RC via estratto; trial → pagante 35-37,7%, sintesi discordanti).
 
-**Modello DECISO (2026-10-05)**: Pro con **abbonamento annuale + lifetime** (entrambi), prova gratuita come introductory offer di Apple (2 settimane se App Store Connect la consente, DA CONFERMARE; alternative 1 settimana o 1 mese; RevenueCat via terzi indica che i trial di 17-32 giorni convertono meglio dei <4 giorni, fonte non letta direttamente) più codice promozionale con sconto -80% (offer code Apple, tipo Pay as you go o Pay up front, per canale). Tip jar tolta dalla v1; nessuna analisi: metriche da App Store Connect e riscatto dei codici. Scheda completa: `docs/marketing/decisioni-modello-pro.md`.
+**Modello DECISO (2026-10-05)**: Pro con **abbonamento annuale + lifetime** (entrambi). Scheda completa: `docs/marketing/decisioni-modello-pro.md`.
+- **Prova**: Pro gratis 2 settimane (introductory offer Apple; se App Store Connect non la consente: 1 settimana o 1 mese, DA CONFERMARE), poi si acquista. Benchmark RevenueCat (trial 17-32 giorni convertono meglio dei <4) via terzi, fonte non letta.
+- **Annuale**: 19,99 € pieno; lancio 6,99 € il primo anno via offer code «Pay up front», poi rinnovo a 19,99 €. Netti 13,93 € pieno, 4,87 € lancio. Il paywall dice chiaramente «6,99 € il primo anno, poi 19,99 €/anno» (3.1.2). Prezzo di lancio onesto e a tempo limitato; prezzo barrato falso vietato (normativa UE sulle riduzioni di prezzo, citata a memoria, non verificata).
+- **Lifetime**: venduto insieme all'annuale; **prezzo APERTO**. Se costasse 19,99 come l'annuale sarebbe sempre preferibile e l'annuale inutile. Proposta (non decisa): 39,99 pieno / 19,99 di lancio a posti limitati (netti 27,86 / 13,93).
+- **Famiglia**: prodotto «Lifetime Famiglia» a +30% con Family Sharing (condivisione fino a 6 persone, limite Apple non limitabile a 3; link di condivisione propri non ammessi, 3.1.1); es. su 39,99 -> 51,99, netto ~36,2, da ricalcolare a prezzo deciso. Il lifetime singolo è senza Family Sharing. Il codice famiglia -90% è abbandonato.
+- **Codici**: -80% solo per recensori, palestre e trainer, in numero limitato; per il pubblico il codice di lancio è quello a 6,99 € il primo anno.
+- Tip jar tolta dalla v1; nessun analytics (metriche da App Store Connect e riscatto dei codici).
 
-**Perimetro gratis/Pro (decisione dell'utente)**: GRATIS = registrazione sedute, timer, Live Activity, notifiche, libreria esercizi, programma base, export e cancellazione dati (mai a pagamento), funzioni native (devono restare gratuite: guideline 4.2) e fino a 2 allenamenti/piani generati. PRO = generazione illimitata, calendario, uso del calendario BIA, progressione dei carichi, statistiche avanzate e nuove funzioni Pro continue (valore ricorrente, contro il rischio 3.1.2(a)). La PWA web resta per ora tutta gratuita: nei testi distinguere «versione iOS» e «web». Da chiarire: cosa significa «2 allenamenti» e cosa succede ai dati calendario/BIA a fine prova (raccomandato: sola lettura ed esportabili).
+**Perimetro gratis/Pro (decisione dell'utente)**: GRATIS = base (registrazione sedute, timer, Live Activity, notifiche, libreria esercizi, programma base) + assaggio dei punti forti (cedimento base, 1 sostituzione di macchinario occupato per seduta), fino a 2 piani generati in tutto, export e cancellazione dati (mai a pagamento), funzioni native (guideline 4.2). PRO = cedimento completo, calendario, coach progressivo, alternative illimitate per macchinario occupato, piani illimitati, calendario BIA (dati solo locali, pochi, usati dal coach; «Data Not Collected» resta valido; BIA = stima indicativa), nuove funzioni Pro ogni settimana e a lungo termine (contro il rischio 3.1.2(a)). Massimo 5 punti di blocco nell'app. Alla scadenza i dati restano visibili ed esportabili in sola lettura. La PWA web resta per ora tutta gratuita: nei testi distinguere «versione iOS» e «web».
 
 **Sequenza: spesa zero fino al segnale.** Non scrivere il codice di acquisto né pagare i 99 $ prima del segnale dei 30 giorni (150 iscritti in lista d'attesa o 300 utenti PWA con buon ritorno a 7 giorni). Lavoro stimato dopo il segnale: 15-25 h di sviluppo + circa 4 h in App Store Connect (stima).
 
@@ -188,13 +196,13 @@ Esclude imposte sul reddito e commercialista.
 | 34,99 | 24,38 | 4,88 |
 | 49,99 | 34,83 | 6,97 |
 
-Uno sconto -80% abbassa molto il netto e allunga il rientro dei ~485 €: va riservato a lancio, recensori, palestre e trainer, NON a tutti i canali, con durata limitata (i codici monouso scadono al massimo dopo 6 mesi).
+Uno sconto -80% abbassa molto il netto e allunga il rientro dei ~485 €: va riservato a recensori, palestre e trainer, in numero limitato, NON al pubblico né ai canali social, con durata limitata (i codici monouso scadono al massimo dopo 6 mesi). Esempio sull'annuale 19,99: -80% = 4,00 € (netto 2,79 €). Per il pubblico vale il codice di lancio a 6,99 € il primo anno (netto 4,87 €).
 
 **Regole**:
 - Fissa il prezzo PRIMA del TestFlight pubblico, in base alla fascia raggiunta a fine test.
 - Rivedilo dopo 60-90 giorni con dati reali (non con benchmark).
 - Non aumentare i prezzi esistenti senza comunicazione agli utenti già pagati.
-- Il lifetime stabilisce un tetto di ricavo per utente: tienilo basso rispetto a ~2-3 annualità; non esporlo in modo da cannibalizzare l'annuale senza dati.
+- Il lifetime stabilisce un tetto di ricavo per utente: deve costare chiaramente più dell'annuale (proposta, non decisa: 39,99 vs 19,99), altrimenti l'annuale non ha senso.
 
 ## 7. Offer code come canale e come metrica
 
@@ -213,14 +221,14 @@ Uno sconto -80% abbassa molto il netto e allunga il rientro dei ~485 €: va ris
 | Instagram | IG | Free (prolungamento prova) | Riscatti, passaggio a pagante |
 | TikTok | TIKTOK | Free | Riscatti, passaggio a pagante |
 | Reddit | REDDIT | Free | Riscatti (solo se la community lo consente) |
-| Palestra | PALESTRA-NOME | Pay as you go o Free | Riscatti, ritorno a 7 giorni |
-| Trainer | TRAINER-NOME | Free o sconto | Riscatti, pagatori |
-| Recensori | RECENSORI | Free | Riscatti; nessuna richiesta di recensione positiva |
-| Lancio | LANCIO | Pay up front (sconto -80%, decisione 2026-10-05) | Riscatti nel primo mese |
+| Palestra | PALESTRA-NOME | -80% o Free, numero limitato | Riscatti, ritorno a 7 giorni |
+| Trainer | TRAINER-NOME | -80% o Free, numero limitato | Riscatti, pagatori |
+| Recensori | RECENSORI | -80% o Free, numero limitato | Riscatti; nessuna richiesta di recensione positiva |
+| Lancio (pubblico) | LANCIO | Pay up front: annuale a 6,99 € il primo anno, poi 19,99 € (decisione 2026-10-05) | Riscatti nel primo mese |
 
-Lo sconto -80% è limitato a lancio, recensori, palestre e trainer, a durata limitata; i canali social usano Free (prolungamento prova) o nessun codice. Netti scontati in sez. 6. Dal 29/10/2025 gli offer code valgono anche per il lifetime (non consumabile); il riscatto in app richiede iOS 16.3 e il plugin non apre il foglio di riscatto (passa da App Store/URL, poi `getPurchases` all'avvio: da provare in sandbox).
+Lo sconto -80% è riservato a recensori, palestre e trainer, in numero limitato e a durata limitata; per il pubblico il codice di lancio è quello a 6,99 € il primo anno; i canali social usano Free (prolungamento prova) o nessun codice. Il limite di riscatti per codice va verificato in App Store Connect. Netti scontati in sez. 6. Dal 29/10/2025 gli offer code valgono anche per il lifetime (non consumabile); il riscatto in app richiede iOS 16.3 e il plugin non apre il foglio di riscatto (passa da App Store/URL, poi `getPurchases` all'avvio: da provare in sandbox).
 
-**Caso famiglia, solo OPZIONE NON DECISA**: un codice -90% (netti: 6,99 -> 0,49; 9,99 -> 0,70; 14,99 -> 1,04; 19,99 -> 1,39) limitato a 3 riscatti (limite da verificare in ASC) si sovrappone a Family Sharing di Apple (fino a 5 persone senza pagare di nuovo). Opzioni A/B/C e raccomandazione (A: Family Sharing solo sul lifetime, nessun codice famiglia) in `docs/marketing/decisioni-modello-pro.md` sez. 4.
+**Famiglia (deciso 2026-10-05)**: prodotto «Lifetime Famiglia» a +30% con Family Sharing (fino a 6 persone, limite Apple; link di condivisione propri non ammessi, 3.1.1); lifetime singolo senza Family Sharing. Il codice famiglia -90% è abbandonato. Dettagli in `docs/marketing/decisioni-modello-pro.md` sez. 4.
 
 **Regole**:
 - Nessun incentivo condizionato a una recensione positiva (5.6.3). Il codice si dà senza condizioni sul contenuto del giudizio.
@@ -291,7 +299,7 @@ Data della verifica: 2026-10-05. Da riverificare prima di decisioni di prezzo.
 | 4 | Tempo | «Il necessario», nessun tetto; 3 ore/settimana solo come ritmo minimo di partenza (sez. 3) |
 | 5 | Volto | NO: app + testo, video delle funzionalità con hook di suspense (sez. 3) |
 | 6 | Tono | Mix di 4 pilastri, voce coerente, marchio resiliente (sez. 2) |
-| - | Modello | Pro: annuale + lifetime; prova come introductory offer Apple (2 settimane se consentito, da confermare); offer code -80% riservato; tip jar tolta; nessun analytics; StoreKit 2 senza RevenueCat; PWA gratuita per ora (sez. 6-7, scheda `docs/marketing/decisioni-modello-pro.md`) |
+| - | Modello | Pro: prova 2 settimane (introductory offer Apple, da confermare in ASC); annuale 19,99 € (lancio 6,99 € primo anno, Pay up front); lifetime insieme (prezzo APERTO); Lifetime Famiglia +30% con Family Sharing; -80% solo recensori/palestre/trainer; codice famiglia -90% abbandonato; tip jar tolta; nessun analytics; StoreKit 2 senza RevenueCat; PWA gratuita per ora (sez. 6-7, scheda `docs/marketing/decisioni-modello-pro.md`) |
 | - | Sequenza | Spesa zero fino al segnale dei 30 giorni: niente codice di acquisto e niente 99 $ prima (sez. 6) |
 | - | Ordine delle skill | Delegato all'agente: vedi `docs/marketing/ROADMAP-SKILL.md` |
 
@@ -300,7 +308,7 @@ Data della verifica: 2026-10-05. Da riverificare prima di decisioni di prezzo.
 | # | Domanda | Perché conta |
 |---|---|---|
 | 1 | **Modello Pro DECISO; restano da aggiornare i docs del repo** (`piano-lancio-appstore.md` sez. 8 e le altre, checklist 08...), che dicono ancora "gratis + tip jar": elenco puntuale in `docs/marketing/decisioni-modello-pro.md` sez. 6 (modifiche non ancora eseguite) | Finché i docs non sono allineati, non promettere il Pro in pubblico |
-| 1b | Aperte sul Pro: significato di «2 allenamenti»; dati calendario/BIA a fine prova; durata della prova; scelta famiglia A/B/C (raccomandata A); coerenza testi PWA vs iOS | Vedi scheda sez. 2 e 4 |
+| 1b | Aperte sul Pro: **prezzo del lifetime** (proposta 39,99 pieno / 19,99 lancio a posti limitati; con 19,99 l'annuale sarebbe inutile) e di conseguenza Lifetime Famiglia (+30%); **durata della prova** da confermare in App Store Connect; **irreversibilità di Family Sharing**; **limiti di riscatti per codice**; **Schedule 2** | Vedi scheda sez. 4 e 7 |
 | 7 | Soglie a gradini (sez. 5): approvi 50/100/10%? | Sono mie stime |
 | 8 | Strumento di analytics anonimo | Verifica del fornitore, "Data Not Collected" |
 | 9 | Livello di inglese dell'utente (revisione en); revisione madrelingua de | Pubblicazione in en senza revisione |
