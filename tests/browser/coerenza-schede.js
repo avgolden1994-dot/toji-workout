@@ -72,7 +72,8 @@ const r = await p.evaluate(() => {
     /* ABB-04 */
     const pat = (e) => schemaDi(e.name);
     const spinta = tutti.filter(e => pat(e) === 'spintaO' || pat(e) === 'spintaV').reduce((t, e) => t + e.sets, 0);
-    const tirata = tutti.filter(e => pat(e) === 'tirataO' || pat(e) === 'tirataV' || /face pull|reverse|alzate posteriori|y-raise/i.test(e.name)).reduce((t, e) => t + e.sets, 0);
+    /* il Pullover con Manubrio e la tirata verticale di riserva a casa senza sbarra (CAS-14, D-P11): conta come tirata, come per strEtirata e il collaudo (EQ-01) */
+    const tirata = tutti.filter(e => pat(e) === 'tirataO' || pat(e) === 'tirataV' || /face pull|reverse|alzate posteriori|y-raise|pullover con manubrio/i.test(e.name)).reduce((t, e) => t + e.sets, 0);
     if (spinta + tirata >= 8 && tirata < spinta * 0.85) segna('ABB-04 piu spinte che tirate', prof, 'spinta ' + spinta + ' tirata ' + tirata);
     /* ABB-05: con 3 giorni, intermedio e avanzato, ogni grande gruppo in almeno 2 sedute */
     if (g === 3 && l !== 'principiante' && lu === 'palestra') {

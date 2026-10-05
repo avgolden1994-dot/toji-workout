@@ -25,7 +25,7 @@ const R = path.join(__dirname, '..');
    docs/ricerca-struttura-e-intensita.md). "Convenzione" = pratica comune dei coach, senza prova diretta.
    Cambiare una soglia = alzare VERSIONE_CRITERI: i confronti prima/dopo valgono solo a pari versione.
    ===================================================================================================== */
-const VERSIONE_CRITERI = '1.1';
+const VERSIONE_CRITERI = '1.2';
 /* 1.1 (INT-0, onda 0 del coach v2): criteri aggiornati dalle decisioni del registro docs/coach-v2-decisioni.md, non per far passare l'onda:
    - SAF-01/SAF-02/MOD-03: la leg extension e lo squat a corpo libero con le ginocchia dolenti stanno in CAUTELA, non tra i controindicati
      (B13, B33, REC-04: si modifica prima di escludere; il generatore li lascia con la nota di SCALE_DOLORE e un esercizio per i quadricipiti resta sempre);
@@ -34,6 +34,12 @@ const VERSIONE_CRITERI = '1.1';
    - TEC-01: le tecniche al cedimento valgono anche per i minorenni (ETA-02, MAV-03), oltre a principianti, over 65 e PAR-Q;
    - PAT-01/EQ-01/EQ-02: il Pullover con Manubrio (bersaglio dorsali, D-P11) conta come tirata verticale: era gia cosi nel modello (`mov` dal bersaglio), ora lo dice
      un autotest. L'hip thrust e il ponte glutei restano contati come hinge nel modello della settimana (spinta d'anca): vedi la nota di PAT-01. */
+/* 1.2 (W0-T7, decisione del committente 2026-10-05 sul cancello dell'onda 0): SAF-04:corpo (14,9% dei programmi pesati) contava come «attrezzatura non garantita» il rematore inverso
+   (DETTAGLI att «Sbarra bassa o anelli») a corpo libero. Senza di lui non c'e nessuna tirata orizzontale a casa (la CAS-01 toglie le trazioni e la sedia romana, e la
+   libreria non ha altre tirate senza attrezzi fino a W1-T5): resta, con la nota «sotto un tavolo robusto o con una sbarra bassa» (NOTA_REMATORE_INVERSO), che dice dove farlo
+   con quello che c'e in casa (un tavolo che regge il peso e un tubo o una sbarra bassa sono in ogni casa; una sbarra per le trazioni no). SAF-04 non segnala piu il
+   rematore inverso a corpo libero SE la nota c'e; senza la nota segnala come prima. Il calf raise a un piede (gradino) era gia fuori dal 1.1. Il «prima» (tag
+   coach-v2-onda-0-prima) si rigenera con questo file: il codice vecchio non scrive la nota, quindi il suo SAF-04:corpo non cambia. */
 
 /* --- volume --- */
 /* Una serie vale 1 per il muscolo bersaglio e 0,5 per i sinergisti (Pelland 2025, Sports Medicine, 67 studi: Moderata) */
@@ -201,6 +207,8 @@ const ATTREZZI_QUASI = {
   manubri: ['Sbarra', 'Parallele', 'Sbarra bassa o anelli', 'Sedia romana', 'Panca per lombari', 'Panca a 45°', 'Ruota addominale'],
   corpo: ['Sbarra', 'Parallele', 'Sbarra bassa o anelli', 'Sedia romana', 'Panca per lombari', 'Panca a 45°', 'Ruota addominale', 'Panca']
 };
+/* La nota che il generatore scrive nel programma quando c'e il rematore inverso a corpo libero (W0-T7, vedi 1.2): dove farlo con quello che c'e in casa (Convenzione, decisione del committente) */
+const NOTA_REMATORE_INVERSO = /sotto un tavolo robusto o con una sbarra bassa/i;
 /* attrezzo di DETTAGLI -> categoria di "Attrezzi della tua palestra" (Opzioni > Il coach) */
 const CATEGORIA_ATTREZZO = { 'Bilanciere': 'bilanciere', 'Trap bar': 'bilanciere', 'Manubri': 'manubri', 'Macchina': 'macchine', 'Cavo': 'macchine', 'Multipower': 'macchine', 'Sbarra': 'sbarra', 'Sbarra bassa o anelli': 'sbarra' };
 
@@ -562,7 +570,9 @@ const CRITERI = [
     dove: [MOTORE_JS + ': attrezzoDi (le trazioni contano come "corpo")', 'js/ui/onboarding.js: ONB_LUOGHI (nessuna domanda sulla sbarra)'],
     check: (m, c) => {
       const out = [];
-      m.sedute.forEach(s => s.es.forEach(e => { if (violaAttrezzatura(e, c) === 'quasi') out.push({ sub: c.luogo, msg: s.titolo + ': ' + e.pulito + ' richiede ' + e.inf.att + ' (luogo: ' + c.luogo + ')', tag: e.pulito + ' [' + e.inf.att + ']', gravita: 1 }); }));
+      /* 1.2: il rematore inverso a corpo libero con la sua nota (tavolo robusto o sbarra bassa) non e attrezzatura «non garantita» */
+      const conNota = (e) => c.luogo === 'corpo' && e.inf.att === 'Sbarra bassa o anelli' && ((c.prog && c.prog.note) || []).some(n => NOTA_REMATORE_INVERSO.test(String(n)));
+      m.sedute.forEach(s => s.es.forEach(e => { if (violaAttrezzatura(e, c) === 'quasi' && !conNota(e)) out.push({ sub: c.luogo, msg: s.titolo + ': ' + e.pulito + ' richiede ' + e.inf.att + ' (luogo: ' + c.luogo + ')', tag: e.pulito + ' [' + e.inf.att + ']', gravita: 1 }); }));
       return out; } },
   { id: 'SAF-05', nome: 'Esercizio tecnicamente impegnativo a un principiante o in modalita prudente (over 65, PAR-Q)', sev: 2, forza: 'Convenzione', fonte: 'pratica dei coach: il principiante parte da macchine, manubri e regressioni; ACSM 2026 per over 65 e pressione',
     dove: [RICETTE_JS + ': buildProgram (prio: +3 ai pesanti se !cauto, anche ai principianti; cauto toglie solo 3 punti)', MOTORE_JS + ': consentito'],
@@ -1135,6 +1145,8 @@ const FIXTURES = [
   fixture('schiena dolente con il front squat', { fastidi: ['schiena'] }, [['Lunedì', 'lower', [E('Front Squat', 3, 8, 120)]]], {}, ['SAF-01']),
   fixture('corpo libero con un bilanciere', { luogo: 'corpo' }, [['Lunedì', 'lower', [E('Squat con Bilanciere', 3, 8, 120)]]], {}, ['SAF-03']),
   fixture('casa con manubri e la sbarra', { luogo: 'manubri' }, [['Lunedì', 'upper', [E('Trazioni alla Sbarra (Pull-ups)', 3, 8, 90)]]], {}, ['SAF-04'], ['SAF-03']),
+  fixture('corpo libero con il rematore inverso e la nota del tavolo robusto (W0-T7, 1.2): non e attrezzatura non garantita', { luogo: 'corpo' }, [['Lunedì', 'pull', [E('Rematore Inverso (Corpo Libero)', 3, 10, 75)]]], { note: ['Rematore inverso: fallo sotto un tavolo robusto o con una sbarra bassa, dopo aver controllato che regga il tuo peso.'] }, [], ['SAF-04', 'SAF-03']),
+  fixture('corpo libero con il rematore inverso senza la nota: attrezzatura non garantita (W0-T7, 1.2)', { luogo: 'corpo' }, [['Lunedì', 'pull', [E('Rematore Inverso (Corpo Libero)', 3, 10, 75)]]], {}, ['SAF-04'], ['SAF-03']),
   fixture('palestra senza macchine con una macchina', { attrezziPalestra: ['bilanciere', 'manubri', 'sbarra'] }, [['Lunedì', 'upper', [E('Chest Press Machine', 3, 10, 90)]]], {}, ['SAF-03']),
   fixture('principiante con stacco da terra', { level: 'principiante' }, [['Lunedì', 'fullbody', [E('Stacco da Terra (Deadlift)', 3, 8, 120)]]], {}, ['SAF-05']),
   fixture('principiante con un drop set', { level: 'principiante' }, [['Lunedì', 'fullbody', [E('Curl ai Cavi', 3, 12, 60, { tecnica: 'drop' })]]], {}, ['TEC-01']),
@@ -1188,7 +1200,7 @@ function autotest() {
     Object.assign(p, { freq: 'auto', parq: 'no', sonno: 'bene', priorita: [], fastidi: [], attrezziPalestra: null, psico: 'nessuno' }, f.over);
     const c = contesto(p);
     const prog = { sedute: f.sedute.map(([giorno, tipo, es]) => ({ giorno, tipo, titolo: tipo + ' ' + giorno, esercizi: es.map(e => ({ name: G.nomeInLibreria(e.n) || ('?' + e.n), sets: e.sets, reps: e.reps, rest: e.rest, weight: 0, superset: e.superset, tecnica: e.tecnica })) })),
-      fasi: f.extra.fasi || FASI12, rirSett: f.extra.rirSett || null, rirProva: f.extra.rirProva || null, settimane: 12, blocco: 4, scheme: { settimane: 12 }, split: { nome: 'prova', giorni: [] }, prefs: { luogo: p.luogo, fastidi: p.fastidi, attrezziPalestra: p.attrezziPalestra, graditi: [], odiati: [], priorita: p.priorita }, note: [], metodo: null };
+      fasi: f.extra.fasi || FASI12, rirSett: f.extra.rirSett || null, rirProva: f.extra.rirProva || null, settimane: 12, blocco: 4, scheme: { settimane: 12 }, split: { nome: 'prova', giorni: [] }, prefs: { luogo: p.luogo, fastidi: p.fastidi, attrezziPalestra: p.attrezziPalestra, graditi: [], odiati: [], priorita: p.priorita }, note: f.extra.note || [], metodo: null };
     const a = valuta(p, c, prog, null, f.extra.volSenzaPriorita || null);
     const trovati = new Set(a.trovati.map(t => t.crit.id));
     const manca = f.attese.filter(x => !trovati.has(x)), troppi = f.assenti.filter(x => trovati.has(x));

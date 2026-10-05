@@ -66,7 +66,8 @@ function strSerie(sedute, filtro) {
 const STR_FATICA = /Stacco da Terra|Stacco Sumo|Stacco con Trap Bar|Good Morning/;
 const STR_TIRATE_ALTE = /face pull|reverse|alzate posteriori|y-raise/i;
 function strEspinta(e) { const s = schemaDi(e.name); return s === 'spintaO' || s === 'spintaV'; }
-function strEtirata(e) { const s = schemaDi(e.name); return s === 'tirataO' || s === 'tirataV' || STR_TIRATE_ALTE.test(senzaEmoji(e.name)); }
+/* W0-T7: il pullover coi manubri (riserva della tirata verticale a casa, CAS-14, D-P11) e una tirata a tutti gli effetti dell equilibrio (come nel collaudo): schemaDi non lo conta (SCHEMI_RISERVA) */
+function strEtirata(e) { const s = schemaDi(e.name); return s === 'tirataO' || s === 'tirataV' || STR_TIRATE_ALTE.test(senzaEmoji(e.name)) || SCHEMI_RISERVA.test(senzaEmoji(e.name)); }
 
 /* ABB-03: ogni settimana nessun buco. Le aggiunte non si tolgono per far stare la seduta nel tempo (protetto). */
 window.strCopri = function(c) {
@@ -87,26 +88,37 @@ window.strCopri = function(c) {
     return true;
   };
   const tipoDi = (rx) => (sd) => rx.test(sd.tipo);
+  /* W0-T7: il buco si guarda dopo i tagli, non solo prima. Un esercizio che copre da solo il buco della settimana (un solo calf raise, un solo lavoro per i deltoidi posteriori,
+     il solo curl, il solo tricipite diretto, il solo core) si protegge come le aggiunte: il taglio per il tempo e per il numero di esercizi toglie un altro isolamento, non lui
+     (prima la ricetta aveva il calf raise, strCopri non aggiungeva niente e il taglio lo toglieva: polpacci assenti, collaudo MIS-01, ABB-03) */
+  const proteggi = (filtro) => { const e = [].concat.apply([], sedute.map(sd => sd.esercizi.filter(filtro))).pop(); if (e) e.protetto = true; };
   if (ipert && c.level !== 'principiante' && c.days >= 3 && c.goals[0] !== 'salute') {
     if (conGambe && !ha(/calf raise/i))
       aggiungi(['Calf Raise in Piedi', 'Calf Raise Seduto', 'Calf Raise alla Leg Press', 'Calf Raise a un Piede (Corpo Libero)'], tipoDi(/lower|legs|fullbody/),
         'Polpacci: squat e stacchi li allenano poco, un esercizio dedicato a settimana.', 3, 15);
+    else proteggi(e => /calf raise/i.test(senzaEmoji(e.name)));
     if (sedute.some(sd => sd.esercizi.some(strEspinta)) && !ha(STR_TIRATE_ALTE))
       aggiungi(['Reverse Pec Deck', 'Face Pull', 'Alzate Posteriori (Reverse Fly)', 'Y-Raise su Panca Inclinata'], tipoDi(/pull|upper|fullbody|punti/),
         'Deltoidi posteriori: le spinte lavorano la parte davanti della spalla, qui si bilancia il dietro.', 2, 15);
+    else proteggi(e => STR_TIRATE_ALTE.test(senzaEmoji(e.name)));
   }
   if (ipert && c.level !== 'principiante' && c.days >= 4 && c.goals[0] !== 'salute') {
-    if (!sedute.some(sd => sd.esercizi.some(e => strMeta(e).group === 'braccia' && strSub(e) === 'Bicipiti')))
+    const bic = e => strMeta(e).group === 'braccia' && strSub(e) === 'Bicipiti', tri = e => strMeta(e).group === 'braccia' && strSub(e) === 'Tricipiti' && strMeta(e).type !== 'compound';
+    if (!sedute.some(sd => sd.esercizi.some(bic)))
       aggiungi(['Curl su Panca Inclinata', 'Curl Bayesiano ai Cavi', 'Curl con Bilanciere EZ', 'Curl Bilanciere Bicipiti', 'Hammer Curl'], tipoDi(/pull|upper|fullbody|punti/),
         'Bicipiti: un curl a settimana, oltre al lavoro delle tirate.', 2, 12);
-    if (!sedute.some(sd => sd.esercizi.some(e => strMeta(e).group === 'braccia' && strSub(e) === 'Tricipiti' && strMeta(e).type !== 'compound')))
+    else proteggi(bic);
+    if (!sedute.some(sd => sd.esercizi.some(tri)))
       aggiungi(['Estensione Tricipiti sopra la Testa ai Cavi', 'Pushdown con Corda', 'Estensione Tricipiti sopra la Testa con Manubrio', 'French Press'], tipoDi(/push|upper|fullbody|punti/),
         'Tricipiti: un esercizio diretto a settimana, oltre al lavoro delle spinte.', 2, 12);
+    else proteggi(tri);
   }
-  if (c.days >= 3 && c.goals[0] !== 'salute' && !sedute.some(sd => sd.esercizi.some(e => strMeta(e).group === 'core'))) {
-    const prudente = c.level === 'principiante';
-    aggiungi(prudente ? ['Dead Bug', 'Plank', 'Crunch a Terra'] : ['Pallof Press', 'Crunch al Cavo', 'Plank', 'Dead Bug', 'Crunch a Terra'], () => true,
-      'Core: un esercizio a fine seduta, per la stabilità del tronco.', 2, 12);
+  if (c.days >= 3 && c.goals[0] !== 'salute') {
+    if (!sedute.some(sd => sd.esercizi.some(e => strMeta(e).group === 'core'))) {
+      const prudente = c.level === 'principiante';
+      aggiungi(prudente ? ['Dead Bug', 'Plank', 'Crunch a Terra'] : ['Pallof Press', 'Crunch al Cavo', 'Plank', 'Dead Bug', 'Crunch a Terra'], () => true,
+        'Core: un esercizio a fine seduta, per la stabilità del tronco.', 2, 12);
+    } else proteggi(e => strMeta(e).group === 'core');
   }
   sedute.forEach(sd => strOrdina(sd.esercizi, sd.tipo, c.prefs.priorita));
 };
@@ -123,7 +135,7 @@ window.strBilancia = function(c, senzaSu) {
   const spinte = () => strSerie(sedute, strEspinta), tirate = () => strSerie(sedute, strEtirata);
   const sbilanciata = () => spinte() + tirate() >= STR_PESI.minSerieBilancio && tirate() < spinte() * STR_PESI.tirateSuSpinte;
   let giri = 0, mosso = false;
-  while (sbilanciata() && giri++ < 8) {
+  while (sbilanciata() && giri++ < 12) {
     const su = senzaSu ? null : tutti().map(x => x.e).filter(e => strEtirata(e) && !e.fisso && !isTimeBased(e.name) && e.sets < cap).sort((a, b) => a.sets - b.sets)[0];
     if (su) { su.sets++; mosso = true; continue; }
     /* si toglie una serie alla spinta con piu serie, ma non al fondamentale della seduta (ABB-08) */
@@ -143,11 +155,32 @@ window.strBilancia = function(c, senzaSu) {
       x.e.name = nuovo.name; x.e.weight = nuovo.weight || 0; delete x.e.superset;
       fatto = true; return true;
     });
+    /* W0-T7: a corpo libero la tirata e una sola, il rematore inverso (tetto `cap` serie, niente da convertire): non si puo alzare ne sostituire. Si toglie allora UNA spinta intera
+       (prima la verticale, poi quella delle sedute con piu spinte), mai l unica spinta di una seduta, mai il fondamentale, mai sotto il minimo di esercizi della seduta */
+    if (!fatto) {
+      const piuSpinte = (x) => x.sd.esercizi.filter(strEspinta).length, abbondante = (x) => x.sd.esercizi.length > PARAM_NUMERO_ESERCIZI.min;
+      const via = tutti().filter(x => strEspinta(x.e) && !x.e.fisso && !x.e.protetto && !isTimeBased(x.e.name) && primi.indexOf(x.e) === -1 && piuSpinte(x) > 1)
+        .sort((a, b) => abbondante(b) - abbondante(a) || (schemaDi(b.e.name) === 'spintaV') - (schemaDi(a.e.name) === 'spintaV') || piuSpinte(b) - piuSpinte(a) || a.e.sets - b.e.sets)[0];
+      if (via) {
+        const lista = via.sd.esercizi, i = lista.indexOf(via.e);
+        if (abbondante(via)) { lista.splice(i, 1); fatto = true; }
+        else {   /* la seduta ha gia il minimo di esercizi: la spinta in piu lascia il posto a un esercizio di core (uno solo per seduta) */
+          const nome = strCoreNuovo(via.sd, c.prefs);
+          if (nome) { const m = findExercise(nome) || {}; lista.splice(i, 1, { name: nome, sets: 2, reps: isTimeBased(nome) ? (m.reps || 30) : 12, weight: m.weight || 0, rest: 60, protetto: true }); strOrdina(lista, via.sd.tipo, c.prefs.priorita); fatto = true; }   /* ABB-01: il core in fondo */
+        }
+      }
+    }
     if (!fatto) break;
     mosso = true;
   }
   if (mosso && c.note.indexOf(STR_NOTA_TIRATE) === -1) c.note.push(STR_NOTA_TIRATE);
 };
+/* il core meglio classificato (PRIORI) che la seduta non ha gia: uno solo per seduta; null se non ce n e (W0-T7) */
+function strCoreNuovo(sd, prefs) {
+  if (sd.esercizi.some(e => strMeta(e).group === 'core')) return null;
+  const c = EXERCISE_LIBRARY.filter(x => x.group === 'core' && consentito(x.name, prefs)).sort((a, b) => (PRIORI[senzaEmoji(b.name)] || 0) - (PRIORI[senzaEmoji(a.name)] || 0) || (a.name < b.name ? -1 : 1))[0];
+  return c ? c.name : null;
+}
 const STR_NOTA_TIRATE = 'Spinte e tirate: le serie di tirata non sono meno di quelle di spinta, per tenere le spalle in equilibrio.';
 
 /* ABB-08 e ABB-09: alla fine, quando il tempo ha gia tagliato le serie.
