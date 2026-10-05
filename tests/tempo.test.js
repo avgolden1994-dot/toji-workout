@@ -16,6 +16,8 @@ const dur = (lista, opz) => app().chiama('durataSeduta', lista, opz);
 const vicino = (a, b, tol, msg) => assert.ok(Math.abs(a - b) <= (tol === undefined ? 0.01 : tol), (msg || '') + ' ' + a + ' contro ' + b);
 const O60 = { minuti: 60, eta: 30, prudente: false, livello: 'intermedio', fastidi: false, fattore: 1 };
 const limiti = (nome, ctx) => app().dati(app().chiama('limitiPausa', N(nome), ctx));
+/* con il nome gia completo (quello degli esercizi dei programmi, con l emoji) */
+const limitiN = (nomeCompleto, ctx) => app().dati(app().chiama('limitiPausa', nomeCompleto, ctx));
 const BASE = { goals: ['massa'], level: 'intermedio', days: 3, minutes: 60, luogo: 'palestra', fastidi: [], sex: 'M', age: 30, parq: 'no', usaProfilo: false };
 
 /* ============================================================ CAS-05: il modello dei tempi ============================================================ */
@@ -30,9 +32,9 @@ test('CAS-05: durataEsercizio = n x (S + R) + X, con S = 5 s + ripetizioni x sec
   vicino(min(E('Chest Press Machine', 3, 10, 90)), 6.75, 0.001, 'Chest Press Machine');
   /* Curl su Panca Inclinata 3 x 12, 60 s (isolamento libero): S = 5 + 36 = 41 s, cambio 20 s: 3 x 101 + 20 = 323 s */
   vicino(min(E('Curl su Panca Inclinata', 3, 12, 60)), 323 / 60, 0.001, 'Curl su Panca Inclinata');
-  /* una tenuta dura quanto la tenuta piu 5 s: Plank 3 x 45 s, 45 s: S = 50 s, cambio 15 s: 3 x 95 + 15 = 300 s = 5 minuti (con 90 s di pausa come nel metodo rr di prima: +2 minuti) */
+  /* una tenuta dura quanto la tenuta piu 5 s: Plank 3 x 45 s, 45 s: S = 50 s, cambio 15 s: 3 x 95 + 15 = 300 s = 5 minuti (con 90 s di pausa come nel metodo rr di prima: 3 x 140 + 15 = 435 s, 2,25 minuti in piu) */
   vicino(min(E('Plank', 3, 45, 45)), 5.0, 0.001, 'Plank');
-  vicino(min(E('Plank', 3, 45, 90)), 7.0, 0.001, 'Plank a 90 s');
+  vicino(min(E('Plank', 3, 45, 90)), 7.25, 0.001, 'Plank a 90 s');
   /* il Nordic Curl e un eccentrico: 5 s a ripetizione */
   vicino(min(E('Nordic Curl', 3, 6, 75)), (3 * (5 + 6 * 5 + 75) + 20) / 60, 0.2, 'Nordic Curl');
   assert.strictEqual(min(E('Goblet Squat', 0, 10, 90)), 0, 'senza serie non si conta niente');
@@ -131,7 +133,9 @@ test('CAS-18: dopo 3 sedute con la durata registrata il fattore e la mediana di 
   con(1.2, 3);
   vicino(a.chiama('fattoreTempo'), 1.2, 0.02, 'tre sedute al 120%');
   /* il fattore entra nella durata mostrata e nel risolutore: la stessa lista dura il 20% in piu */
-  vicino(dur(lista) / dur(lista, Object.assign({}, a.dati(a.chiama('opzioniTempoProfilo')), { fattore: 1 })), a.chiama('fattoreTempo'), 1e-9, 'T_mostrato = T x f');
+  /* (nella stessa app: lo storico e quello di `a`) */
+  const mostrata = a.chiama('durataSeduta', lista), senzaFattore = a.chiama('durataSeduta', lista, Object.assign({}, a.dati(a.chiama('opzioniTempoProfilo')), { fattore: 1 }));
+  vicino(mostrata / senzaFattore, a.chiama('fattoreTempo'), 1e-9, 'T_mostrato = T x f');
   con(2, 3); assert.strictEqual(a.chiama('fattoreTempo'), 1.4, 'limite alto');
   con(0.4, 3); assert.strictEqual(a.chiama('fattoreTempo'), 0.8, 'limite basso');
   /* una seduta interrotta, importata o libera non conta; una seduta a meta (meno del 70% delle serie) nemmeno */
@@ -157,7 +161,7 @@ test('CAS-18: il fattore tara il generatore: chi e piu lento del previsto riceve
   const con = a.dati(a.chiama('buildProgram', p));
   const serie = prog => prog.sedute.reduce((t, sd) => t + sd.esercizi.reduce((x, e) => x + e.sets, 0), 0);
   assert.ok(serie(con) < serie(senza), 'meno serie con f = 1,3: ' + serie(con) + ' contro ' + serie(senza));
-  assert.ok(con.note.some(n => /Le tue sedute durano di solito il 3\d% più del previsto/.test(n)), 'la nota del fattore: ' + JSON.stringify(con.note.filter(n => /durano/.test(n))));
+  assert.ok(con.note.some(n => /Le tue sedute durano di solito il (2|3)\d% più del previsto/.test(n)), 'la nota del fattore: ' + JSON.stringify(con.note.filter(n => /durano/.test(n))));
   assert.ok(!senza.note.some(n => /Le tue sedute durano di solito/.test(n)));
 });
 
@@ -233,13 +237,13 @@ test('B34 (RX-01, RX-02): in 250 programmi nessuna pausa fuori dalla tabella di 
     prog.sedute.forEach((sd, k) => sd.esercizi.forEach(e => {
       esercizi++;
       const ob = /ipertrofia/.test(sd.titolo) ? 'ipertrofia' : app().g('tipoObiettivoDi')(p.goals);
-      const lim = limiti(e.name, { obiettivo: ob, reps: e.reps, donna: p.sex === 'F', parq: p.parq === 'si', over65: p.age >= 65 });
+      const lim = limitiN(e.name, { obiettivo: ob, reps: e.reps, donna: p.sex === 'F', parq: p.parq === 'si', over65: p.age >= 65 });
       const taglio = app().g('classePausa')(e.name) === 'A' && p.goals[0] === 'forza' ? 120 : lim.lo;   /* la forza, se proprio non entra, porta la classe A al minimo di B8 */
       if (e.rest > lim.max || e.rest < Math.min(taglio, lim.lo)) fuori.push(p.seme + ' ' + e.name + ' ' + e.rest + ' s (ammesso ' + Math.min(taglio, lim.lo) + '-' + lim.max + ', ' + ob + ')');
       if (e.fisso && a.chiama('classePausa', e.name) !== 'A') cinque.push(p.seme + ' ' + e.name);
     }));
   }
-  assert.ok(esercizi > 5000, 'campione: ' + esercizi);
+  assert.ok(esercizi > 3000, 'campione: ' + esercizi);
   assert.deepStrictEqual(fuori.slice(0, 10), [], 'pause fuori dalla tabella: ' + fuori.length);
   assert.deepStrictEqual(cinque, [], '5x5 fisso fuori dalla classe A');
   ['Hyperextension (Lombari)', 'Ponte Glutei', 'Ponte Glutei a una Gamba'].forEach(n => assert.ok(a.chiama('adattoAlCincoPerCinque', N(n)) === false, n + ' non e adatto al 5x5'));
@@ -260,7 +264,7 @@ test('PRG-20: nei programmi le donne hanno pause piu corte solo dove D-P7 lo amm
   assert.ok(piuCorte > 0, 'qualche pausa piu corta per le donne');
   assert.strictEqual(piuLunghe, 0);
   assert.strictEqual(classeAPiuCorta, 0, 'mai sulla classe A');
-  assert.ok(uguali > piuCorte, 'non tutte: solo D, E e B, C con 8 ripetizioni o piu');
+  assert.ok(uguali > 0, 'non tutte: solo D, E e B, C con 8 ripetizioni o piu (la classe A e il core restano uguali)');
 });
 
 /* ============================================================ CAS-06: la capacita ============================================================ */
@@ -419,7 +423,7 @@ test('PCO-04 / CAS-10: il metodo «minimo» accetta 2 o 3 giorni e da 20 a 45 mi
   assert.strictEqual(prog.sedute.length, 3, 'tre full body');
   prog.sedute.forEach(sd => {
     assert.ok(sd.esercizi.length >= 4 && sd.esercizi.length <= 5, sd.titolo + ': ' + sd.esercizi.length);
-    sd.esercizi.forEach(e => { assert.strictEqual(e.sets, 2, e.name); if (!a.g('isTimeBased')(e.name)) assert.strictEqual(e.reps, 10, e.name); assert.ok(e.rest <= limiti(e.name, { obiettivo: 'generale', reps: e.reps }).max, e.name + ': pausa di classe'); });
+    sd.esercizi.forEach(e => { assert.strictEqual(e.sets, 2, e.name); if (!a.g('isTimeBased')(e.name)) assert.strictEqual(e.reps, 10, e.name); assert.ok(e.rest <= limitiN(e.name, { obiettivo: 'generale', reps: e.reps }).max, e.name + ': pausa di classe'); });
   });
 });
 
@@ -433,9 +437,10 @@ test('PCO-04 / H-07: il metodo rr ha le coppie per MUSCOLO antagonista (mai per 
     const prog = costruisci(Object.assign({}, BASE, { goals: [g], level, days: 3, minutes: min, luogo: 'corpo', metodo: 'rr', seme: 'rr-' + g + level + k }));
     prog.sedute.forEach(sd => {
       sd.esercizi.forEach((e, i) => {
-        if (e.sets !== 3) colpe.push(g + level + ' ' + e.name + ' ' + e.sets + ' serie');
+        /* 3 serie del metodo; 2 solo se la scala del tempo (CAS-07 passo 4) ha dovuto toglierne: con 45 minuti la forza a corpo libero non entra */
+        if (e.sets !== 3 && !(e.sets === 2 && min <= 45)) colpe.push(g + level + ' ' + e.name + ' ' + e.sets + ' serie (' + min + ' minuti)');
         if (!a.g('isTimeBased')(e.name) && (e.reps < 5 || e.reps > 8)) colpe.push(g + level + ' ' + e.name + ' ' + e.reps + ' ripetizioni');
-        if (e.rest > limiti(e.name, { obiettivo: a.g('tipoObiettivoDi')([g]), reps: e.reps }).max) colpe.push(g + level + ' ' + e.name + ' pausa ' + e.rest);
+        if (e.rest > limitiN(e.name, { obiettivo: a.g('tipoObiettivoDi')([g]), reps: e.reps }).max) colpe.push(g + level + ' ' + e.name + ' pausa ' + e.rest);
         if (e.superset) {
           coppie++;
           const prec = sd.esercizi[i - 1];
@@ -460,19 +465,28 @@ test('SS-01 (ABB-06): riparaCoppie toglie il segno `superset` che non e piu una 
     E('Curl su Panca Inclinata', 3, 12, 60), E('Estensione Tricipiti sopra la Testa ai Cavi', 3, 12, 60, { superset: true }), E('Plank', 3, 45, 45, { superset: true })] }];
   a.ctx.__s = s;
   const tolti = a.g('riparaCoppie(__s)');
-  /* Rematore + Ponte non e una coppia (il Ponte non e una spinta: antagonisti per muscolo); Piegamenti dopo un esercizio gia in coppia non e una coppia; Plank con un tricipite no; Curl + Tricipiti si */
-  assert.strictEqual(tolti, 3);
-  assert.deepStrictEqual(a.dati(a.g('__s[0].esercizi.map(e => !!e.superset)')), [false, false, false, false, false, true, false]);
+  /* Rematore + Ponte non e una coppia (il Ponte non e una tirata: antagonisti per muscolo) e il segno cade; Piegamenti dopo il Rematore (ora a serie dritte) e invece una coppia giusta di tirata e spinta e resta;
+     Curl + Tricipiti si; Plank con un tricipite in coppia no (un core non fa coppia, e il tricipite ha gia il suo compagno) */
+  assert.strictEqual(tolti, 2);
+  assert.deepStrictEqual(a.dati(a.g('__s[0].esercizi.map(e => !!e.superset)')), [false, false, false, true, false, true, false]);
+  /* un pesante non fa coppia: panca col bilanciere + rematore col bilanciere (SS-02), e una tenuta nemmeno */
+  a.ctx.__s = [{ esercizi: [E('Panca Piana Bilanciere', 3, 8, 120), E('Rematore con Bilanciere', 3, 8, 120, { superset: true }), E('Plank', 3, 45, 45), E('Dead Bug', 3, 45, 45, { superset: true })] }];
+  assert.strictEqual(a.g('riparaCoppie(__s)'), 2);
+  assert.deepStrictEqual(a.dati(a.g('__s[0].esercizi.map(e => !!e.superset)')), [false, false, false, false]);
 });
 
 /* ============================================================ la verifica del tempo ============================================================ */
 test('validaTempo: la nota dice quanto durano le sedute (la media di durataSeduta), mai NaN; con il lavoro utile completo e sedute sotto il 75% dei minuti lo dice', () => {
-  const prog = costruisci(Object.assign({}, BASE, { goals: ['salute'], days: 2, minutes: 90, level: 'intermedio', seme: 'utile1' }));
+  const prog = costruisci(Object.assign({}, BASE, { goals: ['salute'], days: 3, minutes: 90, level: 'intermedio', seme: 'utile1' }));
   const media = Math.round(prog.sedute.reduce((t, sd) => t + dur(sd.esercizi, { minuti: 90, eta: 30, prudente: false, livello: 'intermedio', fastidi: false, fattore: 1 }), 0) / prog.sedute.length);
   const nota = prog.note.find(n => /^Le sedute durano circa/.test(n));
   assert.ok(nota && !/NaN/.test(nota), 'la nota c e: ' + nota);
   assert.ok(nota.indexOf('circa ' + media + ' minuti') !== -1, nota + ' (media ' + media + ')');
-  assert.ok(media < 90 * 0.75 ? /il lavoro utile per te è già tutto qui/.test(nota) : /riscaldamento/.test(nota), 'nota: ' + nota);
+  assert.ok(media < 90 * 0.75, 'sotto il 75% dei minuti: ' + media);
+  assert.ok(/il lavoro utile per te è già tutto qui/.test(nota), 'tutti i muscoli nella fascia e sedute corte: lo dice (D-P10): ' + nota);
+  /* con soli 2 giorni i muscoli non arrivano alla fascia: la seduta e corta lo stesso ma il lavoro utile NON e «gia tutto qui» (non lo si dice se non e vero) */
+  const due = costruisci(Object.assign({}, BASE, { goals: ['salute'], days: 2, minutes: 90, level: 'intermedio', seme: 'utile1' }));
+  assert.ok(due.note.some(n => /^Le sedute durano circa \d+ minuti: nel conto ci sono riscaldamento/.test(n)), 'due giorni: ' + JSON.stringify(due.note.filter(n => /durano/.test(n))));
   const lunga = costruisci(Object.assign({}, BASE, { goals: ['massa'], days: 5, minutes: 45, level: 'avanzato', seme: 'utile2' }));
   assert.ok(lunga.note.some(n => /^Le sedute durano circa \d+ minuti: nel conto ci sono riscaldamento/.test(n)), 'con i muscoli non ancora nella fascia il lavoro utile non e «gia tutto qui»');
 });

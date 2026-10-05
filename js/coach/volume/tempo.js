@@ -542,6 +542,21 @@ function riparaCoppie(sedute) {
   }));
   return tolti;
 }
+/* B34 (RX-01): dopo il tempo, applicaPartenze (carichi/partenza.js, PAR-08/PAR-09) puo cambiare un esercizio con la sua variante senza bilanciere (la panca col bilanciere diventa la chest press) e l esercizio nuovo
+   si porta dietro la pausa del vecchio (150 s su una macchina di classe C, la cui tabella arriva a 120). Si riporta alla pausa della classe nuova (mai piu lunga di v: e un esercizio nuovo, la tabella e un tetto);
+   le pause tagliate per il tempo, piu corte, restano com sono. Ritorna quante ne ha cambiate */
+function riallineaPause(brief, sedute) {
+  const chi = brief.chi, donna = chi.donna && regolaAttiva('PRG-20');
+  let cambiate = 0;
+  sedute.forEach((sd, i) => sd.esercizi.forEach(e => {
+    const lim = limitiPausa(e.name, { obiettivo: obiettivoDellaSeduta(brief, i), reps: e.reps, donna: donna, parq: chi.parq, over65: chi.over65 });
+    let r = Number(e.rest);
+    if (e.originale && e.originale !== e.name) r = Math.max(Math.min(r, lim.v), Math.min(lim.taglio, lim.v));
+    if (r > lim.max) r = lim.max;
+    if (r !== Number(e.rest)) { e.rest = r; cambiate++; }
+  }));
+  return cambiate;
+}
 /* la verifica del tempo, l ultima del programma (verificaProgramma): dice quanto durano le sedute (la stessa durataSeduta di Oggi), se il fattore personale ha tarato il programma (CAS-18), se il lavoro utile e gia
    tutto qui (D-P10), se non si riesce a stare nei minuti (CAS-07: programma di mantenimento) e la dose minima di IPE-12. Ritorna le note; libera il contesto del generatore */
 function validaTempo(brief, sedute) {
@@ -549,6 +564,7 @@ function validaTempo(brief, sedute) {
   liberaContestoTempo();
   if (!sedute.length) return note;
   riparaCoppie(sedute);
+  riallineaPause(brief, sedute);
   const durate = sedute.map(sd => durataSeduta(sd.esercizi, opz)), media = Math.round(durate.reduce((t, x) => t + x, 0) / durate.length);
   const utileCompleto = !(L.sottoFascia && L.sottoFascia.length) && media < minutiEff * sogliaTempo('quotaLavoroUtile') && !brief.metodo.attivo;
   note.push((utileCompleto ? FRASE_LAVORO_UTILE : FRASE_DURATA).replace('#', media));
