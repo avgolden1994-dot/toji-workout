@@ -7,6 +7,14 @@
    scarico da strain), corpo e alimentazione come informazione,
    seduta saltata, aderenza, fine ciclo. Ogni azione ha il suo motivo
    ed e annullabile.
+   Onda 0 del coach v2 (W0-T4):
+   - STD-01 STANDARD_FORZA controlla il livello, non lo decide: si propone di salire solo se l anzianita (LIV-01) e almeno 2 alzate
+     su 4 concordano; se un avanzato dichiarato e sotto il livello 2 in tutte le alzate misurate si propone di rivederlo. Il
+     livello cambia solo col tocco dell utente e si annulla (B20: prima poteva solo salire, e senza annulla).
+   - MES-10 lo scarico fuori dalle analisi: esercizi fermi (STA-01), carico della settimana (STR-01), verdetto del ciclo (CIC-01).
+   - MES-12 il verdetto di ciclo confronta le migliori sedute di carico, con il 3% di soglia: l ultima seduta e sempre di scarico e
+     un intermedio che sale dell 1,5% a settimana risultava "in stallo".
+   - ETA-04 sotto i 18 anni niente numeri su peso, cibo e integratori (proteine, passi, creatina).
    ============================================================ */
 
 /* ---- livello dai numeri (moltiplicatori del peso corporeo) ---- */
@@ -20,6 +28,48 @@ function pesoCorporeo() {
   const st = getBiaStorico();
   for (let i = st.length - 1; i >= 0; i--) if (st[i].valori && st[i].valori.peso) return Number(st[i].valori.peso);
   return Number(p.weight) || 0;
+}
+/* STD-01: dove sta ognuna delle 4 alzate base rispetto alle tabelle STANDARD_FORZA (multipli del peso corporeo; tabelle di una fonte di terzi:
+   Convenzione, livello 3). Il massimale e il migliore stimato (Epley, fino a 12 ripetizioni) delle sedute di carico. Fuori dai 55-110 kg
+   (uomini) e 45-90 kg (donne) il confronto e solo indicativo. livello 0-5 = quante soglie delle tabelle sono raggiunte (1 = non allenato,
+   2 = principiante, 3 = intermedio, 4 = avanzato, 5 = elite). */
+const STD_SOGLIA_INTERMEDIO = 3, STD_SOGLIA_AVANZATO = 4, STD_MINIMO_ALZATE = 2;
+const COACH_GIORNI_REVISIONE_LIVELLO = 28;   /* dopo «Lascia com e» la revisione del livello non si ripropone per 4 settimane */
+function livelloStandardForza() {
+  const p = getProfile() || {};
+  const sesso = (p.sex === 'F' || p.sex === 'donna') ? 'F' : 'M';
+  const peso = pesoCorporeo();
+  const out = { peso: peso, sesso: sesso, alzate: [], indicativo: false };
+  if (!(peso > 0)) return out;
+  out.indicativo = sesso === 'M' ? (peso < 55 || peso > 110) : (peso < 45 || peso > 90);
+  const migliore = {}, prog = getProgramma();
+  tutteLeSedute().forEach(h => { if (h.interrotta) return; (h.sessione || []).forEach(e => {
+    if (inScarico(h, e, prog)) return;
+    Object.keys(ALZATE_BASE).forEach(k => { if (ALZATE_BASE[k].test(e.name)) migliore[k] = Math.max(migliore[k] || 0, e1rmSeduta(e)); });
+  }); });
+  Object.keys(ALZATE_BASE).forEach(k => {
+    if (!(migliore[k] > 0)) return;
+    const rapporto = migliore[k] / peso;
+    out.alzate.push({ alzata: k, e1rm: Math.round(migliore[k] * 10) / 10, rapporto: Math.round(rapporto * 100) / 100, livello: STANDARD_FORZA[sesso][k].filter(x => rapporto >= x).length });
+  });
+  return out;
+}
+/* STD-01: salita e revisione del livello. salita = il livello stimato (LIV-01) e piu alto di quello dichiarato E le alzate misurate non lo
+   smentiscono (con almeno 2 alzate misurate e un peso nel campo di validita, servono 2 alzate sopra la soglia del livello: intermedio 3,
+   avanzato 4; con meno dati le tabelle non possono ne confermare ne smentire e resta il criterio di LIV-01). revisione = un avanzato
+   dichiarato che in tutte le alzate misurate (almeno 2) e sotto il livello 2: si propone di rivedere il livello o il peso di partenza. */
+function proposteLivello(livelloStimatoDaiNumeri) {
+  const ord = ['principiante', 'intermedio', 'avanzato'];
+  const dich = profiloCoach().livello;
+  const std = regolaAttiva('STD-01') ? livelloStandardForza() : null;
+  const misurabile = !!std && !std.indicativo && std.alzate.length >= STD_MINIMO_ALZATE;
+  let salita = null;
+  for (let i = ord.indexOf(livelloStimatoDaiNumeri); i > ord.indexOf(dich) && !salita; i--) {
+    const soglia = ord[i] === 'avanzato' ? STD_SOGLIA_AVANZATO : STD_SOGLIA_INTERMEDIO;
+    if (!misurabile || std.alzate.filter(a => a.livello >= soglia).length >= STD_MINIMO_ALZATE) salita = ord[i];
+  }
+  const revisione = misurabile && dich === 'avanzato' && std.alzate.every(a => a.livello < 2) ? 'intermedio' : null;
+  return { salita: salita, revisione: revisione, standard: std };
 }
 /* Livello = quanto e come ti alleni, non quanto sollevi.
    Anzianita di allenamento regolare (settimane con almeno 2 sedute),
@@ -50,7 +100,8 @@ window.livelloStimato = function() {
   const f1 = (v) => String(Math.round(v * 10) / 10).replace('.', ',');
   const testo = Math.round(mesi) + ' <span>mesi regolari</span> · ' + f1(freq) + ' <span>sedute a settimana</span> · <span>difficoltà</span> ' +
     '<span>' + (diff >= 0.6 ? 'alta' : (diff >= 0.35 ? 'media' : 'bassa')) + '</span>';
-  return { livello: livello, mesi: mesi, freq: freq, sedute: sed.length, difficolta: diff, testo: testo, dettaglio: [] };
+  const prop = proposteLivello(livello);
+  return { livello: livello, mesi: mesi, freq: freq, sedute: sed.length, difficolta: diff, testo: testo, dettaglio: [], salita: prop.salita, revisione: prop.revisione, standard: prop.standard };
 };
 
 /* ---- trovare un equivalente con i 4 criteri ---- */
@@ -124,10 +175,19 @@ window.azioneCoach = function(tipo, nome) {
     });
   }
   if (tipo === 'scarico') conAnnulla('Prossime due sedute di scarico', () => { const ag = aggiustiCoach(); ag.scarico = { sedute: 2, motivo: 'carico della settimana troppo alto' }; salvaAggiusti(ag); });
-  if (tipo === 'livello') {
+  /* STD-01: il livello cambia solo col tocco dell utente e si annulla (prima: solo in salita e senza annulla) */
+  if (tipo === 'livello' || tipo === 'rivediLivello') {
+    if (!coachAttivo()) return;
     const l = livelloStimato(); if (!l) return;
-    const p = getProfile() || {}; p.level = l.livello; localStorage.setItem(PROFILE_KEY(), JSON.stringify(p));
-    showUndo(trP('Livello aggiornato: %s', tr(l.livello)));
+    const nuovo = tipo === 'livello' ? l.salita : l.revisione;
+    if (!nuovo) return;
+    const prima = localStorage.getItem(PROFILE_KEY());
+    const p = getProfile() || {}; p.level = nuovo; localStorage.setItem(PROFILE_KEY(), JSON.stringify(p));
+    showUndo(trP('Livello aggiornato: %s', tr(nuovo)), () => { if (prima !== null) localStorage.setItem(PROFILE_KEY(), prima); if (document.getElementById('agent-body')) renderAgent(); }, 6000);
+    if (document.getElementById('agent-body')) renderAgent();
+  }
+  if (tipo === 'livelloOk') {   /* «Lascia com e»: la proposta di revisione non si ripete per 4 settimane */
+    const ag = aggiustiCoach(); ag.livelloRivistoIl = ymd(new Date()); salvaAggiusti(ag);
     if (document.getElementById('agent-body')) renderAgent();
   }
 };
@@ -137,11 +197,12 @@ function bloccoCorrente() { const st = settimanaProgramma(), p = getProgramma();
 function eserciziFermi() {
   const pc = profiloCoach();
   const soglia = pc.livello === 'principiante' ? 2 : (pc.livello === 'avanzato' ? 8 : 4);
-  const perEs = {};
-  loadHistory().filter(h => h.sessione && !h.interrotta).forEach(h => h.sessione.forEach(e => { (perEs[e.name] = perEs[e.name] || []).push({ d: dataSessione(h), m: e1rmSeduta(e) }); }));
+  const perEs = {}, prog = getProgramma();
+  loadHistory().filter(h => h.sessione && !h.interrotta).forEach(h => h.sessione.forEach(e => { (perEs[e.name] = perEs[e.name] || []).push({ d: dataSessione(h), m: e1rmSeduta(e), scarico: inScarico(h, e, prog) }); }));
   const out = [];
   Object.keys(perEs).forEach(n => {
-    const v = perEs[n].filter(x => x.m > 0 && x.d);
+    /* MES-10: le sedute di scarico e la prima seduta dopo (riparte dal riferimento con un RIR in piu) non dicono se l esercizio e fermo (dalla piu recente alla piu vecchia) */
+    const v = perEs[n].filter((x, i, a) => !x.scarico && !(a[i + 1] && a[i + 1].scarico) && x.m > 0 && x.d);
     if (v.length < 3) return;
     const ultimo = v[0], meglioPrima = Math.max.apply(null, v.slice(1).map(x => x.m));
     const finestra = pc.livello === 'principiante' ? v.slice(0, soglia + 1) : v.filter(x => giorniTra(x.d, ultimo.d) <= soglia * 7 + 3);
@@ -154,6 +215,7 @@ function eserciziFermi() {
 
 /* ---- carico della settimana: monotonia e strain (Foster) ---- */
 function strainSettimane() {
+  const prog = getProgramma();
   const hist = loadHistory().filter(h => h.feedback && h.feedback.srpe && h.minuti && !h.interrotta);
   const lun = lunediDi(new Date());
   return [0, 1, 2].map(k => {
@@ -165,9 +227,19 @@ function strainSettimane() {
     const tot = giorni.reduce((t, x) => t + x, 0);
     const media = tot / 7;
     const sd = Math.sqrt(giorni.reduce((t, x) => t + (x - media) * (x - media), 0) / 7) || 1;
-    const fatica = hist.filter(h => { const d = dataSessione(h); return d && giorniTra(inizio, d) >= 0 && giorniTra(d, piuGiorni(inizio, 6)) >= 0; }).map(h => h.feedback.srpe);
-    return { carico: tot, monotonia: Math.round(media / sd * 100) / 100, strain: Math.round(tot * media / sd), fatica: fatica.length ? fatica.reduce((t, x) => t + x, 0) / fatica.length : 0 };
+    const dellaSettimana = hist.filter(h => { const d = dataSessione(h); return d && giorniTra(inizio, d) >= 0 && giorniTra(d, piuGiorni(inizio, 6)) >= 0; });
+    const fatica = dellaSettimana.map(h => h.feedback.srpe);
+    /* MES-10: una settimana di scarico non e una base di confronto */
+    const scarico = faseDelGiorno(inizio, prog) === 'scarico' || (dellaSettimana.length > 0 && dellaSettimana.every(h => inScarico(h, null, prog)));
+    return { carico: tot, monotonia: Math.round(media / sd * 100) / 100, strain: Math.round(tot * media / sd), fatica: fatica.length ? fatica.reduce((t, x) => t + x, 0) / fatica.length : 0, scarico: scarico };
   });
+}
+
+/* MES-10: c e stato uno scarico (la settimana del programma o sedute scaricate dal coach) negli ultimi `giorni` giorni? Dopo uno scarico non se ne propone un altro */
+function scaricoRecente(giorni) {
+  const oggi = new Date(), prog = getProgramma();
+  if ([0, 7, 14].some(k => k <= giorni && faseDelGiorno(piuGiorni(oggi, -k), prog) === 'scarico')) return true;
+  return loadHistory().some(h => { const d = dataSessione(h); return !h.interrotta && d && giorniTra(d, oggi) <= giorni && (h.sessione || []).some(e => inScarico(h, e, prog)); });
 }
 
 /* ---- schemi della settimana nel piano attuale ---- */
@@ -185,7 +257,6 @@ function controlloSchemi() {
 /* ---- le azioni che il coach propone ---- */
 function azioniCoach() {
   const out = [];
-  const pc = profiloCoach();
   /* plateau: volume +-20%, variante, reset */
   const pz = storicoProntezza().slice(-5).map(x => x.punteggio).filter(x => typeof x === 'number');
   const recuperaBene = !pz.length || pz.reduce((t, x) => t + x, 0) / pz.length >= 60;
@@ -203,13 +274,16 @@ function azioniCoach() {
     out.push({ testo: 'Nuovo blocco: cambio gli accessori per stimolare il muscolo da angoli diversi. I fondamentali restano uguali.', bottoni: [['Ruota gli accessori', "azioneCoach('ruota', '')"]] });
   /* strain in salita da due settimane con fatica alta */
   const sw = strainSettimane();
-  if (sw[0].strain && sw[1].strain && sw[2].strain && sw[0].strain > sw[1].strain && sw[1].strain > sw[2].strain && sw[0].fatica >= 8 && !ag.scarico)
+  if (sw[0].strain && sw[1].strain && sw[2].strain && sw[0].strain > sw[1].strain && sw[1].strain > sw[2].strain && sw[0].fatica >= 8 && !ag.scarico
+      && !sw.some(x => x.scarico) && !scaricoRecente(PARAM_ANALISI.giorniDopoScarico))
     out.push({ testo: 'Il carico della settimana sale da due settimane e la fatica e alta (monotonia ' + String(sw[0].monotonia).replace('.', ',') + '): meglio due sedute di scarico.', bottoni: [['Scarico ora', "azioneCoach('scarico', '')"]] });
-  /* livello dai numeri */
+  /* livello dai numeri (STD-01): salita solo se l anzianita e le alzate concordano; revisione se un avanzato dichiarato e sotto i numeri di un principiante */
   const l = livelloStimato();
-  const ordL = ['principiante', 'intermedio', 'avanzato'];
-  if (l && ordL.indexOf(l.livello) > ordL.indexOf(pc.livello)) {
-    out.push({ testo: '<span>Livello:</span> ' + l.livello + ' \u2014 ' + l.testo + '.', bottoni: [['Aggiorna il livello', "azioneCoach('livello', '')"]] });
+  if (l && l.salita) {
+    out.push({ testo: '<span>Livello:</span> ' + l.salita + ' \u2014 ' + l.testo + '.', bottoni: [['Aggiorna il livello', "azioneCoach('livello', '')"]] });
+  } else if (l && l.revisione && !(ag.livelloRivistoIl && giorniTra(daYmd(ag.livelloRivistoIl), new Date()) < COACH_GIORNI_REVISIONE_LIVELLO)) {
+    out.push({ testo: 'Hai scelto il livello avanzato, ma nei sollevamenti base i carichi sono ancora quelli di un principiante: forse conviene rivedere il livello o il peso di partenza.',
+      bottoni: [['Passa a intermedio', "azioneCoach('rivediLivello', '')"], ['Lascia com’è', "azioneCoach('livelloOk', '')"]] });
   }
   return out;
 }
@@ -218,6 +292,8 @@ function azioniCoach() {
 function corpoCoach() {
   const out = [];
   const p = getProfile() || {};
+  /* ETA-04: sotto i 18 anni niente numeri su peso, cibo e integratori (proteine, passi, creatina, ritmo di calo): si rimanda a un adulto e a un medico o dietista */
+  if (regolaAttiva('ETA-04') && Number(p.age) > 0 && Number(p.age) < 18) return ['Alla tua età non do numeri su peso o cibo: sono cose da parlare con un medico o un dietista. Se pensi spesso al peso o salti i pasti, parlane con qualcuno di cui ti fidi.'];
   const goals = p.goals || (p.goal ? [p.goal] : []);
   const fase = p.fase || (goals[0] === 'dimagrimento' ? 'deficit' : (goals[0] === 'ricomposizione' ? 'ricomposizione' : (goals[0] === 'massa' ? 'massa' : 'mantenimento')));
   const st = getBiaStorico().filter(x => x.valori && x.valori.peso && x.data);
@@ -386,12 +462,29 @@ function verdettoCiclo() {
   let previste = 0, fatte = 0;
   for (let i = 0; i < p.settimane * 7; i++) { const v = cal[ymd(piuGiorni(inizio, i))]; if (v && !v.rest) { previste++; if (v.done) fatte++; } }
   const aderenza = previste ? fatte / previste : 0;
-  const perEs = {};
-  loadHistory().filter(h => h.sessione && !h.interrotta && dataSessione(h) >= inizio).forEach(h => h.sessione.forEach(e => { (perEs[e.name] = perEs[e.name] || []).push(e1rmSeduta(e)); }));
-  const nomi = Object.keys(perEs).filter(n => perEs[n].filter(Boolean).length >= 2);
-  const saliti = nomi.filter(n => { const v = perEs[n].filter(Boolean); return v[0] > v[v.length - 1] * 1.02; });
+  /* MES-12: l ultima seduta di un ciclo e sempre di scarico, quindi l ultima contro la prima dava "stallo" anche a chi saliva dell 1,5% a settimana.
+     Per esercizio si confronta la media delle 3 migliori sedute di CARICO degli ultimi 2 blocchi con quella delle 3 prime, e conta solo
+     una salita oltre il 3% (il rumore del RIR). Con la regola spenta: l ultima contro la prima, oltre il 2% (come prima). */
+  const nuova = regolaAttiva('MES-12');
+  const perEs = {}, prog = p;
+  const dalBlocchi = piuGiorni(inizio, Math.max(0, (p.settimane || 0) - 2 * (p.blocco || p.settimane || 0)) * 7);   /* inizio degli ultimi 2 blocchi */
+  loadHistory().filter(h => h.sessione && !h.interrotta && dataSessione(h) >= inizio).forEach(h => h.sessione.forEach(e => {
+    const m = e1rmSeduta(e);
+    if (nuova ? (m > 0 && !inScarico(h, e, prog)) : true) (perEs[e.name] = perEs[e.name] || []).push({ m: m, ultimi: dataSessione(h) >= dalBlocchi });   /* dalla piu recente */
+  }));
+  const media3 = (a) => { const t = a.slice(0, 3); return t.reduce((x, y) => x + y, 0) / t.length; };
+  const misure = (n) => perEs[n].filter(x => x.m > 0);
+  const nomi = Object.keys(perEs).filter(n => misure(n).length >= 2);
+  const saliti = nomi.filter(n => {
+    const v = misure(n);
+    if (!nuova) return v[0].m > v[v.length - 1].m * 1.02;
+    const prime = media3(v.map(x => x.m).reverse());                                              /* le 3 prime del ciclo */
+    const recenti = media3(v.filter(x => x.ultimi).map(x => x.m).sort((x, y) => y - x));          /* le 3 migliori degli ultimi 2 blocchi */
+    return recenti > prime * (1 + PARAM_ANALISI.rumoreE1rm);
+  });
   const quota = nomi.length ? saliti.length / nomi.length : 0;
-  const esito = aderenza < COACH_PARAMETRI.aderenzaMinima ? 'aderenza' : (quota >= 0.5 ? 'buono' : 'stallo');
+  /* con meno di 2 esercizi misurabili non si puo dire "stallo": si dice "buono" (MES-12) */
+  const esito = aderenza < COACH_PARAMETRI.aderenzaMinima ? 'aderenza' : (quota >= 0.5 || (nuova && nomi.length < 2) ? 'buono' : 'stallo');
   return { aderenza: Math.round(aderenza * 100), quota: Math.round(quota * 100), esito: esito };
 }
 function htmlFineCiclo() {
@@ -415,8 +508,7 @@ window.nuovoCiclo = function(soloPreferenze) {
     priorita: (p.priorita || []).slice(), attrezziPalestra: p.attrezziPalestra, graditi: p.graditi || [], odiati: (p.odiati || []).slice(),
     orario: p.orario, fase: p.fase, psico: p.psico || null, cicli: (p.cicli || 0) + 1, bloccoTipo: p.bloccoTipo || 'ipertrofia', inizio: 'prossima' };
   const l = livelloStimato();
-  const ord = ['principiante', 'intermedio', 'avanzato'];
-  if (!soloPreferenze && l && ord.indexOf(l.livello) > ord.indexOf(d.level)) d.level = l.livello;
+  if (!soloPreferenze && l && l.salita) d.level = l.salita;   /* STD-01: sale solo se anzianita e alzate concordano */
   if (v.esito === 'aderenza') { if (d.days > 2) d.days--; else d.minutes = Math.max(30, d.minutes - 15); }
   if (v.esito === 'stallo') {
     /* si alterna un blocco ipertrofia e uno forza; gli accessori cambiano */

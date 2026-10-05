@@ -13,6 +13,11 @@
           fanno piu indolenzimento (effetto della seduta ripetuta) e il carico di partenza e una stima.
    INT-05 dopo le prime due sedute del programma il coach confronta serie fatte, sforzo (RPE) e prontezza
           con quanto previsto e fissa l esigenza (90-130%) subito, senza aspettare il lunedi.
+   Onda 0 del coach v2 (W0-T4):
+   - PRN-01 il principiante parte da 100% (esigenzaIniziale), non sale oltre e il bilancio delle prime sedute lo puo solo abbassare.
+   - ETA-04 sotto i 18 anni nessun giudizio sulla BIA (i valori di riferimento sono da adulti): niente bandiere di prudenza ne testi.
+   - MES-06 la prima seduta con un esercizio dopo lo scarico lascia una ripetizione in riserva in piu (rirExtraIntensita).
+   - MES-11 il bilancio confronta lo sforzo con il RIR bersaglio che valeva in quella seduta (rpeBersaglioSeduta).
    Le prove, con la loro forza, stanno in docs/ricerca-struttura-e-intensita.md.
    ============================================================ */
 const PARAM_INTENSITA = {
@@ -47,15 +52,16 @@ window.statoBia = function(d, prof) {
   const sex = d.sex || prof.sex;
   const sesso = (sex === 'F' || sex === 'donna') ? 'F' : 'M';
   const eta = Number(d.age || prof.age) || 0;
+  const minore = eta > 0 && eta < 18 && regolaAttiva('ETA-04');   /* ETA-04: i riferimenti sono da adulti, ai minori non si danno giudizi sul corpo */
   let fa = num('phase'), ecw = num('ecw'), tbw = num('tbw');
   if (fa !== null && (fa < 2 || fa > 12)) fa = null;                       /* fuori scala: errore di lettura del referto */
   let rapporto = ecw && tbw && tbw > ecw ? ecw / tbw : null;
   if (rapporto !== null && (rapporto < 0.3 || rapporto > 0.5)) rapporto = null;
   const rif = fa !== null && eta >= 18 ? faRiferimento(sesso, eta) : null;
-  const faMoltoBassa = fa !== null && fa < PARAM_INTENSITA.faAssoluta[sesso];
-  const faBassa = faMoltoBassa || (rif !== null && fa < rif - PARAM_INTENSITA.faMargine);
-  const ecwAlto = rapporto !== null && rapporto >= PARAM_INTENSITA.ecwAlto;
-  const ecwLimite = rapporto !== null && !ecwAlto && rapporto >= PARAM_INTENSITA.ecwLimite;
+  const faMoltoBassa = !minore && fa !== null && fa < PARAM_INTENSITA.faAssoluta[sesso];
+  const faBassa = !minore && (faMoltoBassa || (rif !== null && fa < rif - PARAM_INTENSITA.faMargine));
+  const ecwAlto = !minore && rapporto !== null && rapporto >= PARAM_INTENSITA.ecwAlto;
+  const ecwLimite = !minore && rapporto !== null && !ecwAlto && rapporto >= PARAM_INTENSITA.ecwLimite;
   const livello = Math.min(2, (faMoltoBassa ? 2 : (faBassa ? 1 : 0)) + (ecwAlto ? 1 : 0));
   const testi = [];
   if (faBassa) testi.push('Angolo di fase basso per la tua età (' + _virg(fa) + '° contro circa ' + _virg(rif || 0) + '°): parto senza il +20% di volume e le prime sedute decidono. È una misura di prudenza, non una diagnosi.');
@@ -65,12 +71,17 @@ window.statoBia = function(d, prof) {
   return { fa: fa, faRif: rif, rapporto: rapporto, faBassa: faBassa, faMoltoBassa: faMoltoBassa, ecwAlto: ecwAlto, ecwLimite: ecwLimite, livello: livello, testi: testi, dati: fa !== null || rapporto !== null };
 };
 /* INT-02 */
-window.esigenzaIniziale = function(d, prof) { return PARAM_INTENSITA.esigenza[statoBia(d, prof).livello]; };
+window.esigenzaIniziale = function(d, prof) {
+  const v = PARAM_INTENSITA.esigenza[statoBia(d, prof).livello];
+  /* PRN-01: il principiante parte da 100% (niente "Coach esigente"): impara i movimenti, il corpo si abitua senza troppa dolenzia */
+  return ((d && d.level) || (prof && prof.level)) === 'principiante' && regolaAttiva('PRN-01') ? Math.min(v, 1) : v;
+};
 /* INT-03 e INT-04: ripetizioni in riserva in piu per questo esercizio (usata da rirBersaglio) */
 window.rirExtraIntensita = function(nome) {
   let piu = 0;
   try { piu += PARAM_INTENSITA.rirExtra[statoBia({}, getProfile() || {}).livello] || 0; } catch (e) {}
   try { if (nome && !isTimeBased(nome) && regolaAttiva('INT-04') && coachAttivo() && ultimeSessioni(nome, 1).length === 0) piu += 1; } catch (e) {}
+  try { if (nome && ripresaDopoScarico(nome)) piu += 1; } catch (e) {}   /* MES-06: la prima seduta dopo lo scarico riparte dal carico di prima con un RIR in piu */
   return piu;
 };
 
@@ -95,7 +106,7 @@ function sedutePrimeDelProgramma() {
 window.bilancioPrimeSedute = function() {
   if (!coachAttivo() || !regolaAttiva('INT-05')) return null;
   const p = getProfile(), prog = getProgramma();
-  if (!p || !prog || esigenzaEsclusa(p)) return null;
+  if (!p || !prog || esigenzaEsclusa(p, true)) return null;   /* i principianti restano dentro: il bilancio li puo solo abbassare (PRN-01) */
   if (p.calibrazione && p.calibrazione.programma === prog.creato) return null;
   const P = PARAM_INTENSITA;
   const due = sedutePrimeDelProgramma().slice(0, P.primeSedute);
@@ -106,7 +117,7 @@ window.bilancioPrimeSedute = function() {
     tot++;
     if (!st.done) return;
     fatte++;
-    if (Number(st.rpe) > 0) scarti.push(Number(st.rpe) - rpeBersaglio(e.name));
+    if (Number(st.rpe) > 0) scarti.push(Number(st.rpe) - rpeBersaglioSeduta(x.h, e));
   })));
   const compl = tot ? fatte / tot : 1;
   const scarto = scarti.length >= 3 ? scarti.reduce((t, x) => t + x, 0) / scarti.length : null;
@@ -119,8 +130,9 @@ window.bilancioPrimeSedute = function() {
   else if (compl >= P.completamentoAlto && scarto !== null && scarto <= P.scartoFacile) { delta = P.passo; esito = 'bassa'; motivo = 'prime due sedute: serie facili'; }
   const lun = ymd(lunediDi(new Date()));
   const e = p.esigenza || { valore: esigenzaIniziale({}, p), sett: lun, storia: [] };
+  if (delta > 0 && e.valore >= tettoEsigenza(p)) { delta = 0; esito = 'giusta'; motivo = 'prime due sedute: intensità giusta'; }   /* PRN-01: il principiante non sale oltre il 100% */
   const da = e.valore;
-  e.valore = Math.round(Math.min(1.3, Math.max(0.9, e.valore + delta)) * 100) / 100;
+  e.valore = Math.round(Math.min(tettoEsigenza(p), Math.max(0.9, e.valore + delta)) * 100) / 100;
   e.calibrata = ymd(new Date());
   e.storia = (e.storia || []).concat([{ sett: lun, da: da, a: e.valore, motivi: [motivo] }]).slice(-12);
   p.esigenza = e;
