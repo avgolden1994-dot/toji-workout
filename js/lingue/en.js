@@ -3693,5 +3693,8 @@ window.I18N["en"] = {
 "ampiezza senza dolore, discesa in # s": "pain-free range, lower in # s",
 "Dolore segnalato: carico ridotto (#%)": "Pain reported: load reduced (#%)",
 "Secondari: adduttori": "Secondary: adductors",
-"Secondari: adduttori, erettori spinali": "Secondary: adductors, spinal erectors"
+"Secondari: adduttori, erettori spinali": "Secondary: adductors, spinal erectors",
+"Rematore inverso: fallo sotto un tavolo robusto o con una sbarra bassa, dopo aver controllato che regga il tuo peso.": "Inverted row: do it under a sturdy table or with a low bar, after checking that it holds your weight.",
+"Femorali: senza leg curl restano meno allenati, il ponte glutei li aiuta.": "Hamstrings: without a leg curl they are trained less, the glute bridge helps them.",
+"Hai indicato il livello avanzato, e nei sollevamenti di base i carichi che usi sono ancora bassi: se ti va, puoi rivedere il livello o il peso di partenza. Decidi tu.": "You said the advanced level, and on the basic lifts the loads you use are still low: if you like, you can review your level or your starting weight. It's up to you."
 };

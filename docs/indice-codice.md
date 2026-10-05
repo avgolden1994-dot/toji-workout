@@ -231,11 +231,11 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 52. `js/coach/programma/ricette.js` — Variazione del coach: ricette a slot e buildProgram
 
-`rngDa()` · `_n` · `SLOT_DEF` · `RICETTE` · `PRIORI` · `TECNICHE_AL_CEDIMENTO` · `senzaCedimento()` · `adattoAlCincoPerCinque()` · `SCHEMI_ATTESI` · `SLOT_PER_SCHEMA` · `adattoAllaSeduta()` · `RIPETIZIONI_SETTIMANA_MAX` · `GRUPPI_DELLA_SEDUTA` · `PARAM_TEMPO` · `tipoObiettivoDi()` · `stimaMinutiSeduta()` · `GRUPPI_FRAZIONARI` · `FRAZIONARI_NON_CONTATI` · `gruppoFrazionario()` · `creditoSerie()` · `frazionarieSettimana()` · `limitaVolumePerMuscolo()` · `rinforzaFemorali()` · `riempiTempo()` · `window.buildProgram()`
+`rngDa()` · `_n` · `SLOT_DEF` · `RICETTE` · `PRIORI` · `TECNICHE_AL_CEDIMENTO` · `senzaCedimento()` · `adattoAlCincoPerCinque()` · `ZONA_DEL_FASTIDIO` · `senzaCedimentoPer()` · `SCHEMI_ATTESI` · `SLOT_PER_SCHEMA` · `adattoAllaSeduta()` · `NOTA_REMATORE_INVERSO` · `RIPETIZIONI_SETTIMANA_MAX` · `PARAM_NORDIC` · `RX_NORDIC` · `maxSettimana()` · `ripetizioniFlessione()` · `NOTA_FEMORALI_SENZA_LEG_CURL` · `GRUPPI_DELLA_SEDUTA` · `PARAM_TEMPO` · `tipoObiettivoDi()` · `stimaMinutiSeduta()` · `GRUPPI_FRAZIONARI` · `FRAZIONARI_NON_CONTATI` · `gruppoFrazionario()` · `creditoSerie()` · `frazionarieSettimana()` · `GRUPPI_RECUPERO` · `frazGruppoSeduta()` · `giornoSeduta()` · `recuperoOk()` · `limitaVolumePerMuscolo()` · `rinforzaFemorali()` · `riempiTempo()` · `window.buildProgram()`
 
 ### 53. `js/coach/programma/struttura-pro.js` — Struttura professionale della scheda (ABB-01..10)
 
-`STR_PESI` · `strMeta()` · `strSub()` · `strSchiena()` · `strTier()` · `strRango()` · `window.strOrdina()` · `strChiave()` · `window.strRidondante()` · `strSerie()` · `STR_FATICA` · `STR_TIRATE_ALTE` · `strEspinta()` · `strEtirata()` · `window.strCopri()` · `window.strBilancia()` · `STR_NOTA_TIRATE` · `window.strFinale()` · `strAntagonisti()` · `strPuoSuperserie()` · `window.strSuperserie()`
+`STR_PESI` · `strMeta()` · `strSub()` · `strSchiena()` · `strTier()` · `strRango()` · `window.strOrdina()` · `strChiave()` · `window.strRidondante()` · `strSerie()` · `STR_FATICA` · `STR_TIRATE_ALTE` · `strEspinta()` · `strEtirata()` · `window.strCopri()` · `window.strBilancia()` · `strCoreNuovo()` · `STR_NOTA_TIRATE` · `window.strFinale()` · `strAntagonisti()` · `strPuoSuperserie()` · `window.strSuperserie()`
 
 ## js/ui
 

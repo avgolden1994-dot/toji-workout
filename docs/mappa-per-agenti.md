@@ -79,6 +79,9 @@ Righe arrivate dai task dell'onda 0 (W0-T2..W0-T6), applicate in INT-0; i nomi p
 - pesante = RPE "Al limite" o "Dura" da stanchi (MES-08): sedutaPesante e PARAM_FATICA_SEDUTA in js/coach/questionario-decisioni.js; livelloFatica (js/coach/regole-ricerca.js) dà fatica «alta» con sRPE medio >= 9,5 (`SOGLIA_SRPE_ALTA`, riallineato in INT-0 alle risposte 3/6/8/10) (W0-T5)
 - respiroPer (js/coach/biomeccanica.js): niente apnea anche per eta >= 65 (REC-06 parte a); bonusBiomecc senza il +0,5 delle croci ai cavi (D-P8) (W0-T5)
 - riserve degli schemi: `SCHEMI_RISERVA` in js/coach/programma/schemi.js. Il pullover coi manubri (dorsali) sta nell'elenco della tirata verticale ma `schemaDi` non lo conta come tirata verticale: lo pesca per ultimo il blocco «schemi mancanti» di `buildProgram` (casa senza sbarra, palestra senza sbarra né macchine). Hip thrust e ponte glutei non sono più nell'hinge (B15) (W0-T6)
+- recupero e tetti delle aggiunte (W0-T7): `recuperoOk(sd, sedute, nome, sets)` in js/coach/programma/ricette.js (48 ore tra due sedute dello stesso grande muscolo, 11 serie frazionarie per muscolo in una seduta) usata dal ponte dei femorali, da `rinforzaFemorali`, dal riempimento del tempo e dal riempimento minimo di una seduta di tirata (W0-T7)
+- esclusi per sicurezza (revisione dell'onda 0, B1): `prefs.esclusi` (nomi che `consentito` in js/coach/programma/motore.js non ammette: oggi il Nordic Curl per chi inizia, i prudenti e le ginocchia dolenti); non sono gli `odiati` dell'utente. Tetti del Nordic Curl: `PARAM_NORDIC` in ricette.js (W0-T7)
+- equilibrio spinte/tirate a corpo libero e con la Recommended Routine (W0-T7): `strBilancia` in js/coach/programma/struttura-pro.js toglie una spinta intera quando la tirata è una sola (il rematore inverso); `NOTA_REMATORE_INVERSO` in ricette.js è la nota che il collaudo SAF-04 (criteri 1.2) riconosce (W0-T7)
 
 ## Stile
 

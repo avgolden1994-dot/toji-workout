@@ -3693,5 +3693,8 @@ window.I18N["de"] = {
 "ampiezza senza dolore, discesa in # s": "schmerzfreier Umfang, # s absenken",
 "Dolore segnalato: carico ridotto (#%)": "Schmerz gemeldet: Last reduziert (#%)",
 "Secondari: adduttori": "Sekundär: Adduktoren",
-"Secondari: adduttori, erettori spinali": "Sekundär: Adduktoren, Rückenstrecker"
+"Secondari: adduttori, erettori spinali": "Sekundär: Adduktoren, Rückenstrecker",
+"Rematore inverso: fallo sotto un tavolo robusto o con una sbarra bassa, dopo aver controllato che regga il tuo peso.": "Umgekehrtes Rudern: Mach es unter einem stabilen Tisch oder an einer niedrigen Stange und prüfe vorher, ob alles dein Gewicht trägt.",
+"Femorali: senza leg curl restano meno allenati, il ponte glutei li aiuta.": "Beinbeuger: ohne Beinbeuger-Curl werden sie weniger trainiert, die Glute Bridge hilft ihnen.",
+"Hai indicato il livello avanzato, e nei sollevamenti di base i carichi che usi sono ancora bassi: se ti va, puoi rivedere il livello o il peso di partenza. Decidi tu.": "Du hast das Niveau „Erfahren“ angegeben, und bei den Grundübungen sind die Gewichte, die du verwendest, noch niedrig: Wenn du magst, kannst du das Niveau oder das Startgewicht überprüfen. Du entscheidest."
 };
