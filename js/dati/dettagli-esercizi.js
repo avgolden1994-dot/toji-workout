@@ -295,7 +295,6 @@ const DETTAGLI = {
   'Face Pull con Elastico': ['M', 'Elastico', 'Elastico ancorato all’altezza del viso, presa con i pollici verso di te', 'Deltoidi posteriori e cuffia', 'Deltoide posteriore, extrarotatori della cuffia', 'Romboidi, trapezio medio', '', 'deltoide_posteriore', 'schiena_spessore'],
   'Scrollate con Manubri': ['L', 'Manubri', 'In piedi, un manubrio per mano, braccia tese lungo i fianchi', 'Trapezio', 'Trapezio superiore', 'Avambracci', '', 'trapezio', 'avambracci'],
   /* BRACCIA E CORE */
-  'Reverse Crunch': ['C', 'Corpo libero', 'Schiena a terra, ginocchia piegate verso il petto, il bacino si stacca', 'Addominali', 'Retto dell’addome (parte bassa)', 'Flessori d’anca', '', 'addome_basso', 'flessori_anca'],
   'Suitcase Carry': ['L', 'Manubri', 'Un solo manubrio (o kettlebell) pesante in una mano, camminata dritta', 'Obliqui e anti-rotazione', 'Obliqui, quadrato dei lombi', 'Trapezio superiore, avambracci', '', 'obliqui', 'trapezio avambracci']
 };
 
