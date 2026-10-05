@@ -158,6 +158,8 @@ function valuta(cfg, snap, ondaId, opz) {
     if (esito === undefined) return av(id + ': non c\'e nel JSON del collaudo');
     (ammessi.indexOf(esito) !== -1 ? ok : ko)(id + ': «' + esito + '» (ammessi: ' + ammessi.join(', ') + ')');
   });
+  /* INT-1: con --contro una verifica del modello che era «ok» non puo diventare altro, anche se l'onda non la governa */
+  if (opz.contro) Object.keys(snap.modello).sort().forEach(id => { if (rif.modello[id] === 'ok' && snap.modello[id] !== 'ok') ko('verifica del modello ' + id + ': era «ok» in «' + rif.etichetta + '», ora «' + snap.modello[id] + '»'); });
 
   /* -- 7. regressione: nessuna classe peggiora (rispetto al «prima», o a --contro); i criteri riscritti non si confrontano col «prima» -- */
   const riscritti = opz.contro ? new Set((onda.riscritti || [])) : unione(ordine, cfg.onde, ondaId, 'riscritti');
@@ -170,11 +172,12 @@ function valuta(cfg, snap, ondaId, opz) {
     const tol = sicurezza.has(cod) ? cfg.regressione.tolleranzaSicurezza : cfg.regressione.tolleranzaPunti;
     if (val(k) > valRif(k) + tol + EPS) { peggiorate++; ko('regressione ' + k + ': ' + f2(val(k)) + '% contro ' + f2(valRif(k)) + '% (' + rif.etichetta + '), tolleranza ' + tol + ' punti'); }
   });
-  if (sTot === undefined) {
+  /* INT-1: con --contro il totale non puo peggiorare oltre la tolleranza NEMMENO se ha una soglia esplicita (una soglia allentata, per esempio 21,5 contro un 2,7 misurato, non nasconde una regressione) */
+  if (sTot === undefined || opz.contro) {
     const tolG = cfg.regressione.tolleranzaPunti;
     (snap.gravi_pesata <= rif.gravi_pesata + tolG + EPS ? ok : ko)('gravi_pesata ' + f2(snap.gravi_pesata) + '% non peggiora (' + rif.etichetta + ' ' + f2(rif.gravi_pesata) + '%)');
   }
-  ok('regressione contro «' + rif.etichetta + '»: ' + controllate + ' classi non coperte da una soglia, ' + peggiorate + ' peggiorate' + (riscritti.size ? ' (criteri riscritti, non confrontati: ' + Array.from(riscritti).join(', ') + ')' : ''));
+  ok('regressione contro «' + rif.etichetta + '»: ' + controllate + (opz.contro ? ' classi controllate (anche quelle con una soglia esplicita)' : ' classi non coperte da una soglia') + ', ' + peggiorate + ' peggiorate' + (riscritti.size ? ' (criteri riscritti, non confrontati: ' + Array.from(riscritti).join(', ') + ')' : ''));
 
   /* -- 8. collaudo identico (INT-1 passo 1) -- */
   if (opz.identico) {
@@ -348,6 +351,30 @@ function autotest() {
     eq(esegui(diverso, 'onda-3', { contro }).falliti, 0, 'ma +0,3 punti e dentro la tolleranza della regressione');
     const peggio = istantaneaBuona(cfg, 'onda-3', { pesata: { 'RID-01:grande_gluteo': 4.9 }, conteggio: { 'RID-01:grande_gluteo': 500 } });   /* dentro la soglia di RID-01 (<= 5) ma +2,9 punti sull'onda 2 */
     eq(esegui(peggio, 'onda-3', { contro }).falliti >= 1, true, 'regressione contro l\'onda 2 (anche dentro la soglia di RID-01 a onda-2)');
+  });
+  prova('--contro: ne una soglia esplicita ne un totale allentato nascondono una regressione (INT-1)', () => {
+    /* onda-2: gravi_pesata <= 1; onda-1 eredita 21,5 (la soglia dell'onda 0): 21,5 contro un 2,7 misurato e una soglia allentata */
+    const contro = daCollaudo(istantaneaBuona(cfg, 'onda-1', { gravi_pesata: 2.7 }));
+    const buono = istantaneaBuona(cfg, 'onda-1', { gravi_pesata: 2.7 });
+    eq(esegui(buono, 'onda-1', { contro }).falliti, 0, 'uguale: passa');
+    const lieve = istantaneaBuona(cfg, 'onda-1', { gravi_pesata: 2.7 + 0.4 });
+    eq(esegui(lieve, 'onda-1', { contro }).falliti, 0, '+0,4 punti sul totale: dentro la tolleranza');
+    const peggio = istantaneaBuona(cfg, 'onda-1', { gravi_pesata: 20 });
+    const senza = esegui(peggio, 'onda-1');
+    eq(senza.falliti, 0, 'senza --contro il totale 20 e dentro la soglia 21,5 (e il limite del «prima»)');
+    const con = esegui(peggio, 'onda-1', { contro });
+    eq(con.falliti >= 1, true, 'con --contro il totale 2,7 -> 20 e una regressione anche dentro la soglia');
+    eq(con.righe.some(r => r.esito === 'fallito' && /gravi_pesata .* non peggiora/.test(r.testo)), true, 'il fallimento dice che il totale peggiora');
+    /* una classe dentro la sua soglia ma peggiore dell'onda precedente: gia coperta dalla prova sopra (RID-01); qui la soglia e sulla sottoclasse */
+    const c2 = daCollaudo(istantaneaBuona(cfg, 'onda-1', { pesata: { 'VOL-01:femorali': 40 }, conteggio: { 'VOL-01:femorali': 4000 } }));
+    const p2 = istantaneaBuona(cfg, 'onda-1', { pesata: { 'VOL-01:femorali': 44.9 }, conteggio: { 'VOL-01:femorali': 4900 } });   /* soglia onda 0: 45 */
+    eq(esegui(p2, 'onda-1').falliti, 0, 'sotto la soglia della sottoclasse (45)');
+    eq(esegui(p2, 'onda-1', { contro: c2 }).falliti >= 1, true, 'ma +4,9 punti sull\'onda precedente: fallisce');
+    /* una verifica del modello che era ok non diventa altro */
+    const m1 = daCollaudo(istantaneaBuona(cfg, 'onda-1', { modello: { 'MOD-12': 'ok' } }));
+    const m2 = istantaneaBuona(cfg, 'onda-1', { modello: { 'MOD-12': 'buchi' } });
+    eq(esegui(m2, 'onda-1').falliti, 0, 'MOD-12 non e governato a onda-1: senza --contro non conta');
+    eq(esegui(m2, 'onda-1', { contro: m1 }).falliti >= 1, true, 'con --contro un MOD «ok» che diventa «buchi» ferma il cancello');
   });
   prova('nomi delle onde e etichette del collaudo', () => {
     eq(normalizzaOnda('INT-0', cfg), 'onda-0'); eq(normalizzaOnda('coach-v2-onda-2', cfg), 'onda-2'); eq(normalizzaOnda('2a', cfg), 'onda-2a');
