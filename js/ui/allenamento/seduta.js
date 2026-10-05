@@ -23,10 +23,6 @@ function ultimaVoltaTesto(nome) {
   return 'Ultima volta: ' + fatte.map(x => x.weight + '\u00D7' + x.reps).join(' \u00B7 ');
 }
 
-/* 1RM stimato con la formula di Epley: il calcolo e di e1rm (carichi/e1rm.js, W1-T3; stessi numeri). unoRM resta solo per scheda-quattro-sezioni.js,
-   che la chiama ancora (da togliere quando si tocca quel file) */
-function unoRM(peso, reps) { return e1rm(peso, reps); }
-
 function migliorUnoRM(nome) {
   let best = 0;
   loadHistory().forEach(h0 => (h0.sessione || []).forEach(e => {

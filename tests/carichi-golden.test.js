@@ -449,13 +449,12 @@ if (process.argv.includes('--ricampiona')) {
     assert.strictEqual(app.g('e1rm(100, 1)'), 100, 'una ripetizione: il peso stesso');
   });
 
-  test('e1rm: stessi numeri di unoRM, e1rmSerie ed e1rmSeduta di prima (spostate, non cambiate)', () => {
+  test('e1rm: stessi numeri di unoRM (tolta da seduta.js in INT-1: la copia di prima e qui sotto), e1rmSerie ed e1rmSeduta di prima (spostate, non cambiate)', () => {
     const app = caricaApp({ ora: ORA });
     const unoRMdiPrima = (peso, reps) => { peso = Number(peso) || 0; reps = Number(reps) || 0; if (peso <= 0 || reps <= 0) return 0; if (reps === 1) return peso; return Math.round(peso * (1 + Math.min(reps, 12) / 30) * 10) / 10; };
     const e1rmSerieDiPrima = x => { const w = Number(x.weight) || 0, r = Number(x.reps) || 0; if (!w || !r || r > 12) return 0; return w * (1 + r / 30); };
     [0, 2.5, 20, 60, 61.3, 100, 142.5, '80', 'x', null].forEach(peso => [0, 1, 2, 5, 8, 10, 12, 13, 20, '8', null].forEach(reps => {
       const p = JSON.stringify(peso), r = JSON.stringify(reps);
-      assert.strictEqual(app.g('unoRM(' + p + ', ' + r + ')'), unoRMdiPrima(peso, reps), 'unoRM ' + p + ' x ' + r);
       assert.strictEqual(app.g('e1rm(' + p + ', ' + r + ')'), unoRMdiPrima(peso, reps), 'e1rm ' + p + ' x ' + r);
       assert.strictEqual(app.g('e1rmSerie({ weight: ' + p + ', reps: ' + r + ' })'), e1rmSerieDiPrima({ weight: peso, reps: reps }), 'e1rmSerie ' + p + ' x ' + r);
     }));
