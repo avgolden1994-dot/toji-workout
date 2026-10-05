@@ -548,7 +548,7 @@ Elenco in ordine di importanza. Sono fatti letti nel codice, non ancora corretti
 7. ~~Regola ripetuta~~ — risolto: il limite di 3 serie usa un solo parametro (`serieMaxPrudente`).
 8. ~~Numeri magici sparsi~~ — in parte risolto: i principali sono in `js/coach/parametri.js`; restano soglie minori dentro le funzioni.
 9. ~~Il codice del coach era mescolato al resto~~ — risolto: ora sta in `js/coach/` (una cartella, un file per argomento).
-10. **Giorni doppi sopra i 65 anni solo in RIC-05.** Dall'onda 0 CAR-04 (rientro dopo una pausa su un esercizio) conta i giorni veri per tutti; RIC-05 (rientro del piano intero, `rientroPiano` in `regole-nuove.js`: 14 giorni, 7 oltre i 65) e il testo del registro (B20) li contano ancora doppi. Da allineare in W4-T2 (CST-01, CST-02, MES-15).
+10. **Giorni veri anche sopra i 65 anni (deroga di B20).** CAR-04 (rientro dopo una pausa su un esercizio) e RIC-05 (rientro del piano intero, `rientroPiano` in `regole-nuove.js`: 14 giorni per tutti) contano i giorni veri; il testo del registro (B20) li vuole doppi oltre i 65. Deroga datata 2026-10-05 nel registro (5 giorni di pausa, normali a 2 sedute a settimana, davano -10% di carico e -25% di serie): il trattamento dell'età torna con la catena completa di W4-T2 (CST-01, CST-02, MES-15).
 11. **Salvaguardie e interruttori.** MAV-02, MAV-03 ed ETA-01..03 sono salvaguardie sempre accese; ETA-04 (niente numeri su peso e cibo ai minorenni) è invece in `REGOLE_SPEGNIBILI` per scelta di W0-T4. Da uniformare quando W1-T1 legge «(spegnibile)» dalla riga della mappa.
 12. **Età minima.** La logica del coach usa 13 anni (decisione dell'utente, D-P9); la soglia legale per i dati personali (14 in Italia) è da verificare con un legale prima del rilascio (registro G.1).
 

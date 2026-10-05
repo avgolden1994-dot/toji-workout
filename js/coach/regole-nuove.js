@@ -29,11 +29,12 @@ function prontezzaRecente() {
   const v = sedutePassate().map(x => x.h.prontezza).filter(x => typeof x === 'number').slice(0, 2);
   return v.length ? v.reduce((t, x) => t + x, 0) / v.length : null;
 }
-/* RIC-05: pausa lunga su tutto il piano (con l eta si conta il doppio, come per il singolo esercizio) */
+/* RIC-05: pausa lunga su tutto il piano. I giorni sono quelli veri, per tutti: oltre i 65 anni non si contano doppi, come per il singolo esercizio (CAR-04). Il registro B20 li
+   voleva doppi, ma 5 giorni di pausa (normali con 2 sedute a settimana) facevano scattare il -10% e il -25% delle serie: deroga del 2026-10-05 finche W4-T2 non porta la catena
+   completa di B20 con le sue soglie (CST-01, CST-02, MES-15). */
 function rientroPiano() {
-  const pc = profiloCoach();
   const g = giorniDallUltimaSeduta();
-  return (pc.eta >= 65 ? g * 2 : g) >= 14 ? g : 0;
+  return g >= 14 ? g : 0;
 }
 /* RIC-01: settimana centrale di un blocco di carico (non la prima, non l ultima prima dello scarico) */
 function settimanaCentraleBlocco() {

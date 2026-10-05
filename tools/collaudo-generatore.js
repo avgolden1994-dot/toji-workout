@@ -39,7 +39,9 @@ const VERSIONE_CRITERI = '1.2';
    libreria non ha altre tirate senza attrezzi fino a W1-T5): resta, con la nota «sotto un tavolo robusto o con una sbarra bassa» (NOTA_REMATORE_INVERSO), che dice dove farlo
    con quello che c'e in casa (un tavolo che regge il peso e un tubo o una sbarra bassa sono in ogni casa; una sbarra per le trazioni no). SAF-04 non segnala piu il
    rematore inverso a corpo libero SE la nota c'e; senza la nota segnala come prima. Il calf raise a un piede (gradino) era gia fuori dal 1.1. Il «prima» (tag
-   coach-v2-onda-0-prima) si rigenera con questo file: il codice vecchio non scrive la nota, quindi il suo SAF-04:corpo non cambia. */
+   coach-v2-onda-0-prima) si rigenera con questo file: il codice vecchio non scrive la nota, quindi il suo SAF-04:corpo non cambia.
+   - RX-01/RX-04: il Nordic Curl (eccentrico, 3-6 ripetizioni per sicurezza: B1 della revisione dell onda 0) non e un isolamento fuori fascia (ECCENTRICO_A_BASSE_RIPETIZIONI).
+   - EQ-03:flessione: non scatta dove non esiste una flessione del ginocchio sicura (casa, o palestra senza macchine, con chi inizia, i prudenti o le ginocchia dolenti: il Nordic Curl e escluso). */
 
 /* --- volume --- */
 /* Una serie vale 1 per il muscolo bersaglio e 0,5 per i sinergisti (Pelland 2025, Sports Medicine, 67 studi: Moderata) */
@@ -207,6 +209,15 @@ const ATTREZZI_QUASI = {
   manubri: ['Sbarra', 'Parallele', 'Sbarra bassa o anelli', 'Sedia romana', 'Panca per lombari', 'Panca a 45°', 'Ruota addominale'],
   corpo: ['Sbarra', 'Parallele', 'Sbarra bassa o anelli', 'Sedia romana', 'Panca per lombari', 'Panca a 45°', 'Ruota addominale', 'Panca']
 };
+/* Il Nordic Curl e una discesa eccentrica sovramassimale: per sicurezza il generatore lo prescrive a 3-6 ripetizioni (revisione dell onda 0, B1: non e per principianti, prudenti ne
+   ginocchia dolenti). Fuori dalle fasce di ripetizioni degli isolamenti (RX-01) e dal confronto con i multiarticolari (RX-04): e una scelta di sicurezza, non un difetto (1.2). */
+const ECCENTRICO_A_BASSE_RIPETIZIONI = /nordic/i;
+/* Una flessione del ginocchio sicura per questo profilo? Con le macchine c e il leg curl; senza, resta il Nordic Curl, che il generatore non da a chi inizia, ai prudenti (over 65, PAR-Q,
+   minorenni) ne alle ginocchia dolenti (B1 della revisione dell onda 0): li la flessione non esiste e EQ-03:flessione non puo scattare (le flessioni con elastico o slider sono di W1-T5) (1.2) */
+function flessioneSicuraDisponibile(c) {
+  const macchine = c.luogo === 'palestra' && !(c.attrezziPalestra && c.attrezziPalestra.length && c.attrezziPalestra.indexOf('macchine') === -1);
+  return macchine || (c.level !== 'principiante' && !c.cauto && !c.minore && c.fastidi.indexOf('ginocchia') === -1);
+}
 /* La nota che il generatore scrive nel programma quando c'e il rematore inverso a corpo libero (W0-T7, vedi 1.2): dove farlo con quello che c'e in casa (Convenzione, decisione del committente) */
 const NOTA_REMATORE_INVERSO = /sotto un tavolo robusto o con una sbarra bassa/i;
 /* attrezzo di DETTAGLI -> categoria di "Attrezzi della tua palestra" (Opzioni > Il coach) */
@@ -418,7 +429,7 @@ const CRITERI = [
       const out = [];
       const q = m.vol.quadricipiti || 0, f = m.vol.femorali || 0;
       if (q >= SERIE_QUADRICIPITI_PER_RAPPORTO && f < q * RAPPORTO_FEMORALI_QUADRICIPITI_MIN) out.push({ sub: 'rapporto', msg: 'femorali ' + r1(f) + ' contro quadricipiti ' + r1(q) + ' serie frazionarie (rapporto ' + (f / q).toFixed(2) + ')', gravita: (q * RAPPORTO_FEMORALI_QUADRICIPITI_MIN - f) });
-      if (c.tipoObiettivo === 'ipertrofia' && c.days >= 3 && m.flessioneGinocchio === 0 && m.vol.quadricipiti >= 6) out.push({ sub: 'flessione', msg: 'nessun leg curl o nordic curl: i femorali lavorano solo in estensione d anca', gravita: 2 });
+      if (c.tipoObiettivo === 'ipertrofia' && c.days >= 3 && m.flessioneGinocchio === 0 && m.vol.quadricipiti >= 6 && flessioneSicuraDisponibile(c)) out.push({ sub: 'flessione', msg: 'nessun leg curl o nordic curl: i femorali lavorano solo in estensione d anca', gravita: 2 });
       return out; } },
   { id: 'PAT-01', nome: 'Schema di movimento fondamentale assente nella settimana (squat, hinge, spinte e tirate orizzontali e verticali)', sev: 3, forza: 'Convenzione', fonte: 'piramide di Helms (SCHEMI_MOV), pratica dei coach',
     dove: [RICETTE_JS + ': buildProgram (schemi mancanti, PRG-21)', MOTORE_JS + ': consentito / RISCHIO (fastidi tolgono schemi interi)'],
@@ -469,7 +480,7 @@ const CRITERI = [
     check: (m, c) => {
       const out = [];
       m.sedute.forEach(s => s.es.forEach(e => {
-        if (e.inf.tempo || !(e.reps > 0)) return;
+        if (e.inf.tempo || !(e.reps > 0) || ECCENTRICO_A_BASSE_RIPETIZIONI.test(e.pulito)) return;
         const r = (c.cauto ? REPS_AMMESSE_PRUDENTE : REPS_AMMESSE[c.tipoObiettivo])[e.inf.carico];
         if (e.reps < r[0] || e.reps > r[1]) out.push({ sub: c.tipoObiettivo + '/' + e.inf.carico, msg: s.titolo + ': ' + e.pulito + ' ' + e.sets + 'x' + e.reps + ' (' + e.inf.carico + ', ' + (c.cauto ? 'modalita prudente' : c.tipoObiettivo) + ': ' + r[0] + '-' + r[1] + ')' + (c.metodo ? ' metodo ' + c.metodo : ''), tag: e.pulito + ' ' + e.reps + ' rip', gravita: Math.abs(e.reps < r[0] ? r[0] - e.reps : e.reps - r[1]) });
       }));
@@ -502,7 +513,7 @@ const CRITERI = [
         const comp = s.es.filter(e => e.inf.tipo === 'compound' && !e.inf.tempo);
         if (!comp.length) return;
         const maxComp = Math.max.apply(null, comp.map(e => e.reps));
-        s.es.forEach(e => { if (e.inf.tipo === 'isolation' && !e.inf.tempo && e.reps - maxComp < RIP_ISOLAMENTO_DELTA_MIN) out.push({ msg: s.titolo + ': ' + e.pulito + ' ' + e.reps + ' rip contro ' + maxComp + ' del multiarticolare', gravita: maxComp - e.reps }); });
+        s.es.forEach(e => { if (e.inf.tipo === 'isolation' && !e.inf.tempo && !ECCENTRICO_A_BASSE_RIPETIZIONI.test(e.pulito) && e.reps - maxComp < RIP_ISOLAMENTO_DELTA_MIN) out.push({ msg: s.titolo + ': ' + e.pulito + ' ' + e.reps + ' rip contro ' + maxComp + ' del multiarticolare', gravita: maxComp - e.reps }); });
       });
       return out; } },
   { id: 'GOA-01', nome: 'Obiettivo forza con poco lavoro pesante (serie sui multiarticolari a 6 ripetizioni o meno)', sev: 3, forza: 'Convenzione', fonte: 'ACSM 2026 (carichi alti, 2-3 serie per esercizio); numeri per livello Convenzione',
@@ -1147,6 +1158,8 @@ const FIXTURES = [
   fixture('casa con manubri e la sbarra', { luogo: 'manubri' }, [['Lunedì', 'upper', [E('Trazioni alla Sbarra (Pull-ups)', 3, 8, 90)]]], {}, ['SAF-04'], ['SAF-03']),
   fixture('corpo libero con il rematore inverso e la nota del tavolo robusto (W0-T7, 1.2): non e attrezzatura non garantita', { luogo: 'corpo' }, [['Lunedì', 'pull', [E('Rematore Inverso (Corpo Libero)', 3, 10, 75)]]], { note: ['Rematore inverso: fallo sotto un tavolo robusto o con una sbarra bassa, dopo aver controllato che regga il tuo peso.'] }, [], ['SAF-04', 'SAF-03']),
   fixture('corpo libero con il rematore inverso senza la nota: attrezzatura non garantita (W0-T7, 1.2)', { luogo: 'corpo' }, [['Lunedì', 'pull', [E('Rematore Inverso (Corpo Libero)', 3, 10, 75)]]], {}, ['SAF-04'], ['SAF-03']),
+  fixture('Nordic Curl a 6 ripetizioni: eccentrico a ripetizioni basse per sicurezza, non e fuori fascia (1.2)', {}, [['Lunedì', 'lower', [E('Squat con Bilanciere', 3, 8, 150), E('Nordic Curl', 3, 6, 75)]]], {}, [], ['RX-01', 'RX-04']),
+  fixture('casa, intermedio sano, senza nessuna flessione del ginocchio: EQ-03 scatta (il Nordic Curl e permesso)', { luogo: 'corpo', days: 3, level: 'intermedio' }, [['Lunedì', 'fullbody', [E('Squat a Corpo Libero', 4, 10, 90), E('Affondi Bulgari', 4, 10, 90), E('Piegamenti a Terra (Push-up)', 3, 10, 90)]], ['Mercoledì', 'fullbody', [E('Squat a Corpo Libero', 4, 10, 90), E('Ponte Glutei', 3, 15, 60)]]], {}, ['EQ-03']),
   fixture('palestra senza macchine con una macchina', { attrezziPalestra: ['bilanciere', 'manubri', 'sbarra'] }, [['Lunedì', 'upper', [E('Chest Press Machine', 3, 10, 90)]]], {}, ['SAF-03']),
   fixture('principiante con stacco da terra', { level: 'principiante' }, [['Lunedì', 'fullbody', [E('Stacco da Terra (Deadlift)', 3, 8, 120)]]], {}, ['SAF-05']),
   fixture('principiante con un drop set', { level: 'principiante' }, [['Lunedì', 'fullbody', [E('Curl ai Cavi', 3, 12, 60, { tecnica: 'drop' })]]], {}, ['TEC-01']),

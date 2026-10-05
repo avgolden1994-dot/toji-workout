@@ -50,7 +50,7 @@ function attrezzoDi(nome) {
    ampiezza senza dolore): il ginocchio dolente si modifica, non si toglie ogni lavoro per i quadricipiti. Resta fuori il resto
    dello squat e degli affondi (vedi ECCEZIONI_RISCHIO per il solo squat a corpo libero). */
 const RISCHIO = {
-  spalle: /military|lento avanti|arnold|tirate al mento|dip|panca piana bilanciere|pullover|shoulder press|pike/i,
+  spalle: /military|lento avanti|arnold|tirate al mento|dip|panca piana bilanciere|pullover|shoulder press|pike|piegamenti declinati/i,   /* i piegamenti declinati (piedi rialzati) caricano la spalla come la panca inclinata (STRESS_ZONA.spalla): a casa restano quelli a terra e inclinati */
   ginocchia: /squat|affondi|step-up|hack|bulgar|jump|salti|pistol/i,
   schiena: /stacco|good morning|rematore con bilanciere|squat con bilanciere|hyperextension|t-bar|front squat|rematore presa inversa|yates|sit-up|russian twist|crunch a terra/i
 };
@@ -83,6 +83,7 @@ function eccezioneRischio(f, nome, prefs) {
 function consentito(nome, prefs) {
   const a = attrezzoDi(nome);
   if ((prefs.odiati || []).indexOf(nome) !== -1) return false;
+  if ((prefs.esclusi || []).indexOf(nome) !== -1) return false;   /* esclusi dal coach per sicurezza (revisione dell onda 0, B1: il Nordic Curl), non per gusto */
   /* attrezzi della TUA palestra: il coach propone solo cio che trovi */
   if (prefs.attrezziPalestra && prefs.attrezziPalestra.length && a !== 'corpo' && prefs.attrezziPalestra.indexOf(a) === -1) return false;
   if (/sbarra|trazioni/i.test(nome) && prefs.attrezziPalestra && prefs.attrezziPalestra.length && prefs.attrezziPalestra.indexOf('sbarra') === -1) return false;

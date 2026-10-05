@@ -538,6 +538,7 @@ Per ogni conflitto: posizioni, decisione, perché (con lo stato della prova) e m
 ### B20. Rientro dopo una pausa
 
 - **Decisione.** Una catena sola (W4-T2): CST-01 congela il calendario con le soglie di MES-15 (≤ 6 giorni nulla; 7-13 la rampa non avanza; 14-27 si riparte dalla settimana 1 del blocco e il calendario scorre; ≥ 28 nuovo blocco); CAR-04 riduce i carichi (−10/−20/−30/−50%, giorni doppi oltre i 65); CST-02 riduce le serie (−25%, −10%, poi piano) e aggiunge +1 RIR per 2 sedute; ALG-14 fa risalire del 5% a seduta (2,5% principianti e over 65) fino al carico di prima; REC-08 (4 fasi guidate dal dolore) vale solo dopo un fastidio. Tutto Convenzione con base [V] sul recupero rapido (PMID 32017951) e sullo stop di 2-4 settimane.
+- **Deroga datata (2026-10-05, revisione Opus dell'onda 0; decisione del delegato del responsabile di prodotto).** Fino a W4-T2 i giorni di pausa sono i **giorni veri anche oltre i 65 anni**, sia per CAR-04 (carichi per esercizio) sia per RIC-05 (serie del piano: 14 giorni per tutti). *Motivo*: con il conteggio doppio 5 giorni di pausa, normali con 2 sedute a settimana, davano a un over 65 −10% di carico e −25% di serie; la catena completa con le sue soglie (CST-01 con MES-15: 7-13 giorni nulla) arriva in W4-T2 e riporta lì il trattamento dell'età. La riga «giorni doppi oltre i 65» di questa decisione resta l'obiettivo di W4-T2, non il comportamento dell'onda 0.
 
 ### B21. Proteine e passi
 
