@@ -46,7 +46,8 @@ const IMMAGINI_ESERCIZI = {
   'Squat con Bilanciere': 'esercizi/ex-23-squat-bilanciere.svg',
   'Front Squat': 'esercizi/ex-24-front-squat.svg',
   'Goblet Squat': 'esercizi/ex-25-goblet-squat.svg',
-  'Hack Squat': 'esercizi/ex-26-hack-squat.svg'
+  'Hack Squat': 'esercizi/ex-26-hack-squat.svg',
+  'Leg Press': 'esercizi/ex-27-leg-press.svg'
 };
 window.immagineEsercizio = function(nome) {
   const pulito = String(nome).replace(EMOJI_TESTA, '');
