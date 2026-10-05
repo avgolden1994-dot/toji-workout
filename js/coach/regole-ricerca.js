@@ -75,10 +75,9 @@ function primaSettimanaBlocco(p, numero) {
   if (!(numero >= 1)) return false;
   return numero === 1 || !!(p && p.blocco > 0 && (numero - 1) % p.blocco === 0);
 }
+/* OBI-02: la fase del corpo e una sola per tutta l app (faseCorpo, regia/brief.js): il dimagrimento in qualunque posizione e un deficit, la fase scelta a mano vince */
 function inDeficitCalorico() {
-  const p = getProfile() || {};
-  const goals = p.goals || (p.goal ? [p.goal] : []);
-  return (p.fase || (goals[0] === 'dimagrimento' ? 'deficit' : '')) === 'deficit';
+  return faseCorpo() === 'deficit';
 }
 /* PRN-01 / MES-02: il -1 RIR dell esigenza (>= 1,15) non porta mai sotto il pavimento del livello: ai principianti e in dimagrimento
    non si applica (99 = non si tocca), nella prima settimana del blocco non scende sotto 2 */

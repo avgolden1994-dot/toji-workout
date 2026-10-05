@@ -89,6 +89,20 @@ test('OBI-02: faseCorpo guarda tutti gli obiettivi; la fase scelta a mano vince;
   assert.deepStrictEqual(a.errori, []);
 });
 
+/* INT-1 (out-of-list di W1-T4): regole-ricerca.js leggeva la fase del corpo a modo suo (solo il primo obiettivo): ora usa faseCorpo */
+test('OBI-02: inDeficitCalorico legge faseCorpo (dimagrimento in qualunque posizione); il piso del RIR non si tocca in deficit (MES-02)', () => {
+  const a = caricaApp({ ora: ORA });
+  const prova = (profilo, atteso, perche) => { a.profilo(Object.assign({ level: 'intermedio', age: 30, sex: 'M' }, profilo)); assert.strictEqual(a.json('inDeficitCalorico()'), atteso, perche); };
+  prova({ goals: ['dimagrimento'] }, true, 'dimagrimento primo');
+  prova({ goals: ['massa', 'dimagrimento'] }, true, 'dimagrimento secondo: prima il pannello diceva mantenimento');
+  prova({ goals: ['forza', 'dimagrimento'] }, true, 'forza + dimagrimento');
+  prova({ goals: ['massa'] }, false, 'solo massa');
+  prova({ goals: ['dimagrimento'], fase: 'mantenimento' }, false, 'la fase scelta a mano vince');
+  a.profilo({ goals: ['massa', 'dimagrimento'], level: 'intermedio', age: 30, sex: 'M' });
+  assert.strictEqual(a.json('pisoRirEsigenza(2)'), 99, 'in deficit il -1 RIR dell esigenza non si applica (MES-02), anche con il dimagrimento in seconda posizione');
+  assert.deepStrictEqual(a.errori, []);
+});
+
 /* ---------- il brief (B.2) ---------- */
 test('briefCoach: la forma di B.2 (versione 2, seme, chi, obiettivi, agenda, preferenze, corpo, mente, sicurezza, metodo, test, perche) e i dati giusti', () => {
   const b = app().dati(brief({ goals: ['corsa5k', 'massa'], level: 'principiante', age: 70, parq: 'si', sex: 'F', luogo: 'manubri', fastidi: ['ginocchia', 'nessuno'], days: 3, minutes: 45, freq: '2', priorita: ['spalle'], seme: 'b' }));
