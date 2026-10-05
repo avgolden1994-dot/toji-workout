@@ -165,10 +165,10 @@ test('lo schema coincide con schemaDi dove la regex risponde (affondi e step-up 
 });
 
 /* ---------------------------------------------------------------------------------------------------------------- crediti (registro B6) */
-/* W1-T5: le stesse ragioni per le righe nuove: Stacco in Deficit (come lo stacco da terra), Scrollate con Manubri (trapezio), Wrist Curl e Reverse Wrist Curl (avambracci),
-   Tibialis Raise (tibiale anteriore), Suitcase Carry (trasporto: 0,5 come il Farmer Walk) */
+/* W1-T5: le stesse ragioni per le righe nuove: Stacco in Deficit (come lo stacco da terra), Scrollate con Manubri (trapezio), Tibialis Raise (tibiale anteriore),
+   Suitcase Carry (trasporto: 0,5 come il Farmer Walk) */
 const ECCEZIONI_CREDITO_PIENO = ['Stacco da Terra (Deadlift)', 'Stacco con Trap Bar', 'Hyperextension (Lombari)', 'Scrollate (Shrug)', 'Farmer Walk',
-  'Stacco in Deficit', 'Scrollate con Manubri', 'Wrist Curl', 'Reverse Wrist Curl', 'Tibialis Raise', 'Suitcase Carry'];
+  'Stacco in Deficit', 'Scrollate con Manubri', 'Tibialis Raise', 'Suitcase Carry'];
 
 test('le unita di volume sono le 15 di B6 e ogni muscolo di MUSCOLI ha la sua (o nessuna)', () => {
   assert.deepStrictEqual(UNITA, ['petto', 'dorsali', 'schiena_spessore', 'quadricipiti', 'femorali', 'grande_gluteo', 'adduttori', 'abduttori', 'polpacci',
@@ -208,7 +208,7 @@ test('crediti 0 / 0,5 / 1 (B6): 1 sull\'unita del bersaglio (eccezioni elencate)
 test('le eccezioni al credito pieno sono solo quelle scritte, ognuna con la sua ragione', () => {
   assert.deepStrictEqual(LIB.map(e => pulito(e.name)).filter(n => ATTR[n].eccezione).sort(), ECCEZIONI_CREDITO_PIENO.slice().sort());
   ECCEZIONI_CREDITO_PIENO.forEach(n => assert.ok(ATTR[n].eccezione.length > 40, n));
-  ['Stacco da Terra (Deadlift)', 'Stacco con Trap Bar', 'Hyperextension (Lombari)', 'Scrollate (Shrug)', 'Stacco in Deficit', 'Scrollate con Manubri', 'Wrist Curl', 'Reverse Wrist Curl', 'Tibialis Raise']
+  ['Stacco da Terra (Deadlift)', 'Stacco con Trap Bar', 'Hyperextension (Lombari)', 'Scrollate (Shrug)', 'Stacco in Deficit', 'Scrollate con Manubri', 'Tibialis Raise']
     .forEach(n => assert.strictEqual(UDM[DETT[n][7]], null, n + ': ha un\'unita, nessuna eccezione'));
   assert.deepStrictEqual(ATTR['Farmer Walk'].muscoli, { addome: 0.5 });
   assert.deepStrictEqual(ATTR['Suitcase Carry'].muscoli, { addome: 0.5 }, 'come il Farmer Walk: un trasporto vale 0,5 all\'addome');

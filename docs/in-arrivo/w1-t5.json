@@ -288,11 +288,6 @@
       "es": "Agarre mixto o prono, de pie sobre una elevación de #–# cm",
       "de": "Gemischter oder Obergriff, auf einer #–# cm hohen Erhöhung stehend"
     },
-    "Primari: erettori spinali, glutei, ischiocrurali · Secondari: quadricipiti, dorsali, trapezio, avambracci": {
-      "en": "Primary: spinal erectors, glutes, hamstrings · Secondary: quads, lats, traps, forearms",
-      "es": "Principales: erectores espinales, glúteos, isquiotibiales · Secundarios: cuádriceps, dorsales, trapecio, antebrazos",
-      "de": "Primär: Rückenstrecker, Gesäß, Beinbeuger · Sekundär: Quadrizeps, Latissimus, Trapez, Unterarme"
-    },
     "In piedi su un rialzo stabile di #–# cm (una pedana o un disco da # kg), bilanciere sopra la metà del piede, schiena neutra, spalle leggermente davanti al bilanciere.": {
       "en": "Stand on a stable #–# cm platform (a riser or a # kg plate), bar over the middle of your foot, neutral back, shoulders slightly in front of the bar.",
       "es": "De pie sobre una elevación estable de #–# cm (una tarima o un disco de # kg), barra sobre la mitad del pie, espalda neutra, hombros ligeramente por delante de la barra.",
@@ -412,51 +407,6 @@
       "en": "Hips still, only the knee moves.",
       "es": "Pelvis quieta, solo se mueve la rodilla.",
       "de": "Becken ruhig, nur das Knie bewegt sich."
-    },
-    "Reverse Nordic": {
-      "en": "Reverse Nordic",
-      "es": "Nórdico inverso",
-      "de": "Reverse Nordic"
-    },
-    "In ginocchio su un tappetino, busto che si inclina all’indietro in linea": {
-      "en": "Kneeling on a mat, torso leaning back in a straight line",
-      "es": "De rodillas sobre una esterilla, tronco que se inclina hacia atrás en línea",
-      "de": "Kniend auf einer Matte, der Oberkörper neigt sich in einer Linie nach hinten"
-    },
-    "In ginocchio su un tappetino spesso, busto dritto e anche estese, collo dei piedi a terra (o caviglie sotto un divano), braccia incrociate sul petto.": {
-      "en": "Kneel on a thick mat, torso upright and hips extended, tops of your feet on the floor (or ankles under a sofa), arms crossed over your chest.",
-      "es": "De rodillas sobre una esterilla gruesa, tronco erguido y caderas extendidas, empeines en el suelo (o tobillos bajo un sofá), brazos cruzados sobre el pecho.",
-      "de": "Knie dich auf eine dicke Matte, Oberkörper aufrecht und Hüfte gestreckt, Fußrücken am Boden (oder Knöchel unter einem Sofa), Arme vor der Brust verschränkt."
-    },
-    "Inclina il busto all’indietro in linea retta dalle ginocchia alla testa, senza piegarti alle anche.": {
-      "en": "Lean your torso back in a straight line from knees to head, without bending at the hips.",
-      "es": "Inclina el tronco hacia atrás en línea recta desde las rodillas hasta la cabeza, sin doblarte por las caderas.",
-      "de": "Neige den Oberkörper in einer geraden Linie von den Knien bis zum Kopf nach hinten, ohne dich in der Hüfte zu beugen."
-    },
-    "Scendi finché senti i quadricipiti tendersi, solo fin dove riesci a risalire con controllo.": {
-      "en": "Go down until you feel your quads stretch, only as far as you can come back up with control.",
-      "es": "Baja hasta sentir que se tensan los cuádriceps, solo hasta donde puedas subir con control.",
-      "de": "Gehe nach hinten, bis du die Oberschenkelvorderseite gedehnt spürst, nur so weit, wie du kontrolliert zurückkommst."
-    },
-    "Risali contraendo i quadricipiti, con le anche sempre estese.": {
-      "en": "Come back up by squeezing your quads, keeping your hips extended.",
-      "es": "Sube contrayendo los cuádriceps, con las caderas siempre extendidas.",
-      "de": "Komm zurück, indem du die Oberschenkelvorderseite anspannst, die Hüfte bleibt immer gestreckt."
-    },
-    "Piegarsi alle anche invece di tenere il corpo in linea.": {
-      "en": "Bending at the hips instead of keeping your body in a line.",
-      "es": "Doblarse por las caderas en lugar de mantener el cuerpo en línea.",
-      "de": "In der Hüfte abknicken, statt den Körper in einer Linie zu halten."
-    },
-    "Scendere più di quanto riesci a controllare: se le ginocchia dolgono, accorcia il percorso.": {
-      "en": "Going down further than you can control: if your knees hurt, shorten the range.",
-      "es": "Bajar más de lo que puedes controlar: si te duelen las rodillas, acorta el recorrido.",
-      "de": "Weiter nach hinten gehen, als du kontrollieren kannst: Wenn die Knie schmerzen, verkürze den Weg."
-    },
-    "Il corpo è una tavola dalle ginocchia alla testa: più ti inclini, più è difficile; parti da pochi gradi.": {
-      "en": "Your body is a plank from knees to head: the more you lean, the harder it gets; start with just a few degrees.",
-      "es": "El cuerpo es una tabla desde las rodillas hasta la cabeza: cuanto más te inclinas, más difícil; empieza con pocos grados.",
-      "de": "Dein Körper ist ein Brett von den Knien bis zum Kopf: Je mehr du dich neigst, desto schwerer wird es; beginne mit wenigen Grad."
     },
     "Belt Squat": {
       "en": "Belt Squat",
@@ -848,16 +798,6 @@
       "es": "Kettlebell",
       "de": "Kettlebell"
     },
-    "Flessori del polso": {
-      "en": "Wrist flexors",
-      "es": "Flexores de la muñeca",
-      "de": "Handgelenkbeuger"
-    },
-    "Estensori del polso": {
-      "en": "Wrist extensors",
-      "es": "Extensores de la muñeca",
-      "de": "Handgelenkstrecker"
-    },
     "Stacco Rumeno con Manubri": {
       "en": "Dumbbell Romanian Deadlift",
       "es": "Peso muerto rumano con mancuernas",
@@ -912,11 +852,6 @@
       "en": "Standing on one leg, a dumbbell in the opposite hand, torso lowering",
       "es": "De pie sobre una pierna, una mancuerna en la mano opuesta, tronco que baja",
       "de": "Auf einem Bein stehend, eine Kurzhantel in der gegenüberliegenden Hand, der Oberkörper senkt sich"
-    },
-    "Primari: grande gluteo, ischiocrurali · Secondari: erettori spinali, medio gluteo, core": {
-      "en": "Primary: gluteus maximus, hamstrings · Secondary: spinal erectors, gluteus medius, core",
-      "es": "Principales: glúteo mayor, isquiotibiales · Secundarios: erectores espinales, glúteo medio, core",
-      "de": "Primär: großer Gesäßmuskel, Beinbeuger · Sekundär: Rückenstrecker, mittlerer Gesäßmuskel, Rumpf"
     },
     "In piedi su una gamba sola, ginocchio leggermente flesso, un manubrio nella mano opposta alla gamba d’appoggio; vicino a un muro, se ti serve una mano per l’equilibrio.": {
       "en": "Stand on one leg, knee slightly bent, a dumbbell in the hand opposite your supporting leg; stay near a wall if you need a hand for balance.",
@@ -977,11 +912,6 @@
       "en": "Feet shoulder-width apart, the kettlebell swings between your legs and rises with the hip drive",
       "es": "Pies a la anchura de los hombros, el kettlebell pasa entre las piernas y sube con el empuje de cadera",
       "de": "Füße schulterbreit, das Kettlebell schwingt zwischen den Beinen durch und steigt durch den Hüftstoß"
-    },
-    "Primari: grande gluteo, ischiocrurali · Secondari: erettori spinali, core": {
-      "en": "Primary: gluteus maximus, hamstrings · Secondary: spinal erectors, core",
-      "es": "Principales: glúteo mayor, isquiotibiales · Secundarios: erectores espinales, core",
-      "de": "Primär: großer Gesäßmuskel, Beinbeuger · Sekundär: Rückenstrecker, Rumpf"
     },
     "In piedi, piedi poco più larghi delle spalle, kettlebell a un piede davanti a te. Porta il bacino indietro (hip hinge), afferra il manico con due mani e inclinalo all’indietro tra le gambe, come per passare un pallone.": {
       "en": "Stand with your feet slightly wider than your shoulders, the kettlebell a foot in front of you. Push your hips back (hip hinge), grab the handle with both hands and tilt it back between your legs, as if hiking a football.",
@@ -1103,11 +1033,6 @@
       "es": "Rotadores externos del manguito rotador",
       "de": "Außenrotatoren der Rotatorenmanschette"
     },
-    "Primari: extrarotatori della cuffia (sottospinato, piccolo rotondo) · Secondari: deltoide posteriore": {
-      "en": "Primary: rotator cuff external rotators (infraspinatus, teres minor) · Secondary: rear deltoid",
-      "es": "Principales: rotadores externos del manguito (infraespinoso, redondo menor) · Secundarios: deltoides posterior",
-      "de": "Primär: Außenrotatoren der Rotatorenmanschette (Untergrätenmuskel, kleiner Rundmuskel) · Sekundär: hintere Schulter"
-    },
     "In piedi di lato al cavo, puleggia all’altezza del gomito, maniglia nella mano più lontana dal cavo, gomito piegato a #° tenuto al fianco (un asciugamano arrotolato tra gomito e fianco aiuta a tenerlo fermo).": {
       "en": "Stand sideways to the cable, pulley at elbow height, handle in the hand furthest from the cable, elbow bent at #° and held at your side (a rolled towel between elbow and ribs helps keep it still).",
       "es": "De pie de lado a la polea, polea a la altura del codo, asa en la mano más alejada de la polea, codo flexionado a #° y pegado al costado (una toalla enrollada entre el codo y el costado ayuda a mantenerlo quieto).",
@@ -1182,96 +1107,6 @@
       "en": "Stand with a dumbbell in each hand at your sides, arms straight, shoulders relaxed down.",
       "es": "De pie, una mancuerna en cada mano a los lados del cuerpo, brazos extendidos, hombros relajados hacia abajo.",
       "de": "Stelle dich hin, in jeder Hand eine Kurzhantel seitlich am Körper, Arme gestreckt, Schultern entspannt nach unten."
-    },
-    "Wrist Curl": {
-      "en": "Wrist Curl",
-      "es": "Curl de muñeca",
-      "de": "Handgelenkcurl"
-    },
-    "Avambraccio appoggiato sulla coscia, palmo verso l’alto": {
-      "en": "Forearm resting on your thigh, palm facing up",
-      "es": "Antebrazo apoyado en el muslo, palma hacia arriba",
-      "de": "Unterarm auf dem Oberschenkel abgelegt, Handfläche nach oben"
-    },
-    "Primari: flessori del polso e delle dita (avambraccio)": {
-      "en": "Primary: wrist and finger flexors (forearm)",
-      "es": "Principales: flexores de la muñeca y de los dedos (antebrazo)",
-      "de": "Primär: Handgelenk- und Fingerbeuger (Unterarm)"
-    },
-    "Seduto, avambraccio appoggiato sulla coscia con il polso oltre il ginocchio, palmo verso l’alto, un manubrio leggero in mano.": {
-      "en": "Sit with your forearm resting on your thigh and your wrist past your knee, palm facing up, a light dumbbell in your hand.",
-      "es": "Sentado, antebrazo apoyado en el muslo con la muñeca más allá de la rodilla, palma hacia arriba, una mancuerna ligera en la mano.",
-      "de": "Setze dich hin, Unterarm auf dem Oberschenkel abgelegt, das Handgelenk über dem Knie, Handfläche nach oben, eine leichte Kurzhantel in der Hand."
-    },
-    "Lascia scendere il manubrio aprendo le dita, fino a tenerlo sulle punte.": {
-      "en": "Let the dumbbell roll down by opening your fingers, until you hold it on your fingertips.",
-      "es": "Deja bajar la mancuerna abriendo los dedos, hasta sujetarla con las puntas.",
-      "de": "Lass die Kurzhantel nach unten rollen, indem du die Finger öffnest, bis du sie auf den Fingerspitzen hältst."
-    },
-    "Richiudi le dita e solleva il polso il più in alto possibile.": {
-      "en": "Close your fingers again and lift your wrist as high as you can.",
-      "es": "Vuelve a cerrar los dedos y levanta la muñeca lo más alto posible.",
-      "de": "Schließe die Finger wieder und hebe das Handgelenk so hoch wie möglich."
-    },
-    "Tieni # secondo in alto e scendi lentamente.": {
-      "en": "Hold for # second at the top and lower slowly.",
-      "es": "Mantén # segundo arriba y baja despacio.",
-      "de": "Halte # Sekunde oben und senke langsam ab."
-    },
-    "Muovere il gomito o sollevare l’avambraccio dalla coscia.": {
-      "en": "Moving your elbow or lifting your forearm off your thigh.",
-      "es": "Mover el codo o levantar el antebrazo del muslo.",
-      "de": "Den Ellbogen bewegen oder den Unterarm vom Oberschenkel heben."
-    },
-    "Usare un carico troppo pesante e perdere l’ampiezza.": {
-      "en": "Using a weight that is too heavy and losing range of motion.",
-      "es": "Usar una carga demasiado pesada y perder amplitud.",
-      "de": "Ein zu schweres Gewicht nehmen und den Bewegungsumfang verlieren."
-    },
-    "Si muove solo il polso: l’avambraccio resta fermo come appoggiato su un tavolo.": {
-      "en": "Only your wrist moves: your forearm stays still as if resting on a table.",
-      "es": "Solo se mueve la muñeca: el antebrazo queda quieto como apoyado en una mesa.",
-      "de": "Nur das Handgelenk bewegt sich: Der Unterarm bleibt ruhig wie auf einem Tisch."
-    },
-    "Reverse Wrist Curl": {
-      "en": "Reverse Wrist Curl",
-      "es": "Curl de muñeca inverso",
-      "de": "Reverse-Handgelenkcurl"
-    },
-    "Avambraccio appoggiato sulla coscia, palmo verso il basso": {
-      "en": "Forearm resting on your thigh, palm facing down",
-      "es": "Antebrazo apoyado en el muslo, palma hacia abajo",
-      "de": "Unterarm auf dem Oberschenkel abgelegt, Handfläche nach unten"
-    },
-    "Primari: estensori del polso e delle dita (avambraccio)": {
-      "en": "Primary: wrist and finger extensors (forearm)",
-      "es": "Principales: extensores de la muñeca y de los dedos (antebrazo)",
-      "de": "Primär: Handgelenk- und Fingerstrecker (Unterarm)"
-    },
-    "Seduto, avambraccio appoggiato sulla coscia con il polso oltre il ginocchio, palmo verso il basso, un manubrio leggero in mano.": {
-      "en": "Sit with your forearm resting on your thigh and your wrist past your knee, palm facing down, a light dumbbell in your hand.",
-      "es": "Sentado, antebrazo apoyado en el muslo con la muñeca más allá de la rodilla, palma hacia abajo, una mancuerna ligera en la mano.",
-      "de": "Setze dich hin, Unterarm auf dem Oberschenkel abgelegt, das Handgelenk über dem Knie, Handfläche nach unten, eine leichte Kurzhantel in der Hand."
-    },
-    "Lascia scendere il manubrio piegando il polso verso il basso.": {
-      "en": "Let the dumbbell go down by bending your wrist downward.",
-      "es": "Deja bajar la mancuerna flexionando la muñeca hacia abajo.",
-      "de": "Lass die Kurzhantel sinken, indem du das Handgelenk nach unten beugst."
-    },
-    "Solleva il manubrio estendendo il polso, con il dorso della mano verso l’alto.": {
-      "en": "Lift the dumbbell by extending your wrist, the back of your hand facing up.",
-      "es": "Levanta la mancuerna extendiendo la muñeca, con el dorso de la mano hacia arriba.",
-      "de": "Hebe die Kurzhantel, indem du das Handgelenk streckst, der Handrücken zeigt nach oben."
-    },
-    "Usare un carico troppo pesante: gli estensori sono più deboli dei flessori.": {
-      "en": "Using a weight that is too heavy: the extensors are weaker than the flexors.",
-      "es": "Usar una carga demasiado pesada: los extensores son más débiles que los flexores.",
-      "de": "Ein zu schweres Gewicht nehmen: Die Strecker sind schwächer als die Beuger."
-    },
-    "Carico molto leggero: gli estensori sono piccoli e si stancano subito.": {
-      "en": "Very light weight: the extensors are small and tire quickly.",
-      "es": "Carga muy ligera: los extensores son pequeños y se cansan enseguida.",
-      "de": "Sehr leichtes Gewicht: Die Strecker sind klein und ermüden schnell."
     },
     "Reverse Crunch": {
       "en": "Reverse Crunch",
@@ -1362,6 +1197,36 @@
       "en": "Resist the lean: stand tall as if the weight weren't there, your core works to keep you straight.",
       "es": "Resiste la inclinación: mantente erguido como si el peso no estuviera, el core trabaja para mantenerte en el eje.",
       "de": "Widerstehe der Neigung: Steh aufrecht, als wäre das Gewicht nicht da; der Rumpf arbeitet, um dich in der Achse zu halten."
+    },
+    "Primari: erettori spinali, glutei, ischiocrurali": {
+      "en": "Primary: spinal erectors, glutes, hamstrings",
+      "es": "Principales: erectores espinales, glúteos, isquiotibiales",
+      "de": "Primär: Rückenstrecker, Gesäß, Beinbeuger"
+    },
+    "Primari: grande gluteo, ischiocrurali": {
+      "en": "Primary: gluteus maximus, hamstrings",
+      "es": "Principales: glúteo mayor, isquiotibiales",
+      "de": "Primär: großer Gesäßmuskel, Beinbeuger"
+    },
+    "Secondari: erettori spinali, medio gluteo, core": {
+      "en": "Secondary: spinal erectors, gluteus medius, core",
+      "es": "Secundarios: erectores espinales, glúteo medio, core",
+      "de": "Sekundär: Rückenstrecker, mittlerer Gesäßmuskel, Rumpf"
+    },
+    "Secondari: erettori spinali, core": {
+      "en": "Secondary: spinal erectors, core",
+      "es": "Secundarios: erectores espinales, core",
+      "de": "Sekundär: Rückenstrecker, Rumpf"
+    },
+    "Primari: extrarotatori della cuffia (sottospinato, piccolo rotondo)": {
+      "en": "Primary: rotator cuff external rotators (infraspinatus, teres minor)",
+      "es": "Principales: rotadores externos del manguito (infraespinoso, redondo menor)",
+      "de": "Primär: Außenrotatoren der Rotatorenmanschette (Untergrätenmuskel, kleiner Rundmuskel)"
+    },
+    "Secondari: deltoide posteriore": {
+      "en": "Secondary: rear deltoid",
+      "es": "Secundarios: deltoides posterior",
+      "de": "Sekundär: hintere Schulter"
     }
   }
 }

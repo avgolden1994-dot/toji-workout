@@ -37,7 +37,7 @@ const stessoLavoro = (e, x) => famiglia(e) ? famiglia(x) === famiglia(e) : bersa
 const alt = (p, seduta) => { const n = nomeLib(p); return [...g('alternativeOggi')({ name: n }, [{ name: n }].concat((seduta || []).map(s => ({ name: nomeLib(s) }))))].map(a => pulito(a.ex.name)); };
 
 test('ogni esercizio della libreria ha un muscolo bersaglio valido', () => {
-  assert.strictEqual(LIB.length, 173);   /* 140 + i 33 di W1-T5 */
+  assert.strictEqual(LIB.length, 170);   /* 140 + i 30 di W1-T5 */
   LIB.forEach(e => {
     const b = bersaglio(e.name);
     assert.ok(b && MUSCOLI[b], 'senza bersaglio: ' + e.name);

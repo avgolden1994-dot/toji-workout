@@ -1,4 +1,4 @@
-/* Disegni mancanti (W1-T5, D-P2): i 33 esercizi nuovi escono con la scheda tecnica e senza disegno. La scheda di ognuno mostra il riquadro vuoto
+/* Disegni mancanti (W1-T5, D-P2): i 30 esercizi nuovi escono con la scheda tecnica e senza disegno. La scheda di ognuno mostra il riquadro vuoto
    (.ex-img-slot.vuoto) con «Immagine in arrivo» tradotto, senza errori; nessun consumatore del percorso del disegno (schedaUnica(nome).disegno,
    immagineEsercizio, slotImmagine) presume che il file esista. Quando un disegno arriva, si toglie il nome da NUOVI: la prova guarda comunque il file su disco. */
 const { chromium } = require('playwright-core');
@@ -6,9 +6,10 @@ const fs = require('fs'), path = require('path');
 const R = path.join(__dirname, '..', '..');
 const ok = (c, m) => { console.log((c ? '  ok: ' : '  FALLITO: ') + m); if (!c) process.exitCode = 1; };
 
+/* 30 esercizi: Reverse Nordic, Wrist Curl e Reverse Wrist Curl sono rinviati (nota di docs/in-arrivo/w1-t5.json) */
 const NUOVI = ['Stacco Rumeno con Manubri', 'Stacco Rumeno a una Gamba', 'Hip Thrust con Manubrio', 'Leg Curl con Asciugamano', 'Leg Curl in Piedi', 'Trazioni Negative',
   'Alzate Laterali con Elastico', 'Alzate Laterali Inclinate', 'Floor Press con Manubri', 'Chest Press Inclinata alla Macchina', 'Calf Raise con Manubrio sul Gradino', 'Tibialis Raise',
-  'Cossack Squat', 'Copenhagen Plank', 'Reverse Crunch', 'Suitcase Carry', 'Wrist Curl', 'Reverse Wrist Curl', 'Extrarotazione al Cavo', 'Reverse Nordic', 'Belt Squat', 'Seal Row',
+  'Cossack Squat', 'Copenhagen Plank', 'Reverse Crunch', 'Suitcase Carry', 'Extrarotazione al Cavo', 'Belt Squat', 'Seal Row',
   'Squat con Pausa', 'Panca con Pausa', 'Stacco in Deficit', 'Sit-to-Stand dalla Panca', 'Scrollate con Manubri', 'Lat Pulldown con Elastico', 'Face Pull con Elastico', 'Kettlebell Swing',
   'Rematore agli Anelli', 'Squat su Scatola', 'Step-up Basso'];
 
@@ -46,11 +47,11 @@ ok(/typeof immagineEsercizio === 'function' \? immagineEsercizio\(nome\) : null/
           testo: window.tr('Immagine in arrivo') };
       });
     }, NUOVI);
-    ok(dati.every(d => !d.manca), 'tutti i 33 esercizi sono nella libreria');
+    ok(dati.every(d => !d.manca), 'tutti i 30 esercizi sono nella libreria');
     ok(dati.every(d => !d.manca && typeof d.disegno === 'string' && /^(img|esercizi)\//.test(d.disegno)), 'schedaUnica(nome).disegno e sempre un percorso (mai null), anche senza file');
     const senzaDisegno = dati.filter(d => !d.manca && !fs.existsSync(path.join(R, d.disegno))), conDisegno = dati.filter(d => !d.manca && fs.existsSync(path.join(R, d.disegno)));
     ok(senzaDisegno.length + conDisegno.length === NUOVI.length, 'ogni nuovo ha un percorso (' + senzaDisegno.length + ' senza file, ' + conDisegno.length + ' con il disegno)');
-    if (lang === 'it') ok(senzaDisegno.length === NUOVI.length && dati.every(d => !d.inMappa), 'D-P2: nessuno dei 33 ha ancora un disegno ne una voce in IMMAGINI_ESERCIZI');
+    if (lang === 'it') ok(senzaDisegno.length === NUOVI.length && dati.every(d => !d.inMappa), 'D-P2: nessuno dei 30 ha ancora un disegno ne una voce in IMMAGINI_ESERCIZI');
     ok(dati.every(d => d.tecnica), 'tutti hanno la scheda tecnica completa nella scheda unica');
     ok(dati.every(d => d.buchi.indexOf('scheda tecnica') === -1), 'bucchiNelleSchede non segnala la scheda tecnica di nessuno');
 
@@ -79,7 +80,7 @@ ok(/typeof immagineEsercizio === 'function' \? immagineEsercizio\(nome\) : null/
       }
       if (esito.titolo !== d.n && lang === 'it') male.push(d.n + ': titolo ' + esito.titolo);
     }
-    ok(male.length === 0, 'la scheda di ognuno dei 33 mostra .ex-img-slot.vuoto con «' + (dati[0].testo) + '» ' + male.slice(0, 5).join(' | '));
+    ok(male.length === 0, 'la scheda di ognuno dei 30 mostra .ex-img-slot.vuoto con «' + (dati[0].testo) + '» ' + male.slice(0, 5).join(' | '));
     await p.evaluate(() => closeExerciseInfo());
 
     /* 4. nessun errore: ne di pagina ne di console, a parte il file del disegno che manca di proposito (img/<slug>.png) */

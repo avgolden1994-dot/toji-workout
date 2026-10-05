@@ -64,7 +64,7 @@ const MUSCOLI = {
   obliqui:             { gruppo: 'core',    sub: 'Obliqui e anti-rotazione', nome: 'Obliqui' },
   stabilita:           { gruppo: 'core',    sub: 'Stabilità', nome: 'Core profondo (stabilità)' },
   tibiale:             { gruppo: 'gambe',   sub: 'Polpacci', nome: 'Tibiale anteriore' },   /* W1-T5: Tibialis Raise (unico esercizio: nessuna alternativa) */
-  /* solo come muscoli secondari (W1-T5: avambracci è anche il bersaglio dei wrist curl) */
+  /* solo come muscoli secondari */
   avambracci:          { gruppo: 'braccia', sub: 'Avambracci', nome: 'Avambracci (presa)' },
   flessori_anca:       { gruppo: 'core',    sub: 'Addominali', nome: 'Flessori dell’anca' }
 };
@@ -269,7 +269,6 @@ const DETTAGLI = {
   /* GAMBE */
   'Leg Curl con Asciugamano': ['C', 'Corpo libero', 'Talloni su un asciugamano che scivola, schiena a terra in posizione di ponte', 'Femorali', 'Bicipite femorale, semitendinoso, semimembranoso', 'Gemelli, glutei', '', 'femorali', 'polpacci grande_gluteo'],
   'Leg Curl in Piedi': ['M', 'Macchina', 'In piedi, cuscino sopra il tallone, una gamba alla volta', 'Femorali', 'Bicipite femorale, semitendinoso, semimembranoso', 'Gemelli', '', 'femorali', 'polpacci'],
-  'Reverse Nordic': ['C', 'Corpo libero', 'In ginocchio su un tappetino, busto che si inclina all’indietro in linea', 'Quadricipiti', 'Quadricipiti (retto femorale)', 'Flessori d’anca, core', '', 'quadricipiti', 'flessori_anca stabilita'],
   'Belt Squat': ['M', 'Macchina', 'Cintura con il carico sul bacino, nessun peso sulla schiena', 'Multiarticolari', 'Quadricipiti, glutei', 'Adduttori', '', 'quadricipiti', 'grande_gluteo adduttori'],
   'Squat con Pausa': ['L', 'Bilanciere', 'Bilanciere sulle spalle, pausa di 1–2 secondi in fondo', 'Multiarticolari', 'Quadricipiti, glutei, adduttori', 'Erettori spinali', '', 'quadricipiti', 'grande_gluteo adduttori erettori'],
   'Cossack Squat': ['C', 'Corpo libero', 'Piedi molto larghi, scendi su una gamba mentre l’altra resta tesa', 'Adduttori', 'Adduttori, grande gluteo', 'Quadricipiti, core', '', 'adduttori', 'grande_gluteo quadricipiti stabilita'],
@@ -296,8 +295,6 @@ const DETTAGLI = {
   'Face Pull con Elastico': ['M', 'Elastico', 'Elastico ancorato all’altezza del viso, presa con i pollici verso di te', 'Deltoidi posteriori e cuffia', 'Deltoide posteriore, extrarotatori della cuffia', 'Romboidi, trapezio medio', '', 'deltoide_posteriore', 'schiena_spessore'],
   'Scrollate con Manubri': ['L', 'Manubri', 'In piedi, un manubrio per mano, braccia tese lungo i fianchi', 'Trapezio', 'Trapezio superiore', 'Avambracci', '', 'trapezio', 'avambracci'],
   /* BRACCIA E CORE */
-  'Wrist Curl': ['L', 'Manubri', 'Avambraccio appoggiato sulla coscia, palmo verso l’alto', 'Avambracci', 'Flessori del polso', '', '', 'avambracci'],
-  'Reverse Wrist Curl': ['L', 'Manubri', 'Avambraccio appoggiato sulla coscia, palmo verso il basso', 'Avambracci', 'Estensori del polso', '', '', 'avambracci'],
   'Reverse Crunch': ['C', 'Corpo libero', 'Schiena a terra, ginocchia piegate verso il petto, il bacino si stacca', 'Addominali', 'Retto dell’addome (parte bassa)', 'Flessori d’anca', '', 'addome_basso', 'flessori_anca'],
   'Suitcase Carry': ['L', 'Manubri', 'Un solo manubrio (o kettlebell) pesante in una mano, camminata dritta', 'Obliqui e anti-rotazione', 'Obliqui, quadrato dei lombi', 'Trapezio superiore, avambracci', '', 'obliqui', 'trapezio avambracci']
 };

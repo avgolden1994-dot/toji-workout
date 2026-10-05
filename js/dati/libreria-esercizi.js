@@ -170,7 +170,7 @@ const EXERCISE_LIBRARY = [
   /* adduttori: l alternativa a carico libero dell Adductor Machine (e viceversa) */
   { name: '🦵 Squat Sumo', group: 'gambe', type: 'compound', sets: 3, reps: 12, weight: 16, rest: 75 },
   /* W1-T5 (CAS-13, SEL-03, SEL-04, D-P2, D-P3): esercizi che chiudono i buchi della libreria: hinge e flessione del ginocchio a casa, deltoide laterale e posteriore,
-     adduttori, avambracci, tibiale, core in anti-flessione, varianti con la pausa, e gli attrezzi nuovi (elastici, kettlebell, anelli, scatola). Nessun disegno (D-P2):
+     adduttori, tibiale, core in anti-flessione, varianti con la pausa, e gli attrezzi nuovi (elastici, kettlebell, anelli, scatola). Nessun disegno (D-P2):
      la scheda mostra «Immagine in arrivo» e ha la scheda tecnica completa. Gli attributi stanno in attributi-esercizi.js, i dettagli in dettagli-esercizi.js */
   { name: '💪 Floor Press con Manubri', group: 'petto', type: 'compound', sets: 3, reps: 10, weight: 14, rest: 90 },
   { name: '💪 Chest Press Inclinata alla Macchina', group: 'petto', type: 'compound', sets: 3, reps: 10, weight: 30, rest: 90 },
@@ -182,7 +182,6 @@ const EXERCISE_LIBRARY = [
   { name: '🏹 Stacco in Deficit', group: 'schiena', type: 'compound', sets: 3, reps: 5, weight: 50, rest: 150 },
   { name: '🦵 Leg Curl con Asciugamano', group: 'gambe', type: 'isolation', sets: 3, reps: 10, weight: 0, rest: 60 },
   { name: '🦵 Leg Curl in Piedi', group: 'gambe', type: 'isolation', sets: 3, reps: 12, weight: 15, rest: 60, lato: true },
-  { name: '🦵 Reverse Nordic', group: 'gambe', type: 'isolation', sets: 3, reps: 8, weight: 0, rest: 60 },
   { name: '🦵 Belt Squat', group: 'gambe', type: 'compound', sets: 3, reps: 10, weight: 40, rest: 105 },
   { name: '🦵 Squat con Pausa', group: 'gambe', type: 'compound', sets: 3, reps: 6, weight: 40, rest: 150 },
   { name: '🦵 Cossack Squat', group: 'gambe', type: 'compound', sets: 3, reps: 8, weight: 0, rest: 60, lato: true },
@@ -201,8 +200,6 @@ const EXERCISE_LIBRARY = [
   { name: '🛡️ Extrarotazione al Cavo', group: 'spalle', type: 'isolation', sets: 3, reps: 15, weight: 5, rest: 45, lato: true },
   { name: '🛡️ Face Pull con Elastico', group: 'spalle', type: 'isolation', sets: 3, reps: 15, weight: 0, rest: 45 },
   { name: '🛡️ Scrollate con Manubri', group: 'spalle', type: 'isolation', sets: 3, reps: 15, weight: 16, rest: 60 },
-  { name: '🦾 Wrist Curl', group: 'braccia', type: 'isolation', sets: 3, reps: 15, weight: 8, rest: 45 },
-  { name: '🦾 Reverse Wrist Curl', group: 'braccia', type: 'isolation', sets: 3, reps: 15, weight: 5, rest: 45 },
   { name: '🎯 Reverse Crunch', group: 'core', type: 'isolation', sets: 3, reps: 15, weight: 0, rest: 45 },
   { name: '🎯 Suitcase Carry', group: 'core', type: 'isolation', sets: 3, reps: 30, weight: 14, rest: 60, lato: true, tempo: true },
   /* D-P11: il pullover coi manubri allena i dorsali (bersaglio in DETTAGLI), quindi gruppo schiena. In fondo all elenco di proposito: buildProgram
