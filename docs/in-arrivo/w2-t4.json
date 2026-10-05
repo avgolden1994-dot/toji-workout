@@ -1,0 +1,54 @@
+{
+ "task": "W2-T4",
+ "script": [{ "src": "js/coach/programma/soglie-struttura.js", "prima": "js/coach/programma/mesociclo.js" }],
+ "frasi": {
+  "Mesociclo: # settimane di carico e una di scarico. Il volume sale piano e le ripetizioni in riserva scendono da # a # sui fondamentali.": {
+   "en": "Mesocycle: # weeks of loading and one deload week. Volume builds up gradually and the reps in reserve go down from # to # on the main lifts.",
+   "es": "Mesociclo: # semanas de carga y una de descarga. El volumen sube poco a poco y las repeticiones en reserva bajan de # a # en los ejercicios fundamentales.",
+   "de": "Mesozyklus: # Belastungswochen und eine Deload-Woche. Das Volumen steigt allmählich und die Wiederholungen in Reserve sinken bei den Grundübungen von # auf #."
+  },
+  "Programma di # settimane: i carichi salgono con calma e lo scarico è solo alla fine. Alla settimana # c’è un controllo: se sei stanco, scarichi prima.": {
+   "en": "Program of # weeks: the weights go up gradually and the deload only comes at the end. In week # there is a check: if you are tired, you deload sooner.",
+   "es": "Programa de # semanas: las cargas suben poco a poco y la descarga llega solo al final. En la semana # hay un control: si estás cansado, descargas antes.",
+   "de": "Programm über # Wochen: Die Gewichte steigen allmählich und die Deload-Woche kommt erst am Ende. In Woche # gibt es einen Check: Wenn du müde bist, machst du den Deload früher."
+  }
+ },
+ "regole": [
+  {
+   "capitolo": 5,
+   "sostituisce": true,
+   "riga": "- **PRG-01** durata e blocchi per livello (`strutturaProgramma(livello, prudente)` in `programma/mesociclo.js`; i numeri sono in `programma/soglie-struttura.js`; W2-T4, MES-01 e PRN-03): principiante 12 settimane con lo scarico solo alla 12ª (verifica) e un controllo all'8ª; intermedio e avanzato 12 settimane in due blocchi da 5+1 (blocco 6); prudenti (over 65, PAR-Q positivo, minorenne, se chi chiama passa `prudente`) come prima della v2: principiante 8 settimane a blocchi 3+1, intermedio 12 settimane a 3+1, avanzato 12 settimane a 5+1. Fasi: ogni ultima settimana del blocco = 'scarico'. Un programma salvato dalla v1 tiene le sue fasi (D-P5): le regole nuove valgono per i programmi creati dopo. Senza il file delle soglie, o con MES-01 e PRN-03 spente, tornano le regole di prima (principiante 8 settimane con un solo scarico all'8ª, intermedio 3+1). (storica: sempre accesa, la struttura di MES-01 e PRN-03 si spegne con le loro regole)"
+  },
+  {
+   "capitolo": 5,
+   "sostituisce": true,
+   "riga": "- **PRG-38** RIR per settimana del blocco: assorbito da MES-02 (tabella per livello, classe di esercizio e settimana, in `prog.piano`). `prog.rirSett` resta per chi lo legge ancora ed è il limite basso dei fondamentali col bilanciere di ogni settimana (avanzato 3, 2, 2, 1, 1 e 4 in scarico; prudenti 3 fisso; minorenni 2); con MES-02 spenta torna la rampa di prima, 3, 2, 1, 0 per i soli avanzati. (storica: sempre accesa, con MES-02 spenta torna la rampa di prima)"
+  },
+  {
+   "capitolo": 19,
+   "sostituisce": true,
+   "riga": "- **MES-02** (spegnibile) tabella del RIR per livello, classe di esercizio e settimana del blocco (W2-T4: `pianoMesociclo` la scrive in `prog.piano.settimane[].rir`; `rirPianoSettimana(nome, data)` in `programma/mesociclo.js` la legge dal programma salvato e `rirBersaglioBase` di `regole-ricerca.js` la chiama con `typeof`; un programma salvato dalla v1 non ha il piano e tiene i RIR di prima, il ponte dell'onda 0 `MES_RIR`). Limite basso del bersaglio [r, r+1]: principiante 3-4 nelle settimane 1-2, 2-3 dalla 3ª, la riserva dell'ultima serie degli isolamenti a macchina o cavo scende a 1-2 dalla 7ª, 3-4 alla verifica, mai 0; intermedio pesanti 3 · 3 · 2 · 2 · 1, macchine 3 · 2 · 2 · 1 · 1, isolamenti 3 · 2 · 1 · 1 · 0; avanzato pesanti 3 · 2 · 2 · 1 · 1, macchine 3 · 2 · 1 · 1 · 0, isolamenti 2 · 1 · 1 · 0 · 0; scarico 4-5; il limite basso non supera mai 4. Pavimenti: 1 sui fondamentali col bilanciere (PCO-02) e sui pesi liberi; 2 in casa, da soli, sugli esercizi che possono cadere addosso (CAS-11); il RIR 0 solo con una prontezza di oggi di almeno 60; minorenni mai sotto 2 (ETA-02); prudenti e over 65 sempre 3-4, senza rampa. Il -1 RIR dell'esigenza non scende sotto i pavimenti e non si applica in dimagrimento. Assorbe IPE-05, PCO-02, PCO-07, PRI-02, OBI-10, ALG-18 e CAS-11 (Convenzione + Moderata: Robinson 2024, Halperin 2022, Refalo 2023). Chiude i controlli RIR-01, RIR-02 e RIR-03 del collaudo."
+  },
+  {
+   "capitolo": 28,
+   "riga": "- **OBI-03** (spegnibile) il RIR dichiarato è il RIR usato: modificatori dell'obiettivo sulla tabella MES-02 (`pianoMesociclo`, `rirPianoSettimana`; il primo obiettivo guida): salute mai sotto 2 ripetizioni in riserva; forza sui fondamentali pesanti [2, 4] (salvo AMRAP e test, che il piano non vede); in deficit calorico pavimento 2 sui pesanti e 1 sul resto (ex MES-17). Moderata (ACSM 2026, Robinson 2024) per salute e forza, Convenzione per il taglio."
+  },
+  {
+   "capitolo": 33,
+   "riga": "- **MES-01** (spegnibile) struttura del mesociclo di intermedi e avanzati (W2-T4: `strutturaProgramma` e `pianoMesociclo` in `programma/mesociclo.js`, numeri in `programma/soglie-struttura.js`): 12 settimane in due blocchi da 5 settimane di carico + 1 di scarico, lo scarico anticipabile a 4+1 dallo scarico reattivo (MES-07, W3-T5). `prog.piano` (versione 2) dice per ogni settimana fase, fattore di volume (MES-03), RIR per classe (MES-02), dose dello scarico e cosa passa al blocco dopo (+1 serie al muscolo prioritario con il verdetto «buono», fondamentali fissi per 2-3 blocchi, un terzo - metà degli accessori ruotata al confine). Prudenti (over 65, PAR-Q, minorenni): blocchi 3+1 come prima, nessuna rampa. Scarico: serie -35 / -50 / -60% e carico -5 / -10% sul carico di riferimento di prima dello scarico (mai composto: MES-06), 5-7 giorni, ripresa al 100%. Spenta: intermedio a blocchi 3+1 come prima. Convenzione + Contrastata (Bell 2022 e 2024; due RCT non vedono vantaggi dello scarico sulla massa)."
+  },
+  {
+   "capitolo": 33,
+   "riga": "- **MES-03** (spegnibile) rampa di volume nel blocco (nel piano, `prog.piano.settimane[].volume`; la applica in seduta W3-T4): fattore sul volume di base 0,75 · 0,85 · 0,95 · 1 · 1 (intermedio) e 0,70 · 0,80 · 0,90 · 1 · 1 (avanzato, con +1 serie ai prioritari dalla 3ª settimana), mai sotto 0,80 per salute e dimagrimento; nessuna rampa per i prudenti; il principiante (PRN-03) parte con 2 serie, poi 3 sui primi tre esercizi e 3 su tutti dalla 5ª. Convenzione (a volume pari la periodizzazione non cambia la massa, Moesgaard 2022: serve a gestire fatica e dolenzia). Assorbe IPE-08, PRI-04 e la forma «centrale» di RIC-01 (che resta finché W3-T4 non la sostituisce)."
+  },
+  {
+   "capitolo": 34,
+   "riga": "- **PRN-03** (spegnibile) 12 settimane per chi comincia (ex PRI-03; registro B4, D-P15): principiante non prudente, settimane 1-11 di carico e la 12ª di verifica (serie -35%, carico invariato, RIR 3-4); all'8ª settimana un controllo che diventa uno scarico «basso» solo con fatica media o alta o un segnale dello scarico reattivo (MES-07, W3-T5: `esitoControlloPrincipiante` in `programma/mesociclo.js`). Serie per esercizio 2 e 2 nelle settimane 1-2, poi 3 sui primi tre esercizi e 3 su tutti dalla 5ª (`piano.settimane[].serie`), ripetizioni 10-12 e 12-15 e poi 8-12 e 10-15, RIR come MES-02. I prudenti (over 65, PAR-Q positivo, minorenni) restano a 8 settimane e blocchi 3+1. Spenta: 8 settimane con lo scarico solo all'8ª (il ponte dell'onda 0). Convenzione + Contrastata (due RCT 2024 e 2026; i programmi per principianti più usati non scaricano a calendario)."
+  }
+ ],
+ "mappaAgenti": [
+  "mesociclo e piano settimana per settimana: js/coach/programma/mesociclo.js (`pianoMesociclo` → `prog.piano`, `rirPianoSettimana(nome, data)` letta da `rirBersaglioBase` con typeof, `esitoControlloPrincipiante` per W3-T5); i numeri sono in js/coach/programma/soglie-struttura.js (`sogliaStruttura(nome)`); senza quel file il generatore torna alle regole della v1, senza piano",
+  "programma v2 salvato: js/coach/programma/alternative.js (`applyGeneratedProgram` salva `versione`, `piano`, `volume`, `perche`, `modalita`, `cardio` solo se `prog.versione === 2`; un programma della v1 non li ha e `rirPianoSettimana` ritorna null)"
+ ],
+ "nota": "W2-T4 Mesociclo: nessuna regola bloccata del registro C.2 implementata (MES-01..03, PRN-03, OBI-03 non sono in C.2). La riga squadra non serve: MES-01..02, PRN-03 e OBI-03 sono gia all'Architetto, MES-03 al Dosatore."
+}

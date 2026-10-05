@@ -5,6 +5,7 @@
    Le regole bloccate (REC-06 parte b: pressione alta) non sono qui: non si implementano. */
 const test = require('node:test'), assert = require('node:assert');
 const { caricaApp } = require('./aiuto-app');
+const { conSoglieStruttura, senzaSoglie } = require('./aiuto-mesociclo');
 
 const ORA = '2026-10-05T12:00:00';
 const BASE = { luogo: 'palestra', fastidi: [], attrezzi: 'indifferente', graditi: [], odiati: [] };
@@ -294,22 +295,30 @@ test('BIO-05 (B32, D-P8): le croci ai cavi non hanno piu il +0,5: cavi e manubri
   assert.strictEqual(app.g('bonusBiomecc')(app.g('findExercise')(lib.find(n => /Hack Squat/.test(n))), 'squat', { caviglia: 'no' }, []), 2);
 });
 
-test('PRN-03 ponte (B21, D-P5): il principiante fa 8 settimane con lo scarico solo all 8a; gli altri livelli e i prudenti non cambiano', () => {
-  const app = caricaApp({ ora: ORA });
-  assert.deepStrictEqual(app.json("strutturaProgramma('principiante')"), { settimane: 8, blocco: 8 });
-  assert.deepStrictEqual(app.json("fasiProgramma(strutturaProgramma('principiante'))"), ['carico', 'carico', 'carico', 'carico', 'carico', 'carico', 'carico', 'scarico']);
+test('PRN-03 (B21, D-P5, W2-T4): il principiante fa 12 settimane con lo scarico solo alla 12a, l intermedio blocchi 5+1; i prudenti non cambiano; senza soglie vale il ponte dell onda 0 (8 settimane)', () => {
+  const app = conSoglieStruttura(caricaApp({ ora: ORA }));
+  assert.deepStrictEqual(app.json("strutturaProgramma('principiante')"), { settimane: 12, blocco: 12 });
+  assert.deepStrictEqual(app.json("fasiProgramma(strutturaProgramma('principiante'))"), Array(11).fill('carico').concat(['scarico']));
   /* prudente (over 65, PAR-Q, minorenne): 3+1 come prima; chi chiama deve passarlo */
   assert.deepStrictEqual(app.json("strutturaProgramma('principiante', true)"), { settimane: 8, blocco: 4 });
   assert.deepStrictEqual(app.json("fasiProgramma(strutturaProgramma('principiante', true))"), ['carico', 'carico', 'carico', 'scarico', 'carico', 'carico', 'carico', 'scarico']);
-  assert.deepStrictEqual(app.json("strutturaProgramma('intermedio')"), { settimane: 12, blocco: 4 });
+  assert.deepStrictEqual(app.json("strutturaProgramma('intermedio')"), { settimane: 12, blocco: 6 });
+  assert.deepStrictEqual(app.json("strutturaProgramma('intermedio', true)"), { settimane: 12, blocco: 4 });
   assert.deepStrictEqual(app.json("strutturaProgramma('avanzato')"), { settimane: 12, blocco: 6 });
-  /* buildProgram: 8 settimane, un solo scarico, alla fine; intermedi e avanzati come prima */
-  const prog = (level) => app.dati(app.chiama('buildProgram', { goals: ['massa'], level, days: 3, minutes: 60, luogo: 'palestra', fastidi: [], sex: 'M', age: 30, seme: 'prn', parq: 'no' }));
+  /* buildProgram: 12 settimane, un solo scarico, alla fine; intermedi 5+1 e avanzati 5+1 */
+  const prog = (level, a) => (a || app).dati((a || app).chiama('buildProgram', { goals: ['massa'], level, days: 3, minutes: 60, luogo: 'palestra', fastidi: [], sex: 'M', age: 30, seme: 'prn', parq: 'no' }));
+  const scarichi = p => p.fasi.map((f, i) => f === 'scarico' ? i + 1 : null).filter(Boolean);
   const p = prog('principiante');
-  assert.strictEqual(p.settimane, 8);
-  assert.deepStrictEqual(p.fasi.map((f, i) => f === 'scarico' ? i + 1 : null).filter(Boolean), [8]);
-  assert.deepStrictEqual(prog('intermedio').fasi.map((f, i) => f === 'scarico' ? i + 1 : null).filter(Boolean), [4, 8, 12]);
-  assert.deepStrictEqual(prog('avanzato').fasi.map((f, i) => f === 'scarico' ? i + 1 : null).filter(Boolean), [6, 12]);
+  assert.strictEqual(p.settimane, 12);
+  assert.deepStrictEqual(scarichi(p), [12]);
+  assert.deepStrictEqual(scarichi(prog('intermedio')), [6, 12]);
+  assert.deepStrictEqual(scarichi(prog('avanzato')), [6, 12]);
+  /* il ponte: senza il file delle soglie (o con PRN-03 spenta) 8 settimane con un solo scarico, all 8a; intermedio 3+1 */
+  const v1 = senzaSoglie(caricaApp({ ora: ORA }));
+  assert.deepStrictEqual(v1.json("strutturaProgramma('principiante')"), { settimane: 8, blocco: 8 });
+  assert.deepStrictEqual(scarichi(prog('principiante', v1)), [8]);
+  assert.deepStrictEqual(scarichi(prog('intermedio', v1)), [4, 8, 12]);
+  assert.deepStrictEqual(scarichi(prog('avanzato', v1)), [6, 12]);
   /* nessun lettore del programma assume lo scarico alla 4a: l archivio vecchio e quello nuovo si leggono */
   assert.deepStrictEqual(app.errori, []);
 });

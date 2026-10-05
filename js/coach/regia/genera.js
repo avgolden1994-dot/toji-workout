@@ -190,5 +190,7 @@ window.buildProgram = function(d) {
     settimane: mesociclo.struttura.settimane, blocco: mesociclo.struttura.blocco, fasi: mesociclo.fasi, rirSett: mesociclo.rirSett,
     eserciziPerSeduta: L.nEs, seme: brief.seme
   };
+  /* W2-T4: i programmi v2 portano il piano del mesociclo e la versione (alternative.js li salva); senza il piano (soglie-struttura.js assente) restano come la v1 */
+  if (mesociclo.piano) Object.assign(prog, { versione: 2, piano: mesociclo.piano, perche: brief.perche, modalita: brief.obiettivi.modalita });
   return verificaProgramma(brief, prog);                                /* 17 */
 };
