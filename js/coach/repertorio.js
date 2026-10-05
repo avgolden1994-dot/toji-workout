@@ -112,6 +112,12 @@ window.azioneCoach = function(tipo, nome) {
       const alt = sostituto(e.name, prefsCoach(), usati);
       if (alt) { coppie.push([e.name, alt.name]); usati.push(alt.name); }
     }));
+    if (!coppie.length) {   /* nessun accessorio ha un equivalente dello stesso muscolo: restano quelli attuali, il blocco si segna fatto per non riproporlo */
+      const ag0 = aggiustiCoach(); ag0.ruotatoBlocco = bloccoCorrente(); salvaAggiusti(ag0);
+      if (document.getElementById('agent-body')) renderAgent();
+      showUndo(trP('Nessun accessorio da ruotare con lo stesso muscolo: restano quelli attuali'), null, 6000);
+      return;
+    }
     conAnnulla('Accessori ruotati: ' + coppie.length, () => {
       coppie.forEach(c => sostituisciNelPiano(c[0], c[1], 'Nuovo blocco: accessorio ruotato (i fondamentali restano)'));
       const ag = aggiustiCoach(); ag.ruotatoBlocco = bloccoCorrente(); salvaAggiusti(ag);

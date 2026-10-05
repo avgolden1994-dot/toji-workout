@@ -1,4 +1,4 @@
-/* Muscolo bersaglio e "Macchinario occupato": le alternative allenano lo STESSO muscolo.
+/* Muscolo bersaglio, "Macchinario occupato", "Esercizi alternativi" e sostituto: tutti allenano lo STESSO muscolo.
    Esegue il codice vero dell app in node (vm), senza browser. Lancio: npm test */
 const test = require('node:test'), assert = require('node:assert');
 const fs = require('fs'), path = require('path'), vm = require('vm');
@@ -14,10 +14,10 @@ function carica() {
   ctx.window = ctx; ctx.self = ctx; ctx.globalThis = ctx;
   vm.createContext(ctx);
   ['js/lingue/traduttore.js', 'js/dati/libreria-esercizi.js', 'js/dati/dettagli-esercizi.js', 'js/coach/questionario-decisioni.js',
-    'js/coach/programma/motore.js', 'js/coach/programma/schemi.js', 'js/coach/programma/ricette.js', 'js/ui/allenamento/macchinario-occupato.js']
+    'js/coach/programma/motore.js', 'js/coach/programma/schemi.js', 'js/coach/programma/ricette.js', 'js/coach/programma/alternative.js', 'js/ui/allenamento/macchinario-occupato.js']
     .forEach(f => vm.runInContext(fs.readFileSync(path.join(R, f), 'utf8'), ctx, { filename: f }));
   /* palestra completa, nessun fastidio: senza consenso ai dati il coach non legge il profilo */
-  ctx.coachAttivo = () => false; ctx.getProfile = () => null;
+  ctx.coachAttivo = () => false; ctx.getProfile = () => null; ctx.regolaAttiva = () => true;   /* regolaAttiva e di coach/parametri.js */
   return ctx;
 }
 const c = carica();
@@ -131,4 +131,71 @@ test('schemi di movimento: niente falsi multiarticolari', () => {
   assert.strictEqual(s('🦵 Leg Press'), 'squat');
   assert.strictEqual(s('🦵 Squat con Bilanciere'), 'squat');
   assert.strictEqual(iso('🦵 Nordic Curl'), 'femorali');
+});
+
+/* palestra completa, nessun fastidio, seduta vuota */
+const PREFS = () => ({ luogo: 'palestra', fastidi: [], attrezziPalestra: null, graditi: [], odiati: [], attrezzi: 'indifferente' });
+
+test('Esercizi alternativi (alternativeDi): per tutti i 139 esercizi solo lo stesso muscolo bersaglio, al massimo 6', () => {
+  let coppie = 0, senza = [];
+  LIB.forEach(e => {
+    const a = g('alternativeDi')(e.name, PREFS(), []);
+    assert.ok(a.length <= 6, e.name + ': piu di 6 alternative');
+    if (!a.length) senza.push(pulito(e.name));
+    a.forEach(x => {
+      coppie++;
+      assert.notStrictEqual(x.name, e.name);
+      assert.strictEqual(bersaglio(x.name), bersaglio(e.name), pulito(e.name) + ' -> ' + pulito(x.name));
+    });
+    /* e lo stesso elenco che propone Macchinario occupato senza il vincolo dell attrezzo diverso */
+    assert.deepStrictEqual(a.map(x => x.name), g('alternativeStessoMuscolo')(e.name, PREFS(), []).map(x => x.ex.name));
+  });
+  assert.ok(coppie > 600, 'troppe poche alternative in tutto: ' + coppie);
+  /* mai un altro muscolo, anche se restano meno scelte: gli unici senza alternativa */
+  assert.deepStrictEqual(senza.sort(), ['Adductor Machine', 'Scrollate (Shrug)']);
+});
+
+test('Esercizi alternativi: restano i filtri (gia in seduta, attrezzi, fastidi, odiati)', () => {
+  const curl = nomeLib('Curl Bilanciere Bicipiti'), cavi = nomeLib('Curl ai Cavi');
+  assert.ok(g('alternativeDi')(curl, PREFS(), []).some(x => x.name === cavi));
+  assert.ok(!g('alternativeDi')(curl, PREFS(), [{ name: cavi }]).some(x => x.name === cavi));
+  const solo = Object.assign(PREFS(), { attrezziPalestra: ['manubri'] });
+  const m = g('alternativeDi')(nomeLib('Panca Piana Bilanciere'), solo, []);
+  assert.ok(m.length > 0 && m.every(x => ['manubri', 'corpo'].indexOf(g('attrezzoDi')(x.name)) !== -1 && bersaglio(x.name) === 'petto_medio'));
+  const spalle = Object.assign(PREFS(), { fastidi: ['spalle'] });
+  assert.ok(!g('alternativeDi')(nomeLib('Shoulder Press Machine'), spalle, []).some(x => /military|lento avanti|arnold/i.test(x.name)));
+  const odiati = Object.assign(PREFS(), { odiati: [cavi] });
+  assert.ok(!g('alternativeDi')(curl, odiati, []).some(x => x.name === cavi));
+});
+
+test('sostituto: per tutti i 139 esercizi lo stesso muscolo bersaglio, oppure null (mai un altro muscolo)', () => {
+  let nulli = [];
+  LIB.forEach(e => {
+    const s = g('sostituto')(e.name, PREFS(), []);
+    const esatte = g('alternativeStessoMuscolo')(e.name, PREFS(), []);
+    if (!s) { nulli.push(pulito(e.name)); assert.strictEqual(esatte.length, 0, e.name + ': null ma ci sono alternative'); return; }
+    assert.notStrictEqual(s.name, e.name);
+    assert.strictEqual(bersaglio(s.name), bersaglio(e.name), pulito(e.name) + ' -> ' + pulito(s.name));
+  });
+  assert.deepStrictEqual(nulli.sort(), ['Adductor Machine', 'Scrollate (Shrug)']);
+  assert.strictEqual(g('sostituto')('Esercizio che non esiste', PREFS(), []), null);
+});
+
+test('sostituto: rispetta usati, odiati e la preferenza macchine o pesi liberi, sempre sullo stesso muscolo', () => {
+  const nome = nomeLib('Curl Bilanciere Bicipiti');
+  const primo = g('sostituto')(nome, PREFS(), []);
+  assert.ok(primo);
+  const secondo = g('sostituto')(nome, PREFS(), [primo.name]);
+  assert.ok(secondo && secondo.name !== primo.name && bersaglio(secondo.name) === bersaglio(nome));
+  assert.notStrictEqual(g('sostituto')(nome, Object.assign(PREFS(), { odiati: [primo.name] }), []).name, primo.name);
+  /* tutti gli esercizi dello stesso muscolo gia usati o odiati: null */
+  const tutti = g('alternativeStessoMuscolo')(nome, PREFS(), [], { max: 99 }).map(x => x.ex.name);
+  assert.strictEqual(g('sostituto')(nome, PREFS(), tutti), null);
+  const petto = nomeLib('Panca Piana Bilanciere');
+  const mac = g('sostituto')(petto, Object.assign(PREFS(), { attrezzi: 'macchine' }), []);
+  const lib = g('sostituto')(petto, Object.assign(PREFS(), { attrezzi: 'liberi' }), []);
+  [mac, lib].forEach(x => assert.strictEqual(bersaglio(x.name), 'petto_medio'));
+  /* i graditi contano solo tra gli esercizi dello stesso muscolo */
+  const gradito = g('alternativeStessoMuscolo')(nome, PREFS(), [], { max: 99 }).pop().ex.name;
+  assert.strictEqual(bersaglio(g('sostituto')(nome, Object.assign(PREFS(), { graditi: [gradito] }), []).name), bersaglio(nome));
 });

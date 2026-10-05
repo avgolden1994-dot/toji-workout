@@ -82,7 +82,7 @@ window.openWorkoutDay = function(day) {
   }
   currentDay = day;
   armedSet = null;
-  occupatoAperto = null;
+  impostaOccupato(null);
   ripristinaMusica(true);   /* la canzone scelta nelle Opzioni e gia pronta */
   setTimeout(() => dockStato('sessione'), 0);   /* il lettore resta raggiungibile in seduta */
   if (!specialeAttiva(day)) applicaCaricoProgressivo(day);   /* il coach imposta i carichi della seduta (non in seduta libera o passata) */

@@ -53,21 +53,16 @@ function consentito(nome, prefs) {
   return !(prefs.fastidi || []).some(f => RISCHIO[f] && RISCHIO[f].test(nome));
 }
 
-/* Sostituto: stesso gruppo, stesso tipo se possibile, attrezzo consentito,
-   nella direzione preferita (pesi liberi o macchine) */
+/* Sostituto: SOLO con lo stesso muscolo bersaglio (alternativeStessoMuscolo), attrezzo consentito.
+   Tra quelli adatti vince chi ha lo stesso movimento e tipo, e la direzione preferita (allungamento,
+   graditi, pesi liberi o macchine). Se non c e nessun esercizio dello stesso muscolo ritorna null:
+   chi chiama lascia l esercizio dov e (mai uno per un altro muscolo). */
 function sostituto(nome, prefs, usati) {
-  const meta = findExercise(nome);
-  if (!meta) return null;
-  const candidati = EXERCISE_LIBRARY.filter(e => e.group === meta.group && e.name !== nome &&
-    usati.indexOf(e.name) === -1 && consentito(e.name, prefs));
-  const sch = schemaDi(nome), bersaglio = isolamentoDi(nome);
-  const punteggio = (e) => (e.type === meta.type ? 10 : 0) +
-    (sch && schemaDi(e.name) === sch ? 8 : 0) + (bersaglio && isolamentoDi(e.name) === bersaglio ? 6 : 0) +
-    (inAllungamento(e.name) ? 2 : 0) + ((prefs.graditi || []).indexOf(e.name) !== -1 ? 4 : 0) +
+  const bonus = (e) => (inAllungamento(e.name) ? 2 : 0) + ((prefs.graditi || []).indexOf(e.name) !== -1 ? 2 : 0) +   /* +2 dei graditi e gia in alternativeStessoMuscolo: in tutto 4, come prima */
     (prefs.attrezzi === 'macchine' && attrezzoDi(e.name) === 'macchine' ? 3 : 0) +
     (prefs.attrezzi === 'liberi' && (attrezzoDi(e.name) === 'bilanciere' || attrezzoDi(e.name) === 'manubri') ? 3 : 0);
-  candidati.sort((a, b) => punteggio(b) - punteggio(a));
-  return candidati[0] || null;
+  const alt = alternativeStessoMuscolo(nome, prefs, usati, { max: 1, bonus: bonus });
+  return alt.length ? alt[0].ex : null;
 }
 
 /* Alternative con lo STESSO muscolo bersaglio (bersaglioDi, da DETTAGLI): mai un altro muscolo,

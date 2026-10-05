@@ -44,7 +44,7 @@ function renderOnbResult() {
     '<div class="pref-note">Ho messo insieme chi sei, cosa stai vivendo e i tuoi dati fisici. Le schede famose sono esempi: ne prendo le idee giuste per te.</div>' +
     htmlIspirazioni(prog.ispirazioni) + '</div>';
   html += '<button class="set-row-btn" id="onb-alternative" onclick="apriAlternative()">Esercizi alternativi</button>' +
-    '<div class="sr-note">Scegli tu, esercizio per esercizio, tra alternative che allenano gli stessi muscoli.</div>';
+    '<div class="sr-note">Scegli tu, esercizio per esercizio, tra alternative che allenano lo stesso muscolo.</div>';
   const sb = statoBia(onbData, {});   /* INT-01: angolo di fase e acqua extracellulare, per la prudenza iniziale */
   if ((an && (an.bmi || an.fmPerc || an.ffmi || an.bmr)) || sb.dati) {
     const v1 = (x) => x.toFixed(1).replace('.', ',');

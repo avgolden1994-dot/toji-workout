@@ -14,6 +14,50 @@ const ICONA_SCAMBIO = '<svg width="16" height="16" viewBox="0 0 24 24" fill="non
 const ICONA_FRECCIA_GIU = '<svg class="busy-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
 let occupatoAperto = null;   /* { idx, nome }: esercizio con la tendina aperta */
 let occupatoOpzioni = [];    /* nomi proposti nella tendina aperta */
+let occupatoAscolto = false; /* i listener del documento ci sono solo a tendina aperta */
+
+/* Tendina: si chiude toccando fuori, con Esc, con Tab e dopo la scelta. I listener del documento
+   si aggiungono all apertura e si tolgono alla chiusura (mai uno in giro a tendina chiusa).
+   Si chiude senza ridisegnare la scheda: un tocco su un altro pulsante non va perso.
+   pointerdown (e non click): su iOS Safari un tocco su un punto "vuoto" non genera click. */
+function impostaOccupato(v) {
+  occupatoAperto = v;
+  const on = !!v;
+  if (on === occupatoAscolto) return;
+  occupatoAscolto = on;
+  const f = on ? 'addEventListener' : 'removeEventListener';
+  document[f]('pointerdown', fuoriOccupato, true);
+  document[f]('keydown', tastoOccupato);
+}
+function triggerOccupato() { return document.querySelector('.busy-btn[aria-expanded="true"]'); }
+function chiudiOccupato(fuoco) {
+  const b = triggerOccupato();
+  impostaOccupato(null);
+  document.querySelectorAll('.busy-panel').forEach(x => x.remove());
+  if (b) { b.setAttribute('aria-expanded', 'false'); if (fuoco) b.focus({ preventScroll: true }); }
+}
+function fuoriOccupato(ev) {
+  const b = triggerOccupato();
+  if (!occupatoAperto || !b) { impostaOccupato(null); return; }   /* aperta ma non piu in scheda (cambio giorno o esercizio) */
+  const wrap = b.closest('.busy-wrap');
+  if (wrap && ev.target instanceof Node && wrap.contains(ev.target)) return;
+  chiudiOccupato(false);
+}
+function tastoOccupato(ev) {
+  const b = triggerOccupato();
+  if (!occupatoAperto || !b) { impostaOccupato(null); return; }
+  if (ev.key === 'Escape') { ev.preventDefault(); chiudiOccupato(true); return; }
+  const wrap = b.closest('.busy-wrap');
+  if (!wrap || !wrap.contains(document.activeElement)) return;
+  if (ev.key === 'Tab') { chiudiOccupato(true); return; }   /* il fuoco prosegue dal pulsante */
+  const voci = Array.prototype.slice.call(wrap.querySelectorAll('.busy-opt'));
+  const i = voci.indexOf(document.activeElement);
+  const to = ev.key === 'ArrowDown' ? (i + 1) % voci.length : ev.key === 'ArrowUp' ? (i <= 0 ? voci.length - 1 : i - 1)
+    : ev.key === 'Home' ? 0 : ev.key === 'End' ? voci.length - 1 : -1;
+  if (to < 0 || !voci.length) return;
+  ev.preventDefault();
+  voci[to].focus({ preventScroll: true });
+}
 
 /* attrezzi e fastidi dell utente: solo con il consenso ai dati, come il resto del coach */
 function prefsOccupato() {
@@ -38,43 +82,75 @@ function htmlSostituito(e) {
   return '<div class="busy-chip" data-no-tr>' + ICONA_SCAMBIO + '<span>' + escapeHtml(tr('Al posto di')) + ' <b>' +
     escapeHtml(trEs(e.sostituito.name)) + '</b> · ' + escapeHtml(tr('solo per oggi')) + '</span></div>';
 }
-/* pulsante e tendina: solo prima di aver fatto una serie (le serie fatte restano dell esercizio che le ha prodotte) */
+/* pulsante e tendina: solo prima di aver fatto una serie (le serie fatte restano dell esercizio che le ha prodotte).
+   Senza alternative (e senza un esercizio previsto a cui tornare) niente pulsante: solo il messaggio. */
 function htmlOccupato(e, idx, list) {
   const m = findExercise(e.name);
   if (e.skipped || !m || e.completedSets.some(s => s.done)) return '';
+  const alt = alternativeOggi(e, list);
+  if (!alt.length && !e.sostituito) return '<div class="busy-wrap"><div class="busy-none">' + escapeHtml(tr('Nessuna alternativa adatta con i tuoi attrezzi.')) + '</div></div>';
   const aperto = !!occupatoAperto && occupatoAperto.idx === idx && occupatoAperto.nome === e.name;
-  let h = '<div class="busy-wrap"><button class="busy-btn" data-busy="' + idx + '" aria-expanded="' + aperto + '" aria-controls="busy-p-' + idx +
-    '" onclick="toggleOccupato(' + idx + ')">' + ICONA_SCAMBIO + '<span class="busy-lbl">Macchinario occupato</span>' + ICONA_FRECCIA_GIU + '</button>';
+  let h = '<div class="busy-wrap"><button class="busy-btn" data-busy="' + idx + '" aria-haspopup="true" aria-expanded="' + aperto + '" aria-controls="busy-p-' + idx +
+    '" onclick="toggleOccupato(' + idx + ', event)" onkeydown="tastoApriOccupato(event, ' + idx + ')">' + ICONA_SCAMBIO + '<span class="busy-lbl">Macchinario occupato</span>' + ICONA_FRECCIA_GIU + '</button>';
   if (aperto) {
-    const alt = alternativeOggi(e, list);
     occupatoOpzioni = alt.map(a => a.ex.name);
-    h += '<div class="busy-panel" id="busy-p-' + idx + '" role="group" aria-label="' + escapeHtml(tr('Alternative')) + '">' +
-      '<div class="busy-head" data-no-tr>' + escapeHtml(tr('Stessi muscoli')) + ': <b>' + escapeHtml(tr(MUSCLE_GROUPS[m.group].label)) + '</b> · ' + escapeHtml(tr('solo per oggi')) + '</div>';
+    h += '<div class="busy-panel" id="busy-p-' + idx + '">' +
+      '<div class="busy-head" data-no-tr>' + escapeHtml(tr('Stesso muscolo')) + ': <b>' + escapeHtml(tr((muscoloBersaglio(m.name) || { nome: MUSCLE_GROUPS[m.group].label }).nome)) + '</b> · ' + escapeHtml(tr('solo per oggi')) + '</div>' +
+      '<div class="busy-menu" role="menu" aria-label="' + escapeHtml(tr('Alternative')) + '">';
     if (e.sostituito) {
-      h += '<button class="busy-opt torna" onclick="ripristinaOriginale(' + idx + ')"><span class="busy-opt-txt" data-no-tr><span class="busy-opt-name">' +
+      h += '<button class="busy-opt torna" role="menuitem" tabindex="-1" onclick="ripristinaOriginale(' + idx + ')"><span class="busy-opt-txt" data-no-tr><span class="busy-opt-name">' +
         escapeHtml(tr('Torna a')) + ' ' + escapeHtml(trEs(e.sostituito.name)) + '</span><span class="busy-opt-meta">' + escapeHtml(tr('Esercizio previsto')) +
         '</span></span><span class="busy-opt-go" aria-hidden="true">↺</span></button>';
     }
-    h += alt.map((a, i) => '<button class="busy-opt" onclick="sostituisciOggi(' + idx + ',' + i + ')"><span class="busy-opt-txt" data-no-tr><span class="busy-opt-name">' +
+    h += alt.map((a, i) => '<button class="busy-opt" role="menuitem" tabindex="-1" onclick="sostituisciOggi(' + idx + ',' + i + ')"><span class="busy-opt-txt" data-no-tr><span class="busy-opt-name">' +
       escapeHtml(trEs(a.ex.name)) + '</span><span class="busy-opt-meta">' + escapeHtml(tr(ETICHETTA_ATTREZZO[attrezzoDi(a.ex.name)])) + ' · ' +
-      escapeHtml(tr(a.stessoMov ? 'Stesso movimento' : a.ex.type === 'isolation' ? 'Isolamento' : 'Stessi muscoli')) +
+      escapeHtml(tr(a.stessoMov ? 'Stesso movimento' : a.ex.type === 'isolation' ? 'Isolamento' : 'Stesso muscolo')) +
       '</span></span><span class="busy-opt-go" aria-hidden="true">›</span></button>').join('');
-    if (!alt.length && !e.sostituito) h += '<div class="busy-none">' + escapeHtml(tr('Nessuna alternativa adatta con i tuoi attrezzi.')) + '</div>';
-    h += '</div>';
+    h += '</div></div>';
   }
   return h + '</div>';
 }
-window.toggleOccupato = function(idx) {
+/* da tastiera: Freccia giu o su apre la tendina e va alla prima voce (a tendina aperta le frecce le gestisce tastoOccupato) */
+window.tastoApriOccupato = function(ev, idx) {
+  if ((ev.key !== 'ArrowDown' && ev.key !== 'ArrowUp') || ev.currentTarget.getAttribute('aria-expanded') === 'true') return;
+  ev.preventDefault();
+  ev.stopPropagation();   /* il listener appena aggiunto al documento non deve vedere questo stesso tasto */
+  toggleOccupato(idx, null, true);
+};
+/* ev: il click (da tastiera Invio/Spazio ha detail 0: il fuoco va alla prima voce); sulle altre il fuoco resta sul pulsante */
+window.toggleOccupato = function(idx, ev, daTastiera) {
   const e = (loadData()[currentDay] || [])[idx];
   if (!e) return;
   const gia = !!occupatoAperto && occupatoAperto.idx === idx && occupatoAperto.nome === e.name;
-  occupatoAperto = gia ? null : { idx: idx, nome: e.name };
+  if (gia) { chiudiOccupato(true); return; }
+  impostaOccupato({ idx: idx, nome: e.name });
   renderAllenamento();
   const b = document.querySelector('.busy-btn[data-busy="' + idx + '"]');
-  if (b) b.focus({ preventScroll: true });
+  const voce = document.querySelector('#busy-p-' + idx + ' .busy-opt');
+  if (voce && (daTastiera || (ev && ev.detail === 0))) voce.focus({ preventScroll: true });
+  else if (b) b.focus({ preventScroll: true });
   const pan = document.getElementById('busy-p-' + idx);
-  if (pan && pan.scrollIntoView) pan.scrollIntoView({ block: 'nearest' });
+  if (pan && b) posizionaOccupato(pan, b);
 };
+/* la tendina sta nello spazio visibile: sotto il pulsante, o sopra se sotto (barra in basso compresa) non c e posto */
+function posizionaOccupato(pan, b) {
+  const nav = document.getElementById('bottom-nav');
+  const fondo = Math.min(window.innerHeight, nav ? nav.getBoundingClientRect().top : window.innerHeight);
+  const r = b.getBoundingClientRect();
+  const sotto = fondo - r.bottom - 14, sopra = r.top - 14;
+  const su = sotto < 300 && sopra > sotto;
+  pan.classList.toggle('busy-su', su);
+  pan.style.maxHeight = Math.max(160, Math.min(460, su ? sopra : sotto)) + 'px';
+}
+/* dopo la scelta: la tendina si chiude, la scheda si ridisegna e chi usava la tastiera ritrova il fuoco sul pulsante */
+function dopoSceltaOccupato(idx) {
+  const dentro = !!(document.activeElement && document.activeElement.closest && document.activeElement.closest('.busy-panel'));
+  impostaOccupato(null);
+  renderAllenamento();
+  renderPiano();
+  const b = dentro && document.querySelector('.busy-btn[data-busy="' + idx + '"]');
+  if (b) b.focus({ preventScroll: true });
+}
 window.sostituisciOggi = function(idx, i) {
   const data = loadData();
   const list = data[currentDay] || [];
@@ -96,9 +172,7 @@ window.sostituisciOggi = function(idx, i) {
     superset: cur.superset, addedBy: cur.addedBy, sostituito: orig, sostituitoIl: ymd(new Date()),
     stimato: pp && pp.stimato ? pp.fonte : undefined, coachNote: pp && pp.stimato ? pp.motivo : undefined, coachTipo: pp && pp.stimato ? 'nuovo' : undefined });
   saveData(data);
-  occupatoAperto = null;
-  renderAllenamento();
-  renderPiano();
+  dopoSceltaOccupato(idx);
   showUndo(trP('%s al posto di %s, solo per oggi', trEs(nuovo.name), trEs(orig.name)), () => {
     const d2 = loadData();
     d2[currentDay][idx] = normalizeExerciseRecord(prima);
@@ -114,9 +188,7 @@ window.ripristinaOriginale = function(idx) {
   const prima = copiaRecord(cur);
   list[idx] = normalizeExerciseRecord(copiaRecord(cur.sostituito));
   saveData(data);
-  occupatoAperto = null;
-  renderAllenamento();
-  renderPiano();
+  dopoSceltaOccupato(idx);
   showUndo(trP('Di nuovo %s', trEs(list[idx].name)), () => {
     const d2 = loadData();
     d2[currentDay][idx] = normalizeExerciseRecord(prima);
@@ -141,9 +213,6 @@ function pulisciSostituzioniVecchie() {
   }));
   if (cambiato) saveData(data);
 }
-document.addEventListener('keydown', (ev) => {
-  if (ev.key === 'Escape' && occupatoAperto) { occupatoAperto = null; renderAllenamento(); }
-});
 
 window.updateSetField = function(exIdx, setIdx, field, value) {
   const data = loadData();

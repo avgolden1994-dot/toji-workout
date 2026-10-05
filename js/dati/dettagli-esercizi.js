@@ -255,7 +255,7 @@ window.bersaglioDi = function(nome) {
   const r = DETTAGLI[_nomePulito(nome)];
   return r && r[7] ? r[7] : '';
 };
-/* { id, gruppo, sub, nome } del muscolo bersaglio, per mostrarlo («Stessi muscoli: Bicipite brachiale») */
+/* { id, gruppo, sub, nome } del muscolo bersaglio, per mostrarlo («Stesso muscolo: Bicipite brachiale») */
 window.muscoloBersaglio = function(nome) {
   const id = bersaglioDi(nome);
   return id && MUSCOLI[id] ? Object.assign({ id: id }, MUSCOLI[id]) : null;
