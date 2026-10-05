@@ -1,6 +1,6 @@
 # Checklist App Store — indice
 
-Aggiornato: 2026-10-05 (decisioni principali prese lo stesso giorno: nome "3in", Capacitor 8, dati solo locali, solo iPhone, Coach IA da togliere). Documento madre: [piano-lancio-appstore.md](../piano-lancio-appstore.md). Bozza privacy: [privacy-policy-bozza.md](../privacy-policy-bozza.md).
+Aggiornato: 2026-10-05 (decisioni principali prese lo stesso giorno: nome "3in", Capacitor 8, dati solo locali, solo iPhone, Coach IA da togliere; aggiornato il 2026-10-05: il Coach IA è stato rimosso per intero dal codice, D9 eseguita). Voci da verificare a mano (Worker Cloudflare, dichiarazioni App Privacy per i servizi di terzi): vedi 04. Documento madre: [piano-lancio-appstore.md](../piano-lancio-appstore.md). Bozza privacy: [privacy-policy-bozza.md](../privacy-policy-bozza.md).
 
 Come si usa: spuntare `- [x]` a lavoro fatto, annotare data e nota accanto alla riga. Ciò che è marcato "(da verificare, consultato 2026-10-05)" va riletto sulla fonte ufficiale (vedi Appendice A del piano). Responsabile: **U** utente, **C** Claude, **U+C** entrambi.
 

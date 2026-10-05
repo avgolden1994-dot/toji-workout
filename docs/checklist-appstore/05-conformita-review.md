@@ -16,7 +16,7 @@ Piano: [sezione 4](../piano-lancio-appstore.md#4-conformità-alle-review-guideli
 - [ ] Differenziazione scritta (coach a regole, BIA, epoca d'oro, locale, multilingua)
 
 ## 2.1 Completezza
-- [ ] Coach IA fuori dalla v1: nessun backend da tenere attivo (D9)
+- [ ] Coach IA rimosso per intero (D9, 2026-10-05): nessun backend da tenere attivo per la review; il Worker Cloudflare, fuori dal repo, lo disattiva o cancella il proprietario (da verificare dal proprietario)
 - [ ] Nessun placeholder, link rotto, schermata vuota offline
 - [ ] Mance IAP provabili dal revisore (sandbox)
 
