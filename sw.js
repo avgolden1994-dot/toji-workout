@@ -160,6 +160,7 @@ const ASSETS = [
   './esercizi/ex-22-hyperextension-lombari.svg',
   './esercizi/ex-23-squat-bilanciere.svg',
   './esercizi/ex-24-front-squat.svg',
+  './esercizi/ex-25-goblet-squat.svg',
   /*FINE-ASSET*/
 
 ];
