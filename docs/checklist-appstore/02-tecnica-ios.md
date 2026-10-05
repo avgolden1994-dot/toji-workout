@@ -17,7 +17,7 @@ Piano: [sezione 2](../piano-lancio-appstore.md#2-preparazione-tecnica-ios). Audi
 - [ ] (C) In nativo non registrare/ignorare `sw.js` (SW non affidabile in WKWebView salvo App-Bound Domains; da verificare)
 - [ ] (C) Tutte le risorse nel bundle (font, pdf.js e worker, icone, esercizi): nessuna richiesta a CDN
 - [ ] (C) Nessun aggiornamento di contenuti/codice scaricato: solo nuova build (2.5.2)
-- [ ] (U) Prova in modalità aereo: ogni schermata si apre, il player YouTube/Spotify dà un messaggio chiaro offline (il Coach IA non c'è nella v1)
+- [ ] (U) Prova in modalità aereo: ogni schermata si apre, il player YouTube/Spotify dà un messaggio chiaro offline (il Coach IA è stato rimosso per intero il 2026-10-05, nessuna chiamata a server del titolare)
 
 ## Funzioni native
 - [ ] (C) Haptics: percorso nativo `@capacitor/haptics` provato su iPhone; fallback vibrate non rompe

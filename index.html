@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>3in</title>
 
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://www.youtube.com https://open.spotify.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' blob: data: https://coach-allenamento.avgolden1994.workers.dev https://cdnjs.cloudflare.com; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://open.spotify.com blob: about:; worker-src 'self' blob: https://cdnjs.cloudflare.com; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://www.youtube.com https://open.spotify.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' blob: data: https://cdnjs.cloudflare.com; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://open.spotify.com blob: about:; worker-src 'self' blob: https://cdnjs.cloudflare.com; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#08080a" id="theme-color-meta">
@@ -848,8 +848,12 @@
 <script src="js/dati/libreria-esercizi.js"></script>
 <script src="js/dati/schede-epoca-oro.js"></script>
 <script src="js/dati/dettagli-esercizi.js"></script>
+<script src="js/dati/attributi-esercizi.js"></script>
 <script src="js/coach/parametri.js"></script>
+<script src="js/coach/regia/fasi.js"></script>
 <script src="js/coach/catalogo-regole.js"></script>
+<script src="js/coach/regia/soglie-regia.js"></script>
+<script src="js/coach/regia/perche.js"></script>
 <script src="js/coach/suggeritore.js"></script>
 <script src="js/core/stato-condiviso.js"></script>
 <script src="js/core/storage.js"></script>
@@ -889,13 +893,27 @@
 <script src="js/coach/programma/schemi.js"></script>
 <script src="js/coach/programma/ricette.js"></script>
 <script src="js/coach/programma/struttura-pro.js"></script>
+<script src="js/coach/programma/mesociclo.js"></script>
+<script src="js/coach/programma/completamenti.js"></script>
+<script src="js/coach/volume/serie-ripetizioni.js"></script>
+<script src="js/coach/volume/volume.js"></script>
+<script src="js/coach/volume/tempo.js"></script>
+<script src="js/coach/volume/tecniche.js"></script>
+<script src="js/coach/sicurezza/vincoli.js"></script>
+<script src="js/coach/regia/brief.js"></script>
+<script src="js/coach/regia/genera.js"></script>
 <script src="js/ui/onboarding-risultato.js"></script>
 <script src="js/coach/programma/archivio.js"></script>
 <script src="js/coach/programma/alternative.js"></script>
 <script src="js/ui/statistiche.js"></script>
 <script src="js/ui/statistiche-grafico.js"></script>
 <script src="js/coach/carichi/progressivo.js"></script>
+<script src="js/coach/carichi/e1rm.js"></script>
+<script src="js/coach/carichi/soglie-partenza.js"></script>
 <script src="js/coach/carichi/partenza.js"></script>
+<script src="js/coach/carichi/calibrazione.js"></script>
+<script src="js/coach/carichi/taratura.js"></script>
+<script src="js/coach/sicurezza/scarico.js"></script>
 <script src="js/coach/questionario-decisioni.js"></script>
 <script src="js/coach/prontezza.js"></script>
 <script src="js/coach/mi-sento-male.js"></script>
@@ -942,7 +960,6 @@
 <script src="js/ui/calendario/copia-settimana.js"></script>
 <script src="js/ui/menu-settimana.js"></script>
 <script src="js/ui/sessione-completata.js"></script>
-<script src="js/coach/coach-ia.js"></script>
 <script src="js/ui/esporta-ics.js"></script>
 <script src="js/avvio.js"></script>
 </body>

@@ -9,7 +9,9 @@
      (in pratica +2,5 kg / +5 kg sui multiarticolari, meno sugli isolamenti)
    - mancato una volta: stesso carico, si punta a piu ripetizioni
    - mancato due volte di fila: -10% e si ricostruisce
-   - settimana di scarico: serie -40% e carico -10%
+   - settimana di scarico: serie -40% e carico -10%, sul carico di riferimento
+     (ultima seduta NON di scarico, MES-06: lo scarico non si compone) e dopo
+     lo scarico si riparte da li; la seduta salvata dice se era di scarico (MES-09)
    - la BIA puo frenare: se la massa magra cala, niente aumenti
    Usa SOLO i dati dell utente, quindi funziona solo con il consenso.
    ============================================================ */
@@ -23,15 +25,63 @@ function incrementoPer(nome) {
   return comp ? 2.5 : 1;
 }
 
-/* Le ultime sessioni in cui compare l esercizio, dalla piu recente */
-function ultimeSessioni(nome, n) {
+/* MES-06/MES-09: la fase di una seduta salvata (carico, scarico...). La scrive la voce stessa (settimana.fase); per le voci
+   vecchie si ricava dal programma di adesso e dalla data, finche il programma c e (null se non si puo sapere) */
+function faseSedutaSalvata(h, prog) {
+  if (h && h.settimana && h.settimana.fase) return h.settimana.fase;
+  const p = prog || getProgramma(), d = h ? dataSessione(h) : null;
+  if (!p || !p.inizio || !Array.isArray(p.fasi) || !d) return null;
+  const w = Math.floor(giorniTra(daYmd(p.inizio), lunediDi(d)) / 7) + 1;
+  return w >= 1 && w <= p.fasi.length ? (p.fasi[w - 1] || null) : null;
+}
+/* Il carico di questo esercizio, in questa seduta, era di scarico? Si, se il coach lo aveva deciso per l esercizio (obiettivo.coachTipo:
+   anche lo scarico deciso dal coach o mirato su un solo esercizio) oppure se la seduta era in una settimana di scarico del programma
+   (anche se la prontezza del giorno ha cambiato il tipo in «giu»: era comunque un carico di scarico; «scarico...» vale anche per fasi
+   con un suffisso, come «scarico-reattivo»). E l unica definizione di «seduta di scarico»: la usano MES-06 (riferimento e ripresa) e,
+   con l interruttore di MES-10, inScarico (regole-ricerca.js) per le analisi. */
+function esercizioInScarico(h, ex, prog) {
+  if (ex && ex.obiettivo && ex.obiettivo.coachTipo === 'scarico') return true;
+  return /^scarico/.test(String(faseSedutaSalvata(h, prog) || ''));
+}
+
+/* Le sedute in cui compare l esercizio, dalla piu recente: { h: la voce di storico, ex: l esercizio con le sue serie }.
+   opz.senzaScarico (MES-06): salta le sedute di scarico, che non dicono quanto si e forti */
+function sedutePerEsercizio(nome, n, opz) {
+  const senzaScarico = !!(opz && opz.senzaScarico), prog = senzaScarico ? getProgramma() : null;
   const out = [];
   loadHistory().forEach(h => {
     if (out.length >= n || !h.sessione || h.interrotta) return;
     const ex = h.sessione.find(e => e.name === nome);
-    if (ex) out.push(ex);
+    if (!ex || (senzaScarico && esercizioInScarico(h, ex, prog))) return;
+    out.push({ h: h, ex: ex });
   });
   return out;
+}
+/* Le ultime sessioni in cui compare l esercizio, dalla piu recente (con { senzaScarico: true } senza quelle di scarico) */
+function ultimeSessioni(nome, n, opz) { return sedutePerEsercizio(nome, n, opz).map(x => x.ex); }
+
+/* MES-06: carico di riferimento di un esercizio = il carico massimo delle serie fatte nell ultima seduta che NON era di scarico,
+   se e di meno di GIORNI_CARICO_RIFERIMENTO giorni (0 se non c e). Lo scarico si calcola su questo e mai sul carico di un altro
+   scarico (60 → 54 → 48,5 → 43,5 kg), e dopo lo scarico si riparte da qui. */
+const GIORNI_CARICO_RIFERIMENTO = 28;
+function caricoRiferimento(nome) {
+  const t = sedutePerEsercizio(nome, 6, { senzaScarico: true }).find(x => (x.ex.sets || []).some(s => s.done));
+  if (!t) return 0;
+  const d = dataSessione(t.h);
+  if (d && giorniTra(d, new Date()) > GIORNI_CARICO_RIFERIMENTO) return 0;
+  return Math.max.apply(null, t.ex.sets.filter(s => s.done).map(s => Number(s.weight) || 0));
+}
+
+/* ALG-02: l ultima volta con l esercizio = carico (il massimo delle serie fatte, come lo legge il motore: carico piu
+   frequente con W3-T1) e ripetizioni previste (obiettivo.reps nelle voci nuove, altrimenti le piu basse tra le serie fatte).
+   null se manca la storia o non c erano serie fatte. Serve a «blocca» e a «extra» (dolore-mattina.js). */
+function pesoUltimoDi(nome) {
+  const ex = ultimeSessioni(nome, 1)[0];
+  const fatte = ex ? (ex.sets || []).filter(s => s.done) : [];
+  if (!fatte.length) return null;
+  const prevista = ex.obiettivo ? Number(ex.obiettivo.reps) : 0;
+  return { weight: Math.max.apply(null, fatte.map(s => Number(s.weight) || 0)),
+           reps: prevista > 0 ? prevista : Math.min.apply(null, fatte.map(s => Number(s.reps) || 0)) };
 }
 
 function esito(ex, repsTarget) {

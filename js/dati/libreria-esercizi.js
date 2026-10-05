@@ -28,7 +28,6 @@ const EXERCISE_LIBRARY = [
   { name: '💪 Croci ai Cavi', group: 'petto', type: 'isolation', sets: 3, reps: 12, weight: 12, rest: 60 },
   { name: '💪 Croci su Panca Manubri', group: 'petto', type: 'isolation', sets: 3, reps: 12, weight: 10, rest: 60 },
   { name: '💪 Pectoral Machine (Butterfly)', group: 'petto', type: 'isolation', sets: 3, reps: 12, weight: 30, rest: 60 },
-  { name: '💪 Pullover con Manubrio', group: 'petto', type: 'isolation', sets: 3, reps: 12, weight: 14, rest: 60 },
 
   { name: '🏹 Stacco da Terra (Deadlift)', group: 'schiena', type: 'compound', sets: 4, reps: 6, weight: 60, rest: 150 },
   { name: '🏹 Trazioni alla Sbarra (Pull-ups)', group: 'schiena', type: 'compound', sets: 4, reps: 8, weight: 0, rest: 120 },
@@ -169,7 +168,42 @@ const EXERCISE_LIBRARY = [
   { name: '🎯 Leg Raise alla Sedia Romana', group: 'core', type: 'isolation', sets: 3, reps: 12, weight: 0, rest: 45 },
   { name: '🎯 Sit-up a Ginocchia Piegate', group: 'core', type: 'isolation', sets: 3, reps: 15, weight: 0, rest: 45 },
   /* adduttori: l alternativa a carico libero dell Adductor Machine (e viceversa) */
-  { name: '🦵 Squat Sumo', group: 'gambe', type: 'compound', sets: 3, reps: 12, weight: 16, rest: 75 }
+  { name: '🦵 Squat Sumo', group: 'gambe', type: 'compound', sets: 3, reps: 12, weight: 16, rest: 75 },
+  /* W1-T5 (CAS-13, SEL-03, SEL-04, D-P2, D-P3): esercizi che chiudono i buchi della libreria: hinge e flessione del ginocchio a casa, deltoide laterale e posteriore,
+     adduttori, tibiale, core in anti-flessione laterale, varianti con la pausa, e gli attrezzi nuovi (elastici, kettlebell, anelli, scatola). Nessun disegno (D-P2):
+     la scheda mostra «Immagine in arrivo» e ha la scheda tecnica completa. Gli attributi stanno in attributi-esercizi.js, i dettagli in dettagli-esercizi.js */
+  { name: '💪 Floor Press con Manubri', group: 'petto', type: 'compound', sets: 3, reps: 10, weight: 14, rest: 90 },
+  { name: '💪 Chest Press Inclinata alla Macchina', group: 'petto', type: 'compound', sets: 3, reps: 10, weight: 30, rest: 90 },
+  { name: '💪 Panca con Pausa', group: 'petto', type: 'compound', sets: 3, reps: 6, weight: 35, rest: 120 },
+  { name: '🏹 Trazioni Negative', group: 'schiena', type: 'compound', sets: 3, reps: 4, weight: 0, rest: 120 },
+  { name: '🏹 Seal Row', group: 'schiena', type: 'compound', sets: 3, reps: 10, weight: 14, rest: 90 },
+  { name: '🏹 Lat Pulldown con Elastico', group: 'schiena', type: 'compound', sets: 3, reps: 15, weight: 0, rest: 60 },
+  { name: '🏹 Rematore agli Anelli', group: 'schiena', type: 'compound', sets: 3, reps: 10, weight: 0, rest: 75 },
+  { name: '🏹 Stacco in Deficit', group: 'schiena', type: 'compound', sets: 3, reps: 5, weight: 50, rest: 150 },
+  { name: '🦵 Leg Curl con Asciugamano', group: 'gambe', type: 'isolation', sets: 3, reps: 10, weight: 0, rest: 60 },
+  { name: '🦵 Leg Curl in Piedi', group: 'gambe', type: 'isolation', sets: 3, reps: 12, weight: 15, rest: 60, lato: true },
+  { name: '🦵 Belt Squat', group: 'gambe', type: 'compound', sets: 3, reps: 10, weight: 40, rest: 105 },
+  { name: '🦵 Squat con Pausa', group: 'gambe', type: 'compound', sets: 3, reps: 6, weight: 40, rest: 150 },
+  { name: '🦵 Cossack Squat', group: 'gambe', type: 'compound', sets: 3, reps: 8, weight: 0, rest: 60, lato: true },
+  { name: '🦵 Squat su Scatola', group: 'gambe', type: 'compound', sets: 3, reps: 10, weight: 0, rest: 60 },
+  { name: '🦵 Step-up Basso', group: 'gambe', type: 'compound', sets: 3, reps: 12, weight: 0, rest: 60, lato: true },
+  { name: '🦵 Sit-to-Stand dalla Panca', group: 'gambe', type: 'compound', sets: 3, reps: 8, weight: 0, rest: 60 },
+  { name: '🦵 Calf Raise con Manubrio sul Gradino', group: 'gambe', type: 'isolation', sets: 3, reps: 15, weight: 12, rest: 45 },
+  { name: '🦵 Tibialis Raise', group: 'gambe', type: 'isolation', sets: 3, reps: 15, weight: 0, rest: 45 },
+  { name: '🦵 Copenhagen Plank', group: 'gambe', type: 'isolation', sets: 3, reps: 20, weight: 0, rest: 45, lato: true, tempo: true },
+  { name: '🍑 Stacco Rumeno con Manubri', group: 'glutei', type: 'compound', sets: 3, reps: 10, weight: 14, rest: 90 },
+  { name: '🍑 Stacco Rumeno a una Gamba', group: 'glutei', type: 'compound', sets: 3, reps: 8, weight: 10, rest: 75, lato: true },
+  { name: '🍑 Hip Thrust con Manubrio', group: 'glutei', type: 'compound', sets: 3, reps: 12, weight: 20, rest: 75 },
+  { name: '🍑 Kettlebell Swing', group: 'glutei', type: 'compound', sets: 3, reps: 15, weight: 16, rest: 60 },
+  { name: '🛡️ Alzate Laterali con Elastico', group: 'spalle', type: 'isolation', sets: 3, reps: 15, weight: 0, rest: 45 },
+  { name: '🛡️ Alzate Laterali Inclinate', group: 'spalle', type: 'isolation', sets: 3, reps: 15, weight: 5, rest: 60, lato: true },
+  { name: '🛡️ Extrarotazione al Cavo', group: 'spalle', type: 'isolation', sets: 3, reps: 15, weight: 5, rest: 45, lato: true },
+  { name: '🛡️ Face Pull con Elastico', group: 'spalle', type: 'isolation', sets: 3, reps: 15, weight: 0, rest: 45 },
+  { name: '🛡️ Scrollate con Manubri', group: 'spalle', type: 'isolation', sets: 3, reps: 15, weight: 16, rest: 60 },
+  { name: '🎯 Suitcase Carry', group: 'core', type: 'isolation', sets: 3, reps: 30, weight: 14, rest: 60, lato: true, tempo: true },
+  /* D-P11: il pullover coi manubri allena i dorsali (bersaglio in DETTAGLI), quindi gruppo schiena. In fondo all elenco di proposito: buildProgram
+     lo pesca per ultimo come riserva della tirata verticale (SCHEMI_MOV), dopo trazioni e lat machine */
+  { name: '💪 Pullover con Manubrio', group: 'schiena', type: 'isolation', sets: 3, reps: 12, weight: 14, rest: 60 }
 ];
 
 /* Il menu a tendina si genera dalla libreria: una sola fonte di verita',

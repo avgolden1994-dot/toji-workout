@@ -45,8 +45,9 @@ function metodoAmmesso(m, c) {
 function sceltaMetodo(d, prof0, ps, fis, level, over65) {
   const goals = (d.goals && d.goals.length) ? d.goals : [d.goal || 'salute'];
   const mo = d.momentoNuovo ? momentoDa(d.momentoNuovo) : (prof0.momento ? momentoDa(prof0.momento.id) : null);
+  const eta = Number(d.age) || 0;
   const c = { level: level, days: Number(d.days) || 3, minuti: Number(d.minutes) || 60, luogo: d.luogo || 'palestra', goals: goals, ps: ps, mo: mo,
-    cauto: over65 || d.parq === 'si' || d.parq === true };
+    cauto: over65 || d.parq === 'si' || d.parq === true || (eta >= PARAM_ETA.min && eta < PARAM_ETA.maggiorenne) };   /* ETA-02: il minorenne e prudente come l over 65: niente metodi ad alta intensita */
   const lista = metodiPerTe({ level: level, days: c.days, minutes: c.minuti, luogo: c.luogo, goals: goals, psico: d.psico || prof0.psico, momento: mo ? { id: mo.id } : null });
   lista.forEach(x => {
     /* il fattore fisico pesa sulla scelta */
@@ -64,10 +65,13 @@ function sceltaMetodo(d, prof0, ps, fis, level, over65) {
   return { primo: primo, secondo: secondo, base: base };
 }
 /* i dettagli presi da un secondo metodo */
+/* B22 (W0-T2): il `testo` dice quello che `fa` fa davvero (prima la piramide diceva «15-20» e metteva 20, gli isolamenti «12-15» e mettevano almeno 15).
+   `alCedimento`: il tocco porta vicino al cedimento (MAV-03): buildProgram non lo sceglie per chi non puo e `fa` riceve in `c` cosa e ammesso */
 const TOCCHI = {
-  amrap: { testo: 'l’ultima serie del primo fondamentale a ripetizioni massime', fa: (sd, ps) => { const e = sd.esercizi.find(x => tipoCarico(x.name) === 'pesante' && !x.tecnica); if (e && ps.intensita !== 'bassa') e.tecnica = 'amrap'; } },
-  piramide: { testo: 'l’ultimo isolamento leggero da 15-20 ripetizioni', fa: (sd) => { const iso = sd.esercizi.filter(x => tipoCarico(x.name) === 'isolamento' && !isTimeBased(x.name)); const e = iso[iso.length - 1]; if (e) { e.reps = 20; e.rest = 60; } } },
-  isolamenti: { testo: 'isolamenti da 12-15 ripetizioni', fa: (sd) => sd.esercizi.forEach(x => { if (tipoCarico(x.name) === 'isolamento' && !isTimeBased(x.name)) x.reps = Math.max(x.reps, 15); }) },
+  amrap: { testo: 'l’ultima serie del primo fondamentale a ripetizioni massime', alCedimento: true,
+    fa: (sd, ps, c) => { const e = sd.esercizi.find(x => tipoCarico(x.name) === 'pesante' && !x.tecnica && !(c && c.senzaCedimento && c.senzaCedimento(x.name))); if (e && ps.intensita !== 'bassa' && !(c && c.tecnicheOk === false)) e.tecnica = 'amrap'; } },
+  piramide: { testo: 'l’ultimo isolamento leggero da 20 ripetizioni', fa: (sd) => { const iso = sd.esercizi.filter(x => tipoCarico(x.name) === 'isolamento' && !isTimeBased(x.name) && (findExercise(x.name) || {}).group !== 'core'); const e = iso[iso.length - 1]; if (e) { e.reps = 20; e.rest = 60; } } },
+  isolamenti: { testo: 'isolamenti da almeno 15 ripetizioni', fa: (sd) => sd.esercizi.forEach(x => { if (tipoCarico(x.name) === 'isolamento' && !isTimeBased(x.name)) x.reps = Math.max(x.reps, 15); }) },
   superserie: { testo: 'spinte e tirate in superserie per risparmiare tempo', fa: (sd) => { strSuperserie(sd); } }
 };
 
@@ -76,7 +80,7 @@ function metodiPerTe(prof) {
   prof = prof || {};
   const ps = psicoCoach(prof.psico);
   const mo = prof.momento && momentoDa(prof.momento.id);
-  const level = prof.level || 'intermedio', days = Number(prof.days) || 3, minuti = Number(prof.minutes) || 60;
+  const level = livelloConosciuto(prof.level), days = Number(prof.days) || 3, minuti = Number(prof.minutes) || 60;
   const luogo = prof.luogo || (prof.prefs && prof.prefs.luogo) || 'palestra';
   const goals = prof.goals || [prof.goal || 'salute'];
   return METODI.map(m => {

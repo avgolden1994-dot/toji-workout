@@ -3,7 +3,7 @@
 Piano: [sezione 6](../piano-lancio-appstore.md#6-rilascio-e-dopo).
 
 ## Invio
-- [ ] ASC completo: metadati 4 lingue, screenshot, URL privacy, URL supporto, App Privacy, età, export, DSA
+- [ ] ASC completo: metadati 4 lingue, screenshot, URL privacy, URL supporto, App Privacy (punto da verificare a mano, vedi 04), età, export, DSA
 - [ ] Build selezionata e numero build corretto
 - [ ] Note per il revisore: nessun login, funzioni native, disclaimer medico, origine contenuti, come provare le mance IAP (non sbloccano nulla)
 - [ ] Video breve su dispositivo allegato

@@ -6,6 +6,20 @@
    ============================================================ */
 let ultimaChiusuraSeduta = 0;
 
+/* MES-09: la seduta salvata ricorda in che settimana e fase del programma e stata fatta (`settimana: { numero, fase }`) e,
+   per ogni esercizio, cosa il coach prevedeva (`obiettivo: { reps, sets, rir, tecnica, coachTipo }`): senza, uno scarico
+   e una seduta qualunque (carico di riferimento, analisi, RPE contro il RIR di quel giorno). Campi facoltativi: le voci
+   vecchie non li hanno e restano valide. `settimana` la conserva normalizeHistoryEntry (js/core/storage.js); `obiettivo` sta
+   dentro `sessione`, che normalizeHistoryEntry lascia com e. */
+function obiettivoSeduta(e) {
+  const reps = Number(e.reps), serie = Number(e.sets);
+  const o = { reps: reps > 0 ? reps : undefined, sets: serie > 0 ? serie : undefined, tecnica: e.tecnicaSeduta || e.tecnica || undefined, coachTipo: e.coachTipo || undefined };
+  if (coachAttivo() && !isTimeBased(e.name)) {
+    try { const r = rirBersaglio(e.name); if (Array.isArray(r)) o.rir = [r[0], r[1]]; } catch (err) {}
+  }
+  return o;
+}
+
 /* ============================================================
    CARDIO NELLA SEDUTA
    Sei scelte in un menu a tendina. Per chi fa pesi la camminata in
@@ -136,6 +150,14 @@ window.endWorkout = function() {
       historyEntry.minuti = undefined; historyEntry.prontezza = undefined;
     }
   }
+  /* MES-09: settimana e obiettivo di ogni esercizio, calcolati prima di salvare (il RIR bersaglio vede ancora lo storico di prima); non per le sedute fuori programma */
+  if (!historyEntry.libera && !historyEntry.passata && regolaAttiva('MES-09')) {
+    try {
+      const sett = settimanaProgramma();
+      if (sett && sett.fase) historyEntry.settimana = { numero: sett.numero, fase: sett.fase };
+      historyEntry.sessione.forEach((s, i) => { s.obiettivo = obiettivoSeduta(activeList[i]); });
+    } catch (err) {}
+  }
   const history = loadHistory();
   history.unshift(historyEntry);
   if (historyEntry.passata) history.sort((a, b) => (dataSessione(b) || 0) - (dataSessione(a) || 0));
@@ -145,10 +167,6 @@ window.endWorkout = function() {
   fermaTempoSeduta(true);
 
   if (coachAttivo() && !sedutaInterrotta && !historyEntry.passata) { try { imparaDallaSeduta(activeList); } catch (err) {} }
-  /* coach IA: commento a fine seduta, in background (non blocca nulla) */
-  if (anySetChecked && !sedutaInterrotta && !historyEntry.passata && typeof coachIAAttivo === 'function' && coachIAAttivo()) {
-    try { commentaSeduta(historyEntry.id, true); } catch (err) {}
-  }
   ripristinaSostituzioni(list);   /* macchinario occupato: l esercizio previsto torna nel piano */
   impostaOccupato(null);
   list.forEach(e => {

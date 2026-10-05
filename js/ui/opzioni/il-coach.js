@@ -17,7 +17,7 @@ function paginaCoach(p) {
     'In dimagrimento il coach tiene i carichi e controlla che il peso scenda dello 0,5-1% a settimana.');
   h += setGroup('Su di te',
     '<label class="sr-row sr-input"><span class="sr-name">Peso corporeo (kg)</span><input type="number" inputmode="decimal" value="' + (p.weight || '') + '" onchange="setCoach(\'weight\', Number(this.value) || null)"></label>' +
-    '<label class="sr-row sr-input"><span class="sr-name">Età</span><input type="number" inputmode="numeric" value="' + (p.age || '') + '" onchange="setCoach(\'age\', Number(this.value) || null)"></label>' +
+    '<label class="sr-row sr-input"><span class="sr-name">Età</span><input type="number" inputmode="numeric" min="' + PARAM_ETA.min + '" max="' + PARAM_ETA.max + '" step="1" value="' + (p.age || '') + '" onchange="setCoach(\'age\', Number(this.value) || null)"></label>' +
     '<div class="fb-chips sr-chips-pad">' + chipCoach(p.sex === 'M' || p.sex === 'uomo', "setCoach('sex','M')", 'Uomo') + chipCoach(donna, "setCoach('sex','F')", 'Donna') + '</div>' +
     '<label class="sr-row sr-input"><span class="sr-name">Orario abituale</span><input type="time" value="' + (p.orario || '') + '" onchange="setCoach(\'orario\', this.value)"></label>',
     'L orario fisso aiuta a creare l abitudine: se passa senza allenamento, Oggi te lo ricorda.');
@@ -66,6 +66,8 @@ function toggleCoach(k, on, nome, sub) {
   return '<button class="sr-row" onclick="setCoach(\'' + k + '\', ' + (!on) + ')" role="switch" aria-checked="' + on + '"><span class="sr-name">' + nome + '<small>' + sub + '</small></span><span class="switch ' + (on ? 'on' : '') + '"></span></button>';
 }
 window.setCoach = function(k, v) {
+  /* ETA-01: l eta resta obbligatoria e nei limiti anche dopo l avvio (sotto 13 anni nessun programma): un valore non valido non si salva */
+  if (k === 'age') { const e = etaPerProgramma(v); if (!e.ok) { showUndo(e.messaggio); renderSetPage(); return; } }
   const p = getProfile() || {};
   p[k] = v;
   localStorage.setItem(PROFILE_KEY(), JSON.stringify(p));

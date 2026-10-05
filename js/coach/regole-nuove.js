@@ -12,6 +12,8 @@
    RIC-03 posizione allungata per petto, schiena e glutei (Maeo 2021-2023, Pedrosa 2025)  -> schemi.js
    RIC-04 al massimo una tecnica al cedimento per seduta (Robinson 2024)
    RIC-05 rientro dopo una pausa: serie ridotte su tutto il piano (detraining, SBS)
+   W1-T3: nessun involucro. RIC-01/02/05 sono la fase 60 della catena 'carico', RIC-04 la fase 20 di 'apertura' e di 'prontezza'
+   (regia/fasi.js, piano B.3): l ordine e scritto nel numero, non nell ordine degli script.
    ============================================================ */
 const TECNICHE_INTENSE = ['drop', 'amrap', 'parziali', 'calibrazione', 'negativa', 'forzate', 'riposopausa'];   /* tutte arrivano al cedimento */
 
@@ -29,11 +31,12 @@ function prontezzaRecente() {
   const v = sedutePassate().map(x => x.h.prontezza).filter(x => typeof x === 'number').slice(0, 2);
   return v.length ? v.reduce((t, x) => t + x, 0) / v.length : null;
 }
-/* RIC-05: pausa lunga su tutto il piano (con l eta si conta il doppio, come per il singolo esercizio) */
+/* RIC-05: pausa lunga su tutto il piano. I giorni sono quelli veri, per tutti: oltre i 65 anni non si contano doppi, come per il singolo esercizio (CAR-04). Il registro B20 li
+   voleva doppi, ma 5 giorni di pausa (normali con 2 sedute a settimana) facevano scattare il -10% e il -25% delle serie: deroga del 2026-10-05 finche W4-T2 non porta la catena
+   completa di B20 con le sue soglie (CST-01, CST-02, MES-15). */
 function rientroPiano() {
-  const pc = profiloCoach();
   const g = giorniDallUltimaSeduta();
-  return (pc.eta >= 65 ? g * 2 : g) >= 14 ? g : 0;
+  return g >= 14 ? g : 0;
 }
 /* RIC-01: settimana centrale di un blocco di carico (non la prima, non l ultima prima dello scarico) */
 function settimanaCentraleBlocco() {
@@ -55,12 +58,16 @@ function mancavaSoloUltimaSerie(nome, repsTarget) {
   return s.sets.slice(0, -1).every(completa) && !completa(s.sets[s.sets.length - 1]);
 }
 
-const _caricoProssimoPrima = window.caricoProssimo;
-window.caricoProssimo = function(nome, base, repsTarget, setsBase) {
-  const r = _caricoProssimoPrima(nome, base, repsTarget, setsBase);
+/* Fase 60 RIC della catena 'carico' (regia/fasi.js, W1-T3): RIC-05, RIC-01 e RIC-02 sul risultato di 10 BIL e 50 AGG; prima era un involucro
+   di caricoProssimo. Viene dopo gli aggiusti (50) e prima di INT-04 (70): lo scritto «60» e l ordine, non quello degli script. */
+function regoleRicAlCarico(r, c) {
+  const nome = c.nome, repsTarget = c.repsTarget;
   if (!r || r.tipo === 'scarico' || isTimeBased(nome)) return r;
   const pc = profiloCoach();
-  const cauto = pc.prudente || pc.sonnoMale || pc.livello === 'principiante' || pc.eta >= 65;
+  /* ETA-02 (INT-1, correzione di sicurezza): il minorenne (eta > 0 e sotto i 18: 0 = non detta) e prudente come l over 65, il PAR-Q e il principiante: niente serie in piu
+     (RIC-01, una 16enne arrivava a 5 serie) e niente pausa allungata di RIC-02; il generatore gia lo trattava cosi (brief.chi.cauto) */
+  const minorenne = pc.eta > 0 && pc.eta < PARAM_ETA.maggiorenne;
+  const cauto = pc.prudente || pc.sonnoMale || pc.livello === 'principiante' || pc.eta >= 65 || minorenne;
   const rientro = regolaAttiva('RIC-05') ? rientroPiano() : 0;
   if (rientro) {
     if (r.sets > 2) {
@@ -79,7 +86,8 @@ window.caricoProssimo = function(nome, base, repsTarget, setsBase) {
     r.motivo += ' • mancava solo l ultima serie: 45 secondi di pausa in piu prima di abbassare il carico';
   }
   return r;
-};
+}
+registraFase('carico', 60, 'RIC', regoleRicAlCarico);
 
 /* RIC-04: tecniche al cedimento. In scarico o con prontezza bassa nessuna; altrimenti una sola per seduta.
    La tecnica del programma non si cancella: per la seduta di oggi si mette '-' (nessun badge). */
@@ -99,15 +107,9 @@ function limitaTecnicheIntense(day) {
   if (tolte) saveData(data);
   return tolte;
 }
-const _applicaCaricoPrima = window.applicaCaricoProgressivo;
-window.applicaCaricoProgressivo = function(day) {
-  const n = _applicaCaricoPrima(day);
-  limitaTecnicheIntense(day);
-  return n;
-};
-const _applicaProntezzaPrima = window.applicaProntezza;
-window.applicaProntezza = function(r) {
-  const out = _applicaProntezzaPrima(r);
+/* RIC-04 come fase 20 dei punti 'apertura' (dopo i carichi, 10) e 'prontezza' (dopo la prontezza, 10): prima erano involucri di
+   applicaCaricoProgressivo e applicaProntezza. Non restituiscono niente: il valore (esercizi cambiati, punteggio) resta quello della fase 10. */
+registraFase('apertura', 20, 'RIC-04', (n, c) => { limitaTecnicheIntense(c.giorno); });
+registraFase('prontezza', 20, 'RIC-04', () => {
   if (limitaTecnicheIntense(currentDay) && typeof renderAllenamento === 'function') renderAllenamento();
-  return out;
-};
+});

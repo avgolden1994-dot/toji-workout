@@ -7,28 +7,31 @@
    Il coach collega le due cose al profilo psicologico: chi hai
    davanti + cosa sta vivendo -> quale metodo e con quale dose.
    ============================================================ */
+/* MAV-03 (W0-T2): GreySkull, GZCLP e Reddit PPL hanno l AMRAP nello schema; il coach lo toglie dove non e ammesso (buildProgram) e lo dice qui */
+const ATTENZIONE_AMRAP = 'Con chi inizia, ai minorenni, sopra i 65 anni o in modalità prudente il coach toglie l’AMRAP: la serie finale resta a 1-2 ripetizioni dal cedimento.';
 const FB = (n) => ['fullbody'].concat(Array(Math.max(0, n - 1)).fill('fullbody'));
 const UL4 = { nome: 'Upper / Lower', giorni: ['upper', 'lower', 'upper', 'lower'] };
 const METODI = [
   { id: 'coach', nome: 'Il metodo del coach', fonte: 'Ricerca 2018-2026 (Pelland, Robinson, Helms)', livelli: ['principiante', 'intermedio', 'avanzato'], giorni: [2, 3, 4, 5, 6], intensita: 'media', struttura: 'flessibile', varieta: 1, minuti: [30, 90], luoghi: ['palestra', 'manubri', 'corpo'], obiettivi: ['massa', 'forza', 'dimagrimento', 'salute', 'ricomposizione', 'glutei'], applicabile: true,
     come: 'Volume per muscolo, ripetizioni per tipo di esercizio, RIR che scende nel blocco, scarico dosato sulla fatica.', perChi: 'Tutti: si adatta a te da solo.', attenzione: '' },
   { id: 'startingstrength', nome: 'Starting Strength', fonte: 'Mark Rippetoe', livelli: ['principiante'], giorni: [3], intensita: 'alta', struttura: 'rigida', varieta: 0, minuti: [45, 75], luoghi: ['palestra'], obiettivi: ['forza'], applicabile: true,
-    come: 'Full body A/B, 3 fondamentali col bilanciere, 3×5, +2,5 kg a ogni seduta; due mancate di fila = −5%.', perChi: 'Principianti che vogliono diventare forti con pochi esercizi.', attenzione: 'Poco volume per la massa; noioso per chi ama cambiare.',
+    come: 'Full body A/B: squat 3×5 a ogni seduta, panca o military 3×5, stacco da terra 1×5; +2,5 kg a ogni seduta; due mancate di fila = −5%.', perChi: 'Principianti che vogliono diventare forti con pochi esercizi.', attenzione: 'Poco volume per la massa; noioso per chi ama cambiare. Il power clean non c’è nella libreria: nel giorno B resta lo stacco.',
     split: () => ({ nome: 'Full Body A/B', giorni: FB(3) }), nEs: () => 3, pesanti: true, essenziale: true,
-    ricette: { fullbody: k => k % 2 ? ['squat', 'spintaV', 'hinge'] : ['squat', 'spintaO', 'tirataO'] },
-    schema: (e, i) => { e.sets = 3; e.reps = 5; e.rest = 180; } },
+    /* B19: A = squat, panca, stacco; B = squat, military press, stacco (prima A aveva il rematore e B lo stacco rumeno a 3 serie) */
+    ricette: { fullbody: k => k % 2 ? ['squat', 'spintaV', 'staccoTerra'] : ['squat', 'spintaO', 'staccoTerra'] },
+    schema: (e, i) => { e.sets = /stacco/i.test(e.name) ? 1 : 3; e.reps = 5; e.rest = 180; } },
   { id: 'stronglifts', tocco: 'amrap', nome: 'StrongLifts 5×5', fonte: 'Mehdi Hadim', livelli: ['principiante'], giorni: [3], intensita: 'alta', struttura: 'rigida', varieta: 0, minuti: [45, 75], luoghi: ['palestra'], obiettivi: ['forza', 'massa'], applicabile: true,
     come: 'Full body A/B, 5×5 sui fondamentali (stacco 1×5), +2,5 kg a seduta; mancato più volte = −10%.', perChi: 'Principianti che amano la routine e i numeri che salgono.', attenzione: 'Più volume di Starting Strength: recupero da curare.',
     split: () => ({ nome: 'Full Body A/B', giorni: FB(3) }), nEs: () => 3, pesanti: true, essenziale: true,
-    ricette: { fullbody: k => k % 2 ? ['squat', 'spintaV', 'hinge'] : ['squat', 'spintaO', 'tirataO'] },
+    ricette: { fullbody: k => k % 2 ? ['squat', 'spintaV', 'staccoTerra'] : ['squat', 'spintaO', 'tirataO'] },   /* B19: nel giorno B lo stacco da terra 1x5, non il rumeno */
     schema: (e) => { e.sets = /stacco/i.test(e.name) ? 1 : 5; e.reps = 5; e.rest = 180; } },
   { id: 'greyskull', tocco: 'amrap', nome: 'GreySkull LP', fonte: 'John Sheaffer', livelli: ['principiante'], giorni: [3], intensita: 'alta', struttura: 'rigida', varieta: 0, minuti: [45, 60], luoghi: ['palestra'], obiettivi: ['forza', 'massa', 'ricomposizione'], applicabile: true,
-    come: '2×5 + ultima serie AMRAP sui fondamentali, accessori per braccia; se manchi, −10% e si batte il record di ripetizioni.', perChi: 'Principianti competitivi: ogni seduta un record da battere.', attenzione: '',
+    come: '2×5 + ultima serie AMRAP sui fondamentali, accessori per braccia; se manchi, −10% e si batte il record di ripetizioni.', perChi: 'Principianti competitivi: ogni seduta un record da battere.', attenzione: ATTENZIONE_AMRAP,
     split: () => ({ nome: 'Full Body A/B', giorni: FB(3) }), nEs: () => 4, pesanti: true, essenziale: true,
     ricette: { fullbody: k => k % 2 ? ['squat', 'spintaV', 'hinge', 'isoBic'] : ['squat', 'spintaO', 'tirataO', 'isoTri'] },
     schema: (e, i) => { if (i < 3) { e.sets = 3; e.reps = 5; e.rest = 180; e.tecnica = 'amrap'; } else { e.sets = 3; e.reps = 12; e.rest = 75; } } },
   { id: 'gzclp', tocco: 'amrap', nome: 'GZCLP', fonte: 'Cody Lefever', livelli: ['principiante', 'intermedio'], giorni: [4], intensita: 'alta', struttura: 'rigida', varieta: 0, minuti: [60, 75], luoghi: ['palestra'], obiettivi: ['forza', 'massa'], applicabile: true,
-    come: 'Tre livelli: T1 5×3 pesante con AMRAP, T2 3×10, T3 3×15. Se il T1 si ferma: 6×2, poi 10×1.', perChi: 'Chi vuole forza e massa con regole chiare per gli stalli.', attenzione: '',
+    come: 'Tre livelli: T1 5×3 pesante con AMRAP, T2 3×10, T3 3×15. Se il T1 si ferma: 6×2, poi 10×1.', perChi: 'Chi vuole forza e massa con regole chiare per gli stalli.', attenzione: ATTENZIONE_AMRAP,
     split: () => UL4, nEs: () => 4,
     schema: (e, i) => { if (i === 0) { e.sets = 5; e.reps = 3; e.rest = 180; e.tecnica = 'amrap'; } else if (i === 1) { e.sets = 3; e.reps = 10; e.rest = 120; } else { e.sets = 3; e.reps = 15; e.rest = 60; } } },
   { id: 'phul', nome: 'PHUL', fonte: 'Brandon Campbell', livelli: ['intermedio', 'avanzato'], giorni: [4], intensita: 'alta', struttura: 'rigida', varieta: 0.5, minuti: [60, 75], luoghi: ['palestra'], obiettivi: ['massa', 'forza'], applicabile: true,
@@ -48,7 +51,7 @@ const METODI = [
     } },
   { id: 'redditppl', tocco: 'amrap', nome: 'Reddit PPL', fonte: 'Metallicadpa', livelli: ['principiante', 'intermedio'], giorni: [6, 3], intensita: 'alta', struttura: 'rigida', varieta: 0, minuti: [60, 90], luoghi: ['palestra'], obiettivi: ['massa', 'forza'], applicabile: true,
     come: 'Push/Pull/Legs: fondamentale 4×5 + 1×5+ AMRAP, accessori 3×8-12, +2,5 kg a seduta.',
-    split: (g) => g >= 6 ? { nome: 'Push / Pull / Legs x2', giorni: ['push', 'pull', 'legs', 'push', 'pull', 'legs'] } : { nome: 'Push / Pull / Legs', giorni: ['push', 'pull', 'legs'] }, perChi: 'Chi ha tanto tempo e ama allenarsi spesso.', attenzione: '6 giorni: serve un buon recupero.',
+    split: (g) => g >= 6 ? { nome: 'Push / Pull / Legs x2', giorni: ['push', 'pull', 'legs', 'push', 'pull', 'legs'] } : { nome: 'Push / Pull / Legs', giorni: ['push', 'pull', 'legs'] }, perChi: 'Chi ha tanto tempo e ama allenarsi spesso.', attenzione: '6 giorni: serve un buon recupero. ' + ATTENZIONE_AMRAP,
     schema: (e, i) => { if (i === 0) { e.sets = 5; e.reps = 5; e.rest = 180; e.tecnica = 'amrap'; } else { e.sets = 3; e.reps = 10; e.rest = 90; } } },
   { id: 'minimo', tocco: 'superserie', nome: 'Dose minima', fonte: 'Iversen 2021, ACSM 2026', livelli: ['principiante', 'intermedio', 'avanzato'], giorni: [2], intensita: 'media', struttura: 'flessibile', varieta: 1, minuti: [30, 45], luoghi: ['palestra', 'manubri', 'corpo'], obiettivi: ['salute', 'massa', 'dimagrimento', 'ricomposizione', 'forza', 'glutei'], applicabile: true,
     come: 'Due full body a settimana, 2 serie per esercizio da 6-15 ripetizioni vicino al cedimento, spinte e tirate in superserie.', perChi: 'Chi ha poco tempo o sta passando un periodo pieno.', attenzione: 'Progressi più lenti, ma veri.',

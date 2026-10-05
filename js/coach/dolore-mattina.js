@@ -49,12 +49,25 @@ function consumaAggiusti(entry) {
   salvaAggiusti(ag);
 }
 
-window.caricoProssimo = function(nome, base, repsTarget, setsBase) {
-  const r = caricoProssimoBase(nome, base, repsTarget, setsBase);
+/* B7 (DEC-02): dolore a gomito o ginocchio: -10% con ampiezza senza dolore e almeno cosi tante ripetizioni in riserva */
+const RIR_MIN_DOLORE = 3;
+
+/* Il carico della prossima seduta, fase 50 AGG della catena 'carico' (regia/fasi.js, W1-T3): sopra caricoProssimoBase (fase 10, regole-ricerca.js:
+   progressione, scarico del programma e ripresa dopo lo scarico, MES-06) mette gli aggiustamenti del coach (scarico deciso CAR-10, dolore,
+   «blocca» ed «extra» ALG-02) e la frase del RIR. Prima era la funzione caricoProssimo stessa, avvolta poi da regole-nuove.js e intensita.js:
+   ora sono tutte fasi (60 RIC, 70 INT) con l ordine scritto. */
+function aggiustiAlCarico(r, c) {
+  const nome = c.nome, setsBase = c.setsBase;
   let ag;
   try { ag = aggiustiCoach(); } catch (e) { return r; }
   if (ag.scarico && ag.scarico.sedute > 0 && r.tipo !== 'scarico') {
-    r.weight = arrotonda(r.weight * COACH_PARAMETRI.scaricoReattivoCarico);
+    /* CAR-10: scarico deciso dal coach. MES-06: si calcola sul carico di riferimento (caricoRiferimento), mai su un carico che un altro
+       scarico ha gia tagliato (la seduta di prima era di scarico: il motore parte da li); e mai piu di quello che il motore proponeva
+       (dolore, rientro) se quella proposta non viene da uno scarico. */
+    const rif = isTimeBased(nome) || !regolaAttiva('MES-06') ? 0 : caricoRiferimento(nome);
+    const ultima = rif > 0 ? sedutePerEsercizio(nome, 1)[0] : null;
+    const dopoScarico = !!(ultima && esercizioInScarico(ultima.h, ultima.ex));
+    r.weight = arrotonda((rif > 0 && (dopoScarico || rif <= r.weight) ? rif : r.weight) * COACH_PARAMETRI.scaricoReattivoCarico);
     r.sets = Math.max(2, Math.round((setsBase || 3) * COACH_PARAMETRI.scaricoReattivoSerie));
     r.tipo = 'scarico';
     r.motivo = 'Scarico deciso dal coach: ' + ag.scarico.motivo;
@@ -62,12 +75,22 @@ window.caricoProssimo = function(nome, base, repsTarget, setsBase) {
   const a = ag.esercizi[nome];
   if (a && a.sedute > 0) {
     const inc = incrementoPer(nome);
+    const alg02 = regolaAttiva('ALG-02'), ult = alg02 ? pesoUltimoDi(nome) : null;
     if (a.fattore) { r.weight = arrotonda(r.weight * a.fattore); r.tipo = 'giu'; r.motivo = a.motivo; }
-    else if (a.blocca && r.tipo === 'su') { r.weight = arrotonda(Math.max(0, r.weight - inc)); r.tipo = 'fermo'; r.motivo = 'Stesso carico: l ultima seduta era al limite'; }
-    else if (a.extra && r.tipo === 'su') { r.weight = arrotonda(r.weight + inc); r.motivo += ' • +' + inc + ' kg in più: l ultima volta era leggero'; }
+    /* ALG-02: «blocca» = nessun aumento, quindi carico e ripetizioni dell ultima volta (non un incremento in meno: con +1 ripetizione
+       o con un aumento da RPE il carico finiva sotto o sopra quello di prima); «extra» solo se il «su» era un aumento di carico.
+       Con la regola spenta torna il comportamento di prima. */
+    else if (a.blocca && r.tipo === 'su') {
+      if (alg02 && ult) { r.weight = ult.weight; if (ult.reps > 0) r.reps = ult.reps; }
+      else r.weight = arrotonda(Math.max(0, r.weight - inc));
+      r.tipo = 'fermo'; r.motivo = 'Stesso carico: l ultima seduta era al limite';
+    }
+    else if (a.extra && r.tipo === 'su' && (!alg02 || (ult && r.weight > ult.weight))) { r.weight = arrotonda(r.weight + inc); r.motivo += ' • +' + inc + ' kg in più: l ultima volta era leggero'; }
     else if (a.nota) { r.motivo = a.nota; }
-    if (a.alteRip && !isTimeBased(nome)) { r.reps = Math.max(Number(r.reps) || 0, 12); r.motivo += ' \u2022 ripetizioni alte (12-20) per rispettare l articolazione'; }
+    if (a.alteRip && !isTimeBased(nome)) r.motivo += ' • ampiezza senza dolore, almeno ' + RIR_MIN_DOLORE + ' ripetizioni in riserva';
   }
-  if (!isTimeBased(nome) && r.weight > 0 && r.tipo !== 'scarico' && r.tipo !== 'giu') r.motivo += ' \u2022 ' + testoRir(nome);
+  /* il RIR di oggi; dopo uno scarico e una ripetizione in piu e lo dice testoRir (MES-06) */
+  if (!isTimeBased(nome) && r.weight > 0 && r.tipo !== 'scarico' && r.tipo !== 'giu') r.motivo += ' • ' + testoRir(nome);
   return r;
-};
+}
+registraFase('carico', 50, 'AGG', aggiustiAlCarico);

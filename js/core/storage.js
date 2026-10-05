@@ -85,6 +85,7 @@ function normalizeHistoryEntry(session) {
     date: session.date,
     berserk: !!session.berserk,
     feedback: session.feedback || undefined,
+    /* commentoIA: conservato per le sedute salvate con il vecchio Coach IA (rimosso); non viene più mostrato */
     commentoIA: session.commentoIA && session.commentoIA.testo ? { testo: String(session.commentoIA.testo), data: session.commentoIA.data || '' } : undefined,
     minuti: Number(session.minuti) || undefined,
     prontezza: session.prontezza !== undefined && session.prontezza !== null ? session.prontezza : undefined,
@@ -95,6 +96,7 @@ function normalizeHistoryEntry(session) {
     passata: session.passata ? true : undefined,
     libera: session.libera ? true : undefined,
     skipped: Number(session.skipped) || 0,
+    settimana: session.settimana && typeof session.settimana.fase === 'string' && session.settimana.fase ? { numero: Number(session.settimana.numero) || 0, fase: session.settimana.fase.slice(0, 20) } : undefined,   /* MES-09: settimana e fase del programma (facoltativa) */
     exercises: (session.exercises || []).map(e => ({
       name: e.name,
       weight: e.weight,
@@ -120,6 +122,18 @@ function migrateLegacyDataIfNeeded(mode) {
     localStorage.setItem(historyKey(), legacyHist);
   }
 }
+
+/* Chiavi del vecchio Coach IA (rimosso il 2026-10-05): consenso a parte, data del consenso, codice del dispositivo e contatore
+   mensile dei commenti. Nessun codice le legge piu: restano orfane sui telefoni di chi lo aveva usato. Si tolgono in silenzio a ogni
+   avvio (idempotente: se non ci sono non fa nulla; nessun messaggio, nessuna conferma). Il consenso generale (tz_consenso) e i commenti
+   gia salvati nello storico (commentoIA) NON si toccano. */
+const CHIAVI_COACH_IA_RIMOSSO = ['tz_consenso_ia', 'tz_consenso_ia_data', 'tz_device_ia', 'tz_ia_uso'];
+function ripulisciChiaviCoachIA() {
+  CHIAVI_COACH_IA_RIMOSSO.forEach(k => { try { localStorage.removeItem(k); } catch (e) {} });
+}
+/* subito al caricamento, prima di ogni lettura di consenso (consenso.js, avvio.js) e dopo ripristino-guida.js, che puo rimettere
+   chiavi vecchie da una copia di guida interrotta */
+ripulisciChiaviCoachIA();
 
 function seedDefaultsIfNeeded(mode) {
   const seededKey = `tz_seeded_${mode}`;

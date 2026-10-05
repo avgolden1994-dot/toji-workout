@@ -32,7 +32,7 @@ function seduteEsercizio(nome) {
       out.push({
         data: d, sets: fatte,
         max: Math.max.apply(null, fatte.map(s => Number(s.weight) || 0)),
-        rm: Math.max.apply(null, fatte.map(s => unoRM(s.weight, s.reps))),
+        rm: Math.max.apply(null, fatte.map(s => e1rm(s.weight, s.reps))),
         ripMax: Math.max.apply(null, fatte.map(s => Number(s.reps) || 0)),
         volume: fatte.reduce((a, s) => a + (Number(s.reps) || 0) * (Number(s.weight) || 0), 0)
       });
@@ -108,7 +108,7 @@ function paneRecord(sed) {
   const bRm = best(s => s.rm), bMax = best(s => s.max), bVol = best(s => s.volume);
   let bSet = null;
   sed.forEach(s => s.sets.forEach(x => {
-    const r = unoRM(x.weight, x.reps);
+    const r = e1rm(x.weight, x.reps);
     if (!bSet || r > bSet.r) bSet = { r: r, x: x, data: s.data };
   }));
   const quando = (d) => d.toLocaleDateString(LOCALE(), { day: 'numeric', month: 'short', year: '2-digit' });

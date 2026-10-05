@@ -37,7 +37,8 @@ const r = await p.evaluate(() => {
       const chiavi = {};
       es.forEach(e => { const k = [meta(e).group, sub(e), meta(e).type, schemaDi(e.name) || ''].join('|'); (chiavi[k] = chiavi[k] || []).push(e.name.replace(EMOJI_TESTA, '')); });
       Object.keys(chiavi).forEach(k => {
-        const ammessi = /^gambe\|Multiarticolari\|compound/.test(k) ? 3 : (/^glutei\|Glutei\|compound|^braccia\|(Bicipiti|Tricipiti)\|isolation/.test(k) ? 2 : 1);
+        /* RID-01 (W1-T6): niente terzo multiarticolare per i quadricipiti nella stessa seduta (a corpo libero: squat, affondi e squat su scatola): al massimo due, come dice ABB-02 */
+        const ammessi = /^gambe\|Multiarticolari\|compound|^glutei\|Glutei\|compound|^braccia\|(Bicipiti|Tricipiti)\|isolation/.test(k) ? 2 : 1;
         if (chiavi[k].length > ammessi) segna('ABB-02 esercizi doppi', prof, sd.titolo + ': ' + chiavi[k].join(' + '));
       });
       /* ABB-06 */
@@ -59,6 +60,12 @@ const r = await p.evaluate(() => {
     if (prog.metodo) return;
     const tutti = [].concat.apply([], sed.map(sd => sd.esercizi));
     const ha = (rx) => tutti.some(e => rx.test(e.name.replace(EMOJI_TESTA, '')));
+    /* ABB-07 / REC-02 (W1-T6): due giorni di fila non hanno due sedute con almeno 3 punti lombari (stacchi di ogni tipo, anche il rumeno coi manubri, il trap bar e il good morning una serie ciascuno;
+       squat e rematori col bilanciere, front squat compreso, mezzo punto a serie: lo stesso conto del collaudo REC-02) */
+    const lombari = (sd) => sd.esercizi.reduce((t, e) => t + (schienaLombare(e.name) ? e.sets * (schemaDi(e.name) === 'hinge' ? 1 : 0.5) : 0), 0);
+    for (let i = 0; i < sed.length; i++) for (let j = i + 1; j < sed.length; j++) {
+      if (Math.abs(DAYS.indexOf(sed[i].giorno) - DAYS.indexOf(sed[j].giorno)) === 1 && lombari(sed[i]) >= 3 && lombari(sed[j]) >= 3) segna('ABB-07 schiena pesante due giorni di fila', prof, sed[i].giorno + ' (' + lombari(sed[i]) + ') e ' + sed[j].giorno + ' (' + lombari(sed[j]) + ')');
+    }
     /* ABB-03 */
     if (ipert && l !== 'principiante' && g >= 3 && o[0] !== 'salute') {
       if (sed.some(sd => /lower|legs|fullbody/.test(sd.tipo)) && !ha(/calf/i)) segna('ABB-03 polpacci assenti', prof, '');
@@ -72,7 +79,8 @@ const r = await p.evaluate(() => {
     /* ABB-04 */
     const pat = (e) => schemaDi(e.name);
     const spinta = tutti.filter(e => pat(e) === 'spintaO' || pat(e) === 'spintaV').reduce((t, e) => t + e.sets, 0);
-    const tirata = tutti.filter(e => pat(e) === 'tirataO' || pat(e) === 'tirataV' || /face pull|reverse|alzate posteriori|y-raise/i.test(e.name)).reduce((t, e) => t + e.sets, 0);
+    /* il Pullover con Manubrio e la tirata verticale di riserva a casa senza sbarra (CAS-14, D-P11): conta come tirata, come per strEtirata e il collaudo (EQ-01) */
+    const tirata = tutti.filter(e => pat(e) === 'tirataO' || pat(e) === 'tirataV' || /face pull|reverse|alzate posteriori|y-raise|pullover con manubrio/i.test(e.name)).reduce((t, e) => t + e.sets, 0);
     if (spinta + tirata >= 8 && tirata < spinta * 0.85) segna('ABB-04 piu spinte che tirate', prof, 'spinta ' + spinta + ' tirata ' + tirata);
     /* ABB-05: con 3 giorni, intermedio e avanzato, ogni grande gruppo in almeno 2 sedute */
     if (g === 3 && l !== 'principiante' && lu === 'palestra') {
@@ -91,11 +99,31 @@ chiavi.forEach(k => r.esempi[k].forEach(x => console.log('     ' + k + ' -> ' + 
 /* una scheda letta per intero: intermedio, 3 giorni, massa, palestra, 60 minuti */
 const s = await p.evaluate(() => {
   const prog = buildProgram({ sex: 'M', age: 30, seme: 'audit', fastidi: [], sonno: 'bene', attrezzi: 'indifferente', usaProfilo: false, level: 'intermedio', days: 3, goals: ['massa'], luogo: 'palestra', minutes: 60 });
-  return { split: prog.split.nome, titoli: prog.sedute.map(sd => sd.titolo), note: prog.note };
+  const nomi = [].concat.apply([], prog.sedute.map(sd => sd.esercizi.map(e => e.name.replace(EMOJI_TESTA, ''))));
+  return { split: prog.split.nome, titoli: prog.sedute.map(sd => sd.titolo), note: prog.note, nomi: nomi, core: [].concat.apply([], prog.sedute.map(sd => sd.esercizi)).some(e => (findExercise(e.name) || {}).group === 'core') };
 });
 ok(s.split === 'Upper / Lower / Full Body', 'intermedio, 3 giorni: Upper / Lower / Full Body (' + s.split + ')');
 ok(/forza/.test(s.titoli[0]) && /forza/.test(s.titoli[1]) && /ipertrofia/.test(s.titoli[2]), 'upper e lower forza, full body ipertrofia: ' + s.titoli.join(' | '));
-ok(['Polpacci', 'Deltoidi posteriori', 'Core'].every(w => s.note.some(x => x.indexOf(w) === 0)), 'le aggiunte della settimana hanno la loro nota');
+/* ABB-03: polpacci, deltoidi posteriori e core ci sono in ogni settimana (dall'onda 0 possono venire dalla ricetta o dal riempimento del tempo, non solo da strCopri) */
+const presente = { 'Polpacci': s.nomi.some(n => /calf/i.test(n)), 'Deltoidi posteriori': s.nomi.some(n => /face pull|reverse|alzate posteriori|y-raise/i.test(n)), 'Core': s.core };
+ok(Object.keys(presente).every(w => presente[w]), 'polpacci, deltoidi posteriori e core ci sono nella settimana: ' + JSON.stringify(presente));
+/* ...e la nota di strCopri e una prova che puo FALLIRE (W0-T7: prima era una tautologia): su una settimana senza questi tre buchi strCopri li aggiunge TUTTI e tre, ognuno con la sua nota e protetto
+   dai tagli; su una settimana che li ha gia non aggiunge niente, non scrive note e protegge l unico esercizio che copre ogni buco (il taglio per il tempo non lo toglie piu) */
+const cop = await p.evaluate(() => {
+  const E = (n, sets) => ({ name: nomeInLibreria(n), sets: sets, reps: 10, weight: 0, rest: 90 });
+  const prefs = { luogo: 'palestra', fastidi: [], odiati: [], priorita: [], graditi: [] };
+  const crea = (extra) => [{ giorno: 'Lunedì', tipo: 'upper', esercizi: [E('Panca Piana Bilanciere', 3), E('Lat Machine', 3)].concat(extra ? [E('Reverse Pec Deck', 2)] : []) },
+    { giorno: 'Mercoledì', tipo: 'lower', esercizi: [E('Squat con Bilanciere', 3), E('Leg Press', 3)].concat(extra ? [E('Calf Raise in Piedi', 3)] : []) },
+    { giorno: 'Venerdì', tipo: 'fullbody', esercizi: [E('Military Press', 3), E('Stacco Rumeno', 3)].concat(extra ? [E('Plank', 2)] : []) }];
+  const prova = (extra) => { const sedute = crea(extra), note = []; strCopri({ sedute: sedute, goals: ['massa'], level: 'intermedio', days: 3, prefs: prefs, nEs: 5, note: note, metodoAttivo: null });
+    const tutti = [].concat.apply([], sedute.map(sd => sd.esercizi));
+    return { note: note, n: tutti.length, protetti: tutti.filter(e => e.protetto).map(e => senzaEmoji(e.name)) }; };
+  return { senza: prova(false), con: prova(true) };
+});
+ok(cop.senza.note.some(x => x.indexOf('Polpacci:') === 0) && cop.senza.note.some(x => x.indexOf('Deltoidi posteriori:') === 0) && cop.senza.note.some(x => x.indexOf('Core:') === 0), 'strCopri su una settimana senza buchi coperti: tre aggiunte, tre note (' + cop.senza.note.length + ')');
+ok(cop.senza.n === 9 && cop.senza.protetti.length === 3, 'le tre aggiunte ci sono davvero e sono protette dai tagli: ' + cop.senza.protetti.join(', '));
+ok(cop.con.note.length === 0 && cop.con.n === 9, 'su una settimana che ha gia polpacci, deltoidi posteriori e core non aggiunge niente e non scrive note');
+ok(['Calf Raise in Piedi', 'Reverse Pec Deck', 'Plank'].every(n => cop.con.protetti.indexOf(n) !== -1), 'l unico esercizio che copre ogni buco e protetto (non si taglia per il tempo): ' + cop.con.protetti.join(', '));
 
 /* la priorita dell utente porta il suo gruppo davanti a parita di tipo (ABB-10) */
 const pr = await p.evaluate(() => {

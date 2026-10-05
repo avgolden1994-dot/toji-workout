@@ -106,12 +106,6 @@
 .mc-info summary::after { content: ' \203A'; }
 .mc-info[open] summary::after { content: ' \2039'; }
 .mc-hint { font-size: 0.72rem; line-height: var(--lh-tight); color: var(--muted); text-align: center; margin-top: var(--sp-3); }
-.ia-card { background: color-mix(in srgb, var(--accent) 10%, var(--surface-1)); border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border)); border-radius: 12px; padding: var(--sp-4); margin-bottom: var(--sp-4); }
-.ia-head { display: flex; align-items: center; gap: var(--sp-2); font-weight: 800; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin-bottom: var(--sp-2); }
-.ia-text { font-size: 15px; line-height: 22px; color: var(--text); white-space: pre-line; }
-.ia-meta { font-size: 12px; color: var(--muted); margin-top: var(--sp-2); }
-.ia-btn { width: 100%; padding: 12px; border-radius: 10px; border: 1px dashed var(--accent); background: transparent; color: var(--accent); font-weight: 700; font-size: 15px; }
-.ia-btn[disabled] { opacity: .6; }
 .mc-done-box { background: color-mix(in srgb, var(--success) 12%, var(--surface-1)); border: 1px solid var(--success); border-radius: 12px; padding: var(--sp-4); margin-bottom: var(--sp-4); }
 .mc-done-t { font-weight: 900; color: var(--success); }
 .mc-gcal { display: block; text-align: center; text-decoration: none; margin-top: var(--sp-3); }

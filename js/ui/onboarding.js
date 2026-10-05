@@ -82,6 +82,11 @@ function splitPerFrequenza(level, days, freq) {
   }
   return splitFor(level, days);
 }
+/* scegliSplit(brief): la divisione della settimana dal livello, dai giorni e dalla frequenza scelta (stadio 5 del generatore, piano B.3). Oggi e splitPerFrequenza;
+   un metodo famoso o la modalita forza/estetica (specialitaStruttura) possono sostituirla in regia/genera.js; la riscrive W2-T5. */
+function scegliSplit(brief) {
+  return splitPerFrequenza(brief.chi.livello, brief.agenda.giorni, brief.agenda.freqScelta);
+}
 /* giorno dei punti deboli: i muscoli su cui punti, altrimenti i piccoli gruppi */
 const SLOT_PRIORITA = { petto: ['spintaO', 'isoPetto'], schiena: ['tirataV', 'tirataO'], spalle: ['isoDeltL', 'spintaV', 'isoDeltP'],
   braccia: ['isoBic', 'isoTri'], gambe: ['isoQuad', 'isoFem', 'isoPolp'], glutei: ['glutSpinta', 'unilaterale'], core: ['core'] };
@@ -106,11 +111,21 @@ function schemeFor(goal) {
   return { sets: 3, reps: 10, restCompound: 90, restIso: 60, settimane: 8, nota: 'Tutti i gruppi due volte a settimana, lasciando 2-3 ripetizioni in riserva: il programma migliore e quello che segui.' };
 }
 
-/* Quanti esercizi per seduta, senza sforare i minuti dichiarati */
-function exerciseCountFor(minutes, scheme) {
-  const perEsercizio = scheme.sets * (35 + scheme.restCompound) / 60;
-  const n = Math.floor((minutes - 10) / perEsercizio);
-  return Math.max(3, Math.min(7, n));
+/* PRG-03 (B1, ponte di W0-T2): quanti esercizi per seduta (PARAM_NUMERO_ESERCIZI, serieEffettive, pausaMediaPerTipo, stimaEsercizi; il sinonimo exerciseCountFor)
+   stanno in js/coach/volume/tempo.js dal generatore a stadi (W1-T4): il tempo e un tetto e li decide il Dosatore. */
+
+/* ETA-01 (D-P9, ponte di W0-T2; assorbe REC-11): l eta e obbligatoria prima del programma; sotto 13 anni nessun programma;
+   13-17 anni profilo minorenne (ETA-02, ETA-03: brief.js e prescriviSerie). Una sola funzione per l onboarding, per Opzioni e per buildProgram.
+   Soglia 13 = decisione dell utente; la soglia legale dei dati (14 in Italia) e un tema separato (registro G.1). */
+const PARAM_ETA = { min: 13, max: 99, maggiorenne: 18 };
+const MSG_ETA_SOTTO_MINIMO = 'Sotto i 13 anni il coach non crea programmi: allenati con un adulto esperto.';
+const MSG_ETA_MANCANTE = 'Inserisci la tua età (da 13 a 99 anni): serve per scegliere pesi e ritmo giusti.';
+function etaPerProgramma(eta) {
+  const vuota = eta === null || eta === undefined || (typeof eta === 'string' && eta.trim() === '');
+  const n = Number(eta);
+  if (vuota || !isFinite(n) || n !== Math.floor(n) || n > PARAM_ETA.max) return { ok: false, motivo: 'mancante', minore: false, messaggio: MSG_ETA_MANCANTE };
+  if (n < PARAM_ETA.min) return { ok: false, motivo: n < 1 ? 'mancante' : 'sotto-minimo', minore: false, messaggio: n < 1 ? MSG_ETA_MANCANTE : MSG_ETA_SOTTO_MINIMO };
+  return { ok: true, motivo: n < PARAM_ETA.maggiorenne ? 'minorenne' : 'adulto', minore: n < PARAM_ETA.maggiorenne, messaggio: '' };
 }
 
 window.startOnboarding = function(force) {
@@ -126,7 +141,7 @@ window.startOnboarding = function(force) {
 function nuovoOnbData() {
   return { inizio: undefined, goals: [], goal: null, level: null, days: null, minutes: null,
            luogo: null, fastidi: [], sonno: null, attrezzi: null, parq: null, priorita: [],
-           sex: null, age: null, height: null, weight: null, bia: null,
+           sex: null, age: ((typeof getProfile === 'function' && getProfile()) || {}).age || null, height: null, weight: null, bia: null,   /* ETA-01: chi rifa il programma ha gia detto l eta */
            psico: Object.assign({}, ((typeof getProfile === 'function' && getProfile()) || {}).psico || {}),
            test: Object.assign({}, ((typeof getProfile === 'function' && getProfile()) || {}).test || {}),
            freq: ((typeof getProfile === 'function' && getProfile()) || {}).freq || null };
@@ -147,7 +162,10 @@ window.onbPrev = function() {
 const ONB_ULTIMO = 7;   /* 0 obiettivi, 1 livello, 2 giorni, 3 minuti, 4 preferenze, 5 BIA, 6 come ti alleni meglio, 7 esito */
 
 window.onbNext = function() {
-  if (onbStep === ONB_ULTIMO) { applyGeneratedProgram(); return; }
+  if (onbStep === ONB_ULTIMO) {
+    if (!etaPerProgramma(onbData.age).ok) { onbStep = 4; renderOnb(); return; }   /* ETA-01: senza un eta valida non si crea nessun programma */
+    applyGeneratedProgram(); return;
+  }
   if (!onbStepValid()) return;
   onbStep++;
   renderOnb();
@@ -158,7 +176,7 @@ function onbStepValid() {
   if (onbStep === 1) return !!onbData.level;
   if (onbStep === 2) return !!onbData.days;
   if (onbStep === 3) return !!onbData.minutes;
-  if (onbStep === 4) return !!onbData.luogo && !!onbData.sonno && !!onbData.attrezzi && !!onbData.freq;
+  if (onbStep === 4) return !!onbData.luogo && !!onbData.sonno && !!onbData.attrezzi && !!onbData.freq && etaPerProgramma(onbData.age).ok;
   return true;
 }
 
@@ -176,6 +194,16 @@ window.onbSetTest = function(k, v) {
 window.onbPick = function(campo, valore) {
   onbData[campo] = valore;
   renderOnb();
+};
+/* ETA-01: l eta si scrive senza ridisegnare il passo (il campo perderebbe il fuoco); il messaggio e il tasto Avanti seguono il valore */
+window.onbSetEta = function(v) {
+  const testo = String(v === undefined || v === null ? '' : v).trim();
+  onbData.age = testo === '' ? null : Number(testo);
+  const e = etaPerProgramma(onbData.age);
+  const msg = document.getElementById('onb-eta-msg');
+  if (msg) msg.textContent = (e.ok || testo === '') ? '' : e.messaggio;
+  const next = document.getElementById('onb-next');
+  if (next) next.disabled = !onbStepValid();
 };
 
 /* Fino a tre obiettivi: il primo scelto guida il programma, gli altri lo
@@ -276,8 +304,13 @@ function renderOnb() {
       })).join('');
   } else if (onbStep === 4) {
     /* Solo domande che cambiano davvero il piano: ogni risposta ha un effetto */
+    const eta = etaPerProgramma(onbData.age);
     body.innerHTML = '<div class="onb-q">Qualche preferenza</div>' +
       '<div class="onb-why">Ogni risposta cambia qualcosa di preciso nel programma.</div>' +
+      '<div class="aw-sec">Quanti anni hai?</div>' +
+      '<div class="pref-note">Serve per scegliere pesi e ritmo giusti. Sotto i 13 anni il coach non crea programmi.</div>' +
+      '<div class="onb-fields"><label class="onb-field"><span>Età</span><input type="number" inputmode="numeric" id="onb-age" min="' + PARAM_ETA.min + '" max="' + PARAM_ETA.max + '" step="1" value="' + (onbData.age || '') + '" oninput="onbSetEta(this.value)"></label><span></span></div>' +
+      '<div class="onb-note" id="onb-eta-msg">' + ((eta.ok || !onbData.age) ? '' : eta.messaggio) + '</div>' +
       '<div class="aw-sec">Dove ti alleni?</div>' +
       '<div class="pref-note">Cosi non ti propongo esercizi che non puoi fare.</div>' +
       ONB_LUOGHI.map(g => optHtml('luogo', g)).join('') +
@@ -360,7 +393,7 @@ function renderBiaStep() {
         '<option value="uomo"' + (onbData.sex === 'uomo' ? ' selected' : '') + '>Uomo</option>' +
         '<option value="donna"' + (onbData.sex === 'donna' ? ' selected' : '') + '>Donna</option>' +
       '</select></label>' +
-      '<label class="onb-field"><span>Eta</span><input type="number" id="onb-age" value="' + (onbData.age || '') + '"></label>' +
+      '<span></span>' +   /* l eta e obbligatoria e si chiede nel passo delle preferenze (ETA-01) */
     '</div>' +
     (b.altezza ? '' :
       '<div class="onb-fields" style="margin-top:var(--sp-3);">' +
@@ -406,8 +439,6 @@ function bindBiaInputs() {
   });
   const sex = document.getElementById('onb-sex');
   if (sex) sex.addEventListener('change', () => { onbData.sex = sex.value || null; });
-  const age = document.getElementById('onb-age');
-  if (age) age.addEventListener('change', () => { onbData.age = parseInt(age.value, 10) || null; });
 }
 
 function ensurePdfJs() {
