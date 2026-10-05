@@ -129,6 +129,21 @@ const RIR_MIN_PRINCIPIANTE = 2;
 /* --- sicurezza e attrezzatura --- */
 const CAUTELA_SEV = 2;
 
+/* --- pesi della popolazione ---
+   La matrice e una griglia di copertura: sovrarappresenta i casi rari (5 profili su 6 hanno un fastidio, un terzo e a corpo libero).
+   Per ordinare le classi per IMPATTO ogni profilo pesa quanto e plausibile tra chi usa un app di allenamento. Sono ASSUNZIONI del collaudo
+   (Convenzione, non dati misurati): cambiale qui se hai numeri veri, oppure usa --pesi uniformi per contare ogni profilo uno. */
+const PESI_POPOLAZIONE = {
+  obiettivo: { massa: 0.30, forza: 0.10, ricomposizione: 0.12, dimagrimento: 0.18, salute: 0.10, glutei: 0.08, 'massa+forza': 0.06, 'forza+massa': 0.06 },
+  livello: { principiante: 0.45, intermedio: 0.40, avanzato: 0.15 },
+  giorni: { 2: 0.10, 3: 0.30, 4: 0.30, 5: 0.20, 6: 0.10 },
+  minuti: { 30: 0.10, 45: 0.20, 60: 0.40, 75: 0.15, 90: 0.15 },
+  luogo: { palestra: 0.65, manubri: 0.20, corpo: 0.15 },
+  fastidi: { nessuno: 0.60, spalle: 0.10, ginocchia: 0.10, schiena: 0.10, 'spalle+schiena': 0.05, 'ginocchia+schiena': 0.05 },
+  sesso: { M: 0.5, F: 0.5 },
+  fasciaEta: { giovane: 0.35, adulto: 0.45, senior: 0.20 }
+};
+
 /* =====================================================================================================
    2. CONOSCENZA ESPERTA INDIPENDENTE DAL CODICE DELL APP (Convenzione clinica e di prassi; non e consulenza medica)
    Serve a controllare il generatore con un secondo parere: se l app e l audit usassero la stessa regex, non scoprirebbero nulla.
@@ -175,7 +190,8 @@ const GRUPPI = {
   bicipiti: { muscoli: ['bicipiti'], classe: 'piccolo' },
   tricipiti: { muscoli: ['tricipiti'], classe: 'piccolo' },
   polpacci: { muscoli: ['polpacci'], classe: 'piccolo', diretto: true },
-  core: { muscoli: ['addome', 'addome_basso', 'obliqui', 'stabilita'], classe: 'core' }
+  core: { muscoli: ['addome', 'addome_basso', 'obliqui', 'stabilita'], classe: 'core' },
+  avambracci: { muscoli: ['brachioradiale'], classe: 'piccolo', soloDiretto: true }
 };
 /* Gruppi che il collaudo pretende per tipo di obiettivo (Convenzione) */
 const RICHIESTI = {
@@ -230,9 +246,9 @@ const CRITERI = [
   { id: 'VOL-02', nome: 'Volume settimanale sopra il massimo del livello (serie frazionarie)', sev: 3, forza: 'Moderata', fonte: 'Pelland 2025 (rendimenti decrescenti oltre 12); Convenzione per i tetti',
     dove: [RICETTE_JS + ': buildProgram (blocco "volume per muscolo": le sinergie sono per gruppo, non per muscolo; bonus priorita)', STRUTTURA_JS + ': strCopri / strBilancia (serie aggiunte dopo il tetto)'],
     check: (m, c) => volumeGruppi(m, c).filter(x => x.tipo === 'sopra').map(x => ({ sub: x.g, sev: x.classe === 'grande' ? 3 : 2, msg: x.g + ': ' + r1(x.v) + ' serie frazionarie a settimana, massimo ' + x.max + ' (' + c.tipoObiettivo + ', ' + c.level + ')', gravita: (x.v - x.max) / x.max * 10 })) },
-  { id: 'DIR-01', nome: 'Nessun esercizio diretto per polpacci o deltoidi (laterali, posteriori) nell ipertrofia', sev: 3, forza: 'Convenzione', fonte: 'pratica dei coach; docs/ricerca-struttura-e-intensita.md 1.2 (braccia dirette: Moderata)',
+  { id: 'DIR-01', nome: 'Nessun esercizio diretto per polpacci, deltoidi (laterali, posteriori) o avambracci nell ipertrofia', sev: 3, forza: 'Convenzione', fonte: 'pratica dei coach; docs/ricerca-struttura-e-intensita.md 1.2 (braccia dirette: Moderata)',
     dove: [STRUTTURA_JS + ': strCopri (aggiunge solo con 3+ giorni e non principianti)', RICETTE_JS + ': buildProgram (aggiungiRegione per le alzate laterali)'],
-    check: (m, c) => volumeGruppi(m, c).filter(x => x.tipo === 'diretto').map(x => ({ sub: x.g, msg: x.g + ': solo ' + r1(x.d) + ' serie dirette a settimana (frazionarie ' + r1(x.v) + ')', gravita: 3 - x.d })) },
+    check: (m, c) => volumeGruppi(m, c).filter(x => x.tipo === 'diretto').map(x => ({ sub: x.g, sev: x.g === 'avambracci' ? 1 : 3, msg: x.g + ': solo ' + r1(x.d) + ' serie dirette a settimana (frazionarie ' + r1(x.v) + ')', gravita: 3 - x.d })) },
   { id: 'FRQ-01', nome: 'Grande gruppo allenato meno di 2 volte a settimana', sev: 4, forza: 'Solida', fonte: 'ACSM 2026 (137 revisioni): ogni grande gruppo almeno 2 sedute a settimana',
     dove: [ONB_JS + ': splitFor / splitPerFrequenza', RICETTE_JS + ': RICETTE (ricette per tipo di giorno) e buildProgram (nEs: pochi esercizi per seduta)', 'js/coach/metodi-momenti.js: METODI (split dei metodi famosi)'],
     check: (m, c) => {
@@ -554,6 +570,10 @@ function volumeGruppi(m, c) {
     const piccolo = def.classe !== 'grande';
     const applicabile = !piccolo || (def.classe === 'core' ? c.days >= 3 : (c.days >= PICCOLI_GIORNI_MIN && c.minutes >= PICCOLI_MINUTI_MIN && c.level !== 'principiante'));
     if (!applicabile) return;
+    if (def.soloDiretto) {   /* avambracci: solo la presenza di un esercizio diretto, per avanzati in ipertrofia con tempo (Convenzione) */
+      if (c.tipoObiettivo === 'ipertrofia' && c.level === 'avanzato' && c.days >= 4 && c.minutes >= 60 && d < DIRETTE_MIN) out.push({ g, tipo: 'diretto', v, d, classe: def.classe });
+      return;
+    }
     let range = def.classe === 'core' ? null : VOLUME_SETT[c.tipoObiettivo][c.level][def.classe];
     if (g === 'glutei' && c.goals.indexOf('glutei') !== -1) range = VOLUME_GLUTEI_OBIETTIVO[c.level];
     const richiesto = req.indexOf(g) !== -1;
@@ -685,6 +705,12 @@ function profilo(goals, level, days, minutes, luogo, fastidi, sex, eta, modo) {
     seme: 'collaudo|' + id + '|' + Math.floor(rng() * 3) };
   return p;
 }
+function pesoProfilo(p) {
+  if (PESI_UNIFORMI) return 1;
+  const v = { obiettivo: p.goals.join('+'), livello: p.level, giorni: String(p.days), minuti: String(p.minutes), luogo: p.luogo, fastidi: p.fastidi.join('+') || 'nessuno', sesso: p.sex, fasciaEta: p.fasciaEta };
+  return Object.keys(v).reduce((t, d) => t * ((PESI_POPOLAZIONE[d] && PESI_POPOLAZIONE[d][v[d]]) || 1), 1);
+}
+let PESI_UNIFORMI = false;
 function matrice(modo) {
   const out = [];
   const completa = modo === 'completa';
@@ -768,14 +794,15 @@ function profiloCompatto(p) {
 function eseguiMatrice(profili, opz) {
   const classi = new Map();
   const dimensioni = { livello: {}, obiettivo: {}, giorni: {}, minuti: {}, luogo: {}, fastidi: {}, sesso: {}, fasciaEta: {}, metodo: {} };
-  const tot = { profili: 0, errori: 0, conFallimenti: 0, conGravi: 0, conMetodo: 0, perSev: {}, perMetodo: {}, scemaSettimaneDiverse: 0, fallimentiTotali: 0 };
+  const tot = { pesoTotale: 0, profili: 0, errori: 0, conFallimenti: 0, conGravi: 0, conMetodo: 0, perSev: {}, perMetodo: {}, scemaSettimaneDiverse: 0, fallimentiTotali: 0 };
   const rngRes = mulberry32(20261005);
   const K = 40;
   const t0 = Date.now();
   let ultimo = 0;
   profili.forEach((p, idx) => {
     const a = analizza(p, opz.solo);
-    tot.profili++;
+    const wp = pesoProfilo(p);
+    tot.profili++; tot.pesoTotale += wp;
     if (!a.prog) tot.errori++;
     if (a.prog && a.prog.metodo) { tot.conMetodo++; tot.perMetodo[a.prog.metodo] = (tot.perMetodo[a.prog.metodo] || 0) + 1; }
     if (a.prog && a.prog.scheme && a.prog.scheme.settimane !== a.prog.settimane) tot.scemaSettimaneDiverse++;
@@ -793,8 +820,8 @@ function eseguiMatrice(profili, opz) {
       nFall++;
       if (t.sev >= 4) gravi = true;
       let cl = classi.get(key);
-      if (!cl) { cl = { chiave: key, codice: t.crit.id, sub: t.f.sub || '', nome: t.crit.nome, sev: t.sev, forza: t.crit.forza, fonte: t.crit.fonte, dove: t.crit.dove, n: 0, occorrenze: 0, res: [], visti: 0, peggiore: null, perDim: {} }; classi.set(key, cl); }
-      cl.n++; cl.occorrenze += conteggi.get(key);
+      if (!cl) { cl = { chiave: key, codice: t.crit.id, sub: t.f.sub || '', nome: t.crit.nome, sev: t.sev, forza: t.crit.forza, fonte: t.crit.fonte, dove: t.crit.dove, n: 0, w: 0, occorrenze: 0, res: [], visti: 0, peggiore: null, perDim: {} }; classi.set(key, cl); }
+      cl.n++; cl.w += wp; cl.occorrenze += conteggi.get(key);
       Object.keys(dimVals).forEach(d => { cl.perDim[d] = cl.perDim[d] || {}; cl.perDim[d][dimVals[d]] = (cl.perDim[d][dimVals[d]] || 0) + 1; });
       cl.visti++;
       const cand = () => ({ profilo: p, msg: t.f.msg, gravita: t.f.gravita, tabella: tabellaSettimana(a.m), metodo: a.prog && a.prog.metodo || null });
@@ -803,7 +830,7 @@ function eseguiMatrice(profili, opz) {
     });
     tot.fallimentiTotali += nFall;
     if (nFall) tot.conFallimenti++;
-    if (gravi) tot.conGravi++;
+    if (gravi) { tot.conGravi++; tot.pesoGravi = (tot.pesoGravi || 0) + wp; }
     const dimTot = Object.assign({}, dimVals, { obiettivo: p.goals.join('+') });
     Object.keys(dimTot).forEach(d => { const o = dimensioni[d][dimTot[d]] = dimensioni[d][dimTot[d]] || { n: 0, gravi: 0, fall: 0 }; o.n++; if (gravi) o.gravi++; o.fall += nFall; });
     if (!opz.quiet && Date.now() - ultimo > 2000) { ultimo = Date.now(); process.stderr.write('\r  ' + (idx + 1) + '/' + profili.length + ' profili...'); }
@@ -867,7 +894,7 @@ function gitInfo() {
 
 function costruisciRisultato(profili, esec, opz) {
   const { classi, dimensioni, tot } = esec;
-  const elenco = [...classi.values()].map(cl => ({ ...cl, pct: cl.n / tot.profili * 100, impatto: cl.n / tot.profili * PESO_SEV[cl.sev] * 100 }));
+  const elenco = [...classi.values()].map(cl => ({ ...cl, pct: cl.n / tot.profili * 100, pctPesata: cl.w / tot.pesoTotale * 100, impatto: cl.w / tot.pesoTotale * PESO_SEV[cl.sev] * 100 }));
   elenco.sort((a, b) => b.impatto - a.impatto || b.n - a.n);
   const perCodice = {};
   elenco.forEach(cl => { const o = perCodice[cl.codice] = perCodice[cl.codice] || { codice: cl.codice, nome: cl.nome, sev: cl.sev, forza: cl.forza, dove: cl.dove, fonte: cl.fonte, n: 0 }; o.n = Math.max(o.n, cl.n); });
