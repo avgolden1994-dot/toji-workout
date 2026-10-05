@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 64" width="108" height="64" role="img" aria-label="3in">
+  <title>3in - direzione C «Timer»</title>
+  <!-- Wordmark a segmenti, come la cifra di un cronometro: richiama timer di recupero e numeri tabellari (css/base.css:161, font-variant-numeric: tabular-nums).
+       Raggio dei segmenti 2 = piccoli angoli morbidi dell'app. Colori come A: chiaro --primary #c2410c / scuro #fb8b3c (css/base.css:86,38). -->
+  <style>
+    .ink-f{fill:#0e0e12}.acc-f{fill:#c2410c}
+    @media (prefers-color-scheme: dark){.ink-f{fill:#f3f3f6}.acc-f{fill:#fb8b3c}}
+  </style>
+  <!-- 3 a sette segmenti (a, b, g, c, d), in arancio -->
+  <g class="acc-f">
+    <rect x="4" y="4" width="24" height="10" rx="2"/>
+    <rect x="4" y="27" width="24" height="10" rx="2"/>
+    <rect x="4" y="50" width="24" height="10" rx="2"/>
+    <rect x="30" y="4" width="10" height="27" rx="2"/>
+    <rect x="30" y="33" width="10" height="27" rx="2"/>
+  </g>
+  <!-- i e n a segmenti -->
+  <g class="ink-f">
+    <rect x="52" y="4" width="10" height="10" rx="2"/>
+    <rect x="52" y="24" width="10" height="36" rx="2"/>
+    <rect x="70" y="24" width="36" height="10" rx="2"/>
+    <rect x="70" y="36" width="10" height="24" rx="2"/>
+    <rect x="96" y="36" width="10" height="24" rx="2"/>
+  </g>
+</svg>
