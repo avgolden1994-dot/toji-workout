@@ -165,7 +165,10 @@ test('lo schema coincide con schemaDi dove la regex risponde (affondi e step-up 
 });
 
 /* ---------------------------------------------------------------------------------------------------------------- crediti (registro B6) */
-const ECCEZIONI_CREDITO_PIENO = ['Stacco da Terra (Deadlift)', 'Stacco con Trap Bar', 'Hyperextension (Lombari)', 'Scrollate (Shrug)', 'Farmer Walk'];
+/* W1-T5: le stesse ragioni per le righe nuove: Stacco in Deficit (come lo stacco da terra), Scrollate con Manubri (trapezio), Tibialis Raise (tibiale anteriore),
+   Suitcase Carry (trasporto: 0,5 come il Farmer Walk) */
+const ECCEZIONI_CREDITO_PIENO = ['Stacco da Terra (Deadlift)', 'Stacco con Trap Bar', 'Hyperextension (Lombari)', 'Scrollate (Shrug)', 'Farmer Walk',
+  'Stacco in Deficit', 'Scrollate con Manubri', 'Tibialis Raise', 'Suitcase Carry'];
 
 test('le unita di volume sono le 15 di B6 e ogni muscolo di MUSCOLI ha la sua (o nessuna)', () => {
   assert.deepStrictEqual(UNITA, ['petto', 'dorsali', 'schiena_spessore', 'quadricipiti', 'femorali', 'grande_gluteo', 'adduttori', 'abduttori', 'polpacci',
@@ -205,8 +208,10 @@ test('crediti 0 / 0,5 / 1 (B6): 1 sull\'unita del bersaglio (eccezioni elencate)
 test('le eccezioni al credito pieno sono solo quelle scritte, ognuna con la sua ragione', () => {
   assert.deepStrictEqual(LIB.map(e => pulito(e.name)).filter(n => ATTR[n].eccezione).sort(), ECCEZIONI_CREDITO_PIENO.slice().sort());
   ECCEZIONI_CREDITO_PIENO.forEach(n => assert.ok(ATTR[n].eccezione.length > 40, n));
-  ['Stacco da Terra (Deadlift)', 'Stacco con Trap Bar', 'Hyperextension (Lombari)', 'Scrollate (Shrug)'].forEach(n => assert.strictEqual(UDM[DETT[n][7]], null, n + ': ha un\'unita, nessuna eccezione'));
+  ['Stacco da Terra (Deadlift)', 'Stacco con Trap Bar', 'Hyperextension (Lombari)', 'Scrollate (Shrug)', 'Stacco in Deficit', 'Scrollate con Manubri', 'Tibialis Raise']
+    .forEach(n => assert.strictEqual(UDM[DETT[n][7]], null, n + ': ha un\'unita, nessuna eccezione'));
   assert.deepStrictEqual(ATTR['Farmer Walk'].muscoli, { addome: 0.5 });
+  assert.deepStrictEqual(ATTR['Suitcase Carry'].muscoli, { addome: 0.5 }, 'come il Farmer Walk: un trasporto vale 0,5 all\'addome');
 });
 
 test('i femorali valgono 0 in ogni squat e nella leg press (Kubo 2019); gli stabilizzatori non contano (SEL-01)', () => {
@@ -230,11 +235,19 @@ test('i femorali valgono 0 in ogni squat e nella leg press (Kubo 2019); gli stab
 /* ---------------------------------------------------------------------------------------------------------------- stress per zona (MOD-01) */
 test('stress: ogni coppia esercizio-zona dell\'elenco esperto del collaudo e 2 (forte) o almeno 1 (cautela): MOD-01 «ok»', () => {
   const CORREZIONI_CAUTELA = { 'Calf Raise alla Leg Press|ginocchia': 'la regex «leg press» lo prende per nome, ma a ginocchia ferme non carica il ginocchio' };
+  /* W1-T5: dove la regex dell'elenco esperto (sul nome) non vede bene un esercizio nuovo: [stress voluto, motivo]. Una riga per ogni caso */
+  const CORREZIONI_NUOVI = {
+    'Squat con Pausa|schiena': [2, 'variante dello Squat con Bilanciere (bilanciere sulla schiena): la regex del collaudo cerca «squat con bilanciere» e non lo prende per nome'],
+    'Squat su Scatola|ginocchia': [1, 'è la modifica dello squat per le ginocchia delicate (si siede su una scatola alta): la regex «squat» lo darebbe «forte»; cautela'],
+    'Step-up Basso|ginocchia': [1, 'è il gradino basso per le ginocchia delicate (recupero §3: «step-up bassi»): la regex «step-up» lo darebbe «forte»; cautela']
+  };
   let forti = 0;
   LIB.forEach(e => {
     const n = pulito(e.name), x = attr(n);
     Object.keys(CTRL).forEach(f => {
       const s = x.stress[ZONA_DI_FASTIDIO[f]];
+      const corr = CORREZIONI_NUOVI[n + '|' + f];
+      if (corr) { assert.strictEqual(s, corr[0], n + ': ' + f + ' ' + corr[1]); assert.ok(corr[1].length > 20); return; }
       if (CTRL[f].forte.test(n)) { forti++; assert.strictEqual(s, 2, n + ': ' + f + ' forte nel collaudo, stress ' + s); }
       else {
         assert.notStrictEqual(s, 2, n + ': stress 2 per ' + f + ' ma non e nell\'elenco esperto (forte)');
@@ -363,7 +376,9 @@ const DIFFERENZE = [
   ['STRESS_ZONA', 'Crunch alla Macchina', 'schiena: assente → stress 1', 'elenco esperto del collaudo (cautela)'],
   ['STRESS_ZONA', 'Woodchop ai Cavi (Rotazioni)', 'schiena: assente → stress 1', 'elenco esperto del collaudo (cautela)'],
   ['STRESS_ZONA', 'Leg Raise alla Sedia Romana', 'schiena: assente → stress 1', 'elenco esperto del collaudo (cautela)'],
-  ['STRESS_ZONA', 'Sit-up a Ginocchia Piegate', 'schiena: assente → stress 1', 'elenco esperto del collaudo (cautela)']
+  ['STRESS_ZONA', 'Sit-up a Ginocchia Piegate', 'schiena: assente → stress 1', 'elenco esperto del collaudo (cautela)'],
+  /* dopo l'unione dell'onda 0 (W0-T5, B25): RISCHIO.spalle toglie anche i piegamenti declinati (caricano la spalla come la panca inclinata); l'elenco del collaudo li tiene in cautela */
+  ['RISCHIO', 'Piegamenti Declinati (Piedi Rialzati)', 'spalla: lo toglie → stress 1', 'W0-T5: RISCHIO.spalle toglie i piegamenti declinati (caricano la spalla come la panca inclinata); l’elenco esperto del collaudo li tiene in cautela']
 ];
 
 function differenzeVere() {
@@ -426,7 +441,7 @@ test('contaVolume: serie frazionarie, dirette e sedute per unita, con conti fatt
   assert.deepStrictEqual(att('petto'), { frazionarie: 7, dirette: 7, sedute: 2 });
   assert.deepStrictEqual(att('deltoide_anteriore'), { frazionarie: 3.5, dirette: 0, sedute: 2 });   /* 4 x 0,5 + 3 x 0,5 */
   assert.deepStrictEqual(att('tricipiti'), { frazionarie: 3.5, dirette: 0, sedute: 2 });
-  assert.deepStrictEqual(att('dorsali'), { frazionarie: 3, dirette: 3, sedute: 1 });
+  assert.deepStrictEqual(att('dorsali'), { frazionarie: 3 + 1.5, dirette: 3, sedute: 2 });   /* lat machine 3 il lunedi + il rematore (pulley basso 3 x 0,5) il venerdi: W1-T5, i rematori danno 0,5 ai dorsali */
   assert.deepStrictEqual(att('schiena_spessore'), { frazionarie: 3, dirette: 3, sedute: 1 });
   assert.deepStrictEqual(att('bicipiti'), { frazionarie: 5, dirette: 2, sedute: 2 });   /* lat 1,5 + pulley 1,5 + curl 2; il lunedi 1,5 e il venerdi 3,5 */
   assert.deepStrictEqual(att('deltoide_laterale'), { frazionarie: 3, dirette: 3, sedute: 1 });

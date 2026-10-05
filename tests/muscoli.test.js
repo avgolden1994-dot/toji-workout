@@ -37,7 +37,7 @@ const stessoLavoro = (e, x) => famiglia(e) ? famiglia(x) === famiglia(e) : bersa
 const alt = (p, seduta) => { const n = nomeLib(p); return [...g('alternativeOggi')({ name: n }, [{ name: n }].concat((seduta || []).map(s => ({ name: nomeLib(s) }))))].map(a => pulito(a.ex.name)); };
 
 test('ogni esercizio della libreria ha un muscolo bersaglio valido', () => {
-  assert.strictEqual(LIB.length, 140);
+  assert.strictEqual(LIB.length, 169);   /* 140 + i 29 di W1-T5 */
   LIB.forEach(e => {
     const b = bersaglio(e.name);
     assert.ok(b && MUSCOLI[b], 'senza bersaglio: ' + e.name);
@@ -81,9 +81,9 @@ test('Macchinario occupato: per ogni esercizio ogni alternativa ha lo stesso mus
 test('adduttori e abduttori non si scambiano', () => {
   assert.deepStrictEqual(alt('Abductor Machine').sort(), ['Abduzioni ai Cavi', 'Slanci Laterali a Terra']);
   assert.ok(alt('Slanci Laterali a Terra').indexOf('Abductor Machine') !== -1);
-  /* adduttori: Adductor Machine e Squat Sumo, l una l alternativa dell altro (mai l Abductor Machine) */
-  assert.deepStrictEqual(alt('Adductor Machine'), ['Squat Sumo']);
-  assert.deepStrictEqual(alt('Squat Sumo'), ['Adductor Machine']);
+  /* adduttori: Adductor Machine, Squat Sumo e (W1-T5) Cossack Squat e Copenhagen Plank, ognuno alternativa degli altri (mai l Abductor Machine) */
+  const ADDUTTORI = ['Adductor Machine', 'Copenhagen Plank', 'Cossack Squat', 'Squat Sumo'];
+  ADDUTTORI.forEach(n => assert.deepStrictEqual(alt(n).sort(), ADDUTTORI.filter(x => x !== n), n));
   ['Abductor Machine', 'Slanci Laterali a Terra', 'Abduzioni ai Cavi'].forEach(n => assert.ok(alt(n).every(x => bersaglio(nomeLib(x)) === 'abduttori'), n));
 });
 
@@ -97,9 +97,9 @@ test('Squat Sumo: adduttori, a manubri, nella libreria e nei suoi collegamenti',
   assert.strictEqual(g('schemaDi')(n), 'squat');
   /* e un accessorio per gli adduttori: non prende il posto del fondamentale delle gambe */
   assert.strictEqual(g('SLOT_DEF').squat(LIB.find(e => e.name === n)), false);
-  /* dal Macchinario occupato all Adductor Machine e ritorno; il sostituto pure */
-  assert.strictEqual(pulito(g('sostituto')(n, PREFS(), []).name), 'Adductor Machine');
-  assert.strictEqual(pulito(g('sostituto')(nomeLib('Adductor Machine'), PREFS(), []).name), 'Squat Sumo');
+  /* dal Macchinario occupato all Adductor Machine e ritorno; il sostituto pure: sempre un esercizio degli adduttori (con W1-T5 anche Cossack Squat e Copenhagen Plank) */
+  assert.strictEqual(pulito(g('sostituto')(n, PREFS(), []).name), 'Cossack Squat', 'stesso movimento (squat) e stesso tipo (multiarticolare) prima di tutto');
+  assert.ok(['Adductor Machine', 'Copenhagen Plank', 'Cossack Squat'].indexOf(pulito(g('sostituto')(nomeLib('Adductor Machine'), PREFS(), []).name)) !== -1);
   /* ginocchia delicate: niente squat sumo */
   assert.ok(!g('consentito')(n, Object.assign(PREFS(), { fastidi: ['ginocchia'] })));
 });
@@ -119,8 +119,9 @@ test('multiarticolari totali: lo stacco da terra si scambia con chi allena tutta
     });
   });
   /* le alternative proposte (da confermare): gli altri stacchi da terra, mai un esercizio di un muscolo solo */
-  const tot = { 'Stacco da Terra (Deadlift)': ['Stacco Sumo', 'Stacco con Trap Bar'], 'Stacco con Trap Bar': ['Stacco Sumo', 'Stacco da Terra (Deadlift)'],
-    'Stacco Sumo': ['Stacco con Trap Bar', 'Stacco da Terra (Deadlift)'] };
+  const STACCHI = ['Stacco da Terra (Deadlift)', 'Stacco con Trap Bar', 'Stacco Sumo', 'Stacco in Deficit'];   /* W1-T5: lo stacco in deficit e la stessa famiglia */
+  const tot = {};
+  STACCHI.forEach(n => { tot[n] = STACCHI.filter(x => x !== n); });
   Object.keys(tot).forEach(n => {
     assert.strictEqual(famiglia(nomeLib(n)), 'catena_totale', n);
     assert.deepStrictEqual(alt(n).sort(), tot[n].slice().sort(), n);
@@ -128,12 +129,12 @@ test('multiarticolari totali: lo stacco da terra si scambia con chi allena tutta
     assert.ok(tot[n].indexOf(pulito(g('sostituto')(nomeLib(n), PREFS(), []).name)) !== -1, n + ': sostituto');
   });
   /* fuori dalla famiglia: catena posteriore senza quadricipiti (o senza femorali per squat e affondi) */
-  ['Stacco Rumeno', 'Good Morning', 'Hyperextension (Lombari)', 'Squat con Bilanciere', 'Leg Press', 'Affondi in Camminata', 'Affondi Bulgari', 'Hip Thrust']
-    .forEach(n => assert.strictEqual(famiglia(nomeLib(n)), '', n));
+  ['Stacco Rumeno', 'Good Morning', 'Hyperextension (Lombari)', 'Squat con Bilanciere', 'Leg Press', 'Affondi in Camminata', 'Affondi Bulgari', 'Hip Thrust',
+    'Stacco Rumeno con Manubri', 'Stacco Rumeno a una Gamba', 'Kettlebell Swing', 'Hip Thrust con Manubrio'].forEach(n => assert.strictEqual(famiglia(nomeLib(n)), '', n));
   /* stacco rumeno e good morning restano distinti: non sono alternative l uno dell altro */
   assert.ok(alt('Stacco Rumeno').indexOf('Good Morning') === -1 && alt('Good Morning').indexOf('Stacco Rumeno') === -1);
   /* un muscolo solo resta sul suo bersaglio: l Hyperextension (lombari) propone ancora lo stacco da terra e quello con la trap bar (bersaglio erettori), che allenano anche i lombari */
-  assert.deepStrictEqual(alt('Hyperextension (Lombari)').sort(), ['Stacco con Trap Bar', 'Stacco da Terra (Deadlift)']);
+  assert.deepStrictEqual(alt('Hyperextension (Lombari)').sort(), ['Stacco con Trap Bar', 'Stacco da Terra (Deadlift)', 'Stacco in Deficit']);
   /* schiena delicata: tutti gli stacchi sono a rischio, nessun sostituto (lo stacco resta dov e) */
   assert.strictEqual(g('sostituto')(nomeLib('Stacco da Terra (Deadlift)'), Object.assign(PREFS(), { fastidi: ['schiena'] }), []), null);
   /* nella tendina: «Stesso lavoro», non un muscolo solo */
@@ -148,16 +149,17 @@ test('scelte confermate: bersagli che non cambiano', () => {
   assert.strictEqual(bersaglio('Good Morning'), 'femorali');
 });
 
-test('calf raise: solo polpacci', () => {
-  ['Calf Raise in Piedi', 'Calf Raise Seduto', 'Calf Raise alla Leg Press', 'Calf Raise a un Piede (Corpo Libero)'].forEach(n => {
+test('calf raise: solo polpacci (il tibialis raise non e un calf raise: bersaglio tibiale)', () => {
+  ['Calf Raise in Piedi', 'Calf Raise Seduto', 'Calf Raise alla Leg Press', 'Calf Raise a un Piede (Corpo Libero)', 'Calf Raise con Manubrio sul Gradino'].forEach(n => {
     const a = alt(n);
-    assert.strictEqual(a.length, 3, n);
+    assert.strictEqual(a.length, 4, n);
     assert.ok(a.every(x => /^Calf Raise/.test(x)), n + ': ' + a.join(', '));
   });
 });
 
-test('scrollate: niente alzate laterali (il trapezio superiore non ha altri esercizi)', () => {
-  assert.deepStrictEqual(alt('Scrollate (Shrug)'), []);
+test('scrollate: niente alzate laterali (il trapezio superiore ha solo le due scrollate: col bilanciere e coi manubri, P13)', () => {
+  assert.deepStrictEqual(alt('Scrollate (Shrug)'), ['Scrollate con Manubri']);
+  assert.deepStrictEqual(alt('Scrollate con Manubri'), ['Scrollate (Shrug)']);
 });
 
 test('crunch: addominali, mai Bird Dog o esercizi di stabilita', () => {
@@ -207,7 +209,7 @@ test('schemi di movimento: niente falsi multiarticolari', () => {
 /* palestra completa, nessun fastidio, seduta vuota */
 const PREFS = () => ({ luogo: 'palestra', fastidi: [], attrezziPalestra: null, graditi: [], odiati: [], attrezzi: 'indifferente' });
 
-test('Esercizi alternativi (alternativeDi): per tutti i 140 esercizi solo lo stesso muscolo bersaglio (o la stessa famiglia totale), al massimo 6', () => {
+test('Esercizi alternativi (alternativeDi): per tutti gli esercizi solo lo stesso muscolo bersaglio (o la stessa famiglia totale), al massimo 6', () => {
   let coppie = 0, senza = [];
   LIB.forEach(e => {
     const a = g('alternativeDi')(e.name, PREFS(), []);
@@ -222,9 +224,9 @@ test('Esercizi alternativi (alternativeDi): per tutti i 140 esercizi solo lo ste
     /* e lo stesso elenco che propone Macchinario occupato senza il vincolo dell attrezzo diverso */
     assert.deepStrictEqual(a.map(x => x.name), g('alternativeStessoMuscolo')(e.name, PREFS(), []).map(x => x.ex.name));
   });
-  assert.ok(coppie > 600, 'troppe poche alternative in tutto: ' + coppie);
+  assert.ok(coppie > 800, 'troppe poche alternative in tutto: ' + coppie);
   /* mai un altro muscolo, anche se restano meno scelte: gli unici senza alternativa */
-  assert.deepStrictEqual(senza.sort(), ['Scrollate (Shrug)']);
+  assert.deepStrictEqual(senza.sort(), ['Tibialis Raise']);   /* il tibiale anteriore ha un solo esercizio (W1-T5); le scrollate ora sono due */
 });
 
 test('Esercizi alternativi: restano i filtri (gia in seduta, attrezzi, fastidi, odiati)', () => {
@@ -240,7 +242,7 @@ test('Esercizi alternativi: restano i filtri (gia in seduta, attrezzi, fastidi, 
   assert.ok(!g('alternativeDi')(curl, odiati, []).some(x => x.name === cavi));
 });
 
-test('sostituto: per tutti i 140 esercizi lo stesso muscolo bersaglio (o la stessa famiglia totale), oppure null (mai un altro muscolo)', () => {
+test('sostituto: per tutti gli esercizi lo stesso muscolo bersaglio (o la stessa famiglia totale), oppure null (mai un altro muscolo)', () => {
   let nulli = [];
   LIB.forEach(e => {
     const s = g('sostituto')(e.name, PREFS(), []);
@@ -250,7 +252,7 @@ test('sostituto: per tutti i 140 esercizi lo stesso muscolo bersaglio (o la stes
     assert.ok(stessoLavoro(e.name, s.name), pulito(e.name) + ' -> ' + pulito(s.name));
     if (!famiglia(e.name)) assert.strictEqual(bersaglio(s.name), bersaglio(e.name), pulito(e.name) + ' -> ' + pulito(s.name));
   });
-  assert.deepStrictEqual(nulli.sort(), ['Scrollate (Shrug)']);
+  assert.deepStrictEqual(nulli.sort(), ['Tibialis Raise']);
   assert.strictEqual(g('sostituto')('Esercizio che non esiste', PREFS(), []), null);
 });
 
@@ -333,7 +335,7 @@ test('SEL-02 (a): Stacco con Trap Bar non e un esercizio dei quadricipiti; resta
   });
   ['Leg Extension', 'Goblet Squat'].forEach(x => assert.ok(!alt(x).some(y => /Trap Bar/.test(y)), x));
   /* lui scambia solo con gli altri stacchi da terra */
-  assert.deepStrictEqual(alt('Stacco con Trap Bar').sort(), ['Stacco Sumo', 'Stacco da Terra (Deadlift)']);
+  assert.deepStrictEqual(alt('Stacco con Trap Bar').sort(), ['Stacco Sumo', 'Stacco da Terra (Deadlift)', 'Stacco in Deficit']);
 });
 
 test('D-P11: Pullover con Manubrio allena i dorsali (petto secondario), gruppo schiena; le sue alternative sono tutte dorsali', () => {
@@ -420,4 +422,98 @@ test('SEL-02 (b) e D-P8: nessuno scambio per allungamento attraversa i gruppi o 
     assert.strictEqual(LIB.find(e => pulito(e.name) === da).group, LIB.find(e => pulito(e.name) === a).group, da + ' -> ' + a + ': gruppo diverso');
     assert.ok(!/croci|pullover/i.test(da + a), da + ' -> ' + a);
   });
+});
+
+/* ---- W1-T5 (CAS-13, SEL-03, SEL-04, D-P2, D-P3): i 29 esercizi nuovi, i dorsali dei rematori, la copertura sui dati ---- */
+const NUOVI_W1T5 = ['Stacco Rumeno con Manubri', 'Stacco Rumeno a una Gamba', 'Hip Thrust con Manubrio', 'Leg Curl con Asciugamano', 'Leg Curl in Piedi', 'Belt Squat',
+  'Squat con Pausa', 'Cossack Squat', 'Squat su Scatola', 'Step-up Basso', 'Sit-to-Stand dalla Panca', 'Calf Raise con Manubrio sul Gradino', 'Tibialis Raise',
+  'Trazioni Negative', 'Seal Row', 'Lat Pulldown con Elastico', 'Rematore agli Anelli', 'Stacco in Deficit', 'Floor Press con Manubri',
+  'Chest Press Inclinata alla Macchina', 'Panca con Pausa', 'Alzate Laterali con Elastico', 'Alzate Laterali Inclinate', 'Extrarotazione al Cavo',
+  'Face Pull con Elastico', 'Scrollate con Manubri', 'Suitcase Carry', 'Copenhagen Plank', 'Kettlebell Swing'];
+/* rinviati: il nome e preso per altro da una regex del generatore (Reverse Nordic: isoFem e RX_NORDIC; Wrist Curl: isoBic; Reverse Crunch: isoDeltP) */
+const RINVIATI_W1T5 = ['Reverse Nordic', 'Wrist Curl', 'Reverse Wrist Curl', 'Reverse Crunch'];
+const REMATORI_W1T5 = ['Rematore con Bilanciere', 'Rematore con Manubrio', 'T-Bar Row', 'Pulley Basso', 'Rematore alla Macchina', 'Rematore Inverso (Corpo Libero)',
+  'Rematore con Petto Appoggiato', 'Pulley Basso Presa Inversa', 'Pulley Basso a un Braccio', 'Rematore Presa Inversa (Yates)', 'Seal Row', 'Rematore agli Anelli'];
+const app5 = caricaApp({ ora: '2026-10-05T12:00:00' });
+/* prima dell integrazione la riga <script> di attributi-esercizi.js non e ancora in index.html (lo fa tools/integra-onda.js da docs/in-arrivo/w1-t2.json) */
+if (app5.g('typeof ATTRIBUTI') === 'undefined') vm.runInContext(fs.readFileSync(path.join(R, 'js/dati/attributi-esercizi.js'), 'utf8'), app5.ctx, { filename: 'js/dati/attributi-esercizi.js' });
+const ATTR5 = app5.json('ATTRIBUTI'), TECN5 = app5.json('TECNICA'), IMM5 = app5.json('IMMAGINI_ESERCIZI'), DETT5 = app5.json('DETTAGLI');
+
+test('W1-T5: i 29 esercizi nuovi ci sono una volta sola, con dettagli, attributi e scheda tecnica completi; i 4 rinviati no', () => {
+  assert.strictEqual(NUOVI_W1T5.length, 29);
+  assert.strictEqual(new Set(NUOVI_W1T5).size, 29);
+  NUOVI_W1T5.forEach(n => {
+    assert.strictEqual(LIB.filter(e => pulito(e.name) === n).length, 1, n + ': una sola voce in libreria');
+    assert.ok(DETT5[n] && (DETT5[n].length === 8 || DETT5[n].length === 9) && DETT5[n][7], n + ': riga di DETTAGLI con il bersaglio (8 voci, 9 se ha secondari)');
+    assert.ok(ATTR5[n], n + ': riga di ATTRIBUTI');
+    const t = TECN5[n];
+    assert.ok(t && t.m && t.s && t.c, n + ': scheda tecnica con muscoli, partenza e consiglio');
+    assert.ok(Array.isArray(t.e) && t.e.length >= 2 && Array.isArray(t.x) && t.x.length >= 2, n + ': esecuzione e errori');
+  });
+  RINVIATI_W1T5.forEach(n => {
+    assert.strictEqual(LIB.filter(e => pulito(e.name) === n).length, 0, n + ': rinviato, non in libreria');
+    assert.ok(!DETT5[n] && !ATTR5[n] && !TECN5[n], n + ': rinviato, senza righe');
+  });
+  /* niente doppioni con un nome gia in libreria (senza emoji, senza maiuscole) */
+  const visti = new Set(); LIB.forEach(e => { const k = pulito(e.name).toLowerCase(); assert.ok(!visti.has(k), 'doppione ' + k); visti.add(k); });
+});
+
+test('D-P2: gli esercizi nuovi escono senza disegno (nessuna voce in IMMAGINI_ESERCIZI): il segnaposto «Immagine in arrivo» e il percorso img/ vengono dal generico', () => {
+  NUOVI_W1T5.forEach(n => {
+    assert.ok(!(n in IMM5), n + ': ha un disegno, ma D-P2 dice di non farne');
+    assert.ok(/^img\/[a-z0-9-]+\.png$/.test(app5.chiama('immagineEsercizio', n)), n + ': percorso generico');
+  });
+});
+
+test('D-P3: gli attrezzi nuovi (elastico, kettlebell, anelli) sono dichiarati in ATTRIBUTI.attrezzo e in `serve`, mai al posto del corpo libero', () => {
+  const per = a => NUOVI_W1T5.filter(n => ATTR5[n].attrezzo === a);
+  assert.deepStrictEqual(per('elastico').sort(), ['Alzate Laterali con Elastico', 'Face Pull con Elastico', 'Lat Pulldown con Elastico']);
+  assert.deepStrictEqual(per('kettlebell'), ['Kettlebell Swing']);
+  assert.deepStrictEqual(per('anelli'), ['Rematore agli Anelli']);
+  ['elastico', 'kettlebell', 'anelli'].forEach(a => per(a).forEach(n => assert.ok(ATTR5[n].serve.some(s => s.split('|').indexOf(a) !== -1), n + ': serve ' + a)));
+  /* chi serve la panca la dichiara: il floor press no (sta a terra), il seal row si */
+  assert.deepStrictEqual(ATTR5['Seal Row'].serve, ['panca']);
+  assert.deepStrictEqual(ATTR5['Floor Press con Manubri'].serve, []);
+  /* conteggio per attrezzo dei 29 */
+  const conta = {}; NUOVI_W1T5.forEach(n => { conta[ATTR5[n].attrezzo] = (conta[ATTR5[n].attrezzo] || 0) + 1; });
+  assert.deepStrictEqual(conta, { manubri: 9, corpo: 8, macchina: 3, bilanciere: 3, elastico: 3, anelli: 1, cavo: 1, kettlebell: 1 });
+});
+
+test('W1-T5: i rematori danno 0,5 ai dorsali (prima il gran dorsale era nel testo ma non tra i secondari: nessun credito)', () => {
+  REMATORI_W1T5.forEach(n => {
+    assert.strictEqual(DETT5[n][7], 'schiena_spessore', n + ': il bersaglio resta lo spessore');
+    assert.ok(DETT5[n][8].split(' ').indexOf('dorsali') !== -1, n + ': dorsali tra i secondari di DETTAGLI');
+    assert.strictEqual(ATTR5[n].muscoli.schiena_spessore, 1, n);
+    assert.strictEqual(ATTR5[n].muscoli.dorsali, 0.5, n + ': 0,5 ai dorsali (scala 0/0,5/1 di B6, non 0,7)');
+  });
+  /* il lat resta bersaglio dei dorsali: i rematori non diventano esercizi dei dorsali e non scambiano con le trazioni */
+  assert.strictEqual(DETT5['Lat Machine'][7], 'dorsali');
+  assert.strictEqual(ATTR5['Lat Machine'].muscoli.dorsali, 1);
+  assert.ok(alt('Rematore con Bilanciere').indexOf('Rematore con Manubrio') !== -1);
+  assert.ok(!alt('Rematore con Manubrio').some(x => /Trazioni|Lat Machine/.test(x)));
+});
+
+test('MOD-12 sui dati (W1-T5): a casa con i manubri hinge, flessione del ginocchio, deltoide laterale e posteriore hanno una scelta; con l elastico anche la tirata verticale', () => {
+  const kit = (ammessi, serveOk) => Object.keys(ATTR5).filter(n => ammessi.indexOf(ATTR5[n].attrezzo) !== -1 && ATTR5[n].serve.every(s => serveOk.indexOf(s) !== -1));
+  const cella = {
+    hinge: n => ATTR5[n].schema === 'hinge',
+    femoraliFlessione: n => ATTR5[n].schema === 'isolamento' && ATTR5[n].muscoli.femorali === 1,
+    deltoideLaterale: n => ATTR5[n].muscoli.deltoide_laterale === 1,
+    deltoidePosteriore: n => ATTR5[n].muscoli.deltoide_posteriore === 1,
+    tirataV: n => ATTR5[n].schema === 'tirataV'
+  };
+  const manubri = kit(['manubri', 'corpo'], []);
+  assert.deepStrictEqual(manubri.filter(cella.hinge).sort(), ['Stacco Rumeno a una Gamba', 'Stacco Rumeno con Manubri']);   /* prima: nessuno */
+  assert.ok(manubri.filter(cella.femoraliFlessione).length >= 1, 'flessione del ginocchio: ' + manubri.filter(cella.femoraliFlessione));
+  assert.ok(manubri.filter(cella.deltoideLaterale).length >= 2, 'deltoide laterale');
+  assert.ok(manubri.filter(cella.deltoidePosteriore).length >= 1, 'deltoide posteriore');
+  /* con una panca i posteriori sono due (Y-raise) */
+  assert.ok(kit(['manubri', 'corpo'], ['panca']).filter(cella.deltoidePosteriore).length >= 2);
+  /* corpo libero e basta: la flessione del ginocchio c e (asciugamano), il resto aspetta gli attrezzi dichiarati (W2-T5/T6) */
+  const corpo = kit(['corpo'], []);
+  assert.deepStrictEqual(corpo.filter(cella.femoraliFlessione), ['Leg Curl con Asciugamano']);
+  assert.strictEqual(corpo.filter(cella.hinge).length, 0);
+  const elastico = kit(['corpo', 'elastico'], ['elastico']);
+  ['deltoideLaterale', 'deltoidePosteriore', 'tirataV'].forEach(k => assert.ok(elastico.filter(cella[k]).length >= 1, k + ' con l elastico'));
+  assert.deepStrictEqual(kit(['corpo', 'elastico', 'anelli', 'kettlebell'], ['elastico', 'anelli', 'kettlebell']).filter(cella.hinge), ['Kettlebell Swing']);
 });

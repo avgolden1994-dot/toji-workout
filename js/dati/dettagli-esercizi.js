@@ -63,6 +63,7 @@ const MUSCOLI = {
   addome_basso:        { gruppo: 'core',    sub: 'Addominali', nome: 'Retto dell’addome (parte bassa)' },
   obliqui:             { gruppo: 'core',    sub: 'Obliqui e anti-rotazione', nome: 'Obliqui' },
   stabilita:           { gruppo: 'core',    sub: 'Stabilità', nome: 'Core profondo (stabilità)' },
+  tibiale:             { gruppo: 'gambe',   sub: 'Polpacci', nome: 'Tibiale anteriore' },   /* W1-T5: Tibialis Raise (unico esercizio: nessuna alternativa) */
   /* solo come muscoli secondari */
   avambracci:          { gruppo: 'braccia', sub: 'Avambracci', nome: 'Avambracci (presa)' },
   flessori_anca:       { gruppo: 'core',    sub: 'Addominali', nome: 'Flessori dell’anca' }
@@ -82,7 +83,7 @@ const MUSCOLI = {
 const MULTIARTICOLARI_TOTALI = {
   catena_totale: { nome: 'Catena posteriore e gambe (multiarticolare totale)',
     muscoli: ['erettori', 'grande_gluteo', 'femorali', 'quadricipiti'],
-    esercizi: ['Stacco da Terra (Deadlift)', 'Stacco con Trap Bar', 'Stacco Sumo'] }
+    esercizi: ['Stacco da Terra (Deadlift)', 'Stacco con Trap Bar', 'Stacco Sumo', 'Stacco in Deficit'] }
 };
 
 /* perche l attacco o la presa contano: una nota per famiglia di esercizi, con la fonte */
@@ -126,17 +127,17 @@ const DETTAGLI = {
   'Trazioni Presa Inversa (Chin-up)': ['C', 'Sbarra', 'Presa supina alla larghezza delle spalle', 'Dorsali · larghezza', 'Gran dorsale, bicipite', 'Romboidi, trapezio inferiore', 'trazioni', 'dorsali', 'bicipiti schiena_spessore'],
   'Lat Machine': ['M', 'Cavo', 'Barra lunga, presa prona larga', 'Dorsali · larghezza', 'Gran dorsale', 'Grande rotondo, bicipite', 'lat', 'dorsali', 'bicipiti'],
   'Lat Machine Presa Inversa': ['M', 'Cavo', 'Barra, presa supina stretta', 'Dorsali · larghezza', 'Gran dorsale, bicipite', 'Grande rotondo', 'lat', 'dorsali', 'bicipiti'],
-  'Rematore con Bilanciere': ['L', 'Bilanciere', 'Presa prona, busto inclinato a 45°', 'Spessore · dorsali e romboidi', 'Gran dorsale, romboidi, trapezio medio', 'Erettori spinali, bicipite, deltoide posteriore', '', 'schiena_spessore', 'erettori bicipiti deltoide_posteriore'],
-  'Rematore con Manubrio': ['L', 'Manubri', 'Un braccio, appoggio su una panca', 'Spessore · dorsali e romboidi', 'Gran dorsale, romboidi', 'Bicipite, deltoide posteriore', '', 'schiena_spessore', 'bicipiti deltoide_posteriore'],
-  'T-Bar Row': ['M', 'Macchina', 'Maniglia a V, presa neutra', 'Spessore · dorsali e romboidi', 'Gran dorsale, romboidi, trapezio medio', 'Erettori spinali, bicipite', '', 'schiena_spessore', 'erettori bicipiti'],
-  'Pulley Basso': ['M', 'Cavo', 'Triangolo, presa neutra stretta', 'Spessore · dorsali e romboidi', 'Gran dorsale, romboidi, trapezio medio', 'Bicipite, deltoide posteriore', 'pulley', 'schiena_spessore', 'bicipiti deltoide_posteriore'],
+  'Rematore con Bilanciere': ['L', 'Bilanciere', 'Presa prona, busto inclinato a 45°', 'Spessore · dorsali e romboidi', 'Gran dorsale, romboidi, trapezio medio', 'Erettori spinali, bicipite, deltoide posteriore', '', 'schiena_spessore', 'dorsali erettori bicipiti deltoide_posteriore'],
+  'Rematore con Manubrio': ['L', 'Manubri', 'Un braccio, appoggio su una panca', 'Spessore · dorsali e romboidi', 'Gran dorsale, romboidi', 'Bicipite, deltoide posteriore', '', 'schiena_spessore', 'dorsali bicipiti deltoide_posteriore'],
+  'T-Bar Row': ['M', 'Macchina', 'Maniglia a V, presa neutra', 'Spessore · dorsali e romboidi', 'Gran dorsale, romboidi, trapezio medio', 'Erettori spinali, bicipite', '', 'schiena_spessore', 'dorsali erettori bicipiti'],
+  'Pulley Basso': ['M', 'Cavo', 'Triangolo, presa neutra stretta', 'Spessore · dorsali e romboidi', 'Gran dorsale, romboidi, trapezio medio', 'Bicipite, deltoide posteriore', 'pulley', 'schiena_spessore', 'dorsali bicipiti deltoide_posteriore'],
   'Pullover ai Cavi': ['M', 'Cavo', 'Barra dritta o corda, cavo alto', 'Dorsali · larghezza', 'Gran dorsale', 'Grande rotondo, tricipite (capo lungo)', '', 'dorsali', 'tricipiti'],
   'Hyperextension (Lombari)': ['C', 'Panca per lombari', 'Busto dritto, glutei e lombari', 'Lombari e catena posteriore', 'Erettori spinali', 'Glutei, femorali', '', 'erettori', 'grande_gluteo femorali'],
-  'Rematore alla Macchina': ['M', 'Macchina', 'Petto appoggiato, maniglie neutre', 'Spessore · dorsali e romboidi', 'Gran dorsale, romboidi, trapezio medio', 'Bicipite, deltoide posteriore', '', 'schiena_spessore', 'bicipiti deltoide_posteriore'],
+  'Rematore alla Macchina': ['M', 'Macchina', 'Petto appoggiato, maniglie neutre', 'Spessore · dorsali e romboidi', 'Gran dorsale, romboidi, trapezio medio', 'Bicipite, deltoide posteriore', '', 'schiena_spessore', 'dorsali bicipiti deltoide_posteriore'],
   'Pulldown a Braccia Tese': ['M', 'Cavo', 'Corda o barra dritta, cavo alto', 'Dorsali · larghezza', 'Gran dorsale', 'Grande rotondo, tricipite (capo lungo)', '', 'dorsali', 'tricipiti'],
   'Trazioni Assistite (Macchina)': ['M', 'Macchina', 'Presa prona larga, ginocchia sul cuscino', 'Dorsali · larghezza', 'Gran dorsale', 'Bicipite, romboidi', 'trazioni', 'dorsali', 'bicipiti schiena_spessore'],
-  'Rematore Inverso (Corpo Libero)': ['C', 'Sbarra bassa o anelli', 'Presa prona, corpo teso', 'Spessore · dorsali e romboidi', 'Gran dorsale, romboidi, trapezio medio', 'Bicipite, deltoide posteriore, core', '', 'schiena_spessore', 'bicipiti deltoide_posteriore stabilita'],
-  'Rematore con Petto Appoggiato': ['L', 'Manubri', 'Panca inclinata, petto appoggiato', 'Spessore · dorsali e romboidi', 'Gran dorsale, romboidi, trapezio medio', 'Bicipite, deltoide posteriore', '', 'schiena_spessore', 'bicipiti deltoide_posteriore'],
+  'Rematore Inverso (Corpo Libero)': ['C', 'Sbarra bassa o anelli', 'Presa prona, corpo teso', 'Spessore · dorsali e romboidi', 'Gran dorsale, romboidi, trapezio medio', 'Bicipite, deltoide posteriore, core', '', 'schiena_spessore', 'dorsali bicipiti deltoide_posteriore stabilita'],
+  'Rematore con Petto Appoggiato': ['L', 'Manubri', 'Panca inclinata, petto appoggiato', 'Spessore · dorsali e romboidi', 'Gran dorsale, romboidi, trapezio medio', 'Bicipite, deltoide posteriore', '', 'schiena_spessore', 'dorsali bicipiti deltoide_posteriore'],
   'Lat Machine a un Braccio': ['M', 'Cavo', 'Maniglia singola', 'Dorsali · larghezza', 'Gran dorsale', 'Grande rotondo, bicipite', 'lat', 'dorsali', 'bicipiti'],
 
   /* ---------------- GAMBE ---------------- */
@@ -233,10 +234,10 @@ const DETTAGLI = {
 
   /* ---------------- VARIANTI (attacco o presa che cambiano il muscolo) ---------------- */
   'Pulley Basso Barra Larga (Presa Prona)': ['M', 'Cavo', 'Barra larga, presa prona', 'Spessore · dorsali e romboidi', 'Trapezio medio e inferiore, romboidi, deltoide posteriore', 'Gran dorsale, bicipite', 'pulley', 'schiena_spessore', 'deltoide_posteriore dorsali bicipiti'],
-  'Pulley Basso Presa Inversa': ['M', 'Cavo', 'Barra, presa supina', 'Spessore · dorsali e romboidi', 'Gran dorsale (parte bassa), bicipite', 'Romboidi', 'pulley', 'schiena_spessore', 'bicipiti'],
-  'Pulley Basso a un Braccio': ['M', 'Cavo', 'Maniglia singola, presa neutra', 'Spessore · dorsali e romboidi', 'Gran dorsale', 'Romboidi, bicipite, obliqui', 'pulley', 'schiena_spessore', 'bicipiti obliqui'],
+  'Pulley Basso Presa Inversa': ['M', 'Cavo', 'Barra, presa supina', 'Spessore · dorsali e romboidi', 'Gran dorsale (parte bassa), bicipite', 'Romboidi', 'pulley', 'schiena_spessore', 'dorsali bicipiti'],
+  'Pulley Basso a un Braccio': ['M', 'Cavo', 'Maniglia singola, presa neutra', 'Spessore · dorsali e romboidi', 'Gran dorsale', 'Romboidi, bicipite, obliqui', 'pulley', 'schiena_spessore', 'dorsali bicipiti obliqui'],
   'Lat Machine Triangolo (Presa Neutra)': ['M', 'Cavo', 'Triangolo, presa neutra stretta', 'Dorsali · larghezza', 'Gran dorsale (parte bassa), grande rotondo', 'Bicipite, brachioradiale', 'lat', 'dorsali', 'bicipiti brachioradiale'],
-  'Rematore Presa Inversa (Yates)': ['L', 'Bilanciere', 'Presa supina, busto inclinato a circa 45°', 'Spessore · dorsali e romboidi', 'Gran dorsale (parte bassa), romboidi', 'Bicipite, erettori spinali', '', 'schiena_spessore', 'bicipiti erettori'],
+  'Rematore Presa Inversa (Yates)': ['L', 'Bilanciere', 'Presa supina, busto inclinato a circa 45°', 'Spessore · dorsali e romboidi', 'Gran dorsale (parte bassa), romboidi', 'Bicipite, erettori spinali', '', 'schiena_spessore', 'dorsali bicipiti erettori'],
   'Trazioni Presa Neutra': ['C', 'Sbarra', 'Maniglie parallele, presa neutra', 'Dorsali · larghezza', 'Gran dorsale, bicipite', 'Brachioradiale, romboidi', 'trazioni', 'dorsali', 'bicipiti brachioradiale'],
   'Croci ai Cavi Alti (Parte Bassa)': ['M', 'Cavo', 'Maniglie singole, pulegge alte, mani che scendono', 'Petto · fasci bassi', 'Gran pettorale (fasci bassi)', 'Deltoide anteriore', 'crocialti', 'petto_basso', 'deltoide_anteriore'],
   'Piegamenti Declinati (Piedi Rialzati)': ['C', 'Corpo libero', 'Piedi su una panca', 'Petto · fasci alti', 'Gran pettorale (fasci alti), deltoide anteriore', 'Tricipite, core', '', 'petto_alto', 'deltoide_anteriore tricipiti stabilita'],
@@ -257,7 +258,44 @@ const DETTAGLI = {
   'Crunch alla Macchina': ['M', 'Macchina', 'Seduto, maniglie ai lati della testa', 'Addominali', 'Retto dell’addome', 'Obliqui', '', 'addome', 'obliqui'],
   'Woodchop ai Cavi (Rotazioni)': ['M', 'Cavo', 'Maniglia, dal cavo alto al basso in diagonale', 'Obliqui e anti-rotazione', 'Obliqui, retto dell’addome', 'Gran dorsale, glutei', '', 'obliqui', 'addome'],
   'Leg Raise alla Sedia Romana': ['C', 'Sedia romana', 'Avambracci sui supporti, schiena appoggiata', 'Addominali', 'Retto dell’addome (parte bassa)', 'Flessori d’anca', '', 'addome_basso', 'flessori_anca'],
-  'Sit-up a Ginocchia Piegate': ['C', 'Corpo libero', 'Schiena a terra, ginocchia piegate, piedi bloccati', 'Addominali', 'Retto dell’addome', 'Flessori d’anca, obliqui', '', 'addome', 'flessori_anca obliqui']
+  'Sit-up a Ginocchia Piegate': ['C', 'Corpo libero', 'Schiena a terra, ginocchia piegate, piedi bloccati', 'Addominali', 'Retto dell’addome', 'Flessori d’anca, obliqui', '', 'addome', 'flessori_anca obliqui'],
+
+  /* ---------------- W1-T5: ESERCIZI CHE CHIUDONO I BUCHI (D-P2: senza disegno; D-P3: elastici, kettlebell, anelli) ---------------- */
+  /* GLUTEI E HINGE */
+  'Stacco Rumeno con Manubri': ['L', 'Manubri', 'Gambe quasi tese, un manubrio per mano vicino alle gambe', 'Glutei e femorali', 'Grande gluteo, femorali', 'Erettori spinali', '', 'grande_gluteo', 'femorali erettori'],
+  'Stacco Rumeno a una Gamba': ['L', 'Manubri', 'In piedi su una gamba, un manubrio nella mano opposta, busto che si abbassa', 'Glutei e femorali', 'Grande gluteo, femorali', 'Erettori spinali, core', '', 'grande_gluteo', 'femorali erettori stabilita'],
+  'Hip Thrust con Manubrio': ['L', 'Manubri', 'Schiena sulla panca, un manubrio sul bacino', 'Glutei', 'Grande gluteo', 'Femorali, adduttori', '', 'grande_gluteo', 'femorali adduttori'],
+  'Kettlebell Swing': ['L', 'Kettlebell', 'Piedi larghi come le spalle, il kettlebell passa tra le gambe e sale con la spinta d’anca', 'Glutei e femorali', 'Grande gluteo, femorali', 'Erettori spinali, core', '', 'grande_gluteo', 'femorali erettori stabilita'],
+  /* GAMBE */
+  'Leg Curl con Asciugamano': ['C', 'Corpo libero', 'Talloni su un asciugamano che scivola, schiena a terra in posizione di ponte', 'Femorali', 'Bicipite femorale, semitendinoso, semimembranoso', 'Gemelli, glutei', '', 'femorali', 'polpacci grande_gluteo'],
+  'Leg Curl in Piedi': ['M', 'Macchina', 'In piedi, cuscino sopra il tallone, una gamba alla volta', 'Femorali', 'Bicipite femorale, semitendinoso, semimembranoso', 'Gemelli', '', 'femorali', 'polpacci'],
+  'Belt Squat': ['M', 'Macchina', 'Cintura con il carico sul bacino, nessun peso sulla schiena', 'Multiarticolari', 'Quadricipiti, glutei', 'Adduttori', '', 'quadricipiti', 'grande_gluteo adduttori'],
+  'Squat con Pausa': ['L', 'Bilanciere', 'Bilanciere sulle spalle, pausa di 1–2 secondi in fondo', 'Multiarticolari', 'Quadricipiti, glutei, adduttori', 'Erettori spinali', '', 'quadricipiti', 'grande_gluteo adduttori erettori'],
+  'Cossack Squat': ['C', 'Corpo libero', 'Piedi molto larghi, scendi su una gamba mentre l’altra resta tesa', 'Adduttori', 'Adduttori, grande gluteo', 'Quadricipiti, core', '', 'adduttori', 'grande_gluteo quadricipiti stabilita'],
+  'Squat su Scatola': ['C', 'Corpo libero', 'Piedi larghi come le spalle, ti siedi a ogni ripetizione su una scatola o una sedia robusta', 'Multiarticolari', 'Quadricipiti, glutei', 'Adduttori, core', '', 'quadricipiti', 'grande_gluteo adduttori stabilita'],
+  'Step-up Basso': ['C', 'Corpo libero', 'Un piede su un gradino basso (15–20 cm), l’altro sfiora solo il gradino', 'Multiarticolari', 'Quadricipiti, glutei', 'Femorali', '', 'quadricipiti', 'grande_gluteo femorali'],
+  'Sit-to-Stand dalla Panca': ['C', 'Corpo libero', 'Seduto sul bordo di una panca o di una sedia stabile, piedi sotto le ginocchia', 'Multiarticolari', 'Quadricipiti, glutei', 'Adduttori, core', '', 'quadricipiti', 'grande_gluteo adduttori stabilita'],
+  'Calf Raise con Manubrio sul Gradino': ['L', 'Manubri', 'In piedi sul bordo di un gradino, un manubrio per mano, tallone nel vuoto', 'Polpacci', 'Gemelli', 'Soleo', 'calf', 'polpacci'],
+  'Tibialis Raise': ['C', 'Corpo libero', 'Schiena al muro, talloni a terra, le punte dei piedi che salgono', 'Polpacci', 'Tibiale anteriore', '', '', 'tibiale'],
+  'Copenhagen Plank': ['C', 'Corpo libero', 'Di fianco, gamba superiore su una sedia o una panca, avambraccio a terra', 'Adduttori', 'Adduttori, obliqui', 'Medio gluteo, core', '', 'adduttori', 'obliqui abduttori'],
+  /* SCHIENA */
+  'Trazioni Negative': ['C', 'Sbarra', 'Presa prona, parti con il mento sopra la sbarra e scendi in 4–5 secondi', 'Dorsali · larghezza', 'Gran dorsale', 'Bicipite, romboidi, trapezio inferiore', 'trazioni', 'dorsali', 'bicipiti schiena_spessore'],
+  'Seal Row': ['L', 'Manubri', 'A pancia in giù su una panca alta, braccia che pendono', 'Spessore · dorsali e romboidi', 'Gran dorsale, romboidi, trapezio medio', 'Bicipite, deltoide posteriore', '', 'schiena_spessore', 'dorsali bicipiti deltoide_posteriore'],
+  'Lat Pulldown con Elastico': ['M', 'Elastico', 'Elastico ancorato in alto, in ginocchio sotto l’ancoraggio, presa prona larga', 'Dorsali · larghezza', 'Gran dorsale', 'Grande rotondo, bicipite', 'lat', 'dorsali', 'bicipiti'],
+  'Rematore agli Anelli': ['C', 'Anelli', 'Presa neutra, corpo teso e inclinato, piedi a terra', 'Spessore · dorsali e romboidi', 'Gran dorsale, romboidi, trapezio medio', 'Bicipite, deltoide posteriore, core', '', 'schiena_spessore', 'dorsali bicipiti deltoide_posteriore stabilita'],
+  'Stacco in Deficit': ['L', 'Bilanciere', 'Presa mista o prona, in piedi su un rialzo di 2–5 cm', 'Lombari e catena posteriore', 'Erettori spinali, glutei, femorali', 'Quadricipiti, trapezio, gran dorsale, avambracci', '', 'erettori', 'grande_gluteo femorali quadricipiti trapezio dorsali avambracci'],
+  /* PETTO */
+  'Floor Press con Manubri': ['L', 'Manubri', 'Sdraiato a terra, i gomiti si fermano sul pavimento', 'Petto · fasci medi', 'Gran pettorale', 'Deltoide anteriore, tricipite', '', 'petto_medio', 'deltoide_anteriore tricipiti'],
+  'Chest Press Inclinata alla Macchina': ['M', 'Macchina', 'Schienale reclinato a circa 30°, maniglie in alto', 'Petto · fasci alti', 'Gran pettorale (fasci alti)', 'Deltoide anteriore, tricipite', '', 'petto_alto', 'deltoide_anteriore tricipiti'],
+  'Panca con Pausa': ['L', 'Bilanciere', 'Presa prona poco più larga delle spalle, pausa di 1–2 secondi sul petto', 'Petto · fasci medi', 'Gran pettorale', 'Deltoide anteriore, tricipite', '', 'petto_medio', 'deltoide_anteriore tricipiti'],
+  /* SPALLE E TRAPEZIO */
+  'Alzate Laterali con Elastico': ['L', 'Elastico', 'In piedi sull’elastico, un’estremità per mano, braccia ai lati', 'Deltoidi laterali', 'Deltoide laterale', 'Trapezio superiore', '', 'deltoide_laterale', 'trapezio'],
+  'Alzate Laterali Inclinate': ['L', 'Manubri', 'In piedi di lato a un montante, una mano si tiene e il busto si inclina lontano', 'Deltoidi laterali', 'Deltoide laterale', 'Trapezio superiore', '', 'deltoide_laterale', 'trapezio'],
+  'Extrarotazione al Cavo': ['M', 'Cavo', 'Maniglia singola, puleggia all’altezza del gomito, gomito fermo al fianco', 'Deltoidi posteriori e cuffia', 'Extrarotatori della cuffia', 'Deltoide posteriore', '', 'deltoide_posteriore', ''],
+  'Face Pull con Elastico': ['M', 'Elastico', 'Elastico ancorato all’altezza del viso, presa con i pollici verso di te', 'Deltoidi posteriori e cuffia', 'Deltoide posteriore, extrarotatori della cuffia', 'Romboidi, trapezio medio', '', 'deltoide_posteriore', 'schiena_spessore'],
+  'Scrollate con Manubri': ['L', 'Manubri', 'In piedi, un manubrio per mano, braccia tese lungo i fianchi', 'Trapezio', 'Trapezio superiore', 'Avambracci', '', 'trapezio', 'avambracci'],
+  /* BRACCIA E CORE */
+  'Suitcase Carry': ['L', 'Manubri', 'Un solo manubrio (o kettlebell) pesante in una mano, camminata dritta', 'Obliqui e anti-rotazione', 'Obliqui, quadrato dei lombi', 'Trapezio superiore, avambracci', '', 'obliqui', 'trapezio avambracci']
 };
 
 function _nomePulito(nome) { return String(nome).replace(EMOJI_TESTA, ''); }
