@@ -61,6 +61,27 @@ test('CAS-08: una coppia dura n x (S_A + S_B + 15 + max(R_A, R_B)) + X_A + X_B: 
   vicino(dur(coppia, O60) - dur([E('Chest Press Machine', 3, 10, 90, { rest: 90 })].slice(0, 0).concat([]), O60) > 0 ? dur(coppia, O60) : 0, dur(coppia, O60), 1e-9);
 });
 
+test('CAS-05: sei sedute di esempio calcolate a mano (60 minuti, 30 anni, intermedio): la durata di durataSeduta torna entro 0,05 minuti (il criterio e ±1)', () => {
+  const E2 = (n, s, r, p, x) => E(n, s, r, p, x);
+  /* durata = G + rampa + somma degli esercizi - ultima pausa; ogni esercizio n x (S + R) + X (S = 5 s + ripetizioni x secondi; X = cambio) */
+  const casi = [
+    /* A: Goblet Squat 3x10 a 90 s: 3 x (40 + 90) + 30 = 420 s = 7,0; - 1,5 (ultima pausa); G 4; rampa 2 serie 2,9 -> 12,4 */
+    [[E2('Goblet Squat', 3, 10, 90)], 4 + 2.9 + 7.0 - 1.5],
+    /* B: Squat col bilanciere 4x5 a 180 s: 4 x (30 + 180) + 60 = 900 s = 15; - 3; G 5 (primo multiarticolare a 5 ripetizioni); rampa 4 serie 6,2 -> 23,2 */
+    [[E2('Squat con Bilanciere', 4, 5, 180)], 5 + 6.2 + 15 - 3],
+    /* C: chest press + lat machine in coppia, 3x10 a 90 s: 3 x (35 + 35 + 15 + 90) + 30 + 30 = 585 s = 9,75; - 1,5; G 4; rampa 2 serie (2,9) + 1 (1,3) -> 16,45 */
+    [[E2('Chest Press Machine', 3, 10, 90), E2('Lat Machine', 3, 10, 90, { superset: true })], 4 + 2.9 + 1.3 + 9.75 - 1.5],
+    /* D: panca + rematore con il bilanciere, 3x8 a 120 s: 2 x (3 x (45 + 120) + 60) = 1110 s = 18,5; - 2; G 4; rampa 3 serie (4,1) + 2 serie (2,9) della stessa regione -> 27,5 */
+    [[E2('Panca Piana Bilanciere', 3, 8, 120), E2('Rematore con Bilanciere', 3, 8, 120)], 4 + 4.1 + 2.9 + 18.5 - 2],
+    /* E: curl e tricipiti in coppia, 3x12 a 60 s: 3 x (41 + 41 + 15 + 60) + 20 + 20 = 511 s = 8,517; - 1; G 4; nessuna rampa sugli isolamenti liberi -> 11,52 */
+    [[E2('Curl su Panca Inclinata', 3, 12, 60), E2('Estensione Tricipiti sopra la Testa ai Cavi', 3, 12, 60, { superset: true })], 4 + 0 + 511 / 60 - 1],
+    /* F: affondi bulgari (un lato: 2 x (5 + 10 x 4) + 10 = 100 s, cambio 40 s: 3 x (100 + 90) + 40 = 610 s) e plank (3 x (50 + 45) + 15 = 300 s); - 0,75; G 4; rampa 1 serie a corpo libero 1,3 -> 19,72 */
+    [[E2('Affondi Bulgari', 3, 10, 90), E2('Plank', 3, 45, 45)], 4 + 1.3 + 610 / 60 + 5 - 0.75]
+  ];
+  casi.forEach(([lista, atteso], i) => vicino(dur(lista, O60), atteso, 0.05, 'seduta ' + 'ABCDEF'[i]));
+  assert.strictEqual(casi.length, 6);
+});
+
 test('CAS-05 (RIS 3.7, 3.9, 3.6): il riscaldamento generale e la rampa entrano nella seduta: G = 4 + 1 col primo multiarticolare a 5 ripetizioni o meno, rampa da 4 serie (6,2 minuti) sullo squat pesante', () => {
   const a = app();
   const squat = [E('Squat con Bilanciere', 4, 5, 180)];
@@ -552,4 +573,33 @@ test('i numeri di soglie-tempo.js hanno forza e fonte (Convenzione, Decisione, M
   assert.deepStrictEqual(soglie.durataMaxPrincipiante.v, { settimane1e2: 40, dopo: 50 });
   assert.deepStrictEqual(soglie.fattorePersonale.v.min, 0.8);
   assert.deepStrictEqual(soglie.fattorePersonale.v.max, 1.4);
+});
+
+/* le frasi nuove del tempo sono tradotte: o nel JSON di W2-T2 (finche INT non lo applica) o nei dizionari (dopo) */
+test('le frasi FRASE_* di tempo.js hanno la traduzione in en, es e de (nel JSON di W2-T2 o nei dizionari), con gli stessi # (i numeri)', () => {
+  const R = path.join(__dirname, '..');
+  const src = fs.readFileSync(path.join(R, 'js/coach/volume/tempo.js'), 'utf8');
+  const frasi = []; const re = /const (FRASE_[A-Z_]+) = '((?:[^'\\]|\\.)*)';/g; let m;
+  while ((m = re.exec(src))) frasi.push(m[2].replace(/\\'/g, "'"));
+  assert.ok(frasi.length >= 8, 'le frasi ci sono: ' + frasi.length);
+  const json = fs.existsSync(path.join(R, 'docs/in-arrivo/w2-t2.json')) ? JSON.parse(fs.readFileSync(path.join(R, 'docs/in-arrivo/w2-t2.json'), 'utf8')).frasi : {};
+  const dic = {};
+  ['en', 'es', 'de'].forEach(l => { const ctx = { window: {} }; require('vm').runInNewContext(fs.readFileSync(path.join(R, 'js/lingue/' + l + '.js'), 'utf8'), ctx); dic[l] = ctx.window.I18N[l]; });
+  frasi.forEach(f => {
+    const chiave = f.replace(/\d+(?:[.,]\d+)*/g, '#');   /* come il traduttore: le cifre diventano # */
+    ['en', 'es', 'de'].forEach(l => {
+      const t = (json[chiave] && json[chiave][l]) || dic[l][chiave] || dic[l][f];
+      assert.ok(t, l + ': manca la traduzione di «' + f.slice(0, 60) + '…»');
+      assert.strictEqual((t.match(/#/g) || []).length, (chiave.match(/#/g) || []).length, l + ': i # di «' + f.slice(0, 40) + '…»');
+    });
+  });
+});
+
+test('i metodi famosi (Park, Arnold, Gironda) tengono le loro pause e le loro coppie: la tabella di classe e il controllo delle coppie valgono per il coach, rr e minimo (PCO-04)', () => {
+  const arnold = costruisci(Object.assign({}, BASE, { level: 'avanzato', days: 6, minutes: 90, metodo: 'arnold6', seme: 'arn1' }));
+  assert.strictEqual(arnold.metodo, 'arnold6');
+  assert.ok(arnold.sedute.every(sd => sd.esercizi.every(e => e.rest === 90)), 'Arnold: 90 s su tutto');
+  assert.deepStrictEqual(arnold.sedute[0].esercizi.map((e, i) => e.superset ? i : -1).filter(i => i >= 0), [1, 3], 'Arnold: panca + lat machine e le altre coppie spinta-tirata del metodo restano');
+  const park = costruisci(Object.assign({}, BASE, { level: 'intermedio', days: 3, minutes: 75, metodo: 'park', seme: 'park1' }));
+  assert.ok(park.sedute[0].esercizi.filter(e => e.sets === 5 && e.reps === 5).every(e => e.rest === 180), 'Park: i 5x5 a 180 s');
 });

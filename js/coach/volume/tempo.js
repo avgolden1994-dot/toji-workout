@@ -250,6 +250,8 @@ function pausaPrescritta(nome, ctx) { return limitiPausa(nome, ctx).v; }
    [lo, max]. Scrive in brief.lavoro.pauseDonneAccorciate se per le donne e scesa sotto la pausa degli uomini (la nota del programma sulle pause delle donne lo legge: genera.js, noteDelProgramma) */
 /* l obiettivo che vale per le pause e le fasce di UNA seduta: quello del programma, salvo il giorno di ipertrofia del PHUL (ha le pause della massa anche con la forza come obiettivo: B2) */
 function obiettivoDellaSeduta(brief, i) { return (brief.lavoro.tipiGiorno || [])[i] === 'ipertrofia' ? 'ipertrofia' : tipoObiettivoDi(brief.obiettivi.lista); }
+/* le regole del coach sul tempo (le pause della tabella di classe, le coppie solo antagoniste e senza pesanti) valgono per i suoi programmi e per i metodi che le usano (rr e minimo: PCO-04); gli altri metodi famosi hanno le loro (Park 180 s sul 5x5, Arnold 90 s con la panca in coppia, Gironda 75 s) */
+function regoleDelCoach(metodoAttivo) { return !metodoAttivo || ['rr', 'minimo'].indexOf(metodoAttivo.id) !== -1; }
 function pausePerClasse(brief, sedute) {
   const chi = brief.chi, donna = chi.donna && regolaAttiva('PRG-20');
   let accorciate = false;
@@ -498,7 +500,7 @@ function adattaAlTempo(brief, sedute) {
       sd.esercizi.splice(sd.esercizi.indexOf(via), 1);
     }
   });
-  pausePerClasse(brief, sedute);
+  if (regoleDelCoach(metodoAttivo)) pausePerClasse(brief, sedute); else brief.lavoro.pauseDonneAccorciate = false;
   const passi = { pause: 0, coppie: 0, tagli: 0 };
   sedute.forEach(sd => scalaDelTempo(brief, sd, sedute, opz, minutiEff, passi));
   L.tempoPassi = passi;
@@ -595,8 +597,7 @@ function validaTempo(brief, sedute) {
   const note = [], opz = opzioniTempo(brief), minuti = brief.agenda.minuti, level = brief.chi.livello, minutiEff = minutiEffettivi(minuti, level), L = brief.lavoro, giorni = Number(brief.agenda.giorni) || 3;
   liberaContestoTempo();
   if (!sedute.length) return note;
-  riparaCoppie(sedute);
-  riallineaPause(brief, sedute);
+  if (regoleDelCoach(brief.metodo.attivo)) { riparaCoppie(sedute); riallineaPause(brief, sedute); }
   const durate = sedute.map(sd => durataSeduta(sd.esercizi, opz)), media = Math.round(durate.reduce((t, x) => t + x, 0) / durate.length);
   const utileCompleto = !(L.sottoFascia && L.sottoFascia.length) && media < minutiEff * sogliaTempo('quotaLavoroUtile') && !brief.metodo.attivo;
   note.push((utileCompleto ? FRASE_LAVORO_UTILE : FRASE_DURATA).replace('#', media));

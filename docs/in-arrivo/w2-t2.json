@@ -1,0 +1,126 @@
+{
+  "task": "W2-T2",
+  "script": [
+    {
+      "src": "js/coach/volume/soglie-tempo.js",
+      "dopo": "js/coach/volume/tempo.js"
+    }
+  ],
+  "frasi": {
+    "Per farti stare nei minuti ho accorciato prima le pause e abbinato esercizi opposti, poi tolto il superfluo: gli schemi di base restano sempre.": {
+      "en": "To fit your time I shortened the rests first and paired opposing exercises, then cut the extras: the basic patterns always stay.",
+      "es": "Para que quepa en tu tiempo acorté primero los descansos y emparejé ejercicios opuestos, luego quité lo superfluo: los patrones básicos siempre se quedan.",
+      "de": "Damit es in deine Zeit passt, habe ich zuerst die Pausen verkürzt und gegensätzliche Übungen gepaart, dann das Überflüssige gestrichen: Die Grundmuster bleiben immer."
+    },
+    "Le sedute durano circa # minuti: nel conto ci sono riscaldamento, cambi tra gli esercizi e, dove serve, il lato destro e sinistro.": {
+      "en": "Sessions last about # minutes: the count includes warm-up, changeovers between exercises and, where needed, the right and left side.",
+      "es": "Las sesiones duran unos # minutos: en el cálculo entran el calentamiento, los cambios entre ejercicios y, donde hace falta, el lado derecho y el izquierdo.",
+      "de": "Die Einheiten dauern etwa # Minuten: Eingerechnet sind Aufwärmen, Wechsel zwischen den Übungen und, wo nötig, die rechte und linke Seite."
+    },
+    "Le sedute durano circa # minuti: il lavoro utile per te è già tutto qui, non serve riempire il resto del tempo.": {
+      "en": "Sessions last about # minutes: all the useful work for you is already here, there is no need to fill the rest of the time.",
+      "es": "Las sesiones duran unos # minutos: todo el trabajo útil para ti ya está aquí, no hace falta llenar el resto del tiempo.",
+      "de": "Die Einheiten dauern etwa # Minuten: Die für dich nützliche Arbeit ist schon vollständig drin, die restliche Zeit musst du nicht füllen."
+    },
+    "Le tue sedute durano di solito il #% più del previsto: adatto il programma alla tua velocità.": {
+      "en": "Your sessions usually take #% longer than planned: I'm adapting the program to your pace.",
+      "es": "Tus sesiones suelen durar un #% más de lo previsto: adapto el programa a tu ritmo.",
+      "de": "Deine Einheiten dauern meist #% länger als geplant: Ich passe das Programm an dein Tempo an."
+    },
+    "Le tue sedute durano di solito il #% meno del previsto: adatto il programma alla tua velocità.": {
+      "en": "Your sessions usually take #% less than planned: I'm adapting the program to your pace.",
+      "es": "Tus sesiones suelen durar un #% menos de lo previsto: adapto el programa a tu ritmo.",
+      "de": "Deine Einheiten dauern meist #% kürzer als geplant: Ich passe das Programm an dein Tempo an."
+    },
+    "Con questi minuti il programma tiene i muscoli e fa progredire chi comincia: per crescere in modo evidente servono più sedute o sedute più lunghe.": {
+      "en": "With these minutes the program maintains your muscles and helps beginners progress: to grow noticeably you need more sessions or longer ones.",
+      "es": "Con estos minutos el programa mantiene los músculos y hace progresar a quien empieza: para crecer de forma evidente hacen falta más sesiones o sesiones más largas.",
+      "de": "Mit diesen Minuten hält das Programm deine Muskeln und bringt Einsteiger voran: Um deutlich zu wachsen, brauchst du mehr oder längere Einheiten."
+    },
+    "Per chi comincia bastano sedute da #-# minuti: più a lungo non serve e stanca, il tempo in più va al riscaldamento e al recupero.": {
+      "en": "For beginners, sessions of #-# minutes are enough: longer is not needed and just tires you, the extra time goes to warm-up and recovery.",
+      "es": "Para quien empieza bastan sesiones de #-# minutos: más tiempo no hace falta y cansa, el tiempo extra va al calentamiento y a la recuperación.",
+      "de": "Für Einsteiger reichen Einheiten von #-# Minuten: Länger ist nicht nötig und ermüdet nur, die zusätzliche Zeit geht ins Aufwärmen und in die Erholung."
+    },
+    "Con poco tempo conta il lavoro essenziale: pochi esercizi completi, in coppia dove si può. Realisticamente #-# serie per muscolo a settimana: bastano per mantenere e per crescere da principiante.": {
+      "en": "With little time the essential work counts: a few complete exercises, paired where possible. Realistically #-# sets per muscle per week: enough to maintain and, as a beginner, to grow.",
+      "es": "Con poco tiempo cuenta el trabajo esencial: pocos ejercicios completos, en pareja donde se pueda. Siendo realistas, #-# series por músculo a la semana: bastan para mantener y, si empiezas, para crecer.",
+      "de": "Bei wenig Zeit zählt die wesentliche Arbeit: wenige vollständige Übungen, wo möglich im Paar. Realistisch sind #-# Sätze pro Muskel und Woche: genug zum Erhalten und, als Einsteiger, zum Wachsen."
+    },
+    "Durata stimata con riscaldamento, cambi, lato destro e sinistro e coppie: circa # minuti": {
+      "en": "Estimated duration including warm-up, changeovers, right and left side and pairs: about # minutes",
+      "es": "Duración estimada con calentamiento, cambios, lado derecho e izquierdo y parejas: unos # minutos",
+      "de": "Geschätzte Dauer mit Aufwärmen, Wechseln, rechter und linker Seite und Paaren: etwa # Minuten"
+    },
+    "Due o tre full body a settimana, # serie per esercizio da #-# ripetizioni vicino al cedimento, spinte e tirate in superserie.": {
+      "en": "Two or three full body sessions a week, # sets per exercise of #-# reps close to failure, pushes and pulls in supersets.",
+      "es": "Dos o tres full body por semana, # series por ejercicio de #-# repeticiones cerca del fallo, empujes y tirones en superserie.",
+      "de": "Zwei oder drei Ganzkörper-Einheiten pro Woche, # Sätze pro Übung mit #-# Wdh. nahe am Muskelversagen, Drücken und Ziehen im Supersatz."
+    },
+    "Coppie di esercizi opposti (spinta e tirata, quadricipiti e femorali), poi il core. #×#-#; a #×# passi alla variante più difficile.": {
+      "en": "Pairs of opposing exercises (push and pull, quadriceps and hamstrings), then core. #×#-#; at #×# move to the harder variation.",
+      "es": "Parejas de ejercicios opuestos (empuje y tirón, cuádriceps e isquiotibiales), luego core. #×#-#; al llegar a #×# pasas a la variante más difícil.",
+      "de": "Paare gegensätzlicher Übungen (Drücken und Ziehen, Quadrizeps und Beinbeuger), dann Rumpf. #×#-#; bei #×# zur schwereren Variante."
+    }
+  },
+  "regole": [
+    {
+      "capitolo": 5,
+      "sostituisce": true,
+      "riga": "- **PRG-03** numero di esercizi per seduta: assorbita da CAS-06 (capitolo 21: `stimaEsercizi` e `numeroEsercizi` in js/coach/volume/tempo.js; `exerciseCountFor` resta come sinonimo di `stimaEsercizi`). Tetto dopo le aggiunte (EXN-02): 8 esercizi per seduta, 6 per chi inizia, tranne le aggiunte protette. (storica: sempre accesa, è un calcolo)"
+    },
+    {
+      "capitolo": 5,
+      "sostituisce": true,
+      "riga": "- **PRG-13** (sempre accesa: tabella delle pause, è un calcolo; B8, assorbe CAS-04 e ETA-09) ripetizioni: pesante 5 se forza, altrimenti max 8 (con la forza come obiettivo tutti i multiarticolari a 6 ripetizioni o meno; con salute e dimagrimento il giorno «forza» del PHUL parte da 6); macchina 8+ (con la forza 6-8, max 4 serie); isolamento 10+ (con forza max 3 serie). Le pause vengono dalla CLASSE dell'esercizio (A-F da `attributi().classe`: A bilanciere libero pesante, B multiarticolare libero o a corpo libero, C macchina guidata, D e E isolamenti, F core, tenute, elastici e corpo libero a zero kg; il Nordic Curl come E) e dall'obiettivo, non dal tipo di carico: `limitiPausa(nome, ctx)` in tempo.js, tabella `SOGLIE_TEMPO.pausa` (Convenzione), prescritta (minima-massima): ipertrofia A 150 (120-180), B 90 (60-90, corpo libero 75), C 105 (75-120), D e E 75 (45-90; polpacci e alzate laterali 60), F 45; forza A 210 (180-240), B e C 120 (min 90), D e E 90, F 45; salute e dimagrimento A 120, B 75, C 90, D e E 60, F 45. Hyperextension e Ponte Glutei non hanno più 158 s e il 5×5 fisso è solo sulla classe A (B34, RX-01, RX-02). Oltre i 65 anni almeno 90 s su B e C e 120 s su A, anche nel taglio per il tempo. Il giorno di ipertrofia del PHUL ha le pause della massa (B2) ma i minimi dell'obiettivo (con la forza B e C a 90 s). A tempo (plank ecc.): ripetizioni = valore della libreria (secondi). Pause arrotondate a 15 s; un esercizio cambiato dopo il tempo (variante senza bilanciere, PAR-08) prende la pausa della sua classe (`riallineaPause`)."
+    },
+    {
+      "capitolo": 5,
+      "sostituisce": true,
+      "riga": "- **PRG-20** (spegnibile) donne (D-P7, riscritta; fonte unica PeerJ 2025, etichetta «Convenzione»; assorbe DON-08): le pause scendono del 15% solo sugli isolamenti (D, E) e sui multiarticolari B e C con almeno 8 ripetizioni, mai sulla classe A né con 6 ripetizioni o meno, con i minimi 45 s (F), 60 s (D, E), 75 s (B, C); mai con il PAR-Q positivo; i minimi dell'obiettivo valgono comunque (forza: B e C a 90 s). Il programma dice «Pause un po piu corte» solo se almeno una pausa è davvero scesa (`brief.lavoro.pauseDonneAccorciate`, da collegare alla nota di genera.js). Con la regola spenta le donne hanno le pause degli uomini. Pause arrotondate a 15 s."
+    },
+    {
+      "capitolo": 5,
+      "sostituisce": true,
+      "riga": "- **PRG-33** la seduta deve stare nei minuti dichiarati (+5% di tolleranza) con lo stesso modello delle schermate (CAS-05, `durataSeduta`): se sfora, la scala del taglio di CAS-07 (`adattaAlTempo` e `scalaDelTempo` in tempo.js: pause, coppie, core e braccia, serie, isolamenti) e un ultimo giro (`rifinisciAlTempo`, dopo strFinale e la seconda strBilancia) che toglie solo serie e riporta le tirate almeno al 90% delle spinte (collaudo DUR-01, W0-T7). Senza metodo famoso il tempo che resta non si riempie (D-P10, B12, DUR-02: `serieSottoFascia` solo dove un muscolo è sotto il minimo) e le pause non si allungano (D-P10, revisione dell'onda 0). Il drop set (poco tempo) si assegna solo se la seduta ci sta ancora (+45 s). (storica: sempre accesa, è una correzione)"
+    },
+    {
+      "capitolo": 21,
+      "riga": "- **CAS-05** (sempre accesa: modello del tempo, è un calcolo; W2-T2, B11, B36; assorbe IPE-14, RIS-12 e il tempo di MAV-09) la durata di una seduta è una sola funzione, `durataSeduta(esercizi, opzioni)` (js/coach/volume/tempo.js; numeri in `SOGLIE_TEMPO`, soglie-tempo.js), usata dal generatore e da Oggi, Giorno e Aggiungi allenamento: le stime a schermo sono quelle del generatore. Per esercizio n×(S+R)+X: S = 5 s di preparazione + ripetizioni × secondi a ripetizione (5 s sulla classe A, 3,5 sui multiarticolari liberi, 4 a corpo libero, 3 su macchine e isolamenti, 5 sul Nordic Curl); una tenuta dura la tenuta + 5 s; un esercizio a un lato vale 2×(5+n×t)+10 s; X è il cambio (attributo `setup`, 15-60 s). Coppie: n×(S_A+S_B+15+max(R_A,R_B))+X_A+X_B (CAS-08). Seduta = riscaldamento generale + rampa + somma degli esercizi − l'ultima pausa, per il fattore personale (CAS-18). Riscaldamento generale G = 4 minuti (+1 dai 40 anni, +2 dai 60, +1 se il primo multiarticolare è a 5 ripetizioni o meno, +1 con un fastidio dichiarato; tra 3 e 8; RIS 3.7). Rampa (RIS 3.9, non dipende dal peso): 4, 3 o 2 serie sul bilanciere e sui fondamentali di classe A secondo l'intensità (I = 1/(1+(R+2)/30), soglie 0,80 e 0,70), una in meno coi manubri, 3, 2 o 1 sulle macchine, 1 a corpo libero e sul primo isolamento, una in meno per regione ripetuta e due per gruppo, +1 per chi comincia e +1 oltre i 65 anni o col PAR-Q, al massimo 5 serie (0, 1,3, 2,9, 4,1, 6,2, 7,5 minuti per 0-5 serie); tetto di 5, 8 o 10 minuti con 45 minuti o meno, fino a 75 e oltre (RIS 3.6), e il primo multiarticolare di ogni regione non perde la rampa. Il drop set pesa +45 s (`PARAM_TEMPO.secDrop`)."
+    },
+    {
+      "capitolo": 21,
+      "riga": "- **CAS-06** (sempre accesa: capacità, è un calcolo; W2-T2; assorbe PRG-03 e PRI-08) quanti esercizi stanno in una seduta (`stimaEsercizi` e `numeroEsercizi` in tempo.js): una seduta tipica per classe (un esercizio su 4 un fondamentale col bilanciere, il 35% multiarticolari, il 40% isolamenti: `PARAM_NUMERO_ESERCIZI`) con le serie di `serieEffettive`, le pause della tabella di PRG-13 e il modello di CAS-05 (riscaldamento e rampa tipici; con 45 minuti o meno le coppie risparmiano il 25%); si prende il numero più grande che sta nei minuti, tra 4 (i quattro schemi di base) e 8 (EXN-02: la riga «10 con le coppie» del piano resta sopra il tetto di 8). Chi comincia: tra 4 e 6 esercizi (5-6 con due giorni e almeno 40 minuti), conta al massimo 50 minuti anche se ne dichiara di più (40 nelle settimane 1-2: D-P10, PRI-08) e la ricetta ne prende uno meno perché il core entra sopra (EXN-02); con poca fiducia (psico) e più del minimo: -1. Il numero non è quello finale: il taglio (CAS-07) toglie il resto."
+    },
+    {
+      "capitolo": 21,
+      "riga": "- **CAS-07** (sempre accesa: ordine d'intervento; W2-T2; assorbe IPE-03; il tempo è un tetto, non un obiettivo: D-P10, B12) se la seduta supera i minuti dichiarati (+5%) `scalaDelTempo` interviene in quest'ordine, fermandosi appena sta nei minuti: 1) le pause scendono verso il minimo della classe, 15 s alla volta partendo dalla più lunga (A 120, B 60, C 75, D e E 45, F 30; con la forza B e C 90 e la classe A non si taglia; oltre i 65 anni B e C 90 e A 120); 2) le coppie antagoniste (CAS-08), anche sopra i 45 minuti; 3) via il core e le braccia dirette (non quelli che coprono un buco della settimana), mai sotto 3 esercizi (EXN-01); 4) le serie da 3 a 2 sui non prioritari, prima gli isolamenti, poi i multiarticolari (le spinte prima delle tirate, ABB-04) e per ultimo il fondamentale; 5) gli isolamenti uno alla volta. Ultima risorsa (DUR-01): con la forza la classe A scende a 120 s, un isolamento protetto lascia il posto, poi un esercizio fuori dai quattro schemi di base (se un altro giorno tiene il suo piano), infine le serie del 5×5 fisso fino a 3. Mai sotto i pavimenti: i quattro schemi di base a 2 serie, 4 serie frazionarie a settimana per i grandi muscoli, i pavimenti di serie dirette di W2-T1 (`pavimentoVolume`). Il tempo che resta non si riempie: `serieSottoFascia` aggiunge una serie solo dove un muscolo è sotto il minimo (agli isolamenti, poi ai multiarticolari non di spalle, una spinta solo se le tirate la pareggiano) dentro i massimi di volume e i minuti dichiarati, poi il solutore di W2-T1 (`aggiungiSerieUtile`); `riempiTempo` non esiste più. Se non si riesce a stare nei minuti il programma lo dice («di mantenimento»)."
+    },
+    {
+      "capitolo": 21,
+      "riga": "- **CAS-08** (sempre accesa: coppie; W2-T2) le coppie fanno risparmiare tempo (una coppia dura il 27,8% in meno di due esercizi a serie dritte con 90 s di pausa): sempre antagoniste PER MUSCOLO bersaglio (spinta e tirata, bicipiti e tricipiti, quadricipiti e femorali: `antagonistiPerMuscolo` in tempo.js, come le conta il collaudo SS-01), mai con un multiarticolare pesante, un core o una tenuta (SS-02). Le crea il passo 2 di CAS-07 (`strSuperserie` filtrato da `coppiaValida`); `validaTempo` toglie il segno `superset` che dopo i cambi di struttura non è più una coppia valida (`riparaCoppie`) e il tempo conta l'esercizio a serie dritte."
+    },
+    {
+      "capitolo": 21,
+      "riga": "- **CAS-18** (spegnibile) fattore personale del tempo (W2-T2): dopo 3 sedute valide con la durata registrata (non interrotte, importate o libere, con almeno il 70% delle serie fatte) il fattore f è la mediana di minuti reali / minuti stimati, tra 0,8 e 1,4 (`fattoreTempo`); il generatore e le stime a schermo lo applicano (T × f) e il programma dice «Le tue sedute durano di solito il #% più (o meno) del previsto». Solo col consenso ai dati (`coachAttivo`); con la regola spenta o con meno di 3 sedute f = 1."
+    },
+    {
+      "capitolo": 21,
+      "riga": "- **IPE-04** (spegnibile) il giorno «forza» del PHUL con 45 minuti o meno (non con la forza come obiettivo) è di 3 serie da 6 ripetizioni con 135 s di pausa sui pesanti, non 4×5 a 180 s (`prescriviSeduta` in serie-ripetizioni.js, `giornoForzaCorto` in soglie-tempo.js); da 60 minuti resta a 5 ripetizioni."
+    },
+    {
+      "capitolo": 21,
+      "riga": "- **IPE-12** (spegnibile) con 30 minuti o meno, o con 2 giorni al massimo, e senza metodo famoso, il programma dice che si lavora sull'essenziale: «Con poco tempo conta il lavoro essenziale… Realisticamente 4-6 serie per muscolo a settimana» (`validaTempo`)."
+    },
+    {
+      "capitolo": 30,
+      "riga": "- **PCO-04** (sempre accesa: metodi; W2-T2 per `rr` e `minimo`; la parte sul RIR è di W3-T1 e non è fatta) la Recommended Routine a coppie (`rr`) ha le coppie per MUSCOLO antagonista (non più per indice: spinta e tirata, quadricipiti e femorali, le gambe prima, nessuna coppia con core o tenute), 3 serie da 5-8 ripetizioni e le pause della classe (il Plank non aspetta più 90 s); la Dose minima (`minimo`) accetta 2 o 3 giorni e da 20 a 45 minuti, 4-5 esercizi da 2 serie da 10 ripetizioni con la pausa della classe (`coppiePerMuscolo` e `METODI` in metodi-momenti.js)."
+    }
+  ],
+  "mappaAgenti": [
+    "il tempo (W2-T2): `durataSeduta`, `durataEsercizio`, `durataCoppia`, `rampaDelleSerie`, `minutiRampa`, `opzioniTempo` (generatore) e `opzioniTempoProfilo` (schermate), `fattoreTempo` in js/coach/volume/tempo.js, numeri in `SOGLIE_TEMPO` (js/coach/volume/soglie-tempo.js); Oggi, Giorno e Aggiungi allenamento stimano con `durataSeduta` (stessa funzione del generatore). Ancora con la stima di prima: js/ui/figura-anatomica.js e js/dati/schede-pronte.js",
+    "pause per classe e capacità: `limitiPausa`, `pausaPrescritta`, `classePausa`, `pausePerClasse`, `riallineaPause`, `stimaEsercizi`, `numeroEsercizi`; scala del taglio: `adattaAlTempo`, `scalaDelTempo`, `serieSottoFascia`, `rifinisciAlTempo`; coppie: `antagonistiPerMuscolo`, `coppiaValida`, `riparaCoppie`; verifica: `validaTempo` (chiamata da `verificaProgramma`, note e «perché»)",
+    "metodi `rr` e `minimo`: `coppiePerMuscolo` in js/coach/metodi-momenti.js (coppie per muscolo antagonista, pause di classe)"
+  ],
+  "nota": "W2-T2 (il tempo): CAS-05..08, CAS-18, IPE-04, IPE-12, PCO-04 (rr e minimo), PRG-03/13/20/33 riscritte. Da fare in INT: collegare la nota delle donne di genera.js a `brief.lavoro.pauseDonneAccorciate`; aggiornare la riga `minimo` della tabella MET-01 (giorni 2-3, minuti 20-45); ricontrollare le stime di js/ui/figura-anatomica.js e js/dati/schede-pronte.js."
+}
