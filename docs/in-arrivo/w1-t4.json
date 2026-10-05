@@ -42,7 +42,7 @@
     {
       "capitolo": 28,
       "titolo": "Dall'obiettivo al programma (OBI)",
-      "riga": "- **OBI-02** Fase del corpo da tutti gli obiettivi: una sola funzione `faseCorpo` (js/coach/regia/brief.js) per la scheda Peso, il pannello del coach (`corpoCoach`) e la nota dei passi del programma; il dimagrimento, in qualunque posizione, è un deficit (come già faceva la nota dei passi), poi vince il primo tra ricomposizione e massa, altrimenti mantenimento; la fase scelta a mano in Opzioni vince su tutto; la priorità tra massa e dimagrimento dichiarati insieme è di OBI-01 (W2-T5). Obiettivi che il coach non conosce ancora (D-P6): il programma è quello di «salute» e il profilo conserva l'obiettivo dichiarato. Convenzione (coerenza interna: docs/ricerca-obiettivi-e-programmi.md A5, OBI-02)."
+      "riga": "- **OBI-02** (sempre accesa: correzione di coerenza, non cambia il programma) Fase del corpo da tutti gli obiettivi: una sola funzione `faseCorpo` (js/coach/regia/brief.js) per la scheda Peso, il pannello del coach (`corpoCoach`) e la nota dei passi del programma; il dimagrimento, in qualunque posizione, è un deficit (come già faceva la nota dei passi), poi vince il primo tra ricomposizione e massa, altrimenti mantenimento; la fase scelta a mano in Opzioni vince su tutto; la priorità tra massa e dimagrimento dichiarati insieme è di OBI-01 (W2-T5). Obiettivi che il coach non conosce ancora (D-P6): il programma è quello di «salute» e il profilo conserva l'obiettivo dichiarato. Convenzione (coerenza interna: docs/ricerca-obiettivi-e-programmi.md A5, OBI-02)."
     }
   ],
   "mappaAgenti": [

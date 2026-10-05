@@ -271,7 +271,8 @@ function pianifica(batch, errori, avvisi) {
         const cod = m[1];
         const blocc = bloccate[cod];
         if (blocc && !/bloccat/i.test(r.riga)) errori.push(id + ': ' + cod + ' e nell\'elenco delle regole bloccate (registro C.2 n. ' + blocc.n + (blocc.parziale ? ', in parte' : '') + '): si registra solo una riga con «(bloccata)» e non si implementa nulla (cancello E.0 punto 0)');
-        if (!/\((spegnibile|bloccata)\)|storica/i.test(r.riga)) avvisi.push(id + ': ' + cod + ' non e segnata «(spegnibile)» ne «(bloccata)» (ogni regola nuova e spegnibile: piano F.4)');
+        /* tre stati leciti: «(spegnibile)», «(bloccata)» o «(parte b bloccata)», «(sempre accesa: motivo)» (guardie, regia, correzioni di coerenza: la salvaguardia che toglie o riduce non si spegne, skill implementa-regola-coach §2.2; INT-1) */
+        if (!/\((spegnibile|bloccata|parte b bloccata|sempre accesa[^)]*)\)|storica/i.test(r.riga)) avvisi.push(id + ': ' + cod + ' non e segnata «(spegnibile)», «(bloccata)» ne «(sempre accesa: motivo)» (ogni regola nuova e spegnibile: piano F.4)');
         const presente = codiciMappa.indexOf(cod) !== -1 || codiciNuovi.has(cod);
         if (r.sostituisce) {
           const k = righe.findIndex(x => (x.match(RX_CODICE) || [])[1] === cod);
@@ -552,6 +553,9 @@ function autotest() {
     eq(/^- \*\*RIC-05\*\* \(spegnibile\) riscritta$/m.test(sost.modifiche[FILE_MAPPA]), true, 'riga sostituita sul posto');
     conErrore(r('- **ZZZ-01** (spegnibile) non c\'e', { sostituisce: true }), /`sostituisce` ma ZZZ-01 non e nella mappa/);
     const av = lancia([json(r('- **RIC-96** senza spegnibile'))]); eq(av.avvisi.some(a => /non e segnata «\(spegnibile\)»/.test(a)), true, 'avviso senza (spegnibile)');
+    ['(sempre accesa: guardia) due', '(parte b bloccata) tre', '(sempre accesa) quattro'].forEach((t, i) => {
+      const ok2 = lancia([json(r('- **RIC-9' + (i + 7) + '** ' + t))]); eq(ok2.avvisi.length, 0, 'nessun avviso per ' + t + ': ' + ok2.avvisi.join('|'));
+    });
     const nuovoCap = clona(base); nuovoCap.regole = [{ capitolo: 21, titolo: 'Capitolo creato dalla regola', riga: '- **ABC-01** (spegnibile) in un capitolo nuovo' }];
     const rc = lancia([json(nuovoCap)]); eq(rc.errori.length, 0, rc.errori.join('|')); eq(/## 21\. Capitolo creato dalla regola\n\n- \*\*ABC-01\*\*/.test(rc.modifiche[FILE_MAPPA]), true, 'capitolo creato con la sua riga');
   });
