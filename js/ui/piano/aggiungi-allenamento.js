@@ -336,7 +336,7 @@ function renderWeekOverview() {
       const aperto = d === currentDay;
       const riposo = isRestDay(d);
       const meta = riposo ? '\u{1F634} Riposo' : serie + ' serie \u2022 ~' +
-        Math.round(list.reduce((s, e) => s + e.sets * (30 + e.rest), 0) / 60) + ' min';
+        Math.round(durataSeduta(list)) + ' min';   /* CAS-05, B36: la stessa stima del generatore e di Oggi */
       return '<button class="wk-row ' + (aperto ? 'open' : '') + '" onclick="openPlanDayScreen(\'' + d + '\')">' +
         '<div class="wk-main">' +
           '<div class="wk-name">' + escapeHtml(getDayTitle(d)) + (getDayTitle(d) !== d ? ' <span class="wk-meta">(' + d + ')</span>' : '') + '</div>' +
@@ -391,8 +391,8 @@ function renderPiano() {
   renderSuggested();
   syncBuildingLine(list.length);
   const totalSets = list.reduce((sum, e) => sum + e.sets, 0);
-  const estSeconds = list.reduce((sum, e) => sum + e.sets * (30 + e.rest), 0);
-  summaryEl.innerText = `${list.length} esercizi • ${totalSets} serie • ~${Math.round(estSeconds / 60)} min`;
+  const estMinuti = durataSeduta(list);   /* CAS-05, B36: la stessa stima del generatore e di Oggi */
+  summaryEl.innerText = `${list.length} esercizi • ${totalSets} serie • ~${Math.round(estMinuti)} min`;
 
   if (!planDayOpen) {
     container.innerHTML = '<div class="wk-empty">Tocca ' + escapeHtml(getDayTitle(currentDay)) + ' qui sopra per vederne gli esercizi.</div>';

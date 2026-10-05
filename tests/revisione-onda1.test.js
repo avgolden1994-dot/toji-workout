@@ -50,7 +50,8 @@ test('M1: nessun prudente e nessun principiante riceve lo Stacco Rumeno a una Ga
   assert.deepStrictEqual(con(principianti).map(x => x.p.seme), [], 'chi inizia non riceve un esercizio di abilita 3 (SEL-06)');
   const esperti = adulti.filter(x => x.p.level !== 'principiante');
   assert.strictEqual(esperti.length, 54);
-  assert.strictEqual(con(esperti).length, 20, 'chi ha esperienza lo riceve dove ci sono i manubri');
+  /* W2-T2: 18 e non 20 (la capacita di CAS-06 e il taglio per il tempo cambiano quali programmi della griglia hanno il posto dell unilaterale); il controllo e che lo riceva ancora dove ci sono i manubri */
+  assert.strictEqual(con(esperti).length, 18, 'chi ha esperienza lo riceve dove ci sono i manubri');
 });
 
 /* ============================================================================================================ M5 */
@@ -92,7 +93,8 @@ test('M5: su una griglia di 324 programmi nessun intermedio o avanzato sano rice
   assert.deepStrictEqual(esperti.filter(haScatola).map(x => x.p.seme), [], 'chi puo fare lo squat con un carico non riceve lo squat di avvio');
   /* lo ricevono ancora chi inizia e i prudenti (la progressione verso lo squat carico) */
   assert.strictEqual(tutti.filter(x => x.p._persona === 'adulto' && x.p.level === 'principiante').filter(haScatola).length, 12);
-  assert.strictEqual(tutti.filter(x => x.p._persona !== 'adulto').filter(haScatola).length, 128);
+  /* W2-T2: 130 e non 128 (con la capacita di CAS-06 ai prudenti e ai principianti restano 2 programmi in piu con lo squat di avvio: e la progressione verso lo squat carico) */
+  assert.strictEqual(tutti.filter(x => x.p._persona !== 'adulto').filter(haScatola).length, 130);
   let sedute = 0, conAvvioEAltroSquat = 0, conDueSquat = 0;
   tutti.forEach(x => x.prog.sedute.forEach(sd => {
     sedute++;
