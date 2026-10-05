@@ -28,7 +28,6 @@ const EXERCISE_LIBRARY = [
   { name: '💪 Croci ai Cavi', group: 'petto', type: 'isolation', sets: 3, reps: 12, weight: 12, rest: 60 },
   { name: '💪 Croci su Panca Manubri', group: 'petto', type: 'isolation', sets: 3, reps: 12, weight: 10, rest: 60 },
   { name: '💪 Pectoral Machine (Butterfly)', group: 'petto', type: 'isolation', sets: 3, reps: 12, weight: 30, rest: 60 },
-  { name: '💪 Pullover con Manubrio', group: 'petto', type: 'isolation', sets: 3, reps: 12, weight: 14, rest: 60 },
 
   { name: '🏹 Stacco da Terra (Deadlift)', group: 'schiena', type: 'compound', sets: 4, reps: 6, weight: 60, rest: 150 },
   { name: '🏹 Trazioni alla Sbarra (Pull-ups)', group: 'schiena', type: 'compound', sets: 4, reps: 8, weight: 0, rest: 120 },
@@ -169,7 +168,10 @@ const EXERCISE_LIBRARY = [
   { name: '🎯 Leg Raise alla Sedia Romana', group: 'core', type: 'isolation', sets: 3, reps: 12, weight: 0, rest: 45 },
   { name: '🎯 Sit-up a Ginocchia Piegate', group: 'core', type: 'isolation', sets: 3, reps: 15, weight: 0, rest: 45 },
   /* adduttori: l alternativa a carico libero dell Adductor Machine (e viceversa) */
-  { name: '🦵 Squat Sumo', group: 'gambe', type: 'compound', sets: 3, reps: 12, weight: 16, rest: 75 }
+  { name: '🦵 Squat Sumo', group: 'gambe', type: 'compound', sets: 3, reps: 12, weight: 16, rest: 75 },
+  /* D-P11: il pullover coi manubri allena i dorsali (bersaglio in DETTAGLI), quindi gruppo schiena. In fondo all elenco di proposito: buildProgram
+     lo pesca per ultimo come riserva della tirata verticale (SCHEMI_MOV), dopo trazioni e lat machine */
+  { name: '💪 Pullover con Manubrio', group: 'schiena', type: 'isolation', sets: 3, reps: 12, weight: 14, rest: 60 }
 ];
 
 /* Il menu a tendina si genera dalla libreria: una sola fonte di verita',
