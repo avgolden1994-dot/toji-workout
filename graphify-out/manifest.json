@@ -540,9 +540,9 @@
     "semantic_hash": "d88b68bf068d0b4bc1e00b1f9309ac51"
   },
   "js/ui/opzioni/impostazioni.js": {
-    "mtime": 1791180266.9390786,
-    "seen": 1791180597.216648,
-    "ast_hash": "465b0bf523536b3a09b1b6359a460392",
+    "mtime": 1791181782.9391687,
+    "seen": 1791182361.1987057,
+    "ast_hash": "bd35444bca168da9c7042973841a7930",
     "semantic_hash": ""
   },
   "js/ui/opzioni/stile-iphone.js": {
@@ -654,10 +654,10 @@
     "semantic_hash": "5558e458ff5680d2afc7b241455c77f9"
   },
   "manifest.json": {
-    "mtime": 1791160530.879713,
-    "seen": 1791180597.2167127,
-    "ast_hash": "56a386b6a7afca1b6aac30ae68681197",
-    "semantic_hash": "56a386b6a7afca1b6aac30ae68681197"
+    "mtime": 1791181789.0871692,
+    "seen": 1791182361.1987262,
+    "ast_hash": "54f2b47e64458a4b9702ac8f7e83d029",
+    "semantic_hash": ""
   },
   "package.json": {
     "mtime": 1791176261.7668405,
@@ -666,9 +666,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1791180133.1319892,
-    "seen": 1791180597.216717,
-    "ast_hash": "ce62d8ebbd6b3dbeb3dd59f05fc374ed",
+    "mtime": 1791181819.8671708,
+    "seen": 1791182361.1987286,
+    "ast_hash": "c2af84197326c2d8ce9cb783af5eb792",
     "semantic_hash": ""
   },
   "tests/avvio.test.js": {
@@ -678,9 +678,9 @@
     "semantic_hash": "1438aec992ef078bc6a8ac79deecf194"
   },
   "tests/struttura.test.js": {
-    "mtime": 1791176261.7668405,
-    "seen": 1791180597.2167258,
-    "ast_hash": "dc5ae7c87d4f06bbb73a6941b9d7568e",
+    "mtime": 1791181855.863173,
+    "seen": 1791182361.198733,
+    "ast_hash": "816680439027dee4e4385f3fcd64ee81",
     "semantic_hash": ""
   },
   "tools/genera-catalogo.js": {
@@ -738,9 +738,9 @@
     "semantic_hash": "64f4a071e9f2b6291220cd3a0ff4fc14"
   },
   "index.html": {
-    "mtime": 1791179530.0430348,
-    "seen": 1791180597.2167733,
-    "ast_hash": "9dd04c8867eafb05747fc3a434ef17d4",
+    "mtime": 1791181788.287169,
+    "seen": 1791182361.1987627,
+    "ast_hash": "4d2b1ba09ec92c1bc75bb9f2f6f773ee",
     "semantic_hash": ""
   },
   "tests/cedimento.test.js": {
@@ -786,9 +786,9 @@
     "semantic_hash": ""
   },
   "docs/mappa-per-agenti.md": {
-    "mtime": 1791180128.9840696,
-    "seen": 1791180597.2167668,
-    "ast_hash": "eaf62ad0b53db10e8a945c71936c7947",
+    "mtime": 1791182341.435202,
+    "seen": 1791182361.198758,
+    "ast_hash": "7f56e08bacb119ddd730bb7694fe190c",
     "semantic_hash": ""
   },
   "docs/checklist-appstore/01-decisioni.md": {
@@ -1107,6 +1107,12 @@
     "mtime": 1791176261.6668406,
     "seen": 1791180597.2168353,
     "ast_hash": "11664ae1f1cab2a1a0fea85a69b07538",
+    "semantic_hash": ""
+  },
+  "js/core/tema-iniziale.js": {
+    "mtime": 1791182376.2992039,
+    "seen": 1791182414.2345912,
+    "ast_hash": "5b4dabf170fb5b3712698a8f42da2872",
     "semantic_hash": ""
   }
 }
