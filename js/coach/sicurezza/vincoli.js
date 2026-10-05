@@ -9,7 +9,8 @@
        gruppiTecniche: ['G1', 'G1b', ...] (docs/ricerca-metodi-avanzati-intensita.md 3.3), tettoCarico (al massimo 1), motivi: [{ codice, testo }] }
    Oggi (W1-T4) le regole sono SOLO quelle di prima, spostate qui senza cambiarne l esito:
    - vietati: il Nordic Curl non entra per chi inizia, per i prudenti (over 65, PAR-Q, minorenni) ne per le ginocchia dolenti (B1, revisione dell onda 0:
-     discesa eccentrica sovramassimale a corpo libero); lo leggono consentito() (prefs.esclusi) e ogni scelta di esercizi;
+     discesa eccentrica sovramassimale a corpo libero) e, dall INT-2a, lo Stacco Rumeno a una Gamba per i prudenti (abilita 3);
+     li leggono consentito() (prefs.esclusi) e ogni scelta di esercizi;
    - serieMaxEsercizio: chi inizia e i prudenti fanno al massimo COACH_PARAMETRI.serieMaxPrudente serie per esercizio (CAS-14, femorali, riempimento);
    - gruppiTecniche: le tecniche al cedimento (G2, G2b, G3) mai a chi inizia, ai minorenni, agli over 65 e in modalita prudente (MAV-02, MAV-03:
      Convenzione, prudenza); la superserie antagonista (G1b) vale per tutti. La matrice completa delle tecniche per persona e di W2-T3 (MAV-01).
@@ -25,6 +26,11 @@ function vincoliSicurezza(brief) {
     vincoli.vietati[nordic] = 'discesa eccentrica sovramassimale: non per chi inizia, per i prudenti e per le ginocchia dolenti';
     vincoli.motivi.push({ codice: 'B1', testo: 'Il Nordic Curl non entra: è una discesa eccentrica sovramassimale, non adatta a chi inizia, ai prudenti e alle ginocchia dolenti.' });
   }
+  /* INT-2a (M1 della revisione dell onda 1): lo Stacco Rumeno a una Gamba e un esercizio di abilita 3 (equilibrio e cerniera su un piede: la sua scheda dice di
+     appoggiare una mano) e prima, letto come bilanciere, finiva in 225 programmi su 263 di persone prudenti; per i prudenti resta fuori finche la scelta non leggera
+     l abilita (W2-T6): hanno lo Stacco Rumeno con Manubri (abilita 2) */
+  const unaGamba = nomeInLibreria('Stacco Rumeno a una Gamba');
+  if (unaGamba && chi.cauto) vincoli.vietati[unaGamba] = 'abilita 3 (equilibrio su un piede): non per i prudenti, finche la scelta non legge l abilita';
   if (chi.principiante || chi.cauto) vincoli.serieMaxEsercizio = COACH_PARAMETRI.serieMaxPrudente;   /* 2-3 serie impegnative (Barbell Medicine); CAS-14, femorali, riempimento */
   /* MAV-03: niente tecniche al cedimento a chi inizia, ai minorenni, agli over 65 e in modalita prudente */
   if (!chi.principiante && !chi.cauto) vincoli.gruppiTecniche.push('G2', 'G2b');

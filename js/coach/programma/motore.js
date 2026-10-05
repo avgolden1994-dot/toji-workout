@@ -18,6 +18,8 @@ function attrezzoDi(nome) {
   const n = nome.toLowerCase();
   if (/asciugamano/.test(n)) return 'corpo';   /* W1-T5: il leg curl con l asciugamano non e alla macchina */
   if (/seal row|suitcase/.test(n)) return 'manubri';   /* W1-T5: il nome non lo dice */
+  if (/stacco rumeno a una gamba/.test(n)) return 'manubri';   /* INT-2a (M1 della revisione dell onda 1): il nome non lo dice e /stacco/ lo faceva "bilanciere" (serve un manubrio) */
+  if (/elastico/.test(n)) return 'corpo';   /* INT-2a: Lat Pulldown, Alzate Laterali e Face Pull con elastico non sono ne macchine ne manubri (nessun attrezzo da dichiarare per ora: li toglie consentito) */
   if (/piegamenti|mani rialzate/.test(n)) return 'corpo';   /* anche con le mani su una panca: niente manubri ("ri-alzate" non e "alzate") */
   if (/un piede|corpo libero|sissy|pike|sit-up|sedia romana|diamante/.test(n)) return 'corpo';
   if (/manubri|concentrazione/.test(n) && !/cavi|cavo|macchin/.test(n)) return 'manubri';   /* "Lento Avanti Manubri" non e da bilanciere */
