@@ -7,18 +7,18 @@ Generato con uno script node che legge `EXERCISE_LIBRARY` (`js/dati/libreria-ese
 | Voce | Valore |
 |---|---|
 | Esercizi nel catalogo (`EXERCISE_LIBRARY`) | 139 |
-| Con immagine (campo presente e file esistente) | 9 |
-| Senza immagine | 130 |
-| File in `esercizi/` | 10 (tutti SVG) |
+| Con immagine (campo presente e file esistente) | 10 |
+| Senza immagine | 129 |
+| File in `esercizi/` | 11 (tutti SVG) |
 | File orfani (non referenziati) | 1 (`ex-02-panca-inclinata-su-a.svg`) |
-| Peso totale `esercizi/` | 426.0 KB |
-| Peso medio per file | 42.6 KB |
+| Peso totale `esercizi/` | 457.4 KB |
+| Peso medio per file | 41.6 KB |
 
 Copertura per gruppo muscolare:
 
 | Gruppo | Esercizi | Con immagine | Senza |
 |---|---|---|---|
-| Petto | 17 | 9 | 8 |
+| Petto | 17 | 10 | 7 |
 | Schiena | 23 | 0 | 23 |
 | Gambe | 24 | 0 | 24 |
 | Glutei | 15 | 0 | 15 |
@@ -27,6 +27,8 @@ Copertura per gruppo muscolare:
 | Core | 18 | 0 | 18 |
 
 Note: gli esercizi usati in `schede-*.js` e le chiavi di `DETTAGLI` (139) coincidono con la libreria: nessun esercizio fuori catalogo. `tools/genera-catalogo.js` NON riguarda gli esercizi: genera il catalogo delle regole del coach da `docs/coach-mappa-regole.md`.
+
+Le bozze Quiver non finali (varianti a-d dell'esercizio 10, di cui la b e' stata usata per il finale) stanno in `esercizi-bozze/`, fuori da `esercizi/` e dalla cache del service worker.
 
 ## 2. Tabella completa
 
@@ -43,7 +45,7 @@ Il nome e' mostrato senza emoji iniziale. Percorso `img/<slug>.png` e' il ripieg
 | 7 | Piegamenti a Terra (Push-up) | Petto | `esercizi/ex-07-push-up.svg` |
 | 8 | Croci ai Cavi | Petto | `esercizi/ex-08-croci-cavi.svg` |
 | 9 | Croci su Panca Manubri | Petto | `esercizi/ex-09-croci-panca-manubri.svg` |
-| 10 | Pectoral Machine (Butterfly) | Petto | nessuna (ripiego inesistente `img/pectoral-machine.png`) |
+| 10 | Pectoral Machine (Butterfly) | Petto | `esercizi/ex-10-pectoral-machine.svg` |
 | 11 | Pullover con Manubrio | Petto | nessuna (ripiego inesistente `img/pullover-con-manubrio.png`) |
 | 12 | Stacco da Terra (Deadlift) | Schiena | nessuna (ripiego inesistente `img/stacco-da-terra.png`) |
 | 13 | Trazioni alla Sbarra (Pull-ups) | Schiena | nessuna (ripiego inesistente `img/trazioni-alla-sbarra.png`) |
