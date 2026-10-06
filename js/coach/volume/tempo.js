@@ -355,10 +355,15 @@ function scalaDelTempo(brief, sd, sedute, opz, minutiEff, passi) {
     else { sd.esercizi.splice(0, sd.esercizi.length, ...ordine); ordine.forEach((e, k) => { if (flag[k]) e.superset = true; else delete e.superset; }); }
     if (T() <= limite) return;
   }
+  /* INT-2b (collaudo PAT-01, EQ-02): un piano di spinta o di tirata verticale che e l unico della settimana non lascia il posto in nessun passo del taglio. I piani sono la spinta e la tirata verticali per
+     schema, il Landmine Press (una spinta verticale per SLOT_DEF, ma schemaDi non lo vede) e il pullover di riserva della tirata verticale. Senza questa guardia il Landmine Press, il solo piano per chi ha la
+     spalla dolente, usciva come «isolamento» nei 30 minuti (25 programmi in palestra, PAT-01:spintaV) */
+  const pianoDi = (e) => { const k = schemaDi(e.name); if (k === 'spintaV' || k === 'tirataV') return k; return /landmine/i.test(senzaEmoji(e.name)) ? 'spintaV' : (e.riservaTirataV ? 'tirataV' : null); };
+  const unicoPiano = (e) => { const k = pianoDi(e); return !!k && !sedute.some(o => o.esercizi.some(x => x !== e && pianoDi(x) === k)); };
   /* 3) il core e le braccia dirette (P6 e P5), uno alla volta: non i protetti, non sotto i pavimenti */
   const via = (sel) => {
     for (let g = 0; g < 12 && T() > limite && sd.esercizi.length > 3; g++) {   /* mai sotto 3 esercizi (EXN-01) */
-      const c = sd.esercizi.filter(sel).filter(e => !e.fisso && !e.protetto && pavimentoOk(brief, sedute, e, e.sets)).pop();
+      const c = sd.esercizi.filter(sel).filter(e => !e.fisso && !e.protetto && !unicoPiano(e) && pavimentoOk(brief, sedute, e, e.sets)).pop();
       if (!c) break;
       togliEsercizio(sd, c); passi.tagli++;
     }
@@ -371,7 +376,7 @@ function scalaDelTempo(brief, sd, sedute, opz, minutiEff, passi) {
   for (let g = 0; g < 80 && T() > limite; g++) {
     const c = sd.esercizi.filter(e => e.sets > 2 && !e.fisso && pavimentoOk(brief, sedute, e, 1)).sort((a, b) => isPrio(a) - isPrio(b) || (a === fondamentale) - (b === fondamentale) || comp(a) - comp(b) || strEtirata(a) - strEtirata(b) || b.sets - a.sets)[0];
     if (c) { c.sets--; passi.tagli++; continue; }
-    const iso = sd.esercizi.filter(e => !comp(e) && !e.protetto && !e.fisso && pavimentoOk(brief, sedute, e, e.sets));
+    const iso = sd.esercizi.filter(e => !comp(e) && !e.protetto && !e.fisso && !unicoPiano(e) && pavimentoOk(brief, sedute, e, e.sets));
     const senzaCore = iso.filter(e => group(e) !== 'core'), v = (senzaCore.length ? senzaCore : iso).pop();
     if (v && sd.esercizi.length > 3) { togliEsercizio(sd, v); passi.tagli++; continue; }
     break;
@@ -389,9 +394,9 @@ function scalaDelTempo(brief, sd, sedute, opz, minutiEff, passi) {
   }
   /* e se ancora non entra (30 minuti e 2 giorni con i glutei come obiettivo: i quattro schemi base a due serie piu la spinta d anca non stanno in 33 minuti) l ultimo esercizio fuori dai quattro schemi base
      (la spinta d anca, un secondo schema) lascia il posto, se la settimana non va sotto i pavimenti: gli schemi di base restano sempre, la seduta non ne ha mai meno di 4 */
-  const SCHEMI_BASE = ['squat', 'hinge', 'spintaO', 'tirataO'], PIANI = ['spintaV', 'tirataV'];
+  const SCHEMI_BASE = ['squat', 'hinge', 'spintaO', 'tirataO'];
   /* un piano di spinta o di tirata (verticale) non sparisce dalla settimana: lascia il posto solo se un altra seduta lo tiene (EQ-02) */
-  const unicoNellaSettimana = (e) => PIANI.indexOf(schemaDi(e.name)) !== -1 && !sedute.some(o => o !== sd && o.esercizi.some(x => schemaDi(x.name) === schemaDi(e.name)));
+  const unicoNellaSettimana = (e) => unicoPiano(e);   /* INT-2b: stessa definizione dei passi sopra (anche il Landmine Press e il pullover di riserva) */
   for (let g = 0; g < 4 && T() > minutiEff * 1.10 && sd.esercizi.length > 4; g++) {
     const fuori = sd.esercizi.filter(e => !e.fisso && SCHEMI_BASE.indexOf(schemaDi(e.name)) === -1 && group(e) !== 'core' && !unicoNellaSettimana(e) && pavimentoOk(brief, sedute, e, e.sets));
     if (!fuori.length) break;
