@@ -107,9 +107,11 @@ function scaricoAlCarico(r, c) {
   r.sets = serie;
   const rif = regolaAttiva('MES-06') ? caricoRiferimento(nome) : 0;
   const mai = ultimeSessioni(nome, 1).length === 0;                                  /* mai fatto: il carico e quello del programma, con la dose unica (non un secondo fattore) */
-  if (mai) r.weight = arrotonda((Number(c.base) || r.weight) * dose.carico);
+  /* ALG-06 (integrazione 3a): il carico sta sulla griglia dell attrezzo (la dose per difetto solo se la griglia non la rappresenta, caricoSceso); la verifica non toglie niente (dose 1) */
+  const sullaGriglia = da => dose.carico < 1 ? caricoSceso(da, dose.carico, nome) : caricoInGriglia(da, nome);
+  if (mai) r.weight = sullaGriglia(Number(c.base) || r.weight);
   else if (verifica) {
-    if (rif > 0) r.weight = arrotonda(rif * dose.carico);
+    if (rif > 0) r.weight = sullaGriglia(rif);
     else { const ult = typeof pesoUltimoDi === 'function' ? pesoUltimoDi(nome) : null; r.weight = ult ? ult.weight : (Number(c.base) || r.weight); }
   }
   const testa = verifica || !(dose.carico < 1) ? 'Settimana di verifica: ' + testoDose(dose.serie, 1) + ', stesso carico di prima' : 'Settimana di scarico: ' + testoDose(dose.serie, dose.carico);

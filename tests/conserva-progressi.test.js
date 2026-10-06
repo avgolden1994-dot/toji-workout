@@ -119,8 +119,9 @@ const lettura = (app, n) => app.dati(app.g('(() => { const n = ' + J(n) + ', u =
 /* il carico che il Piano mostra per un esercizio con lo storico: quello dell ultima seduta non di scarico (entro 28 giorni), altrimenti l ultimo usato */
 const caricoDiLavoro = l => l.riferimento > 0 ? l.riferimento : l.ultimo.weight;
 const proposta = (app, n, reps, serie) => app.dati(app.chiama('caricoProssimo', n, 0, reps, serie));
-/* la fascia di una proposta dopo l ultimo carico: -10% (due mancati) o +5 kg (un passo delle gambe), con un po di margine */
-const FUORI = (w, ult) => w < ult * 0.85 - 0.5 || w > ult * 1.1 + 5;
+/* la fascia di una proposta dopo l ultimo carico: -10% (due mancati) o +5 kg (un passo delle gambe), con un po di margine: un passo della griglia (2,5 kg, ALG-06 di P3-A: un -10%
+   di 12,5 kg cavi non si carica, il primo peso sotto e 10) */
+const FUORI = (w, ult) => w < ult * 0.85 - 2.5 || w > ult * 1.1 + 5;
 
 /* le garanzie, uguali per ogni utente e ogni modo di rifare il programma. `X` = gli esercizi con lo storico; `prima` = lo stato prima di rifare */
 function verifica(app, X, prima, etichetta, opz) {
@@ -315,7 +316,7 @@ elencoFixture().forEach(nome => {
       storia.forEach(h => (h.sessione || []).forEach(e => { if (e.sets.some(s => s.done)) conta[e.name] = (conta[e.name] || 0) + 1; }));
       const X = Object.keys(conta).filter(n => conta[n] >= 3 && app.json('findExercise(' + J(n) + ')') && !app.g('isTimeBased(' + J(n) + ')'));
       assert.ok(storia.length >= 10 && X.length >= 5, nome + ': storico di almeno 10 sedute su almeno 5 esercizi (' + storia.length + ', ' + X.length + ')');
-      const prima = { stato: grezzo(app), letture: {}, proposte: {}, profilo: app.leggi(app.chiave('PROFILE_KEY')), fase: app.json('settimanaProgramma().fase') };
+      const prima = { stato: grezzo(app), letture: {}, proposte: {}, profilo: app.leggi(app.chiave('PROFILE_KEY')), fase: app.json('settimanaProgramma().fase'), versione: app.json('getProgramma().versione') || 1 };
       X.forEach(n => { prima.letture[n] = lettura(app, n); prima.proposte[n] = proposta(app, n, 8, 3); });
       rifai(app, via === 'ciclo' ? { via: 'ciclo' } : { via: 'questionario' });   /* le stesse risposte di prima: livello, giorni, minuti, luogo, sonno, attrezzi */
       const dopo = grezzo(app), hk = app.g('historyKey()'), rs = riscritte(app);
@@ -338,7 +339,16 @@ elencoFixture().forEach(nome => {
         assert.ok(u < 5 || (r.weight >= u * 0.4 && r.weight <= u * 1.35), n + ' propone ' + r.weight + ' kg dopo ' + u + ' kg');
         /* con lo stesso profilo il carico proposto e lo stesso di prima, kg per kg (se nel programma di prima non era in corso una settimana di scarico, che il programma nuovo non ha, e se l esercizio e nel piano
            nuovo: la calibrazione rapida del carico stimato, CAR-18, vale solo per gli esercizi del piano) */
-        if (via === 'ciclo' && prima.fase !== 'scarico' && nelPiano.indexOf(n) !== -1) assert.strictEqual(r.weight, prima.proposte[n].weight, n + ': stessa proposta di prima (' + prima.proposte[n].weight + ' kg, ' + prima.proposte[n].tipo + ')');
+        /* INT-3a: un programma v1 che si rifa diventa v2 e la progressione v2 legge lo stesso storico con le regole nuove di P3-A (ALG-02: il carico piu frequente; AUT-01: la salita
+           da RPE al massimo di 2 punti, circa 6%, per volta: 74 kg con serie facili sono 80 kg per la v1 e 77,5 per la v2): stessa direzione e al massimo un passo della griglia o il 5% */
+        if (via === 'ciclo' && prima.fase !== 'scarico' && nelPiano.indexOf(n) !== -1) {
+          const p0 = prima.proposte[n];
+          if (prima.versione >= 2) assert.strictEqual(r.weight, p0.weight, n + ': stessa proposta di prima (' + p0.weight + ' kg, ' + p0.tipo + ')');
+          else {
+            assert.strictEqual(r.tipo, p0.tipo, n + ': stessa direzione di prima (' + p0.tipo + ')');
+            assert.ok(Math.abs(r.weight - p0.weight) <= Math.max(2.5, p0.weight * 0.05) + 1e-9, n + ': propone ' + r.weight + ' kg, prima ' + p0.weight + ' kg (v1 -> v2: ALG-02 e AUT-01)');
+          }
+        }
       });
       /* chi ha gia un carico nello storico lo ritrova nel piano nuovo e quando apre la seduta; chi e nuovo parte dalla stima */
       const piano = app.pianoSalvato();

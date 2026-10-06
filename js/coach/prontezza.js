@@ -75,9 +75,12 @@ function prontezzaDiOggi(r) {
   if (f < 1) (data[currentDay] || []).forEach(e => {
     const m = findExercise(e.name);
     if (!m || m.type !== 'compound' || !(Number(e.weight) > 0) || e.completedSets.some(x => x.done)) return;
-    e.weight = arrotonda(e.weight * f);
+    /* ALG-06 (integrazione 3a): il carico sta sulla griglia dell attrezzo (caricoSceso: il peso vero piu vicino, almeno un passo sotto); se la griglia lo allontana dalla dose lo dice */
+    const voluto = e.weight * f;
+    e.weight = typeof caricoSceso === 'function' ? caricoSceso(e.weight, f, e.name) : arrotonda(voluto);
     e.completedSets = e.completedSets.map(x => Object.assign({}, x, { weight: e.weight }));
-    e.coachNote = (punteggio >= 50 ? 'Prontezza ' + punteggio + '%: un RIR in più sui multiarticolari (-4%)' : 'Prontezza ' + punteggio + '%: seduta leggera, multiarticolari -10%');
+    e.coachNote = (punteggio >= 50 ? 'Prontezza ' + punteggio + '%: un RIR in più sui multiarticolari (-4%)' : 'Prontezza ' + punteggio + '%: seduta leggera, multiarticolari -10%')
+      + (typeof notaPesoVicino === 'function' ? notaPesoVicino(e.weight, voluto) : '');
     e.coachTipo = 'giu';
     toccati++;
   });

@@ -117,7 +117,8 @@ test('N6 in seduta: nella settimana di scarico dell intermedio gli esercizi da 2
       if (e.setsBase === 2) { con2++; assert.strictEqual(e.sets, 1); }
       if (e.coachTipo === 'scarico') {
         scarichi++;
-        assert.strictEqual(e.weight, 38, e.name + ': 40 kg x 0,95');
+        const manubri = ['manubri', 'corpo'].indexOf(a.g('attrezzoDi(' + JSON.stringify(e.name) + ')')) !== -1;
+        assert.strictEqual(e.weight, manubri ? 38 : 37.5, e.name + ': 40 kg x 0,95 = 38: coi manubri e a corpo libero zavorrato (passi di 2 kg) 38, con il bilanciere, le macchine e i cavi (passi di 2,5 kg) 37,5 (ALG-06, P3-A: prima 38 per tutti)');
         assert.ok(/Settimana di scarico: volume -35% e carico -5%/.test(e.coachNote), e.coachNote);
         assert.ok(!/ripartire/.test(e.coachNote), 'niente «ripartire piu forte»: non ha base');
       }
@@ -240,7 +241,7 @@ test('l 8a settimana del controllo (scarico «basso» del principiante) allegger
   a.storia([0, 1, 2].map(i => a.seduta(2 + 2 * i, [{ nome: SQUAT, serie: [[60, 10, true], [60, 10, true], [60, 10, true]] }], { feedback: FB(10), settimana: { numero: 7, fase: 'carico' } })));
   assert.strictEqual(a.json('settimanaProgramma().doseFissa'), 'bassa');
   const due = a.json('caricoProssimo(' + JSON.stringify(SQUAT) + ', 60, 10, 2)'), tre = a.json('caricoProssimo(' + JSON.stringify(SQUAT) + ', 60, 10, 3)');
-  assert.deepStrictEqual([due.sets, tre.sets, tre.weight], [1, 2, 57], 'da 2 serie a 1, da 3 a 2, 60 kg x 0,95');
+  assert.deepStrictEqual([due.sets, tre.sets, tre.weight], [1, 2, 57.5], 'da 2 serie a 1, da 3 a 2, 60 kg x 0,95 = 57, sulla griglia del bilanciere 57,5 (ALG-06, P3-A)');
 });
 
 /* ============ MES-07: lo scarico deciso dal coach ha le sue protezioni ============ */

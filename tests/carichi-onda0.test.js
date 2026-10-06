@@ -121,7 +121,7 @@ test('dolore con alteRip: resta il -10%, le ripetizioni restano quelle del progr
   app.aggiusti({ esercizi: { [CURL]: { fattore: 0.9, sedute: 2, alteRip: true, motivo: 'Dolore segnalato: carico ridotto (10%)' } }, scarico: null });
   const r = carico(app, null, CURL, 12, 10, 3);
   assert.strictEqual(r.tipo, 'giu');
-  assert.strictEqual(r.weight, 11, '-10% di 12 kg, arrotondato a 0,5 kg');
+  assert.strictEqual(r.weight, 10, '-10% di 12 kg = 10,8 kg: manubri a passi di 2 kg da 10 kg (ALG-06, P3-A: prima 11, a passi di 0,5 kg)');
   assert.strictEqual(r.reps, 11, 'le ripetizioni sono quelle del motore (una in più), non 12');
   assert.match(r.motivo, /Dolore segnalato: carico ridotto \(10%\)/);
   assert.match(r.motivo, /ampiezza senza dolore, almeno 3 ripetizioni in riserva/);
@@ -131,7 +131,7 @@ test('dolore con alteRip: resta il -10%, le ripetizioni restano quelle del progr
 /* ============================================================================================================
    B26 · lo scarico non si compone e dopo lo scarico si riparte dal carico di prima (U15, N1, N2; MES-06)
    ============================================================================================================ */
-test('settimana di scarico: tre sedute dello stesso esercizio, stesso carico in tutte (prima: 54 → 48,5 → 43,5) e poi riparte da 60 (prima: da 43,5 + 2,5)', () => {
+test('settimana di scarico: tre sedute dello stesso esercizio, stesso carico in tutte (prima: 54 → 48,5 → 43,5; con la griglia 55) e poi riparte da 60 (prima: da 43,5 + 2,5)', () => {
   const app = nuovaApp({}, LUN_SETT7);
   registra(app, '2026-10-02T18:00:00', PANCA, 60, 8, 4);   /* ultima seduta normale (settimana 6): voce del tipo v1, senza etichetta di fase */
   const pesi = [];
@@ -142,7 +142,7 @@ test('settimana di scarico: tre sedute dello stesso esercizio, stesso carico in 
     pesi.push(r.weight);
     registra(app, quando, PANCA, r.weight, 8, r.sets);   /* si fa la seduta di scarico: completa */
   });
-  assert.deepStrictEqual(pesi, [54, 54, 54]);
+  assert.deepStrictEqual(pesi, [55, 55, 55], '60 x 0,9 = 54: sulla griglia del bilanciere (2,5 kg) il peso vero piu vicino e 55 (ALG-06, P3-A)');
   const dopo = carico(app, LUN_SETT9, PANCA, 60, 8, 4);
   assert.deepStrictEqual([dopo.weight, dopo.reps, dopo.sets, dopo.tipo], [60, 8, 4, 'fermo'], 'la prima seduta dopo lo scarico riparte dal carico di prima');
   assert.match(dopo.motivo, /Dopo lo scarico riparti dal carico che avevi prima/);
@@ -175,7 +175,7 @@ test('scarico: le sedute salvate dalla v2 (obiettivo.coachTipo, settimana.fase) 
     pesi.push(r.weight);
     registra(app, quando, PANCA, r.weight, 8, r.sets, { voce: { settimana: { numero: 8, fase: 'scarico' } }, obiettivo: { reps: 8, sets: r.sets, rir: [3, 4], coachTipo: 'scarico' } });
   });
-  assert.deepStrictEqual(pesi, [54, 54, 54]);
+  assert.deepStrictEqual(pesi, [55, 55, 55], 'griglia del bilanciere: 54 -> 55 (ALG-06, P3-A)');
   assert.strictEqual(kg(carico(app, LUN_SETT9, PANCA, 60, 8, 4)), 60);
 });
 test('dopo lo scarico si riparte dal carico di prima solo se lo scarico è andato bene; se è mancato resta com\'era', () => {
@@ -194,11 +194,11 @@ test('dopo lo scarico: prudenti e over 65 ripartono dal 95% del carico di prima,
     return app;
   };
   assert.strictEqual(kg(carico(prepara({}), LUN_SETT9, PANCA, 60, 8, 4)), 60);
-  assert.strictEqual(kg(carico(prepara({ age: 70 }), LUN_SETT9, PANCA, 60, 8, 4)), 57);
-  assert.strictEqual(kg(carico(prepara({ parq: true }), LUN_SETT9, PANCA, 60, 8, 4)), 57);
+  assert.strictEqual(kg(carico(prepara({ age: 70 }), LUN_SETT9, PANCA, 60, 8, 4)), 57.5, '60 x 0,95 = 57: griglia del bilanciere 57,5 (ALG-06, P3-A)');
+  assert.strictEqual(kg(carico(prepara({ parq: true }), LUN_SETT9, PANCA, 60, 8, 4)), 57.5);
   const stanco = prepara({});
   stanco.scrivi('coach_plus_prontezza_storia_toji', [{ punteggio: 40 }, { punteggio: 50 }, { punteggio: 55 }]);
-  assert.strictEqual(kg(carico(stanco, LUN_SETT9, PANCA, 60, 8, 4)), 57, 'prontezza media sotto 60: -5%');
+  assert.strictEqual(kg(carico(stanco, LUN_SETT9, PANCA, 60, 8, 4)), 57.5, 'prontezza media sotto 60: -5% (sulla griglia del bilanciere)');
   const bene = prepara({});
   bene.scrivi('coach_plus_prontezza_storia_toji', [{ punteggio: 70 }, { punteggio: 80 }, { punteggio: 75 }]);
   assert.strictEqual(kg(carico(bene, LUN_SETT9, PANCA, 60, 8, 4)), 60);
@@ -225,7 +225,7 @@ test('dopo lo scarico e una pausa di 10 giorni o più (rientro): il -10% si appl
   const DOPO_14 = '2026-10-26T10:00:00';
   [{}, { age: 70 }].forEach(prof => {
     const r = carico(prepara(prof), DOPO_14, PANCA, 60, 8, 4);
-    assert.deepStrictEqual([r.tipo, r.weight], ['giu', 54], JSON.stringify(prof) + ' (prima: 54 x 0,9 = 48,5)');
+    assert.deepStrictEqual([r.tipo, r.weight], ['giu', 55], JSON.stringify(prof) + ' (prima: 54 x 0,9 = 48,5; griglia del bilanciere 55)');
     assert.match(r.motivo, /Rientro dopo 14 giorni: carico -10%/);
   });
 });
@@ -239,31 +239,31 @@ test('rientro (CAR-04): i giorni sono quelli veri anche oltre i 65 anni (prima s
   const cinque = carico(prepara({ age: 70 }, '2026-10-02T10:00:00', 60), '2026-10-07T10:00:00', PANCA, 60, 8, 4);
   assert.notStrictEqual(cinque.tipo, 'giu', cinque.motivo);
   assert.doesNotMatch(cinque.motivo, /Rientro/);
-  assert.strictEqual(cinque.weight, 61.5, 'nessun taglio: l\'aumento dimezzato oltre i 65 anni (+1,25 kg, arrotondato a 0,5)');
+  assert.strictEqual(cinque.weight, 60, 'nessun taglio: l\'aumento dimezzato oltre i 65 anni (+1,25 kg) non si carica sul bilanciere (griglia di 2,5 kg, ALG-06, P3-A: prima 61,5)');
   /* a 70 anni nove giorni non sono ancora una pausa, dieci sì: stesse soglie degli altri (10, 20, 28, 90 giorni) */
   assert.doesNotMatch(carico(prepara({ age: 70 }, '2026-09-26T10:00:00', 60), LUN_SETT7, PANCA, 60, 8, 4).motivo, /Rientro/);
   const dieci = carico(prepara({ age: 70 }, '2026-09-25T10:00:00', 60), LUN_SETT7, PANCA, 60, 8, 4);
-  assert.deepStrictEqual([dieci.tipo, dieci.weight], ['giu', 54]);
+  assert.deepStrictEqual([dieci.tipo, dieci.weight], ['giu', 55], '60 x 0,9 = 54: griglia del bilanciere 55');
   assert.match(dieci.motivo, /Rientro dopo 10 giorni: carico -10%/);
   const trenta = carico(prepara({ age: 70 }, '2026-09-05T10:00:00', 60), LUN_SETT7, PANCA, 60, 8, 4);
-  assert.deepStrictEqual([trenta.tipo, trenta.weight], ['giu', 42], '30 giorni: -30%');
+  assert.deepStrictEqual([trenta.tipo, trenta.weight], ['giu', 42.5], '30 giorni: -30% = 42 kg: griglia del bilanciere 42,5');
 });
 test('scarico senza riferimento (esercizio fatto solo in scarico): la seconda seduta della settimana ripete il carico, non applica la dose una seconda volta', () => {
   const app = nuovaApp({}, LUN_SETT8);
   const primo = carico(app, LUN_SETT8, PANCA, 60, 8, 4);
-  assert.deepStrictEqual([primo.tipo, primo.weight], ['scarico', 54], 'prima volta: carico del programma x 0,9');
+  assert.deepStrictEqual([primo.tipo, primo.weight], ['scarico', 55], 'prima volta: carico del programma x 0,9 = 54, sulla griglia 55');
   registra(app, LUN_SETT8, PANCA, primo.weight, 8, primo.sets);
   const secondo = carico(app, MER_SETT8, PANCA, 60, 8, 4);
-  assert.deepStrictEqual([secondo.tipo, secondo.weight], ['scarico', 54], 'prima: 54 x 0,9 = 48,5');
+  assert.deepStrictEqual([secondo.tipo, secondo.weight], ['scarico', 55], 'prima: 54 x 0,9 = 48,5; griglia 55');
 });
-test('MES-06 non dipende da MES-10 (le analisi senza scarico): con MES-10 spenta lo scarico resta 54, 54 e la ripresa torna a 60', () => {
+test('MES-06 non dipende da MES-10 (le analisi senza scarico): con MES-10 spenta lo scarico resta 55, 55 (griglia) e la ripresa torna a 60', () => {
   const app = conSpegnibili(nuovaApp({}, LUN_SETT7));
   app.g("REGOLE_SPEGNIBILI.indexOf('MES-10') === -1 && REGOLE_SPEGNIBILI.push('MES-10')");
   app.spegni(['MES-10']);
   registra(app, '2026-10-02T18:00:00', PANCA, 60, 8, 4);
   const pesi = [];
   [LUN_SETT8, MER_SETT8].forEach(quando => { const r = carico(app, quando, PANCA, 60, 8, 4); pesi.push(r.weight); registra(app, quando, PANCA, r.weight, 8, r.sets); });
-  assert.deepStrictEqual(pesi, [54, 54]);
+  assert.deepStrictEqual(pesi, [55, 55]);
   const dopo = carico(app, LUN_SETT9, PANCA, 60, 8, 4);
   assert.deepStrictEqual([dopo.tipo, dopo.weight], ['fermo', 60]);
   assert.match(dopo.motivo, /una in più dopo lo scarico/);
@@ -280,16 +280,16 @@ test('scarico deciso dal coach (CAR-10): il carico si calcola sul riferimento, n
   registra(app, '2026-10-02T18:00:00', PANCA, 60, 8, 4);
   app.aggiusti({ esercizi: {}, scarico: { sedute: 2, motivo: 'fatica accumulata nelle ultime sedute' } });
   const r1 = carico(app, '2026-10-06T10:00:00', PANCA, 60, 8, 4);
-  assert.deepStrictEqual([r1.tipo, r1.weight], ['scarico', 54], 'prima: 62,5 x 0,9 = 56,5');
+  assert.deepStrictEqual([r1.tipo, r1.weight], ['scarico', 55], 'prima: 62,5 x 0,9 = 56,5; sul riferimento 60 x 0,9 = 54, griglia del bilanciere 55 (non i 52,5 per difetto: integrazione 3a)');
   /* la seduta di scarico salvata dalla v2 porta il tipo: la volta dopo il riferimento resta 60 */
   registra(app, '2026-10-06T10:00:00', PANCA, 54, 8, 2, { obiettivo: { reps: 8, sets: 2, coachTipo: 'scarico' } });
   const r2 = carico(app, '2026-10-08T10:00:00', PANCA, 60, 8, 4);
-  assert.deepStrictEqual([r2.tipo, r2.weight], ['scarico', 54], 'prima: 54 + 2,5 = 56,5 x 0,9 = 51');
+  assert.deepStrictEqual([r2.tipo, r2.weight], ['scarico', 55], 'prima: 54 + 2,5 = 56,5 x 0,9 = 51');
   /* esaurito lo scarico si riparte da 60 */
   app.aggiusti({ esercizi: {}, scarico: null });
   registra(app, '2026-10-08T10:00:00', PANCA, 54, 8, 2, { obiettivo: { reps: 8, sets: 2, coachTipo: 'scarico' } });
   const r3 = carico(app, '2026-10-12T10:00:00', PANCA, 60, 8, 4);   /* lunedì della settimana 8: scarico del calendario, stesso carico */
-  assert.strictEqual(r3.weight, 54);
+  assert.strictEqual(r3.weight, 55);
   registra(app, MER_SETT8, PANCA, 54, 8, 2, { obiettivo: { reps: 8, sets: 2, coachTipo: 'scarico' } });
   const r4 = carico(app, LUN_SETT9, PANCA, 60, 8, 4);
   assert.strictEqual(r4.weight, 60, 'nessun taglio permanente: dopo lo scarico si riparte da 60');
@@ -312,9 +312,9 @@ test('ALG-02 spenta: «blocca» ed «extra» tornano a com\'erano (un incremento
   registra(app, '2026-10-02T18:00:00', CURL, 12, 10, 3);
   app.spegni(['ALG-02']);
   app.aggiusti({ esercizi: { [CURL]: { blocca: true, sedute: 1 } }, scarico: null });
-  assert.deepStrictEqual([carico(app, null, CURL, 12, 10, 3).weight, carico(app, null, CURL, 12, 10, 3).tipo], [11, 'fermo']);
+  assert.deepStrictEqual([carico(app, null, CURL, 12, 10, 3).weight, carico(app, null, CURL, 12, 10, 3).tipo], [10, 'fermo'], 'un incremento in meno (1 kg): 11 kg non esiste sulla griglia dei manubri (passi di 2 kg da 10 kg): 10 (ALG-06, P3-A)');
   app.aggiusti({ esercizi: { [CURL]: { extra: true, sedute: 1 } }, scarico: null });
-  assert.strictEqual(carico(app, null, CURL, 12, 10, 3).weight, 13);
+  assert.strictEqual(carico(app, null, CURL, 12, 10, 3).weight, 14, 'un incremento in più (1 kg) non si carica con i manubri a passi di 2 kg: il primo peso sopra, 14 (ALG-06, P3-A: prima 13)');
   app.riaccendi();
   assert.strictEqual(carico(app, null, CURL, 12, 10, 3).weight, 12);
 });
@@ -323,9 +323,9 @@ test('MES-06 spenta: lo scarico torna a comporsi (è il ramo di prima, per torna
   registra(app, '2026-10-02T18:00:00', PANCA, 60, 8, 4);
   registra(app, LUN_SETT8, PANCA, 54, 8, 2);
   app.spegni(['MES-06']);
-  assert.strictEqual(carico(app, MER_SETT8, PANCA, 60, 8, 4).weight, 48.5);
+  assert.strictEqual(carico(app, MER_SETT8, PANCA, 60, 8, 4).weight, 47.5, '54 x 0,9 = 48,6: griglia del bilanciere 47,5 (prima 48,5)');
   app.riaccendi();
-  assert.strictEqual(carico(app, MER_SETT8, PANCA, 60, 8, 4).weight, 54);
+  assert.strictEqual(carico(app, MER_SETT8, PANCA, 60, 8, 4).weight, 55, '60 x 0,9 = 54: griglia 55 (prima 54)');
 });
 test('MES-09 spenta: la seduta salvata non porta settimana né obiettivo', () => {
   const app = conSpegnibili(caricaApp({ fixture: 'intermedio-phul' }));

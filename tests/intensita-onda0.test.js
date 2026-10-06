@@ -212,7 +212,7 @@ test('MES-06: lo stesso esercizio 3 volte nella settimana di scarico ha lo stess
     carichi.push(r.weight);
     lista.push(sed(app, giorno, [{ nome: PANCA, serie: [[r.weight, 8, true], [r.weight, 8, true]] }]));   /* la seduta di scarico si fa e si salva */
   });
-  assert.deepStrictEqual(carichi, [54, 54, 54], 'oggi (senza la correzione): 54, 48,5, 43,5');
+  assert.deepStrictEqual(carichi, [55, 55, 55], 'oggi (senza la correzione): 54, 48,5, 43,5; 60 x 0,9 = 54 sulla griglia del bilanciere (ALG-06, P3-A) = 55');
   /* la prima seduta dopo lo scarico riparte dal riferimento (60) con un RIR in piu */
   app.ora('2026-10-05T12:00:00');
   app.storia(dallaPiuRecente(lista));
@@ -229,11 +229,11 @@ test('MES-06: lo stesso esercizio 3 volte nella settimana di scarico ha lo stess
   app.ora('2026-10-05T12:00:00');
   app.storia(dallaPiuRecente(lista.slice(0, 6)));
   app.scrivi('coach_plus_prontezza_storia_toji', [{ data: '2026-10-03', punteggio: 40 }, { data: '2026-10-04', punteggio: 45 }]);
-  assert.strictEqual(app.dati(app.chiama('caricoProssimo', PANCA, 60, 8, 3)).weight, 57);
+  assert.strictEqual(app.dati(app.chiama('caricoProssimo', PANCA, 60, 8, 3)).weight, 57.5, '60 x 0,95 = 57 sulla griglia: 57,5');
   /* l'esercizio che non ha mai avuto un carico di lavoro non si inventa il riferimento */
   const nuovo = caricaApp({ ora: '2026-09-30T12:00:00' });
   nuovo.profilo({ level: 'intermedio' }); nuovo.programma(programma());
-  assert.strictEqual(nuovo.dati(nuovo.chiama('caricoProssimo', PANCA, 60, 8, 3)).weight, 54);
+  assert.strictEqual(nuovo.dati(nuovo.chiama('caricoProssimo', PANCA, 60, 8, 3)).weight, 55, 'mai fatto: 60 x 0,9 = 54, sulla griglia 55');
 });
 
 test('MES-06: il carico di riferimento dello scarico è quello di caricoRiferimento() (progressivo.js, W0-T3): un solo calcolo, nessuna copia', () => {
@@ -241,7 +241,7 @@ test('MES-06: il carico di riferimento dello scarico è quello di caricoRiferime
   app.profilo({ level: 'intermedio' }); app.programma(programma());
   app.storia([sed(app, '2026-09-28', [{ nome: PANCA, serie: tre(50, 8) }])]);
   app.g('window.caricoRiferimento = function () { return 80; }');
-  assert.strictEqual(app.dati(app.chiama('caricoProssimo', PANCA, 60, 8, 3)).weight, 72, '80 x 0,9');
+  assert.strictEqual(app.dati(app.chiama('caricoProssimo', PANCA, 60, 8, 3)).weight, 72.5, '80 x 0,9 = 72: griglia del bilanciere 72,5');
 });
 
 test('ETA-18: oltre i 65 anni gli aumenti sono dimezzati (anche quelli a percentuale), con il motivo scritto; PAR-Q e sonno scarso restano come prima', () => {
@@ -295,7 +295,7 @@ test('regole spente: con MES-06, MES-10, MES-11 e MES-12 spente tornano i compor
     const r = app.dati(app.chiama('caricoProssimo', PANCA, 60, 8, 3)); carichi.push(r.weight);
     lista.push(sed(app, giorno, [{ nome: PANCA, serie: [[r.weight, 8, true], [r.weight, 8, true]] }]));
   });
-  assert.deepStrictEqual(carichi, [54, 48.5]);
+  assert.deepStrictEqual(carichi, [55, 50], 'prima 54 e 48,5: sulla griglia del bilanciere (ALG-06, P3-A) 55 e 50 (55 x 0,9 = 49,5)');
   /* MES-10: lo scarico torna a contare nell'esigenza */
   const e = caricaApp({ ora: '2026-10-05T12:00:00' });
   e.profilo({ level: 'intermedio', days: 3, esigenza: { valore: 1.2, sett: '2026-09-14', storia: [] } }); e.programma(programma());
@@ -318,7 +318,7 @@ test('PCO-01 (riga del principiante): lo schema 5x3 al secondo stallo solo con o
   const forza = stallo(['forza']), massa = stallo(['massa']);
   assert.deepStrictEqual([forza.reps, forza.sets, forza.weight], [3, 5, 40], JSON.stringify(forza));
   assert.strictEqual(massa.tipo, 'giu');
-  assert.strictEqual(massa.weight, 38, JSON.stringify(massa));
+  assert.strictEqual(massa.weight, 37.5, JSON.stringify(massa) + ' (-5% di 40 = 38: griglia del bilanciere 37,5; ALG-06, P3-A)');
   assert.ok(/-5%/.test(massa.motivo) && !/5.3/.test(massa.motivo));
 });
 
