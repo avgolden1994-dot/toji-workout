@@ -21,7 +21,7 @@
    Stacco Rumeno col bilanciere (abilita 2) a chi inizia, e le famiglie dei glutei (PRG-22) un altro */
 const SCHEMI_MOV = [
   ['squat', /squat|leg press|affondi|step-up|pendulum/i, 'Squat'],
-  ['hinge', /stacco|good morning|hyperextension|pull-through/i, 'Hinge'],
+  ['hinge', /stacco|good morning|hyperextension|pull-through|hip hinge/i, 'Hinge'],
   ['spintaO', /panca (piana|inclinata|declinata)|chest press|piegamenti|dip alle/i, 'Spinta orizzontale'],
   ['tirataO', /rematore|t-bar|pulley basso/i, 'Tirata orizzontale'],
   ['spintaV', /military|lento avanti|arnold|shoulder press|pike push/i, 'Spinta verticale'],
@@ -77,7 +77,7 @@ function schienaLombare(nome) {
 }
 const GLUTEI_FAMIGLIE = [
   ['spinta', /hip thrust|ponte glutei/i, 'Hip Thrust'], ['squat', /squat|affondi|leg press/i, 'Affondi Bulgari'],
-  ['stacco', /stacco|hyperextension|good morning|pull-through/i, 'Stacco Rumeno'], ['abduzione', /abductor|slanci|kickback ai cavi/i, 'Abductor Machine']
+  ['stacco', /stacco|hyperextension|good morning|pull-through|hip hinge/i, 'Stacco Rumeno'], ['abduzione', /abductor|slanci|kickback ai cavi/i, 'Abductor Machine']
 ];
 const VOLUME_LIVELLO = { principiante: [8, 10], intermedio: [10, 14], avanzato: [14, 20] };
 const GRUPPI_PRINCIPALI = ['petto', 'schiena', 'gambe', 'spalle', 'braccia', 'glutei'];

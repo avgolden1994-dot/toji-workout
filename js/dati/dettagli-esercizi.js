@@ -295,6 +295,9 @@ const DETTAGLI = {
   'Face Pull con Elastico': ['M', 'Elastico', 'Elastico ancorato all’altezza del viso, presa con i pollici verso di te', 'Deltoidi posteriori e cuffia', 'Deltoide posteriore, extrarotatori della cuffia', 'Romboidi, trapezio medio', '', 'deltoide_posteriore', 'schiena_spessore'],
   'Scrollate con Manubri': ['L', 'Manubri', 'In piedi, un manubrio per mano, braccia tese lungo i fianchi', 'Trapezio', 'Trapezio superiore', 'Avambracci', '', 'trapezio', 'avambracci'],
   /* BRACCIA E CORE */
+  /* W2-T6: a corpo libero la cerniera dell anca e i deltoidi posteriori (MOD-12) */
+  'Hip Hinge a Corpo Libero': ['C', 'Corpo libero', 'In piedi, ginocchia leggermente flesse, mani sulle cosce', 'Glutei e femorali', 'Grande gluteo, femorali', 'Erettori spinali', '', 'grande_gluteo', 'femorali erettori'],
+  'Y-Raise a Corpo Libero': ['C', 'Corpo libero', 'A pancia in giù su un tappetino, braccia a Y davanti a te', 'Deltoidi posteriori e cuffia', 'Trapezio inferiore, deltoide posteriore', 'Romboidi', '', 'deltoide_posteriore', 'schiena_spessore'],
   'Suitcase Carry': ['L', 'Manubri', 'Un solo manubrio (o kettlebell) pesante in una mano, camminata dritta', 'Obliqui e anti-rotazione', 'Obliqui, quadrato dei lombi', 'Trapezio superiore, avambracci', '', 'obliqui', 'trapezio avambracci']
 };
 
