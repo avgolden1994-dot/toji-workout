@@ -1,0 +1,194 @@
+{
+ "task": "P3-B",
+ "script": [
+  {
+   "src": "js/coach/volume/soglie-rampa.js",
+   "dopo": "js/coach/volume/tecniche.js"
+  },
+  {
+   "src": "js/coach/volume/rampa-settimana.js",
+   "dopo": "js/coach/volume/soglie-rampa.js"
+  },
+  {
+   "src": "js/coach/sicurezza/soglie-scarico.js",
+   "prima": "js/coach/sicurezza/scarico.js"
+  }
+ ],
+ "frasi": {
+  "Settimana di scarico: volume -#% e carico -#%": {
+   "en": "Deload week: volume -#% and load -#%",
+   "es": "Semana de descarga: volumen -#% y carga -#%",
+   "de": "Entlastungswoche: Volumen -#% und Gewicht -#%"
+  },
+  "Settimana di verifica: volume -#%, stesso carico di prima": {
+   "en": "Check-up week: volume -#%, same load as before",
+   "es": "Semana de comprobación: volumen -#%, la misma carga de antes",
+   "de": "Kontrollwoche: Volumen -#%, gleiches Gewicht wie zuvor"
+  },
+  "volume -#% e carico -#%": {
+   "en": "volume -#% and load -#%",
+   "es": "volumen -#% y carga -#%",
+   "de": "Volumen -#% und Gewicht -#%"
+  },
+  "È già una settimana di scarico: il coach non ne aggiunge un altro.": {
+   "en": "It is already a deload week: the coach does not add another one.",
+   "es": "Ya es una semana de descarga: el coach no añade otra.",
+   "de": "Es ist schon eine Entlastungswoche: der Coach fügt keine weitere hinzu."
+  },
+  "Il coach ha già deciso uno scarico: si fa quello.": {
+   "en": "The coach has already decided on a deload: that is the one you do.",
+   "es": "El coach ya ha decidido una descarga: se hace esa.",
+   "de": "Der Coach hat schon eine Entlastung beschlossen: die wird gemacht."
+  },
+  "Siamo nelle prime settimane del blocco: la dolenzia dei primi giorni non è fatica accumulata, per ora nessuno scarico.": {
+   "en": "We are in the first weeks of the block: the soreness of the first days is not accumulated fatigue, so no deload for now.",
+   "es": "Estamos en las primeras semanas del bloque: las agujetas de los primeros días no son fatiga acumulada, así que de momento no hay descarga.",
+   "de": "Wir sind in den ersten Wochen des Blocks: der Muskelkater der ersten Tage ist keine angesammelte Ermüdung, daher vorerst keine Entlastung."
+  },
+  "C’è stato uno scarico da meno di # giorni: per ora nessun altro scarico.": {
+   "en": "There was a deload less than # days ago: no other deload for now.",
+   "es": "Hubo una descarga hace menos de # días: de momento no hay otra.",
+   "de": "Vor weniger als # Tagen gab es eine Entlastung: vorerst keine weitere."
+  },
+  "Il coach ha già deciso uno scarico nelle ultime # settimane: ne decide al massimo uno ogni # settimane.": {
+   "en": "The coach has already decided on a deload in the last # weeks: it decides at most one every # weeks.",
+   "es": "El coach ya ha decidido una descarga en las últimas # semanas: decide como máximo una cada # semanas.",
+   "de": "Der Coach hat in den letzten # Wochen schon eine Entlastung beschlossen: höchstens eine alle # Wochen."
+  },
+  "Lo scarico del programma è tra pochi giorni: si fa quello, senza un secondo scarico.": {
+   "en": "The deload of the programme is a few days away: you do that one, without a second deload.",
+   "es": "La descarga del programa es dentro de pocos días: se hace esa, sin una segunda descarga.",
+   "de": "Die Entlastung des Programms ist in wenigen Tagen: es wird diese gemacht, ohne zweite Entlastung."
+  },
+  "Un solo segnale di stanchezza non basta per scaricare: il coach aspetta un secondo segnale (prontezza bassa, forza in calo).": {
+   "en": "A single sign of tiredness is not enough to deload: the coach waits for a second sign (low readiness, strength dropping).",
+   "es": "Una sola señal de cansancio no basta para descargar: el coach espera una segunda señal (preparación baja, fuerza en descenso).",
+   "de": "Ein einzelnes Zeichen von Müdigkeit reicht nicht für eine Entlastung: der Coach wartet auf ein zweites (niedrige Bereitschaft, nachlassende Kraft)."
+  },
+  "segnali": {
+   "en": "signs",
+   "es": "señales",
+   "de": "Zeichen"
+  },
+  "forza in calo": {
+   "en": "strength dropping",
+   "es": "fuerza en descenso",
+   "de": "nachlassende Kraft"
+  },
+  "deriva dell’RPE": {
+   "en": "RPE drift",
+   "es": "deriva del RPE",
+   "de": "RPE-Drift"
+  },
+  "sonno scarso": {
+   "en": "poor sleep",
+   "es": "sueño escaso",
+   "de": "wenig Schlaf"
+  },
+  "poca voglia": {
+   "en": "low motivation",
+   "es": "poca gana",
+   "de": "wenig Lust"
+  },
+  "sedute al limite": {
+   "en": "sessions at the limit",
+   "es": "sesiones al límite",
+   "de": "Einheiten am Limit"
+  },
+  "Fatica accumulata: le prossime # sedute sono di scarico (serie -#%, carico -#%) per ricaricare le energie.": {
+   "en": "Accumulated fatigue: the next # sessions are deload sessions (sets -#%, load -#%) to recharge your energy.",
+   "es": "Fatiga acumulada: las próximas # sesiones son de descarga (series -#%, carga -#%) para recargar energías.",
+   "de": "Angesammelte Ermüdung: die nächsten # Einheiten sind Entlastung (Sätze -#%, Gewicht -#%), um die Energie aufzuladen."
+  },
+  "Prontezza bassa da giorni e altri segnali di recupero scarso: le prossime # sedute sono di scarico": {
+   "en": "Low readiness for days and other signs of poor recovery: the next # sessions are deload sessions",
+   "es": "Preparación baja desde hace días y otras señales de recuperación escasa: las próximas # sesiones son de descarga",
+   "de": "Seit Tagen niedrige Bereitschaft und weitere Zeichen schlechter Erholung: die nächsten # Einheiten sind Entlastung"
+  },
+  "stanchezza alta per piu giorni di fila": {
+   "en": "high tiredness for several days in a row",
+   "es": "cansancio alto durante varios días seguidos",
+   "de": "hohe Müdigkeit an mehreren Tagen in Folge"
+  },
+  "carico della settimana troppo alto": {
+   "en": "weekly load too high",
+   "es": "carga de la semana demasiado alta",
+   "de": "Wochenbelastung zu hoch"
+  },
+  "Stanchezza che non passa": {
+   "en": "Tiredness that does not go away",
+   "es": "Cansancio que no pasa",
+   "de": "Müdigkeit, die nicht vergeht"
+  },
+  "Ho capito": {
+   "en": "Got it",
+   "es": "Entendido",
+   "de": "Verstanden"
+  },
+  "La stanchezza dura da due settimane: questa settimana riposa o fai solo camminate.": {
+   "en": "The tiredness has lasted for two weeks: this week rest or just go for walks.",
+   "es": "El cansancio dura desde hace dos semanas: esta semana descansa o haz solo caminatas.",
+   "de": "Die Müdigkeit hält seit zwei Wochen an: ruhe diese Woche oder gehe nur spazieren."
+  },
+  "Il coach ha dovuto alleggerire il programma due volte in poco tempo: questa settimana riposa o fai solo camminate.": {
+   "en": "The coach had to lighten the programme twice in a short time: this week rest or just go for walks.",
+   "es": "El coach ha tenido que aligerar el programa dos veces en poco tiempo: esta semana descansa o haz solo caminatas.",
+   "de": "Der Coach musste das Programm in kurzer Zeit zweimal erleichtern: ruhe diese Woche oder gehe nur spazieren."
+  },
+  "Se non passa, dormi male o ti senti giù, parlane con il medico: l’app non può capire cosa c’è dietro.": {
+   "en": "If it does not go away, you sleep badly or you feel down, talk to your doctor: the app cannot tell what is behind it.",
+   "es": "Si no pasa, duermes mal o te sientes decaído, habla con tu médico: la app no puede saber qué hay detrás.",
+   "de": "Wenn sie nicht vergeht, du schlecht schläfst oder dich niedergeschlagen fühlst, sprich mit deinem Arzt: die App kann nicht erkennen, was dahintersteckt."
+  },
+  "Messaggio nascosto per qualche giorno": {
+   "en": "Message hidden for a few days",
+   "es": "Mensaje oculto unos días",
+   "de": "Hinweis für einige Tage ausgeblendet"
+  },
+  "Non ora": {
+   "en": "Not now",
+   "es": "Ahora no",
+   "de": "Jetzt nicht"
+  },
+  "Va bene, non ora: te lo richiedo più avanti": {
+   "en": "OK, not now: I will ask you again later",
+   "es": "Vale, ahora no: te lo vuelvo a proponer más adelante",
+   "de": "Alles klar, jetzt nicht: ich frage später noch einmal"
+  },
+  "prime settimane: # serie invece di #, il volume sale piano fino a quello pieno": {
+   "en": "first weeks: # sets instead of #, the volume rises gradually up to the full amount",
+   "es": "primeras semanas: # series en lugar de #, el volumen sube poco a poco hasta el completo",
+   "de": "erste Wochen: # Sätze statt #, das Volumen steigt langsam bis zum vollen Umfang"
+  },
+  "settimana # di # del blocco: # serie invece di #, il volume sale piano fino a quello pieno": {
+   "en": "week # of # of the block: # sets instead of #, the volume rises gradually up to the full amount",
+   "es": "semana # de # del bloque: # series en lugar de #, el volumen sube poco a poco hasta el completo",
+   "de": "Woche # von # des Blocks: # Sätze statt #, das Volumen steigt langsam bis zum vollen Umfang"
+  }
+ },
+ "regole": [
+  {
+   "capitolo": 33,
+   "riga": "- **MES-03** (spegnibile) rampa di volume nel blocco: il piano la scrive in `prog.piano.settimane[].volume` (e, per chi comincia, in `.serie`) e **dal P3-B la applica la seduta** (W3-T4 snella, solo programmi con `prog.versione` 2: la fase 40 «MES-03» della catena 'carico', `rampaAlCarico` in `js/coach/volume/rampa-settimana.js`; i minimi in `volume/soglie-rampa.js`): fattore sul volume di base 0,75 · 0,85 · 0,95 · 1 · 1 (intermedio) e 0,70 · 0,80 · 0,90 · 1 · 1 (avanzato), mai sotto 0,80 per salute e dimagrimento; serie in seduta = `max(2, round(picco × fattore))`, mai sopra il picco (`setsBase`: le serie del programma, che il generatore e il collaudo contano: VOL-01 e VOL-02 misurano la settimana piena, non la 1) e nessuna rampa se il picco è 2 o meno; il principiante (PRN-03) fa 2 serie nelle settimane 1-2, poi 3 sui primi tre esercizi della seduta e 2 sugli altri nelle 3-4, 3 su tutti dalla 5ª; nessuna rampa per i prudenti (over 65, PAR-Q positivo, minorenni), per i programmi della v1 e nelle settimane di scarico (le guarda MES-05). Ogni esercizio con meno serie del picco dice perché («settimana 2 di 5 del blocco: 3 serie invece di 4, il volume sale piano fino a quello pieno»). Il rientro dopo una pausa (RIC-05, fase 60) e la «prima volta» di INT-04 (fase 70) vengono dopo e tolgono ancora, mai sotto 2 (alla prima esposizione con un esercizio la rampa e INT-04 si sommano: 4 serie diventano 2). **Non è** volume autoregolato (PCO-03: ±1 serie per unità secondo prontezza e dolenzia: non c'è) né il +1 ai prioritari dell'avanzato (`prioritari` del piano: nessuno lo legge, per ora lo fa RIC-01 nella settimana centrale del blocco). Convenzione (a volume pari la periodizzazione non cambia la massa, Moesgaard 2022: serve a gestire fatica e dolenzia). Assorbe IPE-08, PRI-04 e la forma «centrale» di RIC-01 (che resta finché W3-T4 non la sostituisce).",
+   "sostituisce": true
+  },
+  {
+   "capitolo": 33,
+   "riga": "- **MES-05** (spegnibile) una dose di scarico sola (P3-B = W3-T5 snella, solo programmi con `prog.versione` 2; `js/coach/sicurezza/scarico.js`, soglie in `sicurezza/soglie-scarico.js`): `DOSE_SCARICO` (il nome resta: la legge `caricoProssimoBase`) non è più una tabella ma si deriva da `scaricoSerie` e `scaricoCarico` di `programma/soglie-struttura.js`: bassa serie ×0,65 e carico ×0,95, media ×0,50 e ×0,90, alta ×0,40 e ×0,90 (la «alta» era a 0,30: con il minimo di 2 serie dava le stesse serie della «media» da 3-4 serie e il «-70%» era solo testo, bug N6); la dose la sceglie la fatica (`livelloFatica`: «alta» con sRPE medio ≥ 9,5 o prontezza sotto 50, MES-08). **N6 chiuso**: `serieDiScarico` tiene il minimo di 2 serie da 3 serie in su e porta un esercizio da 2 serie a 1; a 4 serie «media» e «alta» coincidono (2 e 2, il minimo), da 5 serie la «alta» è più leggera. La fase 30 «MES-05» della catena 'carico' mette le serie dello scarico alla dose unica (anche per la tenuta a tempo) e scrive il motivo con la dose vera, il carico di riferimento (MES-06: l'ultima seduta non di scarico, lo stesso in tutte le sedute della settimana, mai composto) e il RIR 4-5 («Settimana di scarico: volume -50% e carico -10% • sul carico di riferimento (60 kg), lo stesso in tutte le sedute della settimana • lascia 4–5 ripetizioni in riserva»: senza «ripartire più forte», che non ha base). **Verifica del principiante (PRN-03, la 12ª settimana)**: carico = il riferimento di prima dello scarico, non ridotto (`piano.settimane[].carico` = 1; prima il motivo e il codice lo riducevano del 5-10%), serie da 3 a 2 (-33%; un esercizio da 2 serie resta a 2: la tabella del piano è 2/2), RIR 3-4; il controllo dell'8ª settimana (scarico «basso») alleggerisce anche gli esercizi da 2 serie. Lo scarico deciso dal coach (CAR-10, `ag.scarico`) dei programmi v2 usa la stessa dose, quella della fatica del momento in cui lo decide (`ag.scarico.dose`), per due sedute. I programmi salvati prima della v2 tengono la dose di prima (`SOGLIE_SCARICO.doseV1`, registro D-P5). Residui fuori da questo file: `regole-ricerca.js` (P3-A) usa ancora `COACH_PARAMETRI.scaricoReattivoCarico` (0,9) per lo scarico di un esercizio mai fatto e per CAR-08 (scarico mirato). Convenzione (Wendler, RP e il sondaggio di Bell 2024 sulle dosi; ricerca-mesocicli §3.6). Assorbe CAR-03 nei programmi v2."
+  },
+  {
+   "capitolo": 33,
+   "riga": "- **MES-07** (spegnibile) lo scarico deciso dal coach ha le sue protezioni (P3-B = W3-T5 snella, solo programmi con `prog.versione` 2; `valutaScaricoReattivo(causa)`, `segnaliFatica()` in `js/coach/sicurezza/scarico.js`, soglie in `sicurezza/soglie-scarico.js`). Le tre vie che scrivevano `ag.scarico` (DEC-06: due sedute su tre «Al limite»; PRZ-04: tre giorni di prontezza sotto 50; STR-01: lo strain in salita, con il tocco su «Scarico ora») non bastano più da sole: ognuna è UN segnale (S7, S1, S7) e lo scarico c'è solo con almeno due segnali distinti, di cui uno tra S1 prontezza bassa (media delle ultime 3 check-in sotto 50, o 3 giorni su 7), S2 forza in calo (massimale -5% sul migliore delle ultime 3 settimane non di scarico su almeno 2 multiarticolari) e S3 (deriva dell'RPE: **non implementato**, il piano non salva ancora l'RPE bersaglio per serie), più S5 sonno «male» e S6 voglia «poca» in 4 check-in su 7 (la voce voglia la salva `prontezza.js` solo nei programmi v2) e S7 sedute al limite; un segnale forte basta da solo (prontezza media delle ultime 3 sotto 40, o forza in calo su almeno 3 esercizi). Protezioni, una prova per ciascuna in `tests/scarichi.test.js`: non nelle prime 2 settimane del blocco (la dolenzia dei primi giorni non è fatica accumulata), non entro 14 giorni da un altro scarico (`scaricoRecente`), uno solo ogni 3 settimane (`scarichiReattiviRecenti`), non se lo scarico del programma è entro 7 giorni (si fa quello: nessun doppio scarico), né nella settimana di scarico o con uno scarico già deciso; il motivo del «no» lo dice («Un solo segnale di stanchezza non basta per scaricare…»). Dose e durata uniche: la dose di MES-05 della fatica di adesso, per 2 sedute (prima 1 in DEC-06 e 2 in PRZ-04 e STR-01); lo scarico si annulla (`applicaDecisioni`, il messaggio di `applicaProntezza`, `conAnnulla`) e la proposta di STR-01 ha «Non ora» (7 giorni, annullabile). **Non fa**: spostare lo scarico del programma (le settimane del piano sono fisse: «anticipare» vuol dire non scaricare due volte vicino) né far ripartire il blocco da una settimana k-1. I programmi v1 e la regola spenta decidono come prima. Convenzione + Contrastata (nessuna soglia di fatica è validata nei pesi: Saw 2016; individualizzare lo scarico: Delphi 2023)."
+  },
+  {
+   "capitolo": 26,
+   "riga": "- **CST-09** (spegnibile) stanchezza che non passa: riposo e rinvio al medico (P3-B = W3-T5 snella, solo programmi con `prog.versione` 2, con il consenso ai dati del coach; `stanchezzaPersistente()` e `htmlStanchezzaPersistente()` in `js/coach/sicurezza/scarico.js`, il messaggio sta nel riquadro della prontezza della scheda Allenamento, `js/coach/prontezza.js`; soglie in `sicurezza/soglie-scarico.js`): scatta con la prontezza media degli ultimi 14 giorni a 37 o meno (3/8 della scala, almeno 5 misure) **oppure** con due scarichi decisi dal coach in 6 settimane (due episodi a più di 7 giorni uno dall'altro: un solo esercizio scaricato per dolore o per CAR-08 non conta); propone una settimana di riposo o di sole camminate e il medico («La stanchezza dura da due settimane: questa settimana riposa o fai solo camminate. Se non passa, dormi male o ti senti giù, parlane con il medico: l'app non può capire cosa c'è dietro»); mai la parola «sovrallenamento», mai una diagnosi. «Ho capito» lo nasconde per 7 giorni (annullabile). Non è nella scheda Oggi (`oggi.js` non è di P3-B). Solida per lo spettro (consenso ECSS-ACSM, Meeusen 2013), Convenzione per le soglie. Falsi positivi tra chi dorme male per motivi che non c'entrano con l'allenamento: per questo il rinvio al medico è parte del messaggio."
+  }
+ ],
+ "mappaAgenti": [
+  "il piano si esegue in seduta (MES-03, P3-B): js/coach/volume/rampa-settimana.js (`rampaAlCarico`, fase 'carico' 40: serie = max(2, round(picco × w.volume)), il principiante w.serie multi/altri) con i minimi in js/coach/volume/soglie-rampa.js (`sogliaRampa`); solo programmi con `prog.versione` 2; va caricato dopo regia/fasi.js (registra la fase al caricamento)",
+  "scarico unico e protezioni (MES-05, MES-07, CST-09, P3-B): js/coach/sicurezza/scarico.js (`DOSE_SCARICO` derivata da `scaricoSerie` e `scaricoCarico`, `serieDiScarico`, fase 'carico' 30 `scaricoAlCarico`, `programmaConPiano`, `valutaScaricoReattivo`, `segnaliFatica`, `stanchezzaPersistente`, `voceScaricoReattivo`) e js/coach/sicurezza/soglie-scarico.js (`sogliaScarico`: dose dei programmi v1, minimi, protezioni, segnali, CST-09); va caricato prima di scarico.js",
+  "prove del piano in seduta e dello scarico: tests/piano-in-seduta.test.js, tests/scarichi.test.js, aiuto tests/aiuto-atleta-piano.js (telefono con programma v2, orologio finto, settimane vissute una dopo l'altra; carica da sola i file di P3-B se index.html non li ha ancora)"
+ ],
+ "nota": "P3-B (Sonnet 5.5), solo programmi v2. Da fare in integrazione: righe <script> (3), frasi (30), righe della mappa (MES-03 riscritta, MES-05, MES-07, CST-09), poi npm run catalogo, soglie, indice, simboli, sw, golden (programmi e carichi: invariati, la rampa e lo scarico agiscono in seduta), CACHE_NAME. Il cap. 17 n. 3 della mappa (due definizioni di scarico) e da riscrivere a mano: nei programmi v2 la dose e una sola. Difetti fuori dai file di P3-B: js/ui/oggi.js mostra le serie e la durata della seduta dal piano salvato (e.sets, durataSeduta) e il «previste» degli obiettivi della settimana dal picco (setsBase), non dalla rampa; js/coach/agente-consigli.js:91 dice ancora «serve a ripartire piu forte» (senza base); regole-ricerca.js usa ancora i fattori di COACH_PARAMETRI per lo scarico di un esercizio mai fatto e per CAR-08."
+}
