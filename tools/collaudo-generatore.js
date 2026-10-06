@@ -8,6 +8,7 @@
    npm run collaudo:schede                        matrice "standard" (10.800 profili), report fuori dal repo
    npm run collaudo:schede -- --matrice rapida    campione di ~1.800 profili (pochi secondi)
    npm run collaudo:schede -- --matrice completa  prodotto pieno di tutte le dimensioni (64.800 profili)
+   npm run collaudo:schede -- --matrice forza     1.440 profili che possono avere il powerlifting (FRZ-01, 1.6; circa un minuto)
    npm run collaudo:schede -- --out /percorso/dir-o-file.md --etichetta prima
    npm run collaudo:schede -- --profilo '{"level":"intermedio","days":3,"goals":["massa"],"minutes":60}'
    npm run collaudo:schede -- --confronta prima.json dopo.json
@@ -1118,7 +1119,21 @@ function pesoProfilo(p) {
   return Object.keys(v).reduce((t, d) => t * ((PESI_POPOLAZIONE[d] && PESI_POPOLAZIONE[d][v[d]]) || 1), 1);
 }
 let PESI_UNIFORMI = false;
+/* 1.6 (INT-2e): la matrice «forza» (FRZ-01), 1.440 profili: forza per prima (da sola o con la massa), palestra, nessun fastidio, adulto di 25 o 45 anni, PAR-Q negativo, tutti con «powerlifting» x livello x 3-6 giorni x minuti x sesso x attrezzi della palestra
+   (completa, bilanciere+manubri+sbarra, macchine+manubri: l ultima non ha il bilanciere, il generatore ricade sulla forza generale con la nota e FRZ-01 non la guarda). E la misura STRUTTURALE della modalita Forza: nella matrice standard i profili che il collaudo
+   crede capaci di powerlifting sono una ventina (cinque fastidi su sei, due luoghi su tre, ...). Le altre dimensioni minori (sonno, priorita, psico, seme) restano quelle fisse del profilo. */
+function matriceForza() {
+  const out = [];
+  [['forza'], ['forza', 'massa']].forEach(o => LIVELLI.forEach(l => [3, 4, 5, 6].forEach(g => MINUTI.forEach(mi => SESSI.forEach(sx => [FASCE_ETA[0], FASCE_ETA[1]].forEach(e => [['completa', null], ['barra', ['bilanciere', 'manubri', 'sbarra']], ['macchine', ['macchine', 'manubri']]].forEach(a => {
+    const p = profilo(o, l, g, mi, 'palestra', [], sx, e, 'forza');
+    p.id += '|pl|' + a[0]; p.parq = 'no'; p.freq = p.freq === '1' ? 'auto' : p.freq; p.forzaTipo = 'powerlifting'; p.attrezziPalestra = a[1]; p.seme += '|pl' + a[0];
+    out.push(p);
+  })))))));
+  return out;
+}
 function matrice(modo) {
+  if (modo === 'forza') return matriceForza();
+  if (modo === 'forza-rapida') return matriceForza().filter(p => hash32(p.id + '#rapida') % 6 === 0);   /* 240 profili circa: la prova in npm test (tests/collaudo-forza.test.js) */
   const out = [];
   const completa = modo === 'completa';
   GOAL_SET.forEach(o => LIVELLI.forEach(l => GIORNI.forEach(g => MINUTI.forEach(mi => LUOGHI.forEach(lu => FASTIDI_SET.forEach(f => {
@@ -1704,7 +1719,7 @@ function main() {
     return;
   }
   const profili = matrice(o.matrice);
-  const descr = { standard: 'prodotto di obiettivo x livello x giorni x minuti x luogo x fastidi, sesso ed eta assegnati in modo fisso e ripetibile', completa: 'prodotto pieno di obiettivo x livello x giorni x minuti x luogo x fastidi x sesso x fascia di eta', rapida: 'un profilo ogni sei della matrice standard' }[o.matrice] || o.matrice;
+  const descr = { standard: 'prodotto di obiettivo x livello x giorni x minuti x luogo x fastidi, sesso ed eta assegnati in modo fisso e ripetibile', completa: 'prodotto pieno di obiettivo x livello x giorni x minuti x luogo x fastidi x sesso x fascia di eta', rapida: 'un profilo ogni sei della matrice standard', forza: '1.440 profili di forza con il powerlifting scelto, palestra, nessun fastidio, adulti (1.6, FRZ-01)', 'forza-rapida': 'un profilo ogni sei della matrice forza' }[o.matrice] || o.matrice;
   const meta = { data: new Date().toISOString().slice(0, 10), commit: gitInfo(), matrice: o.matrice, descrizioneMatrice: descr, etichetta: o.etichetta || '', scriptCaricati: ENV.scriptCaricati, erroriCaricamento: ENV.erroriCaricamento };
   const esec = eseguiMatrice(profili, o);
   const ris = costruisciRisultato(profili, esec, o);

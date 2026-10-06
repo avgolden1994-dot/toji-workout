@@ -87,7 +87,8 @@ function strSerie(sedute, filtro) {
 /* ABB-09: gli stacchi da terra costano molta fatica per lo stimolo che danno (rapporto stimolo/fatica, Israetel, Helms): al massimo 3 serie */
 const STR_FATICA = /Stacco da Terra|Stacco Sumo|Stacco con Trap Bar|Good Morning/;
 const STR_TIRATE_ALTE = /face pull|reverse|alzate posteriori|y-raise/i;
-function strEspinta(e) { const s = schemaDi(e.name); return s === 'spintaO' || s === 'spintaV'; }
+/* INT-2e (ABB-04): il Landmine Press e una spinta verticale per i dati (attributo schema) ma non per SCHEMI_MOV (la regex): strBilancia non lo contava e il collaudo si (come completamenti.js lo conta per gli schemi mancanti) */
+function strEspinta(e) { const s = schemaDi(e.name); return s === 'spintaO' || s === 'spintaV' || /landmine press/i.test(senzaEmoji(e.name)); }
 /* W0-T7: il pullover coi manubri (riserva della tirata verticale a casa, CAS-14, D-P11) e una tirata a tutti gli effetti dell equilibrio (come nel collaudo): schemaDi non lo conta (SCHEMI_RISERVA) */
 function strEtirata(e) { const s = schemaDi(e.name); return s === 'tirataO' || s === 'tirataV' || STR_TIRATE_ALTE.test(senzaEmoji(e.name)) || SCHEMI_RISERVA.test(senzaEmoji(e.name)); }
 

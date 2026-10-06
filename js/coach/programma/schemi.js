@@ -22,7 +22,7 @@
 const SCHEMI_MOV = [
   ['squat', /squat|leg press|affondi|step-up|pendulum/i, 'Squat'],
   ['hinge', /stacco|good morning|hyperextension|pull-through|hip hinge/i, 'Hinge'],
-  ['spintaO', /panca (piana|inclinata|declinata)|chest press|piegamenti|dip alle/i, 'Spinta orizzontale'],
+  ['spintaO', /panca (piana|inclinata|declinata|con pausa|presa stretta)|chest press|piegamenti|dip alle/i, 'Spinta orizzontale'],   /* INT-2e (ABB-04): anche le varianti della panca di W2-T7 (con pausa, presa stretta): erano spinte per i dati e non per strBilancia */
   ['tirataO', /rematore|t-bar|pulley basso/i, 'Tirata orizzontale'],
   ['spintaV', /military|lento avanti|arnold|shoulder press|pike push/i, 'Spinta verticale'],
   ['tirataV', /trazioni|lat machine|pullover con manubrio/i, 'Tirata verticale']
