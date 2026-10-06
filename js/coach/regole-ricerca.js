@@ -245,7 +245,11 @@ function obiettivoForza() {
    - Solo per i programmi v2 (prog.versione >= 2): quelli salvati prima continuano con le regole di prima (REG-04, D-P5), tranne la griglia.
      ALG-02 il carico di lavoro e il piu frequente tra le serie fatte (a parita il piu alto; con il back-off la serie piu pesante), non il massimo; la seduta e «ok» solo
        se nessuna serie e sotto quel carico (U10: chi abbassava il peso a meta seduta vedeva salire il carico).
-     (Serie 2 del P3-A: AUT-01, un punto di RPE dal massimale, e ALG-05, la fase 'carico' 20.)
+     AUT-01 un punto di RPE vale caricoPer sul massimale (2,4-2,9% di carico, registro B3), al massimo puntiRpeMax punti per volta, mai meno del passo normale, solo
+       con 0-4 ripetizioni in riserva e fino a 12 ripetizioni; chi comincia e i minorenni lo usano solo per frenare (la calibrazione dei principianti e CAR-18), i
+       prudenti a meta; nelle prime sedute degli altri resta CAR-16.
+     ALG-05 fase 'carico' 20 (ricalcoloDalMassimale): le ripetizioni efficaci (bersaglio + ripetizioni in riserva) cambiano di 2 o piu rispetto alla seduta prima ->
+       carico = caricoPer sul massimale recente stimato, per difetto, con i tetti +10% / -30%.
    ============================================================ */
 /* il programma salvato e v2 (REG-04) e i file della bilancia ci sono */
 function progressioneV2() {
@@ -297,6 +301,15 @@ function esitoDiLavoro(ex, repsTarget, W) {
 const FRASE_PESO_CAMBIATO = 'Hai cambiato peso a metà seduta: parto dal peso con cui hai fatto più serie';
 /* MES-05 / N10: a cosa serve lo scarico, senza promettere di «ripartire piu forte» (ricerca-mesocicli-periodizzazione-scarichi §5 riga 20, §2 B: Moderata) */
 const FRASE_SCOPO_SCARICO = 'serve a smaltire la fatica accumulata: non fa crescere di più, ma fermarsi del tutto può costare forza';
+/* AUT-01: il carico (non arrotondato) che un RPE piu basso del bersaglio permette, registro B3: massimale stimato con le ripetizioni in riserva osservate (dentro
+   rirAffidabile, al massimo puntiRpeMax punti sopra quelle del bersaglio), poi caricoPer con quelle del bersaglio. Vale circa 1/(30 + ripetizioni + RIR) per punto:
+   2,4-2,9% tra 3 e 10 ripetizioni. Epley senza il taglio a 12 ripetizioni efficaci di e1rm (lo stesso di caricoPer): vale fino a 12 ripetizioni e 4 in riserva */
+function salitaDaRpe(W, reps, rirOss, rirB) {
+  const lim = sogliaProgressione('rirAffidabile');
+  const oss = Math.max(lim[0], Math.min(lim[1], Number(rirOss) || 0));
+  const usati = Math.max(0, Math.min(sogliaProgressione('puntiRpeMax'), oss - rirB));
+  return caricoPer(W * (1 + (reps + rirB + usati) / 30), reps, rirB);
+}
 
 function caricoProssimoBase(nome, base, repsTarget, setsBase) {
   const sett = settimanaProgramma();
@@ -396,11 +409,22 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase) {
       const delta = media - bers;
       if (delta >= 1) return { weight: pesoUltimo, reps: repsTarget, sets: sets, tipo: 'fermo',
         motivo: 'Serie complete ma RPE ' + String(media).replace('.', ',') + ', sopra il bersaglio ' + String(bers).replace('.', ',') + ': stesso carico, consolida' };
-      if (delta <= -1) {
+      /* AUT-01 (programmi v2, registro B3): il punto di RPE vale caricoPer sul massimale (salitaDaRpe), al massimo 2 punti; chi comincia e i minorenni solo frenano
+         (la calibrazione dei principianti e CAR-18), i prudenti a meta. Nelle prime sedute degli altri resta CAR-16 (+5% per punto); i programmi v1 come prima (+4%) */
+      const aut01 = v2 && regolaAttiva('AUT-01');
+      const regolaDiPrima = !aut01 || (calibrazione && pc.livello !== 'principiante' && !pc.minorenne);
+      if (delta <= -1 && regolaDiPrima) {
         const pct = (calibrazione ? Math.min(0.15, -delta * 0.05) : Math.min(0.1, -delta * 0.04)) * (prudente ? 0.5 : 1);   /* aumenti dimezzati: anche quello a percentuale */
         const w = Math.max(caricoSalito(pesoUltimo, inc, nome), caricoInGriglia(pesoUltimo * (1 + pct), nome));
         return { weight: w, reps: repsTarget, sets: sets, tipo: 'su',
           motivo: 'Serie facili (RPE ' + String(media).replace('.', ',') + ', bersaglio ' + String(bers).replace('.', ',') + '): +' + fmtKg(w - pesoUltimo) + ' kg' + nota + (calibrazione ? ' \u2022 prime sedute: mi avvicino piu in fretta' : '') };
+      }
+      if (delta <= -1 && pc.livello !== 'principiante' && !pc.minorenne && (Number(repsTarget) || 0) <= sogliaProgressione('ripetizioniMaxRpe')) {
+        let t = salitaDaRpe(pesoUltimo, Number(repsTarget) || 0, 10 - media, 10 - bers);
+        if (prudente) t = pesoUltimo + (t - pesoUltimo) / 2;
+        const w = Math.max(caricoSalito(pesoUltimo, inc, nome), caricoInGriglia(t, nome));
+        return { weight: w, reps: repsTarget, sets: sets, tipo: 'su',
+          motivo: 'Serie facili (RPE ' + String(media).replace('.', ',') + ', bersaglio ' + String(bers).replace('.', ',') + '): +' + fmtKg(w - pesoUltimo) + ' kg' + nota };
       }
     }
     /* serie finale AMRAP: aumento proporzionale alle ripetizioni in piu (nSuns) */
@@ -474,7 +498,7 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase) {
 };
 
 /* CARICO PROSSIMO: la catena 'carico' (regia/fasi.js, piano B.3). L ordine e scritto nelle fasi, non e quello degli script: 10 BIL qui
-   (caricoProssimoBase: progressione, scarico del programma e ripresa), 15 CAR-18 in carichi/calibrazione.js,
+   (caricoProssimoBase: progressione, scarico del programma e ripresa), 15 CAR-18 in carichi/calibrazione.js, 20 ALG-05 qui (ricalcolo dal massimale),
    50 AGG in dolore-mattina.js (aggiusti del coach e frase del RIR), 60 RIC in regole-nuove.js, 70 INT in intensita.js, 95 ALG-06 in carichi/attrezzi.js
    (griglia e tetto dei manubri), 99 REG-03 in regia/perche.js. Ogni fase vede il risultato delle precedenti (r.motivo contiene gia i pezzi aggiunti
    prima, r.tipo puo essere gia 'scarico') e restituisce la stessa forma { weight, reps, sets, tipo, motivo, piuPausa?, stallo?, perche? }.
@@ -502,6 +526,69 @@ function caricoProgressione(r, c) {
 }
 registraFase('carico', 10, 'BIL', caricoProgressione);
 
+/* ALG-05 (fase 'carico' 20, solo programmi v2): il massimale recente stimato di un esercizio: le sedute di lavoro (non di scarico) entro giorniMassimaleRecente,
+   al massimo 3, la media delle due migliori (ricerca-algoritmi §3.2). Per ogni serie al carico di lavoro: e1rm con le ripetizioni in riserva dall RPE (con rirBias,
+   dentro rirAffidabile, fino a ripetizioniMaxRpe), 0 al cedimento, altrimenti quelle previste allora (obiettivo.rir) o oggi (rirOggi). null se non c e niente;
+   conRpe = almeno una serie aveva l RPE */
+function massimaleRecente(nome, rirOggi) {
+  const bias = Number((aggiustiCoach() || {}).rirBias) || 0, lim = sogliaProgressione('rirAffidabile'), maxRip = sogliaProgressione('ripetizioniMaxRpe');
+  const giorni = sogliaProgressione('giorniMassimaleRecente'), oggi = new Date();
+  let conRpe = false;
+  const valori = sessioniConData(nome, 12).filter(x => !x.eraDiScarico && x.data && giorniTra(x.data, oggi) <= giorni).slice(0, 3).map(x => {
+    const W = caricoDiLavoro(x.ex), o = x.ex.obiettivo || {};
+    const rirAllora = Array.isArray(o.rir) && o.rir.length === 2 && isFinite(o.rir[0]) && isFinite(o.rir[1]) ? (Number(o.rir[0]) + Number(o.rir[1])) / 2 : rirOggi;
+    const e = (x.ex.sets || []).filter(s => s.done && Number(s.weight) > 0 && Number(s.weight) >= W - 1e-9).map(s => {
+      const reps = Number(s.reps) || 0, rpe = Number(s.rpe);
+      let rir = rirAllora;
+      if (s.wasBerserk) rir = 0;
+      else if (rpe > 0 && reps <= maxRip) { rir = Math.max(lim[0], Math.min(lim[1], 10 - (rpe - bias))); conRpe = true; }
+      return e1rm(Number(s.weight), reps, rir);
+    });
+    return e.length ? Math.max.apply(null, e) : 0;
+  }).filter(v => v > 0).sort((a, b) => b - a);
+  if (!valori.length) return null;
+  return { e1: valori.length >= 2 ? (valori[0] + valori[1]) / 2 : valori[0], conRpe: conRpe };
+}
+/* ALG-05: se le ripetizioni efficaci (bersaglio del piano + ripetizioni in riserva di oggi) cambiano di cambioRipetizioniEfficaci o piu rispetto alla seduta prima
+   (obiettivo.base + obiettivo.rir, salvati da endWorkout: senza la base salvata non si ricalcola), il carico e caricoPer sul massimale recente, per difetto sulla griglia,
+   tra -30% e +10% del carico di lavoro di prima; oltre 12 ripetizioni di bersaglio non si converte (almeno -10%); senza RPE una ripetizione in riserva in piu.
+   Gli aumenti: fermi con il freno della BIA, a meta per prudenti, over 65, sonno scarso e minorenni. Non tocca scarico, prima volta, tempi, corpo libero, la ripresa
+   dopo uno scarico (MES-06), il rientro dopo una pausa (CAR-04) e la calibrazione (CAR-18). Risolve B7 e B8 (stesso esercizio con bersagli diversi nella settimana,
+   cambio di blocco, onda della Forza). Solo con il consenso e i programmi v2 (REG-04). */
+const fraseRicalcolo = (da, a, e1) => (da !== a ? 'Passi da ' + da + ' a ' + a + ' ripetizioni' : 'Ripetizioni in riserva cambiate') + ': peso ricalcolato dal massimale stimato (' + fmtKg(e1) + ' kg)';
+function ricalcoloDalMassimale(r, c) {
+  const nome = c.nome;
+  if (!r || r.tipo === 'scarico' || r.tipo === 'nuovo' || !(Number(r.weight) > 0) || isTimeBased(nome)) return r;
+  if (!coachAttivo() || !progressioneV2() || !regolaAttiva('ALG-05')) return r;
+  if (Array.isArray(r.perche) && r.perche.some(p => p && p.codice === 'CAR-18')) return r;
+  const ultima = sessioniConData(nome, 1)[0];
+  if (!ultima || ultima.eraDiScarico || (ultima.data && rientroDopoPausa(giorniTra(ultima.data, new Date())))) return r;
+  const o = ultima.ex.obiettivo || {}, prima = Number(o.base), ora = Number(c.repsTarget) || 0;
+  if (!(prima > 0) || !(ora > 0)) return r;
+  const rOggi = rirBersaglio(nome), mOggi = (rOggi[0] + rOggi[1]) / 2;
+  const mPrima = Array.isArray(o.rir) && o.rir.length === 2 && isFinite(o.rir[0]) && isFinite(o.rir[1]) ? (Number(o.rir[0]) + Number(o.rir[1])) / 2 : mOggi;
+  if (Math.abs((ora + mOggi) - (prima + mPrima)) < sogliaProgressione('cambioRipetizioniEfficaci') - 1e-9) return r;
+  const M = massimaleRecente(nome, mOggi), W = caricoDiLavoro(ultima.ex);
+  if (!M || !(W > 0)) return r;
+  let t = caricoPer(M.e1, ora, mOggi + (M.conRpe ? 0 : sogliaProgressione('rirInPiuSenzaRpe')));
+  if (ora > sogliaProgressione('ripetizioniMaxConversione')) t = Math.min(t, W * (1 - sogliaProgressione('riduzioneOltreConversione')));
+  const tetti = sogliaProgressione('tettiRicalcolo');
+  t = Math.max(W * (1 - tetti.giu), Math.min(W * (1 + tetti.su), t));
+  if (t > W) {
+    const pc = profiloCoach();
+    if (frenoBia()) t = W;
+    else if (pc.prudente || pc.sonnoMale || pc.eta >= 65 || pc.minorenne) t = W + (t - W) / 2;
+  }
+  const w = grigliaAttiva() ? arrotondaAttrezzo(t, nome, { modo: 'giu' }) : Math.floor(t * 2 + 1e-9) / 2;
+  r.weight = w > 0 ? w : W;
+  r.reps = ora;
+  r.tipo = r.weight > W + 1e-9 ? 'su' : (r.weight < W - 1e-9 ? 'giu' : 'fermo');
+  delete r.stallo; delete r.piuPausa;
+  r.motivo = fraseRicalcolo(prima, ora, M.e1);
+  aggiungiPerche(r, 'ALG-05', r.motivo, { forza: 'Convenzione' });
+  return r;
+}
+registraFase('carico', 20, 'ALG-05', ricalcoloDalMassimale);
 
 /* Applicato quando si apre una seduta: solo se c e il consenso e solo se
    la seduta non e ancora iniziata (non tocca serie gia fatte). La catena 'apertura' (regia/fasi.js): 10 BIL qui (carichiDelGiorno),

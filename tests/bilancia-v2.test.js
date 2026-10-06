@@ -167,7 +167,100 @@ test('ALG-06 spenta: l arrotondamento di prima (0,5 kg)', () => {
   assert.strictEqual(carico(app, CURL, 12, 12, 3).weight, 13);
 });
 
+/* ============================================================================================================
+   ALG-05 · fase 20: ripetizioni efficaci cambiate di 2 o piu -> carico dal massimale stimato, per difetto (programmi v2)
+   ============================================================================================================ */
+const rirMedio = (app, nome) => { const r = app.json('rirBersaglio(' + JSON.stringify(nome) + ')'); return (r[0] + r[1]) / 2; };
+test('ALG-05: da 5 a 8 ripetizioni entro ±2,5% del calcolo a mano, per difetto (prima: 102,5 kg, il carico delle 5 ripetizioni +2,5)', () => {
+  const app = nuovaApp({}, PROG_V2);
+  [10, 6, 3].forEach(g => registra(app, g, PANCA, serie(3, 100, 5, 8), { reps: 5, base: 5, sets: 3, rir: [1, 3] }));
+  const r = carico(app, PANCA, 100, 8, 3);
+  /* a mano (Epley con il RIR, ricerca-algoritmi 3.3): RPE 8 = 2 in riserva; massimale 100 x (1 + 7/30) = 123,3 kg; per 8 ripetizioni con il RIR di oggi */
+  const mano = 100 * (1 + 7 / 30) / (1 + (8 + rirMedio(app, PANCA)) / 30);
+  assert.ok(Math.abs(r.weight / mano - 1) <= 0.025, r.weight + ' kg contro ' + mano.toFixed(1) + ' a mano · ' + r.motivo);
+  assert.ok(r.weight <= mano + 1e-9, 'per difetto');
+  assert.ok(inGrigliaBase(app, PANCA, r.weight));
+  assert.strictEqual(r.reps, 8);
+  assert.match(r.motivo, /Passi da 5 a 8 ripetizioni: peso ricalcolato dal massimale stimato/);
+});
 
+test('ALG-05: da 5 a 12 (l esempio della nota: 84,1 kg, non 90) e da 8 a 5 (piu pesante, al massimo +10%)', () => {
+  const app = nuovaApp({}, PROG_V2);
+  [10, 6, 3].forEach(g => registra(app, g, PANCA, serie(3, 100, 5, 8), { reps: 5, base: 5, sets: 3, rir: [1, 3] }));
+  const r12 = carico(app, PANCA, 100, 12, 3), mano12 = 100 * (1 + 7 / 30) / (1 + (12 + rirMedio(app, PANCA)) / 30);
+  assert.ok(Math.abs(r12.weight / mano12 - 1) <= 0.035 && r12.weight <= mano12, r12.weight + ' contro ' + mano12.toFixed(1));
+  const su = nuovaApp({}, PROG_V2);
+  [10, 6, 3].forEach(g => registra(su, g, PANCA, serie(3, 90, 8, 8), { reps: 8, base: 8, sets: 3, rir: [1, 3] }));
+  const r5 = carico(su, PANCA, 90, 5, 3);
+  assert.ok(r5.weight > 90 && r5.weight <= 99, '8 -> 5: piu pesante ma al massimo +10% (' + r5.weight + ')');
+});
+
+test('ALG-05: la doppia progressione non e un cambio di bersaglio (obiettivo.reps 15, base 12); senza la base salvata, con i programmi v1, spenta o senza consenso: nessun ricalcolo', () => {
+  const app = nuovaApp({}, PROG_V2);
+  [10, 6].forEach(g => registra(app, g, CURL, serie(3, 12, 14), { reps: 14, base: 12, sets: 3 }));
+  registra(app, 3, CURL, serie(3, 12, 15), { reps: 15, base: 12, sets: 3 });
+  const r = carico(app, CURL, 12, 12, 3);
+  assert.ok(!/Passi da/.test(r.motivo) && r.weight === 14, r.weight + ' · ' + r.motivo);
+  const vecchia = nuovaApp({}, PROG_V2);
+  [10, 6, 3].forEach(g => registra(vecchia, g, PANCA, serie(3, 100, 5, 8), { reps: 5, sets: 3 }));
+  assert.ok(!/Passi da/.test(carico(vecchia, PANCA, 100, 8, 3).motivo), 'senza obiettivo.base (sedute salvate prima) nessun ricalcolo');
+  const v1 = nuovaApp({}, PROG_V1);
+  [10, 6, 3].forEach(g => registra(v1, g, PANCA, serie(3, 100, 5, 8), { reps: 5, base: 5, sets: 3, rir: [1, 3] }));
+  assert.ok(!/Passi da/.test(carico(v1, PANCA, 100, 8, 3).motivo), 'v1: come prima');
+  const spenta = nuovaApp({}, PROG_V2);
+  spegnibileNelCatalogo(spenta, 'ALG-05');
+  [10, 6, 3].forEach(g => registra(spenta, g, PANCA, serie(3, 100, 5, 8), { reps: 5, base: 5, sets: 3, rir: [1, 3] }));
+  spenta.spegni(['ALG-05']);
+  assert.ok(!/Passi da/.test(carico(spenta, PANCA, 100, 8, 3).motivo), 'spenta');
+  const senza = nuovaApp({}, PROG_V2, { consenso: false });
+  [10, 6, 3].forEach(g => registra(senza, g, PANCA, serie(3, 100, 5, 8), { reps: 5, base: 5, sets: 3, rir: [1, 3] }));
+  assert.ok(!/Passi da/.test(carico(senza, PANCA, 100, 8, 3).motivo), 'senza consenso');
+});
+
+/* ============================================================================================================
+   AUT-01 · un punto di RPE (registro B3): caricoPer sul massimale, 2,4-2,9% per punto, al massimo 2 punti (circa 6%), mai meno di un passo
+   ============================================================================================================ */
+test('AUT-01: la salita dall RPE vale 2,4-2,9% per punto e non supera il 6% (prima: +4% per punto, fino al 10%)', () => {
+  const app = nuovaApp({}, PROG_V2);
+  assert.strictEqual(app.g('typeof salitaDaRpe'), 'function');
+  [[3, 2], [5, 2], [8, 2], [10, 1], [6, 3], [5, 1]].forEach(([reps, rirB]) => [1, 2, 3, 4].forEach(punti => {
+    const t = app.g('salitaDaRpe(100, ' + reps + ', ' + (rirB + punti) + ', ' + rirB + ')');
+    const usati = Math.min(2, punti, 4 - rirB);   /* oltre 4 ripetizioni in riserva l RPE non conta (rirAffidabile) */
+    const perPunto = (t / 100 - 1) / usati;
+    assert.ok(perPunto >= 0.024 - 1e-9 && perPunto <= 0.029 + 1e-9, reps + ' rip, RIR ' + rirB + ', ' + punti + ' punti: ' + (perPunto * 100).toFixed(2) + '% per punto');
+    assert.ok(t / 100 - 1 <= 0.06 + 1e-9, 'mai oltre il 6%: ' + t);
+  }));
+});
+
+test('AUT-01 in seduta: panca 100 kg x 5 a RPE 6 contro 8 -> 105 kg (prima: 108); RPE 6 contro 9 sulla leg press: al massimo 2 punti (prima: +10%)', () => {
+  const app = nuovaApp({}, PROG_V2);
+  [10, 6, 3].forEach(g => registra(app, g, PANCA, serie(3, 100, 5, 6), { reps: 5, base: 5, sets: 3 }));
+  const r = carico(app, PANCA, 100, 5, 3);
+  assert.deepStrictEqual([r.weight, r.tipo], [105, 'su'], r.motivo);
+  assert.match(r.motivo, /^Serie facili \(RPE 6, bersaglio 8\): \+5 kg/);
+  const leg = nuovaApp({}, PROG_V2);
+  [10, 6, 3].forEach(g => registra(leg, g, LEG, serie(3, 100, 10, 6), { reps: 10, base: 10, sets: 3 }));
+  const rl = carico(leg, LEG, 100, 10, 3);
+  assert.ok(rl.weight <= 106 && rl.weight >= 105, 'al massimo 2 punti, mai meno del passo standard (+5): ' + rl.weight);
+});
+
+test('AUT-01: chi comincia e i minorenni usano l RPE solo per frenare; prudenti a meta; i programmi v1 come prima (+4% per punto, sulla griglia)', () => {
+  const pr = nuovaApp({ level: 'principiante' }, PROG_V2);
+  [10, 6, 3].forEach(g => registra(pr, g, PANCA, serie(3, 60, 8, 6), { reps: 8, base: 8, sets: 3 }));
+  const rp = carico(pr, PANCA, 60, 8, 3);
+  assert.ok(rp.weight <= 62.5 && !/Serie facili/.test(rp.motivo), 'principiante: nessuna accelerazione (prima: 65 kg) · ' + rp.weight + ' · ' + rp.motivo);
+  const mi = nuovaApp({ age: 16 }, PROG_V2);
+  [10, 6, 3].forEach(g => registra(mi, g, PANCA, serie(3, 60, 8, 6), { reps: 8, base: 8, sets: 3 }));
+  assert.ok(carico(mi, PANCA, 60, 8, 3).weight <= 62.5, 'minorenne: nessuna accelerazione');
+  const pq = nuovaApp({ parq: true }, PROG_V2);
+  [10, 6, 3].forEach(g => registra(pq, g, PANCA, serie(3, 100, 5, 6), { reps: 5, base: 5, sets: 3 }));
+  const rq = carico(pq, PANCA, 100, 5, 3);
+  assert.ok(rq.weight <= 102.5 + 1e-9 && rq.weight >= 100, 'prudente: salita dimezzata (' + rq.weight + ')');
+  const v1 = nuovaApp({}, PROG_V1);
+  [10, 6, 3].forEach(g => registra(v1, g, PANCA, serie(3, 100, 5, 6)));
+  const r1 = carico(v1, PANCA, 100, 5, 3);
+  assert.deepStrictEqual([r1.weight, inGrigliaBase(v1, PANCA, r1.weight)], [107.5, true], 'v1: +8% (108) sulla griglia del bilanciere · ' + r1.motivo);
+});
 
 /* ============================================================================================================
    CAS-01b · il manubrio piu pesante dichiarato vale anche nella progressione
