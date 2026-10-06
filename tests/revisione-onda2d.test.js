@@ -242,3 +242,58 @@ test('M1: riconciliaNote guarda la scheda finale: «drop set sull ultimo isolame
   assert.deepStrictEqual(prova([{ esercizi: [es('Leg Press')] }], [POT]), [SENZA], 'nessuna potenza: la frase senza la potenza');
   assert.deepStrictEqual(prova([{ esercizi: [es('Leg Press', 'potenza')] }], [POT]), [POT]);
 });
+
+/* ============ M5: chi comincia non ha mai RIR 0, in nessun percorso; i minorenni mai sotto 2 ============ */
+
+const ES_CLASSI = { A: 'Squat con Bilanciere', B: 'Panca Piana Manubri', C: 'Leg Press', D: 'Leg Extension', E: 'Curl Bilanciere Bicipiti', F: 'Plank' };
+/* il bersaglio base di ogni esercizio di prova in ogni settimana 1..12 */
+function rirDiTutte(a) {
+  const out = {};
+  Object.keys(ES_CLASSI).forEach(c => { out[c] = []; for (let w = 1; w <= 12; w++) out[c].push(a.json('rirBersaglioBase(' + JSON.stringify(ES_CLASSI[c]) + ', ' + w + ')')); });
+  return out;
+}
+const programmaDa = (a, d, extra) => {
+  const p = a.dati(a.chiama('buildProgram', Object.assign({}, BASE, d)));
+  a.programma(Object.assign({ creato: '05/10/2026 ore 12:00', inizio: '2026-10-05', settimane: p.settimane, blocco: p.blocco, fasi: p.fasi, rirSett: p.rirSett, goals: p.goals, prefs: p.prefs,
+    split: p.split.nome, versione: 2, piano: p.piano, schema: { sets: 3, reps: 10 }, seme: 'int2d' }, extra || {}));
+  return p;
+};
+
+test('M5: piano da intermedio salvato e livello poi cambiato in «principiante»: mai sotto 2 ripetizioni in riserva (prima [0, 1] sugli isolamenti alla 5a settimana), 3-4 alla 1a e alla 2a', () => {
+  const a = caricaApp({ ora: LUNEDI });
+  programmaDa(a, { level: 'intermedio', days: 4, age: 30 });
+  a.profilo({ level: 'intermedio', age: 30 });
+  assert.deepStrictEqual(a.json('rirBersaglioBase("Curl Bilanciere Bicipiti", 5)'), [0, 1], 'di controllo: l intermedio arriva a [0, 1] sugli isolamenti alla 5a settimana');
+  a.profilo({ level: 'principiante', age: 30 });
+  const r = rirDiTutte(a);
+  Object.keys(r).forEach(c => r[c].forEach((x, i) => assert.ok(x[0] >= 2 && x[1] > x[0], 'classe ' + c + ' settimana ' + (i + 1) + ': ' + JSON.stringify(x))));
+  assert.deepStrictEqual(r.E[4], [2, 3], 'alla 5a settimana: 2-3');
+  assert.deepStrictEqual([r.E[0], r.E[1]], [[3, 4], [3, 4]], 'alla 1a e alla 2a: 3-4');
+  assert.deepStrictEqual(r.A[7], [2, 3]);
+});
+
+test('M5: programma salvato dalla v1 (senza piano e senza rirSett) e piano da principiante: chi comincia non scende sotto 2, nemmeno con la tabella spenta', () => {
+  const a = caricaApp({ ora: LUNEDI });
+  a.programma({ creato: '05/10/2026 ore 12:00', inizio: '2026-10-05', settimane: 8, blocco: 8, fasi: ['carico', 'carico', 'carico', 'carico', 'carico', 'carico', 'carico', 'scarico'], goals: ['massa'], prefs: {}, split: 'Full body' });
+  a.profilo({ level: 'principiante', age: 30 });
+  a.ora(new Date(2026, 10, 2, 12, 0, 0));   /* settimana 5 */
+  [false, true].forEach(spenta => {
+    if (spenta) a.spegni(['MES-02']);
+    const r = rirDiTutte(a);
+    Object.keys(r).forEach(c => r[c].forEach((x, i) => assert.ok(x[0] >= 2, (spenta ? 'MES-02 spenta, ' : 'v1, ') + 'classe ' + c + ' settimana ' + (i + 1) + ': ' + JSON.stringify(x))));
+  });
+  a.riaccendi();
+  const b = caricaApp({ ora: LUNEDI });
+  programmaDa(b, { level: 'principiante', days: 3 });
+  b.profilo({ level: 'principiante', age: 30 });
+  const r2 = rirDiTutte(b);
+  Object.keys(r2).forEach(c => r2[c].forEach((x, i) => assert.deepStrictEqual(x, i < 2 || i === 11 ? [3, 4] : [2, 3], 'piano da principiante: classe ' + c + ' settimana ' + (i + 1))));
+});
+
+test('M5: i minorenni non scendono mai sotto 2 ripetizioni in riserva, anche con un piano da adulto salvato e l eta poi cambiata', () => {
+  const a = caricaApp({ ora: LUNEDI });
+  programmaDa(a, { level: 'avanzato', days: 4, age: 30 });
+  a.profilo({ level: 'avanzato', age: 15 });
+  const r = rirDiTutte(a);
+  Object.keys(r).forEach(c => r[c].forEach((x, i) => assert.ok(x[0] >= 2, 'classe ' + c + ' settimana ' + (i + 1) + ': ' + JSON.stringify(x))));
+});

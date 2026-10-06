@@ -102,6 +102,13 @@ function pavimentoRirMinorenni(r) {
   const piso = MES_RIR.pisoMinorenni;
   return profiloCoach().minorenne && r[0] < piso ? [piso, Math.max(r[1], piso + 1)] : r;
 }
+/* INT-2d (M5 della revisione, MES-02): chi comincia non lavora mai sotto 2 ripetizioni in riserva (la tabella dice 3-4 nelle settimane 1-2 e 2-3 dopo, mai 0), in ogni percorso: anche con un programma
+   salvato da un altro livello (un piano da intermedio con il livello poi cambiato in «principiante»: gli isolamenti arrivavano a [0, 1] alla 5ª settimana), senza rirSett (salvato dalla v1) o con la tabella spenta.
+   Si legge il livello del momento (profiloCoach), come per i minorenni */
+function pavimentoRirPrincipiante(r) {
+  const piso = MES_RIR.principianteDopo[0];
+  return profiloCoach().livello === 'principiante' && r[0] < piso ? [piso, Math.max(r[1], piso + 1)] : r;
+}
 function rirBersaglio(nome, sett) {
   const r = rirBersaglioBase(nome, sett);
   /* chi si ferma alla prima fatica si allena lontano dal cedimento (PRETIE-Q): stessa crescita fino a 3-4 RIR */
@@ -125,6 +132,8 @@ function rirDalPiano(nome, sett) {
   if (typeof rirPianoSettimana !== 'function') return null;
   const pc = profiloCoach();
   if (pc.prudente || pc.eta >= 65) return null;
+  /* INT-2d (M5): il piano di un altro livello non vale per chi ora e principiante (la tabella del principiante la da rirBersaglioPerLivello: 3-4 poi 2-3) */
+  if (pc.livello === 'principiante') { const pr = getProgramma(); if (!pr || !pr.piano || pr.piano.livello !== 'principiante') return null; }
   let t = rirPianoSettimana(nome, sett);
   if (t && !Array.isArray(t) && isFinite(t.min) && isFinite(t.max)) t = [t.min, t.max];
   if (!Array.isArray(t) || t.length !== 2 || !isFinite(t[0]) || !isFinite(t[1])) return null;
@@ -133,7 +142,7 @@ function rirDalPiano(nome, sett) {
   if (tipoCarico(nome) === 'pesante' && r[0] < MES_RIR.pisoPesante) r = [MES_RIR.pisoPesante, Math.max(r[1], MES_RIR.pisoPesante + 1)];
   return r;
 }
-function rirBersaglioBase(nome, sett) { return pavimentoRirMinorenni(rirDalPiano(nome, sett) || rirBersaglioPerLivello(nome, sett)); }
+function rirBersaglioBase(nome, sett) { return pavimentoRirPrincipiante(pavimentoRirMinorenni(rirDalPiano(nome, sett) || rirBersaglioPerLivello(nome, sett))); }
 function rirBersaglioPerLivello(nome, sett) {
   const pc = profiloCoach();
   if (pc.prudente || pc.eta >= 65) return [3, 4];
