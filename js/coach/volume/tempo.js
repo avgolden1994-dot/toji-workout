@@ -398,6 +398,9 @@ function scalaDelTempoBase(brief, sd, sedute, opz, minutiEff, passi) {
   /* INT-2b: l unica flessione del ginocchio della settimana resta come l unico piano (registro B6: una flessione a settimana; unicaFlessioneSettimana) */
   const unicaFlessione = (e) => unicaFlessioneSettimana(brief, sedute, e);
   const intoccabile = (e) => unicoPiano(e) || unicaFlessione(e);
+  /* INT-2e (ABB-03): un esercizio protetto che copre da solo un buco della settimana (polpacci, deltoidi posteriori, bicipiti, tricipiti diretti: NOTE_REGIONALI di genera.js) non lascia il posto nemmeno per l ultima risorsa:
+     con due tricipiti in due sedute, tolto il primo dal taglio normale, l ultima risorsa toglieva anche il secondo e la settimana restava senza (tests/browser/coerenza-schede.js, 1 profilo su 735 nel browser, non in node) */
+  const unicaCopertura = (e) => typeof NOTE_REGIONALI !== 'undefined' && NOTE_REGIONALI.some(r => r[1](e) && !sedute.some(o => o.esercizi.some(x => x !== e && r[1](x))));
   /* 3) il core e le braccia dirette (P6 e P5), uno alla volta: non i protetti, non sotto i pavimenti */
   const via = (sel) => {
     for (let g = 0; g < 12 && T() > limite && sd.esercizi.length > 3; g++) {   /* mai sotto 3 esercizi (EXN-01) */
@@ -427,7 +430,7 @@ function scalaDelTempoBase(brief, sd, sedute, opz, minutiEff, passi) {
   /* ultima risorsa (collaudo DUR-01): se sfora ancora di oltre il 10%, l ultima aggiunta protetta che non e core lascia il posto (meglio una copertura in meno che una seduta che non sta nei minuti);
      non l unica flessione del ginocchio (INT-2b) */
   for (let g = 0; g < 12 && T() > minutiEff * 1.10 && sd.esercizi.length > 3; g++) {
-    const protette = sd.esercizi.filter(e => !comp(e) && e.protetto && group(e) !== 'core' && !unicaFlessione(e));
+    const protette = sd.esercizi.filter(e => !comp(e) && e.protetto && group(e) !== 'core' && !unicaFlessione(e) && !unicaCopertura(e));
     if (!protette.length) break;
     togliEsercizio(sd, protette[protette.length - 1]); passi.tagli++;
   }
