@@ -56,7 +56,7 @@ const VERSIONE_CRITERI = '1.6';
    si rigenera in un worktree del tag copiandovi questo file, e i risultati si danno ANCORA a tre livelli (1.0, 1.3, 1.4... qui 1.5 e 1.6; la rapida vale come avviso):
    - SPL-01 (L): il principiante con 5 o 6 giorni che ha 4 sedute E la nota «A chi comincia bastano 4 sedute…» non e un fallimento (W2-T5, PRG-02: la ricerca sui principianti §3.3 dice che 2-3 sedute bastano e che oltre 4 non
      servono, e la scelta e detta all utente, anche nel passo dei giorni dell onboarding). Il FATTO deve coincidere con l etichetta (principiante, 5 o 6 giorni, esattamente 4 sedute: NOT-01 controlla la stessa cosa sulla nota);
-     senza la nota resta il fallimento come prima; `--senza-note` spegne l esenzione. Il report stampa quanti programmi sono esentati. Su coach-v2-onda-2d, che non ha la nota, la classe non cambia.
+     senza la nota resta il fallimento come prima; `--senza-note` spegne l esenzione. Il report stampa quanti programmi sono esentati. Anche coach-v2-onda-2d ha la nota dei 4 sedute (777 programmi esentati su 10.800, 778 a 2e): l esenzione vale per tutti gli alberi e allenta la misura di 2d come quella di 2e (la classe e di severita 2: `gravi_pesata` non si sposta).
    - SPL-01 non cambia per gli altri (sev 4).
    - FRZ-01 (nuovo, sev 4, Convenzione): chi ha scelto «forza» come primo obiettivo e «powerlifting» (campo `forzaTipo` del profilo, assegnato nella matrice al 25% dei profili con la forza per prima e al 15% «generale», il resto non risponde: ASSUNZIONE, come i
      pesi della popolazione) e puo averlo (adulto da 18 a 64 anni, PAR-Q negativo, 3 giorni o piu, frequenza diversa da «una volta», palestra con il bilanciere, nessun fastidio dichiarato: le condizioni che il collaudo scrive da se, senza leggere quelle del
@@ -174,8 +174,14 @@ const GIORNI_CONSECUTIVI_MAX = 4;
 /* 1.6: un principiante con 5 o 6 giorni ha al massimo 4 sedute (PRG-02, ricerca sui principianti §3.3: 2-3 sedute bastano, oltre 4 non servono; Convenzione) */
 const SEDUTE_PRINCIPIANTE_MAX = 4;
 /* 1.6, FRZ-01 (powerlifting, Convenzione: ricerca-forza-progressione 1.6): sedute della settimana con un'alzata col bilanciere. Si riconoscono dal nome (indipendente dalle etichette `alzata` del generatore) */
-const FRZ_SQUAT = /^(squat con bilanciere|squat con pausa|front squat)$/i, FRZ_PANCA = /^(panca piana bilanciere|panca con pausa|panca presa stretta|panca inclinata bilanciere)$/i, FRZ_STACCO = /^(stacco da terra \(deadlift\)|stacco rumeno|stacco in deficit|stacco sumo|trap bar deadlift)$/i;
+const FRZ_SQUAT = /^(squat con bilanciere|squat con pausa)$/i, FRZ_PANCA = /^(panca piana bilanciere|panca con pausa|panca presa stretta)$/i, FRZ_STACCO_TERRA = /^stacco da terra \(deadlift\)$/i, FRZ_STACCO_RUMENO = /^stacco rumeno$/i;
+/* INT-2f (revisione 2e): il conto delle alzate di gara non include piu il front squat, la panca inclinata, il rumeno e il deficit come «stacco» (erano esercizi diversi dall'alzata); le varianti con la pausa e a presa stretta
+   le chiama alzata il piano di T7 (FRZ-03). Chi comincia non ha lo stacco da terra (abilita 3: SEL-06, la Sentinella) e il piano gli da lo stacco rumeno: conta come stacco per la frequenza, e il report segnala quanti principianti non l'hanno (telemetria `frz01PrincipianteSenzaStaccoDaTerra`, non un fallimento: e una scelta scritta nel generatore).
+   Le famiglie (con i front squat, il rumeno e il deficit delle varianti dei giorni medi e leggeri) servono all'ordine: se la seduta ha una di queste, la prima della seduta e una di queste (l'alzata del giorno viene prima di ogni altro multiarticolare). */
+const FRZ_FAMIGLIE = /^(squat con bilanciere|squat con pausa|front squat|panca piana bilanciere|panca con pausa|panca inclinata bilanciere|panca presa stretta|stacco da terra \(deadlift\)|stacco rumeno|stacco in deficit)$/i;
 const FRZ_SEDUTE_MIN = { squat: 2, panca: 2, stacco: 1 };
+/* 1.6 (INT-2f), ATT-01: gli attrezzi che si dichiarano (come ATTREZZI_CASA_IDS e ATTREZZI_EXTRA_PALESTRA_IDS del generatore, riscritti qui: il collaudo non legge quelli del generatore) */
+const ATT_DICHIARABILI = ['sbarra', 'panca', 'elastico', 'kettlebell', 'anelli', 'manubri'], ATT_EXTRA_PALESTRA = ['elastico', 'kettlebell', 'anelli'];
 const FRZ_ETA = [18, 64], FRZ_GIORNI_MIN = 3;
 /* Tetto di circa 11 serie frazionarie per muscolo in una seduta (Pelland, meta-regressione, preprint 2025: Moderata) */
 const TETTO_FRAZ_SEDUTA = 11;
@@ -594,7 +600,7 @@ const CRITERI = [
          (principiante, 5-6 giorni, 4 sedute) e la nota e verificata da NOT-01; senza la nota, o con `--senza-note`, resta il fallimento di prima */
       if (!SENZA_NOTE && principianteLimitato && m.sedute.length === SEDUTE_PRINCIPIANTE_MAX && ((c.prog && c.prog.note) || []).some(n => /^A chi comincia bastano 4 sedute/.test(String(n)))) { m.esentatoSpl01 = true; return []; }
       return [{ sub: principianteLimitato ? 'principiante-limitato' : 'altri', sev: principianteLimitato ? 2 : 4, msg: c.days + ' giorni dichiarati, ' + m.sedute.length + ' sedute generate (split ' + c.splitNome + ')' + (((c.prog && c.prog.note) || []).some(n => /giorni/i.test(String(n))) ? '' : ', senza una nota che lo spieghi'), gravita: Math.abs(c.days - m.sedute.length) }]; } },
-  { id: 'FRZ-01', nome: 'Powerlifting scelto e possibile, ma squat e panca non sono in almeno due sedute e lo stacco in una', sev: 4, forza: 'Convenzione', fonte: 'docs/ricerca-forza-progressione.md 1.6 (frequenza 2-3 per alzata nei programmi da powerlifting); W2-T7',
+  { id: 'FRZ-01', nome: 'Powerlifting scelto e possibile, ma squat e panca non sono in almeno due sedute, lo stacco in una, o l alzata del giorno non e il primo esercizio', sev: 4, forza: 'Convenzione', fonte: 'docs/ricerca-forza-progressione.md 1.6 (frequenza 2-3 per alzata nei programmi da powerlifting); W2-T7',
     dove: ['js/coach/specialita/forza.js: modalitaForzaDa, SPEC_FORZA (attiva, split, sedute), specialitaForza', GENERA_JS + ': specialitaStruttura / spec.sedute', 'js/ui/onboarding.js: htmlForzaOnboarding (la domanda)'],
     check: (m, c) => {
       const pr = c.prof;
@@ -602,11 +608,19 @@ const CRITERI = [
       /* le condizioni che il collaudo scrive da se (adulto da 18 a 64, PAR-Q negativo, 3 giorni o piu, frequenza non «una volta», palestra con il bilanciere, nessun fastidio): fuori di qui il powerlifting non e promesso (la nota di T7 lo dice) */
       if (!(pr.age >= FRZ_ETA[0] && pr.age <= FRZ_ETA[1]) || pr.parq === 'si' || c.days < FRZ_GIORNI_MIN || pr.freq === '1' || c.luogo !== 'palestra' || c.fastidi.length || (pr.attrezziPalestra && pr.attrezziPalestra.length && pr.attrezziPalestra.indexOf('bilanciere') === -1)) return [];
       const conta = rx => m.sedute.filter(sd => sd.es.some(e => rx.test(e.pulito))).length;
-      const n = { squat: conta(FRZ_SQUAT), panca: conta(FRZ_PANCA), stacco: conta(FRZ_STACCO) };
+      const principiante = c.level === 'principiante', staccoTerra = conta(FRZ_STACCO_TERRA);
+      /* il front squat conta come squat solo se l utente ha dichiarato il punto debole che lo chiede («squat a meta risalita»: la variante che il piano di T7 da a quel punto, come la pausa e la presa stretta agli altri): senza, e un esercizio diverso */
+      const puntoSquatUscita = (pr.puntiDeboli || []).indexOf('squat-uscita') !== -1;
+      const n = { squat: m.sedute.filter(sd => sd.es.some(e => FRZ_SQUAT.test(e.pulito) || (puntoSquatUscita && /^front squat$/i.test(e.pulito)))).length, panca: conta(FRZ_PANCA), stacco: principiante ? staccoTerra + conta(FRZ_STACCO_RUMENO) : staccoTerra };
+      if (principiante && !staccoTerra) m.frz01PrincipianteSenzaStaccoDaTerra = true;
       const manca = Object.keys(FRZ_SEDUTE_MIN).filter(k => n[k] < FRZ_SEDUTE_MIN[k]);
-      if (!manca.length) return [];
       const conNota = ((c.prog && c.prog.note) || []).some(t => /^Con i minuti che hai alcune alzate restano fuori da qualche seduta/.test(String(t)));
-      return [{ sub: conNota ? 'con-nota-minuti' : 'senza-nota', sev: conNota ? 2 : 4, msg: 'powerlifting con ' + c.days + ' giorni e ' + c.minutes + ' minuti: squat in ' + n.squat + ' sedute (>= 2), panca in ' + n.panca + ' (>= 2), stacco in ' + n.stacco + ' (>= 1)' + (conNota ? ', con la nota onesta sui minuti' : ''), gravita: manca.length }]; } },
+      const out = [];
+      if (manca.length) out.push({ sub: conNota ? 'con-nota-minuti' : 'senza-nota', sev: conNota ? 2 : 4, msg: 'powerlifting con ' + c.days + ' giorni e ' + c.minutes + ' minuti: squat in ' + n.squat + ' sedute (>= 2), panca in ' + n.panca + ' (>= 2), stacco ' + (principiante ? '(o rumeno) ' : 'da terra ') + 'in ' + n.stacco + ' (>= 1)' + (conNota ? ', con la nota onesta sui minuti' : ''), gravita: manca.length });
+      /* INT-2f: l alzata del giorno e il primo esercizio della seduta (Convenzione: si fa prima di tutto il resto, Nunes 2021 per la forza l'ordine conta): il Military Press o il rematore col bilanciere non stanno davanti alla panca o allo squat */
+      const fuori = m.sedute.filter(sd => sd.es.length && sd.es.some(e => FRZ_FAMIGLIE.test(e.pulito)) && !FRZ_FAMIGLIE.test(sd.es[0].pulito));
+      if (fuori.length) out.push({ sub: 'alzata-non-prima', sev: 3, msg: fuori.map(sd => sd.titolo + ': ' + sd.es[0].pulito + ' prima di ' + sd.es.find(e => FRZ_FAMIGLIE.test(e.pulito)).pulito).join('; '), tag: fuori[0].es[0].pulito, gravita: fuori.length });
+      return out; } },
   { id: 'SPL-02', nome: 'Divisione non adatta al numero di giorni (muscolo singolo con pochi giorni, upper/lower con 2 giorni, full body con 5-6)', sev: 3, forza: 'Solida', fonte: 'ACSM 2026 (frequenza 2); ABB-05',
     dove: [ONB_JS + ': splitFor / splitPerFrequenza', 'js/coach/metodi-momenti.js: METODI (split)'],
     check: (m, c) => {
@@ -744,6 +758,26 @@ const CRITERI = [
       /* 1.2: il rematore inverso a corpo libero con la sua nota (tavolo robusto o sbarra bassa) non e attrezzatura «non garantita» */
       const conNota = (e) => c.luogo === 'corpo' && e.inf.att === 'Sbarra bassa o anelli' && ((c.prog && c.prog.note) || []).some(n => NOTA_REMATORE_INVERSO.test(String(n)));
       m.sedute.forEach(s => s.es.forEach(e => { if (violaAttrezzatura(e, c) === 'quasi' && !conNota(e)) out.push({ sub: c.luogo, msg: s.titolo + ': ' + e.pulito + ' richiede ' + e.inf.att + ' (luogo: ' + c.luogo + ')', tag: e.pulito + ' [' + e.inf.att + ']', gravita: 1 }); }));
+      return out; } },
+  { id: 'ATT-01', nome: 'Esercizio che chiede un attrezzo che l utente ha detto di non avere (attrezzi dichiarati a casa o gli extra della palestra)', sev: 4, forza: 'Convenzione', fonte: 'coerenza con la risposta («Cosa hai in casa?», «Cosa c e nella tua palestra?»: CAS-01, INT-2e): i testi dell onboarding promettono solo cio che il programma fa; revisione indipendente dell onda 2e (il collaudo non passava mai gli attrezzi dichiarati)',
+    dove: [MOTORE_JS + ': attrezziDichiaratiEsito / consentitoCalcolo', 'js/ui/onboarding.js: htmlAttrezziOnboarding', 'js/ui/opzioni/il-coach.js: htmlAttrezziCoach'],
+    check: (m, c) => {
+      const pr = c.prof, out = [];
+      /* a casa con i manubri i manubri ci sono per definizione (come brief.js: attrezziDichiarati); a corpo libero no */
+      const casa = (c.luogo === 'manubri' || c.luogo === 'corpo') && Array.isArray(pr.attrezziCasa) ? pr.attrezziCasa.concat(c.luogo === 'manubri' ? ['manubri'] : []) : null;
+      const extra = c.luogo === 'palestra' && Array.isArray(pr.extraPalestra) ? pr.extraPalestra : null;
+      if (!casa && !extra) return [];
+      /* come SAF-04 (W0-T7, decisione del committente): il rematore inverso a corpo libero, con la sua nota («sotto un tavolo robusto o con una sbarra bassa»), e l unica tirata orizzontale senza attrezzi e resta anche a chi non dichiara la sbarra */
+      const conNota = (e) => c.luogo === 'corpo' && e.inf.att === 'Sbarra bassa o anelli' && ((c.prog && c.prog.note) || []).some(n => NOTA_REMATORE_INVERSO.test(String(n)));
+      m.sedute.forEach(s => s.es.forEach(e => {
+        const i = e.inf;
+        if (conNota(e)) return;
+        if (casa) {
+          if (!i.serve || i.serve.length !== 1) return;
+          const alt = String(i.serve[0]).split('|');
+          if (alt.every(x => ATT_DICHIARABILI.indexOf(x) !== -1 && casa.indexOf(x) === -1)) out.push({ sub: 'casa', msg: s.titolo + ': ' + e.pulito + ' chiede ' + alt.join(' o ') + ', che non e tra gli attrezzi dichiarati (' + (casa.join(', ') || 'nessuno') + ')', tag: e.pulito + ' [serve ' + alt.join('|') + ']', gravita: 3 });
+        } else if (ATT_EXTRA_PALESTRA.indexOf(i.attrezzoDato) !== -1 && extra.indexOf(i.attrezzoDato) === -1) out.push({ sub: 'palestra', msg: s.titolo + ': ' + e.pulito + ' chiede ' + i.attrezzoDato + ', che non e tra gli extra dichiarati della palestra (' + (extra.join(', ') || 'nessuno') + ')', tag: e.pulito + ' [' + i.attrezzoDato + ']', gravita: 3 });
+      }));
       return out; } },
   { id: 'SAF-05', nome: 'Esercizio tecnicamente impegnativo a un principiante o in modalita prudente (over 65, PAR-Q)', sev: 2, forza: 'Convenzione', fonte: 'pratica dei coach: il principiante parte da macchine, manubri e regressioni; ACSM 2026 per over 65 e pressione',
     dove: [RICETTE_JS + ': componiSedute (prio: +3 ai pesanti se !cauto, anche ai principianti; cauto toglie solo 3 punti)', MOTORE_JS + ': consentito'],
@@ -966,7 +1000,8 @@ function infoEs(nome) {
   else if (tipo === 'isolation' && bers === 'dorsali' && /pullover con manubrio/i.test(pulito)) mov = 'tirataV';   /* D-P11 (INT-0): il pullover coi manubri (dorsali) e la tirata verticale di riserva a casa */
   /* B15 (INT-0): l'hip thrust e il ponte glutei sono spinte d'anca da supini, non hinge: PAT-01 chiede almeno uno stacco, un good morning, un pull-through (cerniera vera) */
   const hingeVero = mov === 'hinge' && !/hip thrust|ponte glutei/i.test(pulito);
-  c = { nome, pulito, meta, det, tipo, bers, sec, schema, mov, hingeVero, carico: G.tipoCarico(nome), tempo: !!(meta && G.isTimeBased(nome)), att: det ? det.att : '', gruppoLib: meta ? meta.group : '' };
+  const attr = typeof G.attributi === 'function' ? G.attributi(nome) : null;
+  c = { nome, pulito, meta, det, tipo, bers, sec, schema, mov, hingeVero, serve: attr && Array.isArray(attr.serve) ? attr.serve : null, attrezzoDato: attr ? attr.attrezzo : '', carico: G.tipoCarico(nome), tempo: !!(meta && G.isTimeBased(nome)), att: det ? det.att : '', gruppoLib: meta ? meta.group : '' };
   cacheEs.set(nome, c);
   return c;
 }
@@ -1127,12 +1162,30 @@ function matriceForza() {
   [['forza'], ['forza', 'massa']].forEach(o => LIVELLI.forEach(l => [3, 4, 5, 6].forEach(g => MINUTI.forEach(mi => SESSI.forEach(sx => [FASCE_ETA[0], FASCE_ETA[1]].forEach(e => [['completa', null], ['barra', ['bilanciere', 'manubri', 'sbarra']], ['macchine', ['macchine', 'manubri']]].forEach(a => {
     const p = profilo(o, l, g, mi, 'palestra', [], sx, e, 'forza');
     p.id += '|pl|' + a[0]; p.parq = 'no'; p.freq = p.freq === '1' ? 'auto' : p.freq; p.forzaTipo = 'powerlifting'; p.attrezziPalestra = a[1]; p.seme += '|pl' + a[0];
+    /* INT-2f: i punti deboli (FRZ-03, FRZ-04) entrano nella matrice: 40% nessuno, 40% uno, 20% due (uno per alzata), scelti con un hash a parte; prima il collaudo non li passava mai */
+    const rp = mulberry32(hash32(p.id + '#pd')), nPd = scegli(rp, [[0, 40], [1, 40], [2, 20]]);
+    if (nPd) { const alzate = [['squat-buca', 'squat-uscita'], ['panca-petto', 'panca-meta', 'panca-chiusura'], ['stacco-terra', 'stacco-chiusura']].map(l => l.slice()); const sc = []; while (sc.length < nPd) { const l = alzate.splice(Math.floor(rp() * alzate.length), 1)[0]; sc.push(l[Math.floor(rp() * l.length)]); } p.puntiDeboli = sc; p.id += '|pd:' + sc.join('+'); }
     out.push(p);
   })))))));
   return out;
 }
+/* INT-2f (revisione 2e): la matrice «attrezzi» (ATT-01), circa 600 profili: gli attrezzi dichiarati (attrezziCasa, extraPalestra, manubriKg) che prima il collaudo non passava mai al generatore. Casa con i manubri (4 risposte x 2 pesi del manubrio),
+   corpo libero (3 risposte), palestra (3 risposte sugli extra x l elenco completo o senza il bilanciere) x livello x 3-5 giorni x 45 e 60 minuti x massa e glutei, adulti di 25 anni, nessun fastidio. Piccola di proposito: gira in npm test (tests/collaudo-attrezzi.test.js) */
+function matriceAttrezzi() {
+  const out = [], risp = { manubri: [[], ['panca'], ['sbarra', 'elastico'], ['panca', 'sbarra', 'elastico', 'kettlebell', 'anelli']], corpo: [[], ['sbarra'], ['elastico', 'anelli']], palestra: [[], ['kettlebell'], ['elastico', 'anelli']] };
+  ['manubri', 'corpo', 'palestra'].forEach(lu => risp[lu].forEach(ris => (lu === 'manubri' ? [8, 20] : [null]).forEach(kg => (lu === 'palestra' ? [null, ['macchine', 'manubri']] : [null]).forEach(ap => LIVELLI.forEach(l => [3, 4, 5].forEach(g => [45, 60].forEach(mi => [['massa'], ['glutei']].forEach(o => {
+    const p = profilo(o, l, g, mi, lu, [], 'F', FASCE_ETA[0], 'attrezzi');
+    p.id += '|att|' + (ris.join('+') || 'nessuno') + (kg ? '|' + kg + 'kg' : '') + (ap ? '|' + ap.join('+') : ''); p.parq = 'no'; p.freq = 'auto'; p.attrezziPalestra = ap;
+    if (lu === 'palestra') p.extraPalestra = ris.slice(); else p.attrezziCasa = ris.slice();
+    if (kg) p.manubriKg = kg;
+    p.seme += '|att';
+    out.push(p);
+  }))))))));
+  return out;
+}
 function matrice(modo) {
   if (modo === 'forza') return matriceForza();
+  if (modo === 'attrezzi') return matriceAttrezzi();
   if (modo === 'forza-rapida') return matriceForza().filter(p => hash32(p.id + '#rapida') % 6 === 0);   /* 240 profili circa: la prova in npm test (tests/collaudo-forza.test.js) */
   const out = [];
   const completa = modo === 'completa';
@@ -1152,7 +1205,8 @@ function matrice(modo) {
    ===================================================================================================== */
 function datiPerBuild(p, senzaPriorita) {
   return { sex: p.sex, age: p.age, seme: p.seme, fastidi: p.fastidi.slice(), sonno: p.sonno, attrezzi: p.attrezzi, usaProfilo: false, level: p.level, days: p.days, goals: p.goals.slice(),
-    luogo: p.luogo, minutes: p.minutes, freq: p.freq, parq: p.parq, priorita: senzaPriorita ? [] : p.priorita.slice(), psico: PSICO[p.psico || 'nessuno'], attrezziPalestra: p.attrezziPalestra ? p.attrezziPalestra.slice() : undefined, forzaTipo: p.forzaTipo };
+    luogo: p.luogo, minutes: p.minutes, freq: p.freq, parq: p.parq, priorita: senzaPriorita ? [] : p.priorita.slice(), psico: PSICO[p.psico || 'nessuno'], attrezziPalestra: p.attrezziPalestra ? p.attrezziPalestra.slice() : undefined, forzaTipo: p.forzaTipo,
+    puntiDeboli: p.puntiDeboli ? p.puntiDeboli.slice() : undefined, attrezziCasa: p.attrezziCasa ? p.attrezziCasa.slice() : undefined, extraPalestra: p.extraPalestra ? p.extraPalestra.slice() : undefined, manubriKg: p.manubriKg };
 }
 function costruisci(p, senzaPriorita) { return G.buildProgram(datiPerBuild(p, senzaPriorita)); }
 
@@ -1223,7 +1277,7 @@ function tabellaSettimana(m) {
 }
 /* il profilo nel formato di --profilo (si copia e incolla), con i nomi dei campi di buildProgram */
 function profiloCompatto(p) {
-  return '`' + JSON.stringify({ goals: p.goals, level: p.level, days: p.days, minutes: p.minutes, luogo: p.luogo, fastidi: p.fastidi, sex: p.sex, age: p.age, sonno: p.sonno, attrezzi: p.attrezzi, freq: p.freq, parq: p.parq, priorita: p.priorita, psico: p.psico, attrezziPalestra: p.attrezziPalestra, forzaTipo: p.forzaTipo, seme: p.seme }) + '`';
+  return '`' + JSON.stringify({ goals: p.goals, level: p.level, days: p.days, minutes: p.minutes, luogo: p.luogo, fastidi: p.fastidi, sex: p.sex, age: p.age, sonno: p.sonno, attrezzi: p.attrezzi, freq: p.freq, parq: p.parq, priorita: p.priorita, psico: p.psico, attrezziPalestra: p.attrezziPalestra, forzaTipo: p.forzaTipo, puntiDeboli: p.puntiDeboli, attrezziCasa: p.attrezziCasa, extraPalestra: p.extraPalestra, manubriKg: p.manubriKg, seme: p.seme }) + '`';
 }
 
 function eseguiMatrice(profili, opz) {
@@ -1250,6 +1304,7 @@ function eseguiMatrice(profili, opz) {
     esenti.forEach(e => { const r = tot.esentiPerClasse[e.g] = tot.esentiPerClasse[e.g] || { n: 0, peso: 0 }; r.n++; r.peso += wp; });
     if (conVol) { tot.vol01Con++; tot.vol01ConPeso += wp; }
     if (conVol || esenti.length) { tot.vol01Senza++; tot.vol01SenzaPeso += wp; }
+    if (a.m && a.m.frz01PrincipianteSenzaStaccoDaTerra) { tot.frz01SenzaStaccoTerra = (tot.frz01SenzaStaccoTerra || 0) + 1; tot.frz01SenzaStaccoTerraPeso = (tot.frz01SenzaStaccoTerraPeso || 0) + wp; }   /* 1.6, INT-2f: i principianti con il powerlifting che non hanno lo stacco da terra (abilita 3: hanno il rumeno) */
     if (a.m && a.m.esentatoSpl01) { tot.spl01Esentati = (tot.spl01Esentati || 0) + 1; tot.spl01EsentatiPeso = (tot.spl01EsentatiPeso || 0) + wp; }   /* 1.6: SPL-01 non segnala i 4 sedute dei principianti con la nota */
     if (a.m && a.m.esentatoRec03) { tot.rec03Esentati++; tot.rec03EsentatiPeso += wp; }   /* 1.5: REC-03 non segnala i 6 giorni dichiarati con la nota onesta */
     const viste = new Map(), conteggi = new Map();
@@ -1420,6 +1475,7 @@ function mdReport(profili, ris, opz, meta, verifiche) {
   const vd = vol01Doppio({ tot: tot, elenco: elenco });
   L.push('| VOL-01 con l esenzione della nota (criteri 1.5, definizione stretta) | ' + vd.programmi.con + ' programmi (' + vd.pesata.con.toFixed(1) + '% pesata) |');
   L.push('| VOL-01 SENZA l esenzione (come con --senza-note) | ' + vd.programmi.senza + ' programmi (' + vd.pesata.senza.toFixed(1) + '% pesata) |');
+  L.push('| FRZ-01: principianti con il powerlifting senza lo stacco da terra (hanno il rumeno: abilita 3, SEL-06; non e un fallimento) (1.6) | ' + (tot.frz01SenzaStaccoTerra || 0) + ' programmi (' + ((tot.frz01SenzaStaccoTerraPeso || 0) / Math.max(1e-9, tot.pesoTotale) * 100).toFixed(1) + '% pesata) |');
   L.push('| SPL-01 non segnalato per i principianti con 5-6 giorni e 4 sedute con la nota onesta (1.6) | ' + (tot.spl01Esentati || 0) + ' programmi (' + ((tot.spl01EsentatiPeso || 0) / Math.max(1e-9, tot.pesoTotale) * 100).toFixed(1) + '% pesata)' + (SENZA_NOTE ? ' - esenzione spenta (--senza-note)' : ' - senza l esenzione sono segnalati') + ' |');
   L.push('| REC-03 non segnalato per i 6 giorni dichiarati con la nota onesta (1.5) | ' + (tot.rec03Esentati || 0) + ' programmi (' + ((tot.rec03EsentatiPeso || 0) / Math.max(1e-9, tot.pesoTotale) * 100).toFixed(1) + '% pesata)' + (SENZA_NOTE ? ' - esenzione spenta (--senza-note)' : ' - senza l esenzione sono segnalati') + ' |');
   L.push('| Programmi con il piano settimanale (`prog.piano`, MOD-06) | ' + (tot.conPiano || 0) + ' su ' + tot.profili + ' |');
@@ -1483,7 +1539,8 @@ function mdReport(profili, ris, opz, meta, verifiche) {
 function riepilogoCompatto(ris, meta) {
   const per = {}, pesata = {};
   ris.elenco.forEach(cl => { per[cl.chiave] = cl.n; pesata[cl.chiave] = Number(cl.pctPesata.toFixed(2)); });
-  return { criteri: VERSIONE_CRITERI, commit: meta.commit, data: meta.data, matrice: meta.matrice, pesi: PESI_UNIFORMI ? 'uniformi' : 'popolazione', profili: ris.tot.profili, errori: ris.tot.errori, conFallimenti: ris.tot.conFallimenti, conGravi: ris.tot.conGravi, gravi_pesata: Number(((ris.tot.pesoGravi || 0) / ris.tot.pesoTotale * 100).toFixed(2)), conMetodo: ris.tot.conMetodo, classi: per, classi_pesata: pesata, vol01: vol01Doppio(ris), spl01: { esentati: ris.tot.spl01Esentati || 0, esentati_pesata: Number(((ris.tot.spl01EsentatiPeso || 0) / ris.tot.pesoTotale * 100).toFixed(2)) }, rec03: { esentati: ris.tot.rec03Esentati || 0, esentati_pesata: Number(((ris.tot.rec03EsentatiPeso || 0) / ris.tot.pesoTotale * 100).toFixed(2)) } };
+  return { criteri: VERSIONE_CRITERI, commit: meta.commit, data: meta.data, matrice: meta.matrice, pesi: PESI_UNIFORMI ? 'uniformi' : 'popolazione', profili: ris.tot.profili, errori: ris.tot.errori, conFallimenti: ris.tot.conFallimenti, conGravi: ris.tot.conGravi, gravi_pesata: Number(((ris.tot.pesoGravi || 0) / ris.tot.pesoTotale * 100).toFixed(2)), conMetodo: ris.tot.conMetodo, classi: per, classi_pesata: pesata, vol01: vol01Doppio(ris), frz01: { principianti_senza_stacco_da_terra: ris.tot.frz01SenzaStaccoTerra || 0, principianti_senza_stacco_da_terra_pesata: Number(((ris.tot.frz01SenzaStaccoTerraPeso || 0) / ris.tot.pesoTotale * 100).toFixed(2)) },
+    spl01: { esentati: ris.tot.spl01Esentati || 0, esentati_pesata: Number(((ris.tot.spl01EsentatiPeso || 0) / ris.tot.pesoTotale * 100).toFixed(2)) }, rec03: { esentati: ris.tot.rec03Esentati || 0, esentati_pesata: Number(((ris.tot.rec03EsentatiPeso || 0) / ris.tot.pesoTotale * 100).toFixed(2)) } };
 }
 /* 1.5: VOL-01 con l esenzione della nota della causa e SENZA, sempre: { con, senza } = programmi con almeno una classe VOL-01 (n e % pesata), e per classe { con, senza } in % pesata */
 function vol01Doppio(ris) {
@@ -1607,7 +1664,16 @@ const FIXTURES = [
   fixture('SPL-01 1.6: le stesse 4 sedute senza la nota restano un fallimento', { level: 'principiante', days: 5 }, [['Lunedì', 'fullbody', [E('Goblet Squat', 3, 10, 90)]], ['Martedì', 'fullbody', [E('Goblet Squat', 3, 10, 90)]], ['Giovedì', 'fullbody', [E('Goblet Squat', 3, 10, 90)]], ['Venerdì', 'fullbody', [E('Goblet Squat', 3, 10, 90)]]], {}, ['SPL-01']),
   fixture('SPL-01 1.6: un intermedio con 5 giorni e 4 sedute con la nota dei principianti: la nota e falsa (NOT-01) e il numero resta un fallimento', { level: 'intermedio', days: 5 }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 120)]], ['Martedì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 120)]], ['Giovedì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 120)]], ['Venerdì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 120)]]], { note: ['A chi comincia bastano 4 sedute a settimana: gli altri giorni sono riposo o una camminata.'] }, ['SPL-01', 'NOT-01']),
   fixture('FRZ-01 1.6: powerlifting possibile (30 anni, 4 giorni, palestra) con lo squat e la panca in una sola seduta: scatta', { goals: ['forza'], forzaTipo: 'powerlifting', days: 4, age: 30 }, [['Lunedì', 'lower', [E('Squat con Bilanciere', 4, 3, 180), E('Stacco Rumeno', 3, 5, 150)]], ['Martedì', 'upper', [E('Panca Piana Bilanciere', 4, 3, 180), E('Lat Machine', 3, 8, 90)]], ['Giovedì', 'lower', [E('Leg Press', 3, 8, 120), E('Leg Curl Seduto', 3, 10, 90)]], ['Venerdì', 'upper', [E('Military Press', 3, 5, 120), E('Pulley Basso', 3, 8, 90)]]], {}, ['FRZ-01']),
-  fixture('FRZ-01 1.6: powerlifting con squat in due sedute, panca in due e lo stacco rumeno in una: non scatta', { goals: ['forza'], forzaTipo: 'powerlifting', days: 4, age: 30 }, [['Lunedì', 'lower', [E('Squat con Bilanciere', 4, 3, 180), E('Stacco Rumeno', 3, 5, 150)]], ['Martedì', 'upper', [E('Panca Piana Bilanciere', 4, 3, 180), E('Lat Machine', 3, 8, 90)]], ['Giovedì', 'lower', [E('Squat con Pausa', 3, 5, 150), E('Leg Curl Seduto', 3, 10, 90)]], ['Venerdì', 'upper', [E('Panca con Pausa', 3, 5, 150), E('Pulley Basso', 3, 8, 90)]]], {}, [], ['FRZ-01']),
+  fixture('FRZ-01 1.6: powerlifting con squat in due sedute, panca in due e lo stacco da terra in una: non scatta', { goals: ['forza'], forzaTipo: 'powerlifting', days: 4, age: 30 }, [['Lunedì', 'lower', [E('Squat con Bilanciere', 4, 3, 180), E('Stacco da Terra (Deadlift)', 3, 3, 180)]], ['Martedì', 'upper', [E('Panca Piana Bilanciere', 4, 3, 180), E('Lat Machine', 3, 8, 90)]], ['Giovedì', 'lower', [E('Squat con Pausa', 3, 5, 150), E('Leg Curl Seduto', 3, 10, 90)]], ['Venerdì', 'upper', [E('Panca con Pausa', 3, 5, 150), E('Pulley Basso', 3, 8, 90)]]], {}, [], ['FRZ-01']),
+  fixture('FRZ-01 1.6 (INT-2f): lo stacco rumeno non e lo stacco da terra: a un intermedio la settimana col solo rumeno scatta', { goals: ['forza'], forzaTipo: 'powerlifting', days: 4, age: 30 }, [['Lunedì', 'lower', [E('Squat con Bilanciere', 4, 3, 180), E('Stacco Rumeno', 3, 5, 150)]], ['Martedì', 'upper', [E('Panca Piana Bilanciere', 4, 3, 180), E('Lat Machine', 3, 8, 90)]], ['Giovedì', 'lower', [E('Squat con Pausa', 3, 5, 150), E('Leg Curl Seduto', 3, 10, 90)]], ['Venerdì', 'upper', [E('Panca con Pausa', 3, 5, 150), E('Pulley Basso', 3, 8, 90)]]], {}, ['FRZ-01']),
+  fixture('FRZ-01 1.6 (INT-2f): a chi comincia lo stacco rumeno basta (lo stacco da terra e abilita 3): non scatta', { goals: ['forza'], forzaTipo: 'powerlifting', level: 'principiante', days: 4, age: 30 }, [['Lunedì', 'lower', [E('Squat con Bilanciere', 3, 5, 150), E('Stacco Rumeno', 3, 5, 150)]], ['Martedì', 'upper', [E('Panca Piana Bilanciere', 3, 5, 150), E('Lat Machine', 3, 8, 90)]], ['Giovedì', 'lower', [E('Squat con Pausa', 3, 5, 150), E('Leg Curl Seduto', 3, 10, 90)]], ['Venerdì', 'upper', [E('Panca con Pausa', 3, 5, 150), E('Pulley Basso', 3, 8, 90)]]], {}, [], ['FRZ-01']),
+  fixture('FRZ-01 1.6 (INT-2f): senza punto debole il front squat non e uno squat da powerlifting (squat in una sola seduta): scatta', { goals: ['forza'], forzaTipo: 'powerlifting', days: 4, age: 30 }, [['Lunedì', 'lower', [E('Squat con Bilanciere', 4, 3, 180), E('Stacco da Terra (Deadlift)', 3, 3, 180)]], ['Martedì', 'upper', [E('Panca Piana Bilanciere', 4, 3, 180), E('Lat Machine', 3, 8, 90)]], ['Giovedì', 'lower', [E('Front Squat', 3, 5, 150), E('Leg Curl Seduto', 3, 10, 90)]], ['Venerdì', 'upper', [E('Panca con Pausa', 3, 5, 150), E('Pulley Basso', 3, 8, 90)]]], {}, ['FRZ-01']),
+  fixture('FRZ-01 1.6 (INT-2f): con il punto debole «squat a meta risalita» il front squat e la variante che il piano da a quel punto e conta: non scatta', { goals: ['forza'], forzaTipo: 'powerlifting', puntiDeboli: ['squat-uscita'], days: 4, age: 30 }, [['Lunedì', 'lower', [E('Squat con Bilanciere', 4, 3, 180), E('Stacco da Terra (Deadlift)', 3, 3, 180)]], ['Martedì', 'upper', [E('Panca Piana Bilanciere', 4, 3, 180), E('Lat Machine', 3, 8, 90)]], ['Giovedì', 'lower', [E('Front Squat', 3, 5, 150), E('Leg Curl Seduto', 3, 10, 90)]], ['Venerdì', 'upper', [E('Panca con Pausa', 3, 5, 150), E('Pulley Basso', 3, 8, 90)]]], {}, [], ['FRZ-01']),
+  fixture('FRZ-01 1.6 (INT-2f): la frequenza e giusta ma il Military Press apre la seduta prima della panca: l alzata del giorno non e prima: scatta', { goals: ['forza'], forzaTipo: 'powerlifting', days: 4, age: 30 }, [['Lunedì', 'lower', [E('Squat con Bilanciere', 4, 3, 180), E('Stacco da Terra (Deadlift)', 3, 3, 180)]], ['Martedì', 'upper', [E('Military Press', 3, 5, 120), E('Panca Piana Bilanciere', 4, 3, 180), E('Lat Machine', 3, 8, 90)]], ['Giovedì', 'lower', [E('Squat con Pausa', 3, 5, 150), E('Leg Curl Seduto', 3, 10, 90)]], ['Venerdì', 'upper', [E('Panca con Pausa', 3, 5, 150), E('Pulley Basso', 3, 8, 90)]]], {}, ['FRZ-01']),
+  fixture('ATT-01: a casa coi manubri senza la panca dichiarata, un esercizio che chiede la panca: scatta', { luogo: 'manubri', attrezziCasa: [] }, [['Lunedì', 'fullbody', [E('Panca Piana Manubri', 3, 10, 90), E('Rematore con Manubrio', 3, 10, 90), E('Goblet Squat', 3, 10, 90)]]], {}, ['ATT-01']),
+  fixture('ATT-01: con la panca dichiarata lo stesso esercizio non scatta', { luogo: 'manubri', attrezziCasa: ['panca'] }, [['Lunedì', 'fullbody', [E('Panca Piana Manubri', 3, 10, 90), E('Rematore con Manubrio', 3, 10, 90), E('Goblet Squat', 3, 10, 90)]]], {}, [], ['ATT-01']),
+  fixture('ATT-01: in palestra con «nessuno di questi» un esercizio con l elastico: scatta; senza risposta no', { luogo: 'palestra', extraPalestra: [] }, [['Lunedì', 'upper', [E('Face Pull con Elastico', 3, 15, 60), E('Panca Piana Bilanciere', 3, 8, 120), E('Lat Machine', 3, 8, 90)]]], {}, ['ATT-01']),
+  fixture('ATT-01: in palestra senza risposta sugli extra lo stesso esercizio non scatta', { luogo: 'palestra' }, [['Lunedì', 'upper', [E('Face Pull con Elastico', 3, 15, 60), E('Panca Piana Bilanciere', 3, 8, 120), E('Lat Machine', 3, 8, 90)]]], {}, [], ['ATT-01']),
   fixture('FRZ-01 1.6: la stessa settimana monca con la forza generale: il powerlifting non e promesso', { goals: ['forza'], forzaTipo: 'generale', days: 4, age: 30 }, [['Lunedì', 'lower', [E('Squat con Bilanciere', 4, 3, 180)]], ['Martedì', 'upper', [E('Panca Piana Bilanciere', 4, 3, 180)]], ['Giovedì', 'lower', [E('Leg Press', 3, 8, 120)]], ['Venerdì', 'upper', [E('Military Press', 3, 5, 120)]]], {}, [], ['FRZ-01']),
   fixture('REC-01 1.5: il petto a fondo domenica e lunedi sono giorni consecutivi (anello)', {}, [['Lunedì', 'push', [E('Panca Piana Bilanciere', 4, 8, 120)]], ['Domenica', 'push', [E('Panca Inclinata Manubri', 4, 8, 120)]]], {}, ['REC-01']),
   fixture('DEL-01 1.4: principiante non prudente a 12 settimane senza il controllo all 8a: lo scarico e troppo lontano', { level: 'principiante' }, [['Lunedì', 'fullbody', [E('Goblet Squat', 3, 10, 90)]]], { fasi: FASI_PRINCIPIANTE_12, piano: PIANO_DA_FASI(FASI_PRINCIPIANTE_12) }, ['DEL-01']),

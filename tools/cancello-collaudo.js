@@ -242,13 +242,42 @@ function valuta(cfg, snap, ondaId, opz) {
      FUTURA (`onde.<onda>.aperti` o `.ammesse` con la stessa chiave; `oltre-v2` = fuori dalla v2: si vede in ogni corsa e non ferma mai), oppure (b) chiuso (`chiuso: { motivo, data }`), oppure (c) solo per un'ammessa,
      la classe non c'e piu nell'istantanea (nessun programma colpito). Altrimenti il cancello FALLISCE. Un aperto con scadenza futura, non riscritto, si stampa a ogni corsa con il responsabile. `senzaDebiti`
      (solo le prove delle soglie dell'autotest) lo spegne. */
+  /* INT-2f (revisione indipendente dell onda 2e, minore 7): (a) una scadenza non valida di un debito di un onda passata non si salta in silenzio: fallisce; (b) un ammessa riscritta in `aperti` (o come ammessa di un onda dopo) non perde
+     il suo tetto `max`: la classe non sale oltre il tetto in nessuna onda dopo (prima poteva salire di 0,49 a ogni onda, la tolleranza, per sempre: FRQ-02:bicipiti era a 8,99 contro un tetto di 8,8 e passava); il tetto puo scendere, e
+     salire solo con `rialzo: { motivo, data, responsabile }`; (c) `oltre-v2` non vale per le classi di sicurezza e il motivo porta una data (il «motivo datato» che il messaggio chiede). */
+  const SIC = new Set(cfg.regressione.sicurezza);
+  const dataValida = (t) => /\b\d{4}-\d{2}-\d{2}\b/.test(String(t || ''));
+  for (let m = 0; m <= iOnda; m++) {
+    const o = (m === iOnda ? onda : cfg.onde[ordine[m]]) || {};
+    [['ammessa', o.ammesse, 'motivo'], ['aperto', o.aperti, 'motivo']].forEach(([tipo, t, campo]) => Object.keys(t || {}).sort().forEach(k => {
+      const e = t[k] || {};
+      if (e.scade !== 'oltre-v2' || chiusoCon(e)) return;
+      if (SIC.has(codiceDi(k)) || /^SAF-/.test(k)) ko(tipo + ' ' + k + ' (' + ordine[m] + '): scade oltre-v2 ma e una classe di sicurezza: oltre-v2 non vale per la sicurezza');
+      if (!dataValida(e[campo])) ko(tipo + ' ' + k + ' (' + ordine[m] + '): scade oltre-v2 senza una data nel motivo (AAAA-MM-GG): il rinvio fuori dalla v2 e datato');
+    }));
+  }
   if (!opz.senzaDebiti) {
-    const riscrittoDopo = (k, da) => { for (let m = da + 1; m <= iOnda; m++) { const o = (m === iOnda ? onda : cfg.onde[ordine[m]]) || {}; if ([o.aperti, o.ammesse].some(t => t && t[k] && ordine.indexOf(t[k].scade) > iOnda)) return true; } return false; };
+    const dopo = (m) => (m === iOnda ? onda : cfg.onde[ordine[m]]) || {};
+    const riscrittoDopo = (k, da) => { for (let m = da + 1; m <= iOnda; m++) { const o = dopo(m); if ([o.aperti, o.ammesse].some(t => t && t[k] && ordine.indexOf(t[k].scade) > iOnda)) return true; } return false; };
     for (let j = 0; j < iOnda; j++) {
       const o = cfg.onde[ordine[j]] || {};
       [['ammessa', o.ammesse], ['aperto', o.aperti]].forEach(([tipo, t]) => Object.keys(t || {}).sort().forEach(k => {
         const e = t[k] || {}, sc = ordine.indexOf(e.scade);
-        if (sc === -1 || chiusoCon(e) || riscrittoDopo(k, j) || Object.prototype.hasOwnProperty.call(aperti, k) || (onda && onda.ammesse && onda.ammesse[k])) return;   /* riscritto dall'onda che si valuta: lo giudicano i suoi controlli (SCADUTO), senza contarlo due volte */
+        if (chiusoCon(e)) return;
+        if (sc === -1) return ko('debito di ' + ordine[j] + ' con scadenza non valida: ' + tipo + ' ' + k + ' (' + (e.risolve || e.responsabile || 'senza responsabile') + ', scade «' + (e.scade === undefined ? '' : e.scade) + '»): la scadenza e una tra ' + ordine.join(', '));
+        const carried = riscrittoDopo(k, j) || Object.prototype.hasOwnProperty.call(aperti, k) || !!(onda && onda.ammesse && onda.ammesse[k]);
+        /* (b) il tetto dell ammessa dura quanto il debito: la catena delle riscritture lo puo solo abbassare, o alzare con `rialzo` */
+        if (tipo === 'ammessa' && typeof e.max === 'number' && carried && !SIC.has(codiceDi(k))) {
+          let tetto = e.max, da = ordine[j];
+          for (let m = j + 1; m <= iOnda; m++) {
+            const c = ((dopo(m).aperti || {})[k]) || ((dopo(m).ammesse || {})[k]);
+            if (!c || typeof c.max !== 'number') continue;
+            if (c.max > tetto + EPS) { const r = c.rialzo || {}; if (!r.motivo || !r.data || !r.responsabile) ko('ammessa ' + k + ' riscritta in ' + ordine[m] + ': il tetto e stato rialzato da ' + tetto + ' a ' + c.max + ' senza `rialzo` con motivo, data e responsabile (il tetto dura quanto il debito)'); }
+            tetto = c.max; da = ordine[m];
+          }
+          if (snap.pesata[k] && val(k) > tetto + EPS) ko('ammessa ' + k + ' riscritta: ' + f2(val(k)) + '% oltre il tetto ' + tetto + '% (' + da + '): una riscrittura non scioglie il tetto della regressione ammessa');
+        }
+        if (riscrittoDopo(k, j) || Object.prototype.hasOwnProperty.call(aperti, k) || (onda && onda.ammesse && onda.ammesse[k])) { /* riscritto dall onda che si valuta o da una in mezzo: lo giudicano i suoi controlli (SCADUTO) */ return; }
         if (sc > iOnda) { if (tipo === 'aperto') righe.push({ esito: 'aperto', testo: k + ' [scade ' + e.scade + '; scritto in ' + ordine[j] + '] ' + (e.motivo || ''), codice: codiceDi(k), responsabile: e.responsabile || 'senza responsabile' }); return; }
         if (tipo === 'ammessa' && !snap.pesata[k]) return;   /* la classe non e colpita da nessun programma: il debito si e risolto da solo */
         ko('debito di ' + ordine[j] + ' SCADUTO e non risolto: ' + tipo + ' ' + k + ' (' + (e.risolve || e.responsabile || 'senza responsabile') + ', scadenza ' + e.scade + ', ora si valuta ' + ondaId + '): riscrivilo in onde.' + ondaId + '.aperti con una nuova scadenza (o `oltre-v2` con il motivo datato), oppure chiudilo con `chiuso: { motivo, data }`');
@@ -396,8 +425,8 @@ function autotest() {
     try { return cp.spawnSync(process.execPath, [__filename, f].concat(args), { encoding: 'utf8' }); } finally { fs.rmSync(f, { force: true }); }
   };
 
-  prova('le soglie sono coerenti: 50 criteri, 112 classi del «prima», onde in ordine, soglie numeriche', () => {
-    eq(Object.keys(cfg.criteri).length, 50, 'criteri'); eq(Object.keys(cfg.prima.classi).length, 112, 'classi');
+  prova('le soglie sono coerenti: 51 criteri, 112 classi del «prima», onde in ordine, soglie numeriche', () => {
+    eq(Object.keys(cfg.criteri).length, 51, 'criteri'); eq(Object.keys(cfg.prima.classi).length, 112, 'classi');
     eq(cfg.ordineOnde.filter(o => !cfg.onde[o]).length, 0, 'onde senza descrizione');
     Object.keys(cfg.prima.classi).forEach(k => { if (!cfg.criteri[codiceDi(k)]) throw new Error('classe senza criterio: ' + k); });
     Object.keys(cfg.criteri).forEach(cod => {
@@ -639,7 +668,7 @@ function autotest() {
     const K = 'RID-01:grande_gluteo', presente = { pesata: { [K]: 2 }, conteggio: { [K]: 200 } };
     const esito = (modifica, mod) => { const c = nuda(); modifica(c); return valuta(c, daCollaudo(istantaneaBuona(c, 'onda-3', mod || presente)), 'onda-3', { contro: daCollaudo(istantaneaBuona(c, 'onda-2', presente)) }); };
     const debiti = r => r.righe.filter(x => x.esito === 'fallito' && /debito di .* SCADUTO e non risolto/.test(x.testo));
-    const ap = (scade, extra) => Object.assign({ responsabile: 'W2-T1 seguito', scade, motivo: 'prova' }, extra);
+    const ap = (scade, extra) => Object.assign({ responsabile: 'W2-T1 seguito', scade, motivo: 'prova 2026-10-06' }, extra);   /* la data nel motivo: oltre-v2 la vuole (INT-2f) */
     const am = (scade, extra) => Object.assign({ max: 4, tettoIniziale: 4, risolve: 'W2-T5', scade, motivo: 'prova' }, extra);
     eq(esito(() => {}).falliti, 0, 'senza debiti passa');
     /* aperti */
@@ -674,6 +703,35 @@ function autotest() {
     eq(debiti(rv).length, 0, 'nei dati veri nessun debito si perde in silenzio a onda-3: ' + debiti(rv).map(x => x.testo).join(' | '));
     const rv2 = valuta(vero, daCollaudo(istantaneaBuona(vero, 'onda-2b', presente)), 'onda-2b', { contro: daCollaudo(istantaneaBuona(vero, 'onda-2a', presente)) });
     eq(debiti(rv2).length, 0, 'e a onda-2b: ' + debiti(rv2).map(x => x.testo).join(' | '));
+  });
+  prova('INT-2f (revisione 2e, minore 7): una scadenza non valida non si salta, un\'ammessa riscritta non perde il tetto, e `oltre-v2` non vale per la sicurezza e vuole una data nel motivo', () => {
+    const nuda = () => { const c = JSON.parse(JSON.stringify(cfg)); c.ordineOnde.forEach(o => { delete c.onde[o].aperti; c.onde[o].ammesse = {}; }); return c; };
+    const K = 'RID-01:grande_gluteo', presente = (v) => ({ pesata: { [K]: v }, conteggio: { [K]: Math.round(v * 100) } });
+    /* il confronto e con un onda prima identica (nessuna regressione): cio che si prova e il tetto assoluto, non la tolleranza */
+    const esito = (modifica, v) => { const c = nuda(); modifica(c); v = v === undefined ? 2 : v; return valuta(c, daCollaudo(istantaneaBuona(c, 'onda-3', presente(v))), 'onda-3', { contro: daCollaudo(istantaneaBuona(c, 'onda-2', presente(v))) }); };
+    const fallito = (r, re) => r.righe.some(x => x.esito === 'fallito' && re.test(x.testo));
+    const ap = (scade, extra) => Object.assign({ responsabile: 'W2-T1 seguito', scade, motivo: 'prova 2026-10-06' }, extra);
+    const am = (extra) => Object.assign({ max: 4, tettoIniziale: 4, risolve: 'W2-T5', scade: 'onda-2', motivo: 'prova' }, extra);
+    /* (a) la scadenza non valida di un debito di un onda passata fa fallire (prima: saltato in silenzio) */
+    ['onda-9', undefined, ''].forEach(sc => {
+      const r = esito(c => { c.onde['onda-2b'].aperti = { 'Cosa aperta': { responsabile: 'W2-T1', motivo: 'prova' } }; if (sc !== undefined) c.onde['onda-2b'].aperti['Cosa aperta'].scade = sc; });
+      eq(fallito(r, /scadenza non valida/), true, 'un aperto di onda-2b con scadenza «' + sc + '» fa fallire onda-3: ' + r.righe.filter(x => x.esito === 'fallito').map(x => x.testo).join(' | '));
+    });
+    eq(fallito(esito(c => { c.onde['onda-2a'].ammesse = { [K]: am({ scade: 'onda-9' }) }; }), /scadenza non valida/), true, 'e lo stesso per un\'ammessa');
+    /* (b) il tetto di un ammessa riscritta in aperti non si perde: la classe non sale oltre il tetto in nessuna onda dopo, nemmeno di 0,49 a onda */
+    const riscritta = (extra, v) => esito(c => { c.onde['onda-2a'].ammesse = { [K]: am() }; c.onde['onda-3'].aperti = { [K]: ap('onda-4', extra) }; }, v);
+    eq(riscritta({}, 3.9).falliti, 0, 'sotto il tetto (4) passa');
+    eq(fallito(riscritta({}, 4.3), /oltre il tetto.*4/), true, 'la classe a 4,3 oltre il tetto 4 dell ammessa riscritta fallisce');
+    eq(fallito(riscritta({ max: 4.4 }, 4.3), /rialzato da 4 a 4.4 senza `rialzo`/), true, 'riscritta con un tetto piu alto senza rialzo fallisce');
+    eq(riscritta({ max: 4.4, rialzo: { motivo: 'misurata 4,3', data: '2026-10-06', responsabile: 'W2-T1' } }, 4.3).falliti, 0, 'con il rialzo (motivo, data, responsabile) passa e il nuovo tetto vale');
+    eq(fallito(riscritta({ max: 3.5 }, 3.9), /oltre il tetto.*3.5/), true, 'un tetto piu basso scritto dalla riscrittura vale (puo solo scendere senza rialzo)');
+    eq(fallito(esito(c => { c.onde['onda-2a'].ammesse = { [K]: am() }; c.onde['onda-3'].aperti = { [K]: ap('oltre-v2') }; }, 4.3), /oltre il tetto.*4/), true, 'anche riscritta oltre-v2 la classe non sale oltre il tetto');
+    eq(esito(c => { c.onde['onda-2a'].ammesse = { [K]: am() }; c.onde['onda-3'].aperti = { [K]: ap('onda-4') }; }, 3.9).falliti, 0, 'e sotto il tetto passa, anche con oltre-v2');
+    /* (c) oltre-v2: mai per la sicurezza, e il motivo porta una data */
+    eq(fallito(esito(c => { c.onde['onda-3'].aperti = { 'SAF-02:spalle': ap('oltre-v2') }; }), /oltre-v2.*sicurezza/), true, 'una classe di sicurezza non va oltre la v2');
+    eq(fallito(esito(c => { c.onde['onda-3'].aperti = { 'Cosa aperta': ap('oltre-v2', { motivo: 'senza data' }) }; }), /oltre-v2.*data/), true, 'oltre-v2 senza una data nel motivo fallisce');
+    eq(esito(c => { c.onde['onda-3'].aperti = { 'Cosa aperta': ap('oltre-v2') }; }).falliti, 0, 'con la data e senza sicurezza passa');
+    eq(fallito(esito(c => { c.onde['onda-2b'].aperti = { 'SAF-05:prudente': ap('oltre-v2') }; }), /oltre-v2.*sicurezza/), true, 'vale anche per una voce scritta in un onda prima');
   });
   prova('nomi delle onde e etichette del collaudo', () => {
     eq(normalizzaOnda('INT-0', cfg), 'onda-0'); eq(normalizzaOnda('coach-v2-onda-2', cfg), 'onda-2'); eq(normalizzaOnda('2a', cfg), 'onda-2a');

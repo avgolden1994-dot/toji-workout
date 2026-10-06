@@ -23,6 +23,17 @@ test('strOrdina: l alzata (e.alzata) sta in testa, nel suo ordine, prima di ogni
   assert.deepStrictEqual(a.json('strOrdina(__s, "upper", []).map(e => senzaEmoji(e.name))'), ['Panca Piana Bilanciere', 'Military Press', 'Curl su Panca Scott']);
 });
 
+test('strOrdina: tra due alzate vale l ordine del piano (stacco pesante, poi panca leggera), non la priorita dichiarata (petto): l alzata pesante del giorno e la prima', () => {
+  const nome = n => a.g('nomeInLibreria')(n);
+  const lista = [{ name: nome('Stacco da Terra (Deadlift)'), alzata: 'stacco', onda: 'pesante', fisso: true }, { name: nome('Panca Inclinata Bilanciere'), alzata: 'panca', onda: 'leggera', fisso: true }, { name: nome('Rematore con Petto Appoggiato') }];
+  a.ctx.__p = a.g('JSON.parse(' + JSON.stringify(JSON.stringify(lista)) + ')');
+  assert.deepStrictEqual(a.json('strOrdina(__p, "lower", ["petto", "gambe"]).map(e => senzaEmoji(e.name))'), ['Stacco da Terra (Deadlift)', 'Panca Inclinata Bilanciere', 'Rematore con Petto Appoggiato']);
+  /* la priorita decide ancora tra i non alzate */
+  const senza = [{ name: nome('Pulley Basso') }, { name: nome('Panca Piana Manubri') }];
+  a.ctx.__q = a.g('JSON.parse(' + JSON.stringify(JSON.stringify(senza)) + ')');
+  assert.deepStrictEqual(a.json('strOrdina(__q, "upper", ["petto"]).map(e => senzaEmoji(e.name))'), ['Panca Piana Manubri', 'Pulley Basso']);
+});
+
 test('tipoCarico: la Panca Presa Stretta e un fondamentale pesante col bilanciere (classe A negli attributi), non «macchina»', () => {
   assert.strictEqual(a.json('tipoCarico(nomeInLibreria("Panca Presa Stretta"))'), 'pesante');
   assert.strictEqual(a.json('attributi(nomeInLibreria("Panca Presa Stretta")).classe'), 'A');
@@ -33,7 +44,7 @@ test('powerlifting: in ogni seduta con un alzata, la prima e l alzata del giorno
   const out = a.json('(function () { const o = []; ' +
     'const PUNTI = ' + JSON.stringify(PUNTI) + ';' +
     '["intermedio", "avanzato"].forEach(level => [3, 4, 5].forEach(days => [30, 60, 90].forEach(minutes => PUNTI.forEach((pd, k) => {' +
-    'const d = { goals: ["forza"], goal: "forza", level: level, days: days, minutes: minutes, luogo: "palestra", fastidi: [], sex: k % 2 ? "F" : "M", age: 30, sonno: "bene", attrezzi: "indifferente", usaProfilo: false, freq: "auto", parq: "no", forzaTipo: "powerlifting", puntiDeboli: pd, seme: "alz" + level + days + minutes + k };' +
+    'const d = { goals: ["forza"], goal: "forza", level: level, days: days, minutes: minutes, luogo: "palestra", fastidi: [], sex: k % 2 ? "F" : "M", age: 30, sonno: "bene", attrezzi: "indifferente", usaProfilo: false, freq: "auto", parq: "no", forzaTipo: "powerlifting", puntiDeboli: pd, priorita: k % 2 ? ["petto", "gambe"] : [], seme: "alz" + level + days + minutes + k };' +
     'const prog = buildProgram(d); const attiva = prog.sedute.some(s => s.esercizi.some(e => e.alzata));' +
     'o.push({ id: [level, days, minutes, pd.join("+") || "-"].join("|"), attiva: attiva, ko: prog.sedute.filter(s => s.esercizi.some(e => e.alzata) && !s.esercizi[0].alzata).map(s => senzaEmoji(s.esercizi[0].name) + " prima di " + senzaEmoji(s.esercizi.find(e => e.alzata).name)) }); })))); return o; })()');
   assert.strictEqual(out.length, 108);

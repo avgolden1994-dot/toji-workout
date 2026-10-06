@@ -217,7 +217,8 @@
      "MOD-10",
      "MOD-11",
      "FRZ-01",
-     "SPL-01"
+     "SPL-01",
+     "ATT-01"
     ],
     "criteri": [
      "ERR-01",
@@ -254,7 +255,8 @@
      "MOD-11",
      "NOT-01",
      "FRZ-01",
-     "SPL-01"
+     "SPL-01",
+     "ATT-01"
     ],
     "misura": "istantanea onda-2c del 2026-10-06 (commit b7a42ce, matrice standard, criteri 1.4): ogni criterio dichiarato ha tutte le sue soglie assolute verdi e nessuna regressione ammessa; FRQ-01 non e dichiarato (femorali verde, ma bicipiti e tricipiti sono regressioni ammesse); VOL-01, VOL-02, DIR-01, FRQ-02, PRI-01, DUR-01, DUR-02, SES-03, PAT-01, RX-01 restano obiettivi aperti con il responsabile INT-2e (2026-10-06): FRZ-01 e SPL-01 aggiunti ai criteri dichiarati con i criteri 1.6 (standard, commit b88223d: 0 programmi colpiti; il cancello di 2e si lancia contro 2d rigenerato con gli stessi criteri).",
     "rimossi": {
@@ -1255,6 +1257,17 @@
    },
    "nota": "W0-T7 (criteri 1.2, decisione del committente): il rematore inverso resta a corpo libero con la nota «sotto un tavolo robusto o con una sbarra bassa» e SAF-04 non lo segnala piu se la nota c'e (senza di lui a casa non c'e una tirata orizzontale: la CAS-01 toglie le trazioni); il calf raise a un piede (gradino) era gia fuori dai criteri 1.1"
   },
+  "ATT-01": {
+   "nome": "Esercizio che chiede un attrezzo che l utente ha detto di non avere (attrezzi dichiarati a casa o gli extra della palestra)",
+   "sev": 4,
+   "prima": 0,
+   "task": "W2-T5 e INT-2f",
+   "soglie": {
+    "onda-2b": 0,
+    "finale": 0
+   },
+   "nota": "criterio nuovo dei criteri 1.6 (INT-2f, revisione indipendente dell onda 2e: il collaudo non passava mai gli attrezzi dichiarati): lo misura la matrice «attrezzi» (circa 600 profili, tests/collaudo-attrezzi.test.js in npm test); nelle matrici standard e rapida nessun profilo dichiara attrezzi e la classe non esiste"
+  },
   "SAF-05": {
    "nome": "Esercizio tecnicamente impegnativo a un principiante o in modalita prudente (over 65, PAR-Q)",
    "sev": 2,
@@ -1276,7 +1289,7 @@
    }
   },
   "FRZ-01": {
-   "nome": "Powerlifting scelto e possibile, ma squat e panca non sono in almeno due sedute e lo stacco in una",
+   "nome": "Powerlifting scelto e possibile, ma squat e panca non sono in almeno due sedute, lo stacco in una, o l alzata del giorno non e il primo esercizio",
    "sev": 4,
    "prima": 0.63,
    "task": "W2-T7 (FRZ-01..05) e INT-2e",
@@ -1284,7 +1297,7 @@
     "onda-2b": 0,
     "finale": 0
    },
-   "nota": "criterio nuovo dei criteri 1.6 (INT-2e): misura strutturale indipendente della modalita Forza, dai nomi degli esercizi; nella matrice standard i profili che possono avere il powerlifting sono 17 (la prova vera e la matrice «forza», 1.440 profili: 757 programmi senza le frequenze su 2d, 0 ora; tests/collaudo-forza.test.js ne lancia un sesto in npm test)"
+   "nota": "criterio nuovo dei criteri 1.6 (INT-2e, ristretto a INT-2f): misura strutturale indipendente della modalita Forza, dai nomi degli esercizi; conta squat (con bilanciere, con pausa), panca (piana, con pausa, presa stretta) e stacco da terra (a chi comincia anche il rumeno: lo stacco da terra e abilita 3), non il front squat, la panca inclinata, il deficit e il rumeno come alzate; sub `alzata-non-prima` (INT-2f): la prima della seduta e l alzata del giorno. Nella matrice standard i profili che possono avere il powerlifting sono 17; la prova vera e la matrice «forza» (1.440 profili con i punti deboli; tests/collaudo-forza.test.js ne lancia un sesto in npm test)"
   }
  },
  "prima": {

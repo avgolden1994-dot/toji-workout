@@ -43,7 +43,8 @@ window.strOrdina = function(lista, tipoGiorno, priorita) {
   if (tipoGiorno === 'punti') return lista;
   const pos = new Map(lista.map((e, i) => [e, i]));
   const prio = (e) => ((priorita || []).indexOf(strMeta(e).group) !== -1 ? 0 : 1);
-  return lista.sort((a, b) => strRango(a) - strRango(b) || prio(a) - prio(b) || pos.get(a) - pos.get(b));
+  /* INT-2f: tra due alzate vale l ordine del piano (la pesante per prima: stacco pesante, poi panca leggera), non la priorita dichiarata (il petto passava davanti allo stacco pesante) */
+  return lista.sort((a, b) => strRango(a) - strRango(b) || (a.alzata && b.alzata ? 0 : prio(a) - prio(b)) || pos.get(a) - pos.get(b));
 };
 
 /* ABB-02: due esercizi dello stesso gruppo, della stessa parte e dello stesso tipo fanno lo stesso lavoro.
