@@ -112,7 +112,8 @@ test('M5: su una griglia di 324 programmi nessun intermedio o avanzato sano rice
      accanto a un altro (un doppione di scelta, W2-T6); nessuna seduta con lo squat di avvio e un altro squat (sopra, 0) */
   /* W2-T5 (PRG-02): 40 e non 41: con i giorni scelti perche lo stesso grande muscolo non lavori in due giorni di fila (frequenza 3 con 4 o 5 giorni, push/pull/legs) una seduta della griglia non ha piu il secondo squat
      alla macchina. Non e una correzione mirata ma l effetto dei giorni sulla guardia delle 48 ore (recuperoOk) e quindi sul sorteggio dei posti: il controllo che conta, nessuno squat di avvio con un altro squat, resta a 0 sopra */
-  assert.strictEqual(conDueSquat, 40, 'doppi squat nella griglia: erano 71 sul codice di prima, 45 con la capacita di W2-T2, 40 con il volume per muscolo, 41 con il Front Squat vietato, 40 con i giorni di W2-T5');
+  /* prima dell integrazione (index.html senza soglie-split.js) i giorni sono quelli di sempre e le sedute con due squat restano 41 */
+  assert.strictEqual(conDueSquat, app.g('typeof SOGLIE_SPLIT') === 'undefined' ? 41 : 40, 'doppi squat nella griglia: erano 71 sul codice di prima, 45 con la capacita di W2-T2, 40 con il volume per muscolo, 41 con il Front Squat vietato, 40 con i giorni di W2-T5');
 });
 
 /* ============================================================================================================ M3 */
