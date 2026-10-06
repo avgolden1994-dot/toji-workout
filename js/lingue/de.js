@@ -4054,5 +4054,10 @@ window.I18N["de"] = {
 "serie -#% e carico -#%": "Sätze -#% und Gewicht -#%",
 "poi si riprende dal carico di prima": "danach geht es mit dem Gewicht von vorher weiter",
 "Controllo": "Check",
-"la stanchezza lo chiedeva": "deine Müdigkeit hat es verlangt"
+"la stanchezza lo chiedeva": "deine Müdigkeit hat es verlangt",
+"Con 6 giorni hai un solo giorno di riposo": "Mit 6 Tagen hast du nur einen Ruhetag",
+"le sedute sono sei di fila": "die Einheiten sind sechs hintereinander",
+"da venerdì a mercoledì": "von Freitag bis Mittwoch",
+"e il giovedì si riposa.": "und am Donnerstag ruhst du.",
+"e il giovedì si riposa. Lo stesso muscolo grande non lavora a fondo in due giorni consecutivi.": "und am Donnerstag ruhst du. Derselbe große Muskel wird nicht an zwei aufeinanderfolgenden Tagen voll belastet."
 };

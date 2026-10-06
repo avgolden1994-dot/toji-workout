@@ -4054,5 +4054,10 @@ window.I18N["en"] = {
 "serie -#% e carico -#%": "sets -#% and load -#%",
 "poi si riprende dal carico di prima": "then you pick up from the previous load",
 "Controllo": "Check",
-"la stanchezza lo chiedeva": "your tiredness called for it"
+"la stanchezza lo chiedeva": "your tiredness called for it",
+"Con 6 giorni hai un solo giorno di riposo": "With 6 days you have only one rest day",
+"le sedute sono sei di fila": "the sessions are six in a row",
+"da venerdì a mercoledì": "from Friday to Wednesday",
+"e il giovedì si riposa.": "and you rest on Thursday.",
+"e il giovedì si riposa. Lo stesso muscolo grande non lavora a fondo in due giorni consecutivi.": "and you rest on Thursday. The same large muscle is not worked hard on two days in a row."
 };

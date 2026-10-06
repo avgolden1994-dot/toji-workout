@@ -40,22 +40,32 @@ function specialitaStruttura(brief) {
   return fn ? (fn(brief) || null) : null;
 }
 
-/* ---- 5. i giorni della settimana (indici di DAYS): lunedi-giovedi per 2 sedute; 6 giorni = lunedi-mercoledi e venerdi-domenica, con il giovedi di riposo (INT-2b, anticipo di W2-T5: un giorno
-   di riposo in sette e mai piu di 4 giorni di fila, collaudo REC-03; prima lunedi-sabato di fila, 1.754 programmi della matrice). Ogni grande gruppo torna dopo almeno 48 ore: con 6 giorni
-   due sedute dello stesso tipo non stanno in giorni consecutivi; se la divisione lo impone (tre giorni di punti deboli con la frequenza 1) l ordine delle sedute si riordina, e se nemmeno
+/* ---- 5. i giorni della settimana (indici di DAYS): lunedi-giovedi per 2 sedute; 6 giorni = lunedi-mercoledi e venerdi-domenica, con il giovedi di riposo. INT-2d (M2 della revisione): la settimana e un
+   anello, quindi 6 sedute sono SEMPRE sei giorni di fila (venerdi-mercoledi): il giovedi di riposo di INT-2b non evitava i giorni di fila (il «mai piu di 4» contava solo da lunedi a domenica, REC-03 a 0 era un
+   artefatto) e domenica e lunedi erano giorni consecutivi che nessun controllo vedeva (2 programmi su 1.152 col petto a fondo in tutti e due). Ora le 48 ore, i tipi di seduta e l ordine sono ciclici e la nota
+   lo dice (NOTA_SEI_GIORNI_DI_FILA). Ogni grande gruppo torna dopo almeno 48 ore: con 6 giorni
+   due sedute dello stesso tipo non stanno in giorni consecutivi, domenica-lunedi compresi; se la divisione lo impone (tre giorni di punti deboli con la frequenza 1) l ordine delle sedute si riordina, e se nemmeno
    cosi riesce le sedute diventano 5 con la nota (NOTA_SEI_GIORNI). Chi comincia con 5-6 giorni ha 4 sedute (splitFor, PRG-02): stanno sui giorni delle 4 sedute, con la nota
    (NOTA_PRINCIPIANTE_4_SEDUTE: la ricerca sui principianti §3.3, «detto all utente»). Scrive brief.lavoro.split se riordina o riduce le sedute. ---- */
 const GIORNI_PER_SEDUTE = { 2: [0, 3], 3: [0, 2, 4], 4: [0, 1, 3, 4], 5: [0, 1, 3, 4, 5], 6: [0, 1, 2, 4, 5, 6] };
 const NOTA_SEI_GIORNI = 'Con 6 giorni lo stesso gruppo cadrebbe in due giorni di fila: cinque sedute e due giorni di riposo, i muscoli recuperano meglio.';
+/* INT-2d (M2): 6 sedute in 7 giorni sono sempre sei giorni di fila (venerdi-mercoledi, il giovedi si riposa), perche la settimana e un anello: il «giovedi di riposo» non spezza niente. La nota lo dice, e la seconda frase
+   (nessun grande muscolo a fondo in due giorni consecutivi, domenica e lunedi compresi) resta solo se la scheda finale la rispetta (riconciliaNote) */
+const NOTA_SEI_GIORNI_DI_FILA_BREVE = 'Con 6 giorni hai un solo giorno di riposo: le sedute sono sei di fila, da venerdì a mercoledì, e il giovedì si riposa.';
+const NOTA_SEI_GIORNI_DI_FILA = NOTA_SEI_GIORNI_DI_FILA_BREVE + ' Lo stesso muscolo grande non lavora a fondo in due giorni consecutivi.';
 const NOTA_PRINCIPIANTE_4_SEDUTE = 'A chi comincia bastano 4 sedute a settimana: gli altri giorni sono riposo o una camminata.';   /* INT-2d (M1): prima «cresce di più con 4 sedute», senza fonte (la nota principianti §3.3: 2-3 sedute bastano, a volume pari full body e split sono uguali) */
 /* due sedute dello stesso tipo in due giorni consecutivi (indici di DAYS)? */
-function tipiAdiacenti(tipi, indici) { return tipi.some((t, i) => i > 0 && indici[i] - indici[i - 1] === 1 && t === tipi[i - 1]); }
+function tipiAdiacenti(tipi, indici) {
+  const n = tipi.length;
+  /* INT-2d (M2): la settimana e un anello: l ultima seduta (domenica) e la prima (lunedi) sono in giorni consecutivi */
+  return tipi.some((t, i) => i > 0 && indici[i] - indici[i - 1] === 1 && t === tipi[i - 1]) || (n > 2 && giorniAdiacenti(indici[n - 1], indici[0]) && tipi[n - 1] === tipi[0]);
+}
 /* un ordine delle sedute senza due tipi uguali in giorni consecutivi, il piu vicino possibile all ordine di partenza (ricerca esaustiva: al massimo 6 sedute); null se non esiste */
 function riordinaSenzaAdiacenti(tipi, indici) {
   let trovato = null;
   const cerca = (ordine, resto) => {
     if (trovato) return;
-    if (!resto.length) { trovato = ordine; return; }
+    if (!resto.length) { if (ordine.length > 2 && giorniAdiacenti(indici[ordine.length - 1], indici[0]) && ordine[ordine.length - 1] === ordine[0]) return; trovato = ordine; return; }   /* anello: domenica e lunedi */
     const visti = {};
     for (let k = 0; k < resto.length && !trovato; k++) {
       const t = resto[k], i = ordine.length;
@@ -80,6 +90,7 @@ function giorniSettimana(brief, split) {
       if (nuovo) L.split = Object.assign({}, split, { giorni: nuovo.concat(split.giorni.slice(6)) });
       else { L.split = Object.assign({}, split, { giorni: split.giorni.slice(0, 5) }); indici = GIORNI_PER_SEDUTE[5].slice(); if (L.note.indexOf(NOTA_SEI_GIORNI) === -1) L.note.push(NOTA_SEI_GIORNI); }
     }
+    if (indici.length === 6 && L.note.indexOf(NOTA_SEI_GIORNI_DI_FILA) === -1) L.note.push(NOTA_SEI_GIORNI_DI_FILA);
   }
   brief.agenda.indiciGiorni = indici;
   return indici;
@@ -205,6 +216,7 @@ function riconciliaNote(prog) {
   prog.note = prog.note.map(testo => !haCoppie && testo === NOTA_SENZA_CEDIMENTO_SS ? NOTA_SENZA_CEDIMENTO
     : !haDrop && testo === NOTA_POCO_TEMPO_SS_DROP ? NOTA_POCO_TEMPO_SS
     : !haPotenza && testo === NOTA_OVER65_POTENZA ? NOTA_OVER65
+    : testo === NOTA_SEI_GIORNI_DI_FILA && !recuperoRispettato(prog.sedute) ? NOTA_SEI_GIORNI_DI_FILA_BREVE   /* INT-2d (M2): la seconda frase solo se le 48 ore reggono, anche attraverso il lunedi */
     : !haCoppie && typeof FRASE_TAGLIO_TEMPO !== 'undefined' && testo === FRASE_TAGLIO_TEMPO ? FRASE_TAGLIO_TEMPO_SENZA_COPPIE : testo).filter(testo => {
     const t = String(testo), m = /^Aggiunto: (.+?) \u2014 /.exec(t);
     if (viste[t]) return false;

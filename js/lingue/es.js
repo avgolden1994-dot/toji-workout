@@ -4054,5 +4054,10 @@ window.I18N["es"] = {
 "serie -#% e carico -#%": "series -#% y carga -#%",
 "poi si riprende dal carico di prima": "luego se retoma desde la carga de antes",
 "Controllo": "Control",
-"la stanchezza lo chiedeva": "el cansancio lo pedía"
+"la stanchezza lo chiedeva": "el cansancio lo pedía",
+"Con 6 giorni hai un solo giorno di riposo": "Con 6 días tienes un solo día de descanso",
+"le sedute sono sei di fila": "las sesiones son seis seguidas",
+"da venerdì a mercoledì": "de viernes a miércoles",
+"e il giovedì si riposa.": "y el jueves se descansa.",
+"e il giovedì si riposa. Lo stesso muscolo grande non lavora a fondo in due giorni consecutivi.": "y el jueves se descansa. El mismo músculo grande no se trabaja a fondo dos días seguidos."
 };

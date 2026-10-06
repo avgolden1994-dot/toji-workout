@@ -179,9 +179,13 @@ test('6 giorni: lunedi-mercoledi e venerdi-domenica con il giovedi di riposo (PP
     assert.strictEqual(p.sedute.length, 6, JSON.stringify(c) + ': 6 sedute');
     assert.deepStrictEqual(p.sedute.map(sd => giorno(sd.giorno)), [0, 1, 2, 4, 5, 6], JSON.stringify(c) + ': i giorni');
     assert.deepStrictEqual(p.riposo, ['Giovedì']);
-    assert.ok(diFila(p) <= 3, 'al massimo 3 giorni di fila');
+    /* INT-2d (M2 della revisione): «al massimo 3 giorni di fila» contava solo da lunedi a domenica; sull anello della settimana 6 sedute sono sei giorni di fila (venerdi-mercoledi) e la nota lo dice */
+    assert.ok(diFila(p) <= 3, 'da lunedi a domenica al massimo 3 giorni di fila');
+    assert.strictEqual(app.json('giorniAdiacenti(6, 0)'), true, 'domenica e lunedi si seguono');
+    assert.ok(p.note.some(n => /^Con 6 giorni hai un solo giorno di riposo: le sedute sono sei di fila, da venerdì a mercoledì, e il giovedì si riposa\./.test(n)), 'la nota onesta dei sei giorni di fila');
     assert.ok(!adiacentiUguali(p), JSON.stringify(c) + ': stesso tipo in due giorni di fila: ' + p.sedute.map(sd => sd.giorno.slice(0, 3) + ':' + sd.tipo).join(' '));
-    assert.ok(!p.note.some(n => /6 giorni/.test(n)), 'le sedute restano 6: niente nota del ripiego');
+    assert.notStrictEqual(p.sedute[5].tipo, p.sedute[0].tipo, JSON.stringify(c) + ': domenica e lunedi con lo stesso tipo di seduta');
+    assert.ok(!p.note.some(n => /cinque sedute e due giorni di riposo/.test(n)), 'le sedute restano 6: niente nota del ripiego');
   });
   const ppl = costruisci(casi[0]);
   assert.deepStrictEqual(ppl.sedute.map(sd => sd.tipo), ['push', 'pull', 'legs', 'push', 'pull', 'legs'], 'il PPL x2 resta nell ordine: ogni gruppo torna dopo 72 ore');
@@ -192,7 +196,9 @@ test('6 giorni: lunedi-mercoledi e venerdi-domenica con il giovedi di riposo (PP
 test('6 giorni, il ripiego: se nessun ordine evita lo stesso tipo in giorni consecutivi le sedute diventano 5 (lunedi, martedi, giovedi, venerdi, sabato) con la nota; riordinaSenzaAdiacenti e tipiAdiacenti', () => {
   assert.deepStrictEqual(app.json("riordinaSenzaAdiacenti(['push', 'pull', 'legs', 'punti', 'punti', 'punti'], [0, 1, 2, 4, 5, 6])"), ['push', 'pull', 'punti', 'punti', 'legs', 'punti']);
   assert.strictEqual(app.g("riordinaSenzaAdiacenti(['push', 'push', 'push', 'push', 'push', 'pull'], [0, 1, 2, 4, 5, 6])"), null, 'cinque spinte su sei posti non stanno senza giorni consecutivi');
-  assert.deepStrictEqual(app.json("riordinaSenzaAdiacenti(['push', 'push', 'push', 'push', 'pull', 'legs'], [0, 1, 2, 4, 5, 6])"), ['push', 'pull', 'push', 'push', 'legs', 'push'], 'quattro spinte si: nei giorni 0, 2, 4 e 6');
+  /* INT-2d (M2): con 4 spinte i giorni 0, 2, 4 e 6 (lun, mer, ven, dom) non bastano piu: domenica e lunedi sono consecutivi (prima la prova diceva «quattro spinte si») */
+  assert.strictEqual(app.g("riordinaSenzaAdiacenti(['push', 'push', 'push', 'push', 'pull', 'legs'], [0, 1, 2, 4, 5, 6])"), null, 'quattro spinte no: domenica e lunedi si seguono');
+  assert.deepStrictEqual(app.json("riordinaSenzaAdiacenti(['push', 'push', 'push', 'pull', 'legs', 'legs'], [0, 1, 2, 4, 5, 6])").filter(t => t === 'push').length, 3, 'tre spinte si');
   assert.strictEqual(app.g("tipiAdiacenti(['push', 'pull', 'legs', 'push', 'pull', 'legs'], [0, 1, 2, 3, 4, 5])"), false);
   assert.strictEqual(app.g("tipiAdiacenti(['push', 'pull', 'legs', 'punti', 'punti', 'punti'], [0, 1, 2, 4, 5, 6])"), true);
   /* il ripiego dentro giorniSettimana: una divisione impossibile da sistemare */

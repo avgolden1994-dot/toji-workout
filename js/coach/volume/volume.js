@@ -59,6 +59,14 @@ function frazionarieSettimana(sedute) {
 const GRUPPI_RECUPERO = ['petto', 'schiena', 'quadricipiti', 'femorali', 'glutei'];   /* i grandi muscoli del collaudo REC-01 (le spalle hanno la loro storia: i deltoidi posteriori stanno anche nei giorni di tirata) */
 function frazGruppoSeduta(sd, g) { return sd.esercizi.reduce((t, e) => t + e.sets * (creditoSerie(e.name)[g] || 0), 0); }
 function giornoSeduta(sd) { return DAYS.indexOf(sd.giorno); }
+/* INT-2d (M2 della revisione): due giorni della settimana (indici di DAYS) sono consecutivi anche attraverso il lunedi: domenica (6) e lunedi (0) si seguono. Prima ogni controllo delle 48 ore guardava solo
+   |a - b| = 1 e con 6 sedute (venerdi-mercoledi, il giovedi di riposo) il petto poteva cadere domenica e lunedi senza che nessuno lo vedesse */
+function giorniAdiacenti(a, b) { const d = Math.abs(a - b); return d === 1 || d === DAYS.length - 1; }
+/* le 48 ore dei grandi muscoli valgono nella scheda finale, in modo ciclico: nessuna coppia di sedute in giorni consecutivi (domenica e lunedi compresi) ha entrambe almeno serieMinRecupero serie frazionarie dello stesso grande muscolo */
+function recuperoRispettato(sedute) {
+  return !sedute.some((a, i) => sedute.some((b, j) => j > i && giornoSeduta(a) >= 0 && giornoSeduta(b) >= 0 && giorniAdiacenti(giornoSeduta(a), giornoSeduta(b)) &&
+    GRUPPI_RECUPERO.some(g => frazGruppoSeduta(a, g) >= PARAM_TEMPO.serieMinRecupero && frazGruppoSeduta(b, g) >= PARAM_TEMPO.serieMinRecupero)));
+}
 /* opz.obbligata (INT-2b): per la flessione del ginocchio obbligata della settimana (completaSettimana, B6) quando le serie sono ancora quelle della prescrizione (4 per esercizio): non il tetto di serie
    per seduta (a casa coi manubri i glutei sono gia a 11-12 in una seduta di gambe e il leg curl con l asciugamano, credito 0,5 ai glutei, non entrava: il solutore del volume e il taglio per il tempo
    riportano la seduta sotto il tetto, SES-01, subito dopo) e, per le 48 ore, solo i conflitti che la mossa CREA (un grande muscolo gia a 4 serie in due giorni di fila e un conflitto che c era prima) */
@@ -69,7 +77,7 @@ function recuperoOk(sd, sedute, nome, sets, opz) {
     if (dopo > COACH_PARAMETRI.serieMaxMuscoloSeduta && !obbligata) return false;   /* SES-01 */
     if (GRUPPI_RECUPERO.indexOf(g) === -1 || dopo < PARAM_TEMPO.serieMinRecupero) return true;
     if (obbligata && prima >= PARAM_TEMPO.serieMinRecupero) return true;
-    return !sedute.some(o => o !== sd && giornoSeduta(o) >= 0 && Math.abs(giornoSeduta(o) - giornoSeduta(sd)) === 1 && frazGruppoSeduta(o, g) >= PARAM_TEMPO.serieMinRecupero);   /* REC-01 */
+    return !sedute.some(o => o !== sd && giornoSeduta(o) >= 0 && giorniAdiacenti(giornoSeduta(o), giornoSeduta(sd)) && frazGruppoSeduta(o, g) >= PARAM_TEMPO.serieMinRecupero);   /* REC-01 */
   });
 }
 
@@ -279,7 +287,7 @@ function volumeMotore(brief, sedute, b, opz) {
   const SCHIENA_S = sedute.map(() => 0);   /* le serie di schiena (dorsali e spessore insieme) per seduta: il tetto duro di 11 vale per il gruppo, come nel collaudo (SES-01) */
   const giorno = sedute.map(sd => giornoSeduta(sd));
   const consecutive = [], vicini = sedute.map(() => []);
-  for (let s = 0; s < nS; s++) for (let o = s + 1; o < nS; o++) if (giorno[s] >= 0 && giorno[o] >= 0 && Math.abs(giorno[s] - giorno[o]) === 1) { consecutive.push([s, o]); vicini[s].push(o); vicini[o].push(s); }
+  for (let s = 0; s < nS; s++) for (let o = s + 1; o < nS; o++) if (giorno[s] >= 0 && giorno[o] >= 0 && giorniAdiacenti(giorno[s], giorno[o])) { consecutive.push([s, o]); vicini[s].push(o); vicini[o].push(s); }
   const recs = [], vietatiNuovi = {};
   const T = sedute.map(sd => durataSeduta(sd.esercizi));
   const T0 = T.slice();

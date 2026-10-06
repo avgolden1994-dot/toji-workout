@@ -26,7 +26,7 @@ const R = path.join(__dirname, '..');
    docs/ricerca-struttura-e-intensita.md). "Convenzione" = pratica comune dei coach, senza prova diretta.
    Cambiare una soglia = alzare VERSIONE_CRITERI: i confronti prima/dopo valgono solo a pari versione.
    ===================================================================================================== */
-const VERSIONE_CRITERI = '1.4';
+const VERSIONE_CRITERI = '1.5';
 /* 1.1 (INT-0, onda 0 del coach v2): criteri aggiornati dalle decisioni del registro docs/coach-v2-decisioni.md, non per far passare l'onda:
    - SAF-01/SAF-02/MOD-03: la leg extension e lo squat a corpo libero con le ginocchia dolenti stanno in CAUTELA, non tra i controindicati
      (B13, B33, REC-04: si modifica prima di escludere; il generatore li lascia con la nota di SCALE_DOLORE e un esercizio per i quadricipiti resta sempre);
@@ -51,6 +51,21 @@ const VERSIONE_CRITERI = '1.4';
    coincidono sulle controindicazioni (stress 2); sulle cautele il dato aggiunge Panca Declinata e Trazioni (spalla) e Mountain Climber (ginocchio) e toglie Calf Raise alla Leg Press
    (ginocchio: non lo carica): le righe e i motivi sono in DIFFERENZE e CORREZIONI_CAUTELA di tests/attributi.test.js. L'esito sui programmi di coach-v2-onda-0 e nelle note del registro della skill. */
 
+/* 1.5 (INT-2d, revisione indipendente dell onda 2b/2c, docs/coach-v2-decisioni.md D-P21). Tutte correzioni DI MISURA dette dalla revisione, con il motivo e se la definizione si allarga (L) o si stringe (S); il «prima» a pari criteri
+   si rigenera in un worktree del tag coach-v2-onda-2a copiandovi questo file, e i risultati si danno ANCORA a tre livelli (1.0, 1.3, 1.4, ciascuno con e senza DEL-01) piu questo:
+   - VOL-01 (S): l esenzione per la nota della causa si crede solo se il FATTO nominato e vero nel modello del collaudo e coincide con l etichetta scritta: «con N minuti non entra di piu» solo se la seduta piu lunga usa
+     almeno l80% dei minuti; «con i tuoi attrezzi o i tuoi fastidi non c e un esercizio adatto» solo se nessun esercizio consentito copre l unita. La causa «tetto» (una qualunque seduta con 7 esercizi o un gruppo a 8: la
+     condizione era troppo larga, 155 programmi su 1.071 con sedute da 3-5 esercizi) non esenta piu, e nemmeno la frase «struttura» (con i giorni e le sedute di questo programma non c e un altro posto adatto: non nomina un fatto
+     verificabile). Il report stampa SEMPRE VOL-01 con e senza l esenzione (`riepilogo.vol01`), anche senza `--senza-note`.
+   - REC-01, REC-02, REC-03 e `giorniDiFila` (S): la settimana e un anello, domenica e lunedi sono giorni consecutivi (M2 della revisione: 6 sedute in 7 giorni sono SEMPRE sei giorni di fila e REC-03 a 0 era un artefatto del conteggio
+     da lunedi a domenica; 2 programmi su 1.152 avevano il petto a fondo domenica e lunedi senza che nessun controllo lo vedesse). REC-03 non segnala (L) il programma con 6 sedute su 6 giorni dichiarati che lo dice con la nota onesta
+     («Con 6 giorni hai un solo giorno di riposo…»): sei giorni dichiarati sono sei giorni (SPL-01), la matematica non lascia altro; `--senza-note` spegne anche questa esenzione e il report stampa REC-03 con e senza.
+   - NOT-01 (nuovo, sev 3): le note del programma sul volume, sul tempo e sulle tecniche dicono il vero per QUEL programma (M1 della revisione): le definizioni sono nella funzione e la prova della sua capacita di scattare e nell autotest.
+   - DEL-01 (S): il piano da 12 settimane del principiante con un «controllo» all 8a vale solo se il CODICE lo esegue (B1 della revisione: `controlloOttavaPrincipiante` esisteva ma nessuno lo chiamava e il criterio
+     accettava l etichetta nel dato): una prova in vm costruisce un programma da principiante all 8a settimana con fatica alta e chiede a `settimanaProgramma` se la settimana e diventata di scarico (MOD-13).
+   - EQ-03:flessione (S): vale a tutte le frequenze, non solo da 3 giorni (M7 della revisione: a 30 minuti con 2 giorni in palestra 29 programmi su 45 perdevano il leg curl e il criterio non guardava).
+   - MOD-07 resta una misura di COERENZA (stessi crediti letti da due percorsi: non misura la qualita del volume): il cancello non la elenca piu tra i criteri dichiarati verdi.
+   Prima e dopo di questo file nel report di INT-2d. */
 /* 1.4 (INT-2b, onda 2b del coach v2: W2-T1 volume, W2-T2 tempo, W2-T3 tecniche, W2-T4 mesociclo). REGOLA DI ONESTA: il collaudo e scritto dallo stesso sistema che misura, quindi un criterio cambia
    solo in INT, solo di classe A (stesso criterio, definizione che il registro ha cambiato o dato che prima mancava), con il motivo scritto qui e il numero di prima e dopo nel report di INT: ogni
    risultato si dice sempre a tre livelli di criteri (1.0 originale, 1.3 dell'onda 2a, 1.4 questo). Cosa cambia, e cosa diventa piu largo (L) o piu stretto (S):
@@ -163,11 +178,12 @@ const SEC_TECNICA_DROP = 45;
 const TOLLERANZA_SFORAMENTO = 0.10, QUOTA_SPRECO_MAX = 0.25;
 /* 1.4 (B12, D-P10: PRI-08): chi comincia sta al massimo in 50 minuti anche se ne dichiara di piu: lo spreco di DUR-02 si misura contro i suoi minuti massimi (Decisione) */
 const MINUTI_MAX_PRINCIPIANTE = 50;
-/* 1.4: una nota «con N minuti non entra di piu» si crede solo se la seduta piu lunga usa almeno l'80% dei minuti (modello del collaudo); la nota del tetto se una seduta ha 7 esercizi o un gruppo a 8 serie
-   frazionarie (il tetto morbido di B7, IPE-06: preprint 2025, Provvisoria) (Convenzione) */
-const SOGLIA_TEMPO_VINCOLANTE = 0.8, TETTO_MORBIDO_SEDUTA = 8;
+/* 1.4: una nota «con N minuti non entra di piu» si crede solo se la seduta piu lunga usa almeno l'80% dei minuti (modello del collaudo) (Convenzione). In 1.5 vale solo per quella causa: «tetto» non esenta piu */
+const SOGLIA_TEMPO_VINCOLANTE = 0.8;
 /* 1.4: DEL-01 per il principiante non prudente (B4, D-P15, PRN-03): 12 settimane, controllo all'8a, verifica alla 12a (Convenzione/Contrastata: due RCT non vedono vantaggi dello scarico sulla massa) */
 const SETTIMANE_PRINCIPIANTE = 12, CONTROLLO_PRINCIPIANTE = 8;
+/* 1.5 (NOT-01): «poco tempo» di IPE-12 (registro): al massimo 30 minuti, oppure al massimo 2 giorni con al massimo 45 minuti (Moderata: Iversen 2021, Androulakis-Korakakis) */
+const POCO_TEMPO_MINUTI = 30, POCO_TEMPO_GIORNI = 2, POCO_TEMPO_MINUTI_DUE_GIORNI = 45;
 
 /* --- esercizi per seduta (Convenzione) --- */
 const ES_MIN_SEDUTA = 3, ES_MAX_SEDUTA = 8, ES_MAX_PRINCIPIANTE = 6;
@@ -518,7 +534,7 @@ const CRITERI = [
       const out = [];
       const q = m.vol.quadricipiti || 0, f = m.vol.femorali || 0;
       if (q >= SERIE_QUADRICIPITI_PER_RAPPORTO && f < q * RAPPORTO_FEMORALI_QUADRICIPITI_MIN) out.push({ sub: 'rapporto', msg: 'femorali ' + r1(f) + ' contro quadricipiti ' + r1(q) + ' serie frazionarie (rapporto ' + (f / q).toFixed(2) + ')', gravita: (q * RAPPORTO_FEMORALI_QUADRICIPITI_MIN - f) });
-      if (c.tipoObiettivo === 'ipertrofia' && c.days >= 3 && m.flessioneGinocchio === 0 && m.vol.quadricipiti >= 6 && flessioneSicuraDisponibile(c)) out.push({ sub: 'flessione', msg: 'nessun leg curl o nordic curl: i femorali lavorano solo in estensione d anca', gravita: 2 });
+      if (c.tipoObiettivo === 'ipertrofia' && m.flessioneGinocchio === 0 && m.vol.quadricipiti >= 6 && flessioneSicuraDisponibile(c)) out.push({ sub: 'flessione', msg: 'nessun leg curl o nordic curl: i femorali lavorano solo in estensione d anca', gravita: 2 });
       return out; } },
   { id: 'PAT-01', nome: 'Schema di movimento fondamentale assente nella settimana (squat, hinge, spinte e tirate orizzontali e verticali)', sev: 3, forza: 'Convenzione', fonte: 'piramide di Helms (SCHEMI_MOV), pratica dei coach',
     dove: [COMPLETAMENTI_JS + ': completaSettimana (schemi mancanti, PRG-21)', MOTORE_JS + ': consentito / RISCHIO (fastidi tolgono schemi interi)'],
@@ -530,25 +546,26 @@ const CRITERI = [
   /* ---------------- recupero e calendario ---------------- */
   { id: 'REC-01', nome: 'Stesso grande muscolo allenato in due giorni consecutivi (meno di 48 ore)', sev: 3, forza: 'Moderata', fonte: 'ACSM 2009: 48 ore tra sedute dello stesso gruppo (Convenzione per la soglia di serie)',
     dove: [ONB_JS + ': splitPerFrequenza (full body + upper/lower con frequenza 3)', GENERA_JS + ': giorniSettimana (GIORNI_PER_SEDUTE: giorni fissi lun-mar-gio-ven...)'],
-    check: (m) => {
-      const out = [];
-      const grandi = ['petto', 'schiena', 'quadricipiti', 'femorali', 'glutei', 'spalle'];
-      for (let i = 0; i < m.sedute.length; i++) for (let j = i + 1; j < m.sedute.length; j++) {
-        const a = m.sedute[i], b = m.sedute[j];
-        if (Math.abs(a.gi - b.gi) !== 1) continue;
-        grandi.forEach(g => { const f = (s) => (GRUPPI_FREQUENZA[g] || [g]).reduce((t, x) => t + (s.grp[x] || 0), 0); if (f(a) >= REC_SERIE_MIN && f(b) >= REC_SERIE_MIN) out.push({ sub: g, msg: g + ' in ' + a.giorno + ' (' + a.titolo + ') e ' + b.giorno + ' (' + b.titolo + ')', gravita: 2 }); });
-      }
-      return out; } },
+    check: (m) => conflittiRecupero(m).map(x => ({ sub: x.g, msg: x.g + ' in ' + x.a.giorno + ' (' + x.a.titolo + ') e ' + x.b.giorno + ' (' + x.b.titolo + ')', gravita: 2 })) },
   { id: 'REC-02', nome: 'Carico pesante sui lombari in due giorni consecutivi', sev: 3, forza: 'Convenzione', fonte: 'ABB-07',
     dove: [RICETTE_JS + ': componiSedute (vietaSchiena: -5 punti, non un divieto; poi strBilancia e le aggiunte)'],
     check: (m) => {
       const out = [];
       const punti = (s) => s.es.reduce((t, e) => t + (/stacco|good morning/i.test(e.pulito) ? e.sets : (/squat con bilanciere|front squat|rematore con bilanciere|t-bar|rematore presa inversa/i.test(e.pulito) ? e.sets * 0.5 : 0)), 0);
-      for (let i = 0; i < m.sedute.length; i++) for (let j = i + 1; j < m.sedute.length; j++) if (Math.abs(m.sedute[i].gi - m.sedute[j].gi) === 1 && punti(m.sedute[i]) >= LOMBARE_SERIE_PESANTI && punti(m.sedute[j]) >= LOMBARE_SERIE_PESANTI) out.push({ msg: m.sedute[i].giorno + ' e ' + m.sedute[j].giorno + ': ' + m.sedute[i].titolo + ' / ' + m.sedute[j].titolo, gravita: 2 });
+      for (let i = 0; i < m.sedute.length; i++) for (let j = i + 1; j < m.sedute.length; j++) if (consecutivi(m.sedute[i].gi, m.sedute[j].gi) && punti(m.sedute[i]) >= LOMBARE_SERIE_PESANTI && punti(m.sedute[j]) >= LOMBARE_SERIE_PESANTI) out.push({ msg: m.sedute[i].giorno + ' e ' + m.sedute[j].giorno + ': ' + m.sedute[i].titolo + ' / ' + m.sedute[j].titolo, gravita: 2 });
       return out; } },
   { id: 'REC-03', nome: 'Troppi giorni di allenamento di fila (oltre 4)', sev: 2, forza: 'Convenzione', fonte: 'pratica dei coach',
-    dove: [GENERA_JS + ': giorniSettimana (6 giorni = lun-sab di fila)'],
-    check: (m, c) => { const mx = giorniDiFila(m.sedute.map(s => s.gi)); return mx > GIORNI_CONSECUTIVI_MAX ? [{ msg: mx + ' giorni di fila (' + m.sedute.map(s => s.giorno.slice(0, 3)).join(' ') + ')', gravita: mx - GIORNI_CONSECUTIVI_MAX }] : []; } },
+    dove: [GENERA_JS + ': giorniSettimana (6 giorni = venerdi-mercoledi di fila sull anello della settimana, con la nota onesta NOTA_SEI_GIORNI_DI_FILA)'],
+    check: (m, c) => {
+      const mx = giorniDiFila(m.sedute.map(s => s.gi));
+      if (mx <= GIORNI_CONSECUTIVI_MAX) return [];
+      /* 1.5 (M2, L): chi ha dichiarato 6 giorni e ne ha 6 con la nota onesta («un solo giorno di riposo…»): sei giorni dichiarati sono sei giorni di fila sull anello, il generatore non puo evitarlo senza tradire SPL-01.
+         Il report stampa REC-03 anche senza questa esenzione (`riepilogo.rec03`, `--senza-note` la spegne) */
+      if (!SENZA_NOTE && c.days >= 6 && m.sedute.length === 6 && ((c.prog && c.prog.note) || []).some(n => /^Con 6 giorni hai un solo giorno di riposo/.test(String(n)))) { m.esentatoRec03 = true; return []; }
+      return [{ msg: mx + ' giorni di fila (' + m.sedute.map(s => s.giorno.slice(0, 3)).join(' ') + ')', gravita: mx - GIORNI_CONSECUTIVI_MAX }]; } },
+  { id: 'NOT-01', nome: 'Una nota del programma dice una cosa falsa (volume, tempo, tecniche, giorni di fila)', sev: 3, forza: 'Convenzione', fonte: 'REG-02: le note dicono quello che il programma fa davvero; revisione INT-2d (M1: 7 note false misurate su 2.500 profili)',
+    dove: [VOLUME_JS + ': validaVolume (causaVera, NOTA_VOLUME_MANTENIMENTO)', TEMPO_JS + ': validaTempo (FRASE_POCO_TEMPO)', TECNICHE_JS + ': assegnaTecniche (drop set solo su isolamenti)', GENERA_JS + ': riconciliaNote / noteDelProgramma / giorniSettimana'],
+    check: (m, c) => noteFalse(m, c).map(t => ({ msg: t, gravita: 2 })) },
   { id: 'SPL-01', nome: 'Numero di sedute diverso dai giorni dichiarati', sev: 4, forza: 'Convenzione', fonte: 'coerenza con la richiesta',
     dove: [ONB_JS + ': splitFor (principianti con 5-6 giorni: solo 4 sedute)', RICETTE_JS + ': componiSedute (split.giorni.slice(0, giorni))'],
     check: (m, c) => m.sedute.length !== c.days ? [{ sub: c.level === 'principiante' && c.days >= 5 ? 'principiante-limitato' : 'altri', sev: c.level === 'principiante' && c.days >= 5 ? 2 : 4, msg: c.days + ' giorni dichiarati, ' + m.sedute.length + ' sedute generate (split ' + c.splitNome + ')' + (c.prog.note.some(n => /giorni/i.test(String(n))) ? '' : ', senza una nota che lo spieghi'), gravita: Math.abs(c.days - m.sedute.length) }] : [] },
@@ -640,6 +657,9 @@ const CRITERI = [
         const guasti = [];
         if (piano.length !== SETTIMANE_PRINCIPIANTE) guasti.push(piano.length + ' settimane invece di ' + SETTIMANE_PRINCIPIANTE);
         if (controllo !== CONTROLLO_PRINCIPIANTE) guasti.push('nessun controllo all\'' + CONTROLLO_PRINCIPIANTE + 'a settimana (primo controllo: ' + (controllo || 'nessuno') + ')');
+        /* 1.5 (B1 della revisione): l etichetta nel dato non basta, il controllo deve essere ESEGUITO dal codice (MOD-13): in 1.4 `esitoControlloPrincipiante` non aveva chiamanti e la 8a restava «carico» per tutti */
+        const eseguito = c.prog.controlloEseguito !== undefined ? c.prog.controlloEseguito : controlloOttavaEseguito().ok;
+        if (!eseguito) guasti.push('il controllo dell\'' + CONTROLLO_PRINCIPIANTE + 'a settimana c\'e nel piano ma il codice non lo esegue (' + (c.prog.controlloEseguito !== undefined ? 'prova costruita a mano' : controlloOttavaEseguito().motivo) + ')');
         if (ultima.fase !== 'scarico' && ultima.fase !== 'test') guasti.push('l\'ultima settimana e di ' + (ultima.fase || 'niente') + ', non di verifica');
         if (primoScarico && primoScarico < piano.length) guasti.push('scarico alla settimana ' + primoScarico + ' prima della verifica (B4: nessuno scarico a calendario)');
         return guasti.length ? [{ sub: 'principiante', sev: 2, msg: 'principiante: ' + guasti.join('; ') + ' (piano: ' + piano.map(w => w.fase[0]).join('') + ')', gravita: 1 }] : [];
@@ -704,10 +724,47 @@ const CRITERI = [
 /* =====================================================================================================
    4. CALCOLI DI SUPPORTO (volume, tempo, antagonisti, attrezzatura)
    ===================================================================================================== */
+/* 1.5 (M2): i giorni consecutivi attraverso la fine della settimana (domenica 6 e lunedi 0 si seguono): il massimo numero di giorni di fila su un anello di 7 giorni (7 se si allena ogni giorno) */
 function giorniDiFila(gi) {
-  const s = gi.slice().sort((a, b) => a - b); let mx = 0, cur = 0, prev = -9;
-  s.forEach(g => { cur = g === prev + 1 ? cur + 1 : 1; mx = Math.max(mx, cur); prev = g; });
+  const set = new Set(gi); if (set.size >= 7) return 7;
+  let mx = 0;
+  for (let i = 0; i < 7; i++) { if (!set.has(i) || set.has((i + 6) % 7)) continue; let k = 0; while (set.has((i + k) % 7) && k < 7) k++; mx = Math.max(mx, k); }
   return mx;
+}
+/* 1.5 (M2): due giorni (0 = lunedi ... 6 = domenica) sono consecutivi anche attraverso il lunedi */
+const consecutivi = (a, b) => { const d = Math.abs(a - b); return d === 1 || d === 6; };
+/* 1.5 (NOT-01): le note del programma che parlano di volume, tempo, tecniche, tipo di seduta o giorni di fila dicono il vero per QUEL programma? Le definizioni sono quelle della revisione dell onda 2b/2c (M1), scritte qui dal registro
+   e non lette dal generatore: «poco tempo» = IPE-12; «non entra di piu» e «mantenimento» = la seduta piu lunga usa almeno il (1 - QUOTA_SPRECO_MAX) dei minuti (il modello del collaudo e piu prudente di quello del generatore, quindi
+   non scatta per una differenza di stima); «attrezzi» = nessun esercizio consentito copre l unita; il drop set e sull ultimo isolamento (classi D ed E); la potenza c e; le 48 ore reggono anche attraverso il lunedi. Ritorna i testi dei difetti */
+const FRASI_FALSE_PER_COSTRUZIONE = [/Realisticamente \d+-\d+ serie per muscolo/, /i limiti di serie e di esercizi per seduta non lasciano altro posto/, /Il volume sale piano/, /Chi comincia cresce di più/, /bastano per mantenere e per crescere/, /il primo esercizio veloce in salita/];
+function noteFalse(m, c) {
+  const out = [], note = ((c.prog && c.prog.note) || []).map(String);
+  const durMax = Math.max.apply(null, m.sedute.map(sd => sd.minuti).concat([0])), pieno = durMax >= (1 - QUOTA_SPRECO_MAX) * minutiEffettivi(c) - 1e-9;
+  const RX_TEMPO = /: con \d+ minuti non entra di più$/, RX_ATTREZZI = /: con i tuoi attrezzi o i tuoi fastidi non c’è un esercizio adatto$/;
+  const isolamento = e => ['D', 'E'].indexOf(G.classeTecnica(e.nome)) !== -1;
+  note.forEach(n => {
+    FRASI_FALSE_PER_COSTRUZIONE.forEach(rx => { if (rx.test(n)) out.push('frase che il programma non puo garantire: «' + n.slice(0, 80) + '»'); });
+    if (/^Con poco tempo conta il lavoro essenziale/.test(n) && !(c.minutes <= POCO_TEMPO_MINUTI || (c.days <= POCO_TEMPO_GIORNI && c.minutes <= POCO_TEMPO_MINUTI_DUE_GIORNI))) out.push('«poco tempo» con ' + c.days + ' giorni e ' + c.minutes + ' minuti');
+    if (RX_TEMPO.test(n) && !pieno) out.push('«non entra di piu» ma la seduta piu lunga usa ' + Math.round(durMax) + ' minuti su ' + minutiEffettivi(c) + ': ' + n.slice(0, 70));
+    if (/^Con questi minuti è un programma di mantenimento/.test(n) && !(pieno && note.some(x => RX_TEMPO.test(x)))) out.push('«programma di mantenimento» senza la causa tempo (la seduta piu lunga usa ' + Math.round(durMax) + ' minuti su ' + minutiEffettivi(c) + ')');
+    if (RX_ATTREZZI.test(n)) n.replace(RX_ATTREZZI, '').split(', ').forEach(v => { const u = Object.keys(ETICHETTE_B6).find(k => v.indexOf(ETICHETTE_B6[k] + ' ') === 0); if (u && unitaRiempibile(c, u)) out.push('«attrezzi o fastidi» per ' + ETICHETTE_B6[u] + ' ma un esercizio consentito la copre'); });
+    if (/drop set sull ultimo isolamento/.test(n) && !m.sedute.some(sd => sd.es.some(e => e.tecnica === 'drop' && isolamento(e)))) out.push('«drop set sull ultimo isolamento» senza un drop set su un isolamento');
+    if (/un esercizio alla macchina veloce in salita per la potenza/.test(n) && !m.sedute.some(sd => sd.es.some(e => e.tecnica === 'potenza'))) out.push('«veloce in salita per la potenza» senza un esercizio con la potenza');
+    if (/Lo stesso muscolo grande non lavora a fondo in due giorni consecutivi/.test(n) && conflittiRecupero(m).length) out.push('«nessun grande muscolo a fondo in due giorni consecutivi» ma ' + conflittiRecupero(m).length + ' coppie lo smentiscono');
+    if (/^A chi comincia bastano 4 sedute/.test(n) && !(c.level === 'principiante' && c.days >= 5 && m.sedute.length === 4)) out.push('«4 sedute» con ' + c.level + ', ' + c.days + ' giorni e ' + m.sedute.length + ' sedute');
+    if (/^Con 6 giorni hai un solo giorno di riposo/.test(n) && !(c.days >= 6 && m.sedute.length === 6)) out.push('«sei sedute di fila» con ' + m.sedute.length + ' sedute');
+  });
+  return out;
+}
+/* REC-01: le coppie di sedute in giorni consecutivi (anche domenica-lunedi) con lo stesso grande muscolo a fondo (almeno REC_SERIE_MIN serie frazionarie in tutte e due) */
+function conflittiRecupero(m) {
+  const out = [], grandi = ['petto', 'schiena', 'quadricipiti', 'femorali', 'glutei', 'spalle'];
+  for (let i = 0; i < m.sedute.length; i++) for (let j = i + 1; j < m.sedute.length; j++) {
+    const a = m.sedute[i], b = m.sedute[j];
+    if (!consecutivi(a.gi, b.gi)) continue;
+    grandi.forEach(g => { const f = (s) => (GRUPPI_FREQUENZA[g] || [g]).reduce((t, x) => t + (s.grp[x] || 0), 0); if (f(a) >= REC_SERIE_MIN && f(b) >= REC_SERIE_MIN) out.push({ g, a, b }); });
+  }
+  return out;
 }
 function antagonisti(a, b) {
   const x = a.inf.bers, y = b.inf.bers, spinta = (e) => e.inf.mov === 'spintaO' || e.inf.mov === 'spintaV', tirata = (e) => e.inf.mov === 'tirataO' || e.inf.mov === 'tirataV' || e.inf.mov === 'deltPost';
@@ -761,7 +818,9 @@ const minutiEffettivi = (c) => c.level === 'principiante' ? Math.min(c.minutes, 
 const ETICHETTE_B6 = { petto: 'Petto', dorsali: 'Dorsali', quadricipiti: 'Quadricipiti', femorali: 'Femorali', grande_gluteo: 'Glutei', deltoide_laterale: 'Deltoidi laterali', deltoide_posteriore: 'Deltoidi posteriori',
   deltoide_anteriore: 'Deltoidi anteriori', bicipiti: 'Bicipiti', tricipiti: 'Tricipiti', polpacci: 'Polpacci' };
 /* le tre note con la CAUSA che il generatore scrive per ogni unita sotto fascia (REG-02, W2-T1): «Etichetta N serie, ...: <causa>» */
-const NOTE_CAUSA = [[/: con \d+ minuti non entra di più$/, 'tempo'], [/: i limiti di serie e di esercizi per seduta non lasciano altro posto$/, 'tetto'], [/: con i tuoi attrezzi o i tuoi fastidi non c’è un esercizio adatto$/, 'attrezzi']];
+/* 1.5: la causa «tetto» (il generatore di prima di INT-2d) e la frase «struttura» (con i giorni e le sedute di questo programma non c e un altro posto adatto) non nominano un fatto che il collaudo possa verificare */
+const NOTE_CAUSA = [[/: con \d+ minuti non entra di più$/, 'tempo'], [/: i limiti di serie e di esercizi per seduta non lasciano altro posto$/, 'tetto'], [/: con i giorni e le sedute di questo programma non c’è un altro posto adatto$/, 'struttura'],
+  [/: con i tuoi attrezzi o i tuoi fastidi non c’è un esercizio adatto$/, 'attrezzi']];
 let SENZA_NOTE = false;   /* --senza-note: l'esenzione di VOL-01 e spenta (si misura quanto vale) */
 /* gli esercizi della libreria che QUESTO profilo potrebbe fare (luogo, attrezzi, fastidi: `consentito` e stress < 2, attrezzatura, i tecnici non a chi inizia ne ai prudenti, non lo squat di avvio) con i loro crediti */
 const cacheUsabili = new Map();
@@ -783,18 +842,17 @@ function eserciziUsabili(c) {
   return r;
 }
 const unitaRiempibile = (c, u) => eserciziUsabili(c).some(x => (x.cr[u] || 0) >= 0.5);
-/* 1.4: l'unita sotto fascia e dichiarata dal programma (una nota REG-02 la nomina, con una qualunque delle tre cause) E il fatto dichiarato e vero nel modello del collaudo: o le sedute sono piene (la piu lunga usa almeno
-   l'80% dei minuti: la causa «tempo»), o una seduta e al tetto (7 esercizi o un gruppo a 8 serie frazionarie: «tetto»), o nessun esercizio consentito la copre (le «attrezzi»). Il verdetto non dipende dall'etichetta che il generatore
-   ha scelto (il suo modello dei tempi, CAS-05, e meno prudente di quello del collaudo e puo chiamare «tetto» una seduta che il collaudo vede piena); dipende dal fatto. Ritorna la causa vera, o null */
+/* 1.5: l'unita sotto fascia e dichiarata dal programma con una causa che il collaudo puo VERIFICARE, e il fatto e vero nel suo modello: «con N minuti non entra di piu» solo se la seduta piu lunga usa almeno l'80% dei minuti
+   (la causa «tempo»), «con i tuoi attrezzi o i tuoi fastidi non c e un esercizio adatto» solo se nessun esercizio consentito copre l'unita («attrezzi»). L'etichetta e il fatto devono coincidere (in 1.4 bastava una qualunque nota
+   che nominasse l'unita e uno qualunque dei tre fatti, con «tetto» = una seduta qualunque con 7 esercizi o un gruppo a 8: troppo largo). «tetto» e «struttura» non nominano un fatto verificabile: l'unita conta. Ritorna la causa, o null */
 function causaDichiarata(m, c, g) {
   const u = UNITA_B6_DEL_GRUPPO[g], et = ETICHETTE_B6[u];
   if (SENZA_NOTE || !et) return null;
   const note = ((c.prog && c.prog.note) || []).map(String);
-  const nominata = NOTE_CAUSA.some(([rx]) => note.some(x => rx.test(x) && x.replace(rx, '').split(', ').some(v => v.indexOf(et + ' ') === 0)));
-  if (!nominata) return null;
-  if (Math.max.apply(null, m.sedute.map(sd => sd.minuti).concat([0])) >= SOGLIA_TEMPO_VINCOLANTE * minutiEffettivi(c)) return 'tempo';
-  if (m.sedute.some(sd => sd.es.length >= (c.level === 'principiante' ? ES_MAX_PRINCIPIANTE : ES_MAX_SEDUTA) - 1 || Object.keys(sd.grp).some(k => sd.grp[k] >= TETTO_MORBIDO_SEDUTA))) return 'tetto';
-  return unitaRiempibile(c, u) ? null : 'attrezzi';
+  const causa = (NOTE_CAUSA.find(([rx]) => note.some(x => rx.test(x) && x.replace(rx, '').split(', ').some(v => v.indexOf(et + ' ') === 0))) || [])[1];
+  if (causa === 'tempo') return Math.max.apply(null, m.sedute.map(sd => sd.minuti).concat([0])) >= SOGLIA_TEMPO_VINCOLANTE * minutiEffettivi(c) ? 'tempo' : null;
+  if (causa === 'attrezzi') return unitaRiempibile(c, u) ? null : 'attrezzi';
+  return null;
 }
 /* volume per gruppo del collaudo: elenco di verdetti { g, tipo: mis|diretto|sotto|sopra, v, d, min, max, classe } */
 function volumeGruppi(m, c) {
@@ -943,6 +1001,39 @@ function stimaMinuti(es) {
   return sec / 60;
 }
 
+/* 1.5 (MOD-13, DEL-01): il controllo dell 8a settimana del principiante e ESEGUITO dal codice? Una prova in vm: un programma da principiante a 12 settimane salvato come lo salva l app, con l orologio sull 8a settimana, il
+   consenso acceso e tre questionari «Al limite» nello storico; `settimanaProgramma` deve dire che la settimana 8 e di scarico e il programma salvato deve averla scritta cosi (fasi, piano, motivo). Una volta per esecuzione */
+function controlloOttavaEseguito() {
+  if (ENV.controlloOttava) return ENV.controlloOttava;
+  const ctx = ENV.ctx, salvati = { coachAttivo: ctx.coachAttivo, loadHistory: ctx.loadHistory };
+  let r;
+  try {
+    const prog = G.buildProgram({ goals: ['massa'], level: 'principiante', days: 3, minutes: 60, luogo: 'palestra', fastidi: [], sex: 'M', age: 30, parq: 'no', priorita: [], usaProfilo: false, seme: 'mod13' });
+    if (!prog.piano || !prog.piano.struttura || prog.piano.struttura.controllo !== CONTROLLO_PRINCIPIANTE) r = { ok: false, motivo: 'il programma non ha il controllo nel piano' };
+    else if (typeof G.controlloOttavaPrincipiante !== 'function') r = { ok: false, motivo: 'controlloOttavaPrincipiante non esiste' };
+    else {
+      const inizio = G.ymd(G.piuGiorni(G.lunediDi(new Date()), -7 * (CONTROLLO_PRINCIPIANTE - 1)));
+      ctx.localStorage.setItem(G.progKey(), JSON.stringify({ inizio, settimane: prog.settimane, blocco: prog.blocco, fasi: prog.fasi, rirSett: prog.rirSett, piano: prog.piano, perche: [], prefs: prog.prefs }));
+      ctx.coachAttivo = () => true;
+      ctx.loadHistory = () => [0, 1, 2].map(i => ({ id: Date.now() - (2 + 2 * i) * 86400000, sessione: [], feedback: { srpe: 10, arrivo: 'stanco', carichi: 'pesanti', dolore: false, zone: [], livello: 0, esercizi: [] } }));
+      const s = JSON.parse(JSON.stringify(G.settimanaProgramma())), salvato = JSON.parse(ctx.localStorage.getItem(G.progKey()));
+      const w = salvato.piano.settimane[CONTROLLO_PRINCIPIANTE - 1];
+      if (!s || s.numero !== CONTROLLO_PRINCIPIANTE) r = { ok: false, motivo: 'la prova non e arrivata all\'8a settimana (' + (s && s.numero) + ')' };
+      else if (s.fase !== 'scarico' || salvato.fasi[CONTROLLO_PRINCIPIANTE - 1] !== 'scarico' || w.fase !== 'scarico' || !salvato.piano.controllo || !salvato.piano.controllo.motivo) r = { ok: false, motivo: 'con fatica alta la settimana 8 resta «' + s.fase + '» (fasi: ' + salvato.fasi[CONTROLLO_PRINCIPIANTE - 1] + ', piano: ' + w.fase + ')' };
+      else r = { ok: true, motivo: 'con tre sedute «Al limite» la settimana 8 diventa di scarico (dose ' + w.dose + ', serie x' + w.volume + ', carico x' + w.carico + ') con il motivo scritto' };
+      /* senza consenso il controllo non agisce */
+      ctx.coachAttivo = () => false;
+      ctx.localStorage.setItem(G.progKey(), JSON.stringify({ inizio, settimane: prog.settimane, blocco: prog.blocco, fasi: prog.fasi, rirSett: prog.rirSett, piano: prog.piano, perche: [], prefs: prog.prefs }));
+      const senza = JSON.parse(JSON.stringify(G.settimanaProgramma()));
+      if (r.ok && senza.fase !== 'carico') r = { ok: false, motivo: 'senza consenso il controllo agisce lo stesso (settimana 8: ' + senza.fase + ')' };
+    }
+  } catch (e) { r = { ok: false, motivo: 'la prova e andata in errore: ' + (e && e.message) }; }
+  Object.assign(ctx, salvati);
+  try { ctx.localStorage.removeItem(G.progKey()); } catch (e) {}
+  ENV.controlloOttava = r;
+  return r;
+}
+
 /* =====================================================================================================
    6. MATRICE DEI PROFILI
    ===================================================================================================== */
@@ -1083,7 +1174,7 @@ function profiloCompatto(p) {
 function eseguiMatrice(profili, opz) {
   const classi = new Map();
   const dimensioni = { livello: {}, obiettivo: {}, giorni: {}, minuti: {}, luogo: {}, fastidi: {}, sesso: {}, fasciaEta: {}, metodo: {} };
-  const tot = { erroriCriteri: {}, pesoTotale: 0, profili: 0, errori: 0, conFallimenti: 0, conGravi: 0, conMetodo: 0, perSev: {}, perMetodo: {}, scemaSettimaneDiverse: 0, fallimentiTotali: 0, conPiano: 0, esentiNota: 0, esentiNotaPeso: 0, volUnitaConfronti: 0, volUnitaDiversi: 0 };
+  const tot = { erroriCriteri: {}, pesoTotale: 0, profili: 0, errori: 0, conFallimenti: 0, conGravi: 0, conMetodo: 0, perSev: {}, perMetodo: {}, scemaSettimaneDiverse: 0, fallimentiTotali: 0, conPiano: 0, esentiNota: 0, esentiNotaPeso: 0, volUnitaConfronti: 0, volUnitaDiversi: 0, esentiPerClasse: {}, vol01Con: 0, vol01ConPeso: 0, vol01Senza: 0, vol01SenzaPeso: 0, rec03Esentati: 0, rec03EsentatiPeso: 0 };
   const rngRes = mulberry32(20261005);
   const K = 40;
   const t0 = Date.now();
@@ -1099,6 +1190,12 @@ function eseguiMatrice(profili, opz) {
     if (a.prog && a.prog.versione === 2 && a.prog.piano && Array.isArray(a.prog.piano.settimane) && a.prog.piano.settimane.length === a.prog.settimane) tot.conPiano++;   /* 1.4: MOD-06, MOD-09 */
     if (a.prog && !a.prog.metodo && a.m) { tot.volUnitaConfronti++; if (volumeUnitaDiverso(a.prog)) tot.volUnitaDiversi++; }   /* 1.4: MOD-07 */
     if (a.m && a.m.esentiNota && a.m.esentiNota.length) { tot.esentiNota++; tot.esentiNotaPeso += wp; }   /* 1.4: i programmi con VOL-01 esentato dalla nota della causa */
+    /* 1.5: VOL-01 con e senza l esenzione, ogni volta: per classe (le esentate si sommano alle contate: sono insiemi disgiunti per programma) e per programma (almeno una classe) */
+    const esenti = (a.m && a.m.esentiNota) || [], conVol = a.trovati.some(t => t.crit.id === 'VOL-01');
+    esenti.forEach(e => { const r = tot.esentiPerClasse[e.g] = tot.esentiPerClasse[e.g] || { n: 0, peso: 0 }; r.n++; r.peso += wp; });
+    if (conVol) { tot.vol01Con++; tot.vol01ConPeso += wp; }
+    if (conVol || esenti.length) { tot.vol01Senza++; tot.vol01SenzaPeso += wp; }
+    if (a.m && a.m.esentatoRec03) { tot.rec03Esentati++; tot.rec03EsentatiPeso += wp; }   /* 1.5: REC-03 non segnala i 6 giorni dichiarati con la nota onesta */
     const viste = new Map(), conteggi = new Map();
     const tagViste = new Map();
     a.trovati.forEach(t => {
@@ -1211,6 +1308,8 @@ function verificheModello(risultato) {
     prove.push({ cosa: 'lato degli esercizi a un braccio o una gamba', ok: G.infoTempo(nome('Affondi Bulgari')).unilaterale === true && G.infoTempo(press.name).unilaterale === false, valore: 'Affondi Bulgari unilaterale, Leg Press no' });
   } catch (e) { prove.push({ cosa: 'modello del tempo (durataSeduta)', ok: false, valore: 'non risponde: ' + (e && e.message) }); }
   const tutte = prove.length === 3 && prove.every(x => x.ok);
+  const ctl = controlloOttavaEseguito();
+  v.push({ id: 'MOD-13', esito: ctl.ok ? 'ok' : 'manca', titolo: 'Il controllo dell\'8a settimana del principiante e eseguito dal codice (non solo scritto nel piano)', nota: ctl.motivo + '. (1.5, B1 della revisione: in 1.4 il controllo era un\'etichetta nel piano, senza chiamanti)' });
   v.push({ id: 'MOD-08', esito: tutte ? 'ok' : 'manca', titolo: 'Riscaldamento e transizioni nel modello del tempo',
     nota: (tutte ? 'La stima del coach (`durataSeduta`, CAS-05) conta oltre le serie: ' : 'La stima del coach non conta tutto: ') + prove.map(x => x.cosa + ' ' + (x.ok ? 'si' : 'NO') + ' (' + x.valore + ')').join('; ') + '. Il modello del tempo del collaudo resta indipendente (costanti SEC_*, piu prudente): DUR-01 non lo sostituisce con questo.' });
   /* 9. scheme.settimane */
@@ -1262,6 +1361,10 @@ function mdReport(profili, ris, opz, meta, verifiche) {
   L.push('| Programmi con almeno un fallimento di severita alta o critica (>= 4) | ' + tot.conGravi + ' (' + pct(tot.conGravi, tot.profili) + ' della matrice; ' + pct(tot.pesoGravi || 0, tot.pesoTotale) + ' pesata) |');
   L.push('| Fallimenti (classi per programma) in tutto | ' + tot.fallimentiTotali + ' (media ' + (tot.fallimentiTotali / Math.max(1, tot.profili)).toFixed(1) + ' per programma) |');
   L.push('| VOL-01 esentato dalla nota della causa (1.4) | ' + (tot.esentiNota || 0) + ' programmi (' + ((tot.esentiNotaPeso || 0) / Math.max(1e-9, tot.pesoTotale) * 100).toFixed(1) + '% pesata)' + (SENZA_NOTE ? ' - esenzione spenta (--senza-note)' : '') + ' |');
+  const vd = vol01Doppio({ tot: tot, elenco: elenco });
+  L.push('| VOL-01 con l esenzione della nota (criteri 1.5, definizione stretta) | ' + vd.programmi.con + ' programmi (' + vd.pesata.con.toFixed(1) + '% pesata) |');
+  L.push('| VOL-01 SENZA l esenzione (come con --senza-note) | ' + vd.programmi.senza + ' programmi (' + vd.pesata.senza.toFixed(1) + '% pesata) |');
+  L.push('| REC-03 non segnalato per i 6 giorni dichiarati con la nota onesta (1.5) | ' + (tot.rec03Esentati || 0) + ' programmi (' + ((tot.rec03EsentatiPeso || 0) / Math.max(1e-9, tot.pesoTotale) * 100).toFixed(1) + '% pesata)' + (SENZA_NOTE ? ' - esenzione spenta (--senza-note)' : ' - senza l esenzione sono segnalati') + ' |');
   L.push('| Programmi con il piano settimanale (`prog.piano`, MOD-06) | ' + (tot.conPiano || 0) + ' su ' + tot.profili + ' |');
   L.push('| Programmi con un metodo famoso scelto dal coach | ' + tot.conMetodo + ' (' + pct(tot.conMetodo, tot.profili) + '): ' + (Object.keys(tot.perMetodo).map(k => k + ' ' + tot.perMetodo[k]).join(', ') || 'nessuno') + ' |', '');
   const perSev = {}; elenco.forEach(cl => { perSev[cl.sev] = (perSev[cl.sev] || 0) + 1; });
@@ -1323,7 +1426,15 @@ function mdReport(profili, ris, opz, meta, verifiche) {
 function riepilogoCompatto(ris, meta) {
   const per = {}, pesata = {};
   ris.elenco.forEach(cl => { per[cl.chiave] = cl.n; pesata[cl.chiave] = Number(cl.pctPesata.toFixed(2)); });
-  return { criteri: VERSIONE_CRITERI, commit: meta.commit, data: meta.data, matrice: meta.matrice, pesi: PESI_UNIFORMI ? 'uniformi' : 'popolazione', profili: ris.tot.profili, errori: ris.tot.errori, conFallimenti: ris.tot.conFallimenti, conGravi: ris.tot.conGravi, gravi_pesata: Number(((ris.tot.pesoGravi || 0) / ris.tot.pesoTotale * 100).toFixed(2)), conMetodo: ris.tot.conMetodo, classi: per, classi_pesata: pesata };
+  return { criteri: VERSIONE_CRITERI, commit: meta.commit, data: meta.data, matrice: meta.matrice, pesi: PESI_UNIFORMI ? 'uniformi' : 'popolazione', profili: ris.tot.profili, errori: ris.tot.errori, conFallimenti: ris.tot.conFallimenti, conGravi: ris.tot.conGravi, gravi_pesata: Number(((ris.tot.pesoGravi || 0) / ris.tot.pesoTotale * 100).toFixed(2)), conMetodo: ris.tot.conMetodo, classi: per, classi_pesata: pesata, vol01: vol01Doppio(ris), rec03: { esentati: ris.tot.rec03Esentati || 0, esentati_pesata: Number(((ris.tot.rec03EsentatiPeso || 0) / ris.tot.pesoTotale * 100).toFixed(2)) } };
+}
+/* 1.5: VOL-01 con l esenzione della nota della causa e SENZA, sempre: { con, senza } = programmi con almeno una classe VOL-01 (n e % pesata), e per classe { con, senza } in % pesata */
+function vol01Doppio(ris) {
+  const t = ris.tot, pt = Math.max(1e-9, t.pesoTotale), p = x => Number((x / pt * 100).toFixed(2));
+  const perClasse = {};
+  ris.elenco.filter(cl => cl.codice === 'VOL-01').forEach(cl => { perClasse[cl.sub] = { con: Number(cl.pctPesata.toFixed(2)), senza: Number(cl.pctPesata.toFixed(2)), con_n: cl.n, senza_n: cl.n }; });
+  Object.keys(t.esentiPerClasse || {}).forEach(g => { const r = perClasse[g] = perClasse[g] || { con: 0, senza: 0, con_n: 0, senza_n: 0 }; r.senza = Number((r.senza + t.esentiPerClasse[g].peso / pt * 100).toFixed(2)); r.senza_n += t.esentiPerClasse[g].n; });
+  return { esenzione: SENZA_NOTE ? 'spenta (--senza-note)' : 'accesa', programmi: { con: t.vol01Con || 0, senza: t.vol01Senza || 0 }, pesata: { con: p(t.vol01ConPeso || 0), senza: p(t.vol01SenzaPeso || 0) }, perClasse };
 }
 
 /* =====================================================================================================
@@ -1426,6 +1537,15 @@ const FIXTURES = [
   fixture('panca col bilanciere con la spalla dolente (cautela)', { fastidi: ['spalle'] }, [['Lunedì', 'upper', [E('Panca Piana Bilanciere', 3, 8, 120)]]], {}, ['SAF-02']),
   /* ---- 1.4 ---- */
   fixture('DEL-01 1.4: principiante non prudente con il piano a 12 settimane, controllo all 8a e verifica alla 12a: va bene (B4, D-P15)', { level: 'principiante' }, [['Lunedì', 'fullbody', [E('Goblet Squat', 3, 10, 90)]]], { fasi: FASI_PRINCIPIANTE_12, piano: PIANO_PRINCIPIANTE_12 }, [], ['DEL-01']),
+  fixture('DEL-01 1.5: principiante a 12 settimane con il controllo scritto nel piano ma NON eseguito dal codice (B1 della revisione): conta come nessun controllo', { level: 'principiante' }, [['Lunedì', 'fullbody', [E('Goblet Squat', 3, 10, 90)]]], { fasi: FASI_PRINCIPIANTE_12, piano: PIANO_PRINCIPIANTE_12, controlloEseguito: false }, ['DEL-01']),
+  fixture('NOT-01: «poco tempo» a 60 minuti e 3 giorni (la nota mentiva con 2 giorni e 90 minuti)', { minutes: 60, days: 3 }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 120)]]], { note: ['Con poco tempo conta il lavoro essenziale: pochi esercizi completi, in coppia dove si può.'] }, ['NOT-01']),
+  fixture('NOT-01: «poco tempo» a 30 minuti: la nota e vera', { minutes: 30, days: 3 }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 120)]]], { note: ['Con poco tempo conta il lavoro essenziale: pochi esercizi completi, in coppia dove si può.'] }, [], ['NOT-01']),
+  fixture('NOT-01: «drop set sull ultimo isolamento» con un drop su una Lat Machine (multiarticolare)', {}, [['Lunedì', 'upper', [E('Panca Piana Bilanciere', 3, 8, 120), E('Lat Machine', 3, 10, 90, { tecnica: 'drop' })]]], { note: ['Poco tempo: spinte e tirate in superserie (-37% di tempo, stessi risultati) e drop set sull ultimo isolamento.'] }, ['NOT-01']),
+  fixture('NOT-01: la vecchia «4-6 serie per muscolo… bastano per mantenere e per crescere»', {}, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 120)]]], { note: ['Con poco tempo conta il lavoro essenziale: pochi esercizi completi, in coppia dove si può. Realisticamente 4-6 serie per muscolo a settimana: bastano per mantenere e per crescere da principiante.'] }, ['NOT-01']),
+  fixture('NOT-01: «nessun grande muscolo a fondo in due giorni consecutivi» ma il petto e a fondo domenica e lunedi (anello della settimana)', { days: 6 }, [['Lunedì', 'push', [E('Panca Piana Bilanciere', 4, 8, 120)]], ['Domenica', 'push', [E('Panca Inclinata Manubri', 4, 8, 120)]]], { note: ['Con 6 giorni hai un solo giorno di riposo: le sedute sono sei di fila, da venerdì a mercoledì, e il giovedì si riposa. Lo stesso muscolo grande non lavora a fondo in due giorni consecutivi.'] }, ['NOT-01', 'REC-01']),
+  fixture('REC-03 1.5: sei sedute su sei giorni dichiarati, venerdi-mercoledi di fila sull anello, con la nota onesta: non e segnalato (l esenzione dei 6 giorni)', { days: 6 }, ['Lunedì', 'Martedì', 'Mercoledì', 'Venerdì', 'Sabato', 'Domenica'].map(g => [g, 'fullbody', [E('Squat con Bilanciere', 3, 8, 120)]]), { note: ['Con 6 giorni hai un solo giorno di riposo: le sedute sono sei di fila, da venerdì a mercoledì, e il giovedì si riposa.'] }, [], ['REC-03']),
+  fixture('REC-03 1.5: le stesse sei sedute senza la nota: 6 giorni di fila sull anello (prima di 1.5 il «giovedi di riposo» risultava 0)', { days: 6 }, ['Lunedì', 'Martedì', 'Mercoledì', 'Venerdì', 'Sabato', 'Domenica'].map(g => [g, 'fullbody', [E('Squat con Bilanciere', 3, 8, 120)]]), {}, ['REC-03']),
+  fixture('REC-01 1.5: il petto a fondo domenica e lunedi sono giorni consecutivi (anello)', {}, [['Lunedì', 'push', [E('Panca Piana Bilanciere', 4, 8, 120)]], ['Domenica', 'push', [E('Panca Inclinata Manubri', 4, 8, 120)]]], {}, ['REC-01']),
   fixture('DEL-01 1.4: principiante non prudente a 12 settimane senza il controllo all 8a: lo scarico e troppo lontano', { level: 'principiante' }, [['Lunedì', 'fullbody', [E('Goblet Squat', 3, 10, 90)]]], { fasi: FASI_PRINCIPIANTE_12, piano: PIANO_DA_FASI(FASI_PRINCIPIANTE_12) }, ['DEL-01']),
   fixture('DEL-01 1.4: principiante non prudente a 12 settimane con uno scarico a calendario alla 4a (B4: nessuno scarico prima della verifica)', { level: 'principiante' }, [['Lunedì', 'fullbody', [E('Goblet Squat', 3, 10, 90)]]], { fasi: ['carico', 'carico', 'carico', 'scarico', 'carico', 'carico', 'carico', 'carico', 'carico', 'carico', 'carico', 'scarico'], piano: PIANO_PRINCIPIANTE_12 }, ['DEL-01']),
   fixture('GOA-01 1.4: forza per un over 65 con 8-12 ripetizioni (B10): non e un fallimento', { goals: ['forza'], level: 'intermedio', age: 70 }, [['Lunedì', 'fullbody', [E('Leg Press', 3, 10, 120), E('Chest Press Machine', 3, 10, 120)]]], {}, [], ['GOA-01']),
@@ -1452,7 +1572,7 @@ function autotest() {
     Object.assign(p, { freq: 'auto', parq: 'no', sonno: 'bene', priorita: [], fastidi: [], attrezziPalestra: null, psico: 'nessuno' }, f.over);
     const c = contesto(p);
     const prog = { sedute: f.sedute.map(([giorno, tipo, es]) => ({ giorno, tipo, titolo: tipo + ' ' + giorno, esercizi: es.map(e => ({ name: G.nomeInLibreria(e.n) || ('?' + e.n), sets: e.sets, reps: e.reps, rest: e.rest, weight: 0, superset: e.superset, tecnica: e.tecnica })) })),
-      fasi: f.extra.fasi || FASI12, rirSett: f.extra.rirSett || null, rirProva: f.extra.rirProva || null, versione: f.extra.piano ? 2 : undefined, piano: f.extra.piano || undefined, settimane: 12, blocco: 4, scheme: { settimane: 12 }, split: { nome: 'prova', giorni: [] }, prefs: { luogo: p.luogo, fastidi: p.fastidi, attrezziPalestra: p.attrezziPalestra, graditi: [], odiati: [], priorita: p.priorita }, note: f.extra.note || [], metodo: null };
+      fasi: f.extra.fasi || FASI12, rirSett: f.extra.rirSett || null, rirProva: f.extra.rirProva || null, controlloEseguito: f.extra.controlloEseguito, versione: f.extra.piano ? 2 : undefined, piano: f.extra.piano || undefined, settimane: 12, blocco: 4, scheme: { settimane: 12 }, split: { nome: 'prova', giorni: [] }, prefs: { luogo: p.luogo, fastidi: p.fastidi, attrezziPalestra: p.attrezziPalestra, graditi: [], odiati: [], priorita: p.priorita }, note: f.extra.note || [], metodo: null };
     const a = valuta(p, c, prog, null, f.extra.volSenzaPriorita || null);
     const trovati = new Set(a.trovati.map(t => t.crit.id));
     const manca = f.attese.filter(x => !trovati.has(x)), troppi = f.assenti.filter(x => trovati.has(x));
@@ -1499,6 +1619,9 @@ function stampaRiepilogo(ris, meta, file) {
   L.push('Matrice ' + meta.matrice + ': ' + ris.tot.profili + ' profili in ' + ris.tot.secondi.toFixed(1) + ' s | in errore: ' + ris.tot.errori + ' | con metodo famoso: ' + ris.tot.conMetodo);
   L.push('Programmi con fallimenti: ' + ris.tot.conFallimenti + ' (' + (ris.tot.conFallimenti / ris.tot.profili * 100).toFixed(1) + '%), gravi (sev >= 4): ' + ris.tot.conGravi + ' (' + (ris.tot.conGravi / ris.tot.profili * 100).toFixed(1) + '% matrice, ' + ((ris.tot.pesoGravi || 0) / ris.tot.pesoTotale * 100).toFixed(1) + '% pesata)');
   L.push('Criteri ' + VERSIONE_CRITERI + (SENZA_NOTE ? ' (senza l\'esenzione di VOL-01 per la nota della causa)' : '') + ': VOL-01 esentato dalla nota della causa in ' + (ris.tot.esentiNota || 0) + ' programmi (' + ((ris.tot.esentiNotaPeso || 0) / ris.tot.pesoTotale * 100).toFixed(1) + '% pesata); programmi col piano settimanale: ' + (ris.tot.conPiano || 0) + ' su ' + ris.tot.profili);
+  const vd = vol01Doppio(ris);
+  L.push('VOL-01 (programmi con almeno una classe, % pesata): con l\'esenzione della nota ' + vd.pesata.con.toFixed(1) + '% (' + vd.programmi.con + '), SENZA ' + vd.pesata.senza.toFixed(1) + '% (' + vd.programmi.senza + ')' + (SENZA_NOTE ? ' [esenzione spenta con --senza-note]' : '') +
+    ' | REC-03 esentato per i 6 giorni con la nota onesta: ' + (ris.tot.rec03Esentati || 0) + ' programmi (' + ((ris.tot.rec03EsentatiPeso || 0) / ris.tot.pesoTotale * 100).toFixed(1) + '% pesata)');
   L.push('Prime 12 classi per impatto (sev, programmi colpiti, % matrice / % pesata):');
   ris.elenco.slice(0, 12).forEach((cl, i) => L.push(('  ' + (i + 1)).slice(-3) + '. ' + (cl.codice + (cl.sub ? ':' + cl.sub : '')).padEnd(26) + ' sev ' + cl.sev + '  ' + String(cl.n).padStart(6) + ' (' + cl.pct.toFixed(1).padStart(5) + '% / ' + cl.pctPesata.toFixed(1).padStart(5) + '%)  ' + cl.nome.slice(0, 56)));
   const ec = Object.keys(ris.tot.erroriCriteri || {});
