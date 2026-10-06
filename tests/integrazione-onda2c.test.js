@@ -104,3 +104,59 @@ test('FLESSIONI_GINOCCHIO: la lista delle flessioni di B29 ha le macchine, il le
   app.ctx.__sed2 = app.g('(' + JSON.stringify([{ giorno: 'Giovedì', tipo: 'legs', esercizi: [E('Stacco Rumeno con Manubri', 2)] }, { giorno: 'Venerdì', tipo: 'punti', esercizi: [E('Leg Curl Seduto', 4)] }]) + ')');
   assert.strictEqual(app.g('recuperoOk(__sed2[0], __sed2, ' + JSON.stringify(app.dati(curl)) + ', 3, { obbligata: true })'), false);
 });
+
+/* ---- 2) il tetto del core (ABB-03, SEL-07; registro B6 addome) ---- */
+test('core: nessun esercizio di core oltre 3 serie (serieMaxCore), l addome dentro il massimo di B6 a settimana; i due casi letti (Pallof Press 5x12) e una griglia di 72 programmi in palestra', () => {
+  const casi = [
+    { goals: ['massa'], level: 'intermedio', days: 4, minutes: 60, luogo: 'palestra', sex: 'M', age: 25, priorita: ['braccia'], psico: { preferenza: 'impegnativi' }, seme: 'collaudo|massa|intermedio|4|60|palestra|-|M|giovane|1' },
+    { goals: ['massa'], level: 'intermedio', days: 4, minutes: 75, luogo: 'palestra', sex: 'F', age: 25, priorita: ['spalle', 'braccia'], seme: 'collaudo|massa|intermedio|4|75|palestra|-|F|giovane|2' }
+  ];
+  const core = p => [].concat.apply([], p.sedute.map(sd => sd.esercizi.filter(e => app.json('(findExercise(' + JSON.stringify(e.name) + ') || {}).group') === 'core')));
+  const maxCore = app.g("sogliaVolume('serieMaxCore')");
+  assert.strictEqual(maxCore, 3);
+  casi.forEach(c => { const p = costruisci(c); const cs = core(p); assert.ok(cs.length >= 1, 'c e un core'); cs.forEach(e => assert.ok(e.sets <= maxCore, JSON.stringify(c) + ': ' + e.name + ' ' + e.sets + ' serie')); });
+  let programmi = 0, conDueCore = 0, coreTot = 0;
+  ['principiante', 'intermedio', 'avanzato'].forEach(level => [3, 4, 5, 6].forEach(days => [45, 60, 75, 90].forEach(minutes => [['massa'], ['ricomposizione']].forEach(goals => {
+    const c = { goals, level, days, minutes, luogo: 'palestra', sex: 'M', age: 30, seme: 'onda2c-core|' + level + '|' + days + '|' + minutes + '|' + goals[0] };
+    const p = costruisci(c);
+    if (p.metodo) return;
+    programmi++;
+    const cs = core(p), vol = app.json('contaVolume(' + JSON.stringify(p.sedute) + ')'), b = app.json('(() => { const b = briefCoach(' + JSON.stringify(Object.assign({ usaProfilo: false, fastidi: [], priorita: [] }, c)) + ', {}); b.sicurezza.vincoli = vincoliSicurezza(b); risolviMetodo(b); b.lavoro.prefs = prefsDelBrief(b); return bersagliVolume(b); })()');
+    cs.forEach(e => { coreTot++; assert.ok(e.sets <= maxCore, JSON.stringify(c) + ': ' + e.name + ' ' + e.sets + ' serie'); });
+    assert.ok(vol.addome.frazionarie <= b.unita.addome.max + 1e-9, JSON.stringify(c) + ': addome ' + vol.addome.frazionarie + ' oltre il massimo ' + b.unita.addome.max);
+    if (cs.length >= 2) conDueCore++;
+  }))));
+  assert.ok(programmi >= 60 && coreTot >= programmi, 'il campione ha il core: ' + coreTot + ' esercizi su ' + programmi + ' programmi');
+  assert.ok(conDueCore >= 5, 'dove serve piu volume per l addome il solutore mette un secondo esercizio in un altra seduta (adattoAllaSeduta): ' + conDueCore);
+  assert.deepStrictEqual(app.errori, []);
+});
+
+/* ---- 3) spinte e tirate dentro B6 (ABB-04 e VOL-02) ---- */
+test('strBilancia: la serie in piu a una tirata solo se l unita resta dentro il massimo (puoSalire); altrimenti scende una spinta. puoSalireVolume dice no a una tirata con la schiena al tetto', () => {
+  const E = (n, sets) => ({ name: app.chiama('nomeInLibreria', n), sets, reps: 8, rest: 90 });
+  const costruisciSedute = () => app.g('(' + JSON.stringify([
+    { giorno: 'Lunedì', tipo: 'upper', esercizi: [E('Panca Piana Bilanciere', 3), E('Military Press', 3), E('Lat Machine', 2), E('Rematore con Petto Appoggiato', 2)] },
+    { giorno: 'Giovedì', tipo: 'upper', esercizi: [E('Panca Inclinata Manubri', 3), E('Shoulder Press Machine', 3), E('Lat Machine', 2), E('Pulley Basso', 2)] }
+  ]) + ')');
+  const sets = (s) => app.json('__s.map(sd => sd.esercizi.map(e => [senzaEmoji(e.name), e.sets]))');
+  /* spinte 12, tirate 8 (< 90%): senza vincoli una tirata sale */
+  app.ctx.__s = costruisciSedute(); app.ctx.__note = app.g('[]');
+  app.g("strBilancia({ sedute: __s, level: 'intermedio', over65: false, note: __note, metodoAttivo: null, prefs: { luogo: 'palestra', fastidi: [], priorita: [] } })");
+  const libero = sets();
+  assert.ok(libero.some(sd => sd.some(x => /Lat Machine|Rematore|Pulley/.test(x[0]) && x[1] > 2)), 'senza puoSalire una tirata sale: ' + JSON.stringify(libero));
+  /* con puoSalire che dice sempre no (la schiena e al tetto): le tirate non salgono e scende una spinta */
+  app.ctx.__s = costruisciSedute(); app.ctx.__note = app.g('[]');
+  app.g("strBilancia({ sedute: __s, level: 'intermedio', over65: false, note: __note, metodoAttivo: null, prefs: { luogo: 'palestra', fastidi: [], priorita: [] }, puoSalire: () => false })");
+  const vincolato = sets();
+  assert.ok(vincolato.every(sd => sd.every(x => !/Lat Machine|Rematore|Pulley/.test(x[0]) || x[1] === 2)), 'le tirate restano a 2: ' + JSON.stringify(vincolato));
+  const spinte = vincolato.reduce((t, sd) => t + sd.filter(x => /Panca|Military|Shoulder/.test(x[0])).reduce((a, x) => a + x[1], 0), 0);
+  assert.ok(spinte < 12 && 8 >= spinte * 0.9, 'le spinte sono scese fino all equilibrio: ' + spinte);
+  /* puoSalireVolume: un principiante di forza con la schiena gia al tetto di B6 */
+  app.ctx.__b = app.g('(() => { const b = briefCoach(' + JSON.stringify({ goals: ['forza'], level: 'principiante', days: 3, minutes: 60, luogo: 'palestra', sex: 'M', age: 30, usaProfilo: false, fastidi: [], priorita: [] }) + ', {}); b.sicurezza.vincoli = vincoliSicurezza(b); risolviMetodo(b); b.lavoro.prefs = prefsDelBrief(b); b.lavoro.volumeBersagli = bersagliVolume(b); return b; })()');
+  const bersagli = app.json('__b.lavoro.volumeBersagli');
+  assert.ok(bersagli.gruppiLimite.schiena.max >= bersagli.unita.dorsali.min + bersagli.unita.schiena_spessore.min, 'il tetto di gruppo della schiena non e sotto la somma dei minimi: ' + JSON.stringify(bersagli.gruppiLimite));
+  app.ctx.__s = app.g('(' + JSON.stringify([{ giorno: 'Lunedì', tipo: 'fullbody', esercizi: [E('Squat con Bilanciere', 3), E('Panca Piana Bilanciere', 3), E('Lat Machine', 3), E('Rematore con Petto Appoggiato', 3)] },
+    { giorno: 'Mercoledì', tipo: 'fullbody', esercizi: [E('Stacco Rumeno', 3), E('Military Press', 3), E('Rematore alla Macchina', 3), E('Pulley Basso', 3)] }]) + ')');
+  assert.strictEqual(app.g('puoSalireVolume(__b, __s, __s[0].esercizi[2])'), false, 'dorsali e spessore al tetto (12 serie di schiena con massimo ' + bersagli.gruppiLimite.schiena.max + '): la tirata non sale');
+  assert.strictEqual(app.g('puoSalireVolume(__b, __s, __s[0].esercizi[1])'), true, 'la panca (petto 6 di 8) puo salire');
+});

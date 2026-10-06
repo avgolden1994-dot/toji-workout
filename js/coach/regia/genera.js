@@ -211,7 +211,7 @@ function generaProgramma(d) {
   completaSettimana(brief, sedute);                                     /* 7 */
   assegnaVolume(brief, sedute);                                         /* 9: volume per muscolo e tetto per seduta */
   /* ABB-04 e ABB-08: tirate non meno delle spinte, il fondamentale non ha meno serie degli altri */
-  strBilancia({ sedute: sedute, level: brief.chi.livello, over65: brief.chi.over65, note: L.note, metodoAttivo: metodoAttivo, prefs: L.prefs });
+  strBilancia({ sedute: sedute, level: brief.chi.livello, over65: brief.chi.over65, note: L.note, metodoAttivo: metodoAttivo, prefs: L.prefs, puoSalire: (e) => puoSalireVolume(brief, sedute, e) });   /* INT-2b: la tirata sale solo dentro il massimo di B6 */
   noteVolume(brief);
   limitaVolume(brief, sedute);                                          /* 9: tetti dopo la struttura */
   adattaAlTempo(brief, sedute);                                         /* 10 */

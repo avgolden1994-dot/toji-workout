@@ -73,6 +73,7 @@ const SLOT_PER_SCHEMA = { spinta: ['spintaO', 'spintaV'], tirata: ['tirataO', 't
 function adattoAllaSeduta(x, tipo) {
   const g = GRUPPI_DELLA_SEDUTA[tipo];
   if (!g) return true;
+  if (x.group === 'core') return true;   /* INT-2b: il core sta a fine di qualunque seduta (ABB-03, strCopri): il solutore del volume puo metterne un secondo in un altra seduta quando il primo e al tetto di 3 serie */
   if (g.indexOf(x.group) === -1) return false;
   const sub = (dettaglioEsercizio(x.name) || {}).sub, n = senzaEmoji(x.name);
   const dietro = /face pull|reverse|alzate posteriori|y-raise/i.test(n);

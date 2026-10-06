@@ -200,9 +200,10 @@ function bersagliVolume(brief, opz) {
   const rapporto = Math.round(sogliaVolume('femoraliSuQuadricipiti') * unita.quadricipiti.target);
   const fem = unita.femorali;
   if (!fem.altro && rapporto > fem.min) { fem.min = Math.min(rapporto, fem.max); fem.minBanda = Math.max(fem.minBanda, fem.min); fem.target = Math.max(fem.target, fem.min); }
-  /* il tetto di gruppo della schiena: dorsali e spessore insieme non oltre la fascia IPE (le trazioni e i rematori sono la stessa schiena) */
+  /* il tetto di gruppo della schiena: dorsali e spessore insieme non oltre la fascia IPE (le trazioni e i rematori sono la stessa schiena). INT-2b: mai sotto la somma dei due minimi (per i
+     principianti di forza e di salute 6 + 4 > 8: il solutore penalizzava uno stato che le fasce stesse gli chiedevano; il collaudo VOL-02:schiena conta ancora la somma contro la fascia dei dorsali) */
   return { tipo: tipo, giorni: giorni, esigenza: esig, deficit: deficit, specializza: specializza, altriAMantenimento: altriAMantenimento, prioritarie: prioritarie, unita: unita,
-    gruppiLimite: { schiena: { unita: ['dorsali', 'schiena_spessore'], max: Math.max(unita.dorsali.max, unita.schiena_spessore.max) } } };
+    gruppiLimite: { schiena: { unita: ['dorsali', 'schiena_spessore'], max: Math.max(unita.dorsali.max, unita.schiena_spessore.max, unita.dorsali.min + unita.schiena_spessore.min) } } };
 }
 
 /* crediti di UNA serie, per unità: gli attributi sono l unica fonte (W1-T2); senza (un esercizio fuori libreria) si ricade su DETTAGLI */
@@ -263,7 +264,7 @@ function volumeMotore(brief, sedute, b, opz) {
   const GRUPPO_DI_PRIMA = { petto: 'petto', dorsali: 'schiena', quadricipiti: 'quadricipiti', femorali: 'femorali', grande_gluteo: 'glutei', bicipiti: 'bicipiti', tricipiti: 'tricipiti' };
   const freqG = freqU.map(i => GRUPPO_DI_PRIMA[U[i]]);
   const dirU = (frequenzaOk && b.tipo === 'ipertrofia' && chi.livello !== 'principiante') ? VOLUME_FREQUENZA_DIRETTE.map(u => iU[u]).filter(i => P[i].floorD >= 2) : [];
-  const schienaIdx = VOLUME_GRUPPI_RECUPERO.schiena.map(u => iU[u]);
+  const schienaIdx = VOLUME_GRUPPI_RECUPERO.schiena.map(u => iU[u]), iAddome = iU.addome;
   const limiteSchiena = b.gruppiLimite && b.gruppiLimite.schiena ? b.gruppiLimite.schiena.max : 99;
 
   /* ---- stato ---- */
@@ -298,8 +299,9 @@ function volumeMotore(brief, sedute, b, opz) {
     return (sec + (e.rest || 0)) / 60;
   };
   const capSerie = (e) => {
-    const comp = (findExercise(e.name) || {}).type === 'compound';
+    const m = findExercise(e.name) || {}, comp = m.type === 'compound';
     let c = comp ? serieMax.composto : serieMax.isolamento;
+    if (m.group === 'core') c = Math.min(c, sogliaVolume('serieMaxCore'));   /* INT-2b: il core non oltre 3 serie per esercizio (ABB-03, SEL-07); il resto in un altra seduta */
     if (prudente) c = Math.min(c, COACH_PARAMETRI.serieMaxPrudente);
     if (vincoli.serieMaxEsercizio) c = Math.min(c, vincoli.serieMaxEsercizio);
     if (typeof STR_FATICA !== 'undefined' && STR_FATICA.test(e.name)) c = Math.min(c, 3);        /* ABB-09 */
@@ -350,7 +352,13 @@ function volumeMotore(brief, sedute, b, opz) {
   };
   sedute.forEach((sd, s) => {
     const primo = sd.esercizi.find(e => (findExercise(e.name) || {}).type === 'compound' && !isTimeBased(e.name));
-    sd.esercizi.forEach(e => { const r = nuovoRec(s, e, e === primo); recs.push(r); const sets = e.sets; e.sets = 0; muovi(r, sets); });
+    sd.esercizi.forEach(e => {
+      const r = nuovoRec(s, e, e === primo); recs.push(r);
+      /* INT-2b: il core entra gia dentro il suo tetto per esercizio (3 serie: ABB-03, SEL-07), anche se la prescrizione gliene dava 4 (il solutore toglie solo dove l utilita sale) */
+      const sets = (findExercise(e.name) || {}).group === 'core' ? Math.min(e.sets, r.cap) : e.sets;
+      r.sets0 = sets; r.min = Math.min(sets, r.min);
+      e.sets = 0; muovi(r, sets);
+    });
   });
 
   /* ---- utilità ---- */
@@ -394,12 +402,13 @@ function volumeMotore(brief, sedute, b, opz) {
   const seduteChePesano = (i) => { const g = freqG[freqU.indexOf(i)]; return sedute.filter((sd, s) => Math.min(S[s][i], g ? (GL[s][g] || 0) : 99) >= serieMinSeduta - 1e-9).length; };
 
   /* ---- vincoli di una mossa (d serie in più o in meno su un esercizio) ---- */
-  const consente = (r, d, intero) => {
+  const consente = (r, d, intero, senzaEquilibrio) => {   /* senzaEquilibrio (INT-2b): l equilibrio tra spinte e tirate lo giudica chi compone una mossa doppia (miglioreToglimentoCoppia) sullo stato finale */
     const e = r.e;
     if (e.fisso) return false;
     if (d > 0) {
       if (e.sets + d > r.cap) return false;
       for (let k = 0; k < r.cr.length; k++) { const i = r.cr[k][0]; if (S[r.s][i] + r.cr[k][1] * d > P[i].capDuro + 1e-9) return false; }   /* SES-01, IPE-06 */
+      for (let k = 0; k < r.cr.length; k++) { const i = r.cr[k][0]; if (i === iAddome && W[i] + r.cr[k][1] * d > P[i].max + 1e-9) return false; }   /* INT-2b: l addome non supera il massimo di B6 a settimana (tetto duro, non solo la penalita) */
       if (r.sch > 0 && SCHIENA_S[r.s] + r.sch * d > Math.min(P[iU.dorsali].capDuro, P[iU.schiena_spessore].capDuro) + 1e-9) return false;
       for (let k = 0; k < r.gr.length; k++) if (!sommaG[r.gr[k][0]] && G[r.s][r.gr[k][0]] + r.gr[k][1] * d > tettoGruppo + 1e-9) return false;   /* SES-01 col conteggio di prima e degli attributi */
       for (let k = 0; k < r.gr.length; k++) {   /* REC-01: 48 ore (vicini: le sedute del giorno prima e del giorno dopo) */
@@ -408,7 +417,7 @@ function volumeMotore(brief, sedute, b, opz) {
         for (let j = 0; j < vic.length; j++) if (G[vic[j]][h] >= minRec) return false;
       }
     } else if (!intero && e.sets + d < r.min) return false;
-    if (r.push || r.pull) {   /* ABB-04: spinte e tirate non peggiorano uno squilibrio e non ne creano */
+    if ((r.push || r.pull) && !senzaEquilibrio) {   /* ABB-04: spinte e tirate non peggiorano uno squilibrio e non ne creano */
       const prima = squilibrio(), pu = PUSH + (r.push ? d : 0), pl = PULL + (r.pull ? d : 0);
       const dopoSq = (pu + pl >= minBilancio && pl < rapportoTirate * pu) ? rapportoTirate * pu - pl : 0;
       if (dopoSq > 1e-9 && dopoSq > prima + 1e-9) return false;
@@ -456,9 +465,9 @@ function volumeMotore(brief, sedute, b, opz) {
   const SCHEMI_SEDUTA = { fullbody: ['spinta', 'tirata', 'basso'], upper: ['spinta', 'tirata'], lower: ['squat', 'hinge'], legs: ['squat', 'hinge'], push: ['spinta'], pull: ['tirata'] };
   const classeSeduta = (cat, tipo) => cat === 'spintaO' || cat === 'spintaV' ? 'spinta' : cat === 'tirataO' || cat === 'tirataV' ? 'tirata' : ((cat === 'squat' || cat === 'hinge') && tipo === 'fullbody' ? 'basso' : cat);
   const femoraleSeduta = (e) => /leg curl|nordic|stacco|good morning|pull-through/i.test(senzaEmoji(e.name));   /* come SLOT_DEF.hinge e la flessione del ginocchio del collaudo */
-  const rimovibile = (r, senzaVolume) => {
+  const rimovibile = (r, senzaVolume, senzaEquilibrio) => {
     const sd = sedute[r.s];
-    if (r.e.fisso || r.fond || sd.esercizi.length <= 3 || !consente(r, -r.e.sets, true)) return false;
+    if (r.e.fisso || r.fond || sd.esercizi.length <= 3 || !consente(r, -r.e.sets, true, senzaEquilibrio)) return false;
     const att = typeof attributi === 'function' ? attributi(r.e.name) : null;
     if (att && att.soloAvvio) return false;   /* lo squat di avvio (Squat su Scatola, Sit-to-Stand) lo toglie la progressione, non il volume (M5) */
     const cat = categoria(r.e);
@@ -552,6 +561,23 @@ function volumeMotore(brief, sedute, b, opz) {
         if (du > PS.soglia && (!best || du > best.du)) best = { tipo: 'coppia', rs: [], intero: a, r2: c, du: du };
       });
       muovi(a, sets);
+    });
+    /* INT-2b (ABB-04 e VOL-02:schiena dei principianti): o un esercizio di TIRATA intero (il secondo della seduta: non l unico, SES-03) e una serie di spinta insieme: da sola la tirata non puo uscire
+       perche le spinte la pareggiano appena (il collaudo EQ-01 vuole le tirate almeno al 90% delle spinte) e le spinte non possono scendere da sole senza fare peggio. Prima, con 5-6 tirate a settimana
+       da 2 serie (la ricetta full body dei principianti) la schiena restava a 12 serie con massimo 10 */
+    const squilibrioPrima = squilibrio();
+    tirate.forEach(c => {
+      if (!c.sch || !rimovibile(c, false, true)) return;   /* l equilibrio si giudica sotto, sulla mossa intera */
+      const sets = c.e.sets;
+      muovi(c, -sets);
+      spinte.forEach(a => {
+        if (!tolgono(a) || !consente(a, -1, false, true)) return;
+        muovi(a, -1);
+        const du = utilita() - u0, sq = squilibrio();
+        muovi(a, 1);
+        if (sq <= squilibrioPrima + 1e-9 && du > PS.soglia && (!best || du > best.du)) best = { tipo: 'coppia', rs: [a], intero: c, r2: null, du: du };
+      });
+      muovi(c, sets);
     });
     return best;
   };
@@ -712,7 +738,7 @@ function volumeMotore(brief, sedute, b, opz) {
       return true;
     }
     if (az.tipo === 'coppia') {
-      az.rs.forEach(r => muovi(r, -1)); muovi(az.r2, -1);
+      az.rs.forEach(r => muovi(r, -1)); if (az.r2) muovi(az.r2, -1);
       if (az.intero) {
         const r = az.intero, sd = sedute[r.s];
         muovi(r, -r.e.sets);
@@ -721,7 +747,7 @@ function volumeMotore(brief, sedute, b, opz) {
         (opz.tolti || []).push(r.e.name);
         T[r.s] = durataSeduta(sd.esercizi);
       }
-      az.rs.concat([az.r2]).forEach(r => { T[r.s] = durataSeduta(sedute[r.s].esercizi); });
+      az.rs.concat(az.r2 ? [az.r2] : []).forEach(r => { T[r.s] = durataSeduta(sedute[r.s].esercizi); });
       return true;
     }
     if (az.tipo === 'scambio') {
@@ -824,6 +850,20 @@ function assegnaVolume(brief, sedute) {
   volumeMotore(brief, sedute, b, { aggiunti: aggiunti }).risolvi();
   aggiunti.filter(a => sedute.some(sd => sd.esercizi.some(e => e.name === a.nome))).forEach(a => note.push('Aggiunto: ' + senzaEmoji(a.nome) + ' — il muscolo restava sotto il volume minimo.'));   /* solo quelli rimasti nella scheda */
   return sedute;
+}
+
+/* INT-2b (ABB-04 e VOL-02): una serie in piu a una tirata (strBilancia) e ammessa solo se ogni unita che l esercizio allena (credito >= 0,5) resta dentro il suo massimo di B6 e la schiena (dorsali e
+   spessore insieme) dentro il tetto di gruppo: altrimenti l equilibrio si rifa togliendo una serie a una spinta. Prima strBilancia alzava le tirate dei principianti oltre la fascia (collaudo VOL-02:schiena:
+   i principianti di forza a corpo libero a 9 serie con massimo 8). Senza i bersagli (IPE-01 spenta, un metodo) ritorna sempre vero */
+function puoSalireVolume(brief, sedute, e) {
+  if (!volumeNuovoAttivo(brief)) return true;
+  const b = (brief.lavoro && brief.lavoro.volumeBersagli) || bersagliVolume(brief), cr = creditiUnita(e.name), vol = contaVolume(sedute);
+  const ok = Object.keys(cr).every(u => !(cr[u] >= 0.5) || !b.unita[u] || !vol[u] || vol[u].frazionarie + cr[u] <= b.unita[u].max + 1e-9);
+  if (!ok) return false;
+  const sch = Math.max(cr.dorsali || 0, cr.schiena_spessore || 0);
+  if (!(sch > 0) || !b.gruppiLimite || !b.gruppiLimite.schiena) return true;
+  const totale = sedute.reduce((t, sd) => t + sd.esercizi.reduce((a, x) => { const c = creditiUnita(x.name); return a + x.sets * Math.max(c.dorsali || 0, c.schiena_spessore || 0); }, 0), 0);
+  return totale + sch <= b.gruppiLimite.schiena.max + 1e-9;
 }
 
 /* le note del volume: le unità in priorità (specializzazione) e la frequenza scelta dall utente. Vanno dopo quelle di strBilancia (ABB-04) */

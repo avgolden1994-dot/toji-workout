@@ -92,6 +92,13 @@ const SOGLIE_VOLUME = {
     v: { composto: 5, isolamento: 6 },
     forza: 'Convenzione', fonte: 'Krieger 2010; Ralston 2017 (2-6 serie per esercizio: Solida/Moderata); stesso tetto del collaudo (SERIE_MAX_ESERCIZIO)', regole: ['IPE-01']
   },
+  /* ABB-03, SEL-07 (INT-2b, onda 2c): un esercizio di core non va oltre 3 serie (un esercizio di core a fine seduta, 2-3 serie; ricerca-biomeccanica §4 SEL-07 e D10: il core vuole poco volume,
+     2-6 serie a settimana, un movimento «anti» e uno di flessione). Il resto del volume dell'addome lo porta un secondo esercizio in un'altra seduta, non il quinto o sesto giro di Pallof Press
+     (misurato su 600 programmi in palestra: 77 esercizi di core a 4-6 serie). Il massimo a settimana e la fascia di B6 (fasceUnita.addome), tetto duro per il solutore */
+  serieMaxCore: {
+    v: 3,
+    forza: 'Convenzione', fonte: 'ABB-03 (un esercizio di core a fine seduta, 2-3 serie: strCopri, strCoreNuovo); ricerca-biomeccanica-esercizi §4 SEL-07 e D10 (core 2-6 serie a settimana, poco volume); registro B6 (addome 2-4 / 4-8 / 6-10 a settimana)', regole: ['IPE-01', 'IPE-06']
+  },
   /* collaudo EXN-02: al massimo 8 esercizi in una seduta, 6 per chi inizia */
   eserciziMaxSeduta: {
     v: { adulto: 8, principiante: 6 },

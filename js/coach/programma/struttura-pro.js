@@ -148,7 +148,7 @@ window.strCopri = function(c) {
 
 /* ABB-04: le tirate non meno del 90% delle spinte. Si chiama due volte: dopo il volume per muscolo (si puo alzare una tirata)
    e dopo il taglio per il tempo (`senzaSu`: il tempo e gia contato, niente serie in piu).
-   Ordine: +1 serie a una tirata (al massimo 4, 3 per principianti e over 65), -1 a una spinta (minimo 2) e solo alla fine
+   Ordine: +1 serie a una tirata (al massimo 4, 3 per principianti e over 65; INT-2b: solo se l unita resta dentro il massimo di B6, c.puoSalire), -1 a una spinta (minimo 2) e solo alla fine
    una spinta doppione (lo stesso schema due volte nella stessa seduta) diventa una tirata dello stesso tipo di carico. */
 window.strBilancia = function(c, senzaSu) {
   const sedute = c.sedute;
@@ -169,7 +169,8 @@ window.strBilancia = function(c, senzaSu) {
     .sort((a, b) => abbondante(b) - abbondante(a) || (schemaDi(b.e.name) === 'spintaV') - (schemaDi(a.e.name) === 'spintaV') || piuSpinte(b) - piuSpinte(a) || a.e.sets - b.e.sets)[0]; };
   let giri = 0, mosso = false, rimossa = false;
   while (sbilanciata() && giri++ < 12) {
-    const su = senzaSu ? null : tutti().map(x => x.e).filter(e => strEtirata(e) && !e.fisso && !isTimeBased(e.name) && e.sets < cap).sort((a, b) => a.sets - b.sets)[0];
+    /* INT-2b: la serie in piu non porta la tirata oltre il massimo della sua unita (c.puoSalire: puoSalireVolume di volume.js, B6); se nessuna tirata puo salire si scende con una spinta */
+    const su = senzaSu ? null : tutti().map(x => x.e).filter(e => strEtirata(e) && !e.fisso && !isTimeBased(e.name) && e.sets < cap && (!c.puoSalire || c.puoSalire(e))).sort((a, b) => a.sets - b.sets)[0];
     if (su) { su.sets++; mosso = true; continue; }
     /* si toglie una serie alla spinta con piu serie, ma non al fondamentale della seduta (ABB-08) */
     const pr = primi();

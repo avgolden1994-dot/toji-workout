@@ -4,7 +4,7 @@
 > Forze: **Solida** (meta-analisi o posizione ufficiale), **Moderata** (pochi studi, o risultati che cambiano con la popolazione), **Contrastata** (studi in disaccordo), **Convenzione** (pratica dei coach: il foglio «Perché?» mostra «Scelta prudente del coach (Convenzione): non è un risultato di studi»), **Decisione** (scelta di prodotto: «Decisione di prodotto»), **Provvisoria** (numero di partenza in attesa di verifica: «Numero di partenza, in verifica»). Etichette: `etichettaForza` in `js/coach/regia/perche.js` (registro C.4).
 > Le tabelle di prima (`COACH_PARAMETRI`, `PARAM_PARTENZA`, `PARAM_INTENSITA`, `STR_PESI`, `DOSE_SCARICO`, `RIR_TIPO`) non sono ancora qui: passano in un file soglie quando il task che possiede il loro file le tocca.
 
-Totale: 111 soglie in 6 tabelle (Solida 2, Moderata 7, Convenzione 95, Decisione 5, Provvisoria 2).
+Totale: 112 soglie in 6 tabelle (Solida 2, Moderata 7, Convenzione 96, Decisione 5, Provvisoria 2).
 
 ## `SOGLIE_PARTENZA` — `js/coach/carichi/soglie-partenza.js` (bilancia)
 
@@ -140,6 +140,7 @@ Totale: 111 soglie in 6 tabelle (Solida 2, Moderata 7, Convenzione 95, Decisione
 | `pavimentiDirette` | deltoide_laterale g4 [6, 8], g3 [4, 6], g2 [3, 3], forza [2, 3], generale [0, 2], deltoide_posteriore g4 [4, 6], g3 [3, 4], g2 [2, 2], forza [2, 2], generale [0, 2], bicipiti g4 [4, 6], g3 [4, 4], g2 [2, 2], forza [2, 2], generale [0, 2], tricipiti g4 [4, 6], g3 [4, 4], g2 [2, 2], forza [2, 2], generale [0, 2], polpacci g4 [8, 8], g3 [6, 6], g2 [3, 4], forza [3, 3], generale [2, 2], femorali g4 [4, 6], g3 [4, 4], g2 [2, 2], forza [2, 2], generale [2, 2], addome g4 [4, 6], g3 [4, 4], g2 [2, 2], forza [2, 2], generale [2, 2] | Convenzione | registro coach v2 B6 (pavimenti IPE-02 per giorni); ricerca-specializzazione §6.1; Maeo 2023 e Baz-Valle 2022 per tricipiti e bicipiti (Moderata) | IPE-02 |
 | `tettoSeduta` | morbido 8, duro 11, specializzazione 8, specializzazionePiccole 6 | Provvisoria | Remmert 2025 (preprint, meta-regressione sul volume per seduta); Henselmans (≤ 6 per i piccoli in specializzazione); registro coach v2 B7 e C.4 | IPE-06, EST-05 |
 | `serieMaxEsercizio` | composto 5, isolamento 6 | Convenzione | Krieger 2010; Ralston 2017 (2-6 serie per esercizio: Solida/Moderata); stesso tetto del collaudo (SERIE_MAX_ESERCIZIO) | IPE-01 |
+| `serieMaxCore` | 3 | Convenzione | ABB-03 (un esercizio di core a fine seduta, 2-3 serie: strCopri, strCoreNuovo); ricerca-biomeccanica-esercizi §4 SEL-07 e D10 (core 2-6 serie a settimana, poco volume); registro B6 (addome 2-4 / 4-8 / 6-10 a settimana) | IPE-01, IPE-06 |
 | `eserciziMaxSeduta` | adulto 8, principiante 6 | Convenzione | collaudo del generatore (ES_MAX_SEDUTA, ES_MAX_PRINCIPIANTE); piano E.3 W2-T1 | IPE-01 |
 | `seduteMinimeUnita` | 2 | Solida | ACSM 2026 (137 revisioni): ogni grande gruppo almeno 2 sedute a settimana; collaudo FRQ-01 | IPE-01 |
 | `serieMinSeduta` | 1.5 | Convenzione | collaudo FRQ-01 (una seduta conta da 1,5 serie frazionarie, cioè 3 serie sinergiche) | IPE-01 |
