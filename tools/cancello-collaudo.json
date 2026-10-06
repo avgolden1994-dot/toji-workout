@@ -9,7 +9,8 @@
   "Oltre alle soglie il cancello controlla la regressione: nessuna classe peggiora piu di `regressione.tolleranzaPunti` rispetto al «prima» (o rispetto a --contro); le classi di `regressione.sicurezza` non peggiorano affatto; i criteri riscritti dall'INT (`onde.<onda>.riscritti`) non si confrontano col «prima». Con --contro il confronto vale SEMPRE (INT-1): anche per le classi che hanno una soglia esplicita, per il totale gravi_pesata (una soglia allentata non nasconde una regressione) e per le verifiche del modello (un MOD «ok» non diventa altro).",
   "Le regressioni AMMESSE (`onde.<onda>.ammesse`) portano un responsabile (`risolve`: il task che le chiude), una SCADENZA (`scade`: l'onda entro cui devono sparire) e il motivo; il cancello fallisce se mancano, se la scadenza e l'onda che si valuta o una precedente, e non le ammette mai per la sicurezza (INT-2a, M2 della revisione dell'onda 1; una riga datata nel registro per ogni voce).",
   "Le istantanee del collaudo restano FUORI dal repo (skill collaudo-generatore-schede): il «prima» si rigenera lanciando il collaudo sul tag coach-v2-onda-0-prima in un worktree temporaneo.",
-  "D-P20 (INT-2b, 2026-10-06): il cancello ha due parti. (a) Il CANCELLO DI REGRESSIONE (matrice, errori, nessuna classe peggiore dell'onda precedente oltre la tolleranza, zero tolleranza per la sicurezza SAF-01..06, le verifiche del modello che erano ok, le ammesse con responsabile e scadenza) deve passare sempre. (b) Le SOGLIE ASSOLUTE dell'onda non raggiunte sono OBIETTIVI APERTI stampati in ogni corsa con il responsabile (`onde.<onda>.responsabili`, altrimenti `criteri.<COD>.task`) e fermano il cancello solo per i criteri che l'onda DICHIARA di soddisfare (`onde.<onda>.dichiara.criteri`, con il motivo). La versione snella dell'onda 2 (onda-2b: W2-T1..T4 piu onda 2c, senza W2-T5/T6/T7) usa questa separazione: le soglie di onda-2a e onda-2 presuppongono un'onda 2 completa. Le ammesse delle onde precedenti valgono finche non scadono."
+  "D-P20 (INT-2b, 2026-10-06): il cancello ha due parti. (a) Il CANCELLO DI REGRESSIONE (matrice, errori, nessuna classe peggiore dell'onda precedente oltre la tolleranza, zero tolleranza per la sicurezza SAF-01..06, le verifiche del modello che erano ok, le ammesse con responsabile e scadenza) deve passare sempre. (b) Le SOGLIE ASSOLUTE dell'onda non raggiunte sono OBIETTIVI APERTI stampati in ogni corsa con il responsabile (`onde.<onda>.responsabili`, altrimenti `criteri.<COD>.task`) e fermano il cancello solo per i criteri che l'onda DICHIARA di soddisfare (`onde.<onda>.dichiara.criteri`, con il motivo). La versione snella dell'onda 2 (onda-2b: W2-T1..T4 piu onda 2c, senza W2-T5/T6/T7) usa questa separazione: le soglie di onda-2a e onda-2 presuppongono un'onda 2 completa. Le ammesse delle onde precedenti valgono finche non scadono.",
+  "INT-2e (2026-10-06): i debiti delle onde passate non si perdono. Valutando un'onda, ogni `aperti` e ogni `ammesse` di un'onda PRIMA la cui scadenza e arrivata (scade <= onda valutata) deve essere riscritto da un'onda successiva con una nuova scadenza futura (`onde.<onda>.aperti` o `.ammesse`, stessa chiave; `oltre-v2` = fuori dalla v2: si vede in ogni corsa e non ferma), oppure chiuso (`chiuso: { motivo, data }`), oppure, per un'ammessa, la classe non e piu colpita: altrimenti il cancello FALLISCE. `oltre-v2` non e un'onda da valutare."
  ],
  "versione": 1,
  "riferimento": {
@@ -33,6 +34,95 @@
    "SAF-06"
   ]
  },
+ "cumulativo": {
+  "_leggimi": "INT-2g (revisione indipendente dell'onda 2f, scappatoia 2 del cancello). Tetto CUMULATIVO: una classe non puo salire di mezzo punto a onda per sempre (2,00 -> 4,45 in cinque onde passava sempre). `classi` = la PRIMA MISURA di ogni classe (percentuale pesata, matrice standard, criteri `criteri`) sull'albero di partenza della PR dell'onda 2e (`riferimento`: il tag coach-v2-onda-2d = origin/main), rigenerata con il collaudo di INT-2g; `tolleranzaPunti` = 1,0 (due tolleranze d'onda: DECISIONE di INT-2g, da confermare dal responsabile di prodotto, D-P22). Una classe che non e nella tabella parte da 0. Sopra il tetto (prima misura + tolleranza) il cancello fallisce, salvo `rialzi.<classe>`: { max, motivo, data, responsabile } come il `rialzo` di un'ammessa. Non vale per la sicurezza (zero per onda), per i criteri riscritti e per le classi con un tetto proprio (un'ammessa o un aperto con `max`). Il riferimento si cambia solo con un motivo scritto nel registro (E.1); `npm run cancello -- --elenco` lo mostra.",
+  "riferimento": "coach-v2-onda-2d (origin/main, 231a8f9)",
+  "criteri": "1.6",
+  "matrice": "standard",
+  "pesi": "popolazione",
+  "tolleranzaPunti": 1,
+  "classi": {
+   "DIR-01:avambracci": 3.28,
+   "DIR-01:bicipiti": 9.68,
+   "DIR-01:deltoidi_laterali": 7.72,
+   "DIR-01:deltoidi_posteriori": 9.87,
+   "DIR-01:polpacci": 5.91,
+   "DIR-01:tricipiti": 8.84,
+   "DUR-01": 0.07,
+   "DUR-02": 15.56,
+   "EQ-01": 7.5,
+   "EQ-02:orizzontale": 0.06,
+   "EQ-02:verticale": 0.54,
+   "EQ-03:flessione": 0.23,
+   "EQ-03:rapporto": 2.82,
+   "FRQ-01:bicipiti": 8.18,
+   "FRQ-01:femorali": 5.21,
+   "FRQ-01:glutei": 0.85,
+   "FRQ-01:petto": 0.92,
+   "FRQ-01:quadricipiti": 0.02,
+   "FRQ-01:spalle": 1.38,
+   "FRQ-01:tricipiti": 9.87,
+   "FRQ-02:bicipiti": 8.8,
+   "FRQ-02:deltoidi_laterali": 7.16,
+   "FRQ-02:deltoidi_posteriori": 9.59,
+   "FRQ-02:polpacci": 4.1,
+   "FRQ-02:tricipiti": 6.93,
+   "FRZ-01:senza-nota": 0.77,
+   "MIS-01:core": 0.01,
+   "MIS-01:deltoidi_laterali": 1.77,
+   "MIS-01:deltoidi_posteriori": 0.14,
+   "MIS-01:femorali": 0.02,
+   "MIS-01:polpacci": 0.04,
+   "ORD-01": 0.19,
+   "ORD-02": 0.09,
+   "ORD-03": 3.05,
+   "PAT-01:hinge": 0.06,
+   "PAT-01:tirataV": 0.03,
+   "PRI-01:braccia": 2.23,
+   "PRI-01:gambe": 2,
+   "PRI-01:glutei": 0.88,
+   "PRI-01:petto": 2.38,
+   "PRI-01:schiena": 1.27,
+   "PRI-01:spalle": 1.62,
+   "REC-01:femorali": 0.24,
+   "REC-01:glutei": 0.07,
+   "REC-01:petto": 0.02,
+   "REC-01:schiena": 1.43,
+   "REC-01:spalle": 1.3,
+   "RID-01:brachioradiale": 0,
+   "RID-01:grande_gluteo": 0.54,
+   "RID-02": 14.9,
+   "RX-01:generale/isolamento": 0.1,
+   "SAF-02:ginocchia": 15.18,
+   "SAF-02:schiena": 14.3,
+   "SAF-02:spalle": 9.27,
+   "SAF-05:principiante": 4.52,
+   "SAF-05:prudente": 3.92,
+   "SAF-06": 8.53,
+   "SES-03:fullbody/basso": 0.2,
+   "SES-03:legs/hinge": 3.72,
+   "SES-03:lower/hinge": 8.92,
+   "VOL-01:bicipiti": 0.49,
+   "VOL-01:deltoidi_laterali": 2.37,
+   "VOL-01:deltoidi_posteriori": 1.08,
+   "VOL-01:femorali": 5.31,
+   "VOL-01:glutei": 2.71,
+   "VOL-01:petto": 13.34,
+   "VOL-01:polpacci": 1.81,
+   "VOL-01:quadricipiti": 4.03,
+   "VOL-01:schiena": 3.95,
+   "VOL-01:tricipiti": 0.01,
+   "VOL-02:bicipiti": 0.29,
+   "VOL-02:deltoidi_laterali": 0,
+   "VOL-02:femorali": 5.74,
+   "VOL-02:glutei": 4.94,
+   "VOL-02:petto": 1.5,
+   "VOL-02:quadricipiti": 2.45,
+   "VOL-02:schiena": 10.29,
+   "VOL-02:tricipiti": 0.4
+  },
+  "rialzi": {}
+ },
  "ordineOnde": [
   "onda-0",
   "onda-1",
@@ -42,7 +132,8 @@
   "onda-3",
   "onda-4",
   "onda-5",
-  "finale"
+  "finale",
+  "oltre-v2"
  ],
  "onde": {
   "onda-0": {
@@ -81,20 +172,32 @@
      "max": 2.6,
      "risolve": "W2-T1",
      "scade": "onda-2a",
-     "motivo": "rumore del sorteggio, non una causa nei dati: +0,56 punti su una tolleranza di 0,5 (revisione Opus dell'onda 1, M2). Il motivo scritto prima (Floor Press e Panca con Pausa con credito 0,5 ai tricipiti) era sbagliato: non entrano in nessun programma (0 su 2.034), la Chest Press Inclinata alla Macchina in 30. Il nuovo sorteggio dei posti sposta qualche programma sopra il massimo; il volume per muscolo di W2-T1 (soglia 0 a onda-2a) lo chiude"
+     "motivo": "rumore del sorteggio, non una causa nei dati: +0,56 punti su una tolleranza di 0,5 (revisione Opus dell'onda 1, M2). Il motivo scritto prima (Floor Press e Panca con Pausa con credito 0,5 ai tricipiti) era sbagliato: non entrano in nessun programma (0 su 2.034), la Chest Press Inclinata alla Macchina in 30. Il nuovo sorteggio dei posti sposta qualche programma sopra il massimo; il volume per muscolo di W2-T1 (soglia 0 a onda-2a) lo chiude",
+     "chiuso": {
+      "data": "2026-10-06",
+      "motivo": "scaduta a onda-2a: la classe e giudicata dalla soglia assoluta 0 di VOL-02, un obiettivo aperto che il cancello stampa a ogni corsa (38 programmi, 0,48% a 2e; 0,40% a 2d); il motivo scritto in onda-1 (Floor Press e Panca con Pausa) era falso (registro E.1)"
+     }
     },
     "REC-01:spalle": {
      "max": 12.5,
      "tettoIniziale": 12.5,
      "risolve": "W2-T5",
      "scade": "onda-2",
-     "motivo": "rumore del sorteggio, non un difetto nuovo: la classe (spalle allenate in due giorni consecutivi, 11,44% a onda-1 e 13,4% di base) oscilla di circa mezzo punto con ogni modifica che sposta i candidati dei posti (11,75% dopo l'integrazione di W1-T6 e W2-T8, 12,19% dopo le correzioni M1 e M5 di INT-2a: i programmi colpiti sono 1336 a onda-1, 1342 e di nuovo 1336, ma cambia quali sono e quanto pesano nella popolazione assunta: 18 programmi nuovi per 0,64 punti, 24 tolti per 0,18, quasi tutti intermedi in palestra a 5-6 giorni). La causa strutturale (la divisione dei giorni e le 48 ore tra due sedute dello stesso muscolo) e di W2-T5 (soglia 0 a onda-2)"
+     "motivo": "rumore del sorteggio, non un difetto nuovo: la classe (spalle allenate in due giorni consecutivi, 11,44% a onda-1 e 13,4% di base) oscilla di circa mezzo punto con ogni modifica che sposta i candidati dei posti (11,75% dopo l'integrazione di W1-T6 e W2-T8, 12,19% dopo le correzioni M1 e M5 di INT-2a: i programmi colpiti sono 1336 a onda-1, 1342 e di nuovo 1336, ma cambia quali sono e quanto pesano nella popolazione assunta: 18 programmi nuovi per 0,64 punti, 24 tolti per 0,18, quasi tutti intermedi in palestra a 5-6 giorni). La causa strutturale (la divisione dei giorni e le 48 ore tra due sedute dello stesso muscolo) e di W2-T5 (soglia 0 a onda-2)",
+     "chiuso": {
+      "data": "2026-10-06",
+      "motivo": "la regressione di onda-1 (11,44% e 12,19% con i criteri 1.0-1.3) non c'e piu con i criteri 1.6: 1,30% a 2d e 0,67% a 2f in percentuale pesata, ma i programmi colpiti salgono da 188 (2d) a 260 (2f): 6 giorni a corpo libero, il Y-Raise nel giorno di tirata dopo quello di spinta (convenzione «spalle» per gruppo, revisione INT-2e). La chiusura riguarda il tetto di onda-1; il residuo e giudicato dalla soglia assoluta 0 di REC-01 da onda-2 (W2-T5)"
+     }
     },
     "FRQ-02:polpacci": {
      "max": 8.4,
      "risolve": "W2-T1",
      "scade": "onda-2a",
-     "motivo": "il Calf Raise con Manubrio sul Gradino (polpacci 1) entra in una sola seduta dove le serie dirette dei muscoli piccoli non sono ancora distribuite: lo fa W2-T1 (serie dirette per muscolo, soglia 5 a onda-2a); in parte e rumore del sorteggio (+0,55 su 0,5)"
+     "motivo": "il Calf Raise con Manubrio sul Gradino (polpacci 1) entra in una sola seduta dove le serie dirette dei muscoli piccoli non sono ancora distribuite: lo fa W2-T1 (serie dirette per muscolo, soglia 5 a onda-2a); in parte e rumore del sorteggio (+0,55 su 0,5)",
+     "chiuso": {
+      "data": "2026-10-06",
+      "motivo": "chiusa a INT-2b (registro E.1): 4,06% a 2e (standard, criteri 1.6) contro la soglia 5 di onda-2a"
+     }
     }
    },
    "manuale": [
@@ -124,27 +227,27 @@
    ],
    "ammesse": {
     "FRQ-01:bicipiti": {
-     "max": 8.2,
+     "max": 10.2,
      "tettoIniziale": 8,
      "risolve": "W2-T5",
      "scade": "onda-2",
-     "motivo": "891 -> 932 programmi (5,53% -> 7,93% pesata): il solutore del volume per unita (W2-T1) mette le serie dei bicipiti dove costano meno tempo e le concentra in una seduta; con 3 giorni i programmi colpiti passano da 239 a 397 (palestra 271 -> 340, manubri 356 -> 553; il corpo libero migliora, 264 -> 39). La frequenza di 2 sedute per ogni unita (FRQ-01 = 0 salvo frequenza 1 scelta, soglia di onda-2) e l'accettazione di W2-T5. Onda 2c (2026-10-06): 918 -> 923 programmi (7,97% -> 8,14%) con la sola correzione di sicurezza del cancello (Front Squat, Tirate al Mento e Ab Wheel vietati a chi inizia e ai prudenti: SAF-05 578 -> 571 programmi): nessuno dei tre da credito ai bicipiti, cambia il sorteggio dei posti di chi inizia (principianti 460 -> 464, palestra 334 -> 339, 3 giorni 386 -> 390, 30 minuti 510 -> 516); 930 programmi e 8,18% sull'istantanea finale (ABB-08 nella verifica del volume); tetto 8,0 -> 8,2, stesso responsabile e stessa scadenza",
+     "motivo": "891 -> 932 programmi (5,53% -> 7,93% pesata): il solutore del volume per unita (W2-T1) mette le serie dei bicipiti dove costano meno tempo e le concentra in una seduta; con 3 giorni i programmi colpiti passano da 239 a 397 (palestra 271 -> 340, manubri 356 -> 553; il corpo libero migliora, 264 -> 39). La frequenza di 2 sedute per ogni unita (FRQ-01 = 0 salvo frequenza 1 scelta, soglia di onda-2) e l'accettazione di W2-T5. Onda 2c (2026-10-06): 918 -> 923 programmi (7,97% -> 8,14%) con la sola correzione di sicurezza del cancello (Front Squat, Tirate al Mento e Ab Wheel vietati a chi inizia e ai prudenti: SAF-05 578 -> 571 programmi): nessuno dei tre da credito ai bicipiti, cambia il sorteggio dei posti di chi inizia (principianti 460 -> 464, palestra 334 -> 339, 3 giorni 386 -> 390, 30 minuti 510 -> 516); 930 programmi e 8,18% sull'istantanea finale (ABB-08 nella verifica del volume); tetto 8,0 -> 8,2, stesso responsabile e stessa scadenza INT-2e (2026-10-06, integrazione di W2-T5/T6/T7, criteri 1.6, istantanea standard commit b88223d): 1208 programmi e 10,11% pesata contro 930 e 8,18% di 2d; dei 406 programmi nuovi (128 usciti) il 73% (296) ha la spalla dolente: PCO-08 (W2-T6, la cuffia dei rotatori con la spalla dolente: SAF-06 8,53% -> 0,00%) aggiunge il Face Pull e per farlo stare nei minuti toglie una serie a due esercizi di tirata, e il secondo giorno del principiante a 2 giorni e 30 minuti (248 dei nuovi sono principianti, 191 a 30 minuti) scende sotto le 1,5 serie frazionarie di bicipiti per seduta; tetto 8,2 -> 10,2, stesso responsabile e stessa scadenza",
      "rialzo": {
-      "motivo": "FRQ-01:bicipiti 8,18% misurato (930 programmi) contro un tetto iniziale di 8,0: Rialzo del 2026-10-06 (revisione INT-2d, M4 e M7): la regressione e REALE e si legge nei programmi, non e rumore: il solutore del volume per unita concentra le serie dirette dei muscoli piccoli su un esercizio solo (Curl con Manubri e Pushdown fino a 6 serie in una seduta, Alzate Laterali 6 x 15, Extrarotazione al Cavo come riempitivo) invece di distribuirle su due sedute: e il difetto M7/M8 della revisione, aperto con responsabile W2-T1 e scadenza onda-2. Provato e scartato un tetto generale di 4 serie per ogni isolamento: FRQ-02:bicipiti resta a 10,42 contro 10,79 sulla rapida, quindi la causa non e il tetto per esercizio ma la scelta delle sedute (peso di frequenza nel solutore). Il tetto torna al valore misurato sul codice dell'onda 2c (tre decimali di rumore dichiarati: nessuno); i tetti precedenti (8,0 / 9,7 / 8,5) erano quelli misurati su onda-2a e restano in `tettoIniziale`.",
+      "motivo": "FRQ-01:bicipiti 8,18% misurato (930 programmi) contro un tetto iniziale di 8,0: Rialzo del 2026-10-06 (revisione INT-2d, M4 e M7): la regressione e REALE e si legge nei programmi, non e rumore: il solutore del volume per unita concentra le serie dirette dei muscoli piccoli su un esercizio solo (Curl con Manubri e Pushdown fino a 6 serie in una seduta, Alzate Laterali 6 x 15, Extrarotazione al Cavo come riempitivo) invece di distribuirle su due sedute: e il difetto M7/M8 della revisione, aperto con responsabile W2-T1 e scadenza onda-2. Provato e scartato un tetto generale di 4 serie per ogni isolamento: FRQ-02:bicipiti resta a 10,42 contro 10,79 sulla rapida, quindi la causa non e il tetto per esercizio ma la scelta delle sedute (peso di frequenza nel solutore). Il tetto torna al valore misurato sul codice dell'onda 2c (tre decimali di rumore dichiarati: nessuno); i tetti precedenti (8,0 / 9,7 / 8,5) erano quelli misurati su onda-2a e restano in `tettoIniziale`. INT-2e: secondo rialzo, causa MISURATA diversa dalla prima (PCO-08 della cuffia con la spalla dolente, 73% dei programmi nuovi): un compromesso voluto di sicurezza (SAF-06 -8,53 punti) che il collaudo vede come frequenza dei bicipiti; si chiude con la distribuzione delle serie dirette su due sedute (W2-T1 seguito) o con un posto per la cuffia che non tolga serie alle tirate.",
       "data": "2026-10-06",
       "responsabile": "W2-T1 (seguito: distribuire le serie dirette dei muscoli piccoli su due sedute, M7/M8 della revisione INT-2d)"
      }
     },
     "FRQ-01:tricipiti": {
-     "max": 9.9,
+     "max": 10.5,
      "tettoIniziale": 9.7,
      "risolve": "W2-T5",
      "scade": "onda-2",
-     "motivo": "1086 -> 1314 programmi (6,97% -> 9,64% pesata), stessa causa dei bicipiti: con 2 giorni da 491 a 718, in palestra da 268 a 455, a 45 minuti da 151 a 247; i tricipiti prendono credito dalle spinte solo dove gli attributi dicono che sono un vero motore e il solutore non li distribuisce tra le sedute. Onda 2c (2026-10-06): 10,03% (1318 programmi) con il tetto del core (3 serie per esercizio: il secondo core in un'altra seduta prende tempo) e con le tirate che non salgono oltre B6 (l'equilibrio si rifa togliendo una serie a una spinta: una spinta a 2 serie da 1 sola frazionaria ai tricipiti e la seduta non conta piu per la frequenza); tetto 9,7 -> 10,1, stesso responsabile e stessa scadenza",
+     "motivo": "1086 -> 1314 programmi (6,97% -> 9,64% pesata), stessa causa dei bicipiti: con 2 giorni da 491 a 718, in palestra da 268 a 455, a 45 minuti da 151 a 247; i tricipiti prendono credito dalle spinte solo dove gli attributi dicono che sono un vero motore e il solutore non li distribuisce tra le sedute. Onda 2c (2026-10-06): 10,03% (1318 programmi) con il tetto del core (3 serie per esercizio: il secondo core in un'altra seduta prende tempo) e con le tirate che non salgono oltre B6 (l'equilibrio si rifa togliendo una serie a una spinta: una spinta a 2 serie da 1 sola frazionaria ai tricipiti e la seduta non conta piu per la frequenza); tetto 9,7 -> 10,1, stesso responsabile e stessa scadenza INT-2e (2026-10-06, criteri 1.6, commit b88223d): 1172 programmi (meno dei 1314 di 2d: 283 nuovi e 425 usciti) ma 10,20% pesata contro 9,87%: i programmi nuovi hanno pesi di popolazione piu alti; la correzione di ABB-04 (schemaDi vede la Panca con Pausa, la Presa Stretta e il Landmine Press come spinte: EQ-01 7,50% -> 0,65%) toglie a piu programmi una serie a una spinta e la seduta non conta piu per la frequenza dei tricipiti; tetto 9,9 -> 10,2, stesso responsabile e stessa scadenza INT-2f (2026-10-06, criteri 1.6, standard, dopo le correzioni della revisione indipendente): 10,45% e 1138 programmi (1314 a 2d, 1172 a 2e): meno programmi, pesi di popolazione piu alti; tetto 10,2 -> 10,5, stesso responsabile e stessa scadenza.",
      "rialzo": {
-      "motivo": "FRQ-01:tricipiti 9,87% misurato contro un tetto iniziale di 9,7: Rialzo del 2026-10-06 (revisione INT-2d, M4 e M7): la regressione e REALE e si legge nei programmi, non e rumore: il solutore del volume per unita concentra le serie dirette dei muscoli piccoli su un esercizio solo (Curl con Manubri e Pushdown fino a 6 serie in una seduta, Alzate Laterali 6 x 15, Extrarotazione al Cavo come riempitivo) invece di distribuirle su due sedute: e il difetto M7/M8 della revisione, aperto con responsabile W2-T1 e scadenza onda-2. Provato e scartato un tetto generale di 4 serie per ogni isolamento: FRQ-02:bicipiti resta a 10,42 contro 10,79 sulla rapida, quindi la causa non e il tetto per esercizio ma la scelta delle sedute (peso di frequenza nel solutore). Il tetto torna al valore misurato sul codice dell'onda 2c (tre decimali di rumore dichiarati: nessuno); i tetti precedenti (8,0 / 9,7 / 8,5) erano quelli misurati su onda-2a e restano in `tettoIniziale`.",
+      "motivo": "FRQ-01:tricipiti 10,45% misurato a INT-2f contro un tetto di 10,2 (9,87% di 2d, +0,58): Rialzo del 2026-10-06: la regressione e REALE e ha la causa gia scritta (le serie dirette dei muscoli piccoli concentrate in una seduta, ABB-04 che toglie una serie a una spinta e la seduta non conta piu per la frequenza dei tricipiti: M7/M8, W2-T1); le correzioni della revisione indipendente (ripiego della cerniera senza carico, ponte dei femorali che aggiunge il leg curl) cambiano il sorteggio dei posti e lo spostano di 0,25 punti (1172 -> 1138 programmi). Si chiude con la distribuzione delle serie su due sedute (P3-G, scadenza onda-3)",
       "data": "2026-10-06",
-      "responsabile": "W2-T1 (seguito, M7/M8 della revisione INT-2d)"
+      "responsabile": "W2-T1"
      }
     },
     "FRQ-02:bicipiti": {
@@ -168,14 +271,92 @@
    "riscritti": [],
    "dichiara": {
     "motivo": "versione snella dell'onda 2: W2-T5 (split e attrezzi), W2-T6 (scelta per attributi) e W2-T7 (forza) non sono in questa onda; le soglie assolute di onda-2a e onda-2 le presuppongono. Qui l'onda dichiara i criteri misurati verdi sull'istantanea onda-2c (matrice standard, criteri 1.4): da compilare con la misura, non con la speranza",
-    "criteriIniziali": ["ERR-01", "SAN-01", "MIS-01", "SES-01", "EXN-01", "EXN-02", "ORD-04", "SS-01", "SS-02", "EQ-03", "SPL-02", "RX-02", "RX-03", "RX-04", "GOA-01", "TEC-01", "DEL-01", "RIR-01", "RIR-02", "RIR-03", "SAF-01", "SAF-02", "SAF-03", "SAF-04", "gravi_pesata", "MOD-01", "MOD-03", "MOD-06", "MOD-07", "MOD-08", "MOD-09", "MOD-10", "MOD-11"],
-    "criteri": ["ERR-01", "SAN-01", "MIS-01", "SES-01", "EXN-01", "EXN-02", "ORD-04", "SS-01", "SS-02", "EQ-03", "SPL-02", "RX-02", "RX-03", "RX-04", "GOA-01", "TEC-01", "DEL-01", "RIR-01", "RIR-02", "RIR-03", "SAF-01", "SAF-02", "SAF-03", "SAF-04", "gravi_pesata", "MOD-01", "MOD-03", "MOD-06", "MOD-08", "MOD-09", "MOD-10", "MOD-11", "NOT-01"],
-    "misura": "istantanea onda-2c del 2026-10-06 (commit b7a42ce, matrice standard, criteri 1.4): ogni criterio dichiarato ha tutte le sue soglie assolute verdi e nessuna regressione ammessa; FRQ-01 non e dichiarato (femorali verde, ma bicipiti e tricipiti sono regressioni ammesse); VOL-01, VOL-02, DIR-01, FRQ-02, PRI-01, DUR-01, DUR-02, SES-03, PAT-01, RX-01 restano obiettivi aperti con il responsabile",
+    "criteriIniziali": [
+     "ERR-01",
+     "SAN-01",
+     "MIS-01",
+     "SES-01",
+     "EXN-01",
+     "EXN-02",
+     "ORD-04",
+     "SS-01",
+     "SS-02",
+     "EQ-03",
+     "SPL-02",
+     "RX-02",
+     "RX-03",
+     "RX-04",
+     "GOA-01",
+     "TEC-01",
+     "DEL-01",
+     "RIR-01",
+     "RIR-02",
+     "RIR-03",
+     "SAF-01",
+     "SAF-02",
+     "SAF-03",
+     "SAF-04",
+     "gravi_pesata",
+     "MOD-01",
+     "MOD-03",
+     "MOD-06",
+     "MOD-07",
+     "MOD-08",
+     "MOD-09",
+     "MOD-10",
+     "MOD-11",
+     "FRZ-01",
+     "SPL-01",
+     "ATT-01"
+    ],
+    "criteri": [
+     "ERR-01",
+     "SAN-01",
+     "MIS-01",
+     "SES-01",
+     "EXN-01",
+     "EXN-02",
+     "ORD-04",
+     "SS-01",
+     "SS-02",
+     "EQ-03",
+     "SPL-02",
+     "RX-02",
+     "RX-03",
+     "RX-04",
+     "TEC-01",
+     "DEL-01",
+     "RIR-01",
+     "RIR-02",
+     "RIR-03",
+     "SAF-01",
+     "SAF-02",
+     "SAF-03",
+     "SAF-04",
+     "gravi_pesata",
+     "MOD-01",
+     "MOD-03",
+     "MOD-06",
+     "MOD-08",
+     "MOD-09",
+     "MOD-10",
+     "MOD-11",
+     "NOT-01",
+     "FRZ-01",
+     "SPL-01",
+     "ATT-01"
+    ],
+    "misura": "istantanea onda-2c del 2026-10-06 (commit b7a42ce, matrice standard, criteri 1.4): ogni criterio dichiarato ha tutte le sue soglie assolute verdi e nessuna regressione ammessa; FRQ-01 non e dichiarato (femorali verde, ma bicipiti e tricipiti sono regressioni ammesse); VOL-01, VOL-02, DIR-01, FRQ-02, PRI-01, DUR-01, DUR-02, SES-03, PAT-01, RX-01 restano obiettivi aperti con il responsabile INT-2e (2026-10-06): FRZ-01 e SPL-01 aggiunti ai criteri dichiarati con i criteri 1.6 (standard, commit b88223d: 0 programmi colpiti; il cancello di 2e si lancia contro 2d rigenerato con gli stessi criteri).",
     "rimossi": {
      "MOD-07": {
       "motivo": "tautologico (revisione INT-2d, M4d): il generatore e il collaudo leggono gli stessi crediti degli attributi da due percorsi, quindi «coincidono» non dice niente sulla qualita del volume (lo dicono VOL-01 e VOL-02); resta una verifica di coerenza richiesta «ok» dal modello, ma non e piu un criterio dichiarato verde",
       "data": "2026-10-06",
       "responsabile": "INT-2d"
+     },
+     "GOA-01": {
+      "motivo": "INT-2g (2026-10-06): «Hip Hinge a Corpo Libero» ora e sempre 2 serie da 12 ripetizioni (con la forza era 2x6 r120 e contava 2 serie «pesanti» di un esercizio senza carico: un errore di misura che nascondeva una serie mancante). Sulla standard GOA-01 passa da 0 a 4 programmi (0,01%), tutti con la forza per prima, livello intermedio, a casa con i manubri e la schiena dolente (nessuna cerniera con carico consentita): 8 serie a settimana sui multiarticolari con 6 ripetizioni o meno contro le 9 richieste. Il criterio esce dai dichiarati e resta un obiettivo aperto con responsabile e scadenza (`onde.onda-3.aperti`); non e una regressione oltre la tolleranza (+0,01 punti).",
+      "data": "2026-10-06",
+      "responsabile": "INT-2g"
      }
     }
    },
@@ -205,7 +386,7 @@
     "ORD-03": "W2-T6",
     "SAF-05": "W2-T6",
     "SAF-06": "W2-T6 (PCO-08)",
-    "GOA-01": "W2-T7",
+    "GOA-01": "P3-C (forza: giorno pesante e leggero; il ripiego della cerniera senza carico non e lavoro pesante)",
     "MOD-12": "W2-T5 e W2-T6",
     "MOD-04": "W2-T6"
    },
@@ -213,7 +394,11 @@
     "il cancello si lancia contro l'istantanea di onda-2a rigenerata con i criteri 1.5 (stesso collaudo, worktree del tag coach-v2-onda-2a): npm run cancello -- <json onda-2d> onda-2b --contro <json onda-2a v1.5>; --contro e obbligatorio dall'onda-2b",
     "la matrice del verdetto e la STANDARD (10.800 profili); la rapida con --qualsiasi-matrice da avvisi «indicativi» sulle soglie numeriche e non contraddice la standard (FRQ-02:bicipiti 8,80 standard, 10,79 rapida: un campione di un sesto si sposta di punti interi)",
     "gravi_pesata si riporta a tre livelli di criteri (1.0, 1.3, 1.4) con e senza DEL-01, piu i 1.5: a 1.0 e 1.3 il salto e DEL-01 (piano da 12 settimane dei principianti, D-P15) e anche senza DEL-01 il generatore e un poco peggiore (1.0 12,08 -> 12,74; 1.3 2,31 -> 2,77 sulla rapida): il miglioramento si vede solo con i criteri 1.4",
-    "VOL-01 si riporta SEMPRE con e senza l'esenzione della nota (`riepilogo.vol01` del JSON del collaudo): con l'esenzione stretta dei criteri 1.5 (tempo verificato, attrezzi) e senza"
+    "VOL-01 si riporta SEMPRE con e senza l'esenzione della nota (`riepilogo.vol01` del JSON del collaudo): con l'esenzione stretta dei criteri 1.5 (tempo verificato, attrezzi) e senza",
+    "INT-2e: il cancello di 2e si lancia contro 2d RIGENERATO con i criteri 1.6 (worktree del tag coach-v2-onda-2d con il collaudo 1.6 copiato dentro): npm run cancello -- <json 2e> onda-2b --contro <json 2d 1.6>; con la forza matrice `--matrice forza` (FRZ-01: nessuna classe) si guarda a parte, non da verdetto al cancello (matrice diversa) ma tests/collaudo-forza.test.js ne lancia un sesto in npm test",
+    "INT-2e, gravi_pesata (rapida, 1.774 profili, 2d -> 2e): criteri 1.0 38,69 -> 38,46 (senza DEL-01 12,74 -> 11,32), 1.3 31,96 -> 31,70 (senza DEL-01 2,77 -> 1,32), 1.4 1,84 -> 1,37, 1.5 1,84 -> 1,37, 1.6 2,57 -> 1,37; standard 1.6 2,39 -> 1,48; matrice forza 1.6 55,05 -> 2,16. I collaudi 1.0-1.5 non passano `forzaTipo`: la modalita Forza si vede solo con i criteri 1.6",
+    "INT-2f (revisione indipendente dell'onda 2e, 2026-10-06, criteri 1.6 con FRZ-01 ristretto e ATT-01): gravi_pesata standard 2d 2,52 -> 2f 2,22 (1.6 con e senza DEL-01: lo stesso numero); rapida (1.774 profili, un sesto, PESI ALTI SU POCHI PROFILI: indicativa) 1.0 38,69 -> 38,46 (senza DEL-01 12,74 -> 13,17), 1.3 31,96 -> 31,72 (2,77 -> 3,21), 1.4 e 1.5 1,84 -> 3,33, 1.6 2,71 -> 3,33 (FRQ-01:glutei 0,87% -> 2,12% con 28 programmi contro 46); matrice forza (1.440, con i punti deboli) 62,04 -> 2,40; matrice attrezzi (612) 19,31 -> 8,45 con ATT-01 da 166 programmi (144 a casa, 22 in palestra) a 0",
+    "INT-2f: il cancello di 2f si lancia contro 2d RIGENERATO con il collaudo finale (FRZ-01 ristretto, ATT-01): npm run cancello -- <json 2f standard> onda-2e --contro <json 2d standard>"
    ],
    "ammesse": {
     "VOL-01:deltoidi_laterali": {
@@ -231,18 +416,143 @@
      "motivo": "1,08% (169 programmi; 0,20% a onda-2a): visibile solo con i criteri 1.5 (INT-2d, M4): con i criteri 1.4 la nota «struttura» (prima «tetto»: «i limiti di serie e di esercizi per seduta non lasciano altro posto») esentava l'unita da VOL-01; ora la nota non nomina un fatto verificabile e l'unita conta. E una regressione reale di W2-T1 contro onda-2a (il solutore non trova posto per le serie dirette dei muscoli piccoli con sedute da 3-5 esercizi e tempo non esaurito: la stessa causa M7/M8 di FRQ-01/02), ammessa con tetto = misura dell'istantanea 2026-10-06 e scadenza onda-2"
     },
     "VOL-01:polpacci": {
-     "max": 1.9,
+     "max": 2.0,
      "tettoIniziale": 1.9,
      "risolve": "W2-T1",
      "scade": "onda-2",
-     "motivo": "1,81% (188 programmi, 161 con 3 giorni; 0,45% a onda-2a): visibile solo con i criteri 1.5 (INT-2d, M4): con i criteri 1.4 la nota «struttura» (prima «tetto»: «i limiti di serie e di esercizi per seduta non lasciano altro posto») esentava l'unita da VOL-01; ora la nota non nomina un fatto verificabile e l'unita conta. E una regressione reale di W2-T1 contro onda-2a (il solutore non trova posto per le serie dirette dei muscoli piccoli con sedute da 3-5 esercizi e tempo non esaurito: la stessa causa M7/M8 di FRQ-01/02), ammessa con tetto = misura dell'istantanea 2026-10-06 e scadenza onda-2"
+     "motivo": "1,81% (188 programmi, 161 con 3 giorni; 0,45% a onda-2a): visibile solo con i criteri 1.5 (INT-2d, M4): con i criteri 1.4 la nota «struttura» (prima «tetto»: «i limiti di serie e di esercizi per seduta non lasciano altro posto») esentava l'unita da VOL-01; ora la nota non nomina un fatto verificabile e l'unita conta. E una regressione reale di W2-T1 contro onda-2a (il solutore non trova posto per le serie dirette dei muscoli piccoli con sedute da 3-5 esercizi e tempo non esaurito: la stessa causa M7/M8 di FRQ-01/02), ammessa con tetto = misura dell'istantanea 2026-10-06 e scadenza onda-2 INT-2f (2026-10-06): 1,91% e 189 programmi a 2f (1,81% e 188 a 2d): sopra il tetto di 1,9 di 0,01, dentro la tolleranza contro 2d; tetto 1,9 -> 2,0, stesso responsabile e stessa scadenza.",
+     "rialzo": {
+      "motivo": "VOL-01:polpacci 1,91% misurato a INT-2f contro un tetto iniziale di 1,9 (misura di 2e + 0): Rialzo del 2026-10-06: +0,01 (189 programmi contro 183 a 2e): rumore del sorteggio, la causa e quella dei muscoli piccoli (le serie dirette in una seduta sola, M7/M8)",
+      "data": "2026-10-06",
+      "responsabile": "W2-T1"
+     }
+    },
+    "FRQ-02:deltoidi_posteriori": {
+     "max": 11.7,
+     "tettoIniziale": 10.1,
+     "risolve": "W2-T1",
+     "scade": "onda-2",
+     "motivo": "INT-2e (2026-10-06, criteri 1.6, standard, commit b88223d): 972 programmi e 11,69% pesata contro 582 e 9,59% di 2d (+2,10). Conversione, non peggioramento netto: dei 463 programmi nuovi 419 (90%; 396 a corpo libero) in 2d avevano DIR-01 sui deltoidi posteriori (zero serie dirette: nessun esercizio per il gesto senza carico ne elastici); «Y-Raise a Corpo Libero» (W2-T6) li porta a 3 serie dirette, ma in una seduta sola. DIR-01:deltoidi_posteriori scende da 9,87% a 5,92%: la somma delle due classi passa da 19,46 a 17,61. Si chiude distribuendo le serie dirette su due sedute (W2-T1 seguito, lo stesso difetto M7/M8 degli altri muscoli piccoli)",
+     "rialzo": {
+      "motivo": "FRQ-02:deltoidi_posteriori 11,69% misurato contro un tetto iniziale di 10,1 (9,59 di 2d + 0,5 di tolleranza): Rialzo del 2026-10-06 (INT-2e): la regressione e REALE ma e la meta di una conversione misurata sugli stessi programmi (419 su 463 erano DIR-01 in 2d e DIR-01 scende di 3,95 punti); la distribuzione su due sedute e un obiettivo aperto con responsabile W2-T1 e scadenza onda-2",
+      "data": "2026-10-06",
+      "responsabile": "W2-T1"
+     }
+    },
+    "VOL-02:glutei": {
+     "max": 5.9,
+     "tettoIniziale": 5.4,
+     "risolve": "W2-T6",
+     "scade": "onda-2",
+     "motivo": "INT-2e (2026-10-06, criteri 1.6, standard, commit b88223d): 592 programmi e 5,82% pesata contro 667 e 4,94% di 2d (+0,88: meno programmi, ma con pesi di popolazione piu alti: 147 nuovi e 222 usciti, in gran parte chi inizia a casa con 4-6 giorni). Causa: SES-03 (cerniera dell'anca in ogni seduta di gambe e full body, SES-03:lower/hinge 8,92% -> 0,83%): il quarto full body del principiante non e piu accanto al lower (giorni di W2-T5, PRG-02) e prende la cerniera, «Hip Hinge a Corpo Libero» (W2-T6) a 3 serie, e i glutei salgono a 9-10 serie contro un massimo B6 di 8. VOL-02:schiena e petto non peggiorano oltre la tolleranza. Provato e scartato (misurato sulla matrice standard): il fondamentale della seduta con minimo di 3 serie solo se il carico e pesante (volume.js, `nuovoRec`) porta VOL-02:glutei a 2,84% e femorali a 4,60%, ma FRQ-01:tricipiti a 11,79%, FRQ-01:glutei a 0,84% e DUR-02 +1,7 punti: lo scambio e di W2-T1 seguito",
+     "rialzo": {
+      "motivo": "VOL-02:glutei 5,82% misurato contro un tetto iniziale di 5,4 (4,94 di 2d + 0,5): Rialzo del 2026-10-06 (INT-2e): causa misurata (la cerniera dell'anca che SES-03 chiede entra anche nel quarto full body, che T5 non mette piu accanto al lower); il volume del gluteo di chi inizia e il seguito di W2-T6 (tetto settimanale delle cerniere per chi inizia) con scadenza onda-2",
+      "data": "2026-10-06",
+      "responsabile": "W2-T6"
+     }
+    },
+    "PRI-01:braccia": {
+     "max": 2.8,
+     "tettoIniziale": 2.73,
+     "risolve": "W2-T1",
+     "scade": "onda-2",
+     "motivo": "INT-2f (2026-10-06, criteri 1.6, standard): 2,74% pesata e 400 programmi contro 2,23% e 391 di 2d (+0,51 su una tolleranza di 0,5: 2,35% e 394 a 2e). Rumore del sorteggio e dei pesi: 63 programmi nuovi e 54 usciti, il numero dei programmi sale del 2%; la causa non e una regola (le correzioni della revisione cambiano la scelta dei posti: ripiego della cerniera, ponte dei femorali) e la priorita dichiarata alle braccia da le sue serie in piu come prima. Ammessa con tetto = misura e scadenza onda-2: si riscrive in onda-3.aperti",
+     "rialzo": {
+      "motivo": "PRI-01:braccia 2,74% misurato contro un tetto iniziale di 2,73 (2,23% di 2d + 0,5): Rialzo del 2026-10-06 (INT-2f): +0,01 sopra la tolleranza, sorteggio e pesi di popolazione (63 nuovi, 54 usciti, 391 -> 400 programmi); responsabile W2-T1, scadenza onda-2",
+      "data": "2026-10-06",
+      "responsabile": "W2-T1"
+     }
     }
    },
    "aperti": {
     "EQ-03:flessione": {
      "responsabile": "W2-T6",
      "scade": "onda-2",
-     "motivo": "M6 della revisione INT-2d: con 2 giorni a 30 minuti in palestra 29 programmi su 45 della griglia non hanno una flessione del ginocchio (la scala del tempo toglie il Leg Curl prima del secondo multiarticolare di gambe di schema diverso, es. Pendulum Squat dopo la Trap Bar); il criterio 1.5 guarda tutte le frequenze (prima solo da 3 giorni). Correzione: in `scalaDelTempo` togliere o ridurre il secondo multiarticolare di gambe anche di schema diverso prima dell'unica flessione"
+     "motivo": "M6 della revisione INT-2d: con 2 giorni a 30 minuti in palestra 29 programmi su 45 della griglia non hanno una flessione del ginocchio (la scala del tempo toglie il Leg Curl prima del secondo multiarticolare di gambe di schema diverso, es. Pendulum Squat dopo la Trap Bar); il criterio 1.5 guarda tutte le frequenze (prima solo da 3 giorni). Correzione: in `scalaDelTempo` togliere o ridurre il secondo multiarticolare di gambe anche di schema diverso prima dell'unica flessione INT-2e: W2-T6 prova prima la scala di sempre e il ripiego senza carico solo nelle sedute di gambe: il residuo e di 15 programmi su 144 della griglia (era 29 su 45)."
+    },
+    "EQ-01 powerlifting a 3 giorni": {
+     "responsabile": "W3-T6 (FRZ-06..10: la panca tre volte e una tirata per seduta)",
+     "scade": "onda-3",
+     "motivo": "matrice «forza» (1.440 profili con il powerlifting scelto, criteri 1.6, commit b88223d): EQ-01 116 programmi (10,84% pesata) contro 52 (3,08%) della forza generale di 2d e 245 (20,3%) prima della correzione di ABB-04 di INT-2e; restano i tre giorni (91 su 116) con la panca tre volte e una tirata per seduta che col tempo scende a 2 serie; la spinta verticale non si toglie (PAT-01)"
+    },
+    "CAS-01b: il manubrio piu pesante nella progressione": {
+     "responsabile": "W3-T1 (Bilancia v2: progressione dei carichi)",
+     "scade": "onda-3",
+     "motivo": "INT-2e: `manubriKg` limita il carico di PARTENZA con i manubri (stima, libreria, sostituzioni: `tettoManubri` in partenza.js); la progressione delle sedute dopo la prima (`caricoProssimo`) non lo conosce e puo proporre un manubrio piu pesante di quello dichiarato"
+    },
+    "Opzione dei 20 minuti": {
+     "responsabile": "W2-T2 seguito (pause minime)",
+     "scade": "onda-2",
+     "motivo": "non si offre: a 20 minuti il generatore sfora il tempo dichiarato (DUR-01 36% dei programmi contro 0,5% a 30 minuti: tre fondamentali col bilanciere a 120 secondi di pausa in 4 esercizi); la dichiarazione del testo di CAS-10 e onesta (W2-T5)"
+    },
+    "OBI-12, PCO-09, EST-05 e lo spareggio per aderenza": {
+     "responsabile": "W2-T5 seguito",
+     "scade": "onda-2",
+     "motivo": "non fatti da W2-T5 snella (nessuna regola bloccata del registro C.2 implementata): la domanda sull'esperienza di OBI-12, il periodo di PCO-09, il giorno di priorita di EST-05 e lo spareggio per aderenza della divisione"
+    },
+    "PRN-15 (IMC)": {
+     "responsabile": "W2-T6 seguito",
+     "scade": "onda-2",
+     "motivo": "il brief non ha peso e altezza (sono in `corpo` solo se detti); serve un campo del brief e la regola del sovrappeso senza deficit automatico"
+    },
+    "SEL-04, SEL-07, SEL-08, SEL-13, SEL-15, SEL-16": {
+     "responsabile": "W2-T6 seguito",
+     "scade": "onda-2",
+     "motivo": "non fatti da W2-T6 snella (SEL-06, SEL-03, PCO-08, ABB-02/SES-03, ORD-03, PAT-01 e RID-02 in parte si): la scelta per attributi completa"
+    },
+    "IPE-09, RIC-03 e EST-04": {
+     "responsabile": "W2-T6 seguito",
+     "scade": "onda-2",
+     "motivo": "non fatti da W2-T6 snella: il profilo allungato per l'ipertrofia (IPE-09, RIC-03 Convenzione) e le coppie di EST-04"
+    },
+    "PRG-22 (enfasi dei glutei da obiettivo)": {
+     "responsabile": "W2-T6 seguito",
+     "scade": "onda-2",
+     "motivo": "non fatto da W2-T6 snella"
+    },
+    "MOD-04 e la derivazione dagli attributi di SLOT_DEF, SCHEMI_MOV, ISOLAMENTI, IN_ALLUNGAMENTO, SCHIENA_PESANTE": {
+     "responsabile": "W2-T6 seguito",
+     "scade": "onda-2",
+     "motivo": "le tabelle di conoscenza restano regex sul nome e `attrezzoDi` legge il nome: restano 7 differenze tra la regex e i dati su spinte e tirate (elencate in tests/forza-equilibrio.test.js: Dip su Panca, Landmine Press, Dip alla Macchina, Floor Press, Seal Row, Lat Pulldown con Elastico; due varianti della panca le ha chiuse INT-2e)"
+    },
+    "Over 65: esercizi da favorire (ETA-65)": {
+     "responsabile": "W4-T2",
+     "scade": "onda-4",
+     "motivo": "T6 toglie agli over 65 l'abilita 3 ma non favorisce i movimenti piu sicuri (Affondi Bulgari e instabili restano possibili); SAF-05:prudente 17 programmi (0,09%: Military Press e Stacco con Trap Bar a un prudente, abilita 2 nei dati)"
+    },
+    "Pavimenti, fondamentale e tempo a 45 minuti con 3 giorni": {
+     "responsabile": "W2-T2 seguito",
+     "scade": "onda-2",
+     "motivo": "il pavimento di serie dirette, il minimo di 3 serie del fondamentale (volume.js, nuovoRec) e il tempo si contendono le serie a 45 minuti e 3 giorni: provato e scartato in INT-2e il minimo di 3 solo per i fondamentali pesanti (VOL-02 glutei 6,37 -> 2,84 e femorali 6,28 -> 4,60, ma FRQ-01 tricipiti 9,17 -> 11,79, DUR-02 +1,7, FRQ-01 glutei 0,29 -> 0,84): lo scambio va deciso con W2-T1"
+    },
+    "FRZ-06..10 e powerlifting adattato": {
+     "responsabile": "W3-T6 (carichi) e W4-T2 (adattato)",
+     "scade": "onda-3",
+     "motivo": "percentuali del massimale, tetti di RPE, AMRAP di appoggio, massimale di lavoro (FRZ-06..10): oggi l'AMRAP e il back-off di MAV-06 possono capitare su una alzata non pesante; il powerlifting adattato a minorenni, over 65 e PAR-Q (oggi la forza generale con la nota di FRZ-02) e di W4-T2"
+    },
+    "Lacune della libreria: Rack Pull e box squat": {
+     "responsabile": "W3-T6 (libreria della forza)",
+     "scade": "onda-3",
+     "motivo": "mancano il Rack Pull e il box squat tra le varianti dello stacco e dello squat di FRZ-03; oggi lo stacco in deficit e lo squat con pausa/front squat"
+    },
+    "tipoCarico di Panca Presa Stretta": {
+     "responsabile": "W2-T6 seguito",
+     "scade": "onda-2",
+     "motivo": "la Panca Presa Stretta e un esercizio per i tricipiti con il bilanciere: il tipo di carico (pesante o no) non e nei dati degli attributi",
+     "chiuso": {
+      "data": "2026-10-06",
+      "motivo": "chiuso a INT-2f: «Panca Presa Stretta» e un fondamentale col bilanciere (classe A negli attributi) e BIL_PESANTI lo riconosce (tipoCarico «pesante», non «macchina»); prova in tests/forza-ordine-alzata.test.js"
+     }
+    },
+    "VOL-02:petto e le braccia nel powerlifting": {
+     "responsabile": "W3-T6 (FRZ-06..10)",
+     "scade": "onda-3",
+     "motivo": "matrice «forza» (commit b88223d): VOL-02:petto 85 programmi (10,60% pesata contro 2,20% della forza generale di 2d: la panca tre volte a settimana porta il petto sopra il massimo B6 del livello), DIR-01:bicipiti 9,50% -> 16,10% e FRQ-01:bicipiti 9,62% -> 13,78%: le sedute pesanti non hanno posto per le braccia"
+    },
+    "FRQ-01 e FRQ-02 dei muscoli piccoli: le serie dirette su due sedute": {
+     "responsabile": "W2-T1 seguito",
+     "scade": "onda-2",
+     "motivo": "vedi le ammesse FRQ-01:bicipiti, FRQ-01:tricipiti, FRQ-02:deltoidi_posteriori e VOL-02:glutei: il difetto M7/M8 della revisione INT-2d, ora anche con la cuffia e con le serie dirette del gesto senza carico"
     }
    }
   },
@@ -270,7 +580,188 @@
     "collaudo non peggiore di INT-2 su nessun criterio: npm run cancello -- <json-onda-3> onda-3 --contro <json-onda-2>",
     "atleta virtuale rifatto con la bilancia v2 e lo scarico di W3-T5 (W3-T6 per la modalita Forza); 0 carichi fuori griglia; golden v1 con sole differenze elencate",
     "regole bloccate ancora spente (cancello E.0 punto 0)"
-   ]
+   ],
+   "aperti": {
+    "FRQ-01:bicipiti": {
+     "responsabile": "P3-G (muscoli piccoli distribuiti: le serie dirette su due sedute e il tetto di serie per isolamento)",
+     "scade": "onda-3",
+     "motivo": "INT-2f (2026-10-06): ammessa con scadenza onda-2 ancora colpita: 9,41% a 2f (1150 programmi) contro 8,18% a 2d (930) e 10,11% a 2e (1208); tetto ammesso 10,2 (origine: onde.onda-2a.ammesse). Il piano snello delle onde 3-5 (bozza del 2026-10-06, da confermare dal responsabile di prodotto) l'assegna al pacchetto P3-G; se P3-G non la chiude, a onda-3 questo debito fa fallire il cancello e va chiuso o riscritto con un nuovo motivo datato."
+    },
+    "FRQ-01:tricipiti": {
+     "responsabile": "P3-G (muscoli piccoli distribuiti: le serie dirette su due sedute e il tetto di serie per isolamento)",
+     "scade": "onda-3",
+     "motivo": "INT-2f (2026-10-06): ammessa con scadenza onda-2 ancora colpita: 10,45% a 2f (1138 programmi) contro 9,87% a 2d (1314) e 10,20% a 2e; tetto ammesso rialzato a 10,5 con `rialzo` (origine: onde.onda-2a.ammesse). Il piano snello delle onde 3-5 (bozza del 2026-10-06, da confermare dal responsabile di prodotto) l'assegna al pacchetto P3-G; se P3-G non la chiude, a onda-3 questo debito fa fallire il cancello e va chiuso o riscritto con un nuovo motivo datato."
+    },
+    "FRQ-02:bicipiti": {
+     "responsabile": "P3-G (muscoli piccoli distribuiti: le serie dirette su due sedute e il tetto di serie per isolamento)",
+     "scade": "onda-3",
+     "motivo": "INT-2f (2026-10-06): ammessa con scadenza onda-2 ancora colpita: 8,49% a 2f (426 programmi) contro 8,80% a 2d (440): sotto il tetto di 8,8 (origine: onde.onda-2a.ammesse). Il piano snello delle onde 3-5 (bozza del 2026-10-06, da confermare dal responsabile di prodotto) l'assegna al pacchetto P3-G; se P3-G non la chiude, a onda-3 questo debito fa fallire il cancello e va chiuso o riscritto con un nuovo motivo datato."
+    },
+    "FRQ-02:deltoidi_posteriori": {
+     "responsabile": "P3-G (muscoli piccoli distribuiti: le serie dirette su due sedute e il tetto di serie per isolamento)",
+     "scade": "onda-3",
+     "motivo": "INT-2f (2026-10-06): ammessa con scadenza onda-2 ancora colpita: 11,42% a 2f (994 programmi) contro 9,59% a 2d (582) e 11,69% a 2e; tetto ammesso 11,7; conversione di DIR-01:deltoidi_posteriori (9,87% -> 5,71%), origine: onde.onda-2b.ammesse. Il piano snello delle onde 3-5 (bozza del 2026-10-06, da confermare dal responsabile di prodotto) l'assegna al pacchetto P3-G; se P3-G non la chiude, a onda-3 questo debito fa fallire il cancello e va chiuso o riscritto con un nuovo motivo datato."
+    },
+    "VOL-01:deltoidi_laterali": {
+     "responsabile": "P3-G (muscoli piccoli distribuiti: le serie dirette su due sedute e il tetto di serie per isolamento)",
+     "scade": "onda-3",
+     "motivo": "INT-2f (2026-10-06): ammessa con scadenza onda-2 ancora colpita: 2,09% a 2f (257 programmi) contro 2,37% a 2d (276); tetto ammesso 2,4 (origine: onde.onda-2b.ammesse). Il piano snello delle onde 3-5 (bozza del 2026-10-06, da confermare dal responsabile di prodotto) l'assegna al pacchetto P3-G; se P3-G non la chiude, a onda-3 questo debito fa fallire il cancello e va chiuso o riscritto con un nuovo motivo datato."
+    },
+    "VOL-01:deltoidi_posteriori": {
+     "responsabile": "P3-G (muscoli piccoli distribuiti: le serie dirette su due sedute e il tetto di serie per isolamento)",
+     "scade": "onda-3",
+     "motivo": "INT-2f (2026-10-06): ammessa con scadenza onda-2 ancora colpita: 1,09% a 2f (192 programmi) contro 1,08% a 2d (169); tetto ammesso 1,1 (origine: onde.onda-2b.ammesse). Il piano snello delle onde 3-5 (bozza del 2026-10-06, da confermare dal responsabile di prodotto) l'assegna al pacchetto P3-G; se P3-G non la chiude, a onda-3 questo debito fa fallire il cancello e va chiuso o riscritto con un nuovo motivo datato."
+    },
+    "VOL-01:polpacci": {
+     "responsabile": "P3-G (muscoli piccoli distribuiti: le serie dirette su due sedute e il tetto di serie per isolamento)",
+     "scade": "onda-3",
+     "motivo": "INT-2f (2026-10-06): ammessa con scadenza onda-2 ancora colpita: 1,91% a 2f (189 programmi) contro 1,81% a 2d (188); tetto ammesso 1,9: sopra il tetto di 0,01, dentro la tolleranza contro 2d (origine: onde.onda-2b.ammesse). Il piano snello delle onde 3-5 (bozza del 2026-10-06, da confermare dal responsabile di prodotto) l'assegna al pacchetto P3-G; se P3-G non la chiude, a onda-3 questo debito fa fallire il cancello e va chiuso o riscritto con un nuovo motivo datato."
+    },
+    "VOL-02:glutei": {
+     "responsabile": "P3-G (muscoli piccoli distribuiti: le serie dirette su due sedute e il tetto di serie per isolamento)",
+     "scade": "onda-3",
+     "motivo": "INT-2f (2026-10-06): ammessa con scadenza onda-2 ancora colpita: 5,19% a 2f (542 programmi) contro 4,94% a 2d (667) e 5,82% a 2e; tetto ammesso 5,9 (origine: onde.onda-2b.ammesse): la cerniera dell'anca di SES-03 entra nel quarto full body del principiante. Il minimo di 3 serie del fondamentale solo se pesante (provato a INT-2e) la porta a 2,84% ma peggiora FRQ-01:tricipiti (11,79%), FRQ-01:glutei (0,84%) e DUR-02 (+1,7 punti): lo scambio e di P3-G. Il piano snello delle onde 3-5 (bozza del 2026-10-06, da confermare dal responsabile di prodotto) l'assegna al pacchetto P3-G; se P3-G non la chiude, a onda-3 questo debito fa fallire il cancello e va chiuso o riscritto con un nuovo motivo datato."
+    },
+    "EQ-03:flessione": {
+     "responsabile": "P3-G (muscoli piccoli distribuiti: le serie dirette su due sedute e il tetto di serie per isolamento)",
+     "scade": "onda-3",
+     "motivo": "INT-2e (2026-10-06): scadenza onda-2 arrivata, ancora aperto: 0,09% a 2f (13 programmi; 26 a 2d, 19 a 2e); a 2 giorni e 30 minuti in palestra restano 15 programmi su 144 della griglia (M6, origine: onde.onda-2b.aperti). Il piano snello delle onde 3-5 (bozza del 2026-10-06, da confermare dal responsabile di prodotto) l'assegna al pacchetto P3-G; se P3-G non la chiude, a onda-3 questo debito fa fallire il cancello e va chiuso o riscritto con un nuovo motivo datato."
+    },
+    "Pavimenti, fondamentale e tempo a 45 minuti con 3 giorni": {
+     "responsabile": "P3-G (muscoli piccoli distribuiti: le serie dirette su due sedute e il tetto di serie per isolamento)",
+     "scade": "onda-3",
+     "motivo": "INT-2e (2026-10-06): scadenza onda-2 arrivata, ancora aperto: il pavimento di serie dirette, il minimo di 3 serie del fondamentale (`nuovoRec`) e il tempo si contendono le serie con 3 giorni a 45 minuti; l'esperimento a 3 serie solo se pesante (provato a INT-2e e scartato) sposta il costo su FRQ-01:tricipiti, FRQ-01:glutei e DUR-02 (origine: onde.onda-2b.aperti). Il piano snello delle onde 3-5 (bozza del 2026-10-06, da confermare dal responsabile di prodotto) l'assegna al pacchetto P3-G; se P3-G non la chiude, a onda-3 questo debito fa fallire il cancello e va chiuso o riscritto con un nuovo motivo datato."
+    },
+    "FRQ-01 e FRQ-02 dei muscoli piccoli: le serie dirette su due sedute": {
+     "responsabile": "P3-G (muscoli piccoli distribuiti: le serie dirette su due sedute e il tetto di serie per isolamento)",
+     "scade": "onda-3",
+     "motivo": "INT-2e (2026-10-06): scadenza onda-2 arrivata, ancora aperto: e la causa comune delle ammesse FRQ-01:bicipiti, FRQ-01:tricipiti, FRQ-02:bicipiti, FRQ-02:deltoidi_posteriori e VOL-01 sui muscoli piccoli (origine: onde.onda-2b.aperti). Il piano snello delle onde 3-5 (bozza del 2026-10-06, da confermare dal responsabile di prodotto) l'assegna al pacchetto P3-G; se P3-G non la chiude, a onda-3 questo debito fa fallire il cancello e va chiuso o riscritto con un nuovo motivo datato."
+    },
+    "Opzione dei 20 minuti": {
+     "responsabile": "W2-T2 seguito (rinviato oltre la v2)",
+     "scade": "oltre-v2",
+     "motivo": "INT-2e (2026-10-06): scadenza di onda-2b arrivata, non chiuso (origine: onde.onda-2b.aperti, dove stanno il motivo e i numeri). Rinviato oltre la v2 il 2026-10-06 (INT-2e): nessun pacchetto delle onde 3-5 del piano snello (bozza, da confermare dal responsabile di prodotto) lo prende; si vede in ogni corsa del cancello e non lo ferma. Il piano snello la mette tra le cose «da non fare»."
+    },
+    "OBI-12, PCO-09, EST-05 e lo spareggio per aderenza": {
+     "responsabile": "W2-T5 seguito (rinviato oltre la v2)",
+     "scade": "oltre-v2",
+     "motivo": "INT-2e (2026-10-06): scadenza di onda-2b arrivata, non chiuso (origine: onde.onda-2b.aperti, dove stanno il motivo e i numeri). Rinviato oltre la v2 il 2026-10-06 (INT-2e): nessun pacchetto delle onde 3-5 del piano snello (bozza, da confermare dal responsabile di prodotto) lo prende; si vede in ogni corsa del cancello e non lo ferma."
+    },
+    "PRN-15 (IMC)": {
+     "responsabile": "W2-T6 seguito (rinviato oltre la v2)",
+     "scade": "oltre-v2",
+     "motivo": "INT-2e (2026-10-06): scadenza di onda-2b arrivata, non chiuso (origine: onde.onda-2b.aperti, dove stanno il motivo e i numeri). Rinviato oltre la v2 il 2026-10-06 (INT-2e): nessun pacchetto delle onde 3-5 del piano snello (bozza, da confermare dal responsabile di prodotto) lo prende; si vede in ogni corsa del cancello e non lo ferma."
+    },
+    "SEL-04, SEL-07, SEL-08, SEL-13, SEL-15, SEL-16": {
+     "responsabile": "W2-T6 seguito (rinviato oltre la v2)",
+     "scade": "oltre-v2",
+     "motivo": "INT-2e (2026-10-06): scadenza di onda-2b arrivata, non chiuso (origine: onde.onda-2b.aperti, dove stanno il motivo e i numeri). Rinviato oltre la v2 il 2026-10-06 (INT-2e): nessun pacchetto delle onde 3-5 del piano snello (bozza, da confermare dal responsabile di prodotto) lo prende; si vede in ogni corsa del cancello e non lo ferma."
+    },
+    "IPE-09, RIC-03 e EST-04": {
+     "responsabile": "W2-T6 seguito (rinviato oltre la v2)",
+     "scade": "oltre-v2",
+     "motivo": "INT-2e (2026-10-06): scadenza di onda-2b arrivata, non chiuso (origine: onde.onda-2b.aperti, dove stanno il motivo e i numeri). Rinviato oltre la v2 il 2026-10-06 (INT-2e): nessun pacchetto delle onde 3-5 del piano snello (bozza, da confermare dal responsabile di prodotto) lo prende; si vede in ogni corsa del cancello e non lo ferma."
+    },
+    "PRG-22 (enfasi dei glutei da obiettivo)": {
+     "responsabile": "W2-T6 seguito (rinviato oltre la v2)",
+     "scade": "oltre-v2",
+     "motivo": "INT-2e (2026-10-06): scadenza di onda-2b arrivata, non chiuso (origine: onde.onda-2b.aperti, dove stanno il motivo e i numeri). Rinviato oltre la v2 il 2026-10-06 (INT-2e): nessun pacchetto delle onde 3-5 del piano snello (bozza, da confermare dal responsabile di prodotto) lo prende; si vede in ogni corsa del cancello e non lo ferma."
+    },
+    "MOD-04 e la derivazione dagli attributi di SLOT_DEF, SCHEMI_MOV, ISOLAMENTI, IN_ALLUNGAMENTO, SCHIENA_PESANTE": {
+     "responsabile": "W2-T6 seguito (rinviato oltre la v2)",
+     "scade": "oltre-v2",
+     "motivo": "INT-2e (2026-10-06): scadenza di onda-2b arrivata, non chiuso (origine: onde.onda-2b.aperti, dove stanno il motivo e i numeri). Rinviato oltre la v2 il 2026-10-06 (INT-2e): nessun pacchetto delle onde 3-5 del piano snello (bozza, da confermare dal responsabile di prodotto) lo prende; si vede in ogni corsa del cancello e non lo ferma. INT-2f: con il kettlebell dichiarato lo Swing non e una cerniera che un posto dell'hinge sappia scegliere (SLOT_DEF.hinge e una regex sul nome): a corpo libero il ripiego senza carico resta."
+    },
+    "tipoCarico di Panca Presa Stretta": {
+     "responsabile": "W2-T6 seguito (rinviato oltre la v2)",
+     "scade": "oltre-v2",
+     "motivo": "INT-2e (2026-10-06): scadenza di onda-2b arrivata, non chiuso (origine: onde.onda-2b.aperti, dove stanno il motivo e i numeri). Rinviato oltre la v2 il 2026-10-06 (INT-2e): nessun pacchetto delle onde 3-5 del piano snello (bozza, da confermare dal responsabile di prodotto) lo prende; si vede in ogni corsa del cancello e non lo ferma.",
+     "chiuso": {
+      "data": "2026-10-06",
+      "motivo": "chiuso a INT-2f: «Panca Presa Stretta» e un fondamentale col bilanciere (classe A negli attributi) e BIL_PESANTI lo riconosce (tipoCarico «pesante», non «macchina»); prova in tests/forza-ordine-alzata.test.js"
+     }
+    },
+    "FRZ-06..10 e powerlifting adattato": {
+     "responsabile": "W3-T6 (carichi) e W4-T2 (adattato), rinviato oltre la v2",
+     "scade": "oltre-v2",
+     "motivo": "INT-2e (2026-10-06): scadenza di onda-2b arrivata, non chiuso (origine: onde.onda-2b.aperti, dove stanno il motivo e i numeri). Rinviato oltre la v2 il 2026-10-06 (INT-2e): nessun pacchetto delle onde 3-5 del piano snello (bozza, da confermare dal responsabile di prodotto) lo prende; si vede in ogni corsa del cancello e non lo ferma. Le percentuali del massimale (FRZ-06..10) sono tra le cose «da non fare» del piano snello."
+    },
+    "Lacune della libreria: Rack Pull e box squat": {
+     "responsabile": "W3-T6 (libreria della forza), rinviato oltre la v2",
+     "scade": "oltre-v2",
+     "motivo": "INT-2e (2026-10-06): scadenza di onda-2b arrivata, non chiuso (origine: onde.onda-2b.aperti, dove stanno il motivo e i numeri). Rinviato oltre la v2 il 2026-10-06 (INT-2e): nessun pacchetto delle onde 3-5 del piano snello (bozza, da confermare dal responsabile di prodotto) lo prende; si vede in ogni corsa del cancello e non lo ferma."
+    },
+    "EQ-01 powerlifting a 3 giorni": {
+     "responsabile": "P3-C (forza: giorno leggero e leggero, EQ-01 nel powerlifting)",
+     "scade": "onda-4",
+     "motivo": "INT-2e (2026-10-06): scadenza onda-3 arrivata. Il piano snello delle onde 3-5 (bozza, da confermare) mette P3-C dopo P3-A, P3-B e P3-G, nell'integrazione di onda-4: nuova scadenza onda-4. Misura a 2e: EQ-01 116 programmi su 1.440 (10,84% contro 3,08% della forza generale di 2d), la panca tre volte a settimana con una tirata per seduta (origine: onde.onda-2b.aperti)."
+    },
+    "VOL-02:petto e le braccia nel powerlifting": {
+     "responsabile": "P3-C (forza: giorno leggero e leggero, EQ-01 nel powerlifting)",
+     "scade": "onda-4",
+     "motivo": "INT-2e (2026-10-06): scadenza onda-3 arrivata; stessa nuova scadenza di EQ-01 powerlifting a 3 giorni (P3-C, onda-4): VOL-02:petto 10,60% pesata contro 2,20% della forza generale di 2d, DIR-01:bicipiti 16,10% (origine: onde.onda-2b.aperti)."
+    },
+    "CAS-01b: il manubrio piu pesante nella progressione": {
+     "responsabile": "P3-A (Bilancia essenziale: CAS-01b, ALG-02)",
+     "scade": "onda-3",
+     "motivo": "INT-2e (2026-10-06): resta la scadenza onda-3 (e il pacchetto P3-A del piano snello, bozza da confermare): `manubriKg` limita oggi solo il carico di PARTENZA; nella progressione `arrotonda` usa 0,5 kg per qualsiasi attrezzo. Se P3-A non lo chiude, a onda-3 fa fallire il cancello (origine: onde.onda-2b.aperti)."
+    },
+    "PRI-01:braccia": {
+     "responsabile": "P3-G (muscoli piccoli distribuiti: le serie dirette su due sedute e il tetto di serie per isolamento)",
+     "scade": "onda-3",
+     "motivo": "INT-2f (2026-10-06): ammessa nuova di onda-2b con scadenza onda-2: 2,74% a 2f (400 programmi) contro 2,23% a 2d (391); tetto 2,8 con `rialzo`; sorteggio e pesi (63 nuovi, 54 usciti). Il piano snello delle onde 3-5 (bozza del 2026-10-06, da confermare dal responsabile di prodotto) l'assegna al pacchetto P3-G; se P3-G non la chiude, a onda-3 questo debito fa fallire il cancello e va chiuso o riscritto con un nuovo motivo datato."
+    },
+    "Pullover con Manubrio e Rematore con Manubrio: `serve` vuoto che di solito chiede una panca": {
+     "responsabile": "dati degli attributi (W2-T6 seguito; nessun pacchetto del piano snello lo possiede: da assegnare a INT-3a)",
+     "scade": "onda-3",
+     "motivo": "revisione indipendente dell'onda 2e (2026-10-06): «Pullover con Manubrio» e «Rematore con Manubrio» hanno `serve: []` negli attributi ma di solito si fanno appoggiati a una panca: chi ha dichiarato «niente panca» li riceve (tre volte a settimana nel programma d'esempio della revisione: casa con i manubri, `attrezziCasa = []`). Il collaudo ATT-01 non lo vede perche il dato non chiede la panca. Si chiude correggendo il dato (e una prova sui 10 esercizi che chiedono la panca) o scrivendo che si fanno senza."
+    },
+    "Stacco in Deficit come variante «leggera» il giorno dello squat pesante": {
+     "responsabile": "P3-C (forza: giorno leggero e leggero)",
+     "scade": "onda-4",
+     "motivo": "revisione indipendente dell'onda 2e (2026-10-06), sospetto da preparatore non misurato: lo stacco in deficit e piu duro dello stacco da gara (maggiore escursione), e `SPEC_FORZA.varianti.standard.stacco` lo mette come esposizione «leggera» (anche il giorno dello squat pesante). Si chiude con una misura (fatica stimata della variante contro la gara, classe e `fatica` negli attributi) o spostando il deficit fuori dal giorno dello squat pesante."
+    },
+    "Accessorio della panca con i manubri (punti deboli del powerlifting)": {
+     "responsabile": "P3-C (forza: giorno leggero e leggero)",
+     "scade": "onda-4",
+     "motivo": "revisione indipendente dell'onda 2e (2026-10-06): l'accessorio del punto debole della panca («panca a meta», «panca in chiusura») e solo ai cavi (Pushdown, Estensione sopra la testa ai cavi): con una palestra bilanciere+manubri+sbarra non entra mai, a qualunque durata (48 programmi per ogni durata nella matrice «forza»). Il testo di «Dove ti blocchi?» ora lo dice; si chiude aggiungendo alternative con i manubri a `SPEC_FORZA.accessori`."
+    },
+    "Note quasi uguali sul mantenimento a 2 giorni e 30 minuti": {
+     "responsabile": "W2-T2 seguito (rinviato oltre la v2)",
+     "scade": "oltre-v2",
+     "motivo": "revisione indipendente dell'onda 2e (2026-10-06): a 2 giorni e 30 minuti il programma ha tre note quasi uguali sul «mantenimento» (poco tempo, volume sotto fascia, mantenimento): leggibili ma ripetitive. Rinviato oltre la v2 il 2026-10-06 (INT-2f): non e un errore, e rumore di lettura; si vede in ogni corsa del cancello e non lo ferma."
+    },
+    "GOA-01": {
+     "responsabile": "P3-C (forza: giorno pesante e leggero; il ripiego della cerniera senza carico non e lavoro pesante)",
+     "scade": "onda-4",
+     "motivo": "INT-2g (2026-10-06): 4 programmi su 10.800 (0,01%) con la forza per prima, livello intermedio, casa con i manubri e la schiena dolente hanno 8 serie a 6 ripetizioni o meno contro le 9 del criterio (ad esempio forza|intermedio|6|60|manubri|schiena|F|giovane: panca inclinata 3x6, rematore 2x6, goblet squat 3x6): fino a 2f «Hip Hinge a Corpo Libero» faceva 2x6 con la forza e contava 2 serie pesanti per un esercizio senza carico (la revisione indipendente dell'onda 2f lo ha chiesto sempre da 12). Il piano snello delle onde 3-5 (bozza, da confermare) mette la forza in P3-C: una serie di lavoro pesante in piu (o un altro multiarticolare con carico) in quelle sedute, o una soglia diversa per chi non puo caricare la schiena."
+    },
+    "Il ponte dei femorali a 2 giorni e 30 minuti prende il posto del secondo squat": {
+     "responsabile": "P3-G (muscoli piccoli distribuiti: le serie dirette su due sedute e il tetto di serie per isolamento)",
+     "scade": "onda-3",
+     "motivo": "revisione indipendente dell'onda 2f (2026-10-06), non corretto in INT-2g: e il compromesso M6/EQ-03 (il ponte dei femorali). A 2 giorni e 30 minuti il leg curl o il Nordic Curl del ponte prendono il posto del secondo squat: FRQ-01:quadricipiti (severita 4) passa da 2 programmi a 69 su 10.800 (0,02% → 0,19%; 66 a 2f, 30 a 2e), FRQ-01:glutei da 49 (2e) a 186 e poi 182 (2d 260). Esempio: massa|intermedio|2|30|manubri|schiena|F|giovane, lunedi solo tre esercizi (Goblet Squat, Panca, Rematore), giovedi nessuno squat ma Nordic Curl 2x6. Non si corregge ora: togliere il ponte rimette FRQ-01:femorali a 5,21% (ora 1,55%), tenerlo toglie lo squat; serve distribuire i muscoli piccoli e il tempo su due sedute (stesso pacchetto di M6 e dei pavimenti a 45 minuti)."
+    },
+    "Avanzato con la schiena dolente: Pull-Through tre volte a settimana e Leg Curl 6×10 due volte": {
+     "responsabile": "dati degli attributi e selezione (W2-T6 seguito; nessun pacchetto del piano snello lo possiede: da assegnare a INT-3a)",
+     "scade": "onda-3",
+     "motivo": "revisione indipendente dell'onda 2f (2026-10-06), sospetto da preparatore non misurato e non corretto in INT-2g: powerlifting avanzato con la schiena dolente, 5 giorni, 60 minuti, palestra (profilo con seme «rev|21» del revisore; la modalita Forza non si attiva con la schiena dolente e resta la forza generale): il Pull-Through ai Cavi compare in tre sedute (mercoledi, venerdi, domenica) e il Leg Curl Seduto 6x10 in due (venerdi, domenica). Si chiude con una misura (quanti programmi avanzati con la schiena dolente hanno lo stesso esercizio in tre sedute o la stessa flessione 6x10 due volte) e la scelta di un secondo esercizio per lo schema."
+    },
+    "Cancello di regressione delle matrici «forza» e «attrezzi»": {
+     "responsabile": "INT-3a (da assegnare: nessun pacchetto del piano snello lo possiede)",
+     "scade": "onda-3",
+     "motivo": "revisione indipendente dell'onda 2f (2026-10-06), scappatoia 4 del cancello, non fatto in INT-2g: il cancello giudica solo la matrice standard; le matrici «forza» (1.440 profili) e «attrezzi» (612) girano in `npm test` solo per FRZ-01/ATT-01/ERR/SAN/EXN (un sesto). Misura 2d → INT-2g (criteri 1.6): forza `gravi_pesata` 62,04% → 2,40% (FRZ-01 906 → 0 programmi per costruzione: 2d non legge `forzaTipo`) ma EQ-01 3,08% → 8,82%, VOL-02:petto 2,20% → 8,38%, DIR-01:bicipiti 9,50% → 16,30%, FRQ-01:bicipiti 9,62% → 13,29%, FRQ-01:glutei 0,05% → 2,12% (1 → 45 programmi, severita 4), DIR-01:polpacci 17 → 45 programmi, RID-01:schiena_spessore 0 → 19 e RID-01:grande_gluteo 0 → 16 programmi, EQ-02:orizzontale 0 → 20; attrezzi `gravi_pesata` 19,31% → 5,34% (ATT-01 166 → 0) ma FRQ-01:glutei 0 → 8 programmi (5,34%, severita 4), PAT-01:tirataV 0 → 28, EQ-02:verticale 1,51% → 2,93%, PRI-01:braccia 0,68% → 3,34%. Perche non adesso: 2d ignora `forzaTipo` e gli attrezzi dichiarati, quindi il confronto 2d → 2e misura una funzione che prima non c'era e ogni classe «peggiora» per costruzione; le chiavi delle classi coincidono con quelle della standard (serve un tetto e un `cumulativo` per matrice, con le sue ammesse). A onda-3 l'integratore sceglie il riferimento (la misura di INT-2g di queste due matrici) e il cancello le giudica con `--contro`."
+    },
+    "Tirata verticale con gli attrezzi dichiarati a corpo libero (matrice «attrezzi»)": {
+     "responsabile": "INT-3a (da assegnare: nessun pacchetto del piano snello lo possiede)",
+     "scade": "onda-3",
+     "motivo": "INT-2g (2026-10-06), trovato dalla correzione di SAF-03/SAF-04: ora che il collaudo legge gli attrezzi dichiarati, la tirata verticale con l'elastico, gli anelli o la sbarra dichiarati e un esercizio possibile, e il generatore non la sceglie sempre: sulla matrice «attrezzi» PAT-01:tirataV 0 → 28 programmi su 612 (2,17% pesata) e EQ-02:verticale 8 → 36 (2f) o 16 → 36 (2d), tutti a corpo libero, donne, massa o glutei, senza fastidi, con elastico e anelli dichiarati (esempio: massa|principiante|3|45|corpo|-|F|giovane|att|elastico+anelli). Prima erano nascosti dal falso positivo (con gli attrezzi dichiarati il collaudo vedeva l'elastico come attrezzatura non disponibile e la tirata verticale come non fattibile). Non e un peggioramento del generatore (2d non leggeva gli attrezzi dichiarati) ma una lacuna ora visibile; non e nella matrice standard."
+    },
+    "Residui del revisore dell'onda 2f non misurati: la nota «la panca copre il deltoide anteriore» a chi non ha la panca e la pausa di 120 s dell'Hip Hinge con la forza": {
+     "responsabile": "INT-3a (da assegnare: nessun pacchetto del piano snello lo possiede)",
+     "scade": "onda-3",
+     "motivo": "revisione indipendente dell'onda 2f (2026-10-06) e INT-2g: (a) la nota che dice che la panca copre il deltoide anteriore compare anche a chi non ha la panca dichiarata (sospetto da preparatore, non misurato); (b) con la forza come obiettivo «Hip Hinge a Corpo Libero» e ora 2x12 ma con la pausa della forza (120 s: 46 occorrenze su 55 nella griglia di prova, 90 e 105 s le altre): per un esercizio senza carico e troppo, e pesa sul tempo delle sedute corte. Non misurati con un criterio e non corretti in INT-2g."
+    }
+   }
   },
   "onda-4": {
    "int": "INT-4",
@@ -303,6 +794,13 @@
     "dal cap. G, fuori dal collaudo: carichi (atleta virtuale), partenza bassa donne, spiegazioni (100% con un perche e un codice), traduzioni (0 pezzi mancanti su >= 500 testi), soglie (100% con forza e fonte), migrazione (6/6 fixture), codice (npm run controlla, test:browser, grafo:verifica, nessun wrapper tra file), prestazioni (buildProgram mediana < 50 ms, 95 percentile < 150 ms)",
     "16 regole bloccate del registro C.2 spente o sbloccate con una fonte vista (sessione R-1)"
    ]
+  },
+  "oltre-v2": {
+   "int": "-",
+   "matrice": "standard",
+   "titolo": "Oltre la v2: la scadenza dei debiti rinviati fuori dal piano delle onde 0-5 e finale (INT-2e, 2026-10-06). Non e un'onda da valutare: un debito con questa scadenza si stampa in ogni corsa del cancello e non lo ferma mai",
+   "riscritti": [],
+   "manuale": []
   }
  },
  "totali": {
@@ -754,9 +1252,10 @@
    "task": "W2-T5",
    "soglie": {
     "onda-2": 0,
-    "finale": 0
+    "finale": 0,
+    "onda-2b": 0
    },
-   "nota": "criterio aggiornato in INT-2: con la nota non e un fallimento"
+   "nota": "criterio aggiornato in INT-2e (criteri 1.6): il principiante con 5-6 giorni e 4 sedute con la nota «A chi comincia bastano 4 sedute» non e un fallimento (il fatto coincide con l etichetta; 777 programmi su 10.800 a 2d, 778 a 2e, 6,7% pesata: erano la classe `principiante-limitato`); senza la nota o per gli altri livelli resta severita 4"
   },
   "SPL-02": {
    "nome": "Divisione non adatta al numero di giorni (muscolo singolo con pochi giorni, upper/lower con 2 giorni, full body con 5-6)",
@@ -933,6 +1432,17 @@
    },
    "nota": "W0-T7 (criteri 1.2, decisione del committente): il rematore inverso resta a corpo libero con la nota «sotto un tavolo robusto o con una sbarra bassa» e SAF-04 non lo segnala piu se la nota c'e (senza di lui a casa non c'e una tirata orizzontale: la CAS-01 toglie le trazioni); il calf raise a un piede (gradino) era gia fuori dai criteri 1.1"
   },
+  "ATT-01": {
+   "nome": "Esercizio che chiede un attrezzo che l utente ha detto di non avere (attrezzi dichiarati a casa o gli extra della palestra)",
+   "sev": 4,
+   "prima": 0,
+   "task": "W2-T5 e INT-2f",
+   "soglie": {
+    "onda-2b": 0,
+    "finale": 0
+   },
+   "nota": "criterio nuovo dei criteri 1.6 (INT-2f, revisione indipendente dell onda 2e: il collaudo non passava mai gli attrezzi dichiarati): lo misura la matrice «attrezzi» (circa 600 profili, tests/collaudo-attrezzi.test.js in npm test); nelle matrici standard e rapida nessun profilo dichiara attrezzi e la classe non esiste"
+  },
   "SAF-05": {
    "nome": "Esercizio tecnicamente impegnativo a un principiante o in modalita prudente (over 65, PAR-Q)",
    "sev": 2,
@@ -952,6 +1462,17 @@
     "onda-2": 0,
     "finale": 0
    }
+  },
+  "FRZ-01": {
+   "nome": "Powerlifting scelto e possibile, ma squat e panca non sono in almeno due sedute, lo stacco in una, o l alzata del giorno non e il primo esercizio",
+   "sev": 4,
+   "prima": 0.63,
+   "task": "W2-T7 (FRZ-01..05) e INT-2e",
+   "soglie": {
+    "onda-2b": 0,
+    "finale": 0
+   },
+   "nota": "criterio nuovo dei criteri 1.6 (INT-2e, ristretto a INT-2f): misura strutturale indipendente della modalita Forza, dai nomi degli esercizi; conta squat (con bilanciere, con pausa), panca (piana, con pausa, presa stretta) e stacco da terra (a chi comincia anche il rumeno: lo stacco da terra e abilita 3), non il front squat, la panca inclinata, il deficit e il rumeno come alzate; sub `alzata-non-prima` (INT-2f): la prima della seduta e l alzata del giorno. Nella matrice standard i profili che possono avere il powerlifting sono 17; la prova vera e la matrice «forza» (1.440 profili con i punti deboli; tests/collaudo-forza.test.js ne lancia un sesto in npm test)"
   }
  },
  "prima": {

@@ -37,7 +37,7 @@ const stessoLavoro = (e, x) => famiglia(e) ? famiglia(x) === famiglia(e) : bersa
 const alt = (p, seduta) => { const n = nomeLib(p); return [...g('alternativeOggi')({ name: n }, [{ name: n }].concat((seduta || []).map(s => ({ name: nomeLib(s) }))))].map(a => pulito(a.ex.name)); };
 
 test('ogni esercizio della libreria ha un muscolo bersaglio valido', () => {
-  assert.strictEqual(LIB.length, 169);   /* 140 + i 29 di W1-T5 */
+  assert.strictEqual(LIB.length, 171);   /* 140 + i 29 di W1-T5 + i 2 di W2-T6 (Hip Hinge e Y-Raise a corpo libero) */
   LIB.forEach(e => {
     const b = bersaglio(e.name);
     assert.ok(b && MUSCOLI[b], 'senza bersaglio: ' + e.name);
@@ -508,7 +508,7 @@ test('MOD-12 sui dati (W1-T5): a casa con i manubri hinge, flessione del ginocch
     tirataV: n => ATTR5[n].schema === 'tirataV'
   };
   const manubri = kit(['manubri', 'corpo'], []);
-  assert.deepStrictEqual(manubri.filter(cella.hinge).sort(), ['Stacco Rumeno a una Gamba', 'Stacco Rumeno con Manubri']);   /* prima: nessuno */
+  assert.deepStrictEqual(manubri.filter(cella.hinge).sort(), ['Hip Hinge a Corpo Libero', 'Stacco Rumeno a una Gamba', 'Stacco Rumeno con Manubri']);   /* prima: nessuno; W2-T6 aggiunge la cerniera senza carico */
   assert.ok(manubri.filter(cella.femoraliFlessione).length >= 1, 'flessione del ginocchio: ' + manubri.filter(cella.femoraliFlessione));
   assert.ok(manubri.filter(cella.deltoideLaterale).length >= 2, 'deltoide laterale');
   assert.ok(manubri.filter(cella.deltoidePosteriore).length >= 1, 'deltoide posteriore');
@@ -517,8 +517,9 @@ test('MOD-12 sui dati (W1-T5): a casa con i manubri hinge, flessione del ginocch
   /* corpo libero e basta: la flessione del ginocchio c e (asciugamano), il resto aspetta gli attrezzi dichiarati (W2-T5/T6) */
   const corpo = kit(['corpo'], []);
   assert.deepStrictEqual(corpo.filter(cella.femoraliFlessione), ['Leg Curl con Asciugamano']);
-  assert.strictEqual(corpo.filter(cella.hinge).length, 0);
+  assert.deepStrictEqual(corpo.filter(cella.hinge), ['Hip Hinge a Corpo Libero']);   /* W2-T6 (SES-03, MOD-12): prima nessuno */
+  assert.deepStrictEqual(corpo.filter(cella.deltoidePosteriore), ['Y-Raise a Corpo Libero']);   /* W2-T6 (SAF-06, MOD-12): prima nessuno */
   const elastico = kit(['corpo', 'elastico'], ['elastico']);
   ['deltoideLaterale', 'deltoidePosteriore', 'tirataV'].forEach(k => assert.ok(elastico.filter(cella[k]).length >= 1, k + ' con l elastico'));
-  assert.deepStrictEqual(kit(['corpo', 'elastico', 'anelli', 'kettlebell'], ['elastico', 'anelli', 'kettlebell']).filter(cella.hinge), ['Kettlebell Swing']);
+  assert.deepStrictEqual(kit(['corpo', 'elastico', 'anelli', 'kettlebell'], ['elastico', 'anelli', 'kettlebell']).filter(cella.hinge).sort(), ['Hip Hinge a Corpo Libero', 'Kettlebell Swing']);   /* W2-T6: con lo swing anche la cerniera senza carico */
 });

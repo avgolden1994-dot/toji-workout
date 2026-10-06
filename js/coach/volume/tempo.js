@@ -342,6 +342,31 @@ const NOTA_FEMORALI_TEMPO = 'Femorali: con questi minuti la flessione del ginocc
    anche sopra i 45 minuti (ABB-06: mai con un fondamentale pesante); 3) via il core e le braccia dirette (non quelli che coprono un buco della settimana: `protetto`); 4) serie da 3 a 2 sui non prioritari;
    5) gli isolamenti uno alla volta; ultima risorsa (DUR-01): un isolamento protetto. Mai sotto i pavimenti, mai sotto i quattro schemi base per due serie. `passi` conta cosa e servito (le note) */
 function scalaDelTempo(brief, sd, sedute, opz, minutiEff, passi) {
+  /* M6 (W2-T6, revisione INT-2d; collaudo EQ-03:flessione): a 2 giorni e 30 minuti in palestra la seduta full body ha due multiarticolari di gambe di schema DIVERSO (squat e stacco rumeno) oltre a una
+     spinta e a una tirata, e il leg curl, l unica flessione della settimana, usciva per ultimo (la scala toglieva serie ai multiarticolari e poi lui). La flessione vale piu di una seconda cerniera dell anca o
+     di un secondo squat (registro B6: una flessione a settimana): se la seduta la tiene e sfora i minuti si prova PRIMA la scala di sempre; se la flessione resta in scheda non si tocca niente (un secondo squat
+     tolto senza bisogno lasciava i quadricipiti a una seduta sola: collaudo FRQ-01, 3,6% dei programmi). Solo se la scala la toglie, e la seduta ha due multiarticolari di gambe, si prova senza il piu caro dei due
+     (secondoDiGambe, completamenti.js) e si tiene la mossa SOLO se la flessione resta; se la scala la toglie comunque, tutto torna com era (togliere il secondo di gambe e perdere comunque la flessione sarebbero
+     due perdite). Un solo secondo di gambe per seduta: la mossa si prova una volta */
+  const secondo = sd.esercizi.some(e => unicaFlessioneSettimana(brief, sedute, e)) && durataSeduta(sd.esercizi, opz) > minutiEff * (1 + PARAM_TEMPO.tolleranzaSforamento) ? secondoDiGambe(sd, sedute, opz) : null;
+  if (secondo) {
+    const lista = sd.esercizi.slice(), stato = lista.map(e => [e, e.sets, e.rest, e.superset]), copiaPassi = Object.assign({}, passi), note = brief.lavoro.note.slice();
+    const ripristina = () => {
+      sd.esercizi.splice(0, sd.esercizi.length, ...lista);
+      stato.forEach(x => { x[0].sets = x[1]; x[0].rest = x[2]; if (x[3]) x[0].superset = x[3]; else delete x[0].superset; });
+      Object.assign(passi, copiaPassi); brief.lavoro.note.splice(0, brief.lavoro.note.length, ...note);
+    };
+    scalaDelTempoBase(brief, sd, sedute, opz, minutiEff, passi);
+    if (sd.esercizi.some(eFlessioneGinocchio)) return;   /* la scala di sempre basta: la flessione c e */
+    ripristina();
+    togliEsercizio(sd, secondo);
+    scalaDelTempoBase(brief, sd, sedute, opz, minutiEff, passi);
+    if (sd.esercizi.some(eFlessioneGinocchio)) { passi.tagli++; return; }
+    ripristina();
+  }
+  scalaDelTempoBase(brief, sd, sedute, opz, minutiEff, passi);
+}
+function scalaDelTempoBase(brief, sd, sedute, opz, minutiEff, passi) {
   const chi = brief.chi, goals = brief.obiettivi.lista, ob = obiettivoDellaSeduta(brief, sedute.indexOf(sd)), prio = brief.lavoro.prefs.priorita, metodoAttivo = brief.metodo.attivo;
   const limite = minutiEff * (1 + PARAM_TEMPO.tolleranzaSforamento), T = () => durataSeduta(sd.esercizi, opz);
   if (T() <= limite) return;
@@ -373,6 +398,9 @@ function scalaDelTempo(brief, sd, sedute, opz, minutiEff, passi) {
   /* INT-2b: l unica flessione del ginocchio della settimana resta come l unico piano (registro B6: una flessione a settimana; unicaFlessioneSettimana) */
   const unicaFlessione = (e) => unicaFlessioneSettimana(brief, sedute, e);
   const intoccabile = (e) => unicoPiano(e) || unicaFlessione(e);
+  /* INT-2e (ABB-03): un esercizio protetto che copre da solo un buco della settimana (polpacci, deltoidi posteriori, bicipiti, tricipiti diretti: NOTE_REGIONALI di genera.js) non lascia il posto nemmeno per l ultima risorsa:
+     con due tricipiti in due sedute, tolto il primo dal taglio normale, l ultima risorsa toglieva anche il secondo e la settimana restava senza (tests/browser/coerenza-schede.js, 1 profilo su 735 nel browser, non in node) */
+  const unicaCopertura = (e) => typeof NOTE_REGIONALI !== 'undefined' && NOTE_REGIONALI.some(r => r[1](e) && !sedute.some(o => o.esercizi.some(x => x !== e && r[1](x))));
   /* 3) il core e le braccia dirette (P6 e P5), uno alla volta: non i protetti, non sotto i pavimenti */
   const via = (sel) => {
     for (let g = 0; g < 12 && T() > limite && sd.esercizi.length > 3; g++) {   /* mai sotto 3 esercizi (EXN-01) */
@@ -402,7 +430,7 @@ function scalaDelTempo(brief, sd, sedute, opz, minutiEff, passi) {
   /* ultima risorsa (collaudo DUR-01): se sfora ancora di oltre il 10%, l ultima aggiunta protetta che non e core lascia il posto (meglio una copertura in meno che una seduta che non sta nei minuti);
      non l unica flessione del ginocchio (INT-2b) */
   for (let g = 0; g < 12 && T() > minutiEff * 1.10 && sd.esercizi.length > 3; g++) {
-    const protette = sd.esercizi.filter(e => !comp(e) && e.protetto && group(e) !== 'core' && !unicaFlessione(e));
+    const protette = sd.esercizi.filter(e => !comp(e) && e.protetto && group(e) !== 'core' && !unicaFlessione(e) && !unicaCopertura(e));
     if (!protette.length) break;
     togliEsercizio(sd, protette[protette.length - 1]); passi.tagli++;
   }
@@ -528,10 +556,13 @@ function adattaAlTempo(brief, sedute) {
       /* un multiarticolare si toglie solo se la seduta ha un altro dello stesso schema (due spinte verticali): mai l unica spinta, tirata, squat o hinge (collaudo SES-03) */
       const doppi = sd.esercizi.filter(e => !e.protetto && !e.fisso && (findExercise(e.name) || {}).type === 'compound' && schemaDi(e.name) && sd.esercizi.filter(y => schemaDi(y.name) === schemaDi(e.name)).length > 1);
       /* se resta troppo lungo (EXN-02, anche con l 8 di CAS-06 le aggiunte di strCopri e dei completamenti possono portare a 9) lascia l ultima aggiunta protetta che non e core */
-      const protette = sd.esercizi.filter(e => !e.fisso && e.protetto && (findExercise(e.name) || {}).type !== 'compound' && (findExercise(e.name) || {}).group !== 'core');
+      const protette = sd.esercizi.filter(e => !e.fisso && e.protetto && !e.cuffia && (findExercise(e.name) || {}).type !== 'compound' && (findExercise(e.name) || {}).group !== 'core');   /* INT-2f: non il lavoro per la cuffia (PCO-08, SAF-06): e una salvaguardia, lascia il posto prima una copertura di qualita (il leg curl del ponte) */
       /* il core si toglie solo se un altra seduta della settimana ne ha uno: la copertura (ABB-03) resta */
       const core = sd.esercizi.filter(e => !e.fisso && (findExercise(e.name) || {}).group === 'core' && sedute.some(o => o !== sd && o.esercizi.some(x => (findExercise(x.name) || {}).group === 'core')));
-      const via = iso[iso.length - 1] || doppi[doppi.length - 1] || protette[protette.length - 1] || core[core.length - 1];
+      /* INT-2f: la spinta d anca (hip thrust, ponte glutei) che ha accanto una cerniera vera della stessa seduta e il doppione della cerniera (una sola per seduta, RID-01): lascia il posto prima del lavoro per la cuffia */
+      const ex = (e) => findExercise(e.name) || e;
+      const doppioCerniera = sd.esercizi.filter(e => !e.fisso && !e.cuffia && SLOT_DEF.glutSpinta(ex(e)) && sd.esercizi.some(y => y !== e && SLOT_DEF.hinge(ex(y)) && !RIPIEGO_HINGE.test(senzaEmoji(y.name))));
+      const via = iso[iso.length - 1] || doppi[doppi.length - 1] || protette[protette.length - 1] || doppioCerniera[doppioCerniera.length - 1] || core[core.length - 1];
       if (!via) break;
       sd.esercizi.splice(sd.esercizi.indexOf(via), 1);
     }

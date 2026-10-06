@@ -9,6 +9,7 @@
 const test = require('node:test'), assert = require('node:assert');
 const fs = require('fs'), path = require('path'), vm = require('vm');
 const { caricaApp } = require('./aiuto-app');
+const { conSoglieSelezione } = require('./aiuto-selezione');   /* W2-T6: le soglie della scelta degli esercizi (SEL-06) anche prima che index.html le citi */
 const { simulaNellApp, riassunto, mulberry32, CONTROLLO } = require('./aiuto-atleta');
 
 const R = path.join(__dirname, '..');
@@ -18,7 +19,7 @@ const REGOLE_NUOVE = ["PAR-06", "PAR-07", "PAR-08", "PAR-09", "CAR-18", "CAR-19"
 
 /* l app vera, con i file di W2-T8 anche se index.html non li ha ancora (l integrazione li aggiunge) e le regole nuove spegnibili */
 function nuovaApp(opz) {
-  const a = caricaApp(Object.assign({ ora: LUNEDI }, opz || {}));
+  const a = conSoglieSelezione(caricaApp(Object.assign({ ora: LUNEDI }, opz || {})));
   const html = fs.readFileSync(path.join(R, 'index.html'), 'utf8');
   FILE_NUOVI.forEach(f => { if (html.indexOf('src="' + f + '"') === -1) vm.runInContext(fs.readFileSync(path.join(R, f), 'utf8'), a.ctx, { filename: f }); });
   REGOLE_NUOVE.forEach(c => a.g('REGOLE_SPEGNIBILI.indexOf(' + JSON.stringify(c) + ') === -1 && REGOLE_SPEGNIBILI.push(' + JSON.stringify(c) + ')'));
@@ -214,14 +215,17 @@ test('D.8.4: nessun carico fuori dalla griglia dell attrezzo; mai un bilanciere 
   assert.ok(barraVuota > 0, 'di controllo: in forza (e per il gradito) il bilanciere resta e parte dalla barra vuota (' + barraVuota + ')');
 });
 
-test('D.8.5 PAR-08: in 200 profili di donne principianti, se il bilanciere partirebbe sotto la soglia il posto ha una variante con lo stesso bersaglio', () => {
+test('D.8.5 PAR-08: in 200 profili di donne, se il bilanciere partirebbe sotto la soglia il posto ha una variante con lo stesso bersaglio', () => {
   const a = nuovaApp();
   let scambi = 0, panche = 0;
-  profiliDonne(200, 21, { level: 'principiante', luogo: 'palestra' }).forEach(p => {
+  /* W2-T6 (SEL-06): le principianti senza la forza come primo obiettivo non ricevono piu il bilanciere (sul codice di prima: 318 esercizi col bilanciere e 685 scambi in 200 programmi, ora 0 e 0: partono dalle macchine e dai manubri,
+     abilita 1); lo scambio di PAR-08 si prova sulle intermedie (lo sconto di PAR-06 arriva fino al livello intermedio), 11 scambi su 200 */
+  profiliDonne(200, 21, { level: 'intermedio', luogo: 'palestra' }).forEach(p => {
     const prog = a.dati(a.chiama('buildProgram', p));
-    const ctx = CTX(p.sex, 'principiante', p.weight);
+    const ctx = CTX(p.sex, 'intermedio', p.weight);
     prog.sostituzioni.forEach(s => {
-      assert.strictEqual(a.json('bersaglioDi(' + JSON.stringify(s.a) + ')'), a.json('bersaglioDi(' + JSON.stringify(s.da) + ')'), p.seme + ': ' + s.da + ' -> ' + s.a + ' stesso bersaglio');
+      /* W2-T6 (SEL-06): la lista delle sostituzioni ha anche i posti dove il primo della classifica e vietato a chi inizia per la sua abilita (Affondi Bulgari -> Affondi Inversi): lo stesso bersaglio vale per gli scambi del bilanciere (PAR-08) */
+      if (a.chiama('attrezzoDi', s.da) === 'bilanciere') assert.strictEqual(a.json('bersaglioDi(' + JSON.stringify(s.a) + ')'), a.json('bersaglioDi(' + JSON.stringify(s.da) + ')'), p.seme + ': ' + s.da + ' -> ' + s.a + ' stesso bersaglio');
       if (a.chiama('attrezzoDi', s.da) === 'bilanciere' && a.chiama('attrezzoDi', s.a) !== 'bilanciere') scambi++;
     });
     prog.sedute.forEach(sd => sd.esercizi.forEach(e => {
@@ -259,7 +263,8 @@ test('PAR-09: le principianti partono da piegamenti inclinati e da trazioni assi
   const base = { goals: ['massa'], level: 'principiante', days: 3, minutes: 60, luogo: 'palestra', sex: 'F', age: 30, weight: 60, fastidi: [], sonno: 'bene', attrezzi: 'indifferente', parq: 'no', usaProfilo: false };
   let completi = 0, facilitati = 0, uomini = 0, intermedie = 0;
   for (let i = 0; i < 60; i++) {
-    const p = Object.assign({}, base, { seme: 'par09-' + i, goals: [['massa', 'salute', 'ricomposizione'][i % 3]] });
+    /* W2-T6 (SEL-06): in palestra chi inizia non riceve piu le trazioni libere (abilita 3) e parte dalle macchine: il posto non ha piu bisogno dello scambio. Lo scambio resta dove ci sono i piegamenti a terra: un programma su due a corpo libero */
+    const p = Object.assign({}, base, { seme: 'par09-' + i, goals: [['massa', 'salute', 'ricomposizione'][i % 3]], luogo: i % 2 ? 'palestra' : 'corpo' });
     const prog = a.dati(a.chiama('buildProgram', p));
     const nomi = prog.sedute.map(sd => sd.esercizi.map(e => e.name)).reduce((t, x) => t.concat(x), []);
     assert.ok(!nomi.some(n => /Piegamenti a Terra|Trazioni alla Sbarra/.test(n)), p.seme + ': nessun piegamento a terra o trazione completa per una principiante');

@@ -4,7 +4,7 @@
 > Forze: **Solida** (meta-analisi o posizione ufficiale), **Moderata** (pochi studi, o risultati che cambiano con la popolazione), **Contrastata** (studi in disaccordo), **Convenzione** (pratica dei coach: il foglio «Perché?» mostra «Scelta prudente del coach (Convenzione): non è un risultato di studi»), **Decisione** (scelta di prodotto: «Decisione di prodotto»), **Provvisoria** (numero di partenza in attesa di verifica: «Numero di partenza, in verifica»). Etichette: `etichettaForza` in `js/coach/regia/perche.js` (registro C.4).
 > Le tabelle di prima (`COACH_PARAMETRI`, `PARAM_PARTENZA`, `PARAM_INTENSITA`, `STR_PESI`, `DOSE_SCARICO`, `RIR_TIPO`) non sono ancora qui: passano in un file soglie quando il task che possiede il loro file le tocca.
 
-Totale: 115 soglie in 6 tabelle (Solida 2, Moderata 7, Convenzione 99, Decisione 5, Provvisoria 2).
+Totale: 137 soglie in 9 tabelle (Solida 3, Moderata 10, Contrastata 1, Convenzione 115, Decisione 6, Provvisoria 2).
 
 ## `SOGLIE_PARTENZA` — `js/coach/carichi/soglie-partenza.js` (bilancia)
 
@@ -29,6 +29,25 @@ Totale: 115 soglie in 6 tabelle (Solida 2, Moderata 7, Convenzione 99, Decisione
 | `calibrazioneSenzaRpe` | bassa alto 0.1, basso 0.15, iso 0.1, normale 0.05, volteMax 2 | Convenzione | ricerca-donne-carichi-iniziali §3.6 (senza RPE +10/15/10%); piano D.5 (al massimo 2 volte) | CAR-18, CAR-19 |
 | `calibrazioneTettoSalto` | 0.25 | Convenzione | piano D.5 (mai oltre +25%); ricerca-donne-carichi-iniziali §3.6 | CAR-18 |
 | `calibrazioneCauto` | 0.5 | Convenzione | piano D.5 (salvaguardie); skill implementa-regola-coach §6 (gli aumenti si dimezzano per i prudenti) | CAR-18 |
+
+## `SOGLIE_SELEZIONE` — `js/coach/programma/soglie-selezione.js` (architetto)
+
+| Voce | Valore | Forza | Fonte | Regole |
+|---|---|---|---|---|
+| `abilitaMax` | principiante 2, prudente 2 | Convenzione | ricerca-principianti-12-settimane §3.4 e PRI-05 («mai liv 3»; i liv 2 solo dove il posto non ha un liv 1: la regola «un solo liv 2 per seduta» non è implementata come tetto), §5.3 (affondi bulgari in 18 piani su 23, trazioni libere in 10, nordic e pike push-up); ricerca-biomeccanica-esercizi §5.3 P14 e SEL-06 | SEL-06 |
+| `squatPerSeduta` | 2 | Convenzione | piano coach v2 W2-T6 (SES-03: nelle sedute Gambe due varianti di squat, la terza e hinge o flessione); ABB-02 (niente esercizi doppi); collaudo RID-01 | ABB-02 |
+| `cuffia` | serieMinime 2, serieAggiunte 2, seduteDueVolte 4, eserciziMax 2 | Convenzione | ricerca-metodi-coach-pratici H-08 e PCO-08 (Cressey: rotazione esterna della cuffia almeno una volta a settimana, 2-3 serie, una o due volte; non più di 2 esercizi aggiunti); collaudo SAF-06 (almeno 2 serie dirette); seduteDueVolte: Provvisoria | PCO-08 |
+
+## `SOGLIE_SPLIT` — `js/coach/programma/soglie-split.js` (architetto)
+
+| Voce | Valore | Forza | Fonte | Regole |
+|---|---|---|---|---|
+| `giorniDiFilaMax` | 4 | Convenzione | ricerca-ipertrofia-programmazione §3.7 (5 giorni: due giorni di riposo, mai oltre 4 di fila); pratica dei coach; collaudo REC-03 (GIORNI_CONSECUTIVI_MAX) | PRG-02 |
+| `gruppiDelleSedute` | fullbody [«petto», «schiena», «quadricipiti», «femorali», «glutei», «spalle»], upper [«petto», «schiena», «spalle»], lower [«quadricipiti», «femorali», «glutei»], legs [«quadricipiti», «femorali», «glutei»], push [«petto», «spalle»], pull [«schiena», «spalle», «femorali», «glutei»], petto-schiena [«petto», «schiena», «femorali», «glutei»], spalle-braccia [«spalle»] | Moderata | ACSM 2009 (48 ore tra due sedute dello stesso gruppo; Moderata per la regola, Convenzione per la soglia di serie); collaudo REC-01 (sei gruppi) | PRG-02 |
+| `puntiDeboli` | petto [«petto»], schiena [«schiena»], spalle [«spalle»], gambe [«quadricipiti», «femorali»], glutei [«glutei»], sempre [«spalle»] | Convenzione | ricettaPunti (ui/onboarding.js): le priorita dichiarate, poi alzate laterali e posteriori, braccia, polpacci e core | PRG-02 |
+| `principianteSedute` | giorniDa 5, sedute 4 | Convenzione | ricerca-principianti-12-settimane §3.3 (5-6 giorni diventano 4, detto all’utente; 2-3 sedute già bastano a chi inizia) | PRG-02 |
+| `oreSonnoBene` | adulto 7, minorenne 8 | Moderata | ricerca-fasce-di-eta §5 punto 4 (adolescenti: 8-10 ore; sotto le 8 ore più infortuni e meno recupero) | ETA-05 |
+| `manubriKg` | min 1, max 100 | Convenzione | limite del campo (ricerca-casa-poco-tempo §4.3: si chiede il manubrio più pesante a mano, in kg) | CAS-01 |
 
 ## `SOGLIE_STRUTTURA` — `js/coach/programma/soglie-struttura.js` (architetto)
 
@@ -99,6 +118,23 @@ Totale: 115 soglie in 6 tabelle (Solida 2, Moderata 7, Convenzione 99, Decisione
 | `stessaTecnicaStessoEsercizioSettimana` | 1 | Convenzione | ricerca-metodi-avanzati-intensita.md 4.1 (una stessa tecnica sullo stesso esercizio al massimo una volta a settimana) | MAV-08 |
 | `discesaSecondi` | [2, 3] | Moderata | ricerca-metodi-avanzati-intensita.md 1.4 e 4.3 (Schoenfeld 2015: da 0,5 a 8 s per ripetizione la crescita e simile; discesa 2-3 s) | MAV-11 |
 
+## `SOGLIE_FORZA` — `js/coach/specialita/soglie-forza.js` (specialista)
+
+| Voce | Valore | Forza | Fonte | Regole |
+|---|---|---|---|---|
+| `frequenzaMinima` | squat 2, panca 2, stacco 1 | Convenzione | docs/ricerca-forza-progressione.md 1.6 (frequenza per la forza: 2-3 sedute per alzata, conoscenza del modello non verificata sul web; Williams 2017 e ACSM 2026 vanno nella stessa direzione); docs/ricerca-metodi-coach-pratici.md 2.11 (Sheiko: panca 3 volte, squat 2); docs/ricerca-obiettivi-e-programmi.md 3.1 (forza: lo stesso fondamentale 2-3 volte) | FRZ-02 |
+| `giorni` | min 3, max 6 | Decisione | W2-T7 (versione snella): con 2 giorni resta la forza generale, detto all'utente; GIORNI_PER_SEDUTE di regia/genera.js arriva a 6 sedute | FRZ-02 |
+| `onda` | pesante serie 4, ripetizioni 3, media serie 3, ripetizioni 5, leggera serie 2, ripetizioni 5 | Convenzione | docs/ricerca-metodi-coach-pratici.md 2.7 (5/3/1: onda 5/3/1 di 4 settimane), 2.8 (GZCL: T1 1-3 ripetizioni per serie, T2 5-8), 2.10 (Candito); docs/ricerca-forza-progressione.md 1.6 (volume per la forza: 6-12 serie a settimana per alzata) e 3.8 (intermedio: alternanza pesante, media, leggera); docs/ricerca-obiettivi-e-programmi.md 3.1 (principali 1-6 ripetizioni, 3-6 serie dirette per fondamentale) | FRZ-05 |
+| `ondaGiornaliera` | true | Contrastata | docs/ricerca-forza-progressione.md 2C (lineare o ondulato: A meta-analisi 2022 e Williams 2017, B Harries 2015 e meta-analisi 2026 con 29 studi) e 3.8 | FRZ-05 |
+| `ondaPrincipiante` | «media» | Convenzione | docs/ricerca-forza-progressione.md 3.8 (principiante: full body 2-3 volte, stessi carichi in tutte le sedute) | FRZ-05 |
+| `pausaDaClasse` | pesante «max», media «v», leggera «lo» | Convenzione | registro coach v2 B8 (pause per classe, soglie-tempo.js); docs/ricerca-forza-progressione.md 1.6 (riposo per la forza 2-5 minuti: Moderata, già in repo); la scelta di quale estremo della fascia per quale giorno è del coach | FRZ-05 |
+| `serieMaxStacco` | 3 | Convenzione | ABB-09 (struttura-pro.js strFinale: stacchi da terra a 3 serie al massimo); docs/ricerca-struttura-e-intensita.md (rapporto stimolo/fatica dello stacco) | FRZ-02, FRZ-05 |
+| `serieMinimeAlzata` | 2 | Solida | Krieger 2010, Ralston 2017 (2-3 serie battono 1: la stessa soglia di RX-03 del collaudo) | FRZ-05 |
+| `pausaMinimaStima` | 120 | Moderata | ACSM 2009 (2-3 minuti sui fondamentali per la forza), docs/ricerca-forza-progressione.md 1.6 (riposo per la forza: 2-5 minuti); collaudo RX-02 (forza, pesanti: 120-300 s) | FRZ-02 |
+| `serieMinimeTirata` | 3 | Convenzione | ABB-04 (tirate non meno del 90% delle spinte, STR_PESI.tirateSuSpinte); docs/ricerca-struttura-e-intensita.md (equilibrio spalle: pratica dei coach) | FRZ-02 |
+| `serieAccessorio` | 3 | Convenzione | docs/ricerca-obiettivi-e-programmi.md 3.1 (forza: 3-6 serie dirette per fondamentale a settimana + accessori 6-12, Mod †); docs/ricerca-forza-progressione.md 1.6 (punti deboli e accessori: nessuna prova diretta) | FRZ-04 |
+| `puntiDeboliMax` | 2 | Convenzione | W2-T7: ogni accessorio toglie tempo e recupero; stessa idea di EST-02 (al massimo 2 unità prioritarie) | FRZ-03, FRZ-04 |
+
 ## `SOGLIE_TEMPO` — `js/coach/volume/soglie-tempo.js` (dosatore)
 
 | Voce | Valore | Forza | Fonte | Regole |
@@ -144,6 +180,7 @@ Totale: 115 soglie in 6 tabelle (Solida 2, Moderata 7, Convenzione 99, Decisione
 | `serieMaxEsercizio` | composto 5, isolamento 6 | Convenzione | Krieger 2010; Ralston 2017 (2-6 serie per esercizio: Solida/Moderata); stesso tetto del collaudo (SERIE_MAX_ESERCIZIO) | IPE-01 |
 | `serieMaxIsolamentoConFastidio` | 4 | Convenzione | revisione indipendente INT-2d, M7 (misurato: isolamenti a 6 serie in centinaia di programmi, Alzate Laterali 6 x 15 con la spalla dolente); regola di sicurezza (tolleranza zero, SAF-02: nessun esercizio aggiunto carica una zona dolente senza prudenza) | IPE-01, SAF-02 |
 | `serieMaxCore` | 3 | Convenzione | ABB-03 (un esercizio di core a fine seduta, 2-3 serie: strCopri, strCoreNuovo); ricerca-biomeccanica-esercizi §4 SEL-07 e D10 (core 2-6 serie a settimana, poco volume); registro B6 (addome 2-4 / 4-8 / 6-10 a settimana) | IPE-01, IPE-06 |
+| `ripiegoCerniera` | serieMax 2, ripetizioni 12 | Convenzione | revisione indipendente dell onda 2e (INT-2f, maggiore 2); ricerca-principianti §3.1 (il gesto della cerniera dell anca si impara con movimenti guidati e poche serie); registro B6 (credito 0,5 ai femorali negli attributi) | SES-03 |
 | `eserciziMaxSeduta` | adulto 8, principiante 6 | Convenzione | collaudo del generatore (ES_MAX_SEDUTA, ES_MAX_PRINCIPIANTE); piano E.3 W2-T1 | IPE-01 |
 | `seduteMinimeUnita` | 2 | Solida | ACSM 2026 (137 revisioni): ogni grande gruppo almeno 2 sedute a settimana; collaudo FRQ-01 | IPE-01 |
 | `serieMinSeduta` | 1.5 | Convenzione | collaudo FRQ-01 (una seduta conta da 1,5 serie frazionarie, cioè 3 serie sinergiche) | IPE-01 |

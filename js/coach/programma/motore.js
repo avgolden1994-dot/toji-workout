@@ -62,6 +62,12 @@ function senzaMacchine(prefs) {
 const ATTREZZI_NON_DI_CASA = /^(sbarra|parallele|sedia romana|panca per lombari|panca a 45°|ruota addominale|elastico|kettlebell|anelli)$/i;   /* W1-T5, D-P3: elastici, kettlebell e anelli finche W2-T5 non li fa dichiarare */
 const ATTREZZI_NON_CON_I_MANUBRI = /^(sbarra bassa o anelli)$/i;
 function attrezzoFisicoDi(nome) { const d = dettaglioEsercizio(nome); return d ? d.att : ''; }
+/* SEL-03 (W2-T6; D-P3, ricerca-casa-poco-tempo §4.1-4.2): l esercizio chiede un attrezzo oltre a pavimento, muro, una sedia robusta e un gradino? Si legge il DATO `serve` di attributi-esercizi.js
+   (serveAttrezzo, «sbarra|anelli» = a oppure b); senza attributi (fuori libreria, albero di prima) no: come prima */
+function chiedeAttrezzo(nome, attrezzo) {
+  const serve = typeof serveAttrezzo === 'function' ? serveAttrezzo(nome) : null;
+  return !!serve && serve.some(s => String(s).split('|').indexOf(attrezzo) !== -1);
+}
 function attrezzoDiCasaMancante(nome, luogo) {
   if (luogo !== 'manubri' && luogo !== 'corpo') return false;
   const att = attrezzoFisicoDi(nome);
@@ -70,6 +76,36 @@ function attrezzoDiCasaMancante(nome, luogo) {
 /* INT-1 (completa la patch di W1-T5, D-P3): con un elenco di attrezzi della palestra dichiarato (Opzioni, onboarding) elastici, kettlebell e anelli non ci sono: l utente non puo ancora
    dichiararli (lo fa W2-T5), quindi il coach non li propone (a casa li toglie ATTREZZI_NON_DI_CASA). Senza elenco la palestra e completa e valgono come prima. */
 const ATTREZZI_NON_DICHIARABILI_IN_PALESTRA = /^(elastico|kettlebell|anelli)$/i;
+/* CAS-01 (W2-T5, collegata da INT-2e; D-P3): gli attrezzi DICHIARATI, solo quando il campo e dichiarato (un elenco, anche vuoto: «nessuno di questi» e una risposta); null o assente = come prima.
+   Il vocabolario e quello dei dati (attributi-esercizi.js): `serve` (sbarra, panca, elastico, kettlebell, anelli, e quelli che non si dichiarano: parallele, ancoraggio, ruota, sedia romana; «a|b» = a oppure b)
+   e `attrezzo` (elastico, kettlebell, anelli per i tre extra). Esito: null = la dichiarazione non dice niente su questo esercizio (valgono i filtri di prima); false = un attrezzo che serve non e dichiarato
+   (fuori); true = e dichiarato (i filtri di prima sull attrezzo fisico non lo tolgono piu: gli elastici in palestra con un elenco, la sbarra o i kettlebell a casa).
+   A casa si valutano solo gli attrezzi che si dichiarano e solo se l esercizio ne chiede UNO preciso; «sbarra|anelli» (il rematore inverso, che a corpo libero si fa sotto un tavolo robusto, nota del programma)
+   non toglie niente: lo toglie come prima il luogo con i manubri, a meno che uno dei due non sia dichiarato. Parallele, ancoraggio, ruota e sedia romana non si dichiarano: restano ai filtri di prima. */
+const ATTREZZI_EXTRA_DEI_DATI = ['elastico', 'kettlebell', 'anelli'];
+function attrezzoExtraDi(nome) {
+  const a = typeof attributi === 'function' ? attributi(nome) : null;
+  return a && ATTREZZI_EXTRA_DEI_DATI.indexOf(a.attrezzo) !== -1 ? a.attrezzo : '';
+}
+/* le due liste dichiarate, o null se non c e (campo assente, null) o se CAS-01 e spenta (i campi salvati restano nel profilo, la scelta degli esercizi non li legge) */
+function dichiaratiDi(prefs, campo) {
+  return Array.isArray(prefs[campo]) && (typeof regolaAttiva !== 'function' || regolaAttiva('CAS-01')) ? prefs[campo] : null;
+}
+function attrezziDichiaratiEsito(nome, prefs) {
+  if (!Array.isArray(prefs.attrezziCasa) && !Array.isArray(prefs.extraPalestra)) return null;   /* niente dichiarato: come prima, senza guardare altro */
+  const casa = dichiaratiDi(prefs, 'attrezziCasa'), extraPalestra = dichiaratiDi(prefs, 'extraPalestra');
+  if (prefs.luogo === 'palestra') {
+    const extra = attrezzoExtraDi(nome);
+    return extra && extraPalestra ? extraPalestra.indexOf(extra) !== -1 : null;
+  }
+  if ((prefs.luogo !== 'manubri' && prefs.luogo !== 'corpo') || !casa) return null;
+  const serve = typeof serveAttrezzo === 'function' ? serveAttrezzo(nome) : null;
+  if (!serve || serve.length !== 1) return null;
+  const alternative = String(serve[0]).split('|'), dichiarabili = typeof ATTREZZI_CASA_IDS !== 'undefined' ? ATTREZZI_CASA_IDS : [];
+  const dichiarato = alternative.some(x => casa.indexOf(x) !== -1);
+  if (dichiarato) return true;
+  return alternative.length === 1 && dichiarabili.indexOf(alternative[0]) !== -1 ? false : null;
+}
 function eccezioneRischio(f, nome, prefs) {
   const e = ECCEZIONI_RISCHIO[f];
   return !!(e && e.nome.test(senzaEmoji(nome).trim()) && e.quando(prefs));
@@ -87,17 +123,33 @@ function consentito(nome, prefs) {
   perPrefs.set(nome, r);
   return r;
 }
+/* INT-2f (revisione dell onda 2e, maggiore 2): la cerniera dell anca senza carico («Hip Hinge a Corpo Libero», RIPIEGO_HINGE in ricette.js) e un RIPIEGO: e consentita solo se nessuna cerniera con carico lo e per questa persona
+   (i posti dell hinge scelgono per nome: SLOT_DEF.hinge, stacchi, good morning, pull-through). Prima compariva in 7.449 programmi su 10.800, anche in palestra e con uno stacco con carico nella stessa settimana: la varieta tra i giorni
+   (-4 a un esercizio gia usato) batteva il suo punteggio negativo. Dipende solo dalle preferenze (luogo, attrezzi, fastidi): la risposta si ricorda con `consentito` */
+function cerniereConCaricoConsentite(prefs) {
+  return EXERCISE_LIBRARY.some(x => !RIPIEGO_HINGE.test(senzaEmoji(x.name)) && SLOT_DEF.hinge(x) && consentito(x.name, prefs));
+}
 function consentitoCalcolo(nome, prefs) {
   const a = attrezzoDi(nome);
   if ((prefs.odiati || []).indexOf(nome) !== -1) return false;
   if ((prefs.esclusi || []).indexOf(nome) !== -1) return false;   /* esclusi dal coach per sicurezza (revisione dell onda 0, B1: il Nordic Curl), non per gusto */
+  if (RIPIEGO_HINGE.test(senzaEmoji(nome)) && cerniereConCaricoConsentite(prefs)) return false;   /* INT-2f: il ripiego solo dove non c e una cerniera con carico */
+  /* CAS-01 (INT-2e): gli attrezzi dichiarati; un elastico, un kettlebell o gli anelli dichiarati non passano dai filtri sull attrezzo di prima (che li leggono dal nome: «pulldown» = macchine) */
+  const dichiarato = attrezziDichiaratiEsito(nome, prefs);
+  if (dichiarato === false) return false;
+  const extraDichiarato = dichiarato === true && attrezzoExtraDi(nome) !== '';
   /* attrezzi della TUA palestra: il coach propone solo cio che trovi */
-  if (prefs.attrezziPalestra && prefs.attrezziPalestra.length && a !== 'corpo' && prefs.attrezziPalestra.indexOf(a) === -1) return false;
-  if (/sbarra|trazioni/i.test(nome) && prefs.attrezziPalestra && prefs.attrezziPalestra.length && prefs.attrezziPalestra.indexOf('sbarra') === -1) return false;
-  if (prefs.luogo === 'palestra' && prefs.attrezziPalestra && prefs.attrezziPalestra.length && ATTREZZI_NON_DICHIARABILI_IN_PALESTRA.test(attrezzoFisicoDi(nome))) return false;   /* INT-1, D-P3 */
-  if (prefs.luogo === 'manubri' && (a === 'macchine' || a === 'bilanciere')) return false;
-  if (prefs.luogo === 'corpo' && a !== 'corpo') return false;
-  if (attrezzoDiCasaMancante(nome, prefs.luogo)) return false;   /* CAS-01 */
+  if (!extraDichiarato) {
+    if (prefs.attrezziPalestra && prefs.attrezziPalestra.length && a !== 'corpo' && prefs.attrezziPalestra.indexOf(a) === -1) return false;
+    if (/sbarra|trazioni/i.test(nome) && prefs.attrezziPalestra && prefs.attrezziPalestra.length && prefs.attrezziPalestra.indexOf('sbarra') === -1) return false;
+    if (prefs.luogo === 'palestra' && prefs.attrezziPalestra && prefs.attrezziPalestra.length && ATTREZZI_NON_DICHIARABILI_IN_PALESTRA.test(attrezzoFisicoDi(nome))) return false;   /* INT-1, D-P3 */
+    if (prefs.luogo === 'manubri' && (a === 'macchine' || a === 'bilanciere')) return false;
+    if (prefs.luogo === 'corpo' && a !== 'corpo') return false;
+  }
+  if (dichiarato !== true && attrezzoDiCasaMancante(nome, prefs.luogo)) return false;   /* CAS-01: a casa cio che chiede un attrezzo che non e dichiarato (sbarra dichiarata: le trazioni tornano) */
+  /* SEL-03 (collaudo SAF-04): a corpo libero niente esercizio che per dato chiede una panca (Dip su Panca: una sedia robusta fa lo stesso, ma il questionario non garantisce ne l una ne l altra);
+     con la panca dichiarata (prefs.attrezziCasa, CAS-01 di W2-T5) l esercizio torna */
+  if (prefs.luogo === 'corpo' && chiedeAttrezzo(nome, 'panca') && !(dichiaratiDi(prefs, 'attrezziCasa') || []).some(x => /^panca$/i.test(x))) return false;
   return !(prefs.fastidi || []).some(f => RISCHIO[f] && RISCHIO[f].test(nome) && !eccezioneRischio(f, nome, prefs));
 }
 

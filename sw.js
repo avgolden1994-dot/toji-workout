@@ -2,7 +2,7 @@
    il segnale spesso manca). Strategia: network-first con fallback alla cache,
    così vedi sempre l'ultima versione se sei online, ma l'app parte comunque offline. */
 
-const CACHE_NAME = '3in-v18';   /* cambiando il nome, le copie vecchie vengono buttate */
+const CACHE_NAME = '3in-v19';   /* cambiando il nome, le copie vecchie vengono buttate */
 const ASSETS = [
   './',
   /* Elenco generato da tools/genera-sw.js (npm run sw): non si modifica a mano.
@@ -85,6 +85,8 @@ const ASSETS = [
   './js/coach/programma/ricette.js',
   './js/coach/programma/struttura-pro.js',
   './js/coach/programma/soglie-struttura.js',
+  './js/coach/programma/soglie-selezione.js',
+  './js/coach/programma/soglie-split.js',
   './js/coach/programma/mesociclo.js',
   './js/coach/programma/completamenti.js',
   './js/coach/volume/serie-ripetizioni.js',
@@ -98,6 +100,8 @@ const ASSETS = [
   './js/coach/sicurezza/tecnica-adatta.js',
   './js/coach/regia/brief.js',
   './js/coach/regia/genera.js',
+  './js/coach/specialita/soglie-forza.js',
+  './js/coach/specialita/forza.js',
   './js/ui/onboarding-risultato.js',
   './js/coach/programma/archivio.js',
   './js/coach/programma/alternative.js',

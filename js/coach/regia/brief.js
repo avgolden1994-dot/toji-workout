@@ -84,6 +84,45 @@ function chiDa(d) {
     parq: parq, cauto: over65 || parq || minorenne };
 }
 
+/* ============================================================
+   CAS-01 (W2-T5, D-P3): GLI ATTREZZI DICHIARATI. CONTRATTO CON W2-T6 (la scelta degli esercizi per attributi): qui si AGGIUNGONO tre campi al brief, mai si rinomina o si toglie un campo che c era.
+   I nomi sono quelli di `serve` e `attrezzo` degli attributi degli esercizi (js/dati/attributi-esercizi.js): sbarra, panca, elastico, kettlebell, anelli, manubri.
+     brief.agenda.attrezziCasa   null | [ids]   cosa ha in casa chi si allena a casa (luogo 'manubri' o 'corpo'), nell ordine di ATTREZZI_CASA_IDS. null = non l ha detto (si comporta come prima: a casa nessun
+                                                 esercizio che chiede un attrezzo non dichiarato). Con luogo 'manubri' contiene sempre 'manubri' (e la scelta del luogo), con 'corpo' mai; con la palestra e null.
+     brief.agenda.manubriKg      null | numero  kg del manubrio piu pesante (a mano; per i regolabili il carico massimo di uno), da 1 a 100 (SOGLIE_SPLIT.manubriKg); solo con luogo 'manubri' e solo se detto.
+     brief.agenda.extraPalestra  null | [ids]   gli attrezzi in piu che chi si allena in palestra dichiara di trovare, tra elastico, kettlebell e anelli (ATTREZZI_EXTRA_PALESTRA_IDS). null = non l ha detto
+                                                 (come prima: senza elenco degli attrezzi della palestra ci sono tutti, con un elenco dichiarato questi tre no). [] = ha risposto «nessuno di questi».
+   Gli stessi tre nomi, solo se dichiarati, sono in prefsDelBrief (prefs.attrezziCasa, prefs.manubriKg, prefs.extraPalestra: quello che legge consentito) e nel profilo salvato; `agenda.attrezziPalestra` resta
+   com era (elenco di bilanciere, manubri, macchine, sbarra, o null = palestra completa). Chi legge i campi li legge in modo difensivo: un programma salvato prima di W2-T5 non li ha.
+   ============================================================ */
+const ATTREZZI_CASA_IDS = ['sbarra', 'panca', 'elastico', 'kettlebell', 'anelli', 'manubri'];
+const ATTREZZI_EXTRA_PALESTRA_IDS = ['elastico', 'kettlebell', 'anelli'];
+/* l elenco dichiarato, ripulito: solo gli id noti, nell ordine di `validi`; qualunque cosa non sia un elenco vale «non dichiarato» (null) */
+function listaAttrezziNota(x, validi) { return Array.isArray(x) ? validi.filter(id => x.indexOf(id) !== -1) : null; }
+/* i tre campi dichiarati da `d` (le risposte) o, se `d` non li dice, dal profilo salvato `prof0`; coerenti con il luogo (vedi sopra) */
+function attrezziDichiarati(d, prof0) {
+  d = d || {}; prof0 = prof0 || {};
+  if (typeof regolaAttiva === 'function' && !regolaAttiva('CAS-01')) return { attrezziCasa: null, manubriKg: null, extraPalestra: null };   /* CAS-01 spenta: nessuna domanda, nessun campo */
+  const prendi = k => d[k] !== undefined ? d[k] : prof0[k];
+  const luogo = d.luogo || prof0.luogo || 'palestra', casa = luogo === 'manubri' || luogo === 'corpo';
+  let attrezziCasa = casa ? listaAttrezziNota(prendi('attrezziCasa'), ATTREZZI_CASA_IDS) : null, manubriKg = null;
+  if (attrezziCasa) {   /* con luogo 'manubri' i manubri ci sono per definizione, con 'corpo' no */
+    const con = attrezziCasa.filter(id => id !== 'manubri');
+    if (luogo === 'manubri') con.push('manubri');
+    attrezziCasa = ATTREZZI_CASA_IDS.filter(id => con.indexOf(id) !== -1);
+  }
+  const kg = Number(prendi('manubriKg')), lim = typeof sogliaSplit === 'function' ? sogliaSplit('manubriKg') : null;
+  if (luogo === 'manubri' && isFinite(kg) && kg > 0 && (!lim || (kg >= lim.min && kg <= lim.max))) manubriKg = Math.round(kg * 2) / 2;
+  return { attrezziCasa: attrezziCasa, manubriKg: manubriKg, extraPalestra: luogo === 'palestra' ? listaAttrezziNota(prendi('extraPalestra'), ATTREZZI_EXTRA_PALESTRA_IDS) : null };
+}
+
+/* le chiavi degli attrezzi dichiarati da salvare nel profilo o da passare alle preferenze di una sostituzione: solo quelle dette (chi non risponde ha un profilo identico a quello di prima) */
+function attrezziSalvati(d, prof0) {
+  const a = attrezziDichiarati(d, prof0), out = {};
+  Object.keys(a).forEach(k => { if (a[k] !== null) out[k] = a[k]; });
+  return out;
+}
+
 /* briefCoach(d, prof0): d sono le risposte (onbData o un profilo), prof0 il profilo salvato (vuoto se d non e onbData).
    Lancia l errore dell eta sotto i 13 anni (ETA-01, D-P9): e l ultima guardia, perche un programma da adulto a un bambino e peggio di nessun programma
    (e nessun chiamante scrive niente prima di aver ricevuto il programma). Il metodo (metodo.attivo, tocco, ispirazioni) lo completa
@@ -95,6 +134,7 @@ function briefCoach(d, prof0) {
   const goals = obiettiviEffettivi(dichiarati);
   const chi = chiDa(d);
   if (chi.eta > 0 && chi.eta < PARAM_ETA.min) throw new Error(MSG_ETA_SOTTO_MINIMO);
+  const attrezzi = attrezziDichiarati(d, prof0);   /* CAS-01 */
   const freqScelta = ['1', '2', '3'].indexOf(String(d.freq || prof0.freq || '')) !== -1 ? String(d.freq || prof0.freq) : null;
   /* chi ha davanti: le risposte psicologiche cambiano come si usano le regole; il coach compone: fattore fisico (BIA, dati) + psicologico + momento di vita */
   const ps = psicoCoach(d.psico || prof0.psico);
@@ -108,9 +148,10 @@ function briefCoach(d, prof0) {
     versione: 2, seme: seme,
     chi: chi,
     obiettivi: { dichiarati: dichiarati, lista: goals, primo: goals[0], scheme: schemaMisto(goals), fase: faseCorpo({ goals: goals, fase: d.fase || prof0.fase }),
-      modalita: 'generale' /* FRZ-01, EST-01 */, prioritaUnita: [] /* max 2, EST-02 (W2-T1) */ },
+      modalita: (typeof modalitaForzaDa === 'function' && modalitaForzaDa(d, prof0, goals)) || 'generale' /* FRZ-01 (W2-T7: la legge specialita/forza.js; la domanda e di W2-T5), EST-01 */, prioritaUnita: [] /* max 2, EST-02 (W2-T1) */ },
     agenda: { giorni: d.days /* come arriva: i controlli sui giorni lo leggono cosi */, minuti: Number(d.minutes) || 60, luogo: d.luogo || 'palestra',
-      attrezziPalestra: d.attrezziPalestra !== undefined ? d.attrezziPalestra : (prof0.attrezziPalestra || null), passiPalestra: null /* W3-T1 */, freqScelta: freqScelta, indiciGiorni: null /* giorniSettimana */ },
+      attrezziPalestra: d.attrezziPalestra !== undefined ? d.attrezziPalestra : (prof0.attrezziPalestra || null), passiPalestra: null /* W3-T1 */, freqScelta: freqScelta, indiciGiorni: null /* giorniSettimana */,
+      attrezziCasa: attrezzi.attrezziCasa, manubriKg: attrezzi.manubriKg, extraPalestra: attrezzi.extraPalestra /* CAS-01, W2-T5: vedi attrezziDichiarati */ },
     preferenze: { graditi: d.graditi || prof0.graditi || [], odiati: d.odiati || prof0.odiati || [], attrezzi: d.attrezzi || 'indifferente', varieta: 1 /* lo completa risolviMetodo */,
       priorita: (d.priorita || prof0.priorita || []).slice(0, 3) /* i gruppi scelti dall utente (fino a 3); le unita fini sono di EST-02 */, scelte: d.scelte || {} },
     corpo: { fis: fis, sonno: d.sonno || 'bene', statoBia: null /* INT-01: si legge dove serve (statoBia(d, prof0)) */, massa: null /* contestoCarichi, in applicaPartenze */ },
@@ -151,6 +192,8 @@ function prefsDelBrief(brief) {
   const prefs = { luogo: brief.agenda.luogo, fastidi: brief.sicurezza.fastidi, sonno: brief.corpo.sonno, attrezzi: brief.preferenze.attrezzi,
     attrezziPalestra: brief.agenda.attrezziPalestra, graditi: brief.preferenze.graditi, odiati: brief.preferenze.odiati, priorita: brief.preferenze.priorita };
   prefs.esclusi = Object.keys((brief.sicurezza.vincoli || {}).vietati || {});
+  /* CAS-01 (W2-T5): gli attrezzi dichiarati, solo se detti (un programma di chi non risponde ha le prefs di sempre, byte per byte): li legge consentito() */
+  ['attrezziCasa', 'manubriKg', 'extraPalestra'].forEach(k => { if (brief.agenda[k] !== null && brief.agenda[k] !== undefined) prefs[k] = Array.isArray(brief.agenda[k]) ? brief.agenda[k].slice() : brief.agenda[k]; });
   if (brief.metodo.attivo && brief.metodo.attivo.luogo) prefs.luogo = brief.metodo.attivo.luogo;
   return prefs;
 }

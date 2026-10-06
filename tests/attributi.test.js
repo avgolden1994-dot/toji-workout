@@ -170,7 +170,9 @@ test('lo schema coincide con schemaDi dove la regex risponde (affondi e step-up 
 const ECCEZIONI_CREDITO_PIENO = ['Stacco da Terra (Deadlift)', 'Stacco con Trap Bar', 'Hyperextension (Lombari)', 'Scrollate (Shrug)', 'Farmer Walk',
   'Stacco in Deficit', 'Scrollate con Manubri', 'Tibialis Raise', 'Suitcase Carry',
   /* INT-2a (M4 della revisione dell onda 1): il credito pieno va a un altra unita del bersaglio (co-bersaglio documentato) o scende a 0,5 (cuffia) */
-  'Stacco Rumeno', 'Stacco Rumeno con Manubri', 'Stacco Rumeno a una Gamba', 'Affondi Bulgari', 'Affondi al Multipower (Piede Rialzato)', 'Extrarotazione al Cavo'];
+  'Stacco Rumeno', 'Stacco Rumeno con Manubri', 'Stacco Rumeno a una Gamba', 'Affondi Bulgari', 'Affondi al Multipower (Piede Rialzato)', 'Extrarotazione al Cavo',
+  /* W2-T6: la cerniera dell anca senza carico, come lo Stacco Rumeno con Manubri (femorali 1, gluteo 0,5) */
+  'Hip Hinge a Corpo Libero'];
 
 test('le unita di volume sono le 15 di B6 e ogni muscolo di MUSCOLI ha la sua (o nessuna)', () => {
   assert.deepStrictEqual(UNITA, ['petto', 'dorsali', 'schiena_spessore', 'quadricipiti', 'femorali', 'grande_gluteo', 'adduttori', 'abduttori', 'polpacci',
@@ -314,7 +316,6 @@ test('attrezzo e serve seguono DETTAGLI (MOD-04); unilaterale e `lato` della lib
    STRESS_ZONA elencava gli esercizi che caricano di più ogni articolazione (per scegliere la variante del dolore); l'elenco esperto del collaudo
    è un'altra cosa (cosa togliere con un fastidio dichiarato): quasi tutte le righe STRESS_ZONA sono esercizi che l'elenco del collaudo aggiunge. */
 const DIFFERENZE = [
-  ['tipoCarico', 'Panca Presa Stretta', 'macchina → classe A', 'barra libera con carico pesante: classe A (metodi §3.1); tipoCarico la riconosceva solo dal nome'],
   ['tipoCarico', 'Rematore Presa Inversa (Yates)', 'macchina → classe A', 'barra libera con carico pesante: classe A (metodi §3.1); tipoCarico la riconosceva solo dal nome'],
   ['stabile', 'Piegamenti a Terra (Push-up)', 'false → stabilita 1', 'senza carico il cedimento non espone: piegamenti a cedimento pieno (casa §4.4)'],
   ['stabile', 'Croci su Panca Manubri', 'true → stabilita 2', 'manubri liberi sopra il petto: almeno 1 ripetizione in riserva (casa §4.4)'],
@@ -392,6 +393,7 @@ const DIFFERENZE = [
   ['stabile', 'Seal Row', 'false → stabilita 1', 'bio §5.5: petto e pancia appoggiati sulla panca, nessun carico sui lombari e nessun equilibrio: cedimento accettabile'],
   ['stabile', 'Sit-to-Stand dalla Panca', 'false → stabilita 1', 'età §6: l’alzata dalla panca con un appoggio vicino: il vecchio stabile() la vede libera perché multiarticolare a corpo libero'],
   ['stabile', 'Squat su Scatola', 'false → stabilita 1', 'D-P3: la scatola e la sedia danno il punto d’arrivo e l’appoggio: cedimento accettabile (il vecchio stabile() vede solo le macchine)'],
+  ['stabile', 'Hip Hinge a Corpo Libero', 'false → stabilita 1', 'W2-T6: senza carico il cedimento non espone, come lo Squat a Corpo Libero (B33): il vecchio stabile() vede libero ogni multiarticolare senza macchina'],
   ['stabile', 'Suitcase Carry', 'true → stabilita 2', 'bio §5.5: un trasporto con un solo carico (anti-flessione laterale) e un esercizio di equilibrio: almeno 1-2 ripetizioni in riserva; il vecchio stabile() lo vede stabile perche non e multiarticolare']
 ];
 
