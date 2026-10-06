@@ -268,7 +268,9 @@ function volumeMotore(brief, sedute, b, opz) {
       w0: imp * PS.mantenimento / ref, w1: imp * PS.minimo / ref, w2: imp * PS.bersaglio / ref, w4: PS.eccesso / ref, wd: imp * PS.direttePavimento / ref };
   });
   const frequenzaOk = nS >= 2 && b.giorni >= 3;
-  const freqU = frequenzaOk ? VOLUME_FREQUENZA_UNITA.map(u => iU[u]) : [];
+  /* P3-G (FRQ-01): la frequenza delle unità grandi e delle braccia (almeno 2 sedute che contano) vale anche con 2 giorni: due full body sono due sedute, e prima il solutore non la guardava (i tagli
+     lasciavano lo squat o la spinta in una seduta sola: FRQ-01:quadricipiti a 2 giorni e 30 minuti, FRQ-01:tricipiti) */
+  const freqU = nS >= 2 ? VOLUME_FREQUENZA_UNITA.map(u => iU[u]) : [];
   /* la frequenza si conta col più severo dei due conteggi, gli attributi e il credito di prima (creditoSerie): una seduta «conta» solo se vale per tutti e due (FRQ-01) */
   const GRUPPO_DI_PRIMA = { petto: 'petto', dorsali: 'schiena', quadricipiti: 'quadricipiti', femorali: 'femorali', grande_gluteo: 'glutei', bicipiti: 'bicipiti', tricipiti: 'tricipiti' };
   const freqG = freqU.map(i => GRUPPO_DI_PRIMA[U[i]]);
@@ -283,7 +285,25 @@ function volumeMotore(brief, sedute, b, opz) {
   GR.forEach((g, h) => { iG[g] = h; });
   const sommaG = GR.map(g => VOLUME_GRUPPI_SOMMA.indexOf(g) !== -1);
   const G = sedute.map(() => new Array(nG).fill(0));   /* serie per gruppo del recupero e per seduta, indicizzate come GR (INT-2b: niente chiavi di testo nel ciclo caldo) */
-  let PUSH = 0, PULL = 0, SCHIENA = 0;
+  let PUSH = 0, PULL = 0, SCHIENA = 0, TV = 0, TO = 0;   /* TV, TO: serie di tirata verticale e orizzontale della settimana (pianiTirata) */
+  const pianiT = sogliaVolume('pianiTirata');
+  /* il piano di tirata di un esercizio, come lo conta il collaudo EQ-02: 1 verticale (multiarticolare per i dorsali, o il pullover di riserva: schema tirataV negli attributi), 2 orizzontale (multiarticolare per lo spessore), 0 altro */
+  const pianoTirata = (nome) => {
+    if (isTimeBased(nome)) return 0;
+    const m = findExercise(nome) || {}, bers = bersaglioDi(nome);
+    if (m.type === 'compound') return bers === 'dorsali' ? 1 : (bers === 'schiena_spessore' ? 2 : 0);
+    const a = typeof attributi === 'function' ? attributi(nome) : null;
+    return bers === 'dorsali' && a && a.schema === 'tirataV' ? 1 : 0;
+  };
+  /* P3-G (EQ-02): una mossa su una tirata non porta il piano piu povero sotto la quota (o piu sotto): non toglie serie al piano in minoranza, non ne aggiunge a quello in maggioranza. Un piano che non c e
+     (nessuna tirata verticale possibile) non blocca le altre */
+  const pianiOk = (pt, d) => {
+    const v = TV + (pt === 1 ? d : 0), o = TO + (pt === 2 ? d : 0), t = v + o;
+    if (t < pianiT.serieMin || Math.min(v, o) >= pianiT.quota * t - 1e-9) return true;
+    const minoranza = v < o ? 1 : 2, nMin = Math.min(v, o);
+    if (pt === minoranza) return d > 0;
+    return d < 0 || (nMin === 0 && (minoranza === 1 ? TV : TO) === 0);
+  };
   const SCHIENA_S = sedute.map(() => 0);   /* le serie di schiena (dorsali e spessore insieme) per seduta: il tetto duro di 11 vale per il gruppo, come nel collaudo (SES-01) */
   const giorno = sedute.map(sd => giornoSeduta(sd));
   const consecutive = [], vicini = sedute.map(() => []);
@@ -328,7 +348,7 @@ function volumeMotore(brief, sedute, b, opz) {
     GR.forEach((g, h) => { const v = VOLUME_GRUPPI_RECUPERO[g].map(u => cr[u] || 0), c0 = sommaG[h] ? v.reduce((t, x) => t + x, 0) : Math.max.apply(null, v), c = Math.max(c0, sommaG[h] ? 0 : (vecchio[g] || 0)); if (c > 0) gr.push([h, c]); });
     const tempo = !isTimeBased(e.name);
     return { s: s, e: e, cr: crv, gr: gr, leg: vecchio, push: tempo && strEspinta(e), pull: tempo && strEtirata(e), tm: tempoSerie(e), sets0: e.sets, cap: capSerie(e), fond: !!fond, min: Math.min(e.sets, fond ? 3 : 2), bloccato: false,
-      sch: Math.max(cr.dorsali || 0, cr.schiena_spessore || 0),
+      sch: Math.max(cr.dorsali || 0, cr.schiena_spessore || 0), pt: pianoTirata(e.name),
       comp: tempo && (findExercise(e.name) || {}).type === 'compound', pes: tipoCarico(e.name) === 'pesante' };   /* ABB-08: multiarticolare (non a tempo) e carico pesante */
   };
   const muovi = (r, d) => {
@@ -361,6 +381,7 @@ function volumeMotore(brief, sedute, b, opz) {
     }
     if (r.push) PUSH += d;
     if (r.pull) PULL += d;
+    if (r.pt === 1) TV += d; else if (r.pt === 2) TO += d;
     SCHIENA += r.sch * d; SCHIENA_S[s] += r.sch * d;
   };
   sedute.forEach((sd, s) => {
@@ -393,6 +414,16 @@ function volumeMotore(brief, sedute, b, opz) {
     return !(dopo > 2 && dopo > f.e.sets);
   };
 
+  /* P3-G (FRQ-01, collaudo: una seduta conta da serieMinSeduta serie frazionarie): la frequenza di un unità è la somma delle quote delle sue `seduteMin` sedute MIGLIORI (quota di una seduta = min(1, serie
+     frazionarie / serieMinSeduta)), non di tutte. Prima tre sedute da 1 serie frazionaria (un rematore da 2 serie per seduta: 0,67 ciascuna) valevano 2 sedute piene, il solutore non vedeva il buco e il
+     collaudo non contava nessuna seduta (FRQ-01:bicipiti, FRQ-01:tricipiti) */
+  const quoteFreq = new Array(nS).fill(0);
+  const frequenzaMigliori = (quota) => {
+    for (let s = 0; s < nS; s++) quoteFreq[s] = quota(s);
+    let n = 0;
+    for (let k = 0; k < seduteMin && k < nS; k++) { let m = -1, j = -1; for (let s = 0; s < nS; s++) if (quoteFreq[s] > m) { m = quoteFreq[s]; j = s; } n += m; quoteFreq[j] = -1; }
+    return n;
+  };
   /* ---- utilità ---- */
   const utilita = () => {
     let r = 0;
@@ -414,7 +445,7 @@ function volumeMotore(brief, sedute, b, opz) {
     /* oltre il tetto duro (SES-01) una serie costa quanto un muscolo sotto il minimo: uno stato di partenza fuori tetto si ripara (le sedute senza unità sopra il tetto morbido non aggiungono niente: si saltano) */
     for (let s = 0; s < nS; s++) { if (sopraMorbido[s] === 0) continue; for (let i = 0; i < nU; i++) { const o = S[s][i] - P[i].capMorbido; if (o > 0) { r -= o * PS.morbidoSeduta; const d = S[s][i] - P[i].capDuro; if (d > 0) r -= d * PS.duroSeduta; } } }
     for (let k = 0; k < freqU.length; k++) {
-      if (freqSporca[k]) { const i = freqU[k], g = freqG[k]; let n = 0; for (let s = 0; s < nS; s++) n += Math.min(1, Math.min(S[s][i], g ? (GL[s][g] || 0) : 99) / serieMinSeduta); nFreq[k] = n; freqSporca[k] = false; }
+      if (freqSporca[k]) { const i = freqU[k], g = freqG[k]; nFreq[k] = frequenzaMigliori(s => Math.min(1, Math.min(S[s][i], g ? (GL[s][g] || 0) : 99) / serieMinSeduta)); freqSporca[k] = false; }
       r += PS.frequenza * Math.min(seduteMin, nFreq[k]);
     }
     for (let k = 0; k < dirU.length; k++) {
@@ -450,6 +481,7 @@ function volumeMotore(brief, sedute, b, opz) {
         for (let j = 0; j < vic.length; j++) if (G[vic[j]][h] >= minRec) return false;
       }
     } else if (!intero && e.sets + d < r.min) return false;
+    if (r.pt && !pianiOk(r.pt, d)) return false;   /* P3-G: EQ-02, i due piani di tirata */
     if ((r.push || r.pull) && !senzaEquilibrio) {   /* ABB-04: spinte e tirate non peggiorano uno squilibrio e non ne creano */
       const prima = squilibrio(), pu = PUSH + (r.push ? d : 0), pl = PULL + (r.pull ? d : 0);
       const dopoSq = (pu + pl >= minBilancio && pl < rapportoTirate * pu) ? rapportoTirate * pu - pl : 0;
