@@ -95,7 +95,7 @@ function renderDayView() {
   if (start) start.style.display = list.length ? 'block' : 'none';
 
   const serie = list.reduce((s2, e) => s2 + e.sets, 0);
-  const minuti = Math.round(list.reduce((s2, e) => s2 + e.sets * (30 + e.rest), 0) / 60);
+  const minuti = Math.round(durataSeduta(list));   /* CAS-05, B36: la stessa stima del generatore e di Oggi */
   sum.innerText = list.length + ' esercizi \u2022 ' + serie + ' serie \u2022 circa ' + minuti + ' minuti';
 
   cont.innerHTML = list.map((e, i) => {

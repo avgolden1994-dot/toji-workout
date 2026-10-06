@@ -48,8 +48,12 @@ window.strOrdina = function(lista, tipoGiorno, priorita) {
 /* ABB-02: due esercizi dello stesso gruppo, della stessa parte e dello stesso tipo fanno lo stesso lavoro.
    Fanno eccezione lo squat (macchina dopo il bilanciere: 2), i glutei multiarticolari (2) e i curl o le estensioni per le braccia (2: uno allungato, uno accorciato). */
 function strChiave(e) {
+  const t = typeof memoriaTabella === 'function' ? memoriaTabella('strChiave') : null;   /* dipende solo dal nome: dentro buildProgram una volta per nome */
+  if (t !== null) { const v = t.get(e.name); if (v !== undefined) return v; }
   const m = strMeta(e), d = dettaglioEsercizio(e.name) || {};
-  return [m.group, d.sub, m.type, schemaDi(e.name) || ''].join('|');
+  const r = [m.group, d.sub, m.type, schemaDi(e.name) || ''].join('|');
+  if (t !== null) t.set(e.name, r);
+  return r;
 }
 window.strRidondante = function(x, base) {
   if (!dettaglioEsercizio(x.name)) return false;
@@ -95,7 +99,9 @@ window.strCopri = function(c) {
   const ha = (rx) => sedute.some(sd => sd.esercizi.some(e => rx.test(senzaEmoji(e.name))));
   const conGambe = sedute.some(sd => /lower|legs|fullbody/.test(sd.tipo));
   const aggiungi = (nomi, dove, testo, sets, repsDefault) => {
-    const nome = nomi.map(nomeInLibreria).find(n => n && consentito(n, c.prefs));
+    /* INT-2b (collaudo SAF-02): prima un esercizio che non carica una zona dolente dichiarata (stress 0), poi, se non c e, uno consentito con la cautela */
+    const ammessi = nomi.map(nomeInLibreria).filter(n => n && consentito(n, c.prefs));
+    const nome = ammessi.find(n => !(typeof esercizioCaricaIlFastidio === 'function' && esercizioCaricaIlFastidio(n, c.prefs.fastidi))) || ammessi[0];
     if (!nome) return false;
     const sd = sedute.filter(dove).filter(s => !s.esercizi.some(e => e.name === nome) && s.esercizi.length <= c.nEs + 1)   /* la seduta puo crescere di due esercizi piccoli: il tempo si recupera dopo, tagliando serie */
       .sort((a, b) => a.esercizi.length - b.esercizi.length)[0];
@@ -144,7 +150,7 @@ window.strCopri = function(c) {
 
 /* ABB-04: le tirate non meno del 90% delle spinte. Si chiama due volte: dopo il volume per muscolo (si puo alzare una tirata)
    e dopo il taglio per il tempo (`senzaSu`: il tempo e gia contato, niente serie in piu).
-   Ordine: +1 serie a una tirata (al massimo 4, 3 per principianti e over 65), -1 a una spinta (minimo 2) e solo alla fine
+   Ordine: +1 serie a una tirata (al massimo 4, 3 per principianti e over 65; INT-2b: solo se l unita resta dentro il massimo di B6, c.puoSalire), -1 a una spinta (minimo 2) e solo alla fine
    una spinta doppione (lo stesso schema due volte nella stessa seduta) diventa una tirata dello stesso tipo di carico. */
 window.strBilancia = function(c, senzaSu) {
   const sedute = c.sedute;
@@ -165,7 +171,8 @@ window.strBilancia = function(c, senzaSu) {
     .sort((a, b) => abbondante(b) - abbondante(a) || (schemaDi(b.e.name) === 'spintaV') - (schemaDi(a.e.name) === 'spintaV') || piuSpinte(b) - piuSpinte(a) || a.e.sets - b.e.sets)[0]; };
   let giri = 0, mosso = false, rimossa = false;
   while (sbilanciata() && giri++ < 12) {
-    const su = senzaSu ? null : tutti().map(x => x.e).filter(e => strEtirata(e) && !e.fisso && !isTimeBased(e.name) && e.sets < cap).sort((a, b) => a.sets - b.sets)[0];
+    /* INT-2b: la serie in piu non porta la tirata oltre il massimo della sua unita (c.puoSalire: puoSalireVolume di volume.js, B6); se nessuna tirata puo salire si scende con una spinta */
+    const su = senzaSu ? null : tutti().map(x => x.e).filter(e => strEtirata(e) && !e.fisso && !isTimeBased(e.name) && e.sets < cap && (!c.puoSalire || c.puoSalire(e))).sort((a, b) => a.sets - b.sets)[0];
     if (su) { su.sets++; mosso = true; continue; }
     /* si toglie una serie alla spinta con piu serie, ma non al fondamentale della seduta (ABB-08) */
     const pr = primi();

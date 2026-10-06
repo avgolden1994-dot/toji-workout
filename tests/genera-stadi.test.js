@@ -5,9 +5,10 @@
 const test = require('node:test'), assert = require('node:assert');
 const { caricaApp, ORA, profili, TUTTI_GLI_OBIETTIVI } = require('./aiuto-genera');
 const { elencoFixture } = require('./aiuto-app');
+const { conSoglieStruttura } = require('./aiuto-mesociclo');
 
 let _app = null;
-const app = () => _app || (_app = caricaApp({ ora: ORA }));
+const app = () => _app || (_app = conSoglieStruttura(caricaApp({ ora: ORA })));   /* W2-T4: il mesociclo v2 legge le soglie della struttura */
 const BASE = { goals: ['massa'], level: 'intermedio', days: 4, minutes: 60, luogo: 'palestra', fastidi: [], sex: 'M', age: 30, usaProfilo: false, seme: 'w1t4-stadi' };
 const costruisci = (d, a) => (a || app()).dati((a || app()).chiama('buildProgram', Object.assign({}, BASE, d)));
 const brief = (d, a) => (a || app()).chiama('briefCoach', Object.assign({}, BASE, d), {});
@@ -176,9 +177,11 @@ test('vincoliSicurezza: oggi le regole di prima: Nordic Curl, serie massime, tec
   assert.strictEqual(adulto.tettoCarico, 1);
   /* INT-2a (M1 della revisione dell onda 1): lo Stacco Rumeno a una Gamba (abilita 3) non e per i prudenti ne per chi inizia; le ginocchia dolenti toglierebbero solo il Nordic Curl */
   const unaGamba = app().g("nomeInLibreria('Stacco Rumeno a una Gamba')");
+  /* Onda 2c (SAF-05 del collaudo, tolleranza zero): anche Front Squat, Tirate al Mento e Ab Wheel (abilita 3) sono vietati a chi inizia e ai prudenti */
+  const abilita3 = ['Front Squat', 'Tirate al Mento (Upright Row)', 'Ab Wheel'].map(n => app().g("nomeInLibreria('" + n + "')"));
   [{ level: 'principiante' }, { age: 70 }, { age: 16 }, { parq: 'si' }].forEach(d => {
     const r = v(Object.assign({ level: 'avanzato' }, d));
-    assert.deepStrictEqual(Object.keys(r.vietati), [nordic, unaGamba], 'Nordic Curl e Stacco Rumeno a una Gamba vietati per ' + stringa(d));
+    assert.deepStrictEqual(Object.keys(r.vietati), [nordic, unaGamba].concat(abilita3), 'Nordic Curl, Stacco Rumeno a una Gamba e i tre di abilita 3 vietati per ' + stringa(d));
   });
   assert.deepStrictEqual(Object.keys(v({ level: 'avanzato', fastidi: ['ginocchia'] }).vietati).sort(), [nordic].concat(avvio).sort(), 'Nordic Curl vietato per le ginocchia dolenti (e gli esercizi di avvio, come per ogni avanzato)');
   [{ level: 'principiante' }, { age: 70 }, { age: 16 }, { parq: 'si' }].forEach(d => {
@@ -191,23 +194,23 @@ test('vincoliSicurezza: oggi le regole di prima: Nordic Curl, serie massime, tec
   assert.deepStrictEqual(v({}).rirMin, {});
   /* i vincoli arrivano a consentito(): prefs.esclusi li legge */
   const p = costruisci({ level: 'principiante' });
-  assert.deepStrictEqual(p.prefs.esclusi, [nordic, unaGamba]);
-  assert.ok(!p.sedute.some(sd => sd.esercizi.some(e => /nordic/i.test(e.name))));
+  assert.deepStrictEqual(p.prefs.esclusi, [nordic, unaGamba].concat(abilita3));
+  assert.ok(!p.sedute.some(sd => sd.esercizi.some(e => /nordic|front squat|tirate al mento|ab wheel/i.test(e.name))));
 });
 
 /* ---------- 4. il mesociclo ---------- */
-test('pianoMesociclo: settimane, scarichi e RIR per settimana come prima', () => {
+test('pianoMesociclo: settimane, scarichi e RIR per settimana (W2-T4: 12 settimane per chi comincia, blocchi 5+1; i prudenti come prima)', () => {
   const m = (d) => app().dati(app().chiama('pianoMesociclo', app().chiama('briefCoach', Object.assign({}, BASE, d), {})));
-  assert.deepStrictEqual(m({ level: 'principiante' }).struttura, { settimane: 8, blocco: 8 });
+  assert.deepStrictEqual(m({ level: 'principiante' }).struttura, { settimane: 12, blocco: 12 });
   assert.deepStrictEqual(m({ level: 'principiante', age: 70 }).struttura, { settimane: 8, blocco: 4 });
-  assert.deepStrictEqual(m({ level: 'intermedio' }).struttura, { settimane: 12, blocco: 4 });
+  assert.deepStrictEqual(m({ level: 'intermedio' }).struttura, { settimane: 12, blocco: 6 });
   const av = m({ level: 'avanzato' });
   assert.deepStrictEqual(av.struttura, { settimane: 12, blocco: 6 });
-  assert.deepStrictEqual(av.rirSett, [3, 2, 2, 1, 0, 4, 3, 2, 2, 1, 0, 4]);
+  assert.deepStrictEqual(av.rirSett, [3, 2, 2, 1, 1, 4, 3, 2, 2, 1, 1, 4], 'il limite basso dei fondamentali col bilanciere: mai 0 (PCO-02)');
   assert.strictEqual(av.note.length, 1);
-  assert.strictEqual(m({ level: 'intermedio' }).rirSett, null);
+  assert.deepStrictEqual(m({ level: 'intermedio' }).rirSett, [3, 3, 2, 2, 1, 4, 3, 3, 2, 2, 1, 4], 'MES-02: anche l intermedio ha la rampa del RIR');
   assert.deepStrictEqual(m({ level: 'intermedio', age: 15 }).rirSett, [2, 2, 2, 4, 2, 2, 2, 4, 2, 2, 2, 4], 'minorenne: almeno 2 ripetizioni in riserva, 4 nello scarico');
-  assert.strictEqual(m({ level: 'avanzato', age: 15 }).note.length, 0, 'il minorenne avanzato non ha la rampa a 0');
+  assert.strictEqual(m({ level: 'avanzato', age: 15 }).note.length, 0, 'il minorenne avanzato non ha la rampa');
   assert.deepStrictEqual(app().json("fasiProgramma(strutturaProgramma('avanzato'))"), ['carico', 'carico', 'carico', 'carico', 'carico', 'scarico', 'carico', 'carico', 'carico', 'carico', 'carico', 'scarico']);
 });
 
@@ -225,14 +228,15 @@ test('specialitaStruttura: oggi nessuna (null); un task dopo registra la sua mod
   assert.strictEqual(app().g('Object.keys(SPECIALITA_STRUTTURA).length'), 0);
 });
 
-test('giorniSettimana e scegliSplit: i giorni di sempre (2 = lunedi e giovedi, 6 = lunedi-sabato) e la divisione dal livello e dalla frequenza', () => {
+test('giorniSettimana e scegliSplit: i giorni di sempre (2 = lunedi e giovedi, 6 = lunedi-mercoledi e venerdi-domenica) e la divisione dal livello e dalla frequenza', () => {
   const g = (days) => app().json('(() => { const b = briefCoach(' + stringa(Object.assign({}, BASE, { days })) + ', {}); return { indici: giorniSettimana(b, null), nelBrief: b.agenda.indiciGiorni }; })()');
   assert.deepStrictEqual(g(2).indici, [0, 3]);
   assert.deepStrictEqual(g(3).indici, [0, 2, 4]);
   assert.deepStrictEqual(g(4).indici, [0, 1, 3, 4]);
   assert.deepStrictEqual(g(5).indici, [0, 1, 3, 4, 5]);
-  assert.deepStrictEqual(g(6).indici, [0, 1, 2, 3, 4, 5]);
-  assert.deepStrictEqual(g(6).nelBrief, [0, 1, 2, 3, 4, 5], 'i giorni restano nel brief');
+  /* INT-2b (onda 2c): 6 giorni = lunedi-mercoledi e venerdi-domenica, il giovedi di riposo (collaudo REC-03: mai 6 giorni di fila; prima lunedi-sabato) */
+  assert.deepStrictEqual(g(6).indici, [0, 1, 2, 4, 5, 6]);
+  assert.deepStrictEqual(g(6).nelBrief, [0, 1, 2, 4, 5, 6], 'i giorni restano nel brief');
   const s = (d) => app().dati(app().chiama('scegliSplit', app().chiama('briefCoach', Object.assign({}, BASE, d), {}))).nome;
   assert.strictEqual(s({ level: 'intermedio', days: 4 }), 'Upper / Lower x2');
   assert.strictEqual(s({ level: 'principiante', days: 3 }), 'Full Body 3x');
@@ -259,8 +263,11 @@ test('stimaEsercizi e durataSeduta sono le funzioni di prima (exerciseCountFor e
 test('verificaProgramma: chiama i valida* che esistono e mette in nota il testo che ritornano; senza valida* non cambia niente', () => {
   const a = caricaApp({ ora: ORA });
   const d = Object.assign({}, BASE);
-  const prog0 = a.dati(a.chiama('buildProgram', d));
   assert.strictEqual(typeof a.g('validaVolume'), 'function');
+  /* W2-T2: validaTempo esiste (le note oneste del tempo): per provare il meccanismo la si sostituisce, prima con una che non scrive niente e poi con quella di prova */
+  assert.strictEqual(typeof a.g('validaTempo'), 'function');
+  a.g("globalThis.validaTempo = () => []");
+  const prog0 = a.dati(a.chiama('buildProgram', d));
   a.g("globalThis.validaTempo = (brief, sedute) => ['Prova: la seduta di ' + sedute.length + ' giorni non entra nei minuti']");
   const prog1 = a.dati(a.chiama('buildProgram', d));
   assert.deepStrictEqual(prog1.note, prog0.note.concat(['Prova: la seduta di ' + prog0.sedute.length + ' giorni non entra nei minuti']));
@@ -281,7 +288,7 @@ test('buildProgram non scrive niente e, con lo stesso seme, da lo stesso program
 
 test('buildProgram: la forma del programma e dei suoi campi, nell ordine di sempre (le schermate e il salvataggio li leggono)', () => {
   const p = costruisci({});
-  assert.deepStrictEqual(Object.keys(p), ['goals', 'scheme', 'split', 'sedute', 'prefs', 'metodo', 'ispirazioni', 'fisico', 'sostituzioni', 'note', 'riposo', 'settimane', 'blocco', 'fasi', 'rirSett', 'eserciziPerSeduta', 'seme']);
+  assert.deepStrictEqual(Object.keys(p), ['goals', 'scheme', 'split', 'sedute', 'prefs', 'metodo', 'ispirazioni', 'fisico', 'sostituzioni', 'note', 'riposo', 'settimane', 'blocco', 'fasi', 'rirSett', 'eserciziPerSeduta', 'seme', 'versione', 'piano', 'perche', 'modalita']);
   assert.deepStrictEqual(Object.keys(p.prefs), ['luogo', 'fastidi', 'sonno', 'attrezzi', 'attrezziPalestra', 'graditi', 'odiati', 'priorita', 'esclusi']);
   assert.deepStrictEqual(Object.keys(p.sedute[0]), ['giorno', 'tipo', 'titolo', 'esercizi']);
   Object.keys(p.sedute[0].esercizi[0]).forEach(k => assert.ok(['name', 'sets', 'reps', 'weight', 'rest', 'fisso', 'tecnica', 'superset', 'stimato'].indexOf(k) !== -1, 'campo inatteso ' + k));

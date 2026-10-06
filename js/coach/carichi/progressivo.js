@@ -92,14 +92,20 @@ function esito(ex, repsTarget) {
   return tutte && reps ? 'ok' : 'mancato';
 }
 
-/* Settimana corrente del programma (1..N) e la sua fase */
+/* Settimana corrente del programma (1..N) e la sua fase. PRN-03 (INT-2d, B1): alla settimana del controllo di un programma da principiante a 12 settimane la
+   prima lettura decide il controllo (controlloOttavaPrincipiante, programma/mesociclo.js: con il consenso, una volta sola, annullabile) e scrive la fase nel
+   programma salvato; la settimana di scarico che ne esce porta la dose fissata dal controllo (`doseFissa`, la legge caricoProssimoBase) e il suo motivo */
 window.settimanaProgramma = function() {
-  const p = getProgramma();
+  let p = getProgramma();
   if (!p) return null;
+  if (typeof controlloOttavaPrincipiante === 'function' && controlloOttavaPrincipiante(p)) p = getProgramma();
   const giorni = giorniTra(daYmd(p.inizio), lunediDi(new Date()));
   const w = Math.floor(giorni / 7) + 1;
   if (w < 1 || w > p.settimane) return { numero: w, fase: null, finito: w > p.settimane, totale: p.settimane };
-  return { numero: w, fase: p.fasi[w - 1], finito: false, totale: p.settimane };
+  const out = { numero: w, fase: p.fasi[w - 1], finito: false, totale: p.settimane };
+  const c = p.piano && p.piano.controllo;
+  if (c && c.settimana === w) { out.controllo = c.motivo; if (c.esito === 'scarico' && out.fase === 'scarico') out.doseFissa = c.dose; }
+  return out;
 };
 
 /* La BIA frena gli aumenti se la massa magra e scesa di almeno 1 kg */

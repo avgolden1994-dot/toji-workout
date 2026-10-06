@@ -87,11 +87,15 @@ window.applyGeneratedProgram = function() {
   }
   saveCal(cal);
 
-  localStorage.setItem(progKey(), JSON.stringify({
+  const salvato = {
     creato: formatNow(), inizio: ymd(inizio), settimane: prog.settimane, blocco: prog.blocco, fasi: prog.fasi,
     goals: prog.goals, prefs: prog.prefs, split: prog.split.nome, rirSett: prog.rirSett,
     schema: { sets: prog.scheme.sets, reps: prog.scheme.reps }, seme: prog.seme, ispirazioni: prog.ispirazioni
-  }));
+  };
+  /* programma v2 (REG-04, W2-T4): versione, piano del mesociclo (pianoMesociclo), volume per unita (W2-T1), perche con codice (REG-03), modalita (FRZ-01, EST-01)
+     e cardio. Un programma salvato dalla v1 non ha questi campi (nessun `piano`): chi li legge ricade sul comportamento di prima (rirPianoSettimana ritorna null) */
+  if (prog.versione === 2) Object.assign(salvato, { versione: 2, piano: prog.piano || null, volume: prog.volume || null, perche: prog.perche || [], modalita: prog.modalita || 'generale', cardio: prog.cardio || null });
+  localStorage.setItem(progKey(), JSON.stringify(salvato));
   localStorage.setItem(PROFILE_KEY(), JSON.stringify({
     goal: prog.goals[0], goals: prog.goals, level: onbData.level, days: onbData.days, minutes: onbData.minutes,
     prefs: prog.prefs, sex: onbData.sex, age: onbData.age, bia: onbData.bia, parq: onbData.parq === 'si' || onbData.parq === true,

@@ -28,7 +28,15 @@ const SCHEMI_MOV = [
 const SCHEMI_RISERVA = /pullover con manubrio/i;
 /* fuori dagli schemi: gli isolamenti col nome di un multiarticolare ("Calf Raise alla Leg Press",
    "Sissy Squat"); \balzate perche "Mani Rialzate" sono piegamenti, non alzate; le riserve (SCHEMI_RISERVA) */
-function schemaDi(nome) { const n = senzaEmoji(nome); if (SCHEMI_RISERVA.test(n) || /curl|croci|french|estensione|\balzate|y-raise|kickback|calf raise|sissy/i.test(n)) return null; const x = SCHEMI_MOV.find(sc => sc[1].test(n)); return x ? x[0] : null; }
+function schemaDi(nome) {
+  const t = typeof memoriaTabella === 'function' ? memoriaTabella('schemaDi') : null;   /* dentro buildProgram: una volta per nome */
+  if (t !== null) { const v = t.get(nome); if (v !== undefined) return v; }
+  const n = senzaEmoji(nome);
+  let r = null;
+  if (!(SCHEMI_RISERVA.test(n) || /curl|croci|french|estensione|\balzate|y-raise|kickback|calf raise|sissy/i.test(n))) { const x = SCHEMI_MOV.find(sc => sc[1].test(n)); r = x ? x[0] : null; }
+  if (t !== null) t.set(nome, r);
+  return r;
+}
 const ISOLAMENTI = [
   ['quadricipiti', /leg extension/i], ['femorali', /leg curl|nordic curl|stacco rumeno|good morning/i], ['bicipiti', /curl/i],
   ['tricipiti', /pushdown|french press|estensione tricipiti|kickback tricipiti|presa stretta|dip su panca/i],
@@ -45,7 +53,13 @@ const IN_ALLUNGAMENTO_NUOVI = /pullover con manubrio|affondi bulgari|stacco rume
 /* nessuna coppia: Croci ai Cavi -> Croci su Panca Manubri e tolta da D-P8 (alla pari), Pullover ai Cavi -> Pullover con
    Manubrio da SEL-02 (prima del pullover dei dorsali la coppia passava dai dorsali al petto: cambiava muscolo) */
 const SCAMBI_ALLUNGAMENTO_NUOVI = [];
-function inAllungamento(nome) { return IN_ALLUNGAMENTO.test(nome) || (regolaAttiva('RIC-03') && IN_ALLUNGAMENTO_NUOVI.test(nome)); }
+function inAllungamento(nome) {
+  const t = typeof memoriaTabella === 'function' ? memoriaTabella('inAllungamento') : null;
+  if (t !== null) { const v = t.get(nome); if (v !== undefined) return v; }
+  const r = IN_ALLUNGAMENTO.test(nome) || (regolaAttiva('RIC-03') && IN_ALLUNGAMENTO_NUOVI.test(nome));
+  if (t !== null) t.set(nome, r);
+  return r;
+}
 function scambiAllungamento() { return regolaAttiva('RIC-03') ? SCAMBI_ALLUNGAMENTO.concat(SCAMBI_ALLUNGAMENTO_NUOVI) : SCAMBI_ALLUNGAMENTO; }
 const SCAMBI_ALLUNGAMENTO = [['Pushdown Tricipiti ai Cavi', 'Estensione Tricipiti sopra la Testa ai Cavi'], ['Leg Curl Sdraiato', 'Leg Curl Seduto'], ['French Press', 'Estensione Tricipiti sopra la Testa con Manubrio']];
 /* stimolo/fatica: al massimo uno di questi per seduta */

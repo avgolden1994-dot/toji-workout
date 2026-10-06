@@ -34,7 +34,9 @@ const r=await p.evaluate(()=>{
   profilo({priorita:[]});
   // RIC-04
   const mk=(n,t)=>({name:n,sets:3,reps:8,weight:20,rest:90,tecnica:t,completedSets:[{done:false,reps:8,weight:20}]});
-  const dati=loadData(); const g=DAYS[0]; dati[g]=[mk('A','drop'),mk('B','amrap'),mk('C','parziali'),mk('D','backoff')]; saveData(dati);
+  /* W2-T3 (MAV-01, MAV-05, MAV-08): esercizi veri della libreria (il cancello legge gli attributi: classe, profilo); un intermedio ha 1 tecnica al cedimento per seduta e si tiene la piu sicura,
+     non la prima della lista: le parziali sul polpaccio (isolamento a macchina, muscolo allungato) battono il drop set sul curl e l AMRAP sulla panca; il back-off e dell avanzato */
+  const dati=loadData(); const g=DAYS[0]; dati[g]=[mk('🦾 Curl ai Cavi','drop'),mk('💪 Panca Piana Bilanciere','amrap'),mk('🦵 Calf Raise in Piedi','parziali'),mk('🦵 Squat con Bilanciere','backoff')]; saveData(dati);
   out.r4n=limitaTecnicheIntense(g); out.r4=loadData()[g].map(e=>e.tecnicaSeduta||'');
   const d2=loadData(); d2[g].forEach(e=>{e.tecnicaSeduta='';}); saveData(d2);
   programma(4,['carico','carico','carico','scarico']); out.r4s=limitaTecnicheIntense(g);
@@ -49,8 +51,8 @@ ok(r.r1prima===3&&r.r1ultima===3,'prima e ultima settimana del blocco: nessuna s
 ok(r.r1nonPrior===3,'muscolo non prioritario: niente'); ok(r.r1princ===3,'principiante: niente'); ok(r.r1stanco===3,'prontezza bassa: niente'); ok(r.r1spenta===3,'regola spenta: niente');
 console.log('RIC-02'); ok(r.r2.piuPausa===45,'mancava solo l ultima serie: +45 s'); ok(!r.r2no.piuPausa,'piu serie mancate: nessuna pausa extra');
 console.log('RIC-05'); ok(r.r5.sets===3&&/rientro dopo 20/.test(r.r5.motivo),'dopo 20 giorni: 4 serie -> 3'); ok(r.r5no.sets===4,'dopo 5 giorni: invariato'); ok(r.r5eta.sets===4&&!/rientro dopo/.test(r.r5eta.motivo),'a 70 anni i giorni sono quelli veri: dopo 8 giorni le serie non cambiano (deroga B20, 2026-10-05)'); ok(r.r5eta15.sets===3&&/rientro dopo 15/.test(r.r5eta15.motivo),'a 70 anni dopo 15 giorni: 4 serie -> 3');
-console.log('RIC-04'); ok(r.r4n===2&&JSON.stringify(r.r4)===JSON.stringify(['','-','-','']),'tre tecniche intense: resta la prima, le altre tolte (il backoff non conta)');
-ok(r.r4s===3,'in settimana di scarico: tutte le intense tolte');
+console.log('RIC-04'); ok(r.r4n===3&&JSON.stringify(r.r4)===JSON.stringify(['-','-','','-']),'quattro tecniche: resta la piu sicura (parziali sul polpaccio), non la prima; il back-off sul bilanciere e dell avanzato');
+ok(r.r4s===4,'in settimana di scarico: tutte le tecniche al cedimento tolte (anche il back-off)');
 console.log('RIC-03'); ok(r.r3.join()==='false,true,true,false,false','stacco rumeno e pullover coi manubri contano come allungamento, le croci (su panca e ai cavi) alla pari e senza il bonus (D-P8, W0-T6)');
 console.log('Catalogo'); ok(r.cat>100,'catalogo con '+r.cat+' regole, RIC incluse');
 ok(errs.length===0,'nessun errore di pagina '+errs.join('|'));

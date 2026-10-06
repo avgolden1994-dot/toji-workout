@@ -73,6 +73,7 @@ const SLOT_PER_SCHEMA = { spinta: ['spintaO', 'spintaV'], tirata: ['tirataO', 't
 function adattoAllaSeduta(x, tipo) {
   const g = GRUPPI_DELLA_SEDUTA[tipo];
   if (!g) return true;
+  if (x.group === 'core') return true;   /* INT-2b: il core sta a fine di qualunque seduta (ABB-03, strCopri): il solutore del volume puo metterne un secondo in un altra seduta quando il primo e al tetto di 3 serie */
   if (g.indexOf(x.group) === -1) return false;
   const sub = (dettaglioEsercizio(x.name) || {}).sub, n = senzaEmoji(x.name);
   const dietro = /face pull|reverse|alzate posteriori|y-raise/i.test(n);
@@ -114,6 +115,7 @@ function componiSedute(brief, split) {
   /* 3 giorni con upper e lower una volta sola: il full body fa da giorno leggero per entrambi (forza + ipertrofia, ogni muscolo 2 volte) */
   const ulUnico = split.giorni.filter(g => g === 'upper').length === 1 && split.giorni.filter(g => g === 'lower').length === 1;
   let schienaPrima = null;   /* ABB-07: la seduta del giorno prima aveva un carico pesante sulla schiena? */
+  let schienaPrimaSeduta = null;   /* INT-2d (M2): la prima seduta della settimana (lunedi con 6 sedute): l ultima (domenica) la precede nell anello */
   let senzaSbarra = false;           /* CAS-14: almeno un posto della tirata verticale e stato riempito con il pullover o con una serie in piu di rematore */
   let pulloverMesso = false;         /* CAS-14: almeno un posto e stato riempito con il pullover (lo dice anche la nota dello schema aggiunto, come PRG-21) */
   const senzaSbarraSerieInPiu = [];  /* CAS-14: gli indici delle sedute dove il posto e rimasto vuoto: il rematore prende una serie in piu */
@@ -123,7 +125,9 @@ function componiSedute(brief, split) {
     const usati = [];
     const base = [];
     let pesantiSchiena = 0;
-    const vietaSchiena = !!(schienaPrima && !metodoAttivo && indiciGiorni[i] - schienaPrima.idx === 1 && schienaPrima.pesa);
+    const nSedute = Math.min(split.giorni.length, brief.agenda.giorni);
+    const vietaSchiena = !!(!metodoAttivo && ((schienaPrima && indiciGiorni[i] - schienaPrima.idx === 1 && schienaPrima.pesa) ||
+      (i === nSedute - 1 && schienaPrimaSeduta && giorniAdiacenti(indiciGiorni[i], schienaPrimaSeduta.idx) && schienaPrimaSeduta.pesa)));   /* INT-2d (M2): anche domenica dopo lunedi (ciclico) */
     let schienaQui = false;
     /* PHUL: all intermedio con upper/lower la prima volta e forza, la seconda ipertrofia */
     const tipoGiorno = ((level === 'intermedio' && !metodoAttivo) || (metodoAttivo && metodoAttivo.phul)) && (tplId === 'upper' || tplId === 'lower') ? (visti[tplId] ? 'ipertrofia' : 'forza')
@@ -248,6 +252,7 @@ function componiSedute(brief, split) {
     /* ABB-01: fondamentale, poi macchine, poi isolamenti, il core in fondo (i metodi famosi hanno il loro ordine) */
     if (!metodoAttivo) strOrdina(base, tplId, prefs.priorita);
     schienaPrima = { idx: indiciGiorni[i], pesa: schienaQui };
+    if (i === 0) schienaPrimaSeduta = schienaPrima;
 
     const seduta = {
       giorno: DAYS[indiciGiorni[i]],

@@ -50,7 +50,8 @@ test('M1: nessun prudente e nessun principiante riceve lo Stacco Rumeno a una Ga
   assert.deepStrictEqual(con(principianti).map(x => x.p.seme), [], 'chi inizia non riceve un esercizio di abilita 3 (SEL-06)');
   const esperti = adulti.filter(x => x.p.level !== 'principiante');
   assert.strictEqual(esperti.length, 54);
-  assert.strictEqual(con(esperti).length, 20, 'chi ha esperienza lo riceve dove ci sono i manubri');
+  /* W2-T2: 18 e non 20 (la capacita di CAS-06 e il taglio per il tempo cambiano quali programmi della griglia hanno il posto dell unilaterale); il controllo e che lo riceva ancora dove ci sono i manubri */
+  assert.strictEqual(con(esperti).length, 18, 'chi ha esperienza lo riceve dove ci sono i manubri');
 });
 
 /* ============================================================================================================ M5 */
@@ -92,7 +93,8 @@ test('M5: su una griglia di 324 programmi nessun intermedio o avanzato sano rice
   assert.deepStrictEqual(esperti.filter(haScatola).map(x => x.p.seme), [], 'chi puo fare lo squat con un carico non riceve lo squat di avvio');
   /* lo ricevono ancora chi inizia e i prudenti (la progressione verso lo squat carico) */
   assert.strictEqual(tutti.filter(x => x.p._persona === 'adulto' && x.p.level === 'principiante').filter(haScatola).length, 12);
-  assert.strictEqual(tutti.filter(x => x.p._persona !== 'adulto').filter(haScatola).length, 128);
+  /* W2-T2: 130 e non 128 (con la capacita di CAS-06 ai prudenti e ai principianti restano 2 programmi in piu con lo squat di avvio: e la progressione verso lo squat carico) */
+  assert.strictEqual(tutti.filter(x => x.p._persona !== 'adulto').filter(haScatola).length, 130);
   let sedute = 0, conAvvioEAltroSquat = 0, conDueSquat = 0;
   tutti.forEach(x => x.prog.sedute.forEach(sd => {
     sedute++;
@@ -102,7 +104,13 @@ test('M5: su una griglia di 324 programmi nessun intermedio o avanzato sano rice
   }));
   assert.ok(sedute > 1000);
   assert.strictEqual(conAvvioEAltroSquat, 0, 'lo squat di avvio non sta con un altro squat');
-  assert.strictEqual(conDueSquat, 45, 'restano solo i doppi squat carichi (bilanciere + macchina, ABB-02): prima 71');
+  /* INT-2b: 40 e non 45 (con il volume per muscolo di W2-T1 la griglia ha 5 sedute di squat doppi in meno: Hack Squat + Leg Press e le coppie col bilanciere; erano 71 sul codice di prima, 45 con la capacita di
+     W2-T2). Il controllo che conta, nessuna seduta con lo squat di avvio e un altro squat, resta a 0 sopra. Restano 40 sedute con due schemi di squat: macchina + macchina (Hack + Leg Press, Hack + Pendulum),
+     bilanciere + macchina (ABB-02) e, a casa con i manubri, Goblet Squat + Squat a Corpo Libero (23 sedute, come prima: 22): un doppione di scelta, non di volume, che spetta alla scelta per attributi
+     (RID-01/RID-02, W2-T6). Il numero scende solo se il generatore migliora: si aggiorna con il motivo, mai a mano per far passare la prova */
+  /* onda 2c (INT-2b): 41 e non 40: il Front Squat e vietato a chi inizia e ai prudenti (SAF-05, abilita 3: vincoli.js) e in una seduta della griglia il suo posto lo prende uno squat alla macchina
+     accanto a un altro (un doppione di scelta, W2-T6); nessuna seduta con lo squat di avvio e un altro squat (sopra, 0) */
+  assert.strictEqual(conDueSquat, 41, 'doppi squat nella griglia: erano 71 sul codice di prima, 45 con la capacita di W2-T2, 40 con il volume per muscolo');
 });
 
 /* ============================================================================================================ M3 */

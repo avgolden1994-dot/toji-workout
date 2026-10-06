@@ -36,14 +36,17 @@
    (caricoProssimoBase, carichiDelGiorno, contaStalli), le altre nei file delle loro regole. Spostati: DOSE_SCARICO e livelloFatica in
    sicurezza/scarico.js, e1rmSerie e e1rmSeduta in carichi/e1rm.js, la taratura del RIR (CAR-14) in carichi/taratura.js.
    ============================================================ */
-/* tecniche speciali che il coach assegna (quando e perche: vedi Opzioni > Il coach) */
+/* tecniche speciali che il coach assegna (quando e perche: vedi Opzioni > Il coach).
+   MAV-16 (W2-T3): i testi sono onesti: drop set, myo-reps, rest-pause e cluster non fanno crescere di piu delle serie normali a parita di volume, fanno risparmiare tempo o fatica
+   (meta-analisi 2022-2026, Solida). MAV-06: l AMRAP si ferma a 1 ripetizione dal cedimento. MAV-07: le parziali sono facoltative e solo dove il muscolo e allungato. */
 const TECNICHE = {
-  drop: 'Drop set sull ultima serie: arrivato vicino al cedimento togli il 20% e continua, due volte',
-  cluster: 'Cluster: 30 secondi di pausa ogni 2 ripetizioni, meno fatica per le articolazioni',
+  drop: 'Drop set sull’ultima serie: arrivato vicino al cedimento togli il 20% e continua, due volte. Non fa crescere di più: serve a risparmiare tempo',
+  myo: 'Myo-reps: una serie da 12-20 ripetizioni vicino al cedimento, poi 3-5 mini-serie da 3-5 ripetizioni con 10-20 secondi di pausa. Non fa crescere di più: serve a risparmiare tempo',
+  cluster: 'Cluster: 30 secondi di pausa ogni 2 ripetizioni. Non fa crescere di più: serve ad arrivare meno stanco',
   potenza: 'Potenza: salita veloce con un carico leggero (40-60%), discesa controllata',
-  amrap: 'Ultima serie AMRAP: fai piu ripetizioni possibili con buona tecnica',
+  amrap: 'Ultima serie: arriva a 1 ripetizione dal cedimento e fermati se la velocità cala o la tecnica cede',
   backoff: 'Back-off: dopo la serie piu pesante, le altre a -5%',
-  parziali: 'A fine serie qualche ripetizione parziale nella parte allungata',
+  parziali: 'A fine serie, dopo il cedimento, 3-6 ripetizioni solo nella parte in cui il muscolo è allungato. Facoltativo: non è dimostrato che batta il movimento completo',
   calibrazione: 'Calibrazione: ultima serie fino al cedimento, il coach impara quanto stimi le ripetizioni in riserva',
   /* tecniche dell epoca d oro (TEC-01..05): le assegnano solo i metodi che le prevedono */
   piramide: 'Piramide: serie dopo serie il carico sale e le ripetizioni scendono (per esempio 12, 10, 8, 6), come faceva Arnold',
@@ -62,9 +65,12 @@ function profiloCoach() {
 }
 const BIL_PESANTI = /Squat con Bilanciere|Squat con Pausa|Front Squat|Stacco(?! Rumeno (?:con Manubri|a una Gamba))|Panca con Pausa|Panca Piana Bilanciere|Panca Inclinata Bilanciere|Panca Declinata|Military Press|Rematore con Bilanciere|T-Bar Row|Good Morning/;
 function tipoCarico(nome) {
+  const t = typeof memoriaTabella === 'function' ? memoriaTabella('tipoCarico') : null;   /* dentro buildProgram: una volta per nome */
+  if (t !== null) { const v = t.get(nome); if (v !== undefined) return v; }
   const m = findExercise(nome) || findExercise(nomeInLibreria(senzaEmoji(nome)) || '');
-  if (!m || m.type !== 'compound') return 'isolamento';
-  return BIL_PESANTI.test(senzaEmoji(nome)) ? 'pesante' : 'macchina';
+  const r = (!m || m.type !== 'compound') ? 'isolamento' : (BIL_PESANTI.test(senzaEmoji(nome)) ? 'pesante' : 'macchina');
+  if (t !== null) t.set(nome, r);
+  return r;
 }
 const RIR_TIPO = { pesante: [1, 3], macchina: [0, 2], isolamento: [0, 1] };
 /* MES-02 (ponte dell onda 0): una tabella sola per il RIR di partenza (registro B5; collaudo RIR-02 e RIR-03). Principiante: 3-4
@@ -96,6 +102,13 @@ function pavimentoRirMinorenni(r) {
   const piso = MES_RIR.pisoMinorenni;
   return profiloCoach().minorenne && r[0] < piso ? [piso, Math.max(r[1], piso + 1)] : r;
 }
+/* INT-2d (M5 della revisione, MES-02): chi comincia non lavora mai sotto 2 ripetizioni in riserva (la tabella dice 3-4 nelle settimane 1-2 e 2-3 dopo, mai 0), in ogni percorso: anche con un programma
+   salvato da un altro livello (un piano da intermedio con il livello poi cambiato in «principiante»: gli isolamenti arrivavano a [0, 1] alla 5ª settimana), senza rirSett (salvato dalla v1) o con la tabella spenta.
+   Si legge il livello del momento (profiloCoach), come per i minorenni */
+function pavimentoRirPrincipiante(r) {
+  const piso = MES_RIR.principianteDopo[0];
+  return profiloCoach().livello === 'principiante' && r[0] < piso ? [piso, Math.max(r[1], piso + 1)] : r;
+}
 function rirBersaglio(nome, sett) {
   const r = rirBersaglioBase(nome, sett);
   /* chi si ferma alla prima fatica si allena lontano dal cedimento (PRETIE-Q): stessa crescita fino a 3-4 RIR */
@@ -111,7 +124,25 @@ function rirBersaglio(nome, sett) {
   if (!stabile(nome) && out[0] < 1) out = [1, Math.max(2, out[1])];
   return pavimentoRirMinorenni(out);
 }
-function rirBersaglioBase(nome, sett) { return pavimentoRirMinorenni(rirBersaglioPerLivello(nome, sett)); }
+/* MES-02 (W2-T3, aggancio): la tabella del piano per settimana e classe, se c e (rirPianoSettimana, programma/mesociclo.js, W2-T4), decide il RIR della settimana; senza (oggi, o un
+   programma salvato prima del piano) restano i valori di prima, rirBersaglioPerLivello. rirPianoSettimana(nome, sett) ritorna [min, max] (o { min, max }) per l esercizio in quella settimana,
+   o niente se per questa persona la tabella non si applica. La prudenza vince sempre (modalita prudente e over 65 restano a 3-4, i minorenni a 2 o piu), il RIR non supera 4 e i
+   fondamentali col bilanciere non scendono sotto MES_RIR.pisoPesante (collaudo RIR-02). */
+function rirDalPiano(nome, sett) {
+  if (typeof rirPianoSettimana !== 'function') return null;
+  const pc = profiloCoach();
+  if (pc.prudente || pc.eta >= 65) return null;
+  /* INT-2d (M5): il piano di un altro livello non vale per chi ora e principiante (la tabella del principiante la da rirBersaglioPerLivello: 3-4 poi 2-3) */
+  if (pc.livello === 'principiante') { const pr = getProgramma(); if (!pr || !pr.piano || pr.piano.livello !== 'principiante') return null; }
+  let t = rirPianoSettimana(nome, sett);
+  if (t && !Array.isArray(t) && isFinite(t.min) && isFinite(t.max)) t = [t.min, t.max];
+  if (!Array.isArray(t) || t.length !== 2 || !isFinite(t[0]) || !isFinite(t[1])) return null;
+  let r = [Math.max(0, Math.min(4, Number(t[0]))), Math.max(0, Math.min(4, Number(t[1])))];
+  if (r[1] < r[0]) r = [r[0], r[0]];
+  if (tipoCarico(nome) === 'pesante' && r[0] < MES_RIR.pisoPesante) r = [MES_RIR.pisoPesante, Math.max(r[1], MES_RIR.pisoPesante + 1)];
+  return r;
+}
+function rirBersaglioBase(nome, sett) { return pavimentoRirPrincipiante(pavimentoRirMinorenni(rirDalPiano(nome, sett) || rirBersaglioPerLivello(nome, sett))); }
 function rirBersaglioPerLivello(nome, sett) {
   const pc = profiloCoach();
   if (pc.prudente || pc.eta >= 65) return [3, 4];
@@ -211,7 +242,7 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase) {
   const over65 = pc.eta >= 65;   /* ETA-18: gli aumenti si dimezzano anche dopo i 65 anni, come dice il capitolo 14 della mappa */
   const prudente = pc.sonnoMale || pc.prudente || over65;
   const sess = ultimeSessioni(nome, 2);
-  const dose = scarico ? DOSE_SCARICO[livelloFatica()] : null;
+  const dose = scarico ? DOSE_SCARICO[sett.doseFissa || livelloFatica()] : null;   /* PRN-03 (INT-2d): lo scarico del controllo dell 8ª ha la dose «bassa» del registro, non quella della fatica di oggi */
   const sets = scarico ? Math.max(2, Math.round((setsBase || 3) * dose.serie)) : (setsBase || 3);
 
   if (isTimeBased(nome)) {

@@ -129,7 +129,12 @@ test('(c) la nota «senza leg curl restano meno allenati» non compare se la set
   });
   assert.deepStrictEqual(colpe, []);
   assert.ok(conStaccoSenzaNota > 50, 'programmi con una cerniera per i femorali: ' + conStaccoSenzaNota);
-  assert.ok(conNota > 20, 'resta la nota dove i femorali hanno solo il ponte: ' + conNota);
+  /* INT-2b: 5 programmi della griglia e non piu 20+. Con il volume per muscolo (W2-T1) il Leg Curl con Asciugamano entra a casa quasi sempre e la nota «senza leg curl restano meno allenati» era falsa in
+     quei programmi (c era la flessione e la nota diceva il contrario): riconciliaNote (REG-02) la toglie. Resta dove i femorali hanno davvero solo il ponte (principianti a casa con 2 giorni e 30 minuti): il controllo
+     che conta e sopra, mai la nota con una cerniera, e sotto in tests/integrazione-onda2b.test.js (mai la nota con una flessione) */
+  /* INT-2b (onda 2c): 0 programmi. Il Leg Curl con Asciugamano e nella lista delle flessioni di B29 (FLESSIONI_GINOCCHIO) e a casa entra anche a 2 giorni e 30 minuti: il ponte al posto della flessione resta
+     solo per chi ha escluso ogni flessione (odiati), provato in tests/generatore-onda0b.test.js */
+  assert.ok(conNota <= 3, 'la nota del ponte al posto della flessione e rara o assente: ' + conNota);
 });
 
 test('(c) eCernieraFemorali: lo stacco rumeno (coi manubri, a una gamba), il good morning e gli stacchi si; hip thrust, ponte, hyperextension, pull-through e leg curl no', () => {

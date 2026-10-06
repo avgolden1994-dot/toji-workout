@@ -94,13 +94,13 @@ test('B30/MES-02: pavimento 1 sui fondamentali pesanti anche con la rampa dell\'
   app.ora('2026-09-14T12:00:00');   /* settimana 2: invariato */
   assert.deepStrictEqual(app.dati(app.chiama('rirBersaglioBase', CURL)), [0, 1]);
   assert.deepStrictEqual(app.dati(app.chiama('rirBersaglioBase', SQUAT)), [1, 3]);
-  /* regola spenta: tornano i valori di prima (principiante [1,3], intermedio isolamento [0,1]) */
+  /* regola spenta: tornano i valori di prima (intermedio isolamento [0,1]); il principiante ([1,3] prima) non scende comunque sotto 2: INT-2d (M5 della revisione), il pavimento di chi comincia non e della tabella */
   spegnibili(app, ['MES-02']);
   app.spegni(['MES-02']);
   app.ora('2026-09-07T12:00:00');
   assert.deepStrictEqual(app.dati(app.chiama('rirBersaglioBase', CURL)), [0, 1]);
   app.profilo({ level: 'principiante' });
-  assert.deepStrictEqual(app.dati(app.chiama('rirBersaglioBase', SQUAT)), [1, 3]);
+  assert.deepStrictEqual(app.dati(app.chiama('rirBersaglioBase', SQUAT)), [2, 3]);
 });
 
 test('B11/MES-10: una settimana di scarico con RPE bassi non alza l\'esigenza (in una settimana di carico si)', () => {

@@ -91,8 +91,11 @@ const REPS_MAX_CORPO = 30;
 const TIME_MIN = 10;
 const TIME_MAX = 120;
 window.isTimeBased = function(name) {
-  const m = findExercise(name);
-  return !!m && (m.tempo === true || (m.group === 'core' && m.reps >= 25));
+  const t = typeof memoriaTabella === 'function' ? memoriaTabella('isTimeBased') : null;   /* dentro buildProgram: una volta per nome */
+  if (t !== null) { const v = t.get(name); if (v !== undefined) return v; }
+  const m = findExercise(name), r = !!m && (m.tempo === true || (m.group === 'core' && m.reps >= 25));
+  if (t !== null) t.set(name, r);
+  return r;
 };
 /* esercizi a un lato alla volta: le ripetizioni sono "per lato" */
 window.perLato = function(name) { const m = findExercise(name); return !!(m && m.lato); };
@@ -265,7 +268,7 @@ function renderGruppi() {
     document.getElementById('group-templates').innerHTML = conStato.map(x => {
       const t = x.tpl;
       const totalSets = t.exercises.reduce((s2, e) => s2 + e.sets, 0);
-      const estMin = Math.round(t.exercises.reduce((s2, e) => s2 + e.sets * (30 + e.rest), 0) / 60);
+      const estMin = Math.round(durataSeduta(t.exercises));   /* CAS-05, B36 (INT-2b): la stessa stima del generatore, di Oggi e di Aggiungi allenamento */
       const etichetta = x.stato === 'done'
         ? '\u2713 gia caricata su ' + getDayTitle(currentDay)
         : (x.stato === 'partial'

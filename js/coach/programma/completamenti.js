@@ -12,6 +12,11 @@
    ============================================================ */
 const NOTA_REMATORE_INVERSO = 'Rematore inverso: fallo sotto un tavolo robusto o con una sbarra bassa, dopo aver controllato che regga il tuo peso.';
 const NOTA_FEMORALI_SENZA_LEG_CURL = 'Femorali: senza leg curl restano meno allenati, il ponte glutei li aiuta.';
+/* le flessioni del ginocchio della libreria, nell ordine in cui il coach le propone: le macchine, poi la flessione a casa (il leg curl con l asciugamano: W1-T5, CAS-13, abilita 1, nessun attrezzo), per
+   ultimo il Nordic Curl (eccentrico, 3x6, una seduta a settimana, non per chi inizia ne per i prudenti: B1). INT-2b: prima la lista era solo [Seduto, Sdraiato, Nordic], e a casa con i manubri la
+   settimana restava senza flessione (6 programmi a 30 minuti nella matrice standard; il ponte glutei al posto del leg curl anche dove l asciugamano c era) */
+const FLESSIONI_GINOCCHIO = ['Leg Curl Seduto', 'Leg Curl Sdraiato', 'Leg Curl in Piedi', 'Leg Curl con Asciugamano', 'Nordic Curl'];
+const NOTA_FEMORALI_SERVE_FLESSIONE = 'Femorali: squat e hip thrust non li fanno crescere, serve la flessione del ginocchio (leg curl).';   /* riconciliaNote (genera.js) la tiene solo se la scheda ha davvero una flessione */
 /* W1-T6: una cerniera dell anca che allena i femorali (credito > 0 negli attributi: stacco rumeno, a una gamba, good morning, stacchi; non l hyperextension, che e classe F, ne l hip thrust, che e
    una spinta d anca). Senza attributi ricade sul nome. */
 function eCernieraFemorali(e) {
@@ -75,7 +80,8 @@ function completaSettimana(brief, sedute) {
   const settimanaNomi = () => [].concat.apply([], sedute.map(sd => sd.esercizi.map(e => senzaEmoji(e.name))));
   const aggiungiRegione = (rx, nomi, dove, testo) => {
     if (settimanaNomi().some(n => rx.test(n))) return;
-    const nome = nomi.map(nomeInLibreria).find(n => n && consentito(n, prefs));
+    const ammessi = nomi.map(nomeInLibreria).filter(n => n && consentito(n, prefs));   /* INT-2b (SAF-02): prima chi non carica una zona dolente dichiarata */
+    const nome = ammessi.find(n => !(typeof esercizioCaricaIlFastidio === 'function' && esercizioCaricaIlFastidio(n, prefs.fastidi))) || ammessi[0];
     if (!nome) return;
     const sd = sedute.filter(dove).sort((a, b) => a.esercizi.length - b.esercizi.length)[0];
     if (!sd || sd.esercizi.length > nEs) return;
@@ -89,14 +95,14 @@ function completaSettimana(brief, sedute) {
      (lower, legs, full body) ha uno stacco o una flessione del ginocchio: dove manca si aggiunge un leg curl da 3 serie (2 ai principianti).
      Il femorale cosi si allena in ogni seduta di gambe e non solo in una, col rapporto giusto sui quadricipiti (collaudo FRQ-01, EQ-03, VOL-01) */
   if (!(metodoAttivo && metodoAttivo.essenziale) && giorni >= 2 && conGambe) {
-    const flessioni = ['Leg Curl Seduto', 'Leg Curl Sdraiato', 'Nordic Curl'].map(nomeInLibreria).filter(n => n && consentito(n, prefs));
+    const flessioni = FLESSIONI_GINOCCHIO.map(nomeInLibreria).filter(n => n && consentito(n, prefs));   /* INT-2b: anche il leg curl con l asciugamano (casa, CAS-13) e quello in piedi, che la lista non aveva */
     const usi = (n) => sedute.filter(sd => sd.esercizi.some(e => e.name === n)).length;
     let aggiunti = 0, aggiuntiPonte = 0;
     const setsFlessione = level === 'principiante' ? 2 : 3;
     const eFlessione = (e) => /leg curl|nordic/i.test(senzaEmoji(e.name)), ePonte = (e) => /ponte glutei/i.test(senzaEmoji(e.name));
     /* B1 (revisione dell onda 0): senza macchine ne Nordic Curl (chi inizia, i prudenti, le ginocchia dolenti) non c e una flessione del ginocchio sicura da dare a casa: i femorali restano
        meno allenati e prendono il ponte glutei (credito 0,5: il ponte a una gamba per chi puo, quello a due gambe per chi inizia o e prudente) dove non c e gia. Le flessioni vere sono di W1-T5 */
-    const ponte = !['Leg Curl Seduto', 'Leg Curl Sdraiato'].some(n => nomeInLibreria(n) && consentito(nomeInLibreria(n), prefs))
+    const ponte = !FLESSIONI_GINOCCHIO.filter(n => !RX_NORDIC.test(n)).some(n => nomeInLibreria(n) && consentito(nomeInLibreria(n), prefs))
       ? ((level === 'principiante' || cauto) ? ['Ponte Glutei', 'Ponte Glutei a una Gamba'] : ['Ponte Glutei a una Gamba', 'Ponte Glutei']).map(nomeInLibreria).filter(n => n && consentito(n, prefs))[0] : null;
     sedute.filter(sd => /lower|legs|fullbody/.test(sd.tipo)).forEach(sd => {
       if (sd.esercizi.some(e => SLOT_DEF.hinge(e) || eFlessione(e)) || sd.esercizi.length > nEs + 1) return;
@@ -114,7 +120,24 @@ function completaSettimana(brief, sedute) {
     });
     /* e almeno una flessione del ginocchio nella settimana, anche se ogni seduta ha gia il suo stacco (aggiungiRegione dava 2 serie e solo con 3+ giorni) */
     if (flessioni.length && !settimanaNomi().some(n => /leg curl|nordic/i.test(n))) {
-      const sd = sedute.filter(x => /lower|legs|fullbody/.test(x.tipo) && x.esercizi.length <= nEs + 1 && recuperoOk(x, sedute, flessioni[0], setsFlessione)).sort((a, b) => a.esercizi.length - b.esercizi.length)[0];
+      const gambe = sedute.filter(x => /lower|legs|fullbody/.test(x.tipo)).sort((a, b) => a.esercizi.length - b.esercizi.length);
+      const recOk = (x) => recuperoOk(x, sedute, flessioni[0], setsFlessione, { obbligata: true });   /* le 48 ore che la mossa crea si; il tetto per seduta lo rimettono il volume e il tempo (le serie qui sono ancora 4 per esercizio) */
+      /* INT-2b (registro B6, collaudo EQ-03:flessione): se ogni seduta di gambe e gia oltre nEs + 1 (le famiglie dei glutei, gli schemi mancanti: a 30 minuti con l obiettivo glutei) la flessione entra
+         comunque nella piu corta sotto il tetto di esercizi (EXN-02): decide la scala del tempo, che tiene l unica flessione della settimana e toglie prima un doppione dello schema (scalaDelTempo) */
+      const maxEs = level === 'principiante' ? PARAM_NUMERO_ESERCIZI.maxSedutaPrincipiante : PARAM_NUMERO_ESERCIZI.maxSeduta;
+      let sd = gambe.find(x => x.esercizi.length <= nEs + 1 && recOk(x)) || gambe.find(x => x.esercizi.length < maxEs && recOk(x)) || null;
+      if (!sd) {   /* ogni seduta di gambe e al tetto di esercizi, o di serie per muscolo (SES-01 contato prima del volume, con 4 serie per esercizio: a casa coi manubri i glutei sono gia a 11): la flessione
+                      prende il posto del secondo esercizio di schema squat (la hack, gli affondi o lo squat a corpo libero dopo il primo), mai del fondamentale ne di un posto fisso */
+        for (const x of gambe) {
+          const comp = x.esercizi.filter(e => (findExercise(e.name) || {}).type === 'compound' && !isTimeBased(e.name));
+          const doppio = comp.filter((e, i) => i > 0 && !e.fisso && schemaDi(e.name) === 'squat' && comp.some(y => y !== e && schemaDi(y.name) === 'squat')).pop();
+          if (!doppio) continue;
+          const k = x.esercizi.indexOf(doppio);
+          x.esercizi.splice(k, 1);
+          if (recOk(x)) { sd = x; break; }
+          x.esercizi.splice(k, 0, doppio);
+        }
+      }
       const nome = sd ? flessioni[0] : null;
       if (nome) {
         const m = findExercise(nome) || {};
@@ -124,7 +147,7 @@ function completaSettimana(brief, sedute) {
     }
     /* W1-T6: la nota «senza leg curl restano meno allenati» non c e dove i femorali hanno gia una cerniera dell anca vera (stacco rumeno coi manubri o col bilanciere, a una gamba,
        good morning, stacchi): rinforzaFemorali e il ponte guardavano solo le flessioni e la nota compariva anche con lo stacco rumeno in scheda (mappa, cap. 17 n. 15) */
-    if (aggiunti) note.push('Femorali: squat e hip thrust non li fanno crescere, serve la flessione del ginocchio (leg curl).');
+    if (aggiunti) note.push(NOTA_FEMORALI_SERVE_FLESSIONE);
     else if (aggiuntiPonte && !sedute.some(sd => sd.esercizi.some(eCernieraFemorali))) note.push(NOTA_FEMORALI_SENZA_LEG_CURL);
   }
   if (regioni && conGambe) {
@@ -160,7 +183,7 @@ function rinforzaFemorali(c) {
   /* il Nordic Curl e una discesa eccentrica a corpo libero: oltre 3 serie non e un lavoro che si fa (la libreria lo da a 3x6) */
   const tetto = (e) => /nordic/i.test(senzaEmoji(e.name)) ? Math.min(3, c.maxSerieFlessione) : c.maxSerieFlessione;
   const dentro = (sd) => durataSeduta(sd.esercizi) <= c.minuti * 1.05;
-  const nomiFlessione = () => ['Leg Curl Seduto', 'Leg Curl Sdraiato', 'Nordic Curl'].map(nomeInLibreria).filter(n => n && consentito(n, c.prefs));
+  const nomiFlessione = () => FLESSIONI_GINOCCHIO.map(nomeInLibreria).filter(n => n && consentito(n, c.prefs));
   const usoFlessione = (n) => c.sedute.filter(x => x.esercizi.some(e => e.name === n)).length;
   /* frequenza: il femorale conta in una seduta da 1,5 serie frazionarie in su (3 serie con credito 0,5: un pull-through a 2 serie non basta); almeno 2 sedute
      a settimana (ACSM 2026). Dove manca, una serie in piu al leg curl che c e o un leg curl nuovo (collaudo FRQ-01) */
@@ -171,8 +194,20 @@ function rinforzaFemorali(c) {
     const nome = nomiFlessione().filter(n => usoFlessione(n) < maxSettimana(n) && recuperoOk(sd, c.sedute, n, c.setsNuovo)).sort((a, b) => usoFlessione(a) - usoFlessione(b))[0];
     if (!nome) return false;
     const m = findExercise(nome) || {};
-    sd.esercizi.push({ name: nome, sets: Math.min(c.setsNuovo, RX_NORDIC.test(senzaEmoji(nome)) ? PARAM_NORDIC.serieMax : 99), reps: ripetizioniFlessione(nome), weight: m.weight || 0, rest: 75 });
-    if (!dentro(sd)) { sd.esercizi.pop(); return false; }
+    const nuovoEs = { name: nome, sets: Math.min(c.setsNuovo, RX_NORDIC.test(senzaEmoji(nome)) ? PARAM_NORDIC.serieMax : 99), reps: ripetizioniFlessione(nome), weight: m.weight || 0, rest: 75 };
+    sd.esercizi.push(nuovoEs);
+    if (!dentro(sd)) {
+      sd.esercizi.pop();
+      /* INT-2b (B6): nei minuti non entra in piu: prende il posto del secondo esercizio di schema squat della seduta (non il primo multiarticolare, non un fisso), se cosi la seduta sta nei minuti;
+         la flessione del ginocchio vale piu di un doppione dello squat (scala di priorita del poco tempo, P4 contro un secondo P1 dello stesso schema) */
+      const comp = sd.esercizi.filter(e => (findExercise(e.name) || {}).type === 'compound' && !isTimeBased(e.name));
+      const doppio = comp.filter((e, i) => i > 0 && !e.fisso && schemaDi(e.name) === 'squat' && comp.some(y => y !== e && schemaDi(y.name) === 'squat')).pop();
+      if (!doppio) return false;
+      const k = sd.esercizi.indexOf(doppio), dopo = sd.esercizi[k + 1], coppiaDopo = !!(dopo && dopo.superset && !doppio.superset);
+      togliEsercizio(sd, doppio);
+      sd.esercizi.push(nuovoEs);
+      if (!dentro(sd)) { sd.esercizi.pop(); sd.esercizi.splice(k, 0, doppio); if (coppiaDopo) dopo.superset = true; return false; }
+    }
     strOrdina(sd.esercizi, sd.tipo, c.prefs.priorita);   /* ABB-01: il core resta in fondo */
     return true;
   };

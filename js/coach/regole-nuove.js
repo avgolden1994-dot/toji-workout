@@ -10,12 +10,12 @@
    RIC-01 serie in piu nelle settimane centrali del blocco (Pelland 2025, Bell 2024)
    RIC-02 pausa piu lunga prima di abbassare il carico (Singer 2024)
    RIC-03 posizione allungata per petto, schiena e glutei (Maeo 2021-2023, Pedrosa 2025)  -> schemi.js
-   RIC-04 al massimo una tecnica al cedimento per seduta (Robinson 2024)
-   RIC-05 rientro dopo una pausa: serie ridotte su tutto il piano (detraining, SBS)
+   RIC-04 il budget delle tecniche al cedimento per seduta (Robinson 2024; W2-T3: il cancello di sicurezza/tecnica-adatta.js, MAV-01, MAV-05, MAV-08)
+   RIC-05 rientro dopo una pausa: serie ridotte su tutto il piano (detraining, SBS) e discesa controllata (MAV-11)
    W1-T3: nessun involucro. RIC-01/02/05 sono la fase 60 della catena 'carico', RIC-04 la fase 20 di 'apertura' e di 'prontezza'
    (regia/fasi.js, piano B.3): l ordine e scritto nel numero, non nell ordine degli script.
    ============================================================ */
-const TECNICHE_INTENSE = ['drop', 'amrap', 'parziali', 'calibrazione', 'negativa', 'forzate', 'riposopausa'];   /* tutte arrivano al cedimento */
+const TECNICHE_INTENSE = ['drop', 'myo', 'amrap', 'parziali', 'calibrazione', 'negativa', 'forzate', 'riposopausa'];   /* tutte arrivano al cedimento */
 
 function sedutePassate() {
   return loadHistory().filter(h0 => h0.sessione && h0.sessione.length && !h0.interrotta)
@@ -73,6 +73,8 @@ function regoleRicAlCarico(r, c) {
     if (r.sets > 2) {
       r.sets = Math.max(2, Math.round(r.sets * 0.75));
       r.motivo += ' • rientro dopo ' + rientro + ' giorni: meno serie su tutto il piano, poi si torna al solito';
+      /* MAV-11: dopo una pausa si scende piano (2-3 secondi), senza fretta */
+      if (regolaAttiva('MAV-11')) aggiungiPerche(r, 'MAV-11', 'Scendi piano: ' + SOGLIE_TECNICHE.discesaSecondi.v[0] + '-' + SOGLIE_TECNICHE.discesaSecondi.v[1] + ' secondi in discesa.');
     }
     return r;
   }
@@ -89,21 +91,26 @@ function regoleRicAlCarico(r, c) {
 }
 registraFase('carico', 60, 'RIC', regoleRicAlCarico);
 
-/* RIC-04: tecniche al cedimento. In scarico o con prontezza bassa nessuna; altrimenti una sola per seduta.
+/* RIC-04 (W2-T3: il budget del cancello delle tecniche, MAV-01, MAV-05, MAV-08): ogni tecnica della seduta di oggi passa da tecnicaAdatta (persona, esercizio, giorno: scarico,
+   prontezza sotto 50, posizione nel blocco) e le tecniche al cedimento restano al massimo budgetTecniche(...).perSeduta (intermedio 1, avanzato 2), le piu sicure e non le prime
+   della lista (MAV-05). Il tetto della settimana lo tiene il programma, che si ripete in ogni settimana (assegnaTecniche, validaTecniche).
    La tecnica del programma non si cancella: per la seduta di oggi si mette '-' (nessun badge). */
 function limitaTecnicheIntense(day) {
   if (!regolaAttiva('RIC-04') || !coachAttivo()) return 0;
   const data = loadData(), list = data[day] || [];
   if (list.some(e => e.completedSets.some(s => s.done))) return 0;
-  const st = settimanaProgramma();
-  const pr = prontezzaOggi(day);
-  const niente = (st && st.fase === 'scarico') || (typeof pr === 'number' && pr < COACH_PARAMETRI.prontezzaMedia);
-  let viste = 0, tolte = 0;
+  const brief = briefTecnicheOggi(day), st = settimanaProgramma(), pr = prontezzaOggi(day);
+  const ctx = { settimana: st, prontezza: pr };
+  ctx.budget = budgetTecniche(brief, st, ctx);
+  let tolte = 0;
+  const candidati = [];
   list.forEach(e => {
     const t = e.tecnicaSeduta || e.tecnica;
-    if (!TECNICHE_INTENSE.includes(t)) return;
-    if (niente || viste >= 1) { e.tecnicaSeduta = '-'; tolte++; } else viste++;
+    if (!t || !GRUPPO_TECNICA[t]) return;   /* nessuna tecnica, '-' (gia tolta) o una che il cancello non conosce */
+    if (!tecnicaAdatta(t, e.name, brief, ctx).ok) { e.tecnicaSeduta = '-'; tolte++; return; }
+    if (tecnicaContaNelBudget(t)) candidati.push({ e: e, tecnica: t, rischio: rischioTecnica(t, e.name) });
   });
+  scegliTecnicheSicure(candidati, ctx.budget.perSeduta).scartate.forEach(c => { c.e.tecnicaSeduta = '-'; tolte++; });
   if (tolte) saveData(data);
   return tolte;
 }
