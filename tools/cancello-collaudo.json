@@ -1,343 +1,1850 @@
 {
-  "_leggimi": [
-    "Soglie del cancello del collaudo del generatore (piano coach v2, W0-T1; registro docs/coach-v2-decisioni.md tabella E e cap. G del piano).",
-    "Uso: npm run collaudo:schede -- --matrice standard --etichetta onda-N --out /tmp/x   poi   npm run cancello -- /tmp/x/collaudo-generatore-onda-N.json onda-N [--contro <json onda prima>] [--identico]",
-    "Una soglia e il massimo della percentuale PESATA di programmi colpiti (0 = nessun programma, contato sui programmi); vale da quell'onda in poi finche una successiva non la cambia (le soglie si ereditano: un criterio a 0 resta a 0).",
-    "`criteri.<COD>.soglie` vale per tutte le sottoclassi del criterio, `criteri.<COD>.sub.<sottoclasse>` solo per quella. Una soglia puo essere {max, dove:{dimensione:valore}, unita:\"programmi\"}: conta i programmi colpiti in quel valore della dimensione (per esempio luogo palestra).",
-    "`prima` = istantanea «base» misurata sul codice di partenza (tag coach-v2-onda-0-prima, matrice standard 10.800 profili, criteri 1.0, pesi popolazione): ogni criterio porta il valore della sottoclasse peggiore. La colonna `finale` e la tabella G del piano.",
-    "Le soglie cambiano solo nelle integrazioni (INT), con un motivo scritto e VERSIONE_CRITERI del collaudo alzata (invariante F.1.12): il collaudo non si «aggiusta» per far passare un'onda.",
-    "Oltre alle soglie il cancello controlla la regressione: nessuna classe peggiora piu di `regressione.tolleranzaPunti` rispetto al «prima» (o rispetto a --contro); le classi di `regressione.sicurezza` non peggiorano affatto; i criteri riscritti dall'INT (`onde.<onda>.riscritti`) non si confrontano col «prima». Con --contro il confronto vale SEMPRE (INT-1): anche per le classi che hanno una soglia esplicita, per il totale gravi_pesata (una soglia allentata non nasconde una regressione) e per le verifiche del modello (un MOD «ok» non diventa altro).",
-    "Le regressioni AMMESSE (`onde.<onda>.ammesse`) portano un responsabile (`risolve`: il task che le chiude), una SCADENZA (`scade`: l'onda entro cui devono sparire) e il motivo; il cancello fallisce se mancano, se la scadenza e l'onda che si valuta o una precedente, e non le ammette mai per la sicurezza (INT-2a, M2 della revisione dell'onda 1; una riga datata nel registro per ogni voce).",
-    "Le istantanee del collaudo restano FUORI dal repo (skill collaudo-generatore-schede): il «prima» si rigenera lanciando il collaudo sul tag coach-v2-onda-0-prima in un worktree temporaneo."
-  ],
-  "versione": 1,
-  "riferimento": {"etichetta":"base","tag":"coach-v2-onda-0-prima","commit":"0e71714 (js/ identico fino al tag: e71e612)","criteri":"1.0","matrice":"standard","pesi":"popolazione","tolleranzaPrima":0.5},
-  "regressione": {"tolleranzaPunti":0.5,"tolleranzaSicurezza":0,"sicurezza":["SAF-01","SAF-03"]},
-  "ordineOnde": ["onda-0","onda-1","onda-2a","onda-2","onda-3","onda-4","onda-5","finale"],
-  "onde": {
-    "onda-0": {"int":"INT-0","matrice":"standard","titolo":"Onda 0 - strumenti e bug netti","riscritti":["DEL-01","PAT-01","TEC-01"],"manuale":["prova congiunta W0-T3 + W0-T4 dello scarico (MES-06): tre sedute di scarico a 54 kg, la prima dopo lo scarico a 60 kg","INT-0 (fatto) alza VERSIONE_CRITERI a 1.1: DEL-01 (principiante non prudente: scarico solo all'8a, D-P5), PAT-01 (hinge = cerniera vera, B15; a casa senza sbarra la tirata verticale vale con il pullover coi manubri, D-P11; conta anche per EQ-01 ed EQ-02), TEC-01 (anche i minorenni), SAF-01/SAF-02/MOD-03 (leg extension e squat a corpo libero con le ginocchia dolenti sono cautela: B13, B33, REC-04), SAF-04 (il gradino non e attrezzatura non garantita, B28). Il «prima» per il confronto va rigenerato con i criteri 1.1 nel worktree del tag coach-v2-onda-0-prima e passato a --contro","SES-03 e PAT-01 a casa non sono ancora a 0 (W1-T5, W2-T6): il cancello li guarda solo in palestra","W0-T7 (criteri 1.2): SAF-04 non segnala il rematore inverso a corpo libero se il programma ha la nota «sotto un tavolo robusto o con una sbarra bassa» (decisione del committente); RX-01 e RX-04 non contano il Nordic Curl (eccentrico a 3-6 ripetizioni per sicurezza, B1 della revisione Opus); EQ-03:flessione non scatta dove non esiste una flessione del ginocchio sicura (casa e palestra senza macchine, con chi inizia, i prudenti o le ginocchia dolenti: il Nordic Curl e escluso). Il «prima» per il confronto (--contro) va rigenerato con i criteri 1.2 nel worktree del tag","W0-T7: il cancello confrontato con --contro giudica ogni classe contro il «prima» anche se ha una soglia esplicita (una soglia non basta a farla passare): le classi che a casa dipendono da W1-T5 (rematore inverso come unica tirata a corpo libero, niente trazioni, nessuna flessione del ginocchio sicura, niente hinge) restano sopra il «prima» e sono elencate nel report di W0-T7, non nascoste"]},
-    "onda-1": {"int":"INT-1","matrice":"standard","titolo":"Onda 1 - fondamenta (comportamento identico, poi libreria)","riscritti":["SAF-01","SAF-02"],
-    "ammesse":{
-      "VOL-02:glutei":{"max":32.5,"risolve":"W2-T1","scade":"onda-2a","motivo":"conseguenza dei 29 esercizi nuovi: a casa con i manubri lo Stacco Rumeno con Manubri e l'Hip Thrust con Manubrio (glutei 1 a serie), lo Squat su Scatola e lo Step-up Basso (0,5) portano credito ai glutei che il motore del volume, ancora per gruppo, non vede: i programmi sopra il massimo salgono da 411 a 1371 a casa coi manubri (palestra 650 -> 688, corpo libero 531 -> 718). Il volume per muscolo con gli attributi e di W2-T1 (soglia 0 a onda-2a); INT-2a ha allineato i crediti (M4: cerniera e affondi), cosi il motore nuovo parte da dati coerenti"},
-      "VOL-02:tricipiti":{"max":2.6,"risolve":"W2-T1","scade":"onda-2a","motivo":"rumore del sorteggio, non una causa nei dati: +0,56 punti su una tolleranza di 0,5 (revisione Opus dell'onda 1, M2). Il motivo scritto prima (Floor Press e Panca con Pausa con credito 0,5 ai tricipiti) era sbagliato: non entrano in nessun programma (0 su 2.034), la Chest Press Inclinata alla Macchina in 30. Il nuovo sorteggio dei posti sposta qualche programma sopra il massimo; il volume per muscolo di W2-T1 (soglia 0 a onda-2a) lo chiude"},
-      "REC-01:spalle":{"max":12.5,"risolve":"W2-T5","scade":"onda-2","motivo":"rumore del sorteggio, non un difetto nuovo: la classe (spalle allenate in due giorni consecutivi, 11,44% a onda-1 e 13,4% di base) oscilla di circa mezzo punto con ogni modifica che sposta i candidati dei posti (11,75% dopo l'integrazione di W1-T6 e W2-T8, 12,19% dopo le correzioni M1 e M5 di INT-2a: i programmi colpiti sono 1336 a onda-1, 1342 e di nuovo 1336, ma cambia quali sono e quanto pesano nella popolazione assunta: 18 programmi nuovi per 0,64 punti, 24 tolti per 0,18, quasi tutti intermedi in palestra a 5-6 giorni). La causa strutturale (la divisione dei giorni e le 48 ore tra due sedute dello stesso muscolo) e di W2-T5 (soglia 0 a onda-2)"},
-      "FRQ-02:polpacci":{"max":8.4,"risolve":"W2-T1","scade":"onda-2a","motivo":"il Calf Raise con Manubrio sul Gradino (polpacci 1) entra in una sola seduta dove le serie dirette dei muscoli piccoli non sono ancora distribuite: lo fa W2-T1 (serie dirette per muscolo, soglia 5 a onda-2a); in parte e rumore del sorteggio (+0,55 su 0,5)"}
+ "_leggimi": [
+  "Soglie del cancello del collaudo del generatore (piano coach v2, W0-T1; registro docs/coach-v2-decisioni.md tabella E e cap. G del piano).",
+  "Uso: npm run collaudo:schede -- --matrice standard --etichetta onda-N --out /tmp/x   poi   npm run cancello -- /tmp/x/collaudo-generatore-onda-N.json onda-N [--contro <json onda prima>] [--identico]",
+  "Una soglia e il massimo della percentuale PESATA di programmi colpiti (0 = nessun programma, contato sui programmi); vale da quell'onda in poi finche una successiva non la cambia (le soglie si ereditano: un criterio a 0 resta a 0).",
+  "`criteri.<COD>.soglie` vale per tutte le sottoclassi del criterio, `criteri.<COD>.sub.<sottoclasse>` solo per quella. Una soglia puo essere {max, dove:{dimensione:valore}, unita:\"programmi\"}: conta i programmi colpiti in quel valore della dimensione (per esempio luogo palestra).",
+  "`prima` = istantanea «base» misurata sul codice di partenza (tag coach-v2-onda-0-prima, matrice standard 10.800 profili, criteri 1.0, pesi popolazione): ogni criterio porta il valore della sottoclasse peggiore. La colonna `finale` e la tabella G del piano.",
+  "Le soglie cambiano solo nelle integrazioni (INT), con un motivo scritto e VERSIONE_CRITERI del collaudo alzata (invariante F.1.12): il collaudo non si «aggiusta» per far passare un'onda.",
+  "Oltre alle soglie il cancello controlla la regressione: nessuna classe peggiora piu di `regressione.tolleranzaPunti` rispetto al «prima» (o rispetto a --contro); le classi di `regressione.sicurezza` non peggiorano affatto; i criteri riscritti dall'INT (`onde.<onda>.riscritti`) non si confrontano col «prima». Con --contro il confronto vale SEMPRE (INT-1): anche per le classi che hanno una soglia esplicita, per il totale gravi_pesata (una soglia allentata non nasconde una regressione) e per le verifiche del modello (un MOD «ok» non diventa altro).",
+  "Le regressioni AMMESSE (`onde.<onda>.ammesse`) portano un responsabile (`risolve`: il task che le chiude), una SCADENZA (`scade`: l'onda entro cui devono sparire) e il motivo; il cancello fallisce se mancano, se la scadenza e l'onda che si valuta o una precedente, e non le ammette mai per la sicurezza (INT-2a, M2 della revisione dell'onda 1; una riga datata nel registro per ogni voce).",
+  "Le istantanee del collaudo restano FUORI dal repo (skill collaudo-generatore-schede): il «prima» si rigenera lanciando il collaudo sul tag coach-v2-onda-0-prima in un worktree temporaneo.",
+  "D-P20 (INT-2b, 2026-10-06): il cancello ha due parti. (a) Il CANCELLO DI REGRESSIONE (matrice, errori, nessuna classe peggiore dell'onda precedente oltre la tolleranza, zero tolleranza per la sicurezza SAF-01..06, le verifiche del modello che erano ok, le ammesse con responsabile e scadenza) deve passare sempre. (b) Le SOGLIE ASSOLUTE dell'onda non raggiunte sono OBIETTIVI APERTI stampati in ogni corsa con il responsabile (`onde.<onda>.responsabili`, altrimenti `criteri.<COD>.task`) e fermano il cancello solo per i criteri che l'onda DICHIARA di soddisfare (`onde.<onda>.dichiara.criteri`, con il motivo). La versione snella dell'onda 2 (onda-2b: W2-T1..T4 piu onda 2c, senza W2-T5/T6/T7) usa questa separazione: le soglie di onda-2a e onda-2 presuppongono un'onda 2 completa. Le ammesse delle onde precedenti valgono finche non scadono."
+ ],
+ "versione": 1,
+ "riferimento": {
+  "etichetta": "base",
+  "tag": "coach-v2-onda-0-prima",
+  "commit": "0e71714 (js/ identico fino al tag: e71e612)",
+  "criteri": "1.0",
+  "matrice": "standard",
+  "pesi": "popolazione",
+  "tolleranzaPrima": 0.5
+ },
+ "regressione": {
+  "tolleranzaPunti": 0.5,
+  "tolleranzaSicurezza": 0,
+  "sicurezza": [
+   "SAF-01",
+   "SAF-02",
+   "SAF-03",
+   "SAF-04",
+   "SAF-05",
+   "SAF-06"
+  ]
+ },
+ "ordineOnde": [
+  "onda-0",
+  "onda-1",
+  "onda-2a",
+  "onda-2b",
+  "onda-2",
+  "onda-3",
+  "onda-4",
+  "onda-5",
+  "finale"
+ ],
+ "onde": {
+  "onda-0": {
+   "int": "INT-0",
+   "matrice": "standard",
+   "titolo": "Onda 0 - strumenti e bug netti",
+   "riscritti": [
+    "DEL-01",
+    "PAT-01",
+    "TEC-01"
+   ],
+   "manuale": [
+    "prova congiunta W0-T3 + W0-T4 dello scarico (MES-06): tre sedute di scarico a 54 kg, la prima dopo lo scarico a 60 kg",
+    "INT-0 (fatto) alza VERSIONE_CRITERI a 1.1: DEL-01 (principiante non prudente: scarico solo all'8a, D-P5), PAT-01 (hinge = cerniera vera, B15; a casa senza sbarra la tirata verticale vale con il pullover coi manubri, D-P11; conta anche per EQ-01 ed EQ-02), TEC-01 (anche i minorenni), SAF-01/SAF-02/MOD-03 (leg extension e squat a corpo libero con le ginocchia dolenti sono cautela: B13, B33, REC-04), SAF-04 (il gradino non e attrezzatura non garantita, B28). Il «prima» per il confronto va rigenerato con i criteri 1.1 nel worktree del tag coach-v2-onda-0-prima e passato a --contro",
+    "SES-03 e PAT-01 a casa non sono ancora a 0 (W1-T5, W2-T6): il cancello li guarda solo in palestra",
+    "W0-T7 (criteri 1.2): SAF-04 non segnala il rematore inverso a corpo libero se il programma ha la nota «sotto un tavolo robusto o con una sbarra bassa» (decisione del committente); RX-01 e RX-04 non contano il Nordic Curl (eccentrico a 3-6 ripetizioni per sicurezza, B1 della revisione Opus); EQ-03:flessione non scatta dove non esiste una flessione del ginocchio sicura (casa e palestra senza macchine, con chi inizia, i prudenti o le ginocchia dolenti: il Nordic Curl e escluso). Il «prima» per il confronto (--contro) va rigenerato con i criteri 1.2 nel worktree del tag",
+    "W0-T7: il cancello confrontato con --contro giudica ogni classe contro il «prima» anche se ha una soglia esplicita (una soglia non basta a farla passare): le classi che a casa dipendono da W1-T5 (rematore inverso come unica tirata a corpo libero, niente trazioni, nessuna flessione del ginocchio sicura, niente hinge) restano sopra il «prima» e sono elencate nel report di W0-T7, non nascoste"
+   ]
+  },
+  "onda-1": {
+   "int": "INT-1",
+   "matrice": "standard",
+   "titolo": "Onda 1 - fondamenta (comportamento identico, poi libreria)",
+   "riscritti": [
+    "SAF-01",
+    "SAF-02"
+   ],
+   "ammesse": {
+    "VOL-02:glutei": {
+     "max": 32.5,
+     "risolve": "W2-T1",
+     "scade": "onda-2a",
+     "motivo": "conseguenza dei 29 esercizi nuovi: a casa con i manubri lo Stacco Rumeno con Manubri e l'Hip Thrust con Manubrio (glutei 1 a serie), lo Squat su Scatola e lo Step-up Basso (0,5) portano credito ai glutei che il motore del volume, ancora per gruppo, non vede: i programmi sopra il massimo salgono da 411 a 1371 a casa coi manubri (palestra 650 -> 688, corpo libero 531 -> 718). Il volume per muscolo con gli attributi e di W2-T1 (soglia 0 a onda-2a); INT-2a ha allineato i crediti (M4: cerniera e affondi), cosi il motore nuovo parte da dati coerenti"
     },
-    "manuale":["passo 1 (uniti T1-T4): collaudo identico a coach-v2-onda-0: npm run cancello -- <json-onda-1> onda-1 --contro <json-onda-0> --identico","passo 2 (unito W1-T5): nessun criterio peggiora (--contro <json-onda-0>); MOD-12 e SES-03 a casa devono migliorare rispetto a onda-0","golden di W1-T3 e W1-T4 identici; INT-1 rigenera il golden di buildProgram (dichiarato: piano F.1 punto 11)","SAF-01 e SAF-02 leggono l'attributo `stress` (VERSIONE_CRITERI alzata): stesso esito sui programmi di coach-v2-onda-0"]},
-    "onda-2a": {"int":"INT-2a","matrice":"standard","titolo":"Onda 2a - generatore: volume, tempo, tecniche, mesociclo","riscritti":["VOL-01","VOL-02","DIR-01","DUR-02","RIR-03"],"manuale":["INT-2a aggiorna le soglie VOL-01, VOL-02, DIR-01 (tabella B6), DUR-02 (definizione v2, B12) e RIR-03 (riga principiante [3,4]) con VERSIONE_CRITERI alzata","DIR-01: 0 nel perimetro G (intermedio/avanzato, ipertrofia, >= 3 giorni, >= 45 minuti), <= 5% fuori: il JSON del collaudo non incrocia le dimensioni, il perimetro si guarda con --profilo o nel report","VOL-01 <= 2% e 100% dei casi residui con la nota della causa; nessun muscolo sotto 4 serie frazionarie senza nota","misura congiunta volume + tempo (W2-T1 e W2-T2 si contendono le serie); durate di 6 sedute campione = calcolo a mano +-1 minuto","INT-2b (2026-10-06, criteri 1.4): le soglie di questa onda sono misurate sul codice fuso di W2-T1..T4; quelle non raggiunte (VOL-02, DIR-01, FRQ-02, PRI-01, DUR-02, MIS-01:femorali, VOL-01:petto e i residui di SES-03, PAT-01, DUR-01, RX-01) restano rosse e sono elencate con il responsabile in docs/PIANO.md (onda 2b) e nel cap. 17 n. 17 della mappa; le quattro regressioni oltre la tolleranza sono ammesse qui sotto, fino a onda-2"],"ammesse":{"EQ-03:flessione":{"max":0.7,"risolve":"W2-T6","scade":"onda-2","motivo":"da 22 a 49 programmi (0,12% -> 0,64%, +0,52 su una tolleranza di 0,5), 47 a 30 minuti in palestra (ipertrofia, 3-6 giorni, intermedio e avanzato): `rinforzaFemorali` aggiunge il leg curl solo se la seduta resta entro i minuti dichiarati (+5%) e non sostituisce un esercizio di core o di polpacci; con il modello del tempo di W2-T2 (riscaldamento, rampa, cambi) le sedute da 30 minuti sono gia al tetto e la flessione non entra, mentre lo Stacco Rumeno da' ai femorali 4 serie frazionarie (scansione di INT-2b: su 864 profili a 30 minuti in palestra 0 senza flessione a onda-2a, 100 ora). Dare alla flessione il posto di un esercizio meno importante e la scelta per attributi di W2-T6; l'unica flessione del ginocchio non viene tolta dal solutore (volume.js)"},"FRQ-01:bicipiti":{"max":8.0,"risolve":"W2-T5","scade":"onda-2","motivo":"891 -> 932 programmi (5,53% -> 7,93% pesata): il solutore del volume per unita (W2-T1) mette le serie dei bicipiti dove costano meno tempo e le concentra in una seduta; con 3 giorni i programmi colpiti passano da 239 a 397 (palestra 271 -> 340, manubri 356 -> 553; il corpo libero migliora, 264 -> 39). La frequenza di 2 sedute per ogni unita (FRQ-01 = 0 salvo frequenza 1 scelta, soglia di onda-2) e l'accettazione di W2-T5"},"FRQ-01:tricipiti":{"max":9.7,"risolve":"W2-T5","scade":"onda-2","motivo":"1086 -> 1314 programmi (6,97% -> 9,64% pesata), stessa causa dei bicipiti: con 2 giorni da 491 a 718, in palestra da 268 a 455, a 45 minuti da 151 a 247; i tricipiti prendono credito dalle spinte solo dove gli attributi dicono che sono un vero motore e il solutore non li distribuisce tra le sedute"},"FRQ-02:bicipiti":{"max":8.5,"risolve":"W2-T1","scade":"onda-2","motivo":"408 -> 440 programmi (7,24% -> 8,43% pesata, +1,19), stessa causa: le serie dirette dei bicipiti (4 a settimana) entrano in una seduta sola con 3-4 giorni, in palestra da 202 a 245, a 60 minuti da 89 a 120. La soglia di onda-2a (5%) non e raggiunta nemmeno dalle altre unita piccole (laterali 7,3, posteriori 8,8, tricipiti 6,9): distribuire le serie dirette tra almeno due sedute e il seguito di W2-T1"}}},
-    "onda-2": {"int":"INT-2","matrice":"standard","titolo":"Onda 2 - generatore completo, calendario, casa, partenza bassa","riscritti":["DEL-01","SPL-01"],"manuale":["INT-2 aggiorna DEL-01 (principianti 12 settimane) e SPL-01 (con la nota non e un fallimento) con VERSIONE_CRITERI alzata","atleta virtuale (D.8 punto 9): mediana <= 3 esposizioni per le donne con partenza bassa, <= 2 per gli uomini, 95 percentile <= 5, zero prescrizioni sopra la capacita al RIR bersaglio - 1","FRQ-01: 0 salvo frequenza 1 scelta dall'utente (il criterio non distingue ancora: se resta un residuo, verificarlo con --profilo)","i programmi nuovi hanno `versione: 2`; regole bloccate ancora spente (cancello E.0 punto 0)"]},
-    "onda-3": {"int":"INT-3","matrice":"standard","titolo":"Onda 3 - carichi e autoregolazione","riscritti":[],"manuale":["collaudo non peggiore di INT-2 su nessun criterio: npm run cancello -- <json-onda-3> onda-3 --contro <json-onda-2>","atleta virtuale rifatto con la bilancia v2 e lo scarico di W3-T5 (W3-T6 per la modalita Forza); 0 carichi fuori griglia; golden v1 con sole differenze elencate","regole bloccate ancora spente (cancello E.0 punto 0)"]},
-    "onda-4": {"int":"INT-4","matrice":"completa","titolo":"Onda 4 - sicurezza, recupero, popolazioni (matrice completa)","riscritti":[],"manuale":["SAF-02 = 0 senza nota di modifica: il criterio conta i programmi senza la nota (verificare che sia cosi dopo W4-T1)","collaudo non peggiore di INT-3: npm run cancello -- <json-onda-4> onda-4 --contro <json-onda-3>","regole bloccate ancora spente (E.0 punto 0); matrice completa senza errori del generatore"]},
-    "onda-5": {"int":"INT-5","matrice":"completa","titolo":"Onda 5 - mente, corpo, interfaccia, traduzioni (matrice completa)","riscritti":[],"manuale":["collaudo non peggiore di INT-4: npm run cancello -- <json-onda-5> onda-5 --contro <json-onda-4>","tutte le frasi del campione (>= 500 testi generati sulla matrice) tradotte; 0 parole vietate (CST-04); tests/browser/ tutti verdi (npm run test:browser)","regole bloccate ancora spente (E.0 punto 0)"]},
-    "finale": {"int":"F-1","matrice":"completa","titolo":"Definizione di fatto (cap. G del piano, matrice completa)","riscritti":[],"manuale":["dal cap. G, fuori dal collaudo: carichi (atleta virtuale), partenza bassa donne, spiegazioni (100% con un perche e un codice), traduzioni (0 pezzi mancanti su >= 500 testi), soglie (100% con forza e fonte), migrazione (6/6 fixture), codice (npm run controlla, test:browser, grafo:verifica, nessun wrapper tra file), prestazioni (buildProgram mediana < 50 ms, 95 percentile < 150 ms)","16 regole bloccate del registro C.2 spente o sbloccate con una fonte vista (sessione R-1)"]}
-  },
-  "totali": {
-    "gravi_pesata": {"prima":35.82,"onda-0":21.5,"onda-2":1,"onda-4":0.5,"finale":0.5}
-  },
-  "modello": {
-    "MOD-01": {"onda-1":["ok","info"]},
-    "MOD-02": {"onda-4":["ok","info"]},
-    "MOD-03": {"onda-0":["ok","info"]},
-    "MOD-04": {"onda-2":["ok","info"]},
-    "MOD-05": {"onda-3":["ok","info"]},
-    "MOD-06": {"onda-2a":["ok","info"]},
-    "MOD-07": {"onda-2a":["ok","info"]},
-    "MOD-08": {"onda-2a":["ok","info"]},
-    "MOD-09": {"onda-2a":["ok","info"]},
-    "MOD-10": {"onda-0":["ok","info"]},
-    "MOD-11": {"onda-0":["ok","info"]},
-    "MOD-12": {"onda-2":["ok","info"]}
-  },
-  "criteri": {
-    "ERR-01": {"nome":"Il generatore fallisce o produce una scheda malformata","sev":5,"prima":0,"task":"tutte","soglie":{"onda-0":0,"finale":0},"nota":"il generatore non lancia errori: resta a 0 (cap. G)"},
-    "SAN-01": {"nome":"Dati della scheda incoerenti (esercizio doppio nella seduta, serie o ripetizioni non valide, esercizio fuori libreria)","sev":4,"prima":0,"task":"tutte","soglie":{"onda-0":0,"finale":0},"nota":"nessun esercizio doppio o fuori libreria: resta a 0 (cap. G)"},
-    "MIS-01": {"nome":"Muscolo di fatto non allenato nella settimana (meno di 2 serie frazionarie)","sev":4,"prima":5.87,"task":"W0-T5 (quadricipiti), W0-T2 (femorali); W2-T1","soglie":{"onda-2":0,"finale":0},"sub":{"quadricipiti":{"onda-0":0},"femorali":{"onda-0":1}},"nota":"W0-T7: femorali onda-0 <= 1% (misurato 0,98%: principianti a casa con una sola seduta di gambe a settimana, un ponte da 3 serie = 1,5 serie frazionarie: B1, il Nordic Curl non c e piu; le flessioni vere sono di W1-T5); INT-2: 0"},
-    "VOL-01": {"nome":"Volume settimanale sotto il minimo del livello (serie frazionarie)","sev":3,"prima":57.43,"task":"W0-T2 ponte; W2-T1","soglie":{"onda-2a":2,"finale":2},"sub":{"femorali":{"onda-0":45}},"nota":"registro E: INT-0 femorali <= 30%; INT-2a <= 2% e 100% con la nota della causa (la nota non si misura nel JSON: INT-2a la controlla a mano). W0-T7: soglia di onda-0 45 (misurato 44,8%, prima 57,4%): la revisione Opus (B1) ha tolto il Nordic Curl a chi inizia, ai prudenti e alle ginocchia dolenti e senza macchine a casa non c'e un altra flessione del ginocchio (resta il ponte glutei, credito 0,5): i femorali restano sotto il minimo con la nota «senza leg curl restano meno allenati»; le flessioni vere (elastico, slider) e lo stacco rumeno coi manubri sono di W1-T5. In palestra con le macchine il numero non e peggiorato di molto (899 programmi contro 802 di INT-0)"},
-    "VOL-02": {"nome":"Volume settimanale sopra il massimo del livello (serie frazionarie)","sev":3,"prima":35.05,"task":"W2-T1","soglie":{"onda-2a":0,"finale":0},"nota":"0 oltre la tolleranza del +10% (tabella B6)"},
-    "DIR-01": {"nome":"Poche serie dirette per tricipiti, bicipiti, deltoidi (laterali, posteriori), polpacci o avambracci nell ipertrofia","sev":3,"prima":23.09,"task":"W2-T1","soglie":{"onda-2a":5,"finale":5},"nota":"cap. G: 0 nel perimetro (intermedio/avanzato, ipertrofia, >= 3 giorni, >= 45 minuti), <= 5% fuori: il cancello guarda solo il <= 5% totale"},
-    "FRQ-01": {"nome":"Grande gruppo allenato meno di 2 volte a settimana","sev":4,"prima":31.41,"task":"W0-T2 ponte; W2-T5, W2-T1","soglie":{"onda-2":0,"finale":0},"sub":{"femorali":{"onda-0":25}},"nota":"registro E: INT-0 femorali <= 10%; INT-2 0 salvo frequenza 1 scelta. W0-T7: soglia di onda-0 25 (misurato 24,1%, prima 31,4%) per lo stesso motivo di VOL-01:femorali (B1: senza Nordic Curl a casa il ponte glutei vale 1,5 serie frazionarie per seduta solo con 3 serie, e il tempo le taglia); torna a 0 con W1-T5 e W2-T5"},
-    "FRQ-02": {"nome":"Muscolo piccolo (deltoidi, braccia, polpacci) con serie dirette in una sola seduta","sev":2,"prima":15.46,"task":"W2-T1","soglie":{"onda-2a":5,"finale":5}},
-    "SES-03": {"nome":"Seduta senza uno schema di base per il suo tipo (full body senza squat/hinge, spinta o tirata; upper senza spinta o tirata; lower senza squat o hinge)","sev":3,"prima":22.45,"task":"W0-T2 (palestra); W1-T5 + W2-T6 (casa)","soglie":{"onda-0":{"max":0,"dove":{"luogo":"palestra"},"unita":"programmi"},"onda-2":0,"finale":0},"nota":"registro E: INT-0 0 in palestra (conteggio di programmi con luogo palestra) su TUTTE le sottoclassi; INT-2 0 ovunque. Il piano (W0-T2) cita solo lower/hinge: vale il registro, che ha la precedenza; se W0-T2 non copre legs/hinge, lower/squat e fullbody/basso lo decide INT-0"},
-    "SES-01": {"nome":"Oltre 11 serie frazionarie per muscolo in una sola seduta","sev":3,"prima":6.59,"task":"W2-T1","soglie":{"onda-2a":0,"finale":0}},
-    "DUR-01": {"nome":"La seduta non sta nei minuti dichiarati (durata stimata oltre il 10%)","sev":4,"prima":5.86,"task":"W0-T2 ponte; W2-T2","soglie":{"onda-2a":0,"finale":0,"onda-0":0.3},"nota":"INT-0: non peggiora (regressione contro il «prima»); W0-T7: soglia 0,3 (misurato 0,12%: sedute da 30 minuti con tutti gli esercizi gia a 2 serie); INT-2a: 0"},
-    "DUR-02": {"nome":"La seduta spreca oltre il 25% del tempo dichiarato","sev":2,"prima":82.82,"task":"W0-T2 ponte; W2-T2","soglie":{"onda-0":74,"onda-2a":3,"finale":3},"nota":"INT-2a nella definizione v2 (B12: spreco solo se un'unita e sotto la sua fascia e la seduta usa < 75% dei minuti). Onda 0: soglia 74 (misurato 73,3%, prima 82,8%). Classe A (D-P10: il tempo e un tetto, non un obiettivo): W0-T7 ha tolto dal riempimento l'allungamento delle pause (revisione Opus M2: core a 90-120 s nel 35% dei programmi, Goblet Squat a 225 s nel giorno di ipertrofia), quindi il calo 82,8 -> 63,2 di INT-0 era in gran parte imbottitura; il numero vero e il 3% con la definizione v2 di INT-2a. Lo sforamento (DUR-01) e misurato a parte"},
-    "EXN-01": {"nome":"Troppo pochi esercizi in una seduta (meno di 3)","sev":3,"prima":2.36,"task":"W0-T2","soglie":{"onda-0":0,"finale":0}},
-    "EXN-02": {"nome":"Troppi esercizi in una seduta (oltre 8, oltre 6 per un principiante)","sev":2,"prima":13.83,"task":"W2-T2","soglie":{"onda-2a":0,"finale":0}},
-    "ORD-01": {"nome":"Pre-affaticamento: isolamento di un muscolo prima del multiarticolare che lo usa","sev":3,"prima":0.26,"task":"W2-T6","soglie":{"onda-2":0,"finale":0}},
-    "ORD-02": {"nome":"Isolamento prima di un multiarticolare (muscoli diversi)","sev":2,"prima":0.12,"task":"W2-T6","soglie":{"onda-2":0,"finale":0}},
-    "ORD-03": {"nome":"Multiarticolare di spalle o braccia prima di un multiarticolare delle gambe o dello stacco (senza priorita dichiarata)","sev":2,"prima":17.62,"task":"W2-T6","soglie":{"onda-2":0,"finale":0}},
-    "ORD-04": {"nome":"Core prima di esercizi di altri muscoli","sev":1,"prima":0,"task":"gia a 0","soglie":{"onda-0":0,"finale":0}},
-    "SS-01": {"nome":"Superserie tra muscoli non antagonisti","sev":3,"prima":2.05,"task":"W2-T2","soglie":{"onda-2a":0,"finale":0}},
-    "SS-02": {"nome":"Superserie con un multiarticolare pesante o con un esercizio a tempo o di core","sev":3,"prima":0.96,"task":"W2-T2","soglie":{"onda-2a":0,"finale":0}},
-    "RID-01": {"nome":"Due esercizi per lo stesso muscolo e lo stesso tipo nella stessa seduta","sev":2,"prima":23.36,"task":"W2-T6","soglie":{"onda-2":5,"finale":5}},
-    "RID-02": {"nome":"Lo stesso esercizio in 3 o piu sedute della settimana","sev":2,"prima":13.75,"task":"W2-T6","soglie":{"onda-2":5,"finale":5}},
-    "EQ-01": {"nome":"Piu serie di spinta che di tirata (spalle sbilanciate)","sev":3,"prima":11.47,"task":"W2-T6","soglie":{"onda-2":0,"finale":0}},
-    "EQ-02": {"nome":"Tirate solo verticali o solo orizzontali (manca uno dei due piani)","sev":2,"prima":0.23,"task":"W2-T6","soglie":{"onda-2":0,"finale":0}},
-    "EQ-03": {"nome":"Femorali in ritardo sui quadricipiti, o nessuna flessione del ginocchio","sev":3,"prima":38.23,"task":"W0-T2 ponte; W2-T1, W2-T6","soglie":{"onda-2":0,"finale":0},"sub":{"rapporto":{"onda-0":27}},"nota":"registro E: INT-0 rapporto femorali/quadricipiti <= 15%; INT-2 0 (il piano W2-T1 lo chiede gia a INT-2a: vale il registro, che ha la precedenza). W0-T7: soglia di onda-0 27 (misurato 26,1%, prima 38,2%): B1, come VOL-01:femorali. EQ-03:flessione (criteri 1.2) non scatta piu dove non c e una flessione sicura"},
-    "PAT-01": {"nome":"Schema di movimento fondamentale assente nella settimana (squat, hinge, spinte e tirate orizzontali e verticali)","sev":3,"prima":0.12,"task":"W0-T6 (palestra), W1-T5 (casa)","soglie":{"onda-0":{"max":0,"dove":{"luogo":"palestra"},"unita":"programmi"},"onda-2":0,"finale":0},"nota":"INT-0: 0 in palestra (a casa resta finche W1-T5 non aggiunge lo stacco rumeno con manubri); INT-2: 0"},
-    "REC-01": {"nome":"Stesso grande muscolo allenato in due giorni consecutivi (meno di 48 ore)","sev":3,"prima":13.42,"task":"W2-T5","soglie":{"onda-2":0,"finale":0}},
-    "REC-02": {"nome":"Carico pesante sui lombari in due giorni consecutivi","sev":3,"prima":3.94,"task":"W2-T5","soglie":{"onda-2":0,"finale":0}},
-    "REC-03": {"nome":"Troppi giorni di allenamento di fila (oltre 4)","sev":2,"prima":7.34,"task":"W2-T5","soglie":{"onda-2":0,"finale":0}},
-    "SPL-01": {"nome":"Numero di sedute diverso dai giorni dichiarati","sev":4,"prima":6.69,"task":"W2-T5","soglie":{"onda-2":0,"finale":0},"nota":"criterio aggiornato in INT-2: con la nota non e un fallimento"},
-    "SPL-02": {"nome":"Divisione non adatta al numero di giorni (muscolo singolo con pochi giorni, upper/lower con 2 giorni, full body con 5-6)","sev":3,"prima":0,"task":"gia a 0","soglie":{"onda-0":0,"finale":0}},
-    "RX-01": {"nome":"Ripetizioni fuori dalla fascia dell obiettivo e del tipo di esercizio","sev":3,"prima":3.47,"task":"W0-T2 ponte; W2-T2","soglie":{"onda-2a":0,"finale":0}},
-    "RX-02": {"nome":"Recupero tra le serie fuori dalla fascia dell obiettivo e del tipo di esercizio","sev":3,"prima":2.78,"task":"W2-T2","soglie":{"onda-2a":0,"finale":0}},
-    "RX-03": {"nome":"Una sola serie su un esercizio, o oltre 6 serie","sev":3,"prima":0,"task":"gia a 0","soglie":{"onda-0":0,"finale":0}},
-    "RX-04": {"nome":"Isolamento con meno ripetizioni del multiarticolare della stessa seduta","sev":2,"prima":0,"task":"gia a 0","soglie":{"onda-0":0,"finale":0}},
-    "GOA-01": {"nome":"Obiettivo forza con poco lavoro pesante (serie sui multiarticolari a 6 ripetizioni o meno)","sev":3,"prima":9.5,"task":"W2-T2, W2-T7","soglie":{"onda-2a":0,"finale":0}},
-    "TEC-01": {"nome":"Tecniche al cedimento (drop set, parziali, AMRAP, back-off) a principianti o in modalita prudente","sev":3,"prima":14.09,"task":"W0-T2","soglie":{"onda-0":0,"finale":0},"nota":"INT-0 aggiorna il criterio (anche minori e over 65)"},
-    "PRI-01": {"nome":"Muscolo prioritario dichiarato ma senza serie in piu rispetto al programma senza priorita","sev":2,"prima":6.16,"task":"W2-T1","soglie":{"onda-2a":0,"finale":0}},
-    "DEL-01": {"nome":"Scarico assente o troppo lontano nel programma","sev":4,"prima":0,"task":"gia a 0","soglie":{"onda-0":0,"finale":0},"nota":"INT-0: principianti scarico solo all'8a; INT-2: 12 settimane (VERSIONE_CRITERI alzata)"},
-    "RIR-01": {"nome":"Nessun andamento settimanale del RIR per intermedi (rirSett solo agli avanzati)","sev":2,"prima":40.05,"task":"W2-T4","soglie":{"onda-2a":0,"finale":0}},
-    "RIR-02": {"nome":"RIR 0 pianificato anche sui fondamentali pesanti col bilanciere","sev":3,"prima":11.69,"task":"W0-T4","soglie":{"onda-0":0,"finale":0}},
-    "RIR-03": {"nome":"RIR della prima settimana troppo basso per il livello (cedimento sugli isolamenti e sulle macchine dal primo giorno)","sev":3,"prima":35.94,"task":"W0-T4","soglie":{"onda-0":0,"finale":0},"nota":"INT-2a: riga principiante [3,4] (soglia aggiornata, VERSIONE_CRITERI alzata)"},
-    "SAF-01": {"nome":"Esercizio in conflitto con un fastidio dichiarato (controindicato)","sev":5,"prima":15.26,"task":"W0-T5","soglie":{"onda-0":0,"finale":0},"nota":"severita 5: tolleranza di regressione 0"},
-    "SAF-02": {"nome":"Esercizio da usare con cautela per un fastidio dichiarato","sev":2,"prima":16.15,"task":"W4-T1","soglie":{"onda-4":0,"finale":0},"sub":{"ginocchia":{"onda-0":16},"spalle":{"onda-0":11}},"nota":"cap. G: 100% con nota di modifica, cioe 0 programmi senza nota. INT-0 (criteri 1.1): ginocchia <= 16 (misurato 15,2%, prima 14,5%): B13, B33, REC-04 tengono in programma leg extension e squat a corpo libero con la nota di modifica (prima li toglieva RISCHIO), quindi la cautela sale; spalle: W0-T7 riporta la soglia a 11 (misurato 10,0%, prima 10,7%): RISCHIO.spalle esclude ora i piegamenti declinati (revisione Opus M3; restano le croci coi manubri, alla pari di quelle ai cavi: D-P8)"},
-    "SAF-03": {"nome":"Attrezzatura non disponibile per il luogo dichiarato","sev":4,"prima":0,"task":"gia a 0","soglie":{"onda-0":0,"finale":0},"nota":"severita 5: tolleranza di regressione 0"},
-    "SAF-04": {"nome":"Attrezzatura non garantita nel luogo dichiarato (sbarra, parallele, sedia romana a casa o a corpo libero)","sev":2,"prima":20.41,"task":"W0-T5","soglie":{"onda-0":0,"finale":0},"nota":"W0-T7 (criteri 1.2, decisione del committente): il rematore inverso resta a corpo libero con la nota «sotto un tavolo robusto o con una sbarra bassa» e SAF-04 non lo segnala piu se la nota c'e (senza di lui a casa non c'e una tirata orizzontale: la CAS-01 toglie le trazioni); il calf raise a un piede (gradino) era gia fuori dai criteri 1.1"},
-    "SAF-05": {"nome":"Esercizio tecnicamente impegnativo a un principiante o in modalita prudente (over 65, PAR-Q)","sev":2,"prima":20.4,"task":"W2-T6","soglie":{"onda-2":0,"finale":0}},
-    "SAF-06": {"nome":"Fastidio alla spalla senza lavoro per la cuffia o i deltoidi posteriori","sev":2,"prima":10.47,"task":"W2-T6 (PCO-08)","soglie":{"onda-2":0,"finale":0}}
-  },
-  "prima": {
-    "matrice": "standard", "profili": 10800, "criteri": "1.0", "pesi": "popolazione", "commit": "e71e612",
-    "errori": 0, "conGravi": 7493, "gravi_pesata": 35.82,
-    "modello": {"MOD-01":"manca","MOD-02":"manca","MOD-03":"buchi","MOD-04":"incoerente","MOD-05":"manca","MOD-06":"parziale","MOD-07":"incoerente","MOD-08":"manca","MOD-09":"incoerente","MOD-10":"info","MOD-12":"buchi","MOD-11":"ok"},
-    "classi": {
-      "SAF-01:spalle": [15.26,3600],
-      "VOL-01:femorali": [57.43,6233],
-      "DUR-02": [82.82,8660],
-      "EQ-03:rapporto": [38.23,4090],
-      "RIR-03:principiante": [35.94,2586],
-      "VOL-02:glutei": [35.05,2255],
-      "FRQ-01:femorali": [31.41,4347],
-      "VOL-02:schiena": [29.22,2280],
-      "SAF-01:schiena": [6.89,755],
-      "VOL-01:petto": [26,3591],
-      "DIR-01:polpacci": [23.09,1895],
-      "SES-03:lower/hinge": [22.45,3993],
-      "RIR-01": [40.05,3600],
-      "DIR-01:deltoidi_laterali": [19.98,1820],
-      "DIR-01:deltoidi_posteriori": [18.94,1773],
-      "RIR-03:intermedio": [31.61,2558],
-      "FRQ-01:quadricipiti": [7.48,2588],
-      "VOL-01:quadricipiti": [14.33,2071],
-      "TEC-01:drop": [14.09,1949],
-      "VOL-02:quadricipiti": [13.45,709],
-      "REC-01:spalle": [13.42,1414],
-      "MIS-01:quadricipiti": [5.87,2473],
-      "DUR-01": [5.86,862],
-      "RIR-02": [11.69,2612],
-      "RID-01:grande_gluteo": [23.36,1044],
-      "EQ-01": [11.47,1392],
-      "DIR-01:tricipiti": [20.56,1950],
-      "SAF-04:manubri": [20.41,3600],
-      "SAF-05:principiante": [20.4,2043],
-      "DIR-01:bicipiti": [20.14,1778],
-      "MIS-01:femorali": [4.88,1367],
-      "GOA-01": [9.5,2300],
-      "ORD-03": [17.62,1744],
-      "SES-03:legs/hinge": [8.65,2235],
-      "SAF-02:schiena": [16.15,3313],
-      "FRQ-02:deltoidi_posteriori": [15.46,899],
-      "FRQ-02:polpacci": [15.11,944],
-      "SAF-04:corpo": [14.93,3600],
-      "FRQ-02:deltoidi_laterali": [14.51,844],
-      "SAF-02:ginocchia": [14.5,3111],
-      "FRQ-01:petto": [3.62,689],
-      "EXN-02": [13.83,708],
-      "RID-02": [13.75,1797],
-      "SES-01:glutei": [6.59,664],
-      "VOL-01:glutei": [6.58,2086],
-      "REC-01:schiena": [6.14,479],
-      "SAF-05:prudente": [11.94,2402],
-      "FRQ-01:glutei": [2.92,1103],
-      "FRQ-02:bicipiti": [11.64,663],
-      "SAF-02:spalle": [10.66,2114],
-      "SAF-06": [10.47,2621],
-      "FRQ-02:tricipiti": [9.5,577],
-      "TEC-01:amrap": [4.71,122],
-      "SES-03:lower/squat": [4.01,1414],
-      "REC-02": [3.94,218],
-      "REC-03": [7.34,1754],
-      "VOL-01:schiena": [3.63,844],
-      "RX-01:generale/pesante": [3.47,97],
-      "SPL-01:principiante-limitato": [6.69,777],
-      "RID-01:deltoide_anteriore": [6.67,795],
-      "TEC-01:parziali": [3.33,603],
-      "RID-01:quadricipiti": [6.27,460],
-      "PRI-01:braccia": [6.16,663],
-      "MIS-01:core": [5.8,797],
-      "VOL-01:deltoidi_posteriori": [2.81,493],
-      "RX-02:troppo-lungo/forza/isolamento": [2.78,790],
-      "RX-01:ipertrofia/macchina": [2.75,827],
-      "VOL-02:petto": [2.7,302],
-      "PRI-01:gambe": [5.26,490],
-      "SES-03:fullbody/basso": [2.6,1071],
-      "FRQ-01:bicipiti": [5.15,678],
-      "PRI-01:petto": [5.07,409],
-      "FRQ-01:tricipiti": [4.88,621],
-      "EXN-01": [2.36,959],
-      "SS-01": [2.05,211],
-      "PRI-01:spalle": [3.93,388],
-      "RX-02:troppo-lungo/generale/pesante": [1.87,50],
-      "REC-01:quadricipiti": [1.8,54],
-      "MIS-01:deltoidi_laterali": [1.79,174],
-      "SES-03:legs/squat": [1.7,742],
-      "RX-02:troppo-lungo/ipertrofia/macchina": [1.61,439],
-      "VOL-02:deltoidi_anteriori": [2.94,450],
-      "RX-01:forza/pesante": [1.42,45],
-      "MIS-01:deltoidi_posteriori": [1.23,157],
-      "REC-01:petto": [1.14,152],
-      "FRQ-01:spalle": [1.13,227],
-      "VOL-02:tricipiti": [2.23,285],
-      "VOL-02:bicipiti": [2.17,294],
-      "EQ-03:flessione": [1.07,136],
-      "PRI-01:glutei": [2.01,285],
-      "REC-01:glutei": [0.99,130],
-      "SS-02": [0.96,122],
-      "PRI-01:schiena": [1.91,231],
-      "DIR-01:avambracci": [3.48,605],
-      "SES-01:quadricipiti": [0.66,28],
-      "MIS-01:glutei": [0.32,217],
-      "MIS-01:polpacci": [0.59,56],
-      "SES-01:schiena": [0.41,81],
-      "ORD-01": [0.26,39],
-      "SES-01:petto": [0.17,31],
-      "SES-01:deltoidi_anteriori": [0.14,24],
-      "PAT-01:hinge": [0.12,2],
-      "VOL-02:femorali": [0.12,24],
-      "EQ-02:orizzontale": [0.23,49],
-      "RX-01:generale/isolamento": [0.1,17],
-      "VOL-01:deltoidi_laterali": [0.08,6],
-      "ORD-02": [0.12,8],
-      "VOL-02:polpacci": [0.07,37],
-      "EQ-02:verticale": [0.04,2],
-      "RX-02:troppo-corto/ipertrofia/pesante": [0.01,2],
-      "REC-01:femorali": [0.01,5],
-      "VOL-02:deltoidi_laterali": [0,1]
+    "VOL-02:tricipiti": {
+     "max": 2.6,
+     "risolve": "W2-T1",
+     "scade": "onda-2a",
+     "motivo": "rumore del sorteggio, non una causa nei dati: +0,56 punti su una tolleranza di 0,5 (revisione Opus dell'onda 1, M2). Il motivo scritto prima (Floor Press e Panca con Pausa con credito 0,5 ai tricipiti) era sbagliato: non entrano in nessun programma (0 su 2.034), la Chest Press Inclinata alla Macchina in 30. Il nuovo sorteggio dei posti sposta qualche programma sopra il massimo; il volume per muscolo di W2-T1 (soglia 0 a onda-2a) lo chiude"
+    },
+    "REC-01:spalle": {
+     "max": 12.5,
+     "risolve": "W2-T5",
+     "scade": "onda-2",
+     "motivo": "rumore del sorteggio, non un difetto nuovo: la classe (spalle allenate in due giorni consecutivi, 11,44% a onda-1 e 13,4% di base) oscilla di circa mezzo punto con ogni modifica che sposta i candidati dei posti (11,75% dopo l'integrazione di W1-T6 e W2-T8, 12,19% dopo le correzioni M1 e M5 di INT-2a: i programmi colpiti sono 1336 a onda-1, 1342 e di nuovo 1336, ma cambia quali sono e quanto pesano nella popolazione assunta: 18 programmi nuovi per 0,64 punti, 24 tolti per 0,18, quasi tutti intermedi in palestra a 5-6 giorni). La causa strutturale (la divisione dei giorni e le 48 ore tra due sedute dello stesso muscolo) e di W2-T5 (soglia 0 a onda-2)"
+    },
+    "FRQ-02:polpacci": {
+     "max": 8.4,
+     "risolve": "W2-T1",
+     "scade": "onda-2a",
+     "motivo": "il Calf Raise con Manubrio sul Gradino (polpacci 1) entra in una sola seduta dove le serie dirette dei muscoli piccoli non sono ancora distribuite: lo fa W2-T1 (serie dirette per muscolo, soglia 5 a onda-2a); in parte e rumore del sorteggio (+0,55 su 0,5)"
     }
+   },
+   "manuale": [
+    "passo 1 (uniti T1-T4): collaudo identico a coach-v2-onda-0: npm run cancello -- <json-onda-1> onda-1 --contro <json-onda-0> --identico",
+    "passo 2 (unito W1-T5): nessun criterio peggiora (--contro <json-onda-0>); MOD-12 e SES-03 a casa devono migliorare rispetto a onda-0",
+    "golden di W1-T3 e W1-T4 identici; INT-1 rigenera il golden di buildProgram (dichiarato: piano F.1 punto 11)",
+    "SAF-01 e SAF-02 leggono l'attributo `stress` (VERSIONE_CRITERI alzata): stesso esito sui programmi di coach-v2-onda-0"
+   ]
   },
-  "primaCompleta": {
-    "matrice": "completa", "profili": 64800, "criteri": "1.0", "pesi": "popolazione", "commit": "e71e612",
-    "errori": 0, "conGravi": 44753, "gravi_pesata": 35.11,
-    "modello": {"MOD-01":"manca","MOD-02":"manca","MOD-03":"buchi","MOD-04":"incoerente","MOD-05":"manca","MOD-06":"parziale","MOD-07":"incoerente","MOD-08":"manca","MOD-09":"incoerente","MOD-10":"info","MOD-12":"buchi","MOD-11":"ok"},
-    "classi": {
-      "SAF-01:spalle": [15,21600],
-      "VOL-01:femorali": [57.11,37408],
-      "DUR-02": [83.5,52796],
-      "EQ-03:rapporto": [35.44,23823],
-      "VOL-02:glutei": [34.56,13215],
-      "RIR-03:principiante": [32.8,12943],
-      "FRQ-01:femorali": [29.83,25340],
-      "VOL-02:schiena": [29.15,13068],
-      "VOL-01:petto": [26.75,22922],
-      "SAF-01:schiena": [6.18,3828],
-      "DIR-01:polpacci": [23.19,11502],
-      "SES-03:lower/hinge": [22.16,23920],
-      "RIR-01": [40,21600],
-      "DIR-01:deltoidi_laterali": [19.9,10890],
-      "DIR-01:deltoidi_posteriori": [19.5,10847],
-      "TEC-01:drop": [15.52,13501],
-      "FRQ-01:quadricipiti": [7.68,15397],
-      "VOL-01:quadricipiti": [15.27,13293],
-      "RIR-03:intermedio": [28.67,12925],
-      "VOL-02:quadricipiti": [12.81,3874],
-      "REC-01:spalle": [12.8,7874],
-      "RID-01:grande_gluteo": [23.85,6338],
-      "MIS-01:quadricipiti": [5.84,14885],
-      "EQ-01": [11.6,8596],
-      "RIR-02": [10.85,12916],
-      "DUR-01": [5.37,4538],
-      "DIR-01:tricipiti": [20.61,11656],
-      "DIR-01:bicipiti": [20.35,10637],
-      "GOA-01": [10.09,14197],
-      "SAF-04:manubri": [20,21600],
-      "MIS-01:femorali": [5,8585],
-      "SES-03:legs/hinge": [9.04,13538],
-      "SAF-05:principiante": [17.83,10281],
-      "ORD-03": [16.56,10300],
-      "SAF-02:schiena": [15.55,19577],
-      "FRQ-02:deltoidi_posteriori": [15.39,5483],
-      "SAF-05:prudente": [15.36,20632],
-      "FRQ-02:polpacci": [15.19,5731],
-      "SAF-04:corpo": [15,21600],
-      "FRQ-02:deltoidi_laterali": [14.57,5155],
-      "SAF-02:ginocchia": [14.36,18740],
-      "FRQ-01:petto": [3.59,4108],
-      "VOL-01:glutei": [6.91,13408],
-      "EXN-02": [13.35,4264],
-      "RID-02": [13.24,11002],
-      "SES-01:glutei": [6.49,3309],
-      "FRQ-02:bicipiti": [11.34,3986],
-      "SAF-02:spalle": [10.77,12748],
-      "FRQ-01:glutei": [2.67,6387],
-      "REC-01:schiena": [5.29,2682],
-      "SAF-06": [10.16,15716],
-      "FRQ-02:tricipiti": [9.25,3461],
-      "TEC-01:amrap": [4.54,649],
-      "VOL-01:schiena": [4.26,5582],
-      "SES-03:lower/squat": [3.91,8327],
-      "REC-03": [7.63,10569],
-      "REC-02": [3.65,1174],
-      "SPL-01:principiante-limitato": [7.01,4729],
-      "TEC-01:parziali": [3.44,5066],
-      "VOL-01:deltoidi_posteriori": [3.36,2928],
-      "RID-01:deltoide_anteriore": [6.7,4830],
-      "RX-01:generale/pesante": [3.27,505],
-      "PRI-01:braccia": [6.4,3992],
-      "RID-01:quadricipiti": [6.34,2562],
-      "MIS-01:core": [6.04,4891],
-      "RX-02:troppo-lungo/forza/isolamento": [3,4824],
-      "VOL-02:petto": [2.63,1693],
-      "PRI-01:gambe": [5.24,3072],
-      "RX-01:ipertrofia/macchina": [2.48,4116],
-      "SES-03:fullbody/basso": [2.42,6226],
-      "EXN-01": [2.35,5650],
-      "FRQ-01:tricipiti": [4.5,3648],
-      "FRQ-01:bicipiti": [4.48,3935],
-      "PRI-01:spalle": [4.17,2322],
-      "RX-02:troppo-lungo/generale/pesante": [2.06,316],
-      "SS-01": [2.05,1308],
-      "PRI-01:petto": [3.86,2630],
-      "MIS-01:deltoidi_laterali": [1.83,1040],
-      "SES-03:legs/squat": [1.59,4651],
-      "VOL-02:deltoidi_anteriori": [3.08,2463],
-      "REC-01:quadricipiti": [1.44,315],
-      "RX-02:troppo-lungo/ipertrofia/macchina": [1.42,2159],
-      "MIS-01:deltoidi_posteriori": [1.27,1185],
-      "VOL-02:tricipiti": [2.48,1691],
-      "REC-01:glutei": [1.2,718],
-      "PRI-01:glutei": [2.37,1769],
-      "REC-01:petto": [1.14,821],
-      "FRQ-01:spalle": [1.12,1343],
-      "VOL-02:bicipiti": [2.23,1684],
-      "RX-01:forza/pesante": [1.08,208],
-      "PRI-01:schiena": [2.13,1340],
-      "EQ-03:flessione": [1.05,808],
-      "SS-02": [0.95,717],
-      "DIR-01:avambracci": [3.43,3574],
-      "MIS-01:glutei": [0.32,1280],
-      "SES-01:quadricipiti": [0.62,157],
-      "MIS-01:polpacci": [0.55,325],
-      "ORD-01": [0.5,263],
-      "SES-01:schiena": [0.42,390],
-      "VOL-02:femorali": [0.25,162],
-      "RX-01:generale/isolamento": [0.19,121],
-      "SES-01:deltoidi_anteriori": [0.17,114],
-      "SES-01:petto": [0.16,150],
-      "VOL-01:deltoidi_laterali": [0.1,63],
-      "EQ-02:orizzontale": [0.17,245],
-      "RX-02:troppo-corto/ipertrofia/pesante": [0.05,30],
-      "VOL-02:polpacci": [0.07,220],
-      "ORD-02": [0.06,47],
-      "EQ-02:verticale": [0.05,16],
-      "PAT-01:hinge": [0.02,6],
-      "REC-01:femorali": [0.01,21],
-      "VOL-02:deltoidi_posteriori": [0.01,11],
-      "VOL-02:deltoidi_laterali": [0.01,10],
-      "SES-01:bicipiti": [0,2],
-      "SES-01:tricipiti": [0,2],
-      "RX-01:ipertrofia/pesante": [0,1]
+  "onda-2a": {
+   "int": "INT-2a",
+   "matrice": "standard",
+   "titolo": "Onda 2a - generatore: volume, tempo, tecniche, mesociclo",
+   "riscritti": [
+    "VOL-01",
+    "VOL-02",
+    "DIR-01",
+    "DUR-02",
+    "RIR-03"
+   ],
+   "manuale": [
+    "INT-2a aggiorna le soglie VOL-01, VOL-02, DIR-01 (tabella B6), DUR-02 (definizione v2, B12) e RIR-03 (riga principiante [3,4]) con VERSIONE_CRITERI alzata",
+    "DIR-01: 0 nel perimetro G (intermedio/avanzato, ipertrofia, >= 3 giorni, >= 45 minuti), <= 5% fuori: il JSON del collaudo non incrocia le dimensioni, il perimetro si guarda con --profilo o nel report",
+    "VOL-01 <= 2% e 100% dei casi residui con la nota della causa; nessun muscolo sotto 4 serie frazionarie senza nota",
+    "misura congiunta volume + tempo (W2-T1 e W2-T2 si contendono le serie); durate di 6 sedute campione = calcolo a mano +-1 minuto",
+    "INT-2b (2026-10-06, criteri 1.4): le soglie di questa onda sono misurate sul codice fuso di W2-T1..T4; quelle non raggiunte (VOL-02, DIR-01, FRQ-02, PRI-01, DUR-02, MIS-01:femorali, VOL-01:petto e i residui di SES-03, PAT-01, DUR-01, RX-01) restano rosse e sono elencate con il responsabile in docs/PIANO.md (onda 2b) e nel cap. 17 n. 17 della mappa; le quattro regressioni oltre la tolleranza sono ammesse qui sotto, fino a onda-2"
+   ],
+   "ammesse": {
+    "EQ-03:flessione": {
+     "max": 0.7,
+     "risolve": "W2-T6",
+     "scade": "onda-2",
+     "motivo": "da 22 a 49 programmi (0,12% -> 0,64%, +0,52 su una tolleranza di 0,5), 47 a 30 minuti in palestra (ipertrofia, 3-6 giorni, intermedio e avanzato): `rinforzaFemorali` aggiunge il leg curl solo se la seduta resta entro i minuti dichiarati (+5%) e non sostituisce un esercizio di core o di polpacci; con il modello del tempo di W2-T2 (riscaldamento, rampa, cambi) le sedute da 30 minuti sono gia al tetto e la flessione non entra, mentre lo Stacco Rumeno da' ai femorali 4 serie frazionarie (scansione di INT-2b: su 864 profili a 30 minuti in palestra 0 senza flessione a onda-2a, 100 ora). Dare alla flessione il posto di un esercizio meno importante e la scelta per attributi di W2-T6; l'unica flessione del ginocchio non viene tolta dal solutore (volume.js)"
+    },
+    "FRQ-01:bicipiti": {
+     "max": 8.0,
+     "risolve": "W2-T5",
+     "scade": "onda-2",
+     "motivo": "891 -> 932 programmi (5,53% -> 7,93% pesata): il solutore del volume per unita (W2-T1) mette le serie dei bicipiti dove costano meno tempo e le concentra in una seduta; con 3 giorni i programmi colpiti passano da 239 a 397 (palestra 271 -> 340, manubri 356 -> 553; il corpo libero migliora, 264 -> 39). La frequenza di 2 sedute per ogni unita (FRQ-01 = 0 salvo frequenza 1 scelta, soglia di onda-2) e l'accettazione di W2-T5"
+    },
+    "FRQ-01:tricipiti": {
+     "max": 9.7,
+     "risolve": "W2-T5",
+     "scade": "onda-2",
+     "motivo": "1086 -> 1314 programmi (6,97% -> 9,64% pesata), stessa causa dei bicipiti: con 2 giorni da 491 a 718, in palestra da 268 a 455, a 45 minuti da 151 a 247; i tricipiti prendono credito dalle spinte solo dove gli attributi dicono che sono un vero motore e il solutore non li distribuisce tra le sedute"
+    },
+    "FRQ-02:bicipiti": {
+     "max": 8.5,
+     "risolve": "W2-T1",
+     "scade": "onda-2",
+     "motivo": "408 -> 440 programmi (7,24% -> 8,43% pesata, +1,19), stessa causa: le serie dirette dei bicipiti (4 a settimana) entrano in una seduta sola con 3-4 giorni, in palestra da 202 a 245, a 60 minuti da 89 a 120. La soglia di onda-2a (5%) non e raggiunta nemmeno dalle altre unita piccole (laterali 7,3, posteriori 8,8, tricipiti 6,9): distribuire le serie dirette tra almeno due sedute e il seguito di W2-T1"
     }
+   }
+  },
+  "onda-2b": {
+   "int": "INT-2b",
+   "matrice": "standard",
+   "titolo": "Onda 2b - versione snella dell'onda 2 (W2-T1..T4 fusi, poi onda 2c): cancello di regressione contro onda-2a e obiettivi dichiarati (D-P20)",
+   "riscritti": [],
+   "dichiara": {
+    "motivo": "versione snella dell'onda 2: W2-T5 (split e attrezzi), W2-T6 (scelta per attributi) e W2-T7 (forza) non sono in questa onda; le soglie assolute di onda-2a e onda-2 le presuppongono. Qui l'onda dichiara i criteri misurati verdi sull'istantanea onda-2c (matrice standard, criteri 1.4): da compilare con la misura, non con la speranza",
+    "criteri": []
+   },
+   "responsabili": {
+    "VOL-02": "W2-T6 (scelta per attributi; PRI-01 contro VOL-02 per le unita in priorita e la classe schiena del collaudo, criteri 1.5 in INT-2)",
+    "DIR-01": "W2-T1 seguito (serie dirette distribuite su due sedute) e W2-T5",
+    "FRQ-02": "W2-T1 seguito e W2-T5 (split e frequenza)",
+    "FRQ-01": "W2-T5 (split: ogni unita in due sedute)",
+    "PRI-01": "W2-T1 seguito (priorita misurabile dal collaudo)",
+    "DUR-02": "W2-T2 seguito (riempire solo con unita sotto fascia: D-P10) e W2-T6",
+    "DUR-01": "W2-T2 seguito",
+    "MIS-01": "W2-T6 (copertura per muscolo)",
+    "VOL-01": "W2-T6 (copertura per muscolo) e W2-T1 seguito",
+    "SES-03": "W2-T6 (ogni seduta lower con uno squat e un hinge)",
+    "PAT-01": "W2-T6 e W2-T5 (attrezzi di casa)",
+    "RX-01": "W2-T2 seguito e W2-T7",
+    "REC-01": "W2-T5 (48 ore tra sedute dello stesso gruppo)",
+    "REC-02": "W2-T5",
+    "SPL-01": "W2-T5 (criterio aggiornato in INT-2: con la nota non e un fallimento)",
+    "EQ-01": "W2-T6",
+    "EQ-02": "W2-T6",
+    "EQ-03": "W2-T6",
+    "RID-01": "W2-T6",
+    "RID-02": "W2-T6",
+    "ORD-01": "W2-T6",
+    "ORD-02": "W2-T6",
+    "ORD-03": "W2-T6",
+    "SAF-05": "W2-T6",
+    "SAF-06": "W2-T6 (PCO-08)",
+    "GOA-01": "W2-T7",
+    "MOD-12": "W2-T5 e W2-T6",
+    "MOD-04": "W2-T6"
+   },
+   "manuale": [
+    "il cancello si lancia contro l'istantanea di onda-2a rigenerata con i criteri 1.4: npm run cancello -- <json onda-2c> onda-2b --contro <json onda-2a v1.4>",
+    "gravi_pesata si riporta a tre livelli di criteri (1.0, 1.3, 1.4): a 1.0 e 1.3 il salto e DEL-01 (piano da 12 settimane dei principianti, D-P15)"
+   ]
+  },
+  "onda-2": {
+   "int": "INT-2",
+   "matrice": "standard",
+   "titolo": "Onda 2 - generatore completo, calendario, casa, partenza bassa",
+   "riscritti": [
+    "DEL-01",
+    "SPL-01"
+   ],
+   "manuale": [
+    "INT-2 aggiorna DEL-01 (principianti 12 settimane) e SPL-01 (con la nota non e un fallimento) con VERSIONE_CRITERI alzata",
+    "atleta virtuale (D.8 punto 9): mediana <= 3 esposizioni per le donne con partenza bassa, <= 2 per gli uomini, 95 percentile <= 5, zero prescrizioni sopra la capacita al RIR bersaglio - 1",
+    "FRQ-01: 0 salvo frequenza 1 scelta dall'utente (il criterio non distingue ancora: se resta un residuo, verificarlo con --profilo)",
+    "i programmi nuovi hanno `versione: 2`; regole bloccate ancora spente (cancello E.0 punto 0)"
+   ]
+  },
+  "onda-3": {
+   "int": "INT-3",
+   "matrice": "standard",
+   "titolo": "Onda 3 - carichi e autoregolazione",
+   "riscritti": [],
+   "manuale": [
+    "collaudo non peggiore di INT-2 su nessun criterio: npm run cancello -- <json-onda-3> onda-3 --contro <json-onda-2>",
+    "atleta virtuale rifatto con la bilancia v2 e lo scarico di W3-T5 (W3-T6 per la modalita Forza); 0 carichi fuori griglia; golden v1 con sole differenze elencate",
+    "regole bloccate ancora spente (cancello E.0 punto 0)"
+   ]
+  },
+  "onda-4": {
+   "int": "INT-4",
+   "matrice": "completa",
+   "titolo": "Onda 4 - sicurezza, recupero, popolazioni (matrice completa)",
+   "riscritti": [],
+   "manuale": [
+    "SAF-02 = 0 senza nota di modifica: il criterio conta i programmi senza la nota (verificare che sia cosi dopo W4-T1)",
+    "collaudo non peggiore di INT-3: npm run cancello -- <json-onda-4> onda-4 --contro <json-onda-3>",
+    "regole bloccate ancora spente (E.0 punto 0); matrice completa senza errori del generatore"
+   ]
+  },
+  "onda-5": {
+   "int": "INT-5",
+   "matrice": "completa",
+   "titolo": "Onda 5 - mente, corpo, interfaccia, traduzioni (matrice completa)",
+   "riscritti": [],
+   "manuale": [
+    "collaudo non peggiore di INT-4: npm run cancello -- <json-onda-5> onda-5 --contro <json-onda-4>",
+    "tutte le frasi del campione (>= 500 testi generati sulla matrice) tradotte; 0 parole vietate (CST-04); tests/browser/ tutti verdi (npm run test:browser)",
+    "regole bloccate ancora spente (E.0 punto 0)"
+   ]
+  },
+  "finale": {
+   "int": "F-1",
+   "matrice": "completa",
+   "titolo": "Definizione di fatto (cap. G del piano, matrice completa)",
+   "riscritti": [],
+   "manuale": [
+    "dal cap. G, fuori dal collaudo: carichi (atleta virtuale), partenza bassa donne, spiegazioni (100% con un perche e un codice), traduzioni (0 pezzi mancanti su >= 500 testi), soglie (100% con forza e fonte), migrazione (6/6 fixture), codice (npm run controlla, test:browser, grafo:verifica, nessun wrapper tra file), prestazioni (buildProgram mediana < 50 ms, 95 percentile < 150 ms)",
+    "16 regole bloccate del registro C.2 spente o sbloccate con una fonte vista (sessione R-1)"
+   ]
   }
+ },
+ "totali": {
+  "gravi_pesata": {
+   "prima": 35.82,
+   "onda-0": 21.5,
+   "onda-2": 1,
+   "onda-4": 0.5,
+   "finale": 0.5
+  }
+ },
+ "modello": {
+  "MOD-01": {
+   "onda-1": [
+    "ok",
+    "info"
+   ]
+  },
+  "MOD-02": {
+   "onda-4": [
+    "ok",
+    "info"
+   ]
+  },
+  "MOD-03": {
+   "onda-0": [
+    "ok",
+    "info"
+   ]
+  },
+  "MOD-04": {
+   "onda-2": [
+    "ok",
+    "info"
+   ]
+  },
+  "MOD-05": {
+   "onda-3": [
+    "ok",
+    "info"
+   ]
+  },
+  "MOD-06": {
+   "onda-2a": [
+    "ok",
+    "info"
+   ]
+  },
+  "MOD-07": {
+   "onda-2a": [
+    "ok",
+    "info"
+   ]
+  },
+  "MOD-08": {
+   "onda-2a": [
+    "ok",
+    "info"
+   ]
+  },
+  "MOD-09": {
+   "onda-2a": [
+    "ok",
+    "info"
+   ]
+  },
+  "MOD-10": {
+   "onda-0": [
+    "ok",
+    "info"
+   ]
+  },
+  "MOD-11": {
+   "onda-0": [
+    "ok",
+    "info"
+   ]
+  },
+  "MOD-12": {
+   "onda-2": [
+    "ok",
+    "info"
+   ]
+  }
+ },
+ "criteri": {
+  "ERR-01": {
+   "nome": "Il generatore fallisce o produce una scheda malformata",
+   "sev": 5,
+   "prima": 0,
+   "task": "tutte",
+   "soglie": {
+    "onda-0": 0,
+    "finale": 0
+   },
+   "nota": "il generatore non lancia errori: resta a 0 (cap. G)"
+  },
+  "SAN-01": {
+   "nome": "Dati della scheda incoerenti (esercizio doppio nella seduta, serie o ripetizioni non valide, esercizio fuori libreria)",
+   "sev": 4,
+   "prima": 0,
+   "task": "tutte",
+   "soglie": {
+    "onda-0": 0,
+    "finale": 0
+   },
+   "nota": "nessun esercizio doppio o fuori libreria: resta a 0 (cap. G)"
+  },
+  "MIS-01": {
+   "nome": "Muscolo di fatto non allenato nella settimana (meno di 2 serie frazionarie)",
+   "sev": 4,
+   "prima": 5.87,
+   "task": "W0-T5 (quadricipiti), W0-T2 (femorali); W2-T1",
+   "soglie": {
+    "onda-2": 0,
+    "finale": 0
+   },
+   "sub": {
+    "quadricipiti": {
+     "onda-0": 0
+    },
+    "femorali": {
+     "onda-0": 1
+    }
+   },
+   "nota": "W0-T7: femorali onda-0 <= 1% (misurato 0,98%: principianti a casa con una sola seduta di gambe a settimana, un ponte da 3 serie = 1,5 serie frazionarie: B1, il Nordic Curl non c e piu; le flessioni vere sono di W1-T5); INT-2: 0"
+  },
+  "VOL-01": {
+   "nome": "Volume settimanale sotto il minimo del livello (serie frazionarie)",
+   "sev": 3,
+   "prima": 57.43,
+   "task": "W0-T2 ponte; W2-T1",
+   "soglie": {
+    "onda-2a": 2,
+    "finale": 2
+   },
+   "sub": {
+    "femorali": {
+     "onda-0": 45
+    }
+   },
+   "nota": "registro E: INT-0 femorali <= 30%; INT-2a <= 2% e 100% con la nota della causa (la nota non si misura nel JSON: INT-2a la controlla a mano). W0-T7: soglia di onda-0 45 (misurato 44,8%, prima 57,4%): la revisione Opus (B1) ha tolto il Nordic Curl a chi inizia, ai prudenti e alle ginocchia dolenti e senza macchine a casa non c'e un altra flessione del ginocchio (resta il ponte glutei, credito 0,5): i femorali restano sotto il minimo con la nota «senza leg curl restano meno allenati»; le flessioni vere (elastico, slider) e lo stacco rumeno coi manubri sono di W1-T5. In palestra con le macchine il numero non e peggiorato di molto (899 programmi contro 802 di INT-0)"
+  },
+  "VOL-02": {
+   "nome": "Volume settimanale sopra il massimo del livello (serie frazionarie)",
+   "sev": 3,
+   "prima": 35.05,
+   "task": "W2-T1",
+   "soglie": {
+    "onda-2a": 0,
+    "finale": 0
+   },
+   "nota": "0 oltre la tolleranza del +10% (tabella B6)"
+  },
+  "DIR-01": {
+   "nome": "Poche serie dirette per tricipiti, bicipiti, deltoidi (laterali, posteriori), polpacci o avambracci nell ipertrofia",
+   "sev": 3,
+   "prima": 23.09,
+   "task": "W2-T1",
+   "soglie": {
+    "onda-2a": 5,
+    "finale": 5
+   },
+   "nota": "cap. G: 0 nel perimetro (intermedio/avanzato, ipertrofia, >= 3 giorni, >= 45 minuti), <= 5% fuori: il cancello guarda solo il <= 5% totale"
+  },
+  "FRQ-01": {
+   "nome": "Grande gruppo allenato meno di 2 volte a settimana",
+   "sev": 4,
+   "prima": 31.41,
+   "task": "W0-T2 ponte; W2-T5, W2-T1",
+   "soglie": {
+    "onda-2": 0,
+    "finale": 0
+   },
+   "sub": {
+    "femorali": {
+     "onda-0": 25
+    }
+   },
+   "nota": "registro E: INT-0 femorali <= 10%; INT-2 0 salvo frequenza 1 scelta. W0-T7: soglia di onda-0 25 (misurato 24,1%, prima 31,4%) per lo stesso motivo di VOL-01:femorali (B1: senza Nordic Curl a casa il ponte glutei vale 1,5 serie frazionarie per seduta solo con 3 serie, e il tempo le taglia); torna a 0 con W1-T5 e W2-T5"
+  },
+  "FRQ-02": {
+   "nome": "Muscolo piccolo (deltoidi, braccia, polpacci) con serie dirette in una sola seduta",
+   "sev": 2,
+   "prima": 15.46,
+   "task": "W2-T1",
+   "soglie": {
+    "onda-2a": 5,
+    "finale": 5
+   }
+  },
+  "SES-03": {
+   "nome": "Seduta senza uno schema di base per il suo tipo (full body senza squat/hinge, spinta o tirata; upper senza spinta o tirata; lower senza squat o hinge)",
+   "sev": 3,
+   "prima": 22.45,
+   "task": "W0-T2 (palestra); W1-T5 + W2-T6 (casa)",
+   "soglie": {
+    "onda-0": {
+     "max": 0,
+     "dove": {
+      "luogo": "palestra"
+     },
+     "unita": "programmi"
+    },
+    "onda-2": 0,
+    "finale": 0
+   },
+   "nota": "registro E: INT-0 0 in palestra (conteggio di programmi con luogo palestra) su TUTTE le sottoclassi; INT-2 0 ovunque. Il piano (W0-T2) cita solo lower/hinge: vale il registro, che ha la precedenza; se W0-T2 non copre legs/hinge, lower/squat e fullbody/basso lo decide INT-0"
+  },
+  "SES-01": {
+   "nome": "Oltre 11 serie frazionarie per muscolo in una sola seduta",
+   "sev": 3,
+   "prima": 6.59,
+   "task": "W2-T1",
+   "soglie": {
+    "onda-2a": 0,
+    "finale": 0
+   }
+  },
+  "DUR-01": {
+   "nome": "La seduta non sta nei minuti dichiarati (durata stimata oltre il 10%)",
+   "sev": 4,
+   "prima": 5.86,
+   "task": "W0-T2 ponte; W2-T2",
+   "soglie": {
+    "onda-2a": 0,
+    "finale": 0,
+    "onda-0": 0.3
+   },
+   "nota": "INT-0: non peggiora (regressione contro il «prima»); W0-T7: soglia 0,3 (misurato 0,12%: sedute da 30 minuti con tutti gli esercizi gia a 2 serie); INT-2a: 0"
+  },
+  "DUR-02": {
+   "nome": "La seduta spreca oltre il 25% del tempo dichiarato",
+   "sev": 2,
+   "prima": 82.82,
+   "task": "W0-T2 ponte; W2-T2",
+   "soglie": {
+    "onda-0": 74,
+    "onda-2a": 3,
+    "finale": 3
+   },
+   "nota": "INT-2a nella definizione v2 (B12: spreco solo se un'unita e sotto la sua fascia e la seduta usa < 75% dei minuti). Onda 0: soglia 74 (misurato 73,3%, prima 82,8%). Classe A (D-P10: il tempo e un tetto, non un obiettivo): W0-T7 ha tolto dal riempimento l'allungamento delle pause (revisione Opus M2: core a 90-120 s nel 35% dei programmi, Goblet Squat a 225 s nel giorno di ipertrofia), quindi il calo 82,8 -> 63,2 di INT-0 era in gran parte imbottitura; il numero vero e il 3% con la definizione v2 di INT-2a. Lo sforamento (DUR-01) e misurato a parte"
+  },
+  "EXN-01": {
+   "nome": "Troppo pochi esercizi in una seduta (meno di 3)",
+   "sev": 3,
+   "prima": 2.36,
+   "task": "W0-T2",
+   "soglie": {
+    "onda-0": 0,
+    "finale": 0
+   }
+  },
+  "EXN-02": {
+   "nome": "Troppi esercizi in una seduta (oltre 8, oltre 6 per un principiante)",
+   "sev": 2,
+   "prima": 13.83,
+   "task": "W2-T2",
+   "soglie": {
+    "onda-2a": 0,
+    "finale": 0
+   }
+  },
+  "ORD-01": {
+   "nome": "Pre-affaticamento: isolamento di un muscolo prima del multiarticolare che lo usa",
+   "sev": 3,
+   "prima": 0.26,
+   "task": "W2-T6",
+   "soglie": {
+    "onda-2": 0,
+    "finale": 0
+   }
+  },
+  "ORD-02": {
+   "nome": "Isolamento prima di un multiarticolare (muscoli diversi)",
+   "sev": 2,
+   "prima": 0.12,
+   "task": "W2-T6",
+   "soglie": {
+    "onda-2": 0,
+    "finale": 0
+   }
+  },
+  "ORD-03": {
+   "nome": "Multiarticolare di spalle o braccia prima di un multiarticolare delle gambe o dello stacco (senza priorita dichiarata)",
+   "sev": 2,
+   "prima": 17.62,
+   "task": "W2-T6",
+   "soglie": {
+    "onda-2": 0,
+    "finale": 0
+   }
+  },
+  "ORD-04": {
+   "nome": "Core prima di esercizi di altri muscoli",
+   "sev": 1,
+   "prima": 0,
+   "task": "gia a 0",
+   "soglie": {
+    "onda-0": 0,
+    "finale": 0
+   }
+  },
+  "SS-01": {
+   "nome": "Superserie tra muscoli non antagonisti",
+   "sev": 3,
+   "prima": 2.05,
+   "task": "W2-T2",
+   "soglie": {
+    "onda-2a": 0,
+    "finale": 0
+   }
+  },
+  "SS-02": {
+   "nome": "Superserie con un multiarticolare pesante o con un esercizio a tempo o di core",
+   "sev": 3,
+   "prima": 0.96,
+   "task": "W2-T2",
+   "soglie": {
+    "onda-2a": 0,
+    "finale": 0
+   }
+  },
+  "RID-01": {
+   "nome": "Due esercizi per lo stesso muscolo e lo stesso tipo nella stessa seduta",
+   "sev": 2,
+   "prima": 23.36,
+   "task": "W2-T6",
+   "soglie": {
+    "onda-2": 5,
+    "finale": 5
+   }
+  },
+  "RID-02": {
+   "nome": "Lo stesso esercizio in 3 o piu sedute della settimana",
+   "sev": 2,
+   "prima": 13.75,
+   "task": "W2-T6",
+   "soglie": {
+    "onda-2": 5,
+    "finale": 5
+   }
+  },
+  "EQ-01": {
+   "nome": "Piu serie di spinta che di tirata (spalle sbilanciate)",
+   "sev": 3,
+   "prima": 11.47,
+   "task": "W2-T6",
+   "soglie": {
+    "onda-2": 0,
+    "finale": 0
+   }
+  },
+  "EQ-02": {
+   "nome": "Tirate solo verticali o solo orizzontali (manca uno dei due piani)",
+   "sev": 2,
+   "prima": 0.23,
+   "task": "W2-T6",
+   "soglie": {
+    "onda-2": 0,
+    "finale": 0
+   }
+  },
+  "EQ-03": {
+   "nome": "Femorali in ritardo sui quadricipiti, o nessuna flessione del ginocchio",
+   "sev": 3,
+   "prima": 38.23,
+   "task": "W0-T2 ponte; W2-T1, W2-T6",
+   "soglie": {
+    "onda-2": 0,
+    "finale": 0
+   },
+   "sub": {
+    "rapporto": {
+     "onda-0": 27
+    }
+   },
+   "nota": "registro E: INT-0 rapporto femorali/quadricipiti <= 15%; INT-2 0 (il piano W2-T1 lo chiede gia a INT-2a: vale il registro, che ha la precedenza). W0-T7: soglia di onda-0 27 (misurato 26,1%, prima 38,2%): B1, come VOL-01:femorali. EQ-03:flessione (criteri 1.2) non scatta piu dove non c e una flessione sicura"
+  },
+  "PAT-01": {
+   "nome": "Schema di movimento fondamentale assente nella settimana (squat, hinge, spinte e tirate orizzontali e verticali)",
+   "sev": 3,
+   "prima": 0.12,
+   "task": "W0-T6 (palestra), W1-T5 (casa)",
+   "soglie": {
+    "onda-0": {
+     "max": 0,
+     "dove": {
+      "luogo": "palestra"
+     },
+     "unita": "programmi"
+    },
+    "onda-2": 0,
+    "finale": 0
+   },
+   "nota": "INT-0: 0 in palestra (a casa resta finche W1-T5 non aggiunge lo stacco rumeno con manubri); INT-2: 0"
+  },
+  "REC-01": {
+   "nome": "Stesso grande muscolo allenato in due giorni consecutivi (meno di 48 ore)",
+   "sev": 3,
+   "prima": 13.42,
+   "task": "W2-T5",
+   "soglie": {
+    "onda-2": 0,
+    "finale": 0
+   }
+  },
+  "REC-02": {
+   "nome": "Carico pesante sui lombari in due giorni consecutivi",
+   "sev": 3,
+   "prima": 3.94,
+   "task": "W2-T5",
+   "soglie": {
+    "onda-2": 0,
+    "finale": 0
+   }
+  },
+  "REC-03": {
+   "nome": "Troppi giorni di allenamento di fila (oltre 4)",
+   "sev": 2,
+   "prima": 7.34,
+   "task": "W2-T5",
+   "soglie": {
+    "onda-2": 0,
+    "finale": 0
+   }
+  },
+  "SPL-01": {
+   "nome": "Numero di sedute diverso dai giorni dichiarati",
+   "sev": 4,
+   "prima": 6.69,
+   "task": "W2-T5",
+   "soglie": {
+    "onda-2": 0,
+    "finale": 0
+   },
+   "nota": "criterio aggiornato in INT-2: con la nota non e un fallimento"
+  },
+  "SPL-02": {
+   "nome": "Divisione non adatta al numero di giorni (muscolo singolo con pochi giorni, upper/lower con 2 giorni, full body con 5-6)",
+   "sev": 3,
+   "prima": 0,
+   "task": "gia a 0",
+   "soglie": {
+    "onda-0": 0,
+    "finale": 0
+   }
+  },
+  "RX-01": {
+   "nome": "Ripetizioni fuori dalla fascia dell obiettivo e del tipo di esercizio",
+   "sev": 3,
+   "prima": 3.47,
+   "task": "W0-T2 ponte; W2-T2",
+   "soglie": {
+    "onda-2a": 0,
+    "finale": 0
+   }
+  },
+  "RX-02": {
+   "nome": "Recupero tra le serie fuori dalla fascia dell obiettivo e del tipo di esercizio",
+   "sev": 3,
+   "prima": 2.78,
+   "task": "W2-T2",
+   "soglie": {
+    "onda-2a": 0,
+    "finale": 0
+   }
+  },
+  "RX-03": {
+   "nome": "Una sola serie su un esercizio, o oltre 6 serie",
+   "sev": 3,
+   "prima": 0,
+   "task": "gia a 0",
+   "soglie": {
+    "onda-0": 0,
+    "finale": 0
+   }
+  },
+  "RX-04": {
+   "nome": "Isolamento con meno ripetizioni del multiarticolare della stessa seduta",
+   "sev": 2,
+   "prima": 0,
+   "task": "gia a 0",
+   "soglie": {
+    "onda-0": 0,
+    "finale": 0
+   }
+  },
+  "GOA-01": {
+   "nome": "Obiettivo forza con poco lavoro pesante (serie sui multiarticolari a 6 ripetizioni o meno)",
+   "sev": 3,
+   "prima": 9.5,
+   "task": "W2-T2, W2-T7",
+   "soglie": {
+    "onda-2a": 0,
+    "finale": 0
+   }
+  },
+  "TEC-01": {
+   "nome": "Tecniche al cedimento (drop set, parziali, AMRAP, back-off) a principianti o in modalita prudente",
+   "sev": 3,
+   "prima": 14.09,
+   "task": "W0-T2",
+   "soglie": {
+    "onda-0": 0,
+    "finale": 0
+   },
+   "nota": "INT-0 aggiorna il criterio (anche minori e over 65)"
+  },
+  "PRI-01": {
+   "nome": "Muscolo prioritario dichiarato ma senza serie in piu rispetto al programma senza priorita",
+   "sev": 2,
+   "prima": 6.16,
+   "task": "W2-T1",
+   "soglie": {
+    "onda-2a": 0,
+    "finale": 0
+   }
+  },
+  "DEL-01": {
+   "nome": "Scarico assente o troppo lontano nel programma",
+   "sev": 4,
+   "prima": 0,
+   "task": "gia a 0",
+   "soglie": {
+    "onda-0": 0,
+    "finale": 0
+   },
+   "nota": "INT-0: principianti scarico solo all'8a; INT-2: 12 settimane (VERSIONE_CRITERI alzata)"
+  },
+  "RIR-01": {
+   "nome": "Nessun andamento settimanale del RIR per intermedi (rirSett solo agli avanzati)",
+   "sev": 2,
+   "prima": 40.05,
+   "task": "W2-T4",
+   "soglie": {
+    "onda-2a": 0,
+    "finale": 0
+   }
+  },
+  "RIR-02": {
+   "nome": "RIR 0 pianificato anche sui fondamentali pesanti col bilanciere",
+   "sev": 3,
+   "prima": 11.69,
+   "task": "W0-T4",
+   "soglie": {
+    "onda-0": 0,
+    "finale": 0
+   }
+  },
+  "RIR-03": {
+   "nome": "RIR della prima settimana troppo basso per il livello (cedimento sugli isolamenti e sulle macchine dal primo giorno)",
+   "sev": 3,
+   "prima": 35.94,
+   "task": "W0-T4",
+   "soglie": {
+    "onda-0": 0,
+    "finale": 0
+   },
+   "nota": "INT-2a: riga principiante [3,4] (soglia aggiornata, VERSIONE_CRITERI alzata)"
+  },
+  "SAF-01": {
+   "nome": "Esercizio in conflitto con un fastidio dichiarato (controindicato)",
+   "sev": 5,
+   "prima": 15.26,
+   "task": "W0-T5",
+   "soglie": {
+    "onda-0": 0,
+    "finale": 0
+   },
+   "nota": "severita 5: tolleranza di regressione 0"
+  },
+  "SAF-02": {
+   "nome": "Esercizio da usare con cautela per un fastidio dichiarato",
+   "sev": 2,
+   "prima": 16.15,
+   "task": "W4-T1",
+   "soglie": {
+    "onda-4": 0,
+    "finale": 0
+   },
+   "sub": {
+    "ginocchia": {
+     "onda-0": 16
+    },
+    "spalle": {
+     "onda-0": 11
+    }
+   },
+   "nota": "cap. G: 100% con nota di modifica, cioe 0 programmi senza nota. INT-0 (criteri 1.1): ginocchia <= 16 (misurato 15,2%, prima 14,5%): B13, B33, REC-04 tengono in programma leg extension e squat a corpo libero con la nota di modifica (prima li toglieva RISCHIO), quindi la cautela sale; spalle: W0-T7 riporta la soglia a 11 (misurato 10,0%, prima 10,7%): RISCHIO.spalle esclude ora i piegamenti declinati (revisione Opus M3; restano le croci coi manubri, alla pari di quelle ai cavi: D-P8)"
+  },
+  "SAF-03": {
+   "nome": "Attrezzatura non disponibile per il luogo dichiarato",
+   "sev": 4,
+   "prima": 0,
+   "task": "gia a 0",
+   "soglie": {
+    "onda-0": 0,
+    "finale": 0
+   },
+   "nota": "severita 5: tolleranza di regressione 0"
+  },
+  "SAF-04": {
+   "nome": "Attrezzatura non garantita nel luogo dichiarato (sbarra, parallele, sedia romana a casa o a corpo libero)",
+   "sev": 2,
+   "prima": 20.41,
+   "task": "W0-T5",
+   "soglie": {
+    "onda-0": 0,
+    "finale": 0
+   },
+   "nota": "W0-T7 (criteri 1.2, decisione del committente): il rematore inverso resta a corpo libero con la nota «sotto un tavolo robusto o con una sbarra bassa» e SAF-04 non lo segnala piu se la nota c'e (senza di lui a casa non c'e una tirata orizzontale: la CAS-01 toglie le trazioni); il calf raise a un piede (gradino) era gia fuori dai criteri 1.1"
+  },
+  "SAF-05": {
+   "nome": "Esercizio tecnicamente impegnativo a un principiante o in modalita prudente (over 65, PAR-Q)",
+   "sev": 2,
+   "prima": 20.4,
+   "task": "W2-T6",
+   "soglie": {
+    "onda-2": 0,
+    "finale": 0
+   }
+  },
+  "SAF-06": {
+   "nome": "Fastidio alla spalla senza lavoro per la cuffia o i deltoidi posteriori",
+   "sev": 2,
+   "prima": 10.47,
+   "task": "W2-T6 (PCO-08)",
+   "soglie": {
+    "onda-2": 0,
+    "finale": 0
+   }
+  }
+ },
+ "prima": {
+  "matrice": "standard",
+  "profili": 10800,
+  "criteri": "1.0",
+  "pesi": "popolazione",
+  "commit": "e71e612",
+  "errori": 0,
+  "conGravi": 7493,
+  "gravi_pesata": 35.82,
+  "modello": {
+   "MOD-01": "manca",
+   "MOD-02": "manca",
+   "MOD-03": "buchi",
+   "MOD-04": "incoerente",
+   "MOD-05": "manca",
+   "MOD-06": "parziale",
+   "MOD-07": "incoerente",
+   "MOD-08": "manca",
+   "MOD-09": "incoerente",
+   "MOD-10": "info",
+   "MOD-12": "buchi",
+   "MOD-11": "ok"
+  },
+  "classi": {
+   "SAF-01:spalle": [
+    15.26,
+    3600
+   ],
+   "VOL-01:femorali": [
+    57.43,
+    6233
+   ],
+   "DUR-02": [
+    82.82,
+    8660
+   ],
+   "EQ-03:rapporto": [
+    38.23,
+    4090
+   ],
+   "RIR-03:principiante": [
+    35.94,
+    2586
+   ],
+   "VOL-02:glutei": [
+    35.05,
+    2255
+   ],
+   "FRQ-01:femorali": [
+    31.41,
+    4347
+   ],
+   "VOL-02:schiena": [
+    29.22,
+    2280
+   ],
+   "SAF-01:schiena": [
+    6.89,
+    755
+   ],
+   "VOL-01:petto": [
+    26,
+    3591
+   ],
+   "DIR-01:polpacci": [
+    23.09,
+    1895
+   ],
+   "SES-03:lower/hinge": [
+    22.45,
+    3993
+   ],
+   "RIR-01": [
+    40.05,
+    3600
+   ],
+   "DIR-01:deltoidi_laterali": [
+    19.98,
+    1820
+   ],
+   "DIR-01:deltoidi_posteriori": [
+    18.94,
+    1773
+   ],
+   "RIR-03:intermedio": [
+    31.61,
+    2558
+   ],
+   "FRQ-01:quadricipiti": [
+    7.48,
+    2588
+   ],
+   "VOL-01:quadricipiti": [
+    14.33,
+    2071
+   ],
+   "TEC-01:drop": [
+    14.09,
+    1949
+   ],
+   "VOL-02:quadricipiti": [
+    13.45,
+    709
+   ],
+   "REC-01:spalle": [
+    13.42,
+    1414
+   ],
+   "MIS-01:quadricipiti": [
+    5.87,
+    2473
+   ],
+   "DUR-01": [
+    5.86,
+    862
+   ],
+   "RIR-02": [
+    11.69,
+    2612
+   ],
+   "RID-01:grande_gluteo": [
+    23.36,
+    1044
+   ],
+   "EQ-01": [
+    11.47,
+    1392
+   ],
+   "DIR-01:tricipiti": [
+    20.56,
+    1950
+   ],
+   "SAF-04:manubri": [
+    20.41,
+    3600
+   ],
+   "SAF-05:principiante": [
+    20.4,
+    2043
+   ],
+   "DIR-01:bicipiti": [
+    20.14,
+    1778
+   ],
+   "MIS-01:femorali": [
+    4.88,
+    1367
+   ],
+   "GOA-01": [
+    9.5,
+    2300
+   ],
+   "ORD-03": [
+    17.62,
+    1744
+   ],
+   "SES-03:legs/hinge": [
+    8.65,
+    2235
+   ],
+   "SAF-02:schiena": [
+    16.15,
+    3313
+   ],
+   "FRQ-02:deltoidi_posteriori": [
+    15.46,
+    899
+   ],
+   "FRQ-02:polpacci": [
+    15.11,
+    944
+   ],
+   "SAF-04:corpo": [
+    14.93,
+    3600
+   ],
+   "FRQ-02:deltoidi_laterali": [
+    14.51,
+    844
+   ],
+   "SAF-02:ginocchia": [
+    14.5,
+    3111
+   ],
+   "FRQ-01:petto": [
+    3.62,
+    689
+   ],
+   "EXN-02": [
+    13.83,
+    708
+   ],
+   "RID-02": [
+    13.75,
+    1797
+   ],
+   "SES-01:glutei": [
+    6.59,
+    664
+   ],
+   "VOL-01:glutei": [
+    6.58,
+    2086
+   ],
+   "REC-01:schiena": [
+    6.14,
+    479
+   ],
+   "SAF-05:prudente": [
+    11.94,
+    2402
+   ],
+   "FRQ-01:glutei": [
+    2.92,
+    1103
+   ],
+   "FRQ-02:bicipiti": [
+    11.64,
+    663
+   ],
+   "SAF-02:spalle": [
+    10.66,
+    2114
+   ],
+   "SAF-06": [
+    10.47,
+    2621
+   ],
+   "FRQ-02:tricipiti": [
+    9.5,
+    577
+   ],
+   "TEC-01:amrap": [
+    4.71,
+    122
+   ],
+   "SES-03:lower/squat": [
+    4.01,
+    1414
+   ],
+   "REC-02": [
+    3.94,
+    218
+   ],
+   "REC-03": [
+    7.34,
+    1754
+   ],
+   "VOL-01:schiena": [
+    3.63,
+    844
+   ],
+   "RX-01:generale/pesante": [
+    3.47,
+    97
+   ],
+   "SPL-01:principiante-limitato": [
+    6.69,
+    777
+   ],
+   "RID-01:deltoide_anteriore": [
+    6.67,
+    795
+   ],
+   "TEC-01:parziali": [
+    3.33,
+    603
+   ],
+   "RID-01:quadricipiti": [
+    6.27,
+    460
+   ],
+   "PRI-01:braccia": [
+    6.16,
+    663
+   ],
+   "MIS-01:core": [
+    5.8,
+    797
+   ],
+   "VOL-01:deltoidi_posteriori": [
+    2.81,
+    493
+   ],
+   "RX-02:troppo-lungo/forza/isolamento": [
+    2.78,
+    790
+   ],
+   "RX-01:ipertrofia/macchina": [
+    2.75,
+    827
+   ],
+   "VOL-02:petto": [
+    2.7,
+    302
+   ],
+   "PRI-01:gambe": [
+    5.26,
+    490
+   ],
+   "SES-03:fullbody/basso": [
+    2.6,
+    1071
+   ],
+   "FRQ-01:bicipiti": [
+    5.15,
+    678
+   ],
+   "PRI-01:petto": [
+    5.07,
+    409
+   ],
+   "FRQ-01:tricipiti": [
+    4.88,
+    621
+   ],
+   "EXN-01": [
+    2.36,
+    959
+   ],
+   "SS-01": [
+    2.05,
+    211
+   ],
+   "PRI-01:spalle": [
+    3.93,
+    388
+   ],
+   "RX-02:troppo-lungo/generale/pesante": [
+    1.87,
+    50
+   ],
+   "REC-01:quadricipiti": [
+    1.8,
+    54
+   ],
+   "MIS-01:deltoidi_laterali": [
+    1.79,
+    174
+   ],
+   "SES-03:legs/squat": [
+    1.7,
+    742
+   ],
+   "RX-02:troppo-lungo/ipertrofia/macchina": [
+    1.61,
+    439
+   ],
+   "VOL-02:deltoidi_anteriori": [
+    2.94,
+    450
+   ],
+   "RX-01:forza/pesante": [
+    1.42,
+    45
+   ],
+   "MIS-01:deltoidi_posteriori": [
+    1.23,
+    157
+   ],
+   "REC-01:petto": [
+    1.14,
+    152
+   ],
+   "FRQ-01:spalle": [
+    1.13,
+    227
+   ],
+   "VOL-02:tricipiti": [
+    2.23,
+    285
+   ],
+   "VOL-02:bicipiti": [
+    2.17,
+    294
+   ],
+   "EQ-03:flessione": [
+    1.07,
+    136
+   ],
+   "PRI-01:glutei": [
+    2.01,
+    285
+   ],
+   "REC-01:glutei": [
+    0.99,
+    130
+   ],
+   "SS-02": [
+    0.96,
+    122
+   ],
+   "PRI-01:schiena": [
+    1.91,
+    231
+   ],
+   "DIR-01:avambracci": [
+    3.48,
+    605
+   ],
+   "SES-01:quadricipiti": [
+    0.66,
+    28
+   ],
+   "MIS-01:glutei": [
+    0.32,
+    217
+   ],
+   "MIS-01:polpacci": [
+    0.59,
+    56
+   ],
+   "SES-01:schiena": [
+    0.41,
+    81
+   ],
+   "ORD-01": [
+    0.26,
+    39
+   ],
+   "SES-01:petto": [
+    0.17,
+    31
+   ],
+   "SES-01:deltoidi_anteriori": [
+    0.14,
+    24
+   ],
+   "PAT-01:hinge": [
+    0.12,
+    2
+   ],
+   "VOL-02:femorali": [
+    0.12,
+    24
+   ],
+   "EQ-02:orizzontale": [
+    0.23,
+    49
+   ],
+   "RX-01:generale/isolamento": [
+    0.1,
+    17
+   ],
+   "VOL-01:deltoidi_laterali": [
+    0.08,
+    6
+   ],
+   "ORD-02": [
+    0.12,
+    8
+   ],
+   "VOL-02:polpacci": [
+    0.07,
+    37
+   ],
+   "EQ-02:verticale": [
+    0.04,
+    2
+   ],
+   "RX-02:troppo-corto/ipertrofia/pesante": [
+    0.01,
+    2
+   ],
+   "REC-01:femorali": [
+    0.01,
+    5
+   ],
+   "VOL-02:deltoidi_laterali": [
+    0,
+    1
+   ]
+  }
+ },
+ "primaCompleta": {
+  "matrice": "completa",
+  "profili": 64800,
+  "criteri": "1.0",
+  "pesi": "popolazione",
+  "commit": "e71e612",
+  "errori": 0,
+  "conGravi": 44753,
+  "gravi_pesata": 35.11,
+  "modello": {
+   "MOD-01": "manca",
+   "MOD-02": "manca",
+   "MOD-03": "buchi",
+   "MOD-04": "incoerente",
+   "MOD-05": "manca",
+   "MOD-06": "parziale",
+   "MOD-07": "incoerente",
+   "MOD-08": "manca",
+   "MOD-09": "incoerente",
+   "MOD-10": "info",
+   "MOD-12": "buchi",
+   "MOD-11": "ok"
+  },
+  "classi": {
+   "SAF-01:spalle": [
+    15,
+    21600
+   ],
+   "VOL-01:femorali": [
+    57.11,
+    37408
+   ],
+   "DUR-02": [
+    83.5,
+    52796
+   ],
+   "EQ-03:rapporto": [
+    35.44,
+    23823
+   ],
+   "VOL-02:glutei": [
+    34.56,
+    13215
+   ],
+   "RIR-03:principiante": [
+    32.8,
+    12943
+   ],
+   "FRQ-01:femorali": [
+    29.83,
+    25340
+   ],
+   "VOL-02:schiena": [
+    29.15,
+    13068
+   ],
+   "VOL-01:petto": [
+    26.75,
+    22922
+   ],
+   "SAF-01:schiena": [
+    6.18,
+    3828
+   ],
+   "DIR-01:polpacci": [
+    23.19,
+    11502
+   ],
+   "SES-03:lower/hinge": [
+    22.16,
+    23920
+   ],
+   "RIR-01": [
+    40,
+    21600
+   ],
+   "DIR-01:deltoidi_laterali": [
+    19.9,
+    10890
+   ],
+   "DIR-01:deltoidi_posteriori": [
+    19.5,
+    10847
+   ],
+   "TEC-01:drop": [
+    15.52,
+    13501
+   ],
+   "FRQ-01:quadricipiti": [
+    7.68,
+    15397
+   ],
+   "VOL-01:quadricipiti": [
+    15.27,
+    13293
+   ],
+   "RIR-03:intermedio": [
+    28.67,
+    12925
+   ],
+   "VOL-02:quadricipiti": [
+    12.81,
+    3874
+   ],
+   "REC-01:spalle": [
+    12.8,
+    7874
+   ],
+   "RID-01:grande_gluteo": [
+    23.85,
+    6338
+   ],
+   "MIS-01:quadricipiti": [
+    5.84,
+    14885
+   ],
+   "EQ-01": [
+    11.6,
+    8596
+   ],
+   "RIR-02": [
+    10.85,
+    12916
+   ],
+   "DUR-01": [
+    5.37,
+    4538
+   ],
+   "DIR-01:tricipiti": [
+    20.61,
+    11656
+   ],
+   "DIR-01:bicipiti": [
+    20.35,
+    10637
+   ],
+   "GOA-01": [
+    10.09,
+    14197
+   ],
+   "SAF-04:manubri": [
+    20,
+    21600
+   ],
+   "MIS-01:femorali": [
+    5,
+    8585
+   ],
+   "SES-03:legs/hinge": [
+    9.04,
+    13538
+   ],
+   "SAF-05:principiante": [
+    17.83,
+    10281
+   ],
+   "ORD-03": [
+    16.56,
+    10300
+   ],
+   "SAF-02:schiena": [
+    15.55,
+    19577
+   ],
+   "FRQ-02:deltoidi_posteriori": [
+    15.39,
+    5483
+   ],
+   "SAF-05:prudente": [
+    15.36,
+    20632
+   ],
+   "FRQ-02:polpacci": [
+    15.19,
+    5731
+   ],
+   "SAF-04:corpo": [
+    15,
+    21600
+   ],
+   "FRQ-02:deltoidi_laterali": [
+    14.57,
+    5155
+   ],
+   "SAF-02:ginocchia": [
+    14.36,
+    18740
+   ],
+   "FRQ-01:petto": [
+    3.59,
+    4108
+   ],
+   "VOL-01:glutei": [
+    6.91,
+    13408
+   ],
+   "EXN-02": [
+    13.35,
+    4264
+   ],
+   "RID-02": [
+    13.24,
+    11002
+   ],
+   "SES-01:glutei": [
+    6.49,
+    3309
+   ],
+   "FRQ-02:bicipiti": [
+    11.34,
+    3986
+   ],
+   "SAF-02:spalle": [
+    10.77,
+    12748
+   ],
+   "FRQ-01:glutei": [
+    2.67,
+    6387
+   ],
+   "REC-01:schiena": [
+    5.29,
+    2682
+   ],
+   "SAF-06": [
+    10.16,
+    15716
+   ],
+   "FRQ-02:tricipiti": [
+    9.25,
+    3461
+   ],
+   "TEC-01:amrap": [
+    4.54,
+    649
+   ],
+   "VOL-01:schiena": [
+    4.26,
+    5582
+   ],
+   "SES-03:lower/squat": [
+    3.91,
+    8327
+   ],
+   "REC-03": [
+    7.63,
+    10569
+   ],
+   "REC-02": [
+    3.65,
+    1174
+   ],
+   "SPL-01:principiante-limitato": [
+    7.01,
+    4729
+   ],
+   "TEC-01:parziali": [
+    3.44,
+    5066
+   ],
+   "VOL-01:deltoidi_posteriori": [
+    3.36,
+    2928
+   ],
+   "RID-01:deltoide_anteriore": [
+    6.7,
+    4830
+   ],
+   "RX-01:generale/pesante": [
+    3.27,
+    505
+   ],
+   "PRI-01:braccia": [
+    6.4,
+    3992
+   ],
+   "RID-01:quadricipiti": [
+    6.34,
+    2562
+   ],
+   "MIS-01:core": [
+    6.04,
+    4891
+   ],
+   "RX-02:troppo-lungo/forza/isolamento": [
+    3,
+    4824
+   ],
+   "VOL-02:petto": [
+    2.63,
+    1693
+   ],
+   "PRI-01:gambe": [
+    5.24,
+    3072
+   ],
+   "RX-01:ipertrofia/macchina": [
+    2.48,
+    4116
+   ],
+   "SES-03:fullbody/basso": [
+    2.42,
+    6226
+   ],
+   "EXN-01": [
+    2.35,
+    5650
+   ],
+   "FRQ-01:tricipiti": [
+    4.5,
+    3648
+   ],
+   "FRQ-01:bicipiti": [
+    4.48,
+    3935
+   ],
+   "PRI-01:spalle": [
+    4.17,
+    2322
+   ],
+   "RX-02:troppo-lungo/generale/pesante": [
+    2.06,
+    316
+   ],
+   "SS-01": [
+    2.05,
+    1308
+   ],
+   "PRI-01:petto": [
+    3.86,
+    2630
+   ],
+   "MIS-01:deltoidi_laterali": [
+    1.83,
+    1040
+   ],
+   "SES-03:legs/squat": [
+    1.59,
+    4651
+   ],
+   "VOL-02:deltoidi_anteriori": [
+    3.08,
+    2463
+   ],
+   "REC-01:quadricipiti": [
+    1.44,
+    315
+   ],
+   "RX-02:troppo-lungo/ipertrofia/macchina": [
+    1.42,
+    2159
+   ],
+   "MIS-01:deltoidi_posteriori": [
+    1.27,
+    1185
+   ],
+   "VOL-02:tricipiti": [
+    2.48,
+    1691
+   ],
+   "REC-01:glutei": [
+    1.2,
+    718
+   ],
+   "PRI-01:glutei": [
+    2.37,
+    1769
+   ],
+   "REC-01:petto": [
+    1.14,
+    821
+   ],
+   "FRQ-01:spalle": [
+    1.12,
+    1343
+   ],
+   "VOL-02:bicipiti": [
+    2.23,
+    1684
+   ],
+   "RX-01:forza/pesante": [
+    1.08,
+    208
+   ],
+   "PRI-01:schiena": [
+    2.13,
+    1340
+   ],
+   "EQ-03:flessione": [
+    1.05,
+    808
+   ],
+   "SS-02": [
+    0.95,
+    717
+   ],
+   "DIR-01:avambracci": [
+    3.43,
+    3574
+   ],
+   "MIS-01:glutei": [
+    0.32,
+    1280
+   ],
+   "SES-01:quadricipiti": [
+    0.62,
+    157
+   ],
+   "MIS-01:polpacci": [
+    0.55,
+    325
+   ],
+   "ORD-01": [
+    0.5,
+    263
+   ],
+   "SES-01:schiena": [
+    0.42,
+    390
+   ],
+   "VOL-02:femorali": [
+    0.25,
+    162
+   ],
+   "RX-01:generale/isolamento": [
+    0.19,
+    121
+   ],
+   "SES-01:deltoidi_anteriori": [
+    0.17,
+    114
+   ],
+   "SES-01:petto": [
+    0.16,
+    150
+   ],
+   "VOL-01:deltoidi_laterali": [
+    0.1,
+    63
+   ],
+   "EQ-02:orizzontale": [
+    0.17,
+    245
+   ],
+   "RX-02:troppo-corto/ipertrofia/pesante": [
+    0.05,
+    30
+   ],
+   "VOL-02:polpacci": [
+    0.07,
+    220
+   ],
+   "ORD-02": [
+    0.06,
+    47
+   ],
+   "EQ-02:verticale": [
+    0.05,
+    16
+   ],
+   "PAT-01:hinge": [
+    0.02,
+    6
+   ],
+   "REC-01:femorali": [
+    0.01,
+    21
+   ],
+   "VOL-02:deltoidi_posteriori": [
+    0.01,
+    11
+   ],
+   "VOL-02:deltoidi_laterali": [
+    0.01,
+    10
+   ],
+   "SES-01:bicipiti": [
+    0,
+    2
+   ],
+   "SES-01:tricipiti": [
+    0,
+    2
+   ],
+   "RX-01:ipertrofia/pesante": [
+    0,
+    1
+   ]
+  }
+ }
 }
