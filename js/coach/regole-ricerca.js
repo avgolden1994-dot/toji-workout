@@ -63,7 +63,7 @@ function profiloCoach() {
            sonnoMale: !!(p.prefs && p.prefs.sonno === 'male'),
            minorenne: eta > 0 && eta < PARAM_ETA.maggiorenne };   /* ETA-02 (INT-2a): un età non detta (0) vale adulto, come per i programmi già salvati */
 }
-const BIL_PESANTI = /Squat con Bilanciere|Squat con Pausa|Front Squat|Stacco(?! Rumeno (?:con Manubri|a una Gamba))|Panca con Pausa|Panca Piana Bilanciere|Panca Inclinata Bilanciere|Panca Declinata|Military Press|Rematore con Bilanciere|T-Bar Row|Good Morning/;
+const BIL_PESANTI = /Squat con Bilanciere|Squat con Pausa|Front Squat|Stacco(?! Rumeno (?:con Manubri|a una Gamba))|Panca con Pausa|Panca Presa Stretta|Panca Piana Bilanciere|Panca Inclinata Bilanciere|Panca Declinata|Military Press|Rematore con Bilanciere|T-Bar Row|Good Morning/;
 function tipoCarico(nome) {
   const t = typeof memoriaTabella === 'function' ? memoriaTabella('tipoCarico') : null;   /* dentro buildProgram: una volta per nome */
   if (t !== null) { const v = t.get(nome); if (v !== undefined) return v; }

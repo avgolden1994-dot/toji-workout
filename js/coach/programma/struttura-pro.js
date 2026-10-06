@@ -26,7 +26,8 @@ function strMeta(e) { return findExercise(e.name) || {}; }
 function strSub(e) { const d = dettaglioEsercizio(e.name); return d ? d.sub : ''; }
 function strSchiena(nome) { return schienaLombare(nome); }   /* ABB-07 / REC-02: il dato dell esercizio, non due espressioni sul nome (W1-T6) */
 
-/* ABB-01: 0 multiarticolari (prima i pesanti), 1 isolamenti dei grandi muscoli, 2 dei piccoli, 3 core */
+/* ABB-01: 0 multiarticolari (prima i pesanti), 1 isolamenti dei grandi muscoli, 2 dei piccoli, 3 core. INT-2f (revisione 2e, maggiore 3): l alzata del giorno della modalita Forza (e.alzata, specialita/forza.js) viene prima di tutto (rango -1):
+   strOrdina e richiamata dopo forzaSedute e metteva davanti il Military Press o il Rematore con Bilanciere */
 function strTier(e) {
   const m = strMeta(e);
   if (m.group === 'core') return 3;
@@ -34,7 +35,7 @@ function strTier(e) {
   if (['petto', 'schiena', 'gambe', 'glutei'].indexOf(m.group) !== -1 && strSub(e) !== 'Polpacci' && strSub(e) !== 'Adduttori' && strSub(e) !== 'Medio gluteo') return 1;
   return 2;
 }
-function strRango(e) { const t = strTier(e); return t * 10 + (t === 0 && tipoCarico(e.name) !== 'pesante' ? 1 : 0) + (t === 0 && RIPIEGO_HINGE.test(senzaEmoji(e.name)) ? 2 : 0); }   /* INT-2f: la cerniera senza carico (ripiego) mai prima di un altro multiarticolare */
+function strRango(e) { if (e.alzata) return -1; const t = strTier(e); return t * 10 + (t === 0 && tipoCarico(e.name) !== 'pesante' ? 1 : 0) + (t === 0 && RIPIEGO_HINGE.test(senzaEmoji(e.name)) ? 2 : 0); }   /* INT-2f: la cerniera senza carico (ripiego) mai prima di un altro multiarticolare */
 /* ordina una lista di esercizi (con almeno `name`); i giorni dei punti deboli restano nell ordine di priorita dell utente */
 /* ABB-10: a parita di tipo, il muscolo prioritario per primo (principio della priorita di Arnold: si allena per primo cio che si vuole far crescere;
    la forza e il lavoro migliorano di piu negli esercizi fatti all inizio, Nunes 2021) */

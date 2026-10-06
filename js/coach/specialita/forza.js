@@ -59,7 +59,7 @@ const FORZA_TIPI_TESTI = [
   ['powerlifting', 'Powerlifting', 'squat, panca e stacco più volte a settimana, con giorni pesanti, medi e leggeri']
 ];
 const FORZA_NOTA_REQUISITI = 'Il powerlifting è per chi ha tra 18 e 64 anni e ha risposto no al questionario sulla salute; servono almeno 3 giorni a settimana, un bilanciere, un rack e una panca. Se qualcosa non va, il programma di forza resta quello generale e te lo dico.';
-const FORZA_NOTA_PUNTI = 'Facoltativo, al massimo due, uno per alzata. Nei giorni medi e leggeri metto la variante che allena quel punto; nel giorno pesante, se i minuti bastano, aggiungo un esercizio per il muscolo che di solito cede.';
+const FORZA_NOTA_PUNTI = 'Facoltativo, al massimo due, uno per alzata. Chi ha esperienza trova la variante che allena quel punto nei giorni medi e leggeri e, nel giorno pesante, se i minuti e gli attrezzi bastano (per la panca servono i cavi), un esercizio in più per il muscolo che di solito cede. Chi comincia ha la stessa alzata in ogni seduta: il punto debole non cambia il suo programma.';
 const FORZA_PUNTI_TESTI = {
   'squat-buca': 'Squat in buca', 'squat-uscita': 'Squat a metà risalita',
   'panca-petto': 'Panca al petto', 'panca-meta': 'Panca a metà', 'panca-chiusura': 'Panca in chiusura',
@@ -95,7 +95,9 @@ const FORZA_NOTA_PIATTA = 'Forza: squat e panca almeno due volte a settimana e l
 const FORZA_NOTA_PRINCIPIANTE = 'Forza: squat e panca almeno due volte a settimana e lo stacco una volta, con la stessa prescrizione in ogni seduta: chi comincia non ha giorni pesanti e leggeri.';
 const FORZA_NOTA_MINUTI = 'Con i minuti che hai alcune alzate restano fuori da qualche seduta: la frequenza del powerlifting non è completa.';
 const FORZA_NOTA_MASSIMALE = 'Non serve provare il massimale: il coach lo stima dalle serie che fai, con meno rischio.';
-const FORZA_NOTA_PRUDENTE = 'Il powerlifting non è per chi ha meno di 18 anni, ne ha 65 o più, o ha risposto sì al questionario sulla salute: il tuo programma di forza resta quello generale, con carichi e ripetizioni più prudenti.';
+const FORZA_NOTA_PRUDENTE = 'Il powerlifting non è per chi ha meno di 18 anni o 65 o più, né per chi ha risposto sì al questionario sulla salute: il tuo programma di forza resta quello generale, con carichi e ripetizioni più prudenti.';
+/* INT-2f: l età non detta non e un programma piu prudente (vale adulto, come per i programmi gia salvati): la nota dice solo che serve */
+const FORZA_NOTA_ETA = 'Per il powerlifting devo sapere che hai tra 18 e 64 anni, e la tua età manca: indicala in Opzioni. Intanto il programma di forza resta quello generale.';
 const FORZA_NOTA_GIORNI = 'Per il powerlifting servono almeno 3 giorni a settimana: con 2 il programma di forza resta quello generale.';
 const FORZA_NOTA_FREQUENZA = 'Hai scelto di allenare ogni muscolo una volta a settimana: il powerlifting chiede squat e panca almeno due volte, e il programma di forza resta quello generale.';
 const FORZA_NOTA_FREQUENZA_SOSTITUITA = 'Hai scelto una frequenza per i muscoli: il powerlifting ha la sua, squat e panca almeno due volte a settimana.';
@@ -125,7 +127,8 @@ const SPEC_FORZA = {
   attiva: function (brief) {
     const L = brief.lavoro, prefs = L.prefs, chi = brief.chi;
     if (brief.obiettivi.modalita !== 'forza' || brief.obiettivi.primo !== 'forza') return { ok: false, nota: null };
-    if (chi.cauto || !(chi.eta >= PARAM_ETA.maggiorenne)) return { ok: false, nota: FORZA_NOTA_PRUDENTE };   /* un'eta non detta (0) non e un adulto: carichi da powerlifting solo a chi dice di avere 18 anni o piu */
+    if (chi.cauto) return { ok: false, nota: FORZA_NOTA_PRUDENTE };
+    if (!(chi.eta >= PARAM_ETA.maggiorenne)) return { ok: false, nota: FORZA_NOTA_ETA };   /* un'eta non detta (0) non e un adulto: carichi da powerlifting solo a chi dice di avere 18 anni o piu (INT-2f: la nota dice che serve l eta, non «piu prudenti») */
     const giorni = Number(brief.agenda.giorni) || 0, g = sogliaForza('giorni');
     if (giorni < g.min) return { ok: false, nota: FORZA_NOTA_GIORNI };
     if (brief.agenda.freqScelta === '1') return { ok: false, nota: FORZA_NOTA_FREQUENZA };   /* ogni muscolo una volta sola: il contrario del powerlifting, la scelta dell'utente vince */
@@ -252,7 +255,11 @@ function specialitaForza(brief) {
   if (!regolaAttiva('FRZ-02')) return null;
   const L = brief.lavoro, note = L.note;
   const att = SPEC_FORZA.attiva(brief);
-  if (!att.ok) { if (att.nota && note.indexOf(att.nota) === -1) note.push(att.nota); return null; }
+  if (!att.ok) {
+    if (att.nota && note.indexOf(att.nota) === -1) note.push(att.nota);
+    if (brief.obiettivi.modalita === 'forza') brief.obiettivi.modalita = 'generale';   /* INT-2f: la modalita dice cio che accade: il powerlifting non si attiva, il programma e di forza generale */
+    return null;
+  }
   /* la frequenza scelta (2 o 3 volte per muscolo) la sostituisce la frequenza della modalità: la nota del volume («ogni muscolo N volte, come hai scelto») direbbe una cosa che qui non vale */
   if (brief.agenda.freqScelta) { brief.agenda.freqScelta = null; if (note.indexOf(FORZA_NOTA_FREQUENZA_SOSTITUITA) === -1) note.push(FORZA_NOTA_FREQUENZA_SOSTITUITA); }
   /* una struttura sola, dichiarata: un metodo famoso scelto dal coach cede alla modalità (REG-01: lo Specialista viene prima dell'Architetto) */

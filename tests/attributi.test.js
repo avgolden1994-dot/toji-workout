@@ -316,7 +316,6 @@ test('attrezzo e serve seguono DETTAGLI (MOD-04); unilaterale e `lato` della lib
    STRESS_ZONA elencava gli esercizi che caricano di più ogni articolazione (per scegliere la variante del dolore); l'elenco esperto del collaudo
    è un'altra cosa (cosa togliere con un fastidio dichiarato): quasi tutte le righe STRESS_ZONA sono esercizi che l'elenco del collaudo aggiunge. */
 const DIFFERENZE = [
-  ['tipoCarico', 'Panca Presa Stretta', 'macchina → classe A', 'barra libera con carico pesante: classe A (metodi §3.1); tipoCarico la riconosceva solo dal nome'],
   ['tipoCarico', 'Rematore Presa Inversa (Yates)', 'macchina → classe A', 'barra libera con carico pesante: classe A (metodi §3.1); tipoCarico la riconosceva solo dal nome'],
   ['stabile', 'Piegamenti a Terra (Push-up)', 'false → stabilita 1', 'senza carico il cedimento non espone: piegamenti a cedimento pieno (casa §4.4)'],
   ['stabile', 'Croci su Panca Manubri', 'true → stabilita 2', 'manubri liberi sopra il petto: almeno 1 ripetizione in riserva (casa §4.4)'],
