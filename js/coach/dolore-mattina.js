@@ -67,10 +67,13 @@ function aggiustiAlCarico(r, c) {
     const rif = isTimeBased(nome) || !regolaAttiva('MES-06') ? 0 : caricoRiferimento(nome);
     const ultima = rif > 0 ? sedutePerEsercizio(nome, 1)[0] : null;
     const dopoScarico = !!(ultima && esercizioInScarico(ultima.h, ultima.ex));
-    r.weight = arrotonda((rif > 0 && (dopoScarico || rif <= r.weight) ? rif : r.weight) * COACH_PARAMETRI.scaricoReattivoCarico);
-    r.sets = Math.max(2, Math.round((setsBase || 3) * COACH_PARAMETRI.scaricoReattivoSerie));
+    /* MES-05 (P3-B, programmi v2): la dose e quella unica di DOSE_SCARICO, della fatica di quando il coach ha deciso (ag.scarico.dose); un esercizio da 2 serie scende davvero (N6).
+       Senza dose (programma v1, o uno scarico deciso prima) restano i numeri di sempre */
+    const dose = ag.scarico.dose && typeof programmaConPiano === 'function' && programmaConPiano() && regolaAttiva('MES-05') ? DOSE_SCARICO[ag.scarico.dose] : null;
+    r.weight = arrotonda((rif > 0 && (dopoScarico || rif <= r.weight) ? rif : r.weight) * (dose ? dose.carico : COACH_PARAMETRI.scaricoReattivoCarico));
+    r.sets = dose ? serieDiScarico(setsBase || 3, dose.serie) : Math.max(2, Math.round((setsBase || 3) * COACH_PARAMETRI.scaricoReattivoSerie));
     r.tipo = 'scarico';
-    r.motivo = 'Scarico deciso dal coach: ' + ag.scarico.motivo;
+    r.motivo = 'Scarico deciso dal coach: ' + ag.scarico.motivo + (dose ? ' • ' + testoDose(dose.serie, dose.carico) : '');
   }
   const a = ag.esercizi[nome];
   if (a && a.sedute > 0) {

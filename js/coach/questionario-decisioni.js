@@ -219,8 +219,16 @@ window.decisioniCoach = function(fb, storicoFeedback, prefs) {
   if (pesanti4 >= 3 && prec.length >= 3) {
     out.push({ tipo: 'frequenza', testo: 'Tre sedute su quattro al limite o arrivando stanco: il recupero non basta. Il coach propone di togliere un allenamento a settimana.' });
   }
-  if (pesanti3 >= 2) {
-    out.push({ tipo: 'scarico', testo: 'Fatica accumulata: la prossima seduta è di scarico (serie -40%, carico -10%) per ricaricare le energie.' });
+  /* MES-07 (P3-B, programmi v2): le sedute al limite sono UN segnale (S7), non bastano da sole: serve un secondo segnale e le protezioni di distanza (valutaScaricoReattivo);
+     la dose e quella unica di DOSE_SCARICO. Programmi della v1 e regola spenta: la decisione di sempre */
+  let scarico = pesanti3 >= 2;
+  const mes07 = scarico && typeof valutaScaricoReattivo === 'function' ? valutaScaricoReattivo('S7') : { ok: true };
+  if (scarico && !mes07.ok) { scarico = false; out.push({ tipo: 'osserva', testo: mes07.perche }); }
+  if (scarico) {
+    const dose = typeof programmaConPiano === 'function' && programmaConPiano() && regolaAttiva('MES-05') ? DOSE_SCARICO[livelloFatica()] : null;
+    out.push({ tipo: 'scarico', testo: dose
+      ? 'Fatica accumulata: le prossime ' + sogliaScarico('reattivoSedute') + ' sedute sono di scarico (serie -' + Math.round((1 - dose.serie) * 100) + '%, carico -' + Math.round((1 - dose.carico) * 100) + '%) per ricaricare le energie.' + (mes07.segnali && mes07.segnali.length ? ' \u2022 segnali: ' + testoSegnali(mes07.segnali) : '')
+      : 'Fatica accumulata: la prossima seduta è di scarico (serie -' + Math.round((1 - COACH_PARAMETRI.scaricoReattivoSerie) * 100) + '%, carico -' + Math.round((1 - COACH_PARAMETRI.scaricoReattivoCarico) * 100) + '%) per ricaricare le energie.' });
   } else if (fb.carichi === 'pesanti' && fb.srpe >= PARAM_FATICA_SEDUTA.srpeDura) {   /* anche le vecchie risposte 9 */
     out.push({ tipo: 'blocca', testo: 'Carichi pesanti e seduta al limite: la prossima volta nessun aumento, consolida prima.' });
   } else if (fb.carichi === 'leggeri' && fb.srpe <= PARAM_FATICA_SEDUTA.srpeFacileMax && !fb.dolore) {
@@ -250,7 +258,7 @@ function applicaDecisioni(dec, fb) {
       }
     }
     if (d.tipo === 'blocca' || d.tipo === 'extra') fb.esercizi.forEach(n => { if (!ag.esercizi[n]) ag.esercizi[n] = { [d.tipo]: true, sedute: 1 }; });
-    if (d.tipo === 'scarico') ag.scarico = scaricoReattivo('fatica accumulata nelle ultime sedute', 1);
+    if (d.tipo === 'scarico') ag.scarico = voceScaricoReattivo('fatica accumulata nelle ultime sedute', 1);   /* programmi v2: la durata e la dose uniche di MES-05 e MES-07 */
     if (d.tipo === 'sostituisci') {
       const lib = findExercise(d.variante);
       DAYS.forEach(g => (data[g] || []).forEach(e => {
