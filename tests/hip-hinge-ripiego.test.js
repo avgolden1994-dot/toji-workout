@@ -59,7 +59,7 @@ test('Hip Hinge a corpo libero: nei programmi compare solo dove nessuna cerniera
   assert.ok(con.some(x => x.luogo === 'corpo'), 'a corpo libero entra ancora: e l unica cerniera dell anca (SES-03)');
 });
 
-test('Hip Hinge a corpo libero: 2 serie da 12 (6 o meno con la forza), in al massimo 2 sedute a settimana, mai prima di un altro multiarticolare', () => {
+test('Hip Hinge a corpo libero: sempre 2 serie da 12 (INT-2g: anche con la forza), in al massimo 2 sedute a settimana, mai prima di un altro multiarticolare', () => {
   const dove = { serie: [], sedute: [], primo: [] };
   G.forEach(x => {
     const n = x.sedute.filter(sd => sd.es.some(e => e.n === HH)).length;
@@ -68,8 +68,7 @@ test('Hip Hinge a corpo libero: 2 serie da 12 (6 o meno con la forza), in al mas
       const i = sd.es.findIndex(e => e.n === HH);
       if (i === -1) return;
       const e = sd.es[i];
-      const giornoForza = /forza/i.test(sd.tipo + ' ' + (sd.titolo || ''));   /* il giorno «forza» del PHUL ha le ripetizioni dei multiarticolari di quel giorno (8 per l intermedio che punta alla massa) */
-      if (e.sets > 2 || (giornoForza ? e.reps > 8 : (e.reps < 12 || e.reps > 15))) dove.serie.push(x.id + ' ' + e.sets + 'x' + e.reps);
+      if (e.sets > 2 || e.reps !== 12) dove.serie.push(x.id + ' ' + e.sets + 'x' + e.reps);   /* INT-2g: 12 ripetizioni sempre, anche nel giorno «forza» del PHUL (era 8) */
       if (i === 0 && sd.es.some(y => y.compound && y.n !== HH)) dove.primo.push(x.id + ' ' + sd.tipo);
     });
   });
@@ -121,12 +120,14 @@ test('tetto di esercizi (EXN-02) e cuffia: un principiante con la spalla dolente
   assert.ok(prog.sedute.some(sd => sd.esercizi.some(e => e.cuffia)), 'il lavoro per la cuffia c e: ' + prog.sedute.map(sd => sd.esercizi.map(e => se(e.name)).join(', ')).join(' / '));
 });
 
-test('Hip Hinge a corpo libero con la forza come obiettivo: le ripetizioni sono quelle dei multiarticolari della forza (6 o meno, collaudo GOA-01), non 12', () => {
-  /* a casa con i manubri e la schiena dolente nessuna cerniera con carico e consentita: il ripiego entra, e con la forza le ripetizioni dei multiarticolari non vanno oltre 6 (4 programmi su 10.800 della matrice standard con 12) */
+test('Hip Hinge a corpo libero con la forza come obiettivo: 2 serie da 12 come sempre (INT-2g: a 6 ripetizioni con 2 minuti di pausa una cerniera senza carico non allena niente; non conta come lavoro pesante per GOA-01)', () => {
+  /* a casa con i manubri e la schiena dolente nessuna cerniera con carico e consentita: il ripiego entra; in 2f con la forza aveva le ripetizioni dei multiarticolari della forza (2x6 r120: 1.200 occorrenze su 8.681) */
   const out = [];
+  let visti = 0;
   [{ luogo: 'manubri', fastidi: ['schiena'] }, { luogo: 'manubri', fastidi: ['ginocchia', 'schiena'] }, { luogo: 'corpo', fastidi: [] }].forEach((x, k) => ['forza', 'forza+massa'].forEach(g => {
     const d = Object.assign({}, BASE, { goals: g.split('+'), goal: 'forza', level: 'intermedio', days: 3, minutes: 30, sex: 'M', age: 40, seme: 'goa' + k + g }, x);
-    a.json('buildProgram(' + JSON.stringify(d) + ')').sedute.forEach(sd => sd.esercizi.forEach(e => { if (se(e.name) === HH && (e.reps > 6 || e.sets > 2) && /forza/.test(sd.titolo + sd.tipo)) out.push(x.luogo + ' ' + g + ' ' + sd.titolo + ': ' + e.sets + 'x' + e.reps); }));
+    a.json('buildProgram(' + JSON.stringify(d) + ')').sedute.forEach(sd => sd.esercizi.forEach(e => { if (se(e.name) === HH) { visti++; if (e.reps !== 12 || e.sets > 2) out.push(x.luogo + ' ' + g + ' ' + sd.titolo + ': ' + e.sets + 'x' + e.reps); } }));
   }));
+  assert.ok(visti > 0, 'il ripiego compare');
   assert.deepStrictEqual(out, []);
 });

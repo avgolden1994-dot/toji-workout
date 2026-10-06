@@ -59,7 +59,7 @@ const FORZA_TIPI_TESTI = [
   ['powerlifting', 'Powerlifting', 'squat, panca e stacco più volte a settimana, con giorni pesanti, medi e leggeri']
 ];
 const FORZA_NOTA_REQUISITI = 'Il powerlifting è per chi ha tra 18 e 64 anni e ha risposto no al questionario sulla salute; servono almeno 3 giorni a settimana, un bilanciere, un rack e una panca. Se qualcosa non va, il programma di forza resta quello generale e te lo dico.';
-const FORZA_NOTA_PUNTI = 'Facoltativo, al massimo due, uno per alzata. Chi ha esperienza trova la variante che allena quel punto nei giorni medi e leggeri e, nel giorno pesante, se i minuti e gli attrezzi bastano (per la panca servono i cavi), un esercizio in più per il muscolo che di solito cede. Chi comincia ha la stessa alzata in ogni seduta: il punto debole non cambia il suo programma.';
+const FORZA_NOTA_PUNTI = 'Facoltativo, al massimo due, uno per alzata. Chi ha esperienza trova la variante che allena quel punto nei giorni medi e leggeri e, nel giorno pesante, se i minuti e gli attrezzi bastano (per la panca servono i cavi), un esercizio in più per il muscolo che di solito cede. Chi comincia ha la stessa prescrizione in ogni seduta: il punto debole aggiunge al massimo un esercizio per punto (alle stesse condizioni) e, se l’alzata torna tre volte a settimana, mette la sua variante alla terza.';
 const FORZA_PUNTI_TESTI = {
   'squat-buca': 'Squat in buca', 'squat-uscita': 'Squat a metà risalita',
   'panca-petto': 'Panca al petto', 'panca-meta': 'Panca a metà', 'panca-chiusura': 'Panca in chiusura',
@@ -92,7 +92,7 @@ function forzaSalvata(d, prof0, goals) {
 const FORZA_NOTA_STRUTTURA = 'Forza: squat e panca almeno due volte a settimana e lo stacco una volta, in giorni pesanti, medi e leggeri. Nei giorni medi e leggeri la stessa alzata cambia variante (con la pausa, a presa stretta).';
 const FORZA_NOTA_ONDA = 'Forza: squat e panca almeno due volte a settimana e lo stacco una volta, in giorni pesanti, medi e leggeri: cambiano serie e ripetizioni.';
 const FORZA_NOTA_PIATTA = 'Forza: squat e panca almeno due volte a settimana e lo stacco una volta, con la stessa prescrizione in ogni seduta.';
-const FORZA_NOTA_PRINCIPIANTE = 'Forza: squat e panca almeno due volte a settimana e lo stacco una volta, con la stessa prescrizione in ogni seduta: chi comincia non ha giorni pesanti e leggeri.';
+const FORZA_NOTA_PRINCIPIANTE = 'Forza: squat e panca almeno due volte a settimana e lo stacco rumeno una volta (lo stacco da terra, più tecnico, non è per chi comincia), con la stessa prescrizione in ogni seduta: chi comincia non ha giorni pesanti e leggeri.';
 const FORZA_NOTA_MINUTI = 'Con i minuti che hai alcune alzate restano fuori da qualche seduta: la frequenza del powerlifting non è completa.';
 const FORZA_NOTA_MASSIMALE = 'Non serve provare il massimale: il coach lo stima dalle serie che fai, con meno rischio.';
 const FORZA_NOTA_PRUDENTE = 'Il powerlifting non è per chi ha meno di 18 anni o 65 o più, né per chi ha risposto sì al questionario sulla salute: il tuo programma di forza resta quello generale, con carichi e ripetizioni più prudenti.';
@@ -106,7 +106,7 @@ const FORZA_NOTA_ATTREZZI = 'Per il powerlifting servono bilanciere, rack e panc
 const FORZA_NOTA_FASTIDIO = 'Con il fastidio che hai indicato una delle tre alzate del powerlifting non è adatta: il programma di forza resta quello generale.';
 const FORZA_PERCHE_STRUTTURA = 'Squat e panca almeno due volte a settimana e lo stacco una: la frequenza di 2-3 sedute per alzata è la pratica dei programmi da powerlifting.';
 const FORZA_PERCHE_ONDA = 'Stessa alzata in un giorno pesante, uno medio e uno leggero: cambia la fatica, non il movimento. Gli studi sull’onda non concordano: non è provata migliore.';
-const FORZA_PERCHE_VARIANTE = 'Punto debole: nei giorni medi e leggeri la variante allena il tratto in cui ti fermi; l’alzata pesante resta quella intera.';
+const FORZA_PERCHE_VARIANTE = 'Punto debole: una variante dell’alzata allena il tratto in cui ti fermi; l’alzata intera resta quella principale.';
 const FORZA_PERCHE_ACCESSORIO = 'Punto debole: un accessorio in più per il muscolo che di solito cede in quell’alzata.';
 const FORZA_ALZATE_BARRA = ['squat', 'panca', 'stacco'];
 /* nome breve per i titoli delle sedute e genere (squat e stacco maschili, panca femminile) */
