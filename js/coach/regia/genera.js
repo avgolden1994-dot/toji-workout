@@ -184,7 +184,13 @@ function verificaProgramma(brief, prog) {
   return riconciliaNote(prog);
 }
 
+/* INT-2b (velocità): mentre il generatore lavora le funzioni che dipendono solo dal nome di un esercizio (findExercise, senzaEmoji, dettaglioEsercizio, schemaDi, strChiave,
+   creditoSerie, tipoCarico, consentito, regolaAttiva...) si calcolano una volta per nome (js/core/memoria-chiamata.js); la memoria si chiude sempre, anche con un errore (ETA-01) */
 window.buildProgram = function(d) {
+  memoriaApri();
+  try { return generaProgramma(d); } finally { memoriaChiudi(); }
+};
+function generaProgramma(d) {
   const prof0 = (typeof getProfile === 'function' && d !== undefined && d.usaProfilo !== false && d === onbData) ? (getProfile() || {}) : {};
   const brief = briefCoach(d, prof0);                                  /* 1 (lancia l errore dell eta sotto i 13 anni: ETA-01) */
   brief.sicurezza.vincoli = vincoliSicurezza(brief);                    /* 2 */
@@ -233,4 +239,4 @@ window.buildProgram = function(d) {
   /* W2-T4: i programmi v2 portano il piano del mesociclo e la versione (alternative.js li salva); senza il piano (soglie-struttura.js assente) restano come la v1 */
   if (mesociclo.piano) Object.assign(prog, { versione: 2, piano: mesociclo.piano, perche: brief.perche, modalita: brief.obiettivi.modalita });
   return verificaProgramma(brief, prog);                                /* 17 */
-};
+}

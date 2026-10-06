@@ -298,14 +298,24 @@ const DETTAGLI = {
   'Suitcase Carry': ['L', 'Manubri', 'Un solo manubrio (o kettlebell) pesante in una mano, camminata dritta', 'Obliqui e anti-rotazione', 'Obliqui, quadrato dei lombi', 'Trapezio superiore, avambracci', '', 'obliqui', 'trapezio avambracci']
 };
 
-function _nomePulito(nome) { return String(nome).replace(EMOJI_TESTA, ''); }
+/* lo stesso calcolo di senzaEmoji (questionario-decisioni.js): condividono lo spazio «senzaEmoji» della memoria di una chiamata */
+function _nomePulito(nome) {
+  const t = typeof memoriaTabella === 'function' ? memoriaTabella('senzaEmoji') : null;
+  if (t !== null) { const v = t.get(nome); if (v !== undefined) return v; }
+  const r = String(nome).replace(EMOJI_TESTA, '');
+  if (t !== null) t.set(nome, r);
+  return r;
+}
 
-/* i dettagli di un esercizio, o null se non e della libreria */
+/* i dettagli di un esercizio, o null se non e della libreria (dentro buildProgram lo stesso oggetto per lo stesso nome: chi lo legge non lo modifica) */
 window.dettaglioEsercizio = function(nome) {
+  const t = typeof memoriaTabella === 'function' ? memoriaTabella('dettaglioEsercizio') : null;
+  if (t !== null) { const v = t.get(nome); if (v !== undefined) return v; }
   const r = DETTAGLI[_nomePulito(nome)];
-  if (!r) return null;
-  return { sez: r[0], att: r[1], attacco: r[2], sub: r[3], focus: r[4], sec: r[5] || '', nota: r[6] ? NOTE_ATTACCO[r[6]] : '', notaId: r[6] || '',
+  const out = !r ? null : { sez: r[0], att: r[1], attacco: r[2], sub: r[3], focus: r[4], sec: r[5] || '', nota: r[6] ? NOTE_ATTACCO[r[6]] : '', notaId: r[6] || '',
     bersaglio: r[7] || '', secondari: r[8] ? r[8].split(' ') : [] };
+  if (t !== null) t.set(nome, out);
+  return out;
 };
 /* il muscolo bersaglio (id di MUSCOLI), o '' se l esercizio non e della libreria */
 window.bersaglioDi = function(nome) {

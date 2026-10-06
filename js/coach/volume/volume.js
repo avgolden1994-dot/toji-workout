@@ -35,13 +35,17 @@ const FRAZIONARI_NON_CONTATI = ['stabilita', 'avambracci', 'flessori_anca'];   /
 function gruppoFrazionario(muscolo) { return Object.keys(GRUPPI_FRAZIONARI).find(g => GRUPPI_FRAZIONARI[g].muscoli.indexOf(muscolo) !== -1) || null; }
 /* credito di UNA serie di un esercizio, per gruppo: 1 se il bersaglio e nel gruppo, 0,5 se e un secondario (i femorali non si contano nello squat e nella leg press: Kubo 2019) */
 function creditoSerie(nome) {
+  const t = typeof memoriaTabella === 'function' ? memoriaTabella('creditoSerie') : null;   /* dentro buildProgram: una volta per nome (chi lo legge non lo modifica) */
+  if (t !== null) { const v = t.get(nome); if (v !== undefined) return v; }
   const det = dettaglioEsercizio(nome), out = {};
-  if (!det) return out;
-  let sec = det.secondari.filter(m => FRAZIONARI_NON_CONTATI.indexOf(m) === -1);
-  if (schemaDi(nome) === 'squat') sec = sec.filter(m => m !== 'femorali');
-  sec.forEach(m => { const g = gruppoFrazionario(m); if (g) out[g] = Math.max(out[g] || 0, 0.5); });
-  const gb = det.bersaglio ? gruppoFrazionario(det.bersaglio) : null;
-  if (gb) out[gb] = 1;
+  if (det) {
+    let sec = det.secondari.filter(m => FRAZIONARI_NON_CONTATI.indexOf(m) === -1);
+    if (schemaDi(nome) === 'squat') sec = sec.filter(m => m !== 'femorali');
+    sec.forEach(m => { const g = gruppoFrazionario(m); if (g) out[g] = Math.max(out[g] || 0, 0.5); });
+    const gb = det.bersaglio ? gruppoFrazionario(det.bersaglio) : null;
+    if (gb) out[gb] = 1;
+  }
+  if (t !== null) t.set(nome, out);
   return out;
 }
 function frazionarieSettimana(sedute) {
@@ -261,16 +265,29 @@ function volumeMotore(brief, sedute, b, opz) {
   /* ---- stato ---- */
   const W = new Array(nU).fill(0), D = new Array(nU).fill(0);
   const S = sedute.map(() => new Array(nU).fill(0)), SD = sedute.map(() => new Array(nU).fill(0)), GL = sedute.map(() => ({}));
-  const GR = Object.keys(VOLUME_GRUPPI_RECUPERO);
-  const G = sedute.map(() => { const o = {}; GR.forEach(g => { o[g] = 0; }); return o; });
+  const GR = Object.keys(VOLUME_GRUPPI_RECUPERO), nG = GR.length, iG = {};
+  GR.forEach((g, h) => { iG[g] = h; });
+  const sommaG = GR.map(g => VOLUME_GRUPPI_SOMMA.indexOf(g) !== -1);
+  const G = sedute.map(() => new Array(nG).fill(0));   /* serie per gruppo del recupero e per seduta, indicizzate come GR (INT-2b: niente chiavi di testo nel ciclo caldo) */
   let PUSH = 0, PULL = 0, SCHIENA = 0;
   const SCHIENA_S = sedute.map(() => 0);   /* le serie di schiena (dorsali e spessore insieme) per seduta: il tetto duro di 11 vale per il gruppo, come nel collaudo (SES-01) */
   const giorno = sedute.map(sd => giornoSeduta(sd));
-  const consecutive = [];
-  for (let s = 0; s < nS; s++) for (let o = s + 1; o < nS; o++) if (giorno[s] >= 0 && giorno[o] >= 0 && Math.abs(giorno[s] - giorno[o]) === 1) consecutive.push([s, o]);
+  const consecutive = [], vicini = sedute.map(() => []);
+  for (let s = 0; s < nS; s++) for (let o = s + 1; o < nS; o++) if (giorno[s] >= 0 && giorno[o] >= 0 && Math.abs(giorno[s] - giorno[o]) === 1) { consecutive.push([s, o]); vicini[s].push(o); vicini[o].push(s); }
   const recs = [], vietatiNuovi = {};
   const T = sedute.map(sd => durataSeduta(sd.esercizi));
   const T0 = T.slice();
+  /* INT-2b (velocità, misurata: l utilità era metà del tempo di buildProgram). La somma dell utilità resta LA STESSA, nello stesso ordine di operazioni (una mossa
+     vince sull altra anche per l ultimo bit: l esito deve restare identico), ma i cicli che non aggiungono niente si saltano: i contatori dicono quante celle stanno
+     sopra un tetto (per seduta: unità sopra il tetto morbido, gruppi sopra il tetto duro; coppie di giorni consecutivi con lo stesso gruppo da 4 serie), e la frequenza
+     di un unità (somma sulle sedute) si ricalcola solo quando una sua seduta cambia. Li tiene aggiornati muovi. */
+  const sopraMorbido = new Array(nS).fill(0);
+  let sopraGruppo = 0, recuperoAttivo = 0;
+  const kFreq = new Array(nU).fill(-1), kDir = new Array(nU).fill(-1), kFreqDiGruppo = {};
+  freqU.forEach((i, k) => { kFreq[i] = k; const g = freqG[k]; if (g) (kFreqDiGruppo[g] = kFreqDiGruppo[g] || []).push(k); });
+  dirU.forEach((i, k) => { kDir[i] = k; });
+  const nFreq = freqU.map(() => 0), freqSporca = freqU.map(() => true), nDir = dirU.map(() => 0), dirSporca = dirU.map(() => true);
+  const recuperoDi = (s, o, h) => Math.min(G[s][h], G[o][h]) >= minRec;
 
   const tempoSerie = (e) => {
     const sec = (isTimeBased(e.name) ? e.reps : e.reps * ((typeof PARAM_TEMPO !== 'undefined' && PARAM_TEMPO.secRipetizione) || 3.5)) * ((findExercise(e.name) || {}).lato ? 2 : 1) + ((typeof PARAM_TEMPO !== 'undefined' && PARAM_TEMPO.secSetup) || 10);
@@ -290,19 +307,42 @@ function volumeMotore(brief, sedute, b, opz) {
     Object.keys(cr).forEach(u => crv.push([iU[u], cr[u]]));
     const gr = [];
     const vecchio = creditoSerie(e.name);   /* le 48 ore valgono anche col conteggio di prima (ponte dei femorali, riempimento): il credito al gruppo è il più alto dei due */
-    GR.forEach(g => { const v = VOLUME_GRUPPI_RECUPERO[g].map(u => cr[u] || 0), c0 = VOLUME_GRUPPI_SOMMA.indexOf(g) !== -1 ? v.reduce((t, x) => t + x, 0) : Math.max.apply(null, v), c = Math.max(c0, VOLUME_GRUPPI_SOMMA.indexOf(g) !== -1 ? 0 : (vecchio[g] || 0)); if (c > 0) gr.push([g, c]); });
+    GR.forEach((g, h) => { const v = VOLUME_GRUPPI_RECUPERO[g].map(u => cr[u] || 0), c0 = sommaG[h] ? v.reduce((t, x) => t + x, 0) : Math.max.apply(null, v), c = Math.max(c0, sommaG[h] ? 0 : (vecchio[g] || 0)); if (c > 0) gr.push([h, c]); });
     const tempo = !isTimeBased(e.name);
     return { s: s, e: e, cr: crv, gr: gr, leg: vecchio, push: tempo && strEspinta(e), pull: tempo && strEtirata(e), tm: tempoSerie(e), sets0: e.sets, cap: capSerie(e), fond: !!fond, min: Math.min(e.sets, fond ? 3 : 2), bloccato: false,
       sch: Math.max(cr.dorsali || 0, cr.schiena_spessore || 0) };
   };
   const muovi = (r, d) => {
     r.e.sets += d;
-    for (let k = 0; k < r.cr.length; k++) { const i = r.cr[k][0], c = r.cr[k][1] * d; W[i] += c; S[r.s][i] += c; if (r.cr[k][1] === 1) { D[i] += d; SD[r.s][i] += d; } }
-    for (let k = 0; k < r.gr.length; k++) G[r.s][r.gr[k][0]] += r.gr[k][1] * d;
-    for (const g in r.leg) GL[r.s][g] = (GL[r.s][g] || 0) + r.leg[g] * d;
+    const s = r.s, Ss = S[s], Gs = G[s], vic = vicini[s];
+    for (let k = 0; k < r.cr.length; k++) {
+      const i = r.cr[k][0], c = r.cr[k][1] * d, cap = P[i].capMorbido;
+      W[i] += c;
+      const prima = Ss[i] > cap;
+      Ss[i] += c;
+      if ((Ss[i] > cap) !== prima) sopraMorbido[s] += prima ? -1 : 1;
+      if (r.cr[k][1] === 1) { D[i] += d; SD[s][i] += d; if (kDir[i] >= 0) dirSporca[kDir[i]] = true; }
+      if (kFreq[i] >= 0) freqSporca[kFreq[i]] = true;
+    }
+    for (let k = 0; k < r.gr.length; k++) {
+      const h = r.gr[k][0], dopo = Gs[h] + r.gr[k][1] * d;
+      /* le coppie di giorni consecutivi con questo gruppo contano solo se la seduta arriva a 4 serie: sotto, prima e dopo, niente cambia */
+      let primaRec = 0;
+      const guarda = vic.length > 0 && (Gs[h] >= minRec || dopo >= minRec);
+      if (guarda) for (let j = 0; j < vic.length; j++) if (recuperoDi(s, vic[j], h)) primaRec++;
+      const primaTetto = !sommaG[h] && Gs[h] > tettoGruppo;
+      Gs[h] = dopo;
+      if ((!sommaG[h] && Gs[h] > tettoGruppo) !== primaTetto) sopraGruppo += primaTetto ? -1 : 1;
+      if (guarda) { for (let j = 0; j < vic.length; j++) if (recuperoDi(s, vic[j], h)) primaRec--; recuperoAttivo -= primaRec; }
+    }
+    for (const g in r.leg) {
+      GL[s][g] = (GL[s][g] || 0) + r.leg[g] * d;
+      const ks = kFreqDiGruppo[g];
+      if (ks) for (let j = 0; j < ks.length; j++) freqSporca[ks[j]] = true;
+    }
     if (r.push) PUSH += d;
     if (r.pull) PULL += d;
-    SCHIENA += r.sch * d; SCHIENA_S[r.s] += r.sch * d;
+    SCHIENA += r.sch * d; SCHIENA_S[s] += r.sch * d;
   };
   sedute.forEach((sd, s) => {
     const primo = sd.esercizi.find(e => (findExercise(e.name) || {}).type === 'compound' && !isTimeBased(e.name));
@@ -327,13 +367,20 @@ function volumeMotore(brief, sedute, b, opz) {
       if (p.floorD > 0) r += Math.min(D[i], p.floorD) * p.wd;
     }
     if (SCHIENA > limiteSchiena) r -= (SCHIENA - limiteSchiena) * PS.eccesso / Math.max(PS.riferimentoMin, limiteSchiena);
-    for (let s = 0; s < nS; s++) for (let i = 0; i < nU; i++) { const o = S[s][i] - P[i].capMorbido; if (o > 0) { r -= o * PS.morbidoSeduta; const d = S[s][i] - P[i].capDuro; if (d > 0) r -= d * PS.duroSeduta; } }   /* oltre il tetto duro (SES-01) una serie costa quanto un muscolo sotto il minimo: uno stato di partenza fuori tetto si ripara */
-    for (let k = 0; k < freqU.length; k++) { const i = freqU[k], g = freqG[k]; let n = 0; for (let s = 0; s < nS; s++) n += Math.min(1, Math.min(S[s][i], g ? (GL[s][g] || 0) : 99) / serieMinSeduta); r += PS.frequenza * Math.min(seduteMin, n); }
-    for (let k = 0; k < dirU.length; k++) { const i = dirU[k]; let n = 0; for (let s = 0; s < nS; s++) n += Math.min(1, SD[s][i]); r += PS.frequenza * Math.min(seduteMin, n); }
+    /* oltre il tetto duro (SES-01) una serie costa quanto un muscolo sotto il minimo: uno stato di partenza fuori tetto si ripara (le sedute senza unità sopra il tetto morbido non aggiungono niente: si saltano) */
+    for (let s = 0; s < nS; s++) { if (sopraMorbido[s] === 0) continue; for (let i = 0; i < nU; i++) { const o = S[s][i] - P[i].capMorbido; if (o > 0) { r -= o * PS.morbidoSeduta; const d = S[s][i] - P[i].capDuro; if (d > 0) r -= d * PS.duroSeduta; } } }
+    for (let k = 0; k < freqU.length; k++) {
+      if (freqSporca[k]) { const i = freqU[k], g = freqG[k]; let n = 0; for (let s = 0; s < nS; s++) n += Math.min(1, Math.min(S[s][i], g ? (GL[s][g] || 0) : 99) / serieMinSeduta); nFreq[k] = n; freqSporca[k] = false; }
+      r += PS.frequenza * Math.min(seduteMin, nFreq[k]);
+    }
+    for (let k = 0; k < dirU.length; k++) {
+      if (dirSporca[k]) { const i = dirU[k]; let n = 0; for (let s = 0; s < nS; s++) n += Math.min(1, SD[s][i]); nDir[k] = n; dirSporca[k] = false; }
+      r += PS.frequenza * Math.min(seduteMin, nDir[k]);
+    }
     if (PUSH + PULL >= minBilancio && PULL < rapportoTirate * PUSH) r -= (rapportoTirate * PUSH - PULL) * PS.equilibrio;
-    for (let s = 0; s < nS; s++) for (let h = 0; h < GR.length; h++) if (VOLUME_GRUPPI_SOMMA.indexOf(GR[h]) === -1 && G[s][GR[h]] > tettoGruppo) r -= (G[s][GR[h]] - tettoGruppo) * PS.duroSeduta;
-    for (let k = 0; k < consecutive.length; k++) for (let h = 0; h < GR.length; h++) {   /* REC-01: due sedute in giorni consecutivi non hanno entrambe 4 serie frazionarie dello stesso grande muscolo */
-      const m = Math.min(G[consecutive[k][0]][GR[h]], G[consecutive[k][1]][GR[h]]);
+    if (sopraGruppo > 0) for (let s = 0; s < nS; s++) for (let h = 0; h < nG; h++) if (!sommaG[h] && G[s][h] > tettoGruppo) r -= (G[s][h] - tettoGruppo) * PS.duroSeduta;
+    if (recuperoAttivo > 0) for (let k = 0; k < consecutive.length; k++) for (let h = 0; h < nG; h++) {   /* REC-01: due sedute in giorni consecutivi non hanno entrambe 4 serie frazionarie dello stesso grande muscolo */
+      const m = Math.min(G[consecutive[k][0]][h], G[consecutive[k][1]][h]);
       if (m >= minRec) r -= (m - minRec + 1) * PS.recupero;
     }
     return r;
@@ -350,11 +397,11 @@ function volumeMotore(brief, sedute, b, opz) {
       if (e.sets + d > r.cap) return false;
       for (let k = 0; k < r.cr.length; k++) { const i = r.cr[k][0]; if (S[r.s][i] + r.cr[k][1] * d > P[i].capDuro + 1e-9) return false; }   /* SES-01, IPE-06 */
       if (r.sch > 0 && SCHIENA_S[r.s] + r.sch * d > Math.min(P[iU.dorsali].capDuro, P[iU.schiena_spessore].capDuro) + 1e-9) return false;
-      for (let k = 0; k < r.gr.length; k++) if (VOLUME_GRUPPI_SOMMA.indexOf(r.gr[k][0]) === -1 && G[r.s][r.gr[k][0]] + r.gr[k][1] * d > tettoGruppo + 1e-9) return false;   /* SES-01 col conteggio di prima e degli attributi */
-      for (let k = 0; k < r.gr.length; k++) {   /* REC-01: 48 ore */
-        const g = r.gr[k][0], dopo = G[r.s][g] + r.gr[k][1] * d;
+      for (let k = 0; k < r.gr.length; k++) if (!sommaG[r.gr[k][0]] && G[r.s][r.gr[k][0]] + r.gr[k][1] * d > tettoGruppo + 1e-9) return false;   /* SES-01 col conteggio di prima e degli attributi */
+      for (let k = 0; k < r.gr.length; k++) {   /* REC-01: 48 ore (vicini: le sedute del giorno prima e del giorno dopo) */
+        const h = r.gr[k][0], dopo = G[r.s][h] + r.gr[k][1] * d, vic = vicini[r.s];
         if (dopo < minRec) continue;
-        for (let o = 0; o < nS; o++) if (o !== r.s && giorno[o] >= 0 && giorno[r.s] >= 0 && Math.abs(giorno[o] - giorno[r.s]) === 1 && G[o][g] >= minRec) return false;
+        for (let j = 0; j < vic.length; j++) if (G[vic[j]][h] >= minRec) return false;
       }
     } else if (!intero && e.sets + d < r.min) return false;
     if (r.push || r.pull) {   /* ABB-04: spinte e tirate non peggiorano uno squilibrio e non ne creano */
@@ -540,6 +587,23 @@ function volumeMotore(brief, sedute, b, opz) {
       recs.forEach(r => { if (r.s !== s || !rimovibile(r)) return; const sets = r.e.sets; muovi(r, -sets); const du = utilita() - u0; muovi(r, sets); if (!mig || du > mig.du) mig = { r: r, du: du }; });
       return (donatori[s] = mig ? mig.r : null);
     };
+    /* INT-2b (velocità): le serie da togliere agli altri esercizi per far posto in una seduta al limite dei minuti dipendono dallo stato della seduta (il donatore tolto, le serie già
+       tolte), non dal candidato: la k-esima scelta è la stessa per ogni esercizio nuovo provato nella stessa seduta. Si calcola una volta e si allunga solo quando ne servono di più */
+    const tolteDi = {};
+    const prossimaTolta = (s, don, tolte) => {
+      const tc = tolteDi[s] || (tolteDi[s] = { lista: [], finita: false });
+      if (tolte.length < tc.lista.length) return tc.lista[tolte.length];
+      if (tc.finita) return null;
+      let mig = null;
+      recs.forEach(r => {
+        if (r.s !== s || r === don || r.e.fisso || r.e.sets - 1 < r.min || !consente(r, -1)) return;
+        muovi(r, -1); const x = utilita() - u0; muovi(r, 1);
+        if (!mig || x > mig.du) mig = { r: r, du: x };
+      });
+      if (!mig) { tc.finita = true; return null; }
+      tc.lista.push(mig.r);
+      return mig.r;
+    };
     bisogni.forEach(u => {
       let provati = 0;
       candidatiNuovi(u).forEach(x => {
@@ -557,14 +621,9 @@ function volumeMotore(brief, sedute, b, opz) {
           const tolte = [];
           let libero = minuti - (T[s] + dt);
           while (!senzaCrescita && libero < -1e-9 && tolte.length < 4) {
-            let mig = null;
-            recs.forEach(r => {
-              if (r.s !== s || r === don || r.e.fisso || r.e.sets - 1 < r.min || !consente(r, -1)) return;
-              muovi(r, -1); const x = utilita() - u0; muovi(r, 1);
-              if (!mig || x > mig.du) mig = { r: r, du: x };
-            });
+            const mig = prossimaTolta(s, don, tolte);
             if (!mig) break;
-            muovi(mig.r, -1); tolte.push(mig.r); libero += mig.r.tm;
+            muovi(mig, -1); tolte.push(mig); libero += mig.tm;
           }
           let du = -Infinity;
           if ((senzaCrescita || libero >= -1e-9) && consente(n.r, 2)) { n.r.e.sets = 0; muovi(n.r, 2); du = utilita() - u0; muovi(n.r, -2); }

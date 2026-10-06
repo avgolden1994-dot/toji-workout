@@ -48,8 +48,12 @@ window.strOrdina = function(lista, tipoGiorno, priorita) {
 /* ABB-02: due esercizi dello stesso gruppo, della stessa parte e dello stesso tipo fanno lo stesso lavoro.
    Fanno eccezione lo squat (macchina dopo il bilanciere: 2), i glutei multiarticolari (2) e i curl o le estensioni per le braccia (2: uno allungato, uno accorciato). */
 function strChiave(e) {
+  const t = typeof memoriaTabella === 'function' ? memoriaTabella('strChiave') : null;   /* dipende solo dal nome: dentro buildProgram una volta per nome */
+  if (t !== null) { const v = t.get(e.name); if (v !== undefined) return v; }
   const m = strMeta(e), d = dettaglioEsercizio(e.name) || {};
-  return [m.group, d.sub, m.type, schemaDi(e.name) || ''].join('|');
+  const r = [m.group, d.sub, m.type, schemaDi(e.name) || ''].join('|');
+  if (t !== null) t.set(e.name, r);
+  return r;
 }
 window.strRidondante = function(x, base) {
   if (!dettaglioEsercizio(x.name)) return false;

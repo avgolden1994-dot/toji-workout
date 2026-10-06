@@ -91,8 +91,11 @@ const REPS_MAX_CORPO = 30;
 const TIME_MIN = 10;
 const TIME_MAX = 120;
 window.isTimeBased = function(name) {
-  const m = findExercise(name);
-  return !!m && (m.tempo === true || (m.group === 'core' && m.reps >= 25));
+  const t = typeof memoriaTabella === 'function' ? memoriaTabella('isTimeBased') : null;   /* dentro buildProgram: una volta per nome */
+  if (t !== null) { const v = t.get(name); if (v !== undefined) return v; }
+  const m = findExercise(name), r = !!m && (m.tempo === true || (m.group === 'core' && m.reps >= 25));
+  if (t !== null) t.set(name, r);
+  return r;
 };
 /* esercizi a un lato alla volta: le ripetizioni sono "per lato" */
 window.perLato = function(name) { const m = findExercise(name); return !!(m && m.lato); };

@@ -51,10 +51,20 @@ const STRESS_ZONA = {
   ginocchio: ['Squat con Bilanciere', 'Front Squat', 'Hack Squat', 'Affondi Manubri', 'Affondi in Camminata', 'Affondi Bulgari', 'Step-up su Panca', 'Leg Extension', 'Leg Press', 'Goblet Squat', 'Squat Sumo', 'Squat con Pausa', 'Cossack Squat', 'Belt Squat', 'Squat su Scatola', 'Step-up Basso', 'Sit-to-Stand dalla Panca'],
   caviglia: ['Calf Raise in Piedi', 'Affondi in Camminata', 'Step-up su Panca', 'Mountain Climber', 'Squat con Bilanciere', 'Calf Raise con Manubrio sul Gradino', 'Step-up Basso', 'Squat con Pausa', 'Belt Squat']
 };
-const senzaEmoji = (n) => String(n).replace(EMOJI_TESTA, '');
+/* dentro buildProgram lo stesso nome si pulisce una volta sola (memoria-chiamata.js, spazio condiviso con _nomePulito di dettagli-esercizi.js) */
+const senzaEmoji = (n) => {
+  const t = typeof memoriaTabella === 'function' ? memoriaTabella('senzaEmoji') : null;
+  if (t !== null) { const v = t.get(n); if (v !== undefined) return v; }
+  const r = String(n).replace(EMOJI_TESTA, '');
+  if (t !== null) t.set(n, r);
+  return r;
+};
 function nomeInLibreria(pulito) {
-  const m = EXERCISE_LIBRARY.find(e => senzaEmoji(e.name) === pulito);
-  return m ? m.name : null;
+  const t = typeof memoriaTabella === 'function' ? memoriaTabella('nomeInLibreria') : null;
+  if (t !== null) { const v = t.get(pulito); if (v !== undefined) return v; }
+  const m = EXERCISE_LIBRARY.find(e => senzaEmoji(e.name) === pulito), r = m ? m.name : null;
+  if (t !== null) t.set(pulito, r);
+  return r;
 }
 /* DEC-03 (B14): la variante per il dolore allena lo STESSO muscolo (alternativeStessoMuscolo: bersaglio o famiglia del
    multiarticolare totale), attrezzi e fastidi consentiti, e non e tra gli esercizi che caricano di piu quella zona (STRESS_ZONA:

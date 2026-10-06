@@ -34,6 +34,7 @@ const ASSETS = [
   './js/core/service-worker.js',
   './js/core/ripristino-guida.js',
   './js/core/costanti.js',
+  './js/core/memoria-chiamata.js',
   './js/dati/schede-pronte.js',
   './js/dati/libreria-esercizi.js',
   './js/dati/schede-epoca-oro.js',

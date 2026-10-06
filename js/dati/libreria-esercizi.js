@@ -227,5 +227,9 @@ function buildExerciseSelect() {
 }
 
 function findExercise(name) {
-  return EXERCISE_LIBRARY.find(e => e.name === name) || null;
+  const t = typeof memoriaTabella === 'function' ? memoriaTabella('findExercise') : null;   /* dentro buildProgram la ricerca si fa una volta per nome (memoria-chiamata.js) */
+  if (t !== null) { const v = t.get(name); if (v !== undefined) return v; }
+  const r = EXERCISE_LIBRARY.find(e => e.name === name) || null;
+  if (t !== null) t.set(name, r);
+  return r;
 }

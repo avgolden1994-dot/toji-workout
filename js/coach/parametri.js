@@ -45,9 +45,16 @@ const REGOLE_SPEGNIBILI = ['RIC-01', 'RIC-02', 'RIC-03', 'RIC-04', 'RIC-05', 'IN
   'CAS-14'];
 const REGOLE_SPENTE_KEY = 'tz_regole_spente';
 window.regolaAttiva = function(codice) {
+  const t = typeof memoriaTabella === 'function' ? memoriaTabella('regolaAttiva') : null;   /* dentro buildProgram le regole spente non cambiano: una lettura per codice */
+  if (t !== null) { const v = t.get(codice); if (v !== undefined) return v; }
+  const r = regolaAttivaCalcolo(codice);
+  if (t !== null) t.set(codice, r);
+  return r;
+};
+function regolaAttivaCalcolo(codice) {
   /* il catalogo si legge solo durante l'esecuzione (e caricato dopo questo file) */
   const voce = typeof regolaDescritta === 'function' ? regolaDescritta(codice) : null;
   if (voce && voce.bloccata) return false;
   if (!REGOLE_SPEGNIBILI.includes(codice) && !(voce && voce.spegnibile)) return true;
   try { return !JSON.parse(localStorage.getItem(REGOLE_SPENTE_KEY) || '[]').includes(codice); } catch (e) { return true; }
-};
+}

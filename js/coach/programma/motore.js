@@ -15,6 +15,13 @@
 
 /* ---- Attrezzatura e fastidi: esercizi da evitare e con cosa sostituirli ---- */
 function attrezzoDi(nome) {
+  const t = typeof memoriaTabella === 'function' ? memoriaTabella('attrezzoDi') : null;   /* dentro buildProgram: una volta per nome */
+  if (t !== null) { const v = t.get(nome); if (v !== undefined) return v; }
+  const r = attrezzoDiCalcolo(nome);
+  if (t !== null) t.set(nome, r);
+  return r;
+}
+function attrezzoDiCalcolo(nome) {
   const n = nome.toLowerCase();
   if (/asciugamano/.test(n)) return 'corpo';   /* W1-T5: il leg curl con l asciugamano non e alla macchina */
   if (/seal row|suitcase/.test(n)) return 'manubri';   /* W1-T5: il nome non lo dice */
@@ -68,7 +75,19 @@ function eccezioneRischio(f, nome, prefs) {
   return !!(e && e.nome.test(senzaEmoji(nome).trim()) && e.quando(prefs));
 }
 
+/* dentro buildProgram la risposta per un nome si ricorda finche le preferenze sono lo stesso oggetto (prefsDelBrief non cambia dopo i posti); con un altro oggetto si ricomincia */
 function consentito(nome, prefs) {
+  const t = typeof memoriaTabella === 'function' ? memoriaTabella('consentito') : null;
+  if (t === null) return consentitoCalcolo(nome, prefs);
+  let perPrefs = t.get(prefs);
+  if (!perPrefs) { perPrefs = new Map(); t.set(prefs, perPrefs); }
+  const v = perPrefs.get(nome);
+  if (v !== undefined) return v;
+  const r = consentitoCalcolo(nome, prefs);
+  perPrefs.set(nome, r);
+  return r;
+}
+function consentitoCalcolo(nome, prefs) {
   const a = attrezzoDi(nome);
   if ((prefs.odiati || []).indexOf(nome) !== -1) return false;
   if ((prefs.esclusi || []).indexOf(nome) !== -1) return false;   /* esclusi dal coach per sicurezza (revisione dell onda 0, B1: il Nordic Curl), non per gusto */

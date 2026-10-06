@@ -65,9 +65,12 @@ function profiloCoach() {
 }
 const BIL_PESANTI = /Squat con Bilanciere|Squat con Pausa|Front Squat|Stacco(?! Rumeno (?:con Manubri|a una Gamba))|Panca con Pausa|Panca Piana Bilanciere|Panca Inclinata Bilanciere|Panca Declinata|Military Press|Rematore con Bilanciere|T-Bar Row|Good Morning/;
 function tipoCarico(nome) {
+  const t = typeof memoriaTabella === 'function' ? memoriaTabella('tipoCarico') : null;   /* dentro buildProgram: una volta per nome */
+  if (t !== null) { const v = t.get(nome); if (v !== undefined) return v; }
   const m = findExercise(nome) || findExercise(nomeInLibreria(senzaEmoji(nome)) || '');
-  if (!m || m.type !== 'compound') return 'isolamento';
-  return BIL_PESANTI.test(senzaEmoji(nome)) ? 'pesante' : 'macchina';
+  const r = (!m || m.type !== 'compound') ? 'isolamento' : (BIL_PESANTI.test(senzaEmoji(nome)) ? 'pesante' : 'macchina');
+  if (t !== null) t.set(nome, r);
+  return r;
 }
 const RIR_TIPO = { pesante: [1, 3], macchina: [0, 2], isolamento: [0, 1] };
 /* MES-02 (ponte dell onda 0): una tabella sola per il RIR di partenza (registro B5; collaudo RIR-02 e RIR-03). Principiante: 3-4
