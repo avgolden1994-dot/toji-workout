@@ -484,7 +484,8 @@ function serieSottoFascia(brief, sedute, opz, minutiEff, c) {
       const gruppi = GRUPPI_DELLA_SEDUTA[sd.tipo] || null, setsNuovo = c.maxSerie >= 3 ? 3 : 2;
       const uso = (n) => sedute.filter(x => x.esercizi.some(e => e.name === n)).length;
       const ginocchia = c.prefs.fastidi.indexOf('ginocchia') !== -1;   /* con le ginocchia dolenti non sceglie lui la leg extension (che il regex di RISCHIO lascia passare, REC-04) */
-      const punti = EXERCISE_LIBRARY.filter(x => consentito(x.name, c.prefs) && !sd.esercizi.some(e => e.name === x.name) && uso(x.name) < maxSettimana(x.name) && !isTimeBased(x.name) &&
+      const caricaFastidio = (n) => typeof esercizioCaricaIlFastidio === 'function' && esercizioCaricaIlFastidio(n, c.prefs.fastidi);   /* INT-2b (SAF-02): niente esercizi nuovi che caricano una zona dolente */
+      const punti = EXERCISE_LIBRARY.filter(x => consentito(x.name, c.prefs) && !caricaFastidio(x.name) && !sd.esercizi.some(e => e.name === x.name) && uso(x.name) < maxSettimana(x.name) && !isTimeBased(x.name) &&
         x.group !== 'core' && x.group !== 'spalle' && (!gruppi || adattoAllaSeduta(x, sd.tipo)) && x.type !== 'compound' && !strRidondante(x, sd.esercizi) && !(ginocchia && /leg extension|sissy/i.test(senzaEmoji(x.name))))
         .map(x => {
           const cr = creditoSerie(x.name);

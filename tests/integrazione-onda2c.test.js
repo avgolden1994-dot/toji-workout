@@ -154,7 +154,8 @@ test('strBilancia: la serie in piu a una tirata solo se l unita resta dentro il 
   /* puoSalireVolume: un principiante di forza con la schiena gia al tetto di B6 */
   app.ctx.__b = app.g('(() => { const b = briefCoach(' + JSON.stringify({ goals: ['forza'], level: 'principiante', days: 3, minutes: 60, luogo: 'palestra', sex: 'M', age: 30, usaProfilo: false, fastidi: [], priorita: [] }) + ', {}); b.sicurezza.vincoli = vincoliSicurezza(b); risolviMetodo(b); b.lavoro.prefs = prefsDelBrief(b); b.lavoro.volumeBersagli = bersagliVolume(b); return b; })()');
   const bersagli = app.json('__b.lavoro.volumeBersagli');
-  assert.ok(bersagli.gruppiLimite.schiena.max >= bersagli.unita.dorsali.min + bersagli.unita.schiena_spessore.min, 'il tetto di gruppo della schiena non e sotto la somma dei minimi: ' + JSON.stringify(bersagli.gruppiLimite));
+  /* il tetto di gruppo della schiena resta quello di W2-T1 (massimo tra dorsali e spessore): per i principianti di forza e di salute e sotto la somma dei due minimi di B6 (6 + 4 > 8), contraddizione scritta nella mappa cap. 17 e da decidere nel registro */
+  assert.strictEqual(bersagli.gruppiLimite.schiena.max, Math.max(bersagli.unita.dorsali.max, bersagli.unita.schiena_spessore.max), JSON.stringify(bersagli.gruppiLimite));
   app.ctx.__s = app.g('(' + JSON.stringify([{ giorno: 'Lunedì', tipo: 'fullbody', esercizi: [E('Squat con Bilanciere', 3), E('Panca Piana Bilanciere', 3), E('Lat Machine', 3), E('Rematore con Petto Appoggiato', 3)] },
     { giorno: 'Mercoledì', tipo: 'fullbody', esercizi: [E('Stacco Rumeno', 3), E('Military Press', 3), E('Rematore alla Macchina', 3), E('Pulley Basso', 3)] }]) + ')');
   assert.strictEqual(app.g('puoSalireVolume(__b, __s, __s[0].esercizi[2])'), false, 'dorsali e spessore al tetto (12 serie di schiena con massimo ' + bersagli.gruppiLimite.schiena.max + '): la tirata non sale');
@@ -215,4 +216,32 @@ test('chi comincia con 5 o 6 giorni ha 4 sedute sui giorni delle 4 sedute (luned
   assert.ok(!quattro.note.includes(NOTA), 'con 4 giorni dichiarati nessuna nota');
   const tre = costruisci({ goals: ['massa'], level: 'intermedio', days: 5, minutes: 60, luogo: 'palestra', sex: 'M', age: 30, seme: 'cinque-i' });
   assert.strictEqual(tre.sedute.length, 5); assert.ok(!tre.note.includes(NOTA));
+});
+
+/* ---- 5) sicurezza: le aggiunte non caricano una zona dolente dichiarata (collaudo SAF-02, tolleranza zero nel cancello: D-P20) ---- */
+test('SAF-02: nessun esercizio aggiunto dopo la ricetta (solutore del volume, riempimento del tempo, strCopri, aggiungiRegione) carica la zona dolente dichiarata (stress >= 1); il caso letto: spalla dolente a casa, niente «Aggiunto: Croci su Panca Manubri»', () => {
+  const stress = (nome, zona) => app.g('stressArticolare(' + JSON.stringify(nome) + ', ' + JSON.stringify(zona) + ')') || 0;
+  const colpe = [];
+  let aggiunti = 0, programmi = 0;
+  ['spalle', 'ginocchia', 'schiena'].forEach(f => ['principiante', 'intermedio', 'avanzato'].forEach(level => [3, 4].forEach(days => ['palestra', 'manubri'].forEach(luogo => [45, 60].forEach(minutes => {
+    const c = { goals: ['massa'], level, days, minutes, luogo, fastidi: [f], sex: 'F', age: 30, seme: 'saf02|' + f + '|' + level + '|' + days + '|' + luogo + '|' + minutes };
+    const p = costruisci(c);
+    if (p.metodo) return;
+    programmi++;
+    p.note.forEach(n => {
+      const m = /^Aggiunto: (.+?) — /.exec(n);
+      if (!m) return;
+      aggiunti++;
+      const nome = app.chiama('nomeInLibreria', m[1]);
+      if (nome && stress(nome, f) >= 1) colpe.push(JSON.stringify(c) + ': aggiunto ' + m[1] + ' con stress ' + stress(nome, f) + ' su ' + f);
+    });
+  })))));
+  assert.deepStrictEqual(colpe, []);
+  assert.ok(programmi >= 60 && aggiunti >= 30, 'il campione esercita le aggiunte: ' + aggiunti + ' su ' + programmi + ' programmi');
+  const casa = costruisci({ goals: ['massa'], level: 'intermedio', days: 4, minutes: 45, luogo: 'manubri', fastidi: ['spalle'], sex: 'M', age: 30, seme: 'saf02-croci' });
+  assert.ok(!casa.note.some(n => /^Aggiunto: Croci su Panca Manubri/.test(n)), casa.note.filter(n => /Aggiunto/.test(n)).join(' | '));
+  /* il filtro in se: le croci coi manubri caricano la spalla (cautela), il pulley no */
+  assert.strictEqual(app.g("esercizioCaricaIlFastidio(nomeInLibreria('Croci su Panca Manubri'), ['spalle'])"), true);
+  assert.strictEqual(app.g("esercizioCaricaIlFastidio(nomeInLibreria('Pulley Basso'), ['spalle'])"), false);
+  assert.deepStrictEqual(app.errori, []);
 });

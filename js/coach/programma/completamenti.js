@@ -80,7 +80,8 @@ function completaSettimana(brief, sedute) {
   const settimanaNomi = () => [].concat.apply([], sedute.map(sd => sd.esercizi.map(e => senzaEmoji(e.name))));
   const aggiungiRegione = (rx, nomi, dove, testo) => {
     if (settimanaNomi().some(n => rx.test(n))) return;
-    const nome = nomi.map(nomeInLibreria).find(n => n && consentito(n, prefs));
+    const ammessi = nomi.map(nomeInLibreria).filter(n => n && consentito(n, prefs));   /* INT-2b (SAF-02): prima chi non carica una zona dolente dichiarata */
+    const nome = ammessi.find(n => !(typeof esercizioCaricaIlFastidio === 'function' && esercizioCaricaIlFastidio(n, prefs.fastidi))) || ammessi[0];
     if (!nome) return;
     const sd = sedute.filter(dove).sort((a, b) => a.esercizi.length - b.esercizi.length)[0];
     if (!sd || sd.esercizi.length > nEs) return;

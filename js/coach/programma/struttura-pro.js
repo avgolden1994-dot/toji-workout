@@ -99,7 +99,9 @@ window.strCopri = function(c) {
   const ha = (rx) => sedute.some(sd => sd.esercizi.some(e => rx.test(senzaEmoji(e.name))));
   const conGambe = sedute.some(sd => /lower|legs|fullbody/.test(sd.tipo));
   const aggiungi = (nomi, dove, testo, sets, repsDefault) => {
-    const nome = nomi.map(nomeInLibreria).find(n => n && consentito(n, c.prefs));
+    /* INT-2b (collaudo SAF-02): prima un esercizio che non carica una zona dolente dichiarata (stress 0), poi, se non c e, uno consentito con la cautela */
+    const ammessi = nomi.map(nomeInLibreria).filter(n => n && consentito(n, c.prefs));
+    const nome = ammessi.find(n => !(typeof esercizioCaricaIlFastidio === 'function' && esercizioCaricaIlFastidio(n, c.prefs.fastidi))) || ammessi[0];
     if (!nome) return false;
     const sd = sedute.filter(dove).filter(s => !s.esercizi.some(e => e.name === nome) && s.esercizi.length <= c.nEs + 1)   /* la seduta puo crescere di due esercizi piccoli: il tempo si recupera dopo, tagliando serie */
       .sort((a, b) => a.esercizi.length - b.esercizi.length)[0];

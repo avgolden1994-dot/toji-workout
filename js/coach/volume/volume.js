@@ -200,10 +200,11 @@ function bersagliVolume(brief, opz) {
   const rapporto = Math.round(sogliaVolume('femoraliSuQuadricipiti') * unita.quadricipiti.target);
   const fem = unita.femorali;
   if (!fem.altro && rapporto > fem.min) { fem.min = Math.min(rapporto, fem.max); fem.minBanda = Math.max(fem.minBanda, fem.min); fem.target = Math.max(fem.target, fem.min); }
-  /* il tetto di gruppo della schiena: dorsali e spessore insieme non oltre la fascia IPE (le trazioni e i rematori sono la stessa schiena). INT-2b: mai sotto la somma dei due minimi (per i
-     principianti di forza e di salute 6 + 4 > 8: il solutore penalizzava uno stato che le fasce stesse gli chiedevano; il collaudo VOL-02:schiena conta ancora la somma contro la fascia dei dorsali) */
+  /* il tetto di gruppo della schiena: dorsali e spessore insieme non oltre la fascia IPE (le trazioni e i rematori sono la stessa schiena). INT-2b (onda 2c), da decidere nel registro: per i
+     principianti di forza e di salute la somma dei due minimi di B6 (dorsali 6 + spessore 4) supera questo tetto (8), e il collaudo VOL-02:schiena confronta la somma con la sola fascia dei dorsali:
+     il tetto resta quello di W2-T1 (provato: alzarlo alla somma dei minimi porta VOL-02:schiena da 10,6 a 16,8 sulla matrice rapida), la contraddizione e scritta nella mappa, cap. 17 */
   return { tipo: tipo, giorni: giorni, esigenza: esig, deficit: deficit, specializza: specializza, altriAMantenimento: altriAMantenimento, prioritarie: prioritarie, unita: unita,
-    gruppiLimite: { schiena: { unita: ['dorsali', 'schiena_spessore'], max: Math.max(unita.dorsali.max, unita.schiena_spessore.max, unita.dorsali.min + unita.schiena_spessore.min) } } };
+    gruppiLimite: { schiena: { unita: ['dorsali', 'schiena_spessore'], max: Math.max(unita.dorsali.max, unita.schiena_spessore.max) } } };
 }
 
 /* crediti di UNA serie, per unità: gli attributi sono l unica fonte (W1-T2); senza (un esercizio fuori libreria) si ricade su DETTAGLI */
@@ -437,6 +438,7 @@ function volumeMotore(brief, sedute, b, opz) {
       if (!(cr[u] >= 0.5) || !consentitoC(x.name)) return false;
       const a = typeof attributi === 'function' ? attributi(x.name) : null;
       if (a && (a.soloAvvio || (prudente && a.abilita === 3))) return false;
+      if (typeof esercizioCaricaIlFastidio === 'function' && esercizioCaricaIlFastidio(x.name, prefs.fastidi)) return false;   /* INT-2b (collaudo SAF-02): un esercizio nuovo non carica una zona dolente dichiarata (stress 1 = cautela): le Croci su Panca Manubri entravano con la spalla dolente */
       if (schienaLombare(x.name) || SCHIENA_PESANTE.test(x.name)) return false;   /* ABB-07: i carichi pesanti per la schiena li decide la composizione, non il volume */
       if (/Pullover con Manubrio/i.test(senzaEmoji(x.name))) return false;   /* D-P11: il pullover è la riserva della tirata verticale, lo mette la composizione solo dove non c è altro; il volume non lo aggiunge */
       /* a casa non si da per certo un attrezzo che il questionario non chiede: a corpo libero niente di ciò che serve qualcosa; con i manubri al massimo la panca (CAS-01) */
