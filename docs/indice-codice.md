@@ -243,7 +243,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 55. `js/coach/programma/motore.js` — Coach engine: costruzione del programma
 
-`attrezzoDi()` · `attrezzoDiCalcolo()` · `RISCHIO` · `ECCEZIONI_RISCHIO` · `senzaMacchine()` · `ATTREZZI_NON_DI_CASA` · `ATTREZZI_NON_CON_I_MANUBRI` · `attrezzoFisicoDi()` · `chiedeAttrezzo()` · `attrezzoDiCasaMancante()` · `ATTREZZI_NON_DICHIARABILI_IN_PALESTRA` · `eccezioneRischio()` · `consentito()` · `consentitoCalcolo()` · `sostituto()` · `alternativeStessoMuscolo()` · `schemaMisto()`
+`attrezzoDi()` · `attrezzoDiCalcolo()` · `RISCHIO` · `ECCEZIONI_RISCHIO` · `senzaMacchine()` · `ATTREZZI_NON_DI_CASA` · `ATTREZZI_NON_CON_I_MANUBRI` · `attrezzoFisicoDi()` · `chiedeAttrezzo()` · `attrezzoDiCasaMancante()` · `ATTREZZI_NON_DICHIARABILI_IN_PALESTRA` · `ATTREZZI_EXTRA_DEI_DATI` · `attrezzoExtraDi()` · `dichiaratiDi()` · `attrezziDichiaratiEsito()` · `eccezioneRischio()` · `consentito()` · `consentitoCalcolo()` · `sostituto()` · `alternativeStessoMuscolo()` · `schemaMisto()`
 
 ### 56. `js/coach/programma/schemi.js` — Schemi di movimento e regole di costruzione
 
@@ -371,7 +371,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 85. `js/coach/carichi/partenza.js` — Carico di partenza dai dati del corpo
 
-`PARAM_PARTENZA` · `FRASE_PRIMA_ESPOSIZIONE` · `FRASE_PARTENZA_BASSA` · `FRASI_FONTE_STIMA` · `MOTIVI_STIMA` · `NOTE_PROGRAMMA_STIMA` · `NOTA_PARTENZA_BASSA` · `NOTA_BARRA_VUOTA` · `NOTA_SENZA_BARRA` · `notaCorpoLiberoFacile` · `sogliaPartenza()` · `fonteBase()` · `contestoCarichi()` · `classePartenza()` · `fattorePartenza()` · `scalaDaCorpo()` · `scalaDaStorico()` · `esercizioAffidabilePerLoStorico()` · `kStoricoPer()` · `arrotondaPartenza()` · `passoCarico()` · `window.stimaCaricoIniziale()` · `pesoPartenza()` · `_PARTENZA_PER_BRIEF` · `penalitaPartenza()` · `varianteSenzaBilanciere()` · `FACILITATE_PAR09` · `versioneFacilitata()` · `applicaPartenze()`
+`PARAM_PARTENZA` · `FRASE_PRIMA_ESPOSIZIONE` · `FRASE_PARTENZA_BASSA` · `FRASI_FONTE_STIMA` · `MOTIVI_STIMA` · `NOTE_PROGRAMMA_STIMA` · `NOTA_PARTENZA_BASSA` · `NOTA_BARRA_VUOTA` · `NOTA_SENZA_BARRA` · `notaCorpoLiberoFacile` · `sogliaPartenza()` · `fonteBase()` · `contestoCarichi()` · `classePartenza()` · `fattorePartenza()` · `scalaDaCorpo()` · `scalaDaStorico()` · `esercizioAffidabilePerLoStorico()` · `kStoricoPer()` · `arrotondaPartenza()` · `passoCarico()` · `window.stimaCaricoIniziale()` · `tettoManubri()` · `pesoPartenza()` · `_PARTENZA_PER_BRIEF` · `penalitaPartenza()` · `varianteSenzaBilanciere()` · `FACILITATE_PAR09` · `versioneFacilitata()` · `applicaPartenze()`
 
 ### 86. `js/coach/carichi/calibrazione.js` — Calibrazione rapida dei carichi stimati (CAR-18, CAR-19)
 

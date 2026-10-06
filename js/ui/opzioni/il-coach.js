@@ -76,7 +76,7 @@ function htmlAttrezziCoach(p) {
   return setGroup('Attrezzi di casa', '<div class="fb-chips sr-chips-pad">' + ATTREZZI_CASA_IDS.filter(k => k !== 'manubri').map(k =>
     chipCoach(dichiarati.indexOf(k) !== -1, "toggleCoachLista('attrezziCasa','" + k + "')", ONB_ATTREZZI_NOMI[k])).join('') + '</div>' +
     (p.luogo === 'manubri' ? '<label class="sr-row sr-input"><span class="sr-name">Manubrio più pesante (kg)</span><input type="number" inputmode="decimal" min="1" max="100" step="0.5" value="' + (p.manubriKg || '') + '" onchange="setManubriKgCoach(this.value)"></label>' : ''),
-    'Pavimento, una sedia robusta e un gradino li do per scontati. Vale dal prossimo programma.');
+    'Pavimento, una sedia robusta e un gradino li do per scontati. Se tocchi qualcosa, scelgo gli esercizi solo con quello (e con i manubri, se ti alleni con quelli); se non rispondi, non conto su sbarra, elastici, kettlebell e anelli. Vale dal prossimo programma.');
 }
 function toggleCoach(k, on, nome, sub) {
   return '<button class="sr-row" onclick="setCoach(\'' + k + '\', ' + (!on) + ')" role="switch" aria-checked="' + on + '"><span class="sr-name">' + nome + '<small>' + sub + '</small></span><span class="switch ' + (on ? 'on' : '') + '"></span></button>';

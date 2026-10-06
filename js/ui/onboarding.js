@@ -323,10 +323,10 @@ function htmlAttrezziOnboarding() {
   if (luogo === 'manubri' || luogo === 'corpo') {
     const casa = Array.isArray(onbData.attrezziCasa) ? onbData.attrezziCasa : [];
     return '<div class="aw-sec">Cosa hai in casa?</div>' +
-      '<div class="pref-note">Tocca quello che hai (facoltativo). Pavimento, una sedia robusta e un gradino li do per scontati.</div>' +
+      '<div class="pref-note">Tocca quello che hai (facoltativo). Pavimento, una sedia robusta e un gradino li do per scontati. Se tocchi qualcosa, scelgo gli esercizi solo con quello (e con i manubri, se ti alleni con quelli); se non rispondi, non conto su sbarra, elastici, kettlebell e anelli.</div>' +
       '<div class="aw-groups">' + ATTREZZI_CASA_IDS.filter(k => k !== 'manubri').map(k => chip(casa.indexOf(k) !== -1, 'onbToggleAttrezzoCasa(\'' + k + '\')', ONB_ATTREZZI_NOMI[k])).join('') + '</div>' +
       (luogo === 'manubri' ? '<div class="onb-fields"><label class="onb-field"><span>Manubrio più pesante (kg)</span><input type="number" inputmode="decimal" id="onb-manubri-kg" min="1" max="100" step="0.5" value="' + (onbData.manubriKg || '') + '" oninput="onbSetManubriKg(this.value)"></label><span></span></div>' +
-        '<div class="pref-note">Quanto pesa, a mano, il manubrio più pesante che hai (per i regolabili, il carico massimo di uno).</div>' : '');
+        '<div class="pref-note">Quanto pesa, a mano, il manubrio più pesante che hai (per i regolabili, il carico massimo di uno). Serve a non proporti carichi di partenza più pesanti di così.</div>' : '');
   }
   return '';
 }

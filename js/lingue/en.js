@@ -4079,14 +4079,14 @@ window.I18N["en"] = {
 "Tocca quello che trovi (facoltativo). Se non rispondi, il coach pensa a una palestra completa.": "Tap what you find there (optional). If you don't answer, the coach assumes a fully equipped gym.",
 "Altro, se c’è:": "Other, if available:",
 "Cosa hai in casa?": "What do you have at home?",
-"Tocca quello che hai (facoltativo). Pavimento, una sedia robusta e un gradino li do per scontati.": "Tap what you have (optional). I take the floor, a sturdy chair and a step for granted.",
+"Tocca quello che hai (facoltativo). Pavimento, una sedia robusta e un gradino li do per scontati. Se tocchi qualcosa, scelgo gli esercizi solo con quello (e con i manubri, se ti alleni con quelli); se non rispondi, non conto su sbarra, elastici, kettlebell e anelli.": "Tap what you have (optional). I take the floor, a sturdy chair and a step for granted. If you tap anything, I pick exercises using only that (plus dumbbells, if you train with those); if you don't answer, I don't count on a pull-up bar, bands, kettlebells or rings.",
 "Manubrio più pesante (kg)": "Heaviest dumbbell (kg)",
-"Quanto pesa, a mano, il manubrio più pesante che hai (per i regolabili, il carico massimo di uno).": "How much the heaviest dumbbell you have weighs in one hand (for adjustable ones, the maximum load of one).",
+"Quanto pesa, a mano, il manubrio più pesante che hai (per i regolabili, il carico massimo di uno). Serve a non proporti carichi di partenza più pesanti di così.": "How much the heaviest dumbbell you have weighs in one hand (for adjustable ones, the maximum load of one). It stops me proposing starting loads heavier than that.",
 "dormo # ore o più, stress sotto controllo": "I sleep # hours or more, stress under control",
 "Altri attrezzi in palestra": "Other equipment at the gym",
 "Tocca quelli che trovi. Se non rispondi, il coach pensa a una palestra completa.": "Tap the ones you find. If you don't answer, the coach assumes a fully equipped gym.",
 "Attrezzi di casa": "Home equipment",
-"Pavimento, una sedia robusta e un gradino li do per scontati. Vale dal prossimo programma.": "I take the floor, a sturdy chair and a step for granted. Applies from the next program.",
+"Pavimento, una sedia robusta e un gradino li do per scontati. Se tocchi qualcosa, scelgo gli esercizi solo con quello (e con i manubri, se ti alleni con quelli); se non rispondi, non conto su sbarra, elastici, kettlebell e anelli. Vale dal prossimo programma.": "I take the floor, a sturdy chair and a step for granted. If you tap anything, I pick exercises using only that (plus dumbbells, if you train with those); if you don't answer, I don't count on a pull-up bar, bands, kettlebells or rings. Applies from the next program.",
 "Hip Hinge a Corpo Libero": "Bodyweight Hip Hinge",
 "Porta le anche indietro (hip hinge) facendo scivolare le mani lungo le cosce.": "Push your hips back (hip hinge), sliding your hands down your thighs.",
 "Schiena che si arrotonda o testa che cade in avanti.": "Back rounding or head dropping forward.",
@@ -4127,5 +4127,6 @@ window.I18N["en"] = {
 "Forza: Full Body #x": "Strength: Full Body #x",
 "Forza: Lower / Upper x#": "Strength: Lower / Upper x#",
 "Forza: Upper / Lower x# + Upper": "Strength: Upper / Lower x# + Upper",
-"Forza: Upper / Lower x#": "Strength: Upper / Lower x#"
+"Forza: Upper / Lower x#": "Strength: Upper / Lower x#",
+"Con i manubri i carichi di partenza non superano il più pesante che hai (# kg).": "With dumbbells, starting loads do not go above the heaviest one you have (# kg)."
 };

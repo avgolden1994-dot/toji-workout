@@ -95,8 +95,10 @@ function contestoCarichi(d, prof) {
   else if (peso && peso >= 35 && peso <= 200) massa = { v: peso * P.fracMagra[donna ? 'F' : 'M'], rif: P.rifFfm, tipo: 'peso' };
   else if (partenzaBassa) massa = { v: sogliaPartenza('pesoDonnaSenzaDati') * P.fracMagra.F, rif: P.rifFfm, tipo: 'tipico' };   /* nessun peso: la donna di riferimento, non l uomo di 75 kg */
   /* PAR-07: lo storico delle donne con il fattore si legge solo con gli esercizi affidabili e assorbe lo sconto (se la regola e accesa) */
+  /* CAS-01 (INT-2e): il manubrio piu pesante che ha detto chi si allena a casa con i manubri (profilo o risposte); senza dichiarazione, con un altro luogo o con la regola spenta null: come prima */
+  const kgManubri = Number(d.manubriKg !== undefined ? d.manubriKg : prof.manubriKg), luogoCasa = d.luogo || prof.luogo;
   return { massa: massa, massaPeso: massaPeso, donna: donna, partenzaBassa: partenzaBassa, storicoFiltrato: partenzaBassa && regolaAttiva('PAR-07'), eta: Number(d.age || prof.age) || 0, livello: livello,
-    cauto: !!(d.parq === 'si' || d.parq === true || prof.parq) };
+    cauto: !!(d.parq === 'si' || d.parq === true || prof.parq), manubriKg: luogoCasa === 'manubri' && kgManubri > 0 && regolaAttiva('CAS-01') ? kgManubri : null };
 }
 /* PAR-06: il fattore di partenza bassa di un esercizio (1 = nessuno): per livello, distretto (alto = tutto tranne gambe e glutei) e tipo (multiarticolare o isolamento).
    Core, tempi e corpo libero (classe F degli attributi) non hanno fattore. */
@@ -217,8 +219,15 @@ window.stimaCaricoIniziale = function(nome, ctx) {
     const barra = Math.min(sogliaPartenza('barraKg'), Number(m.weight) || sogliaPartenza('barraKg'));
     if (grezzo < sogliaPartenza('sottoBarra') * barra) { out.sottoBarra = true; out.barra = barra; out.peso = barra; }
   }
+  const tetto = tettoManubri(nome, out.peso, ctx);
+  if (tetto < out.peso) { out.peso = tetto; out.limiteManubri = true; }
   return out;
 };
+/* CAS-01 (manubriKg, INT-2e): a casa con i manubri la partenza non supera il manubrio piu pesante che ha detto di avere (la stima dal corpo o il peso della libreria erano anche 30 kg per chi ne ha 12).
+   Solo gli esercizi con i manubri (attrezzoDi) e solo con la dichiarazione nel contesto (contestoCarichi: luogo con i manubri, CAS-01 accesa): altrimenti il peso e quello di prima */
+function tettoManubri(nome, peso, ctx) {
+  return ctx && ctx.manubriKg > 0 && attrezzoDi(nome) === 'manubri' && peso > ctx.manubriKg ? ctx.manubriKg : peso;
+}
 /* peso con cui parte un esercizio nuovo: la stima (solo col consenso ai dati), altrimenti la libreria.
    Per le sostituzioni (DEC-09, STA-02, macchinario occupato), la seduta libera e l aggiunta dalla libreria: con un bilanciere sotto la barra (PAR-08) il peso e quello
    della barra vuota e il motivo lo dice (la variante con manubri o macchina la propone chi sceglie l esercizio) */
@@ -227,8 +236,9 @@ function pesoPartenza(nome, ctx) {
   const base = m ? Number(m.weight) || 0 : 0;
   if (!base || !coachAttivo()) return { peso: base, stimato: false };
   let s = null;
-  try { s = stimaCaricoIniziale(nome, ctx || contestoCarichi({}, getProfile() || {})); } catch (e) {}
-  if (!s) return { peso: base, stimato: false };
+  const cc = ctx || contestoCarichi({}, getProfile() || {});
+  try { s = stimaCaricoIniziale(nome, cc); } catch (e) {}
+  if (!s) return { peso: tettoManubri(nome, base, cc), stimato: false };   /* CAS-01: senza stima vale la libreria, ma non oltre il manubrio piu pesante dichiarato */
   const r = { peso: s.peso, stimato: true, fonte: s.fonte, motivo: s.motivo };
   if (s.sottoBarra) { r.sottoBarra = true; r.motivo = NOTA_BARRA_VUOTA + ' • ' + NOTA_SENZA_BARRA; }
   return r;
@@ -289,7 +299,7 @@ function applicaPartenze(brief, sedute) {
     cc.storico = scalaDaStorico({ donne: cc.storicoFiltrato });
     const forza = brief.obiettivi && (brief.obiettivi.modalita === 'forza' || (brief.obiettivi.lista || [])[0] === 'forza');
     const graditi = (L.prefs && L.prefs.graditi) || [];
-    let stimati = 0, fonteStima = null, basse = false, barraVuota = false, senzaBarra = false, facilitati = false;
+    let stimati = 0, fonteStima = null, basse = false, barraVuota = false, senzaBarra = false, facilitati = false, limitatiAiManubri = false;
     sedute.forEach(sd => sd.esercizi.forEach(e => {
       /* PAR-09: le principianti con il fattore attivo partono dalla versione facilitata di piegamenti e trazioni */
       if (cc.partenzaBassa && cc.livello === 'principiante' && regolaAttiva('PAR-09')) {
@@ -320,13 +330,17 @@ function applicaPartenze(brief, sedute) {
       if (s) {
         e.weight = s.peso; e.stimato = s.fonte; stimati++; fonteStima = fonteStima || fonteBase(s.fonte);
         if (s.fEff < 1) { e.partenzaBassa = { fD: s.fD, fEff: s.fEff }; basse = true; }
+        if (s.limiteManubri) limitatiAiManubri = true;
       }
+      const t = tettoManubri(e.name, Number(e.weight) || 0, cc);   /* CAS-01: anche senza stima (nessun dato del corpo) il peso della libreria non supera il manubrio piu pesante dichiarato */
+      if (t < (Number(e.weight) || 0)) { e.weight = t; limitatiAiManubri = true; }
     }));
     if (stimati) note.push(NOTE_PROGRAMMA_STIMA[fonteStima]);
     if (basse) note.push(NOTA_PARTENZA_BASSA);
     if (barraVuota) note.push(NOTA_BARRA_VUOTA);
     if (senzaBarra) note.push(NOTA_SENZA_BARRA);
     if (facilitati) note.push(notaCorpoLiberoFacile());
+    if (limitatiAiManubri) note.push('Con i manubri i carichi di partenza non superano il più pesante che hai (' + cc.manubriKg + ' kg).');   /* CAS-01 */
   }
   return sedute;
 }

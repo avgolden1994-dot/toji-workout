@@ -4079,14 +4079,14 @@ window.I18N["es"] = {
 "Tocca quello che trovi (facoltativo). Se non rispondi, il coach pensa a una palestra completa.": "Toca lo que encuentras (opcional). Si no respondes, el coach da por hecho un gimnasio completo.",
 "Altro, se c’è:": "Otros, si hay:",
 "Cosa hai in casa?": "¿Qué tienes en casa?",
-"Tocca quello che hai (facoltativo). Pavimento, una sedia robusta e un gradino li do per scontati.": "Toca lo que tienes (opcional). Doy por hecho el suelo, una silla resistente y un escalón.",
+"Tocca quello che hai (facoltativo). Pavimento, una sedia robusta e un gradino li do per scontati. Se tocchi qualcosa, scelgo gli esercizi solo con quello (e con i manubri, se ti alleni con quelli); se non rispondi, non conto su sbarra, elastici, kettlebell e anelli.": "Toca lo que tienes (opcional). Doy por hecho el suelo, una silla resistente y un escalón. Si tocas algo, elijo los ejercicios solo con eso (y con mancuernas, si entrenas con ellas); si no respondes, no cuento con barra de dominadas, bandas elásticas, pesas rusas ni anillas.",
 "Manubrio più pesante (kg)": "Mancuerna más pesada (kg)",
-"Quanto pesa, a mano, il manubrio più pesante che hai (per i regolabili, il carico massimo di uno).": "Cuánto pesa, en una mano, la mancuerna más pesada que tienes (en las regulables, la carga máxima de una).",
+"Quanto pesa, a mano, il manubrio più pesante che hai (per i regolabili, il carico massimo di uno). Serve a non proporti carichi di partenza più pesanti di così.": "Cuánto pesa, en una mano, la mancuerna más pesada que tienes (en las regulables, la carga máxima de una). Sirve para no proponerte cargas de partida más pesadas.",
 "dormo # ore o più, stress sotto controllo": "duermo # horas o más, estrés bajo control",
 "Altri attrezzi in palestra": "Otro material del gimnasio",
 "Tocca quelli che trovi. Se non rispondi, il coach pensa a una palestra completa.": "Toca los que encuentras. Si no respondes, el coach da por hecho un gimnasio completo.",
 "Attrezzi di casa": "Material de casa",
-"Pavimento, una sedia robusta e un gradino li do per scontati. Vale dal prossimo programma.": "Doy por hecho el suelo, una silla resistente y un escalón. Vale desde el próximo programa.",
+"Pavimento, una sedia robusta e un gradino li do per scontati. Se tocchi qualcosa, scelgo gli esercizi solo con quello (e con i manubri, se ti alleni con quelli); se non rispondi, non conto su sbarra, elastici, kettlebell e anelli. Vale dal prossimo programma.": "Doy por hecho el suelo, una silla resistente y un escalón. Si tocas algo, elijo los ejercicios solo con eso (y con mancuernas, si entrenas con ellas); si no respondes, no cuento con barra de dominadas, bandas elásticas, pesas rusas ni anillas. Vale desde el próximo programa.",
 "Hip Hinge a Corpo Libero": "Bisagra de cadera sin peso",
 "Porta le anche indietro (hip hinge) facendo scivolare le mani lungo le cosce.": "Lleva las caderas atrás (hip hinge) haciendo deslizar las manos por los muslos.",
 "Schiena che si arrotonda o testa che cade in avanti.": "Espalda que se redondea o cabeza que cae hacia delante.",
@@ -4127,5 +4127,6 @@ window.I18N["es"] = {
 "Forza: Full Body #x": "Fuerza: Full Body #x",
 "Forza: Lower / Upper x#": "Fuerza: Lower / Upper x#",
 "Forza: Upper / Lower x# + Upper": "Fuerza: Upper / Lower x# + Upper",
-"Forza: Upper / Lower x#": "Fuerza: Upper / Lower x#"
+"Forza: Upper / Lower x#": "Fuerza: Upper / Lower x#",
+"Con i manubri i carichi di partenza non superano il più pesante che hai (# kg).": "Con las mancuernas, las cargas de partida no superan la más pesada que tienes (# kg)."
 };

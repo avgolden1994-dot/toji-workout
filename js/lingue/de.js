@@ -4079,14 +4079,14 @@ window.I18N["de"] = {
 "Tocca quello che trovi (facoltativo). Se non rispondi, il coach pensa a una palestra completa.": "Tippe an, was du vorfindest (freiwillig). Wenn du nicht antwortest, geht der Coach von einem vollständig ausgestatteten Studio aus.",
 "Altro, se c’è:": "Weitere, falls vorhanden:",
 "Cosa hai in casa?": "Was hast du zu Hause?",
-"Tocca quello che hai (facoltativo). Pavimento, una sedia robusta e un gradino li do per scontati.": "Tippe an, was du hast (freiwillig). Boden, einen stabilen Stuhl und eine Stufe setze ich voraus.",
+"Tocca quello che hai (facoltativo). Pavimento, una sedia robusta e un gradino li do per scontati. Se tocchi qualcosa, scelgo gli esercizi solo con quello (e con i manubri, se ti alleni con quelli); se non rispondi, non conto su sbarra, elastici, kettlebell e anelli.": "Tippe an, was du hast (freiwillig). Boden, einen stabilen Stuhl und eine Stufe setze ich voraus. Wenn du etwas antippst, wähle ich die Übungen nur damit aus (und mit Kurzhanteln, wenn du mit ihnen trainierst); wenn du nicht antwortest, rechne ich nicht mit Klimmzugstange, Bändern, Kettlebells und Ringen.",
 "Manubrio più pesante (kg)": "Schwerste Kurzhantel (kg)",
-"Quanto pesa, a mano, il manubrio più pesante che hai (per i regolabili, il carico massimo di uno).": "Wie viel die schwerste Kurzhantel, die du hast, in einer Hand wiegt (bei verstellbaren die maximale Last einer Hantel).",
+"Quanto pesa, a mano, il manubrio più pesante che hai (per i regolabili, il carico massimo di uno). Serve a non proporti carichi di partenza più pesanti di così.": "Wie viel die schwerste Kurzhantel, die du hast, in einer Hand wiegt (bei verstellbaren die maximale Last einer Hantel). Damit schlage ich dir keine schwereren Startlasten vor.",
 "dormo # ore o più, stress sotto controllo": "ich schlafe # Stunden oder mehr, Stress im Griff",
 "Altri attrezzi in palestra": "Weitere Geräte im Studio",
 "Tocca quelli che trovi. Se non rispondi, il coach pensa a una palestra completa.": "Tippe an, was du vorfindest. Wenn du nicht antwortest, geht der Coach von einem vollständig ausgestatteten Studio aus.",
 "Attrezzi di casa": "Ausrüstung zu Hause",
-"Pavimento, una sedia robusta e un gradino li do per scontati. Vale dal prossimo programma.": "Boden, einen stabilen Stuhl und eine Stufe setze ich voraus. Gilt ab dem nächsten Programm.",
+"Pavimento, una sedia robusta e un gradino li do per scontati. Se tocchi qualcosa, scelgo gli esercizi solo con quello (e con i manubri, se ti alleni con quelli); se non rispondi, non conto su sbarra, elastici, kettlebell e anelli. Vale dal prossimo programma.": "Boden, einen stabilen Stuhl und eine Stufe setze ich voraus. Wenn du etwas antippst, wähle ich die Übungen nur damit aus (und mit Kurzhanteln, wenn du mit ihnen trainierst); wenn du nicht antwortest, rechne ich nicht mit Klimmzugstange, Bändern, Kettlebells und Ringen. Gilt ab dem nächsten Programm.",
 "Hip Hinge a Corpo Libero": "Hüftbeuge ohne Gewicht",
 "Porta le anche indietro (hip hinge) facendo scivolare le mani lungo le cosce.": "Schiebe die Hüfte nach hinten (Hip Hinge) und lasse die Hände an den Oberschenkeln entlanggleiten.",
 "Schiena che si arrotonda o testa che cade in avanti.": "Rücken, der sich rund macht, oder Kopf, der nach vorn fällt.",
@@ -4127,5 +4127,6 @@ window.I18N["de"] = {
 "Forza: Full Body #x": "Kraft: Full Body #x",
 "Forza: Lower / Upper x#": "Kraft: Lower / Upper x#",
 "Forza: Upper / Lower x# + Upper": "Kraft: Upper / Lower x# + Upper",
-"Forza: Upper / Lower x#": "Kraft: Upper / Lower x#"
+"Forza: Upper / Lower x#": "Kraft: Upper / Lower x#",
+"Con i manubri i carichi di partenza non superano il più pesante che hai (# kg).": "Mit Kurzhanteln gehen die Startlasten nicht über die schwerste hinaus, die du hast (# kg)."
 };
