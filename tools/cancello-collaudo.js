@@ -369,8 +369,8 @@ function autotest() {
     try { return cp.spawnSync(process.execPath, [__filename, f].concat(args), { encoding: 'utf8' }); } finally { fs.rmSync(f, { force: true }); }
   };
 
-  prova('le soglie sono coerenti: 49 criteri, 112 classi del «prima», onde in ordine, soglie numeriche', () => {
-    eq(Object.keys(cfg.criteri).length, 49, 'criteri'); eq(Object.keys(cfg.prima.classi).length, 112, 'classi');
+  prova('le soglie sono coerenti: 50 criteri, 112 classi del «prima», onde in ordine, soglie numeriche', () => {
+    eq(Object.keys(cfg.criteri).length, 50, 'criteri'); eq(Object.keys(cfg.prima.classi).length, 112, 'classi');
     eq(cfg.ordineOnde.filter(o => !cfg.onde[o]).length, 0, 'onde senza descrizione');
     Object.keys(cfg.prima.classi).forEach(k => { if (!cfg.criteri[codiceDi(k)]) throw new Error('classe senza criterio: ' + k); });
     Object.keys(cfg.criteri).forEach(cod => {
