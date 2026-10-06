@@ -105,6 +105,30 @@ test('M6: a 2 giorni e 30 minuti in palestra ogni programma ha la flessione del 
   assert.deepStrictEqual(quad, [], 'quadricipiti in una seduta sola (6 prima)');
 });
 
+test('EQ-03: con l obiettivo glutei e 2 giorni la flessione del ginocchio resta, e anche la spinta d anca', () => {
+  /* sette profili della matrice standard del collaudo (obiettivo glutei, 2 giorni, 60-90 minuti, palestra) senza flessione del ginocchio sul codice di prima: il completamento metteva il leg curl, e il tetto di
+     esercizi per seduta (EXN-02, adattaAlTempo) lo toglieva per primo tra le aggiunte protette. Ora l unica flessione della settimana esce per ultima; con l obiettivo glutei della coppia spinta d anca e
+     cerniera lascia il posto la cerniera (se un altra seduta ne ha una) e la spinta d anca resta: e una delle quattro famiglie della nota «Glutei: ...» */
+  const PROFILI = [
+    { sex: 'M', age: 25, seme: 'collaudo|glutei|principiante|2|60|palestra|ginocchia|M|giovane|1', fastidi: ['ginocchia'], sonno: 'bene', attrezzi: 'indifferente', level: 'principiante', days: 2, goals: ['glutei'], luogo: 'palestra', minutes: 60, freq: '3', parq: 'no', priorita: [], psico: { varieta: 'routine', preferenza: 'impegnativi', tolleranza: 'continuo' } },
+    { sex: 'M', age: 25, seme: 'collaudo|glutei|principiante|2|75|palestra|-|M|giovane|2', fastidi: [], sonno: 'bene', attrezzi: 'macchine', level: 'principiante', days: 2, goals: ['glutei'], luogo: 'palestra', minutes: 75, freq: 'auto', parq: 'no', priorita: [] },
+    { sex: 'F', age: 45, seme: 'collaudo|glutei|principiante|2|75|palestra|ginocchia|F|adulto|0', fastidi: ['ginocchia'], sonno: 'bene', attrezzi: 'indifferente', level: 'principiante', days: 2, goals: ['glutei'], luogo: 'palestra', minutes: 75, freq: '3', parq: 'no', priorita: [], psico: { preferenza: 'tranquilli', tolleranza: 'mi-fermo', fiducia: 'media', varieta: 'mix' } },
+    { sex: 'M', age: 25, seme: 'collaudo|glutei|intermedio|2|75|palestra|-|M|giovane|0', fastidi: [], sonno: 'bene', attrezzi: 'indifferente', level: 'intermedio', days: 2, goals: ['glutei'], luogo: 'palestra', minutes: 75, freq: 'auto', parq: 'no', priorita: ['braccia'] },
+    { sex: 'F', age: 70, seme: 'collaudo|glutei|avanzato|2|75|palestra|-|F|senior|0', fastidi: [], sonno: 'medio', attrezzi: 'indifferente', level: 'avanzato', days: 2, goals: ['glutei'], luogo: 'palestra', minutes: 75, freq: 'auto', parq: 'no', priorita: ['braccia'] },
+    { sex: 'F', age: 25, seme: 'collaudo|glutei|avanzato|2|75|palestra|ginocchia|F|giovane|2', fastidi: ['ginocchia'], sonno: 'bene', attrezzi: 'liberi', level: 'avanzato', days: 2, goals: ['glutei'], luogo: 'palestra', minutes: 75, freq: 'auto', parq: 'no', priorita: ['schiena'] },
+    { sex: 'M', age: 45, seme: 'collaudo|glutei|avanzato|2|90|palestra|-|M|adulto|1', fastidi: [], sonno: 'bene', attrezzi: 'indifferente', level: 'avanzato', days: 2, goals: ['glutei'], luogo: 'palestra', minutes: 90, freq: 'auto', parq: 'no', priorita: ['glutei'] }
+  ];
+  const FLESSIONE = /leg curl|nordic/i, SPINTA_ANCA = /hip thrust|ponte glutei/i;
+  const senza = [], senzaSpinta = [];
+  PROFILI.forEach(p => {
+    const nomi = [].concat.apply([], costruisci(p).sedute.map(sd => sd.esercizi.map(e => senzaEmoji(e.name))));
+    if (!nomi.some(n => FLESSIONE.test(n))) senza.push(p.seme);
+    if (!nomi.some(n => SPINTA_ANCA.test(n))) senzaSpinta.push(p.seme);
+  });
+  assert.deepStrictEqual(senza, [], 'senza flessione del ginocchio');
+  assert.deepStrictEqual(senzaSpinta, [], 'senza spinta d anca con l obiettivo glutei');
+});
+
 test('M6: secondoDiGambe con un costo toglie per primo il secondo di gambe che non costa frequenza (la seconda cerniera, non lo squat)', () => {
   /* prima l ordine era solo per minuti: usciva lo squat (4 serie) e restava la cerniera senza carico (2 serie, 1 serie frazionaria di femorali: non conta per la frequenza) */
   const nome = n => app.g('nomeInLibreria')(n);

@@ -594,7 +594,16 @@ function adattaAlTempo(brief, sedute) {
       /* INT-2f: la spinta d anca (hip thrust, ponte glutei) che ha accanto una cerniera vera della stessa seduta e il doppione della cerniera (una sola per seduta, RID-01): lascia il posto prima del lavoro per la cuffia */
       const ex = (e) => findExercise(e.name) || e;
       const doppioCerniera = sd.esercizi.filter(e => !e.fisso && !e.cuffia && SLOT_DEF.glutSpinta(ex(e)) && sd.esercizi.some(y => y !== e && SLOT_DEF.hinge(ex(y)) && !RIPIEGO_HINGE.test(senzaEmoji(y.name))));
-      const via = iso[iso.length - 1] || doppi[doppi.length - 1] || protette[protette.length - 1] || doppioCerniera[doppioCerniera.length - 1] || core[core.length - 1];
+      /* P3-G (EQ-03:flessione): l unica flessione del ginocchio della settimana, aggiunta e protetta dal completamento, lascia il posto per ultima (prima la spinta d anca doppione della cerniera e il core):
+         con l obiettivo glutei e 2 giorni il leg curl usciva per primo dalla seduta di chi comincia (6 esercizi al massimo) e la settimana restava senza flessione */
+      const altreProtette = protette.filter(e => !unicaFlessioneSettimana(brief, sedute, e));
+      /* con l obiettivo glutei la spinta d anca resta (e una delle quattro famiglie della nota «Glutei: ...»): della coppia lascia il posto la cerniera, se un altra seduta ne ha una (PAT-01), mai il primo multiarticolare */
+      const primoMulti = sd.esercizi.find(e => (findExercise(e.name) || {}).type === 'compound' && !isTimeBased(e.name));
+      const cernieraAltrove = (e) => sedute.some(o => o !== sd && o.esercizi.some(y => SLOT_DEF.hinge(ex(y)) && !RIPIEGO_HINGE.test(senzaEmoji(y.name))));
+      const cernieraDoppia = goals.indexOf('glutei') === -1 ? [] : sd.esercizi.filter(e => e !== primoMulti && !e.fisso && !e.protetto && SLOT_DEF.hinge(ex(e)) && !RIPIEGO_HINGE.test(senzaEmoji(e.name)) &&
+        sd.esercizi.some(y => y !== e && SLOT_DEF.glutSpinta(ex(y))) && cernieraAltrove(e));
+      const glutei = goals.indexOf('glutei') !== -1, ultimo = (l) => l[l.length - 1];
+      const via = ultimo(iso) || ultimo(doppi) || ultimo(altreProtette) || ultimo(cernieraDoppia) || (glutei ? null : ultimo(doppioCerniera)) || ultimo(core) || ultimo(protette) || (glutei ? ultimo(doppioCerniera) : null);
       if (!via) break;
       sd.esercizi.splice(sd.esercizi.indexOf(via), 1);
     }
