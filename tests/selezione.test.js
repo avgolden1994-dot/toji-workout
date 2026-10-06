@@ -182,7 +182,10 @@ test('PCO-08: con 4 o piu sedute anche la rotazione esterna al cavo (la cuffia v
 test('SES-03: a corpo libero ogni seduta di gambe ha una cerniera dell anca (Hip Hinge a Corpo Libero), anche con la schiena dolente; prima nessuna', () => {
   /* sul codice di prima: 0 esercizi di hinge a corpo libero (MOD-12), e il collaudo SES-03 (lower/hinge 9,1%, legs/hinge 3,7% pesati) cadeva su ogni seduta lower e legs a corpo libero */
   const lista = griglia('ses03', ['principiante', 'intermedio', 'avanzato'], ['adulto', 'over65'], ['corpo'], [3, 4, 5, 6], [['massa'], ['glutei'], ['salute']], { fastidi: [] });
-  const gambe = []; lista.forEach(x => x.prog.sedute.forEach(sd => { if (/lower|legs/.test(sd.tipo)) gambe.push({ x, sd }); }));
+  /* la cerniera senza carico e un ripiego: al massimo in due sedute a settimana (RIPETIZIONI_SETTIMANA_MAX) e solo nelle sedute di gambe; con 5 e 6 giorni le sedute di gambe sono piu di due e le prime due la hanno
+     (con 4 giorni e meno ogni seduta di gambe); sul codice di prima con 6 giorni finiva in 4 sedute e i femorali arrivavano a 13 serie frazionarie contro un massimo di 8 (collaudo VOL-02:femorali) */
+  const ripiego = sd => sd.esercizi.some(e => senzaEmoji(e.name) === 'Hip Hinge a Corpo Libero');
+  const gambe = []; lista.forEach(x => { const g = x.prog.sedute.filter(sd => /lower|legs/.test(sd.tipo)); g.forEach((sd, i) => { if (i < 2) gambe.push({ x, sd }); }); assert.ok(x.prog.sedute.filter(ripiego).length <= 2, x.p.seme + ': il ripiego in piu di due sedute'); });
   assert.ok(gambe.length > 40, 'sedute lower e legs: ' + gambe.length);
   const senza = gambe.filter(g => !g.sd.esercizi.some(e => attr(e.name) && attr(e.name).schema === 'hinge'));
   assert.deepStrictEqual(senza.map(g => g.x.p.seme + ' ' + g.sd.giorno), [], 'sedute di gambe a corpo libero senza cerniera dell anca');

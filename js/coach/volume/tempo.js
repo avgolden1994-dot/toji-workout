@@ -344,18 +344,25 @@ const NOTA_FEMORALI_TEMPO = 'Femorali: con questi minuti la flessione del ginocc
 function scalaDelTempo(brief, sd, sedute, opz, minutiEff, passi) {
   /* M6 (W2-T6, revisione INT-2d; collaudo EQ-03:flessione): a 2 giorni e 30 minuti in palestra la seduta full body ha due multiarticolari di gambe di schema DIVERSO (squat e stacco rumeno) oltre a una
      spinta e a una tirata, e il leg curl, l unica flessione della settimana, usciva per ultimo (la scala toglieva serie ai multiarticolari e poi lui). La flessione vale piu di una seconda cerniera dell anca o
-     di un secondo squat (registro B6: una flessione a settimana): se la seduta la tiene, sfora i minuti e ha due multiarticolari di gambe, si prova prima senza il piu caro dei due (secondoDiGambe,
-     completamenti.js) e si tiene la mossa SOLO se la flessione resta in scheda; se la scala la toglie comunque, tutto torna com era e la scala gira senza la mossa (togliere il secondo di gambe e perdere
-     comunque la flessione sarebbero due perdite). Un solo secondo di gambe per seduta: la mossa si prova una volta */
+     di un secondo squat (registro B6: una flessione a settimana): se la seduta la tiene e sfora i minuti si prova PRIMA la scala di sempre; se la flessione resta in scheda non si tocca niente (un secondo squat
+     tolto senza bisogno lasciava i quadricipiti a una seduta sola: collaudo FRQ-01, 3,6% dei programmi). Solo se la scala la toglie, e la seduta ha due multiarticolari di gambe, si prova senza il piu caro dei due
+     (secondoDiGambe, completamenti.js) e si tiene la mossa SOLO se la flessione resta; se la scala la toglie comunque, tutto torna com era (togliere il secondo di gambe e perdere comunque la flessione sarebbero
+     due perdite). Un solo secondo di gambe per seduta: la mossa si prova una volta */
   const secondo = sd.esercizi.some(e => unicaFlessioneSettimana(brief, sedute, e)) && durataSeduta(sd.esercizi, opz) > minutiEff * (1 + PARAM_TEMPO.tolleranzaSforamento) ? secondoDiGambe(sd, sedute, opz) : null;
   if (secondo) {
     const lista = sd.esercizi.slice(), stato = lista.map(e => [e, e.sets, e.rest, e.superset]), copiaPassi = Object.assign({}, passi), note = brief.lavoro.note.slice();
+    const ripristina = () => {
+      sd.esercizi.splice(0, sd.esercizi.length, ...lista);
+      stato.forEach(x => { x[0].sets = x[1]; x[0].rest = x[2]; if (x[3]) x[0].superset = x[3]; else delete x[0].superset; });
+      Object.assign(passi, copiaPassi); brief.lavoro.note.splice(0, brief.lavoro.note.length, ...note);
+    };
+    scalaDelTempoBase(brief, sd, sedute, opz, minutiEff, passi);
+    if (sd.esercizi.some(eFlessioneGinocchio)) return;   /* la scala di sempre basta: la flessione c e */
+    ripristina();
     togliEsercizio(sd, secondo);
     scalaDelTempoBase(brief, sd, sedute, opz, minutiEff, passi);
     if (sd.esercizi.some(eFlessioneGinocchio)) { passi.tagli++; return; }
-    sd.esercizi.splice(0, sd.esercizi.length, ...lista);
-    stato.forEach(x => { x[0].sets = x[1]; x[0].rest = x[2]; if (x[3]) x[0].superset = x[3]; else delete x[0].superset; });
-    Object.assign(passi, copiaPassi); brief.lavoro.note.splice(0, brief.lavoro.note.length, ...note);
+    ripristina();
   }
   scalaDelTempoBase(brief, sd, sedute, opz, minutiEff, passi);
 }
