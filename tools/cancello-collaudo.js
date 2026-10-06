@@ -12,7 +12,7 @@
      npm run cancello -- <json> prima                                  riproduce i numeri «prima» entro 0,5 punti (tag coach-v2-onda-0-prima)
      npm run cancello -- --elenco [onda]                               le soglie in vigore (di un'onda, o la tabella intera)
      npm run cancello -- --autotest                                    prove del cancello su istantanee artificiali (fa parte di npm run controlla)
-   Onde: onda-0, onda-1, onda-2a, onda-2b, onda-2, onda-3, onda-4, onda-5, finale (anche INT-N, N, 2a, 2c = onda-2b, F-1, G; l'etichetta
+   Onde: onda-0, onda-1, onda-2a, onda-2b, onda-2, onda-3, onda-4, onda-5, finale (anche INT-N, N, 2a, 2c, 2d, 2e = onda-2b, F-1, G; l'etichetta
    del collaudo `coach-v2-onda-N` e riconosciuta). Altre opzioni: --soglie <file>, --qualsiasi-matrice (non fallisce se la matrice non e quella
    dell'onda: serve per provare con --matrice rapida), --json (esito leggibile da una macchina).
    Due parti (D-P20, INT-2b): (a) il CANCELLO DI REGRESSIONE (matrice, errori, nessuna classe peggiore dell'onda precedente oltre la tolleranza, zero
@@ -26,6 +26,9 @@
    motivo, data e responsabile. La matrice del cancello e quella dell'onda (standard per onda-2b) e SOLO la standard da il verdetto sulle classi: con --qualsiasi-matrice (rapida: un profilo su sei) le soglie numeriche, i tetti
    e le regressioni sono «indicativi» (avviso, non fallimento: le percentuali di un campione si spostano di punti interi, FRQ-02:bicipiti 8,80 sulla standard e 10,79 sulla rapida) mentre restano fallimenti gli errori, la
    sicurezza (SAF-*), le regole di struttura (--contro, tettoIniziale, dichiara) e le scadenze: standard e rapida non si contraddicono mai sul verdetto che conta. `onde.<onda>.aperti` = obiettivi aperti con responsabile e scadenza.
+   INT-2e (2026-10-06): i DEBITI delle onde passate non si perdono in silenzio. Valutando un'onda, ogni `aperti` e ogni `ammesse` di un'onda PRIMA con la scadenza arrivata (scade <= onda valutata) deve essere riscritto da un'onda
+   successiva con una nuova scadenza futura (`onde.<onda>.aperti`, stessa chiave; `oltre-v2` = fuori dalla v2: si stampa in ogni corsa e non ferma mai), oppure chiuso (`chiuso: { motivo, data }`), oppure (un'ammessa) la
+   classe non e piu colpita: altrimenti il cancello FALLISCE. Un aperto con scadenza futura, non riscritto, si stampa a ogni corsa con il responsabile.
    Esce con 0 se passa, 1 se fallisce, 2 per un errore d'uso (file mancante, onda sconosciuta). */
 'use strict';
 const fs = require('fs'), path = require('path'), os = require('os'), cp = require('child_process');
@@ -65,9 +68,9 @@ function normalizzaOnda(et, cfg) {
   if (/(^|-)(prima|base)$/.test(s) || s === 'prima' || s === 'base') return 'prima';
   s = s.replace(/^int-/, 'onda-');
   if (/^\d[a-z]?$/.test(s)) s = 'onda-' + s;
-  if (s === 'onda-2c' || s === 'onda-2d') s = 'onda-2b';   /* INT-2b, seconda parte (tag coach-v2-onda-2c) e INT-2d, correzioni dopo la revisione (tag coach-v2-onda-2d): lo stesso cancello dell'onda 2b */
+  if (s === 'onda-2c' || s === 'onda-2d' || s === 'onda-2e') s = 'onda-2b';   /* INT-2b, seconda parte (tag coach-v2-onda-2c), INT-2d (tag coach-v2-onda-2d) e INT-2e (tag coach-v2-onda-2e): lo stesso cancello dell'onda 2b */
   if (s === 'f-1' || s === 'fatto' || s === 'g' || s === 'finale') return 'finale';
-  return cfg.ordineOnde.indexOf(s) !== -1 ? s : null;
+  return s !== 'oltre-v2' && cfg.ordineOnde.indexOf(s) !== -1 ? s : null;   /* `oltre-v2` e solo una scadenza (INT-2e), non un'onda da valutare */
 }
 
 const iOndaPer = (ordine, onda) => ordine.indexOf(onda);
@@ -224,13 +227,34 @@ function valuta(cfg, snap, ondaId, opz) {
   });
   /* INT-2d (M4/M6/M7): `onde.<onda>.aperti` = obiettivi aperti scritti con il responsabile e la SCADENZA (una tra ordineOnde): si stampano ogni volta e, valutando l'onda di scadenza o una dopo, fanno fallire il cancello */
   const aperti = (onda && onda.aperti) || {};
+  const chiusoCon = (x) => !!(x && x.chiuso && x.chiuso.motivo && x.chiuso.data);   /* INT-2e: `chiuso: { motivo, data }` = il debito e chiuso, con il motivo scritto: resta nei dati come storia */
   Object.keys(aperti).sort().forEach(k => {
     const a = aperti[k] || {};
-    if (!a.responsabile || !a.motivo) ko('aperto ' + k + ': manca il responsabile o il motivo');
+    if (chiusoCon(a)) ok('aperto ' + k + ' chiuso il ' + a.chiuso.data + ': ' + a.chiuso.motivo);
+    else if (!a.responsabile || !a.motivo) ko('aperto ' + k + ': manca il responsabile o il motivo');
     else if (!a.scade || ordine.indexOf(a.scade) === -1) ko('aperto ' + k + ': manca la scadenza (una tra ' + ordine.join(', ') + ')');
     else if (ordine.indexOf(a.scade) <= ordine.indexOf(ondaId)) ko('aperto ' + k + ' SCADUTO: doveva chiudersi entro ' + a.scade + ' (' + a.responsabile + ')');
     else righe.push({ esito: 'aperto', testo: k + (typeof val(k) === 'number' && (snap.pesata[k] !== undefined) ? ': ' + f2(val(k)) + '%' : '') + ' [scade ' + a.scade + '] ' + a.motivo, codice: codiceDi(k), responsabile: a.responsabile });
   });
+  /* INT-2e: i DEBITI delle onde passate non si perdono in silenzio. Prima del 2026-10-06 le ammesse scadute non si ereditavano (si credevano giudicate «alla loro scadenza») e si controllavano solo gli `aperti`
+     dell'onda in corso: con scadenza onda-2, valutando onda-3, nessun aperto e nessuna ammessa di onda-2a/2b scattava piu, e il debito spariva senza che nessuno lo avesse chiuso. Ora, valutando un'onda,
+     ogni `aperti` e ogni `ammesse` di un'onda PRIMA con la scadenza arrivata (scade <= onda valutata) deve essere: (a) riscritto da un'onda successiva (fino a quella valutata) con una nuova scadenza
+     FUTURA (`onde.<onda>.aperti` o `.ammesse` con la stessa chiave; `oltre-v2` = fuori dalla v2: si vede in ogni corsa e non ferma mai), oppure (b) chiuso (`chiuso: { motivo, data }`), oppure (c) solo per un'ammessa,
+     la classe non c'e piu nell'istantanea (nessun programma colpito). Altrimenti il cancello FALLISCE. Un aperto con scadenza futura, non riscritto, si stampa a ogni corsa con il responsabile. `senzaDebiti`
+     (solo le prove delle soglie dell'autotest) lo spegne. */
+  if (!opz.senzaDebiti) {
+    const riscrittoDopo = (k, da) => { for (let m = da + 1; m <= iOnda; m++) { const o = (m === iOnda ? onda : cfg.onde[ordine[m]]) || {}; if ([o.aperti, o.ammesse].some(t => t && t[k] && ordine.indexOf(t[k].scade) > iOnda)) return true; } return false; };
+    for (let j = 0; j < iOnda; j++) {
+      const o = cfg.onde[ordine[j]] || {};
+      [['ammessa', o.ammesse], ['aperto', o.aperti]].forEach(([tipo, t]) => Object.keys(t || {}).sort().forEach(k => {
+        const e = t[k] || {}, sc = ordine.indexOf(e.scade);
+        if (sc === -1 || chiusoCon(e) || riscrittoDopo(k, j) || Object.prototype.hasOwnProperty.call(aperti, k) || (onda && onda.ammesse && onda.ammesse[k])) return;   /* riscritto dall'onda che si valuta: lo giudicano i suoi controlli (SCADUTO), senza contarlo due volte */
+        if (sc > iOnda) { if (tipo === 'aperto') righe.push({ esito: 'aperto', testo: k + ' [scade ' + e.scade + '; scritto in ' + ordine[j] + '] ' + (e.motivo || ''), codice: codiceDi(k), responsabile: e.responsabile || 'senza responsabile' }); return; }
+        if (tipo === 'ammessa' && !snap.pesata[k]) return;   /* la classe non e colpita da nessun programma: il debito si e risolto da solo */
+        ko('debito di ' + ordine[j] + ' SCADUTO e non risolto: ' + tipo + ' ' + k + ' (' + (e.risolve || e.responsabile || 'senza responsabile') + ', scadenza ' + e.scade + ', ora si valuta ' + ondaId + '): riscrivilo in onde.' + ondaId + '.aperti con una nuova scadenza (o `oltre-v2` con il motivo datato), oppure chiudilo con `chiuso: { motivo, data }`');
+      }));
+    }
+  }
   /* INT-2d (M4): i criteri dichiarati sono fissati prima della misura (`dichiara.criteriIniziali`); uno che ne esce dopo la misura ha bisogno di `dichiara.rimossi.<COD>` con motivo, data e responsabile */
   if (onda && onda.dichiara && ordine.indexOf(ondaId) >= ordine.indexOf('onda-2b')) {
     const d = onda.dichiara, ini = Array.isArray(d.criteriIniziali) ? d.criteriIniziali : null, attuali = new Set(d.criteri || []), rim = d.rimossi || {};
@@ -358,11 +382,14 @@ function istantaneaBuona(cfg, ondaId, modifiche) {
 
 function autotest() {
   const cfg = leggiSoglie(), esiti = [];
+  /* INT-2e: gli obiettivi aperti reali delle onde da venire (`onde.onda-3.aperti`...) scadono proprio all'onda per cui sono scritti (e il loro scopo): le prove delle soglie lavorano su una copia senza,
+     e la prova dei debiti (sotto) legge i dati veri */
+  ['onda-3', 'onda-4', 'onda-5', 'finale'].forEach(o => { if (cfg.onde[o]) delete cfg.onde[o].aperti; });
   const prova = (nome, f) => { let e = null; try { f(); } catch (x) { e = x.message; } esiti.push({ nome, e }); };
   const eq = (a, b, m) => { if (a !== b) throw new Error((m || '') + ' atteso ' + b + ', ottenuto ' + a); };
   const base = daPrima(cfg.prima);
   /* `soloSoglie`: le prove delle soglie assolute non danno il confronto con l'onda prima, obbligatorio dall'onda-2b (le prove del confronto lo danno o lo tolgono apposta) */
-  const esegui = (snapJson, onda, opz) => { const s = daCollaudo(snapJson); return valuta(cfg, s, onda, Object.assign({ soloSoglie: true }, opz)); };
+  const esegui = (snapJson, onda, opz) => { const s = daCollaudo(snapJson); return valuta(cfg, s, onda, Object.assign({ soloSoglie: true, senzaDebiti: true }, opz)); };
   const cli = (snapJson, args) => {
     const f = path.join(os.tmpdir(), 'cancello-autotest-' + process.pid + '-' + Math.random().toString(36).slice(2) + '.json');
     fs.writeFileSync(f, JSON.stringify(snapJson));
@@ -475,7 +502,7 @@ function autotest() {
     cfg2.onde['onda-3'].ammesse = { 'RID-01:grande_gluteo': { max: 4, tettoIniziale: 4, motivo: 'prova', risolve: 'W9-T9', scade: 'onda-4' }, 'SAF-01:spalle': { max: 20, tettoIniziale: 20, motivo: 'non si puo', risolve: 'W9-T9', scade: 'onda-4' } };
     const contro = daCollaudo(istantaneaBuona(cfg2, 'onda-2', { pesata: { 'RID-01:grande_gluteo': 2 }, conteggio: { 'RID-01:grande_gluteo': 200 } }));
     const mk = (v) => istantaneaBuona(cfg2, 'onda-3', { pesata: { 'RID-01:grande_gluteo': v }, conteggio: { 'RID-01:grande_gluteo': v * 100 } });
-    const valuta2 = (snapshot) => valuta(cfg2, daCollaudo(snapshot), 'onda-3', { contro });
+    const valuta2 = (snapshot) => valuta(cfg2, daCollaudo(snapshot), 'onda-3', { contro, senzaDebiti: true });
     eq(valuta2(mk(2)).falliti, 0, 'uguale: passa');
     eq(valuta2(mk(3.5)).falliti, 0, '+1,5 punti ma sotto il tetto 4: ammessa');
     eq(valuta2(mk(3.5)).righe.some(r => /regressione AMMESSA RID-01:grande_gluteo/.test(r.testo)), true, 'e lo dice');
@@ -485,14 +512,14 @@ function autotest() {
     eq(valuta2(altra).righe.some(r => r.esito === 'fallito' && /RID-02/.test(r.testo)), true, 'una classe non ammessa continua a fallire');
     const contro2 = daCollaudo(istantaneaBuona(cfg2, 'onda-2', { pesata: { 'SAF-01:spalle': 0 }, conteggio: { 'SAF-01:spalle': 0 } }));
     const sic = istantaneaBuona(cfg2, 'onda-3', { pesata: { 'SAF-01:spalle': 3 }, conteggio: { 'SAF-01:spalle': 300 } });
-    eq(valuta(cfg2, daCollaudo(sic), 'onda-3', { contro: contro2 }).falliti >= 1, true, 'una classe di sicurezza non si ammette mai');
+    eq(valuta(cfg2, daCollaudo(sic), 'onda-3', { contro: contro2, senzaDebiti: true }).falliti >= 1, true, 'una classe di sicurezza non si ammette mai');
   });
   prova('regressioni ammesse con scadenza (INT-2a, M2): senza responsabile o senza scadenza fallisce, e un\'ammessa scaduta fa fallire il cancello anche sotto il tetto', () => {
     const contro = (c) => daCollaudo(istantaneaBuona(c, 'onda-2', { pesata: { 'RID-01:grande_gluteo': 2 }, conteggio: { 'RID-01:grande_gluteo': 200 } }));
     const conAmmessa = (am, onda) => { const c = JSON.parse(JSON.stringify(cfg)); c.onde[onda] = c.onde[onda] || {}; c.onde[onda].ammesse = { 'RID-01:grande_gluteo': am }; return c; };
     const esito = (am, onda) => {
       const c = conAmmessa(am, onda), snap = istantaneaBuona(c, onda, { pesata: { 'RID-01:grande_gluteo': 3.5 }, conteggio: { 'RID-01:grande_gluteo': 350 } });
-      return valuta(c, daCollaudo(snap), onda, { contro: contro(c) });
+      return valuta(c, daCollaudo(snap), onda, { contro: contro(c), senzaDebiti: true });
     };
     const buona = { max: 4, tettoIniziale: 4, motivo: 'prova', risolve: 'W9-T9', scade: 'onda-4' };
     eq(esito(buona, 'onda-3').falliti, 0, 'con responsabile e scadenza futura passa (+1,5 punti sotto il tetto 4)');
@@ -512,8 +539,8 @@ function autotest() {
     c0.onde['onda-3'].riscritti = ['RID-01'];   /* RID-01 e riscritto dall onda: non e una classe di sicurezza */
     const contro = (ver) => daCollaudo(istantaneaBuona(c0, 'onda-2', { criteri: ver, pesata: { 'RID-01:grande_gluteo': 1 }, conteggio: { 'RID-01:grande_gluteo': 100 } }));
     const peggio = (ver) => istantaneaBuona(c0, 'onda-3', { criteri: ver, pesata: { 'RID-01:grande_gluteo': 4 }, conteggio: { 'RID-01:grande_gluteo': 400 } });
-    eq(valuta(c0, daCollaudo(peggio('9.9')), 'onda-3', { contro: contro('9.8') }).righe.some(r => r.esito === 'fallito' && /regressione RID-01/.test(r.testo)), false, 'versioni diverse: un criterio riscritto non si confronta');
-    eq(valuta(c0, daCollaudo(peggio('9.9')), 'onda-3', { contro: contro('9.9') }).righe.some(r => r.esito === 'fallito' && /regressione RID-01/.test(r.testo)), true, 'stessa versione: si confronta, e peggiora di 3 punti');
+    eq(valuta(c0, daCollaudo(peggio('9.9')), 'onda-3', { contro: contro('9.8'), senzaDebiti: true }).righe.some(r => r.esito === 'fallito' && /regressione RID-01/.test(r.testo)), false, 'versioni diverse: un criterio riscritto non si confronta');
+    eq(valuta(c0, daCollaudo(peggio('9.9')), 'onda-3', { contro: contro('9.9'), senzaDebiti: true }).righe.some(r => r.esito === 'fallito' && /regressione RID-01/.test(r.testo)), true, 'stessa versione: si confronta, e peggiora di 3 punti');
   });
   prova('D-P20 (INT-2b): con `dichiara` una soglia assoluta non raggiunta e un obiettivo aperto (con il responsabile), non un fallimento; un criterio dichiarato che fallisce e una regressione fermano il cancello; senza `dichiara` tutto come prima', () => {
     const c = JSON.parse(JSON.stringify(cfg));
@@ -607,9 +634,50 @@ function autotest() {
     eq(esito({ scade: 'onda-2', motivo: 'prova' }).righe.some(x => x.esito === 'fallito' && /manca il responsabile/.test(x.testo)), true, 'senza responsabile fallisce');
     eq(esito({ responsabile: 'W2-T6', motivo: 'prova' }).righe.some(x => x.esito === 'fallito' && /manca la scadenza/.test(x.testo)), true, 'senza scadenza fallisce');
   });
+  prova('INT-2e: un debito di un\'onda passata (aperto o ammessa) con la scadenza arrivata fa fallire l\'onda dopo, salvo che sia riscritto con una nuova scadenza, chiuso con il motivo o (ammessa) la classe sia sparita', () => {
+    const nuda = () => { const c = JSON.parse(JSON.stringify(cfg)); c.ordineOnde.forEach(o => { delete c.onde[o].aperti; c.onde[o].ammesse = {}; }); return c; };
+    const K = 'RID-01:grande_gluteo', presente = { pesata: { [K]: 2 }, conteggio: { [K]: 200 } };
+    const esito = (modifica, mod) => { const c = nuda(); modifica(c); return valuta(c, daCollaudo(istantaneaBuona(c, 'onda-3', mod || presente)), 'onda-3', { contro: daCollaudo(istantaneaBuona(c, 'onda-2', presente)) }); };
+    const debiti = r => r.righe.filter(x => x.esito === 'fallito' && /debito di .* SCADUTO e non risolto/.test(x.testo));
+    const ap = (scade, extra) => Object.assign({ responsabile: 'W2-T1 seguito', scade, motivo: 'prova' }, extra);
+    const am = (scade, extra) => Object.assign({ max: 4, tettoIniziale: 4, risolve: 'W2-T5', scade, motivo: 'prova' }, extra);
+    eq(esito(() => {}).falliti, 0, 'senza debiti passa');
+    /* aperti */
+    const a1 = esito(c => { c.onde['onda-2b'].aperti = { 'Cosa aperta': ap('onda-2') }; });
+    eq(debiti(a1).length, 1, 'un aperto di onda-2b con scadenza onda-2, valutando onda-3, fa fallire: ' + a1.righe.filter(x => x.esito === 'fallito').map(x => x.testo).join(' | '));
+    eq(/Cosa aperta/.test(debiti(a1)[0].testo) && /onda-2b/.test(debiti(a1)[0].testo), true, 'e dice quale e di quale onda');
+    eq(esito(c => { c.onde['onda-2b'].aperti = { 'Cosa aperta': ap('onda-2') }; c.onde['onda-3'].aperti = { 'Cosa aperta': ap('onda-4') }; }).falliti, 0, 'riscritto in onda-3 con una nuova scadenza: passa');
+    eq(esito(c => { c.onde['onda-2b'].aperti = { 'Cosa aperta': ap('onda-2') }; c.onde['onda-3'].aperti = { 'Cosa aperta': ap('oltre-v2') }; }).falliti, 0, 'riscritto con scadenza oltre-v2 (fuori dalla v2: si vede, non ferma): passa');
+    const stessa = esito(c => { c.onde['onda-2b'].aperti = { 'Cosa aperta': ap('onda-2') }; c.onde['onda-3'].aperti = { 'Cosa aperta': ap('onda-3') }; });
+    eq(stessa.falliti >= 1 && stessa.righe.some(x => x.esito === 'fallito' && /Cosa aperta SCADUTO/.test(x.testo)), true, 'riscritto con la scadenza che sta scadendo (onda-3 valutando onda-3) non e riscritto: fallisce, e una volta sola');
+    eq(debiti(stessa).length, 0, 'senza contarlo due volte (lo dice gia lo scaduto dell\'onda che si valuta)');
+    eq(esito(c => { c.onde['onda-2b'].aperti = { 'Cosa aperta': ap('onda-2') }; c.onde['onda-2'].aperti = { 'Cosa aperta': ap('onda-4') }; }).falliti, 0, 'riscritto da un\'onda in mezzo (onda-2) con una scadenza futura: passa');
+    eq(esito(c => { c.onde['onda-2b'].aperti = { 'Cosa aperta': ap('onda-2', { chiuso: { motivo: 'fatto e provato', data: '2026-10-06' } }) }; }).falliti, 0, 'chiuso con motivo e data: passa');
+    eq(debiti(esito(c => { c.onde['onda-2b'].aperti = { 'Cosa aperta': ap('onda-2', { chiuso: { data: '2026-10-06' } }) }; })).length, 1, 'chiuso senza motivo: fallisce');
+    const futuro = esito(c => { c.onde['onda-2b'].aperti = { 'Cosa aperta': ap('onda-4') }; });
+    eq(futuro.falliti, 0, 'un aperto con scadenza futura non ferma');
+    eq((futuro.perResponsabile['W2-T1 seguito'] || []).length, 1, 'e resta in vista nelle onde dopo, con il responsabile (non solo nell\'onda che l\'ha scritto)');
+    eq(esito(c => { c.onde['onda-2b'].aperti = { 'Cosa aperta': ap('onda-4') }; c.onde['onda-3'].aperti = { 'Cosa aperta': ap('oltre-v2') }; }).aperti, 1, 'se l\'onda dopo lo riscrive, si conta una volta sola');
+    /* ammesse */
+    const m1 = esito(c => { c.onde['onda-2a'].ammesse = { [K]: am('onda-2') }; });
+    eq(debiti(m1).length, 1, 'un\'ammessa di onda-2a con scadenza onda-2, valutando onda-3 e con la classe ancora colpita, fa fallire: ' + m1.righe.filter(x => x.esito === 'fallito').map(x => x.testo).join(' | '));
+    eq(esito(c => { c.onde['onda-2a'].ammesse = { [K]: am('onda-2') }; c.onde['onda-3'].aperti = { [K]: ap('onda-4') }; }).falliti, 0, 'riscritta in onda-3.aperti con una nuova scadenza: passa');
+    eq(esito(c => { c.onde['onda-2a'].ammesse = { [K]: am('onda-2') }; c.onde['onda-3'].ammesse = { [K]: am('onda-4') }; }).falliti, 0, 'o riscritta come ammessa con una nuova scadenza: passa');
+    eq(esito(c => { c.onde['onda-2a'].ammesse = { [K]: am('onda-2', { chiuso: { motivo: 'fatto e provato', data: '2026-10-06' } }) }; }).falliti, 0, 'chiusa con motivo e data: passa');
+    eq(esito(c => { c.onde['onda-2a'].ammesse = { [K]: am('onda-2') }; }, { pesata: { [K]: null } }).falliti, 0, 'con la classe sparita dall\'istantanea (nessun programma colpito) e risolta da sola: passa');
+    eq(debiti(esito(c => { c.onde['onda-2a'].ammesse = { [K]: am('onda-4') }; })).length, 0, 'con scadenza futura non e un debito');
+    /* l'onda in cui si e scritta non conta: i debiti sono delle onde PASSATE */
+    eq(debiti(esito(c => { c.onde['onda-3'].aperti = { 'Cosa aperta': ap('onda-4') }; })).length, 0, 'un aperto scritto dall\'onda che si valuta resta come prima');
+    /* i dati veri: ogni debito delle onde 2a e 2b con scadenza onda-2 o onda-3 e riscritto in onda-3 (o chiuso), nessuno si perde */
+    const vero = leggiSoglie();
+    const rv = valuta(vero, daCollaudo(istantaneaBuona(vero, 'onda-3', presente)), 'onda-3', { contro: daCollaudo(istantaneaBuona(vero, 'onda-2', presente)) });
+    eq(debiti(rv).length, 0, 'nei dati veri nessun debito si perde in silenzio a onda-3: ' + debiti(rv).map(x => x.testo).join(' | '));
+    const rv2 = valuta(vero, daCollaudo(istantaneaBuona(vero, 'onda-2b', presente)), 'onda-2b', { contro: daCollaudo(istantaneaBuona(vero, 'onda-2a', presente)) });
+    eq(debiti(rv2).length, 0, 'e a onda-2b: ' + debiti(rv2).map(x => x.testo).join(' | '));
+  });
   prova('nomi delle onde e etichette del collaudo', () => {
     eq(normalizzaOnda('INT-0', cfg), 'onda-0'); eq(normalizzaOnda('coach-v2-onda-2', cfg), 'onda-2'); eq(normalizzaOnda('2a', cfg), 'onda-2a');
-    eq(normalizzaOnda('coach-v2-onda-0-prima', cfg), 'prima'); eq(normalizzaOnda('base', cfg), 'prima'); eq(normalizzaOnda('F-1', cfg), 'finale'); eq(normalizzaOnda('onda-9', cfg), null);
+    eq(normalizzaOnda('coach-v2-onda-0-prima', cfg), 'prima'); eq(normalizzaOnda('base', cfg), 'prima'); eq(normalizzaOnda('F-1', cfg), 'finale'); eq(normalizzaOnda('onda-9', cfg), null); eq(normalizzaOnda('coach-v2-onda-2e', cfg), 'onda-2b'); eq(normalizzaOnda('oltre-v2', cfg), null);
   });
   prova('da riga di comando: esce 1 oltre soglia, 0 se passa, 2 per un errore d\'uso', () => {
     const fuori = cli(istantanea(base), ['onda-0']);
@@ -650,7 +718,7 @@ function main(argv) {
   if (opz.elenco) { const o = pos[0] ? normalizzaOnda(pos[0], cfg) : null; if (pos[0] && !o) { console.error('onda sconosciuta: ' + pos[0]); return 2; } elenco(cfg, o === 'prima' ? null : o); return 0; }
   if (pos.length !== 2) { console.error('uso: npm run cancello -- <collaudo.json> <onda> [--contro <json>] [--identico]   (npm run cancello -- --help)'); return 2; }
   const onda = normalizzaOnda(pos[1], cfg);
-  if (!onda) { console.error('onda sconosciuta: ' + pos[1] + ' (valide: prima, ' + cfg.ordineOnde.join(', ') + ')'); return 2; }
+  if (!onda) { console.error('onda sconosciuta: ' + pos[1] + ' (valide: prima, ' + cfg.ordineOnde.filter(o => o !== 'oltre-v2').join(', ') + ')'); return 2; }
   let snap, contro = null;
   try { snap = daCollaudo(JSON.parse(fs.readFileSync(pos[0], 'utf8'))); } catch (e) { console.error('Istantanea non leggibile (' + pos[0] + '): ' + e.message); return 2; }
   if (opz.controFile) { try { contro = daCollaudo(JSON.parse(fs.readFileSync(opz.controFile, 'utf8'))); } catch (e) { console.error('Istantanea --contro non leggibile (' + opz.controFile + '): ' + e.message); return 2; } }
