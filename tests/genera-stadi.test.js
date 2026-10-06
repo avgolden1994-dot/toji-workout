@@ -177,9 +177,11 @@ test('vincoliSicurezza: oggi le regole di prima: Nordic Curl, serie massime, tec
   assert.strictEqual(adulto.tettoCarico, 1);
   /* INT-2a (M1 della revisione dell onda 1): lo Stacco Rumeno a una Gamba (abilita 3) non e per i prudenti ne per chi inizia; le ginocchia dolenti toglierebbero solo il Nordic Curl */
   const unaGamba = app().g("nomeInLibreria('Stacco Rumeno a una Gamba')");
+  /* Onda 2c (SAF-05 del collaudo, tolleranza zero): anche Front Squat, Tirate al Mento e Ab Wheel (abilita 3) sono vietati a chi inizia e ai prudenti */
+  const abilita3 = ['Front Squat', 'Tirate al Mento (Upright Row)', 'Ab Wheel'].map(n => app().g("nomeInLibreria('" + n + "')"));
   [{ level: 'principiante' }, { age: 70 }, { age: 16 }, { parq: 'si' }].forEach(d => {
     const r = v(Object.assign({ level: 'avanzato' }, d));
-    assert.deepStrictEqual(Object.keys(r.vietati), [nordic, unaGamba], 'Nordic Curl e Stacco Rumeno a una Gamba vietati per ' + stringa(d));
+    assert.deepStrictEqual(Object.keys(r.vietati), [nordic, unaGamba].concat(abilita3), 'Nordic Curl, Stacco Rumeno a una Gamba e i tre di abilita 3 vietati per ' + stringa(d));
   });
   assert.deepStrictEqual(Object.keys(v({ level: 'avanzato', fastidi: ['ginocchia'] }).vietati).sort(), [nordic].concat(avvio).sort(), 'Nordic Curl vietato per le ginocchia dolenti (e gli esercizi di avvio, come per ogni avanzato)');
   [{ level: 'principiante' }, { age: 70 }, { age: 16 }, { parq: 'si' }].forEach(d => {
@@ -192,8 +194,8 @@ test('vincoliSicurezza: oggi le regole di prima: Nordic Curl, serie massime, tec
   assert.deepStrictEqual(v({}).rirMin, {});
   /* i vincoli arrivano a consentito(): prefs.esclusi li legge */
   const p = costruisci({ level: 'principiante' });
-  assert.deepStrictEqual(p.prefs.esclusi, [nordic, unaGamba]);
-  assert.ok(!p.sedute.some(sd => sd.esercizi.some(e => /nordic/i.test(e.name))));
+  assert.deepStrictEqual(p.prefs.esclusi, [nordic, unaGamba].concat(abilita3));
+  assert.ok(!p.sedute.some(sd => sd.esercizi.some(e => /nordic|front squat|tirate al mento|ab wheel/i.test(e.name))));
 });
 
 /* ---------- 4. il mesociclo ---------- */
