@@ -1,0 +1,7 @@
+{
+  "task": "P3-M",
+  "mappaAgenti": [
+    "rifare il programma conserva progressi e carichi (P3-M, D-P23): `applyGeneratedProgram` (js/coach/programma/alternative.js) prima scrive settimana e fase sulle voci di storico che non le hanno (`fissaFasiDelloStorico`: il fatto «era di scarico» sta solo nel programma che si butta; senza, la proposta ripartiva dal peso dello scarico), poi mostra nel Piano il carico di lavoro di chi ha lo storico (`caricoDelloStorico`, solo con il consenso) e non riaggiunge allo storico dei referti BIA il referto già nel profilo; `nuovoOnbData` (js/ui/onboarding.js) riparte da sesso, peso, altezza, PAR-Q positivo e fastidi del profilo salvato; prova: tests/conserva-progressi.test.js (storico byte per byte, nessuna chiave nuova, proposta di carico, backup, i 6 programmi v1)"
+  ],
+  "nota": "P3-M. Nessuna riga <script> nuova (nessun file nuovo in js/), nessuna frase nuova (nessun testo nuovo per l'utente), nessuna regola con codice (sono correzioni di conservazione dei dati, non regole del coach). PER L'INTEGRAZIONE: docs/indice-codice.md e docs/mappa-simboli.md vanno rigenerati (npm run indice, npm run simboli: due funzioni nuove in alternative.js, righe spostate in alternative.js e onboarding.js); CACHE_NAME da alzare una volta con le altre consegne (cambiano js/coach/programma/alternative.js e js/ui/onboarding.js). Aperti: vedi D-P23 in docs/coach-v2-decisioni.md."
+}
