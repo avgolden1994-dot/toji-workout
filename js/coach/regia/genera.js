@@ -78,11 +78,82 @@ function riordinaSenzaAdiacenti(tipi, indici) {
   cerca([], tipi.slice());
   return trovato;
 }
+/* PRG-02 (W2-T5; collaudo REC-01): i giorni dipendono da COSA si allena. I giorni fissi di sempre (lunedi-martedi-giovedi-venerdi per 4 sedute, lunedi-martedi-giovedi-venerdi-sabato per 5) mettevano
+   un full body il lunedi e un upper il martedi (frequenza 3 con 4 giorni: schiena, spalle e petto a fondo in due giorni di fila), o un push e un pull consecutivi (5 giorni, push/pull/legs + upper/lower:
+   le spalle). Qui, per 3-5 sedute senza un metodo famoso, se i giorni di sempre hanno due sedute in giorni consecutivi che lavorano lo stesso grande muscolo (seduteInConflitto: tipi uguali o con un
+   grande gruppo in comune, SOGLIE_SPLIT.gruppiDelleSedute), si cerca tra tutte le scelte di giorni (al massimo 4 di fila, ciclico) quella con meno conflitti; a pari conflitti quella che non riordina le sedute, a
+   pari riordino quella piu vicina ai giorni di sempre. Senza conflitti nei giorni di sempre non cambia niente (stesso programma di prima, byte per byte). Con 6 sedute vale l ordine di INT-2d (sotto);
+   con un metodo famoso resta la sua struttura. Il risultato non porta una nota: dice il vero la scheda finale, non il tipo di seduta (una seduta di tirata ha anche lo stacco rumeno). */
+function sogliaSplit(nome) { return typeof SOGLIE_SPLIT !== 'undefined' && SOGLIE_SPLIT[nome] ? SOGLIE_SPLIT[nome].v : null; }
+/* i grandi muscoli che una seduta di questo tipo lavora a fondo (SOGLIE_SPLIT.gruppiDelleSedute); i punti deboli le priorita dichiarate piu le spalle (puntiDeboli); un tipo che non conosco, tutti i grandi
+   muscoli (la scelta prudente) */
+function grandiDellaSeduta(tipo, prefs) {
+  const tabella = sogliaSplit('gruppiDelleSedute') || {};
+  if (tipo === 'punti') {
+    const p = sogliaSplit('puntiDeboli') || {}, out = [];
+    ((prefs && prefs.priorita) || []).concat(['sempre']).forEach(g => (p[g] || []).forEach(x => { if (out.indexOf(x) === -1) out.push(x); }));
+    return out;
+  }
+  return tabella[tipo] || tabella.fullbody || [];
+}
+function seduteInConflitto(a, b, prefs) {
+  if (a === b) return true;
+  const ga = grandiDellaSeduta(a, prefs), gb = grandiDellaSeduta(b, prefs);
+  return ga.some(g => gb.indexOf(g) !== -1);
+}
+/* le coppie di sedute in giorni consecutivi (anche domenica-lunedi) che lavorano lo stesso grande muscolo */
+function conflittiDeiGiorni(tipi, indici, prefs) {
+  let n = 0;
+  for (let i = 0; i < tipi.length; i++) for (let j = i + 1; j < tipi.length; j++) if (giorniAdiacenti(indici[i], indici[j]) && seduteInConflitto(tipi[i], tipi[j], prefs)) n++;
+  return n;
+}
+/* il numero massimo di giorni di allenamento di fila, sulla settimana ad anello (7 se allenano tutti i giorni) */
+function giorniDiFilaCiclici(indici) {
+  const set = DAYS.map((x, i) => indici.indexOf(i) !== -1), riposo = set.indexOf(false);
+  if (riposo === -1) return DAYS.length;
+  let max = 0, corsa = 0;
+  for (let k = 1; k <= DAYS.length; k++) { if (set[(riposo + k) % DAYS.length]) { corsa++; if (corsa > max) max = corsa; } else corsa = 0; }
+  return max;
+}
+/* tutti gli ordini diversi delle sedute (due sedute dello stesso tipo non fanno due ordini) */
+function ordiniDistinti(tipi) {
+  const out = [];
+  const cerca = (ordine, resto) => {
+    if (!resto.length) { out.push(ordine); return; }
+    const provati = {};
+    resto.forEach((t, k) => { if (provati[t]) return; provati[t] = true; cerca(ordine.concat([t]), resto.slice(0, k).concat(resto.slice(k + 1))); });
+  };
+  cerca([], tipi.slice());
+  return out;
+}
+/* { indici, tipi, conflitti } se esiste una scelta con MENO conflitti dei giorni `base` (stesso numero di sedute, al massimo SOGLIE_SPLIT.giorniDiFilaMax giorni di fila); null se i giorni di sempre vanno
+   bene o non c e di meglio. Ordine di preferenza: conflitti, sedute riordinate, distanza dai giorni di sempre; a parita vince la prima trovata (i giorni piu a sinistra): il risultato non dipende dal caso */
+function giorniSenzaConflitti(tipi, base, prefs) {
+  const max = sogliaSplit('giorniDiFilaMax'), n = tipi.length;
+  const c0 = conflittiDeiGiorni(tipi, base, prefs);
+  if (!max || !c0) return null;
+  const ordini = ordiniDistinti(tipi);
+  let migliore = { c: c0, d: 0, s: 0, indici: base, tipi: tipi };
+  for (let mask = 1; mask < (1 << DAYS.length); mask++) {
+    const ind = [];
+    for (let b = 0; b < DAYS.length; b++) if (mask & (1 << b)) ind.push(b);
+    if (ind.length !== n || giorniDiFilaCiclici(ind) > max) continue;
+    const s = ind.reduce((t, x, k) => t + Math.abs(x - base[k]), 0);
+    ordini.forEach(o => {
+      const c = conflittiDeiGiorni(o, ind, prefs);
+      if (c > migliore.c) return;
+      const d = o.reduce((t, x, k) => t + (x !== tipi[k] ? 1 : 0), 0);
+      if (c < migliore.c || (c === migliore.c && (d < migliore.d || (d === migliore.d && s < migliore.s)))) migliore = { c: c, d: d, s: s, indici: ind, tipi: o };
+    });
+  }
+  return migliore.c < c0 ? { indici: migliore.indici, tipi: migliore.tipi, conflitti: migliore.c } : null;
+}
 function giorniSettimana(brief, split) {
   const giorni = brief.agenda.giorni, L = brief.lavoro;
   const sedute = split && Array.isArray(split.giorni) ? Math.min(split.giorni.length, giorni) : giorni;
   let indici = (GIORNI_PER_SEDUTE[sedute] || GIORNI_PER_SEDUTE[giorni] || [0, 2, 4]).slice();
-  if (split && sedute < giorni && brief.chi.livello === 'principiante' && giorni >= 5 && L && L.note && L.note.indexOf(NOTA_PRINCIPIANTE_4_SEDUTE) === -1) L.note.push(NOTA_PRINCIPIANTE_4_SEDUTE);
+  const inizio = sogliaSplit('principianteSedute');   /* PRG-02: chi comincia con 5-6 giorni ha 4 sedute; senza il file delle soglie vale il 5 di sempre */
+  if (split && sedute < giorni && brief.chi.livello === 'principiante' && giorni >= (inizio ? inizio.giorniDa : 5) && L && L.note && L.note.indexOf(NOTA_PRINCIPIANTE_4_SEDUTE) === -1) L.note.push(NOTA_PRINCIPIANTE_4_SEDUTE);
   if (split && sedute === 6) {
     const tipi = split.giorni.slice(0, 6);
     if (tipiAdiacenti(tipi, indici)) {
@@ -91,6 +162,16 @@ function giorniSettimana(brief, split) {
       else { L.split = Object.assign({}, split, { giorni: split.giorni.slice(0, 5) }); indici = GIORNI_PER_SEDUTE[5].slice(); if (L.note.indexOf(NOTA_SEI_GIORNI) === -1) L.note.push(NOTA_SEI_GIORNI); }
     }
     if (indici.length === 6 && L.note.indexOf(NOTA_SEI_GIORNI_DI_FILA) === -1) L.note.push(NOTA_SEI_GIORNI_DI_FILA);
+  }
+  /* PRG-02 (W2-T5): 3-5 sedute senza un metodo famoso: i giorni (e, se serve, l ordine) che non mettono lo stesso grande muscolo in due giorni di fila */
+  const corrente = split && (L.split || split);
+  if (corrente && Array.isArray(corrente.giorni) && indici.length >= 3 && indici.length <= 5 && !(brief.metodo && brief.metodo.attivo)) {
+    const tipi = corrente.giorni.slice(0, indici.length);
+    const scelta = giorniSenzaConflitti(tipi, indici, L && L.prefs);
+    if (scelta) {
+      indici = scelta.indici;
+      if (scelta.tipi.some((t, k) => t !== tipi[k])) L.split = Object.assign({}, corrente, { giorni: scelta.tipi.concat(corrente.giorni.slice(tipi.length)) });
+    }
   }
   brief.agenda.indiciGiorni = indici;
   return indici;

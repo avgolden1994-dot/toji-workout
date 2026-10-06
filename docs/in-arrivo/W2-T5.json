@@ -1,0 +1,7 @@
+{
+  "task": "W2-T5",
+  "script": [
+    { "src": "js/coach/programma/soglie-split.js", "dopo": "js/coach/programma/soglie-struttura.js" }
+  ],
+  "nota": "In lavorazione: il manifest si completa man mano (frasi, righe della mappa, squadra, mappa per agenti). Il file delle soglie e caricato da index.html solo dall integrazione: finche non c e, giorniSettimana tiene i giorni di sempre."
+}
