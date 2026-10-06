@@ -108,7 +108,7 @@ function briefCoach(d, prof0) {
     versione: 2, seme: seme,
     chi: chi,
     obiettivi: { dichiarati: dichiarati, lista: goals, primo: goals[0], scheme: schemaMisto(goals), fase: faseCorpo({ goals: goals, fase: d.fase || prof0.fase }),
-      modalita: 'generale' /* FRZ-01, EST-01 */, prioritaUnita: [] /* max 2, EST-02 (W2-T1) */ },
+      modalita: (typeof modalitaForzaDa === 'function' && modalitaForzaDa(d, prof0, goals)) || 'generale' /* FRZ-01 (W2-T7: la legge specialita/forza.js; la domanda e di W2-T5), EST-01 */, prioritaUnita: [] /* max 2, EST-02 (W2-T1) */ },
     agenda: { giorni: d.days /* come arriva: i controlli sui giorni lo leggono cosi */, minuti: Number(d.minutes) || 60, luogo: d.luogo || 'palestra',
       attrezziPalestra: d.attrezziPalestra !== undefined ? d.attrezziPalestra : (prof0.attrezziPalestra || null), passiPalestra: null /* W3-T1 */, freqScelta: freqScelta, indiciGiorni: null /* giorniSettimana */ },
     preferenze: { graditi: d.graditi || prof0.graditi || [], odiati: d.odiati || prof0.odiati || [], attrezzi: d.attrezzi || 'indifferente', varieta: 1 /* lo completa risolviMetodo */,
