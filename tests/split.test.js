@@ -123,3 +123,210 @@ test('REC-01 (collaudo) su programmi veri: con 4 e 5 giorni nessun grande muscol
   assert.strictEqual(tot, 288);
   assert.deepStrictEqual(brutti.slice(0, 6), [], 'programmi con un conflitto o oltre 4 giorni di fila: ' + brutti.length);
 });
+
+/* ---------------------------------------------------------------- CAS-01: gli attrezzi dichiarati ---------------------------------------------------------------- */
+const BASE = { goals: ['massa'], level: 'intermedio', days: 3, minutes: 60, fastidi: [], sex: 'M', age: 30, freq: 'auto', parq: 'no', sonno: 'bene', attrezzi: 'indifferente', priorita: [], usaProfilo: false, seme: 'attrezzi' };
+const con = (extra) => Object.assign({}, BASE, extra);
+
+test('CAS-01: attrezziDichiarati ripulisce e rende coerenti i tre campi con il luogo (manubri sempre in casa coi manubri, mai a corpo libero, kg solo coi manubri, extra solo in palestra)', () => {
+  const a = caricaConSoglie();
+  const f = (d, p) => a.json('attrezziDichiarati(' + JSON.stringify(d) + ', ' + JSON.stringify(p || {}) + ')');
+  assert.deepStrictEqual(f({ luogo: 'manubri' }), { attrezziCasa: null, manubriKg: null, extraPalestra: null }, 'chi non risponde: tutto null (come prima)');
+  assert.deepStrictEqual(f({ luogo: 'manubri', attrezziCasa: ['kettlebell', 'sbarra', 'inventato'], manubriKg: 12.3 }), { attrezziCasa: ['sbarra', 'kettlebell', 'manubri'], manubriKg: 12.5, extraPalestra: null }, 'id noti, ordine fisso, i manubri ci sono, kg al mezzo chilo');
+  assert.deepStrictEqual(f({ luogo: 'corpo', attrezziCasa: ['manubri', 'elastico'], manubriKg: 20, extraPalestra: ['anelli'] }), { attrezziCasa: ['elastico'], manubriKg: null, extraPalestra: null }, 'a corpo libero niente manubri ne kg ne extra della palestra');
+  assert.deepStrictEqual(f({ luogo: 'palestra', attrezziCasa: ['sbarra'], manubriKg: 20, extraPalestra: ['anelli', 'kettlebell', 'x'] }), { attrezziCasa: null, manubriKg: null, extraPalestra: ['kettlebell', 'anelli'] });
+  assert.deepStrictEqual(f({ luogo: 'palestra', extraPalestra: [] }).extraPalestra, [], '«nessuno di questi» e una risposta: elenco vuoto, non null');
+  assert.deepStrictEqual(f({ luogo: 'manubri', manubriKg: 0 }).manubriKg, null);
+  assert.deepStrictEqual(f({ luogo: 'manubri', manubriKg: 500 }).manubriKg, null, 'oltre il limite del campo (100 kg) non e un manubrio');
+  assert.deepStrictEqual(f({ luogo: 'manubri', manubriKg: 'abc' }).manubriKg, null);
+  assert.deepStrictEqual(f({ luogo: 'manubri' }, { luogo: 'manubri', attrezziCasa: ['panca'], manubriKg: 16 }), { attrezziCasa: ['panca', 'manubri'], manubriKg: 16, extraPalestra: null }, 'dal profilo salvato se le risposte non li dicono');
+  assert.deepStrictEqual(f({ luogo: 'manubri', attrezziCasa: [] }, { attrezziCasa: ['panca'] }).attrezziCasa, ['manubri'], 'le risposte vincono sul profilo');
+});
+
+test('CAS-01: il brief porta i tre campi (agenda.attrezziCasa, agenda.manubriKg, agenda.extraPalestra) e le preferenze li passano a consentito solo se detti; chi non risponde ha le prefs di sempre', () => {
+  const a = caricaConSoglie();
+  const brief = (d) => a.json('(function () { const b = briefCoach(' + JSON.stringify(d) + ', {}); b.sicurezza.vincoli = vincoliSicurezza(b); risolviMetodo(b); return { agenda: b.agenda, prefs: prefsDelBrief(b) }; })()');
+  const casa = brief(con({ luogo: 'manubri', attrezziCasa: ['sbarra', 'panca'], manubriKg: 14 }));
+  assert.deepStrictEqual([casa.agenda.attrezziCasa, casa.agenda.manubriKg, casa.agenda.extraPalestra], [['sbarra', 'panca', 'manubri'], 14, null]);
+  assert.deepStrictEqual([casa.prefs.attrezziCasa, casa.prefs.manubriKg, 'extraPalestra' in casa.prefs], [['sbarra', 'panca', 'manubri'], 14, false]);
+  const pal = brief(con({ luogo: 'palestra', extraPalestra: ['kettlebell'] }));
+  assert.deepStrictEqual([pal.agenda.attrezziCasa, pal.agenda.manubriKg, pal.agenda.extraPalestra], [null, null, ['kettlebell']]);
+  assert.deepStrictEqual(pal.prefs.extraPalestra, ['kettlebell']);
+  const niente = brief(con({ luogo: 'manubri' }));
+  assert.deepStrictEqual([niente.agenda.attrezziCasa, niente.agenda.manubriKg, niente.agenda.extraPalestra], [null, null, null]);
+  assert.deepStrictEqual(Object.keys(niente.prefs), ['luogo', 'fastidi', 'sonno', 'attrezzi', 'attrezziPalestra', 'graditi', 'odiati', 'priorita', 'esclusi'], 'nessuna chiave nuova senza risposta: i programmi di chi non risponde non cambiano');
+  /* il campo agenda.attrezziPalestra di prima non cambia (contratto: solo aggiunte) */
+  assert.deepStrictEqual(brief(con({ luogo: 'palestra', attrezziPalestra: ['bilanciere', 'manubri'] })).agenda.attrezziPalestra, ['bilanciere', 'manubri']);
+  /* ... e arrivano nel programma salvato (prog.prefs) */
+  const prog = a.dati(a.chiama('buildProgram', con({ luogo: 'manubri', attrezziCasa: ['panca'], manubriKg: 20 })));
+  assert.deepStrictEqual([prog.prefs.attrezziCasa, prog.prefs.manubriKg], [['panca', 'manubri'], 20]);
+});
+
+test('CAS-01: il profilo salvato dopo «Crea il programma» ha i campi dichiarati, e solo quelli; le sostituzioni (prefsCoach, prefsOccupato) li ricevono', () => {
+  const a = caricaConSoglie();
+  a.g('onbData = Object.assign(nuovoOnbData(), ' + JSON.stringify(con({ luogo: 'manubri', attrezziCasa: ['sbarra'], manubriKg: 18, sex: 'uomo', goal: 'massa' })) + ')');
+  a.g('applyGeneratedProgram()');
+  const salvato = a.leggi(a.chiave('PROFILE_KEY'));
+  assert.deepStrictEqual([salvato.attrezziCasa, salvato.manubriKg, 'extraPalestra' in salvato], [['sbarra', 'manubri'], 18, false]);
+  assert.deepStrictEqual(a.json('(function () { const p = prefsCoach(); return [p.attrezziCasa, p.manubriKg, "extraPalestra" in p]; })()'), [['sbarra', 'manubri'], 18, false]);
+  assert.deepStrictEqual(a.json('(function () { const p = prefsOccupato(); return [p.attrezziCasa, p.manubriKg]; })()'), [['sbarra', 'manubri'], 18]);
+  /* chi non risponde: nessuna chiave nel profilo */
+  const b = caricaConSoglie();
+  b.g('onbData = Object.assign(nuovoOnbData(), ' + JSON.stringify(con({ luogo: 'palestra', sex: 'uomo', goal: 'massa' })) + ')');
+  b.g('applyGeneratedProgram()');
+  const s2 = b.leggi(b.chiave('PROFILE_KEY'));
+  assert.deepStrictEqual(['attrezziCasa' in s2, 'manubriKg' in s2, 'extraPalestra' in s2], [false, false, false]);
+  /* rifare il programma dal profilo tiene quello che era stato detto */
+  a.g('onbData = Object.assign(nuovoOnbData(), { goals: ["massa"], goal: "massa", level: "intermedio", days: 3, minutes: 60, luogo: "manubri", sonno: "bene", attrezzi: "indifferente", sex: "uomo", age: 30, parq: "no", freq: "auto" })');
+  assert.deepStrictEqual(a.json('[onbData.attrezziCasa, onbData.manubriKg]'), [['sbarra', 'manubri'], 18], 'nuovoOnbData riparte dal profilo');
+});
+
+test('CAS-01 (onboarding): la domanda sugli attrezzi cambia con il luogo; i tocchi scrivono i campi del brief; i manubri a corpo libero non ci sono', () => {
+  const a = caricaConSoglie();
+  const html = (luogo) => { a.g('onbData = Object.assign(nuovoOnbData(), { luogo: ' + JSON.stringify(luogo) + ', attrezziPalestra: undefined, attrezziCasa: undefined, extraPalestra: undefined, manubriKg: undefined })'); return a.g('htmlAttrezziOnboarding()'); };
+  const pal = html('palestra');
+  assert.ok(/Cosa c’è nella tua palestra\?/.test(pal) && /onbToggleAttrezzoPalestra\('bilanciere'\)/.test(pal) && /onbToggleExtraPalestra\('kettlebell'\)/.test(pal) && /onbToggleExtraPalestra\('anelli'\)/.test(pal) && /onbToggleExtraPalestra\('elastico'\)/.test(pal), pal);
+  assert.strictEqual((pal.match(/aw-group on/g) || []).length, 4, 'senza risposta i quattro attrezzi della palestra completa sono accesi e i tre extra spenti');
+  const manubri = html('manubri');
+  assert.ok(/Cosa hai in casa\?/.test(manubri) && /onbToggleAttrezzoCasa\('sbarra'\)/.test(manubri) && /onbToggleAttrezzoCasa\('panca'\)/.test(manubri) && /onbToggleAttrezzoCasa\('elastico'\)/.test(manubri) && /onbToggleAttrezzoCasa\('kettlebell'\)/.test(manubri) && /onbToggleAttrezzoCasa\('anelli'\)/.test(manubri) && /Manubrio più pesante \(kg\)/.test(manubri) && /onbSetManubriKg/.test(manubri), manubri);
+  assert.ok(!/onbToggleAttrezzoCasa\('manubri'\)/.test(manubri), 'i manubri sono la scelta del luogo, non un chip');
+  const corpo = html('corpo');
+  assert.ok(/Cosa hai in casa\?/.test(corpo) && !/Manubrio più pesante/.test(corpo) && !/onbSetManubriKg/.test(corpo), corpo);
+  assert.strictEqual(html(null), '');
+  /* i tocchi */
+  a.g('onbData = Object.assign(nuovoOnbData(), { luogo: "manubri", attrezziCasa: undefined, manubriKg: undefined })');
+  a.g('onbToggleAttrezzoCasa("panca"); onbToggleAttrezzoCasa("elastico"); onbToggleAttrezzoCasa("panca"); onbSetManubriKg("22,5")');
+  assert.deepStrictEqual(a.json('[onbData.attrezziCasa, onbData.manubriKg]'), [['elastico'], 22.5]);
+  a.g('onbSetManubriKg("")');
+  assert.strictEqual(a.json('onbData.manubriKg'), null);
+  a.g('onbData = Object.assign(nuovoOnbData(), { luogo: "palestra", attrezziPalestra: undefined, extraPalestra: undefined })');
+  a.g('onbToggleAttrezzoPalestra("macchine"); onbToggleExtraPalestra("anelli")');
+  assert.deepStrictEqual(a.json('[onbData.attrezziPalestra, onbData.extraPalestra]'), [['bilanciere', 'manubri', 'sbarra'], ['anelli']], 'togliere un attrezzo crea l elenco; gli extra sono una risposta a parte');
+  a.g('onbToggleAttrezzoPalestra("macchine")');
+  assert.strictEqual(a.json('onbData.attrezziPalestra'), null, 'tutti e quattro di nuovo accesi = palestra completa = nessun elenco, come in Opzioni');
+});
+
+test('CAS-01 (Opzioni): palestra e casa hanno ognuna il suo gruppo di attrezzi, con gli stessi campi dell onboarding', () => {
+  const a = caricaConSoglie();
+  const pal = a.g('htmlAttrezziCoach(' + JSON.stringify({ luogo: 'palestra', extraPalestra: ['kettlebell'] }) + ')');
+  assert.ok(/Attrezzi della tua palestra/.test(pal) && /Altri attrezzi in palestra/.test(pal) && /toggleCoachLista\('extraPalestra','anelli'\)/.test(pal) && !/Attrezzi di casa/.test(pal), pal);
+  const casa = a.g('htmlAttrezziCoach(' + JSON.stringify({ luogo: 'manubri', attrezziCasa: ['panca'], manubriKg: 16 }) + ')');
+  assert.ok(/Attrezzi di casa/.test(casa) && /toggleCoachLista\('attrezziCasa','kettlebell'\)/.test(casa) && /setManubriKgCoach/.test(casa) && /value="16"/.test(casa) && !/Attrezzi della tua palestra/.test(casa), casa);
+  assert.ok(!/setManubriKgCoach/.test(a.g('htmlAttrezziCoach(' + JSON.stringify({ luogo: 'corpo' }) + ')')));
+  a.g('onbData = nuovoOnbData(); localStorage.setItem(PROFILE_KEY(), JSON.stringify({ luogo: "manubri", level: "intermedio" }))');
+  a.g('toggleCoachLista("attrezziCasa", "sbarra"); toggleCoachLista("attrezziCasa", "anelli"); setManubriKgCoach("24")');
+  assert.deepStrictEqual(a.json('[getProfile().attrezziCasa, getProfile().manubriKg]'), [['sbarra', 'anelli'], 24]);
+  a.g('setManubriKgCoach("")');
+  assert.strictEqual(a.json('"manubriKg" in getProfile()'), false);
+});
+
+/* ---------------------------------------------------------------- OBI-01, OBI-07, CAS-10, ETA-05, PRG-02 (onboarding) ---------------------------------------------------------------- */
+test('OBI-01: massa e dimagrimento insieme mostrano l avviso (non bloccante) con la scelta «Usa la ricomposizione»; il tocco sostituisce i due obiettivi, e solo lui', () => {
+  const a = caricaConSoglie();
+  assert.strictEqual(a.g('htmlAvvisoObiettivi(["massa"])'), '');
+  assert.strictEqual(a.g('htmlAvvisoObiettivi(["forza", "dimagrimento"])'), '');
+  const h = a.g('htmlAvvisoObiettivi(["forza", "massa", "dimagrimento"])');
+  assert.ok(/Costruire muscolo e perdere grasso insieme funziona bene se inizi o riparti/.test(h) && /Scegli una fase alla volta, oppure la ricomposizione/.test(h) && /Se li tieni entrambi, il primo che hai scelto guida il programma/.test(h) && /onbUsaRicomposizione\(\)/.test(h), h);
+  /* senza il tocco, niente cambia: la scelta resta, il programma si crea (il primo guida, la fase del corpo e il deficit: OBI-02) */
+  a.g('onbData = Object.assign(nuovoOnbData(), { goals: ["massa", "dimagrimento"], goal: "massa" })');
+  assert.deepStrictEqual(a.json('onbData.goals'), ['massa', 'dimagrimento']);
+  assert.strictEqual(a.json('faseDaObiettivi(["massa", "dimagrimento"])'), 'deficit', 'l avviso dice il vero: i passi seguono il dimagrimento anche se il primo e la massa');
+  assert.ok(a.json('buildProgram(' + JSON.stringify(con({ goals: ['massa', 'dimagrimento'] })) + ').note.some(n => /^Passi: 10-12 mila/.test(n))'), 'la nota dei passi c e davvero');
+  a.g('onbUsaRicomposizione()');
+  assert.deepStrictEqual(a.json('onbData.goals'), ['ricomposizione']);
+  assert.strictEqual(a.json('onbData.goal'), 'ricomposizione');
+  a.g('onbData = Object.assign(nuovoOnbData(), { goals: ["forza", "dimagrimento", "massa"], goal: "forza" })');
+  a.g('onbUsaRicomposizione()');
+  assert.deepStrictEqual(a.json('onbData.goals'), ['forza', 'ricomposizione'], 'la ricomposizione prende il posto del primo dei due, gli altri obiettivi restano');
+  a.g('onbData = Object.assign(nuovoOnbData(), { goals: ["salute"], goal: "salute" }); onbUsaRicomposizione()');
+  assert.deepStrictEqual(a.json('onbData.goals'), ['salute'], 'senza il conflitto il tocco non fa niente');
+});
+
+test('OBI-07: «tonificare» e il sottotitolo della ricomposizione (le chiavi degli obiettivi non cambiano)', () => {
+  const a = caricaConSoglie();
+  const r = a.json('ONB_GOALS.find(g => g.id === "ricomposizione")');
+  assert.strictEqual(r.desc, 'più muscolo, meno grasso: quello che molti chiamano tonificare');
+  assert.deepStrictEqual(a.json('ONB_GOALS.map(g => g.id)'), ['massa', 'dimagrimento', 'forza', 'ricomposizione', 'salute', 'glutei']);
+});
+
+test('CAS-10: il testo dei minuti non dice piu che sotto la mezz ora lo stimolo e scarso (nessuna fonte); dice cosa fa il coach con pochi minuti', () => {
+  const sorgente = fs.readFileSync(path.join(R, 'js/ui/onboarding.js'), 'utf8');
+  assert.ok(!/Sotto la mezz ora lo stimolo rischia di essere scarso/.test(sorgente));
+  assert.ok(/Con pochi minuti conta cosa metti: pochi esercizi completi, in coppia dove si può\./.test(sorgente));
+});
+
+test('CAS-10: metodoAmmesso accetta il metodo «minimo» a 20-45 minuti e 2-3 giorni (dati del metodo di W2-T2), non a 4 giorni e non senza il motivo', () => {
+  const a = caricaConSoglie();
+  const ps = 'psicoCoach({})';
+  const ammesso = (c) => a.json('(function () { const m = METODI.find(x => x.id === "minimo"); return metodoAmmesso(m, Object.assign({ level: "intermedio", days: 2, minuti: 20, luogo: "palestra", goals: ["salute"], ps: ' + ps + ', mo: null, cauto: false }, ' + JSON.stringify(c) + ')); })()');
+  assert.deepStrictEqual(a.json('METODI.find(x => x.id === "minimo").minuti'), [20, 45]);
+  assert.deepStrictEqual(a.json('METODI.find(x => x.id === "minimo").giorni'), [2, 3]);
+  assert.strictEqual(ammesso({}), true, '20 minuti, 2 giorni');
+  assert.strictEqual(ammesso({ days: 3, minuti: 30 }), true, '30 minuti, 3 giorni');
+  assert.strictEqual(ammesso({ days: 3, minuti: 35 }), true);
+  assert.strictEqual(ammesso({ days: 4, minuti: 30 }), false, '4 giorni: non e un metodo da 2-3');
+  assert.strictEqual(ammesso({ days: 2, minuti: 60 }), false, 'con 60 minuti la dose minima non serve');
+});
+
+test('PRG-02 (onboarding): chi comincia e sceglie 5 o 6 giorni legge, nel passo dei giorni, che avra 4 sedute (la stessa frase della nota del programma); gli altri non vedono niente', () => {
+  const a = caricaConSoglie();
+  const frase = a.g('NOTA_PRINCIPIANTE_4_SEDUTE');
+  assert.strictEqual(frase, 'A chi comincia bastano 4 sedute a settimana: gli altri giorni sono riposo o una camminata.');
+  ['5', '6'].forEach(n => assert.ok(a.g('htmlAvvisoGiorni("principiante", ' + n + ')').indexOf(frase) !== -1, n + ' giorni'));
+  ['2', '3', '4'].forEach(n => assert.strictEqual(a.g('htmlAvvisoGiorni("principiante", ' + n + ')'), '', n + ' giorni'));
+  assert.strictEqual(a.g('htmlAvvisoGiorni("intermedio", 6)'), '');
+  assert.strictEqual(a.g('htmlAvvisoGiorni(null, null)'), '');
+  /* e il programma fa quello che l avviso dice: 4 sedute con la stessa nota */
+  [5, 6].forEach(giorni => {
+    const prog = a.dati(a.chiama('buildProgram', con({ level: 'principiante', days: giorni, goals: ['salute'] })));
+    assert.strictEqual(prog.sedute.length, 4, giorni + ' giorni: 4 sedute');
+    assert.ok(prog.note.indexOf(frase) !== -1, giorni + ' giorni: la nota c e');
+  });
+});
+
+test('ETA-05: «Bene» per il sonno e 8 ore o piu per un minorenne (13-17 anni), 7 per gli altri; l eta scritta nel passo aggiorna il testo senza ridisegnarlo', () => {
+  const a = caricaConSoglie();
+  const d = (eta) => a.g('descSonnoBene(' + eta + ')');
+  assert.strictEqual(d(30), 'dormo 7 ore o piu, stress sotto controllo', 'identica al testo di sempre (la sua traduzione c e gia)');
+  assert.strictEqual(d('null'), 'dormo 7 ore o piu, stress sotto controllo');
+  assert.strictEqual(d(70), 'dormo 7 ore o piu, stress sotto controllo');
+  assert.strictEqual(d(17), 'dormo 8 ore o più, stress sotto controllo');
+  assert.strictEqual(d(13), 'dormo 8 ore o più, stress sotto controllo');
+  assert.strictEqual(d(18), 'dormo 7 ore o piu, stress sotto controllo');
+  assert.strictEqual(d(12), 'dormo 7 ore o piu, stress sotto controllo', 'sotto i 13 anni non c e programma: il testo non cambia');
+  assert.deepStrictEqual(a.json('SOGLIE_SPLIT.oreSonnoBene.v'), { adulto: 7, minorenne: 8 });
+});
+
+/* i passi dell onboarding disegnati davvero (renderOnb) su un DOM finto: le funzioni sono collegate ai passi, non solo scritte */
+function conDomFinto(a) {
+  const els = {};
+  const el = () => ({ innerHTML: '', innerText: '', textContent: '', disabled: false, style: {}, classList: { add() {}, remove() {} } });
+  a.ctx.document = { getElementById: id => (els[id] = els[id] || el()), querySelector: () => null, querySelectorAll: () => [], createElement: () => el(), head: { appendChild() {} } };
+  return els;
+}
+test('onboarding: i passi 0, 2, 3 e 4 mostrano l avviso massa+dimagrimento, il 4 sedute di chi comincia, il nuovo testo dei minuti e la domanda sugli attrezzi', () => {
+  const a = caricaConSoglie();
+  const els = conDomFinto(a);
+  const passo = (n, dati) => { a.g('onbData = Object.assign(nuovoOnbData(), ' + JSON.stringify(dati) + '); onbStep = ' + n + '; renderOnb()'); return els['onb-body'].innerHTML; };
+  const p0 = passo(0, { goals: ['massa', 'dimagrimento'], goal: 'massa' });
+  assert.ok(/id="onb-avviso-obiettivi"/.test(p0) && /Usa la ricomposizione/.test(p0) && /quello che molti chiamano tonificare/.test(p0), 'passo 0');
+  assert.ok(!/onb-avviso-obiettivi/.test(passo(0, { goals: ['massa'], goal: 'massa' })));
+  assert.ok(/id="onb-avviso-giorni"/.test(passo(2, { level: 'principiante', days: 5 })), 'passo 2: principiante con 5 giorni');
+  assert.ok(!/onb-avviso-giorni/.test(passo(2, { level: 'principiante', days: 3 })) && !/onb-avviso-giorni/.test(passo(2, { level: 'avanzato', days: 6 })));
+  const p3 = passo(3, { minutes: 45 });
+  assert.ok(/Con pochi minuti conta cosa metti/.test(p3) && !/Sotto la mezz ora/.test(p3), 'passo 3');
+  assert.ok(!/20 minuti/.test(p3), 'il generatore a 20 minuti sfora il tempo (collaudo, DUR-01): l opzione non c e');
+  const p4 = passo(4, { luogo: 'manubri', age: 16 });
+  assert.ok(/Cosa hai in casa\?/.test(p4) && /id="onb-manubri-kg"/.test(p4), 'passo 4: casa');
+  assert.ok(/id="onb-sonno-bene-desc">dormo 8 ore o più, stress sotto controllo</.test(p4), 'passo 4: sonno di un minorenne');
+  assert.ok(/id="onb-sonno-bene-desc">dormo 7 ore o piu, stress sotto controllo</.test(passo(4, { luogo: 'palestra', age: 40 })), 'passo 4: sonno di un adulto');
+  assert.ok(/Cosa c’è nella tua palestra\?/.test(passo(4, { luogo: 'palestra', age: 40 })), 'passo 4: palestra');
+  assert.ok(!/Cosa hai in casa|Cosa c’è nella tua palestra/.test(passo(4, { luogo: null, age: 40 })), 'senza luogo nessuna domanda');
+  /* l eta scritta aggiorna il testo del sonno senza ridisegnare il passo */
+  a.g('onbData.age = null');
+  els['onb-sonno-bene-desc'] = { textContent: '' };
+  a.g('onbSetEta("15")');
+  assert.strictEqual(els['onb-sonno-bene-desc'].textContent, 'dormo 8 ore o più, stress sotto controllo');
+  a.g('onbSetEta("40")');
+  assert.strictEqual(els['onb-sonno-bene-desc'].textContent, 'dormo 7 ore o piu, stress sotto controllo');
+});

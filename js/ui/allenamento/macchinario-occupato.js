@@ -62,8 +62,8 @@ function tastoOccupato(ev) {
 /* attrezzi e fastidi dell utente: solo con il consenso ai dati, come il resto del coach */
 function prefsOccupato() {
   const p = (coachAttivo() && getProfile()) || {};
-  return { luogo: p.luogo || 'palestra', fastidi: (p.fastidi || []).filter(f => f !== 'nessuno'),
-    attrezziPalestra: p.attrezziPalestra || null, graditi: p.graditi || [], odiati: p.odiati || [] };
+  return Object.assign({ luogo: p.luogo || 'palestra', fastidi: (p.fastidi || []).filter(f => f !== 'nessuno'),
+    attrezziPalestra: p.attrezziPalestra || null, graditi: p.graditi || [], odiati: p.odiati || [] }, attrezziSalvati(p, null));   /* CAS-01 (W2-T5) */
 }
 /* Stesso muscolo bersaglio (non solo stesso gruppo: un curl non diventa un pushdown).
    In ordine: stesso movimento, stesso tipo (multiarticolare o isolamento), attrezzo DIVERSO
