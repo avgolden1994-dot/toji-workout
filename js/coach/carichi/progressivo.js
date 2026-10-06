@@ -15,6 +15,9 @@
    - la BIA puo frenare: se la massa magra cala, niente aumenti
    Usa SOLO i dati dell utente, quindi funziona solo con il consenso.
    ============================================================ */
+/* arrotondamento numerico (0,5 kg se non si dice il passo). ALG-06 (P3-A): il CARICO di un esercizio va sulla griglia del suo attrezzo con
+   arrotondaAttrezzo(kg, nome, { modo }) (carichi/attrezzi.js; caricoInGriglia, caricoSalito, caricoSceso in regole-ricerca.js): questa resta per chi
+   non e ancora passato (prontezza.js, dolore-mattina.js: la fase 'carico' 95 riporta in griglia i carichi della catena) e come ripiego con ALG-06 spenta */
 function arrotonda(x, passo) { return Math.round(x / (passo || 0.5)) * (passo || 0.5); }
 
 function incrementoPer(nome) {
