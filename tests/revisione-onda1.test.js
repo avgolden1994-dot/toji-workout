@@ -110,7 +110,9 @@ test('M5: su una griglia di 324 programmi nessun intermedio o avanzato sano rice
      (RID-01/RID-02, W2-T6). Il numero scende solo se il generatore migliora: si aggiorna con il motivo, mai a mano per far passare la prova */
   /* onda 2c (INT-2b): 41 e non 40: il Front Squat e vietato a chi inizia e ai prudenti (SAF-05, abilita 3: vincoli.js) e in una seduta della griglia il suo posto lo prende uno squat alla macchina
      accanto a un altro (un doppione di scelta, W2-T6); nessuna seduta con lo squat di avvio e un altro squat (sopra, 0) */
-  assert.strictEqual(conDueSquat, 41, 'doppi squat nella griglia: erano 71 sul codice di prima, 45 con la capacita di W2-T2, 40 con il volume per muscolo');
+  /* W2-T5 (PRG-02): 40 e non 41: con i giorni scelti perche lo stesso grande muscolo non lavori in due giorni di fila (frequenza 3 con 4 o 5 giorni, push/pull/legs) una seduta della griglia non ha piu il secondo squat
+     alla macchina. Non e una correzione mirata ma l effetto dei giorni sulla guardia delle 48 ore (recuperoOk) e quindi sul sorteggio dei posti: il controllo che conta, nessuno squat di avvio con un altro squat, resta a 0 sopra */
+  assert.strictEqual(conDueSquat, 40, 'doppi squat nella griglia: erano 71 sul codice di prima, 45 con la capacita di W2-T2, 40 con il volume per muscolo, 41 con il Front Squat vietato, 40 con i giorni di W2-T5');
 });
 
 /* ============================================================================================================ M3 */
