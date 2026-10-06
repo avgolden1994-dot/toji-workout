@@ -17,9 +17,11 @@
      per ultimo, quando nessuna trazione ne lat machine e possibile (casa senza sbarra, palestra senza sbarra ne macchine). schemaDi
      pero non lo conta come tirata verticale (SCHEMI_RISERVA): se la contasse prenderebbe il posto della trazione e del lat anche
      in palestra, e strBilancia lo conterebbe come una tirata vera (collaudo EQ-01, PAT-01). */
+/* W2-T6: il pull-through ai cavi e una cerniera dell anca (attributo schema «hinge»): senza il nome nella regex la settimana col solo pull-through sembrava senza hinge e PRG-21 aggiungeva uno
+   Stacco Rumeno col bilanciere (abilita 2) a chi inizia, e le famiglie dei glutei (PRG-22) un altro */
 const SCHEMI_MOV = [
   ['squat', /squat|leg press|affondi|step-up|pendulum/i, 'Squat'],
-  ['hinge', /stacco|good morning|hyperextension/i, 'Hinge'],
+  ['hinge', /stacco|good morning|hyperextension|pull-through/i, 'Hinge'],
   ['spintaO', /panca (piana|inclinata|declinata)|chest press|piegamenti|dip alle/i, 'Spinta orizzontale'],
   ['tirataO', /rematore|t-bar|pulley basso/i, 'Tirata orizzontale'],
   ['spintaV', /military|lento avanti|arnold|shoulder press|pike push/i, 'Spinta verticale'],
@@ -75,7 +77,7 @@ function schienaLombare(nome) {
 }
 const GLUTEI_FAMIGLIE = [
   ['spinta', /hip thrust|ponte glutei/i, 'Hip Thrust'], ['squat', /squat|affondi|leg press/i, 'Affondi Bulgari'],
-  ['stacco', /stacco|hyperextension|good morning/i, 'Stacco Rumeno'], ['abduzione', /abductor|slanci|kickback ai cavi/i, 'Abductor Machine']
+  ['stacco', /stacco|hyperextension|good morning|pull-through/i, 'Stacco Rumeno'], ['abduzione', /abductor|slanci|kickback ai cavi/i, 'Abductor Machine']
 ];
 const VOLUME_LIVELLO = { principiante: [8, 10], intermedio: [10, 14], avanzato: [14, 20] };
 const GRUPPI_PRINCIPALI = ['petto', 'schiena', 'gambe', 'spalle', 'braccia', 'glutei'];

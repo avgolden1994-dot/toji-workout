@@ -37,6 +37,19 @@ function vincoliSicurezza(brief) {
   ['Front Squat', 'Tirate al Mento (Upright Row)', 'Ab Wheel'].map(nomeInLibreria).forEach(n => {
     if (n && (chi.cauto || chi.principiante)) vincoli.vietati[n] = 'abilita 3: non per i prudenti ne per chi inizia (SEL-06, collaudo SAF-05)';
   });
+  /* SEL-06 (W2-T6; assorbe PRI-05): abilita <= livello. Chi inizia e i prudenti (over 65, PAR-Q positivo, minorenni) non ricevono esercizi di abilita 3 (attributo `abilita` di attributi-esercizi.js: Affondi
+     Bulgari, Sissy Squat, Pike Push-up, Piegamenti Declinati, Dip, Trazioni libere, Stacco da Terra, Good Morning, Mountain Climber...): i tre elenchi di sopra erano a mano, il collaudo SAF-05 ne vedeva
+     uno solo (Pike) e una scheda per chi inizia a corpo libero aveva quattro esercizi di abilita 3 insieme. Un metodo famoso scelto dall utente (d.metodo: Starting Strength, StrongLifts...) porta i suoi
+     esercizi (lo Stacco da Terra): la regola non lo svuota. Si legge il dato, non il nome; senza il file delle soglie (soglie-selezione.js) resta quello di prima */
+  const abMax = typeof sogliaSelezione === 'function' ? sogliaSelezione('abilitaMax') : null;
+  const metodoDellUtente = !!(brief.grezzo && brief.grezzo.d && brief.grezzo.d.metodo && brief.grezzo.d.metodo !== 'coach');
+  if (abMax && (chi.principiante || chi.cauto) && !metodoDellUtente && typeof attributi === 'function' && regolaAttiva('SEL-06')) {
+    const massimo = chi.cauto ? abMax.prudente : abMax.principiante;
+    EXERCISE_LIBRARY.forEach(e => {
+      const a = attributi(e.name);
+      if (a && a.abilita > massimo && !vincoli.vietati[e.name]) vincoli.vietati[e.name] = 'abilita ' + a.abilita + ': non per chi inizia ne per i prudenti (SEL-06, collaudo SAF-05)';
+    });
+  }
   /* INT-2a (M5 della revisione dell onda 1): gli esercizi di avvio (attributo soloAvvio: Squat su Scatola, Sit-to-Stand dalla Panca) sono la progressione verso lo squat carico:
      li ricevono chi inizia e i prudenti. Prima, senza nessuna regola, lo Squat su Scatola entrava in 951 programmi su 1800 di una griglia di prova, anche degli avanzati,
      al posto di uno squat con un carico. Si legge l attributo, non il nome */

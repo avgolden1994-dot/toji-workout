@@ -24,7 +24,7 @@ const FLESSIONE = /leg curl|nordic/i;
 test('M6: a 2 giorni e 30 minuti in palestra la flessione del ginocchio manca solo dove il tempo non basta, e il programma lo dice', () => {
   /* griglia di 144 programmi: livello x obiettivi x fastidi x sesso, seme fisso. Sul codice di prima (tag coach-v2-onda-2d) 107 non avevano una flessione del ginocchio (leg curl, nordic): la scala
      del tempo toglieva serie ai multiarticolari e poi, per ultimo, il leg curl, perche la seduta full body teneva due multiarticolari di gambe di schema diverso (squat e stacco rumeno) oltre a spinta e tirata.
-     Dopo: 16, tutti con un obiettivo di forza in seconda posizione (posti fissi 5x5 e pause lunghe) o il minimo di serie di petto e dorsali che nessun taglio puo scendere (registro B6, pavimenti) */
+     Dopo: 12, quasi tutti con un obiettivo di forza in seconda posizione (posti fissi 5x5 e pause lunghe) o il minimo di serie di petto e dorsali che nessun taglio puo scendere (registro B6, pavimenti) */
   const senza = [];
   let n = 0;
   ['principiante', 'intermedio', 'avanzato'].forEach(level => [['massa'], ['glutei'], ['massa', 'forza'], ['dimagrimento'], ['forza', 'massa'], ['salute']].forEach(goals =>
@@ -36,7 +36,7 @@ test('M6: a 2 giorni e 30 minuti in palestra la flessione del ginocchio manca so
       }
     }))));
   assert.strictEqual(n, 144);
-  assert.ok(senza.length <= 16, 'senza flessione: ' + senza.length + ' su 144 (107 prima della correzione): ' + senza.join(', '));
+  assert.ok(senza.length <= 12, 'senza flessione: ' + senza.length + ' su 144 (107 prima della correzione): ' + senza.join(', '));
   const senzaForza = senza.filter(x => !/forza/.test(x.split('|')[1]));
   assert.ok(senzaForza.length <= 2, 'senza un obiettivo di forza: ' + senzaForza.join(', '));
 });

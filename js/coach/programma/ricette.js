@@ -108,6 +108,12 @@ function componiSedute(brief, split) {
   const L = brief.lavoro, prefs = L.prefs, nEs = L.nEs, sostituzioni = L.sostituzioni, indiciGiorni = brief.agenda.indiciGiorni;
   const testFisici = brief.test, fattoreVarieta = brief.preferenze.varieta;
   const visti = {};
+  /* SEL-06 / PRI-05 (W2-T6): per chi inizia (e non punta alla forza) il bilanciere pesante non prende piu il bonus del primo posto e i posti si riempiono con le prime scelte della tabella 3.4 della nota dei
+     principianti (macchine, manubri e corpo libero con appoggio: abilita 1); il bilanciere arriva dopo. Senza il file delle soglie (soglie-selezione.js) resta com era */
+  const primeScelte = level === 'principiante' && !metodoAttivo && goals[0] !== 'forza' && typeof sogliaSelezione === 'function' && sogliaSelezione('abilitaMax') !== null && regolaAttiva('SEL-06');
+  /* PAR-08 (W2-T8, penalitaPartenza): il bilanciere che per questa persona partirebbe sotto la barra da 20 kg vale -3 nel posto; una volta per nome e per programma */
+  const penalita = {};
+  const penPartenza = (x) => { if (typeof penalitaPartenza !== 'function') return 0; if (penalita[x.name] === undefined) penalita[x.name] = penalitaPartenza(x, brief) || 0; return penalita[x.name]; };
 
   /* variazione: ogni programma (e ogni ciclo) esce diverso, ma e ripetibile col suo seme */
   const rng = rngDa(brief.seme);
@@ -148,7 +154,7 @@ function componiSedute(brief, split) {
       if (slot === 'glutSpinta' && base.some(y => SLOT_DEF.glutSpinta(y))) return;
       const tutti = EXERCISE_LIBRARY.filter(x => def(x) && !base.some(y => y.name === x.name));
       if (!tutti.length) return;
-      const pesante = (pos === 0 || (metodoAttivo && metodoAttivo.pesanti)) && !cauto && !(metodoAttivo && metodoAttivo.leggeri);   /* leggeri: Gironda, 8x8 con macchine e pesi moderati */
+      const pesante = (pos === 0 || (metodoAttivo && metodoAttivo.pesanti)) && !cauto && !(metodoAttivo && metodoAttivo.leggeri) && !primeScelte;   /* leggeri: Gironda, 8x8 con macchine e pesi moderati; SEL-06: chi inizia senza obiettivo forza non ha il +3 del bilanciere */
       const fisso = pesante && goals[0] === 'forza';
       const prio = (x) => (PRIORI[x.name.replace(EMOJI_TESTA, '')] || 0) + (pesante && tipoCarico(x.name) === 'pesante' ? 3 : 0) - (cauto && tipoCarico(x.name) === 'pesante' ? 3 : 0);
       const migliore = tutti.slice().sort((x, y) => prio(y) - prio(x))[0];
@@ -180,6 +186,7 @@ function componiSedute(brief, split) {
         if (!fisso) v += rng() * (level === 'principiante' ? 1 : 2.5) * fattoreVarieta;    /* la variazione del coach, dosata sul gusto */
         if (ps.disagio && !fisso && attrezzoDi(senzaEmoji(x.name)) === 'bilanciere') v -= 2;   /* a disagio: meno bilanciere, meno postazioni */
         if (strRidondante(x, base)) v -= 4;   /* ABB-02: non due esercizi che fanno lo stesso lavoro */
+        if (!fisso && !metodoAttivo) v += penPartenza(x);   /* PAR-08: il bilanciere che partirebbe sotto la barra vuota cede il posto alla variante con manubri o macchina (non per la forza ne per un metodo famoso: li il bilanciere resta) */
         if (vietaSchiena && strSchiena(x.name)) v -= 5;   /* ABB-07: due giorni di fila, schiena pesante una volta sola */
         return v;
       };
@@ -195,6 +202,9 @@ function componiSedute(brief, split) {
         else if (slot.replace(/\d$/, '') === 'hinge') { senzaCandidati(); return; }
         else if (slot === 'unilaterale') return;   /* lo stacco rumeno a una gamba (le ginocchia dolenti tolgono gli affondi): il posto non e un fondamentale, resta vuoto */
       }
+      /* SEL-06 (PRI-05, tabella 3.4): chi inizia parte dalle prime scelte, esercizi di abilita 1 (macchine, manubri, corpo libero con appoggio); un esercizio di abilita 2 entra solo dove il posto non ha un esercizio di
+         abilita 1 consentito (altrimenti resterebbe senza spinta, tirata, squat o cerniera dell anca: meglio uno di abilita 2 che nessuno). Non per l obiettivo forza: li il bilanciere resta */
+      if (primeScelte) { const facili = ordinati.filter(x => (livelloAbilita(x.name) || 1) < 2); if (facili.length) ordinati = facili; }
       const scelta = ordinati.find(x => !strRidondante(x, base)) || ordinati[0];
       /* RID-01 (W1-T6): il secondo posto dello stesso tipo (squat2, spintaO2, isoBic2) non diventa un TERZO esercizio che fa lo stesso lavoro di due gia scelti (nemmeno l eccezione dello
          squat o dei glutei ne ammette tre): a corpo libero lo squat, gli affondi e lo squat su scatola finivano nella stessa seduta, tre esercizi solo per i quadricipiti. Il posto resta

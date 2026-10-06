@@ -256,6 +256,10 @@ function strAntagonisti(a, b) {
   return (ua === 'Bicipiti' && ub === 'Tricipiti') || (ua === 'Tricipiti' && ub === 'Bicipiti') || (ua === 'Quadricipiti' && ub === 'Femorali') || (ua === 'Femorali' && ub === 'Quadricipiti');
 }
 function strPuoSuperserie(e) { return !isTimeBased(e.name) && strMeta(e).group !== 'core' && tipoCarico(e.name) !== 'pesante'; }
+/* ORD-03 (W2-T6; ACSM 2009: grandi gruppi prima dei piccoli): un multiarticolare di spalle o braccia e «piccolo», uno di gambe o di glutei (squat, affondo, cerniera dell anca anche al cavo, spinta d anca)
+   e «basso». Li usano ordinaSedute (completamenti.js) e strSuperserie: una coppia che porta il partner subito dopo il primo non lo mette prima di un multiarticolare di gambe che lo precedeva */
+window.strPiccoloMulti = function(e) { const m = strMeta(e); return m.type === 'compound' && !isTimeBased(e.name) && (m.group === 'spalle' || m.group === 'braccia'); };
+window.strBassoMulti = function(e) { const m = strMeta(e); return m.type === 'compound' && !isTimeBased(e.name) && (eMultiDiGambe(e) || SLOT_DEF.glutSpinta(m)); };
 /* mette in coppia (adiacenti, il secondo col segno `superset`) gli antagonisti; ritorna quante coppie */
 window.strSuperserie = function(sd, max) {
   const es = sd.esercizi;
@@ -266,7 +270,8 @@ window.strSuperserie = function(sd, max) {
     let j = -1;
     for (let k = i + 1; k <= Math.min(es.length - 1, i + 3); k++) {
       /* stesso numero di serie (W0-T7, collaudo DUR-01): il modello del tempo conta tanti giri quanti ne fa l esercizio con piu serie, e una coppia 5+2 sovrastima i minuti */
-      if (strPuoSuperserie(es[k]) && strAntagonisti(es[i], es[k]) && strTier(es[i]) === strTier(es[k]) && es[i].sets === es[k].sets) { j = k; break; }
+      if (strPuoSuperserie(es[k]) && strAntagonisti(es[i], es[k]) && strTier(es[i]) === strTier(es[k]) && es[i].sets === es[k].sets &&
+        !(k > i + 1 && strPiccoloMulti(es[k]) && es.slice(i + 1, k).some(strBassoMulti))) { j = k; break; }   /* ORD-03: non scavalca un multiarticolare di gambe */
     }
     if (j === -1) continue;
     if (j > i + 1) es.splice(i + 1, 0, es.splice(j, 1)[0]);

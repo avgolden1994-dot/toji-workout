@@ -202,7 +202,8 @@ const NOTE_REGIONALI = [
   ['Tricipiti: un esercizio diretto', e => strMeta(e).group === 'braccia' && strSub(e) === 'Tricipiti' && strMeta(e).type !== 'compound'],
   ['Core: un esercizio a fine seduta', e => strMeta(e).group === 'core'],
   ['Retto femorale: cresce solo con la leg extension', e => /leg extension/i.test(senzaEmoji(e.name))],
-  ['Spalle larghe: la panca copre', e => /alzate laterali/i.test(senzaEmoji(e.name))]
+  ['Spalle larghe: la panca copre', e => /alzate laterali/i.test(senzaEmoji(e.name))],
+  ['Con la spalla delicata ho aggiunto', e => typeof RX_CUFFIA !== 'undefined' && RX_CUFFIA.test(senzaEmoji(e.name))]   /* PCO-08 (W2-T6): se il taglio per il tempo ha tolto il lavoro per la cuffia la nota non resta */
 ];
 function riconciliaNote(prog) {
   const nomi = [];

@@ -342,6 +342,24 @@ const NOTA_FEMORALI_TEMPO = 'Femorali: con questi minuti la flessione del ginocc
    anche sopra i 45 minuti (ABB-06: mai con un fondamentale pesante); 3) via il core e le braccia dirette (non quelli che coprono un buco della settimana: `protetto`); 4) serie da 3 a 2 sui non prioritari;
    5) gli isolamenti uno alla volta; ultima risorsa (DUR-01): un isolamento protetto. Mai sotto i pavimenti, mai sotto i quattro schemi base per due serie. `passi` conta cosa e servito (le note) */
 function scalaDelTempo(brief, sd, sedute, opz, minutiEff, passi) {
+  /* M6 (W2-T6, revisione INT-2d; collaudo EQ-03:flessione): a 2 giorni e 30 minuti in palestra la seduta full body ha due multiarticolari di gambe di schema DIVERSO (squat e stacco rumeno) oltre a una
+     spinta e a una tirata, e il leg curl, l unica flessione della settimana, usciva per ultimo (la scala toglieva serie ai multiarticolari e poi lui). La flessione vale piu di una seconda cerniera dell anca o
+     di un secondo squat (registro B6: una flessione a settimana): se la seduta la tiene, sfora i minuti e ha due multiarticolari di gambe, si prova prima senza il piu caro dei due (secondoDiGambe,
+     completamenti.js) e si tiene la mossa SOLO se la flessione resta in scheda; se la scala la toglie comunque, tutto torna com era e la scala gira senza la mossa (togliere il secondo di gambe e perdere
+     comunque la flessione sarebbero due perdite). Un solo secondo di gambe per seduta: la mossa si prova una volta */
+  const secondo = sd.esercizi.some(e => unicaFlessioneSettimana(brief, sedute, e)) && durataSeduta(sd.esercizi, opz) > minutiEff * (1 + PARAM_TEMPO.tolleranzaSforamento) ? secondoDiGambe(sd, sedute, opz) : null;
+  if (secondo) {
+    const lista = sd.esercizi.slice(), stato = lista.map(e => [e, e.sets, e.rest, e.superset]), copiaPassi = Object.assign({}, passi), note = brief.lavoro.note.slice();
+    togliEsercizio(sd, secondo);
+    scalaDelTempoBase(brief, sd, sedute, opz, minutiEff, passi);
+    if (sd.esercizi.some(eFlessioneGinocchio)) { passi.tagli++; return; }
+    sd.esercizi.splice(0, sd.esercizi.length, ...lista);
+    stato.forEach(x => { x[0].sets = x[1]; x[0].rest = x[2]; if (x[3]) x[0].superset = x[3]; else delete x[0].superset; });
+    Object.assign(passi, copiaPassi); brief.lavoro.note.splice(0, brief.lavoro.note.length, ...note);
+  }
+  scalaDelTempoBase(brief, sd, sedute, opz, minutiEff, passi);
+}
+function scalaDelTempoBase(brief, sd, sedute, opz, minutiEff, passi) {
   const chi = brief.chi, goals = brief.obiettivi.lista, ob = obiettivoDellaSeduta(brief, sedute.indexOf(sd)), prio = brief.lavoro.prefs.priorita, metodoAttivo = brief.metodo.attivo;
   const limite = minutiEff * (1 + PARAM_TEMPO.tolleranzaSforamento), T = () => durataSeduta(sd.esercizi, opz);
   if (T() <= limite) return;
@@ -383,13 +401,6 @@ function scalaDelTempo(brief, sd, sedute, opz, minutiEff, passi) {
   };
   via(e => group(e) === 'core');
   via(e => group(e) === 'braccia' && !comp(e));
-  /* M6 (W2-T6, revisione INT-2d; collaudo EQ-03:flessione): la seduta full body che tiene l unica flessione del ginocchio e ha due multiarticolari di gambe lascia il posto al piu caro dei due (secondoDiGambe,
-     completamenti.js) prima di togliere serie: prima la scala toglieva serie ai multiarticolari e poi, per ultima, la flessione */
-  for (let g = 0; g < 2 && T() > limite && sd.esercizi.some(unicaFlessione) && sd.esercizi.length > 3; g++) {
-    const secondo = secondoDiGambe(sd, sedute, opz);
-    if (!secondo) break;
-    togliEsercizio(sd, secondo); passi.tagli++;
-  }
   /* 4) le serie da 3 a 2 sui non prioritari, una alla volta: prima gli isolamenti, poi i multiarticolari (spinte prima delle tirate: ABB-04) e per ultimo il fondamentale della seduta (M4: il lavoro pesante e
      quello che conta); 5) poi gli isolamenti uno alla volta, il core per ultimo */
   const fondamentale = sd.esercizi.find(e => comp(e) && !isTimeBased(e.name));
