@@ -364,8 +364,12 @@ test('B29 (SES-03, MIS-01, FRQ-01): ogni seduta di gambe (lower, legs, full body
   });
   assert.deepStrictEqual(colpe, [], 'sedute di gambe senza femorali');
   assert.ok(controllate > 100, 'sedute controllate: ' + controllate);
-  /* da 2 giorni: almeno una flessione del ginocchio nella settimana, anche per la salute; 2 serie ai principianti, 3 agli altri (salvo i tagli per il tempo) */
-  [['principiante', 2], ['intermedio', 3]].forEach(([level, serie]) => [2, 3].forEach(days => {
+  /* da 2 giorni: almeno una flessione del ginocchio nella settimana, anche per la salute; 2 serie ai principianti, agli altri 3 con 3 giorni e 2 con 2 giorni (salvo i tagli per il tempo).
+     INT-2b: il «3 serie da 2 giorni» era il numero del ponte di W0-T2; la tabella B6 dei pavimenti di serie dirette (W2-T1, colonna «Salute, dimagrimento») dice 2 serie di flessione del ginocchio
+     per la salute, con qualunque numero di giorni: con 2 giorni il leg curl e da 2 serie (e lo stacco rumeno porta il resto dei femorali), con 3 giorni il solutore ne mette 3 dove c e posto. Il test
+     profili salute e un controllo del ponte: il pavimento per la salute non e piu «3 serie» */
+  [['principiante', 2], ['intermedio', 3]].forEach(([level, serieBase]) => [2, 3].forEach(days => {
+    const serie = level === 'intermedio' && days === 2 ? 2 : serieBase;
     const prog = costruisci(Object.assign({}, BASE, { goals: ['salute'], level, days, minutes: 60, seme: 'fem-' + level + days }));
     const flex = [].concat.apply([], prog.sedute.map(sd => sd.esercizi.filter(flessione)));
     assert.ok(flex.length >= 1, level + ' ' + days + ' giorni: nessuna flessione nella settimana');
