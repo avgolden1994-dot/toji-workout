@@ -341,6 +341,17 @@ const NOTA_FEMORALI_TEMPO = 'Femorali: con questi minuti la flessione del ginocc
 /* i passi del taglio su UNA seduta (la scala di CAS-07, ricerca-casa-poco-tempo 5.4): 1) pause al minimo della classe (la classe A della forza non si taglia); 2) coppie antagoniste se fanno risparmiare,
    anche sopra i 45 minuti (ABB-06: mai con un fondamentale pesante); 3) via il core e le braccia dirette (non quelli che coprono un buco della settimana: `protetto`); 4) serie da 3 a 2 sui non prioritari;
    5) gli isolamenti uno alla volta; ultima risorsa (DUR-01): un isolamento protetto. Mai sotto i pavimenti, mai sotto i quattro schemi base per due serie. `passi` conta cosa e servito (le note) */
+/* P3-G (FRQ-01, M6): quante unita grandi (quadricipiti, femorali, glutei, petto, dorsali) scenderebbero sotto le 2 sedute che contano (da serieMinSeduta serie frazionarie, come il collaudo FRQ-01) togliendo
+   l esercizio `e` dalla seduta `sd`. Il secondo di gambe che lascia il posto alla flessione del ginocchio e quello che costa meno alla frequenza: a 2 giorni e 30 minuti usciva lo squat (il piu caro in minuti) e
+   restava una cerniera senza carico da 2 serie, che non conta per i femorali: i quadricipiti restavano in una seduta sola */
+function frequenzaPersa(sedute, sd, e) {
+  if (typeof creditiUnita !== 'function' || typeof sogliaVolume !== 'function') return 0;
+  const minimo = sogliaVolume('serieMinSeduta'), sedMin = sogliaVolume('seduteMinimeUnita');
+  const cr = creditiUnita(e.name);
+  const fraz = (x, u, senza) => x.esercizi.reduce((t, y) => t + (y === senza ? 0 : (Number(y.sets) || 0) * (creditiUnita(y.name)[u] || 0)), 0);
+  return ['quadricipiti', 'femorali', 'grande_gluteo', 'petto', 'dorsali'].filter(u => cr[u] > 0 &&
+    sedute.filter(x => fraz(x, u) >= minimo - 1e-9).length >= sedMin && sedute.filter(x => fraz(x, u, x === sd ? e : null) >= minimo - 1e-9).length < sedMin).length;
+}
 function scalaDelTempo(brief, sd, sedute, opz, minutiEff, passi) {
   /* M6 (W2-T6, revisione INT-2d; collaudo EQ-03:flessione): a 2 giorni e 30 minuti in palestra la seduta full body ha due multiarticolari di gambe di schema DIVERSO (squat e stacco rumeno) oltre a una
      spinta e a una tirata, e il leg curl, l unica flessione della settimana, usciva per ultimo (la scala toglieva serie ai multiarticolari e poi lui). La flessione vale piu di una seconda cerniera dell anca o
@@ -348,7 +359,7 @@ function scalaDelTempo(brief, sd, sedute, opz, minutiEff, passi) {
      tolto senza bisogno lasciava i quadricipiti a una seduta sola: collaudo FRQ-01, 3,6% dei programmi). Solo se la scala la toglie, e la seduta ha due multiarticolari di gambe, si prova senza il piu caro dei due
      (secondoDiGambe, completamenti.js) e si tiene la mossa SOLO se la flessione resta; se la scala la toglie comunque, tutto torna com era (togliere il secondo di gambe e perdere comunque la flessione sarebbero
      due perdite). Un solo secondo di gambe per seduta: la mossa si prova una volta */
-  const secondo = sd.esercizi.some(e => unicaFlessioneSettimana(brief, sedute, e)) && durataSeduta(sd.esercizi, opz) > minutiEff * (1 + PARAM_TEMPO.tolleranzaSforamento) ? secondoDiGambe(sd, sedute, opz) : null;
+  const secondo = sd.esercizi.some(e => unicaFlessioneSettimana(brief, sedute, e)) && durataSeduta(sd.esercizi, opz) > minutiEff * (1 + PARAM_TEMPO.tolleranzaSforamento) ? secondoDiGambe(sd, sedute, opz, (e) => frequenzaPersa(sedute, sd, e)) : null;
   if (secondo) {
     const lista = sd.esercizi.slice(), stato = lista.map(e => [e, e.sets, e.rest, e.superset]), copiaPassi = Object.assign({}, passi), note = brief.lavoro.note.slice();
     const ripristina = () => {
@@ -356,17 +367,20 @@ function scalaDelTempo(brief, sd, sedute, opz, minutiEff, passi) {
       stato.forEach(x => { x[0].sets = x[1]; x[0].rest = x[2]; if (x[3]) x[0].superset = x[3]; else delete x[0].superset; });
       Object.assign(passi, copiaPassi); brief.lavoro.note.splice(0, brief.lavoro.note.length, ...note);
     };
-    scalaDelTempoBase(brief, sd, sedute, opz, minutiEff, passi);
-    if (sd.esercizi.some(eFlessioneGinocchio)) return;   /* la scala di sempre basta: la flessione c e */
-    ripristina();
-    togliEsercizio(sd, secondo);
-    scalaDelTempoBase(brief, sd, sedute, opz, minutiEff, passi);
-    if (sd.esercizi.some(eFlessioneGinocchio)) { passi.tagli++; return; }
-    ripristina();
+    const prova = (larga) => { scalaDelTempoBase(brief, sd, sedute, opz, minutiEff, passi, larga); if (sd.esercizi.some(eFlessioneGinocchio)) return true; ripristina(); return false; };
+    const senzaSecondo = () => { togliEsercizio(sd, secondo); if (prova(true)) { passi.tagli++; return true; } return false; };
+    /* P3-G (M6): 1) la scala di sempre, senza scendere sotto i pavimenti: se tiene la flessione, basta; 2) un secondo di gambe che non costa niente alla frequenza dei muscoli grandi (frequenzaPersa = 0: la
+       seconda cerniera quando l altra seduta ha uno stacco) lascia il posto prima che la scala scenda sotto i pavimenti (altrimenti tutto a 2 serie, cinque esercizi in 30 minuti); 3) la scala che puo scendere
+       sotto i pavimenti per tenere la flessione; 4) il secondo che costa (il secondo squat che fa i quadricipiti della seduta) solo se nemmeno cosi la flessione resta */
+    if (prova(false)) return;
+    const costo = frequenzaPersa(sedute, sd, secondo);
+    if (costo === 0 && senzaSecondo()) return;
+    if (prova(true)) return;
+    if (costo > 0 && senzaSecondo()) return;
   }
-  scalaDelTempoBase(brief, sd, sedute, opz, minutiEff, passi);
+  scalaDelTempoBase(brief, sd, sedute, opz, minutiEff, passi, true);
 }
-function scalaDelTempoBase(brief, sd, sedute, opz, minutiEff, passi) {
+function scalaDelTempoBase(brief, sd, sedute, opz, minutiEff, passi, larga) {
   const chi = brief.chi, goals = brief.obiettivi.lista, ob = obiettivoDellaSeduta(brief, sedute.indexOf(sd)), prio = brief.lavoro.prefs.priorita, metodoAttivo = brief.metodo.attivo;
   const limite = minutiEff * (1 + PARAM_TEMPO.tolleranzaSforamento), T = () => durataSeduta(sd.esercizi, opz);
   if (T() <= limite) return;
@@ -462,6 +476,19 @@ function scalaDelTempoBase(brief, sd, sedute, opz, minutiEff, passi) {
     const f = sd.esercizi.filter(e => e.fisso && e.sets > 3).sort((a, b) => b.sets - a.sets)[0];
     if (!f) break;
     f.sets--; passi.tagli++;
+  }
+  /* P3-G (M6, EQ-03:flessione): prima di togliere l unica flessione si toglie una serie alla volta (fino a 2 per esercizio, il fondamentale e i prioritari per ultimi, prima chi ne ha di piu) anche sotto i pavimenti
+     di volume del taglio: togliere la flessione porta i femorali piu sotto del loro pavimento di quanto faccia una serie in meno di panca o di lat machine (a 2 giorni e 30 minuti la panca e la lat machine
+     restavano a 4 serie, il leg curl usciva: 13 programmi su 144 della griglia M6). Se nemmeno cosi la seduta sta nei minuti, le serie tornano come erano */
+  if (larga && T() > minutiEff * 1.10 && sd.esercizi.length > 3 && sd.esercizi.some(e => unicaFlessione(e) && !e.fisso)) {
+    const stato = sd.esercizi.map(e => [e, e.sets]);
+    for (let g = 0; g < 40 && T() > limite; g++) {
+      const c = sd.esercizi.filter(e => e.sets > 2 && !e.fisso).sort((a, b) => isPrio(a) - isPrio(b) || (a === fondamentale) - (b === fondamentale) || b.sets - a.sets || comp(a) - comp(b) || strEtirata(a) - strEtirata(b))[0];
+      if (!c) break;
+      c.sets--;
+    }
+    if (T() <= minutiEff * 1.10) passi.tagli++;
+    else stato.forEach(x => { x[0].sets = x[1]; });
   }
   /* INT-2b: la scala non ce la fa nemmeno cosi (la seduta ha solo schemi di base, fissi e il fondamentale): l unica flessione esce per ultima, e la nota lo dice (REG-02: il programma dice quello che fa) */
   if (T() > minutiEff * 1.10 && sd.esercizi.length > 3) {

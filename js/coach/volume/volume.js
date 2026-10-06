@@ -680,12 +680,14 @@ function volumeMotore(brief, sedute, b, opz) {
     }).sort((a, c) => (W[iU[a]] / (P[iU[a]].target || 1)) - (W[iU[c]] / (P[iU[c]].target || 1))).slice(0, 4);
     /* con la seduta già piena (8 esercizi, 6 per chi inizia) l esercizio nuovo prende il posto di quello che costa meno al volume */
     const donatori = {};
-    const donatore = (s) => {
-      if (donatori[s] !== undefined) return donatori[s];
+    const donatore = (s, largo) => {
+      const k = s + (largo ? 'L' : '');
+      if (donatori[k] !== undefined) return donatori[k];
       let mig = null;
-      recs.forEach(r => { if (r.s !== s || !rimovibile(r)) return; const sets = r.e.sets; muovi(r, -sets); const du = utilita() - u0; muovi(r, sets); if (!mig || du > mig.du) mig = { r: r, du: du }; });
-      return (donatori[s] = mig ? mig.r : null);
+      recs.forEach(r => { if (r.s !== s || !rimovibile(r, largo)) return; const sets = r.e.sets; muovi(r, -sets); const du = utilita() - u0; muovi(r, sets); if (!mig || du > mig.du) mig = { r: r, du: du }; });
+      return (donatori[k] = mig ? mig.r : null);
     };
+    const servonoDirette = (u) => { const i = iU[u]; return dirU.indexOf(i) !== -1 && sedute.filter((sd, s) => SD[s][i] >= 1).length < Math.min(seduteMin, nS); };
     /* INT-2b (velocità): le serie da togliere agli altri esercizi per far posto in una seduta al limite dei minuti dipendono dallo stato della seduta (il donatore tolto, le serie già
        tolte), non dal candidato: la k-esima scelta è la stessa per ogni esercizio nuovo provato nella stessa seduta. Si calcola una volta e si allunga solo quando ne servono di più */
     const tolteDi = {};
@@ -711,7 +713,7 @@ function volumeMotore(brief, sedute, b, opz) {
           const n = provaNuovo(s, x);
           if (!n) continue;
           provati++;
-          const don = n.pieno ? donatore(s) : null;
+          const don = n.pieno ? (donatore(s) || (servonoDirette(u) && SD[s][iU[u]] < 1 ? donatore(s, true) : null)) : null;
           if (n.pieno && !don) continue;
           const dt = 2 * n.r.tm + 1 - (don ? don.e.sets * don.tm + 1 : 0);   /* due serie e un cambio di esercizio (un minuto), meno quelle dell esercizio tolto */
           const sets = don ? don.e.sets : 0;
