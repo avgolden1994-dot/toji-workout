@@ -36,6 +36,13 @@ function eMultiDiGambe(e) {
   const m = findExercise(e.name) || {};
   return m.type === 'compound' && !isTimeBased(e.name) && schemaDiGambe(e.name) !== null;
 }
+/* ABB-02 (W2-T6, SES-03): x farebbe la terza variante di squat o di affondo della lista (la seduta ne tiene al massimo `squatPerSeduta`, la terza e la cerniera dell anca o la flessione): lo usano i posti della
+   ricetta (ricette.js) e gli esercizi che il solutore del volume aggiunge (volume.js, provaNuovo: il Cossack Squat per gli adduttori finiva dopo uno squat e un affondo). Senza il file delle soglie: mai */
+function squatOltreMax(x, lista) {
+  const tetto = typeof sogliaSelezione === 'function' ? sogliaSelezione('squatPerSeduta') : null;
+  const famiglia = (e) => eMultiDiGambe(e) && schemaDiGambe(e.name) === 'squat';
+  return tetto !== null && regolaAttiva('ABB-02') && famiglia(x) && lista.filter(famiglia).length >= tetto;
+}
 /* M6: a 2 giorni e 30 minuti in palestra la seduta full body ha due multiarticolari di gambe di schema DIVERSO (squat e stacco rumeno) oltre a una spinta e a una tirata: non c e posto per la flessione
    del ginocchio (leg curl), l unica della settimana (registro B6: una flessione a settimana, Maeo 2021). La flessione vale piu di una seconda cerniera dell anca o di un secondo squat: il piu caro in
    minuti dei due (non il primo multiarticolare, non un posto fisso o protetto) lascia il posto, purche il suo schema sia anche in un altra seduta (PAT-01). Solo nel full body: nelle sedute lower e legs
@@ -50,7 +57,7 @@ function secondoDiGambe(sd, sedute, opz) {
 
 /* PCO-08 (W2-T6; Cressey, ricerca-metodi-coach-pratici H-08; collaudo SAF-06): con la spalla dolente dichiarata la settimana ha lavoro per la cuffia dei rotatori e per i deltoidi posteriori, 1-2 volte, leggero e
    che non carica la spalla (stress 0): le serie dirette dei deltoidi posteriori (face pull, alzate posteriori, reverse pec deck: credito pieno) sono almeno `serieMinime`; se mancano entra il primo esercizio della
-   lista che l utente puo fare e, con 4 o piu sedute, la rotazione esterna al cavo in un altra seduta (non piu di due esercizi aggiunti). Non cura il dolore: la nota rimanda al medico. Un metodo essenziale
+   lista che l utente puo fare e, con `seduteDueVolte` o piu sedute, la rotazione esterna al cavo in un altra seduta (non piu di due esercizi aggiunti). Non cura il dolore: la nota rimanda al medico. Un metodo essenziale
    (Starting Strength...) ha la sua struttura. Senza il file delle soglie (soglie-selezione.js) non fa niente. Ritorna quanti esercizi ha aggiunto */
 const CUFFIA_ESERCIZI = ['Face Pull', 'Face Pull con Elastico', 'Reverse Pec Deck', 'Alzate Posteriori (Reverse Fly)', 'Y-Raise a Corpo Libero', 'Y-Raise su Panca Inclinata'];
 const CUFFIA_ROTAZIONE = 'Extrarotazione al Cavo';
@@ -71,14 +78,16 @@ function copriCuffia(brief, sedute) {
       .sort((a, b) => a.esercizi.length - b.esercizi.length)[0];
     if (!sd) return null;
     const m = findExercise(nome) || {};
-    sd.esercizi.push({ name: nome, sets: c.serieAggiunte, reps: isTimeBased(nome) ? (m.reps || 30) : (m.reps && m.reps > 8 ? m.reps : 15), weight: m.weight || 0, rest: 60, protetto: true });
+    sd.esercizi.push({ name: nome, sets: c.serieAggiunte, reps: isTimeBased(nome) ? (m.reps || 30) : (m.reps && m.reps > 8 ? m.reps : 15), weight: m.weight || 0, rest: 60, protetto: true, cuffia: 'aggiunto' });   /* cuffia: il solutore del volume non lo toglie (volume.js, rimovibile); 'aggiunto' = messo da PCO-08, 'ricetta' = c era gia */
     aggiunti++;
     return sd;
   };
   const usate = [];
+  /* il lavoro per i deltoidi posteriori che la ricetta ha gia (un reverse pec deck, un face pull) e quello che la regola chiede: non lo tolgono ne il tempo ne il solutore del volume (prima lo toglievano e la settimana restava senza: collaudo SAF-06) */
+  if (serie() >= c.serieMinime) sedute.forEach(sd => sd.esercizi.forEach(e => { if (diretteDietro(e)) { e.protetto = true; e.cuffia = 'ricetta'; } }));
   if (serie() < c.serieMinime) { const nome = ammessi(CUFFIA_ESERCIZI)[0]; const sd = nome ? aggiungi(nome, usate) : null; if (sd) usate.push(sd); }
-  /* con 4 o piu sedute la rotazione esterna (la cuffia vera) in un altra seduta: Cressey la vuole una o due volte a settimana */
-  if (aggiunti && sedute.length >= 4 && aggiunti < c.eserciziMax) { const nome = ammessi([CUFFIA_ROTAZIONE])[0]; const sd = nome ? aggiungi(nome, usate) : null; if (sd) usate.push(sd); }
+  /* con abbastanza sedute la rotazione esterna (la cuffia vera) in un altra seduta: Cressey la vuole una o due volte a settimana */
+  if (aggiunti && sedute.length >= c.seduteDueVolte && aggiunti < c.eserciziMax) { const nome = ammessi([CUFFIA_ROTAZIONE])[0]; const sd = nome ? aggiungi(nome, usate) : null; if (sd) usate.push(sd); }
   if (aggiunti) note.push(NOTA_CUFFIA);
   return aggiunti;
 }

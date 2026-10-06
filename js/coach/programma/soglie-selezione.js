@@ -13,18 +13,21 @@ const SOGLIE_SELEZIONE = {
      e per i prudenti (over 65, PAR-Q positivo, minorenni): «mai liv 3». Un metodo famoso scelto dall’utente (Starting Strength, StrongLifts…) porta i suoi esercizi: la regola non li toglie */
   abilitaMax: {
     v: { principiante: 2, prudente: 2 },
-    forza: 'Convenzione', fonte: 'ricerca-principianti-12-settimane §3.4 e PRI-05 («un solo esercizio liv 2 per seduta, mai liv 3»), §5.3 (affondi bulgari in 18 piani su 23, trazioni libere in 10, nordic e pike push-up); ricerca-biomeccanica-esercizi §5.3 P14 e SEL-06', regole: ['SEL-06']
+    forza: 'Convenzione', fonte: 'ricerca-principianti-12-settimane §3.4 e PRI-05 («mai liv 3»; i liv 2 solo dove il posto non ha un liv 1: la regola «un solo liv 2 per seduta» non è implementata come tetto), §5.3 (affondi bulgari in 18 piani su 23, trazioni libere in 10, nordic e pike push-up); ricerca-biomeccanica-esercizi §5.3 P14 e SEL-06', regole: ['SEL-06']
   },
-  /* SEL-06: gli esercizi di abilità 2 (serve tecnica o forza) in una seduta di chi comincia: uno solo, dove c’è un’alternativa di abilità 1 */
-  abilita2PerSeduta: {
-    v: 1,
-    forza: 'Convenzione', fonte: 'ricerca-principianti-12-settimane PRI-05 e §5.1 («Esercizio troppo difficile: max un esercizio liv 2 per seduta»)', regole: ['SEL-06']
+  /* ABB-02 (W2-T6, SES-03): i multiarticolari di squat o di affondo in una seduta: due varianti al massimo, la terza e la cerniera dell anca o la flessione del ginocchio (le sedute Gambe avevano squat,
+     un affondo e un secondo squat: tre varianti dello stesso lavoro per i quadricipiti) */
+  squatPerSeduta: {
+    v: 2,
+    forza: 'Convenzione', fonte: 'piano coach v2 W2-T6 (SES-03: nelle sedute Gambe due varianti di squat, la terza e hinge o flessione); ABB-02 (niente esercizi doppi); collaudo RID-01', regole: ['ABB-02']
   },
-  /* PCO-08: la spalla dolente riceve lavoro per la cuffia dei rotatori o per i deltoidi posteriori: almeno questo numero di serie dirette a settimana in al massimo questo numero di sedute, con al massimo
-     due esercizi aggiunti. Le serie sono quelle di Cressey (3 serie, una volta a settimana) ridotte a 2 per seduta come le altre aggiunte di strCopri (deltoidi posteriori, 2 serie da 15) */
+  /* PCO-08: la spalla dolente riceve lavoro per la cuffia dei rotatori o per i deltoidi posteriori: almeno `serieMinime` serie dirette a settimana (collaudo SAF-06); se mancano entra un esercizio da
+     `serieAggiunte` serie (le serie di Cressey, 3 una volta a settimana, ridotte a 2 per seduta come le altre aggiunte di strCopri: deltoidi posteriori, 2 serie da 15) e, con almeno
+     `seduteDueVolte` sedute, la rotazione esterna al cavo in un altra seduta (una o due volte a settimana); mai piu di `eserciziMax` esercizi aggiunti (PCO-08). `seduteDueVolte` e provvisorio: la nota dice
+     «una o due volte» senza dire da quante sedute */
   cuffia: {
-    v: { serieMinime: 2, serieAggiunte: 2, sedute: 2, eserciziMax: 2 },
-    forza: 'Convenzione', fonte: 'ricerca-metodi-coach-pratici H-08 e PCO-08 (Cressey: rotazione esterna della cuffia almeno una volta a settimana, 2-3 serie, una o due volte; non più di 2 esercizi aggiunti); collaudo SAF-06 (almeno 2 serie dirette)', regole: ['PCO-08']
+    v: { serieMinime: 2, serieAggiunte: 2, seduteDueVolte: 4, eserciziMax: 2 },
+    forza: 'Convenzione', fonte: 'ricerca-metodi-coach-pratici H-08 e PCO-08 (Cressey: rotazione esterna della cuffia almeno una volta a settimana, 2-3 serie, una o due volte; non più di 2 esercizi aggiunti); collaudo SAF-06 (almeno 2 serie dirette); seduteDueVolte: Provvisoria', regole: ['PCO-08']
   }
 };
 /* il valore di una soglia della scelta (null se il file non c e: i test che caricano pochi script) */

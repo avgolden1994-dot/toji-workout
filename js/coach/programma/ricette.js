@@ -23,7 +23,7 @@ const SLOT_DEF = {
   tirataV: e => schemaDi(e.name) === 'tirataV',
   squat: e => schemaDi(e.name) === 'squat' && e.type === 'compound' && !e.lato && !/sumo/i.test(_n(e)),   /* lo squat sumo e per gli adduttori: non e il fondamentale delle gambe */
   unilaterale: e => (e.group === 'gambe' || e.group === 'glutei') && e.type === 'compound' && !!e.lato,
-  hinge: e => /stacco|good morning|pull-through/i.test(_n(e)),
+  hinge: e => /stacco|good morning|pull-through|hip hinge/i.test(_n(e)),
   staccoTerra: e => /stacco da terra/i.test(_n(e)),   /* B19: lo Starting Strength fa lo stacco da terra, non il rumeno */
   glutSpinta: e => /hip thrust|ponte glutei/i.test(_n(e)),
   isoPetto: e => e.group === 'petto' && e.type !== 'compound',
@@ -65,7 +65,8 @@ const PRIORI = {
   'Estensione Tricipiti sopra la Testa ai Cavi': 3, 'Pushdown con Corda': 2.5, 'Estensione Tricipiti sopra la Testa con Manubrio': 2.5,
   'Croci ai Cavi da Seduto': 3, 'Pectoral Machine (Butterfly)': 2.5, 'Croci ai Cavi dal Basso': 2,
   'Calf Raise in Piedi': 2.5, 'Calf Raise Seduto': 2, 'Calf Raise alla Leg Press': 2,
-  'Plank': 2, 'Pallof Press': 2, 'Dead Bug': 2, 'Crunch al Cavo': 2
+  'Plank': 2, 'Pallof Press': 2, 'Dead Bug': 2, 'Crunch al Cavo': 2,
+  'Hip Hinge a Corpo Libero': -1   /* W2-T6: ripiego (la cerniera dell anca senza carico): dove c e un cavo o un manubrio vince la variante con il carico; a corpo libero e l unica */
 };
 const SCHEMI_ATTESI = { fullbody: ['spinta', 'tirata', 'basso'], upper: ['spinta', 'tirata'], lower: ['squat', 'hinge'], legs: ['squat', 'hinge'], push: ['spinta'], pull: ['tirata'] };
 const SLOT_PER_SCHEMA = { spinta: ['spintaO', 'spintaV'], tirata: ['tirataO', 'tirataV'], basso: ['squat', 'hinge', 'glutSpinta'], squat: ['squat'], hinge: ['hinge', 'glutSpinta'] };
@@ -111,6 +112,7 @@ function componiSedute(brief, split) {
   /* SEL-06 / PRI-05 (W2-T6): per chi inizia (e non punta alla forza) il bilanciere pesante non prende piu il bonus del primo posto e i posti si riempiono con le prime scelte della tabella 3.4 della nota dei
      principianti (macchine, manubri e corpo libero con appoggio: abilita 1); il bilanciere arriva dopo. Senza il file delle soglie (soglie-selezione.js) resta com era */
   const primeScelte = level === 'principiante' && !metodoAttivo && goals[0] !== 'forza' && typeof sogliaSelezione === 'function' && sogliaSelezione('abilitaMax') !== null && regolaAttiva('SEL-06');
+  /* ABB-02 (W2-T6, SES-03): al massimo due varianti di squat o di affondo in una seduta; la terza e la cerniera dell anca o la flessione del ginocchio, che la ricetta ha gia (senza il file delle soglie: come prima) */
   /* PAR-08 (W2-T8, penalitaPartenza): il bilanciere che per questa persona partirebbe sotto la barra da 20 kg vale -3 nel posto; una volta per nome e per programma */
   const penalita = {};
   const penPartenza = (x) => { if (typeof penalitaPartenza !== 'function') return 0; if (penalita[x.name] === undefined) penalita[x.name] = penalitaPartenza(x, brief) || 0; return penalita[x.name]; };
@@ -159,7 +161,7 @@ function componiSedute(brief, split) {
       const prio = (x) => (PRIORI[x.name.replace(EMOJI_TESTA, '')] || 0) + (pesante && tipoCarico(x.name) === 'pesante' ? 3 : 0) - (cauto && tipoCarico(x.name) === 'pesante' ? 3 : 0);
       const migliore = tutti.slice().sort((x, y) => prio(y) - prio(x))[0];
       /* ABB-07: una sola schiena pesante per seduta; non nei metodi essenziali (Starting Strength, StrongLifts, GreySkull: squat e stacco insieme sono il metodo) */
-      const ok = tutti.filter(x => consentito(x.name, prefs) && !(RX_NORDIC.test(senzaEmoji(x.name)) && (usatiSett[x.name] || 0) >= PARAM_NORDIC.sedutePerSettimana) && !(SCHIENA_PESANTE.test(x.name) && pesantiSchiena >= 1 && !(metodoAttivo && metodoAttivo.essenziale)) && !(metodoAttivo && metodoAttivo.leggeri && tipoCarico(x.name) === 'pesante') && !strSquatDoppio(x, base));   /* M5: lo squat di avvio non sta con un altro squat */
+      const ok = tutti.filter(x => consentito(x.name, prefs) && !(RX_NORDIC.test(senzaEmoji(x.name)) && (usatiSett[x.name] || 0) >= PARAM_NORDIC.sedutePerSettimana) && !(SCHIENA_PESANTE.test(x.name) && pesantiSchiena >= 1 && !(metodoAttivo && metodoAttivo.essenziale)) && !(metodoAttivo && metodoAttivo.leggeri && tipoCarico(x.name) === 'pesante') && !strSquatDoppio(x, base) && !squatOltreMax(x, base));   /* M5: lo squat di avvio non sta con un altro squat; ABB-02: non tre varianti di squat */
       /* il posto resta senza candidati (fastidi, attrezzi, una schiena pesante gia nella seduta, o il giorno dopo un carico lombare pesante: sotto) */
       const senzaCandidati = () => {
         /* SES-03 (ponte di W0-T2): senza stacchi (schiena dolente, niente bilanciere ne cavi) il posto dell hinge lo prende la spinta d anca con carico (hip thrust):
@@ -204,7 +206,15 @@ function componiSedute(brief, split) {
       }
       /* SEL-06 (PRI-05, tabella 3.4): chi inizia parte dalle prime scelte, esercizi di abilita 1 (macchine, manubri, corpo libero con appoggio); un esercizio di abilita 2 entra solo dove il posto non ha un esercizio di
          abilita 1 consentito (altrimenti resterebbe senza spinta, tirata, squat o cerniera dell anca: meglio uno di abilita 2 che nessuno). Non per l obiettivo forza: li il bilanciere resta */
-      if (primeScelte) { const facili = ordinati.filter(x => (livelloAbilita(x.name) || 1) < 2); if (facili.length) ordinati = facili; }
+      let rosa = ordinati;
+      if (primeScelte) { const facili = rosa.filter(x => (livelloAbilita(x.name) || 1) < 2); if (facili.length) rosa = facili; }
+      /* RID-02 (collaudo, Convenzione): lo stesso esercizio al massimo in due sedute a settimana (RIPETIZIONI_SETTIMANA_MAX): il posto prende un esercizio meno usato se ce n e uno (tra le prime scelte
+         di chi inizia; se anche quelle sono finite, tra tutti): senza variante resta quello di prima. Non per i posti fissi della forza ne per i metodi che ripetono la stessa seduta (ripeti) */
+      if (!fisso && !(metodoAttivo && metodoAttivo.ripeti)) {
+        const fresco = (x) => (usatiSett[x.name] || 0) < maxSettimana(x.name), freschi = rosa.filter(fresco);
+        if (freschi.length) rosa = freschi; else { const tuttiFreschi = ordinati.filter(fresco); if (tuttiFreschi.length) rosa = tuttiFreschi; }
+      }
+      ordinati = rosa;
       const scelta = ordinati.find(x => !strRidondante(x, base)) || ordinati[0];
       /* RID-01 (W1-T6): il secondo posto dello stesso tipo (squat2, spintaO2, isoBic2) non diventa un TERZO esercizio che fa lo stesso lavoro di due gia scelti (nemmeno l eccezione dello
          squat o dei glutei ne ammette tre): a corpo libero lo squat, gli affondi e lo squat su scatola finivano nella stessa seduta, tre esercizi solo per i quadricipiti. Il posto resta

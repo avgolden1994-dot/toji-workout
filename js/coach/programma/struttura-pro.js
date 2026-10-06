@@ -122,7 +122,7 @@ window.strCopri = function(c) {
         'Polpacci: squat e stacchi li allenano poco, un esercizio dedicato a settimana.', 3, 15);
     else proteggi(e => /calf raise/i.test(senzaEmoji(e.name)));
     if (sedute.some(sd => sd.esercizi.some(strEspinta)) && !ha(STR_TIRATE_ALTE))
-      aggiungi(['Reverse Pec Deck', 'Face Pull', 'Alzate Posteriori (Reverse Fly)', 'Y-Raise su Panca Inclinata'], tipoDi(/pull|upper|fullbody|punti/),
+      aggiungi(['Reverse Pec Deck', 'Face Pull', 'Alzate Posteriori (Reverse Fly)', 'Y-Raise su Panca Inclinata', 'Y-Raise a Corpo Libero'], tipoDi(/pull|upper|fullbody|punti/),
         'Deltoidi posteriori: le spinte lavorano la parte davanti della spalla, qui si bilancia il dietro.', 2, 15);
     else proteggi(e => STR_TIRATE_ALTE.test(senzaEmoji(e.name)));
   }
