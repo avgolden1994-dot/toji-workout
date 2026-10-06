@@ -258,18 +258,31 @@ function progressioneV2() {
 }
 /* ALG-06: la griglia dell attrezzo vale (carichi/attrezzi.js caricato e regola accesa) */
 function grigliaAttiva() { return typeof arrotondaAttrezzo === 'function' && regolaAttiva('ALG-06'); }
+/* ALG-06: il peso della griglia per kg (ctx: modo), o null se la griglia non lo rappresenta: sotto il minimo dell attrezzo (un bilanciere da 13 kg dei dati
+   vecchi: la barra pesa 20) il primo peso della griglia e piu di un passo sopra, e un carico non si alza di nascosto fino alla barra (la fase 95 lo dice) */
+function pesoGriglia(kg, nome, ctx) {
+  const w = arrotondaAttrezzo(kg, nome, ctx);
+  return w > kg + passoAttrezzo(nome, { kg: kg }) + 1e-9 ? null : w;
+}
 /* ALG-06: il carico piu vicino sulla griglia dell attrezzo (prima: 0,5 kg per tutti) */
-function caricoInGriglia(kg, nome) { return grigliaAttiva() ? arrotondaAttrezzo(kg, nome) : arrotonda(kg); }
+function caricoInGriglia(kg, nome) {
+  const w = grigliaAttiva() ? pesoGriglia(kg, nome) : null;
+  return w === null ? arrotonda(kg) : w;
+}
 /* ALG-06: un aumento di `inc` da `da`: il peso della griglia piu vicino, almeno il primo sopra `da` */
 function caricoSalito(da, inc, nome) {
   if (!grigliaAttiva()) return arrotonda(da + inc);
-  const w = arrotondaAttrezzo(da + inc, nome);
-  return w > da + 1e-9 ? w : arrotondaAttrezzo(da + 1e-6, nome, { modo: 'su' });
+  const w = pesoGriglia(da + inc, nome);
+  if (w === null) return arrotonda(da + inc);
+  if (w > da + 1e-9) return w;
+  const s = pesoGriglia(da + 1e-6, nome, { modo: 'su' });
+  return s === null ? arrotonda(da + inc) : s;
 }
-/* ALG-06: una riduzione di `da` del fattore `f`: il peso della griglia piu vicino, almeno il primo sotto `da` se c e (mai sotto la barra o 1 kg) */
+/* ALG-06: una riduzione di `da` del fattore `f`: il peso della griglia piu vicino, almeno il primo sotto `da` se c e (mai sotto la barra o 1 kg), mai sopra `da` */
 function caricoSceso(da, f, nome) {
   if (!grigliaAttiva()) return arrotonda(da * f);
-  const w = arrotondaAttrezzo(da * f, nome);
+  const w = pesoGriglia(da * f, nome);
+  if (w === null || w > da + 1e-9) return arrotonda(da * f);
   if (w < da - 1e-9) return w;
   const g = arrotondaAttrezzo(da - 1e-6, nome, { modo: 'giu' });
   return g < da - 1e-9 ? g : w;
@@ -579,7 +592,8 @@ function ricalcoloDalMassimale(r, c) {
     if (frenoBia()) t = W;
     else if (pc.prudente || pc.sonnoMale || pc.eta >= 65 || pc.minorenne) t = W + (t - W) / 2;
   }
-  const w = grigliaAttiva() ? arrotondaAttrezzo(t, nome, { modo: 'giu' }) : Math.floor(t * 2 + 1e-9) / 2;
+  const g = grigliaAttiva() ? pesoGriglia(t, nome, { modo: 'giu' }) : null;
+  const w = g !== null && g <= t + 1e-9 ? g : Math.floor(t * 2 + 1e-9) / 2;   /* per difetto: mai sopra il calcolo (sotto la barra vuota resta il calcolo, la fase 95 lo dice) */
   r.weight = w > 0 ? w : W;
   r.reps = ora;
   r.tipo = r.weight > W + 1e-9 ? 'su' : (r.weight < W - 1e-9 ? 'giu' : 'fermo');

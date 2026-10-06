@@ -166,6 +166,17 @@ test('ALG-06, fase 95: sotto la barra vuota il carico non sale (la fase puo solo
   const r = carico(app, PANCA, 20, 8, 3);
   assert.ok(r.weight <= 20 * 1.0 && r.weight < 20, 'mai alzato fino alla barra: ' + r.weight);
   assert.match(r.motivo, /Il bilanciere vuoto pesa 20 kg/);
+  /* dati vecchi sotto la barra (lo stacco rumeno a 13 kg della fixture over65-parq): ne la progressione ne lo scarico mirato saltano alla barra (+54%) */
+  const RUMENO = '🍑 Stacco Rumeno';
+  [['ok', PROG_V1], ['ok', PROG_V2], ['mancato2', PROG_V1], ['rientro', PROG_V2]].forEach(([sk, P]) => {
+    const v = nuovaApp({ parq: true, age: 68 }, P);
+    STORIE[sk](13, 10).forEach(([g, s]) => registra(v, g, RUMENO, s, P === PROG_V2 ? { reps: 10, base: 10, sets: 3 } : null));
+    const rv = carico(v, RUMENO, 13, 10, 3);
+    assert.ok(rv.weight <= 15, sk + ': da 13 kg al massimo un passo, non la barra da 20 (' + rv.weight + ' · ' + rv.motivo + ')');
+  });
+  const cala = nuovaApp({ parq: true, age: 68 }, PROG_V1);
+  [[3, 13], [6, 14.5], [10, 16]].forEach(([g, kg]) => registra(cala, g, RUMENO, serie(3, kg, 10)));
+  assert.ok(carico(cala, RUMENO, 13, 10, 3).weight <= 13, 'scarico mirato (CAR-08) da 13 kg: mai la barra');
 });
 
 test('ALG-06 spenta: l arrotondamento di prima (0,5 kg)', () => {
@@ -342,7 +353,7 @@ test('c.voce: applicaCaricoProgressivo passa alla catena la voce del piano (bers
 /* ============================================================================================================
    Atleta virtuale: 500 donne e 500 uomini x 6 esposizioni, programmi v1 e v2, meta a casa con i manubri dichiarati
    ============================================================================================================ */
-test('atleta virtuale: 0 carichi fuori griglia e 0 sopra il manubrio piu pesante (500 donne e 500 uomini x 6 esposizioni, programmi v1 e v2, meta con i manubri dichiarati); donne senza tetto: mediana <= 3, 95° percentile <= 5', { timeout: 900000 }, () => {
+test('atleta virtuale: 0 carichi fuori griglia e 0 sopra il manubrio piu pesante (500 donne e 500 uomini x 6 esposizioni, programmi v1 e v2, meta con i manubri dichiarati)', { timeout: 900000 }, () => {
   const app = conBilanciaV2(caricaApp({ ora: ORA }));
   const N = Number(process.env.ATLETI) || 500;
   const TETTI = [8, 10, 12, 12.5, 14, 16, 20];
@@ -368,5 +379,17 @@ test('atleta virtuale: 0 carichi fuori griglia e 0 sopra il manubrio piu pesante
   assert.ok(conta.esposizioni >= N * 4 * 6 * 5 && conta.conTetto > N * 2, 'il campione c e');
   assert.deepStrictEqual(conta.fuori.slice(0, 8), [], conta.fuori.length + ' carichi fuori griglia');
   assert.deepStrictEqual(conta.sopra.slice(0, 8), [], conta.sopra.length + ' carichi sopra il manubrio piu pesante');
-  ['v1F', 'v2F'].forEach(k => { assert.ok(riassunti[k].mediana <= 3, k + ' mediana ' + riassunti[k].mediana); assert.ok(riassunti[k].p95 <= 5, k + ' p95 ' + riassunti[k].p95); });
+});
+
+/* La convergenza delle donne (D.8.9) con i programmi v1 e senza programma la prova tests/partenza-donne.test.js (con i file della bilancia in index.html);
+   qui lo stesso campione di D.8.9 (500 principianti, nessun tetto dei manubri) con un programma v2, dove valgono anche ALG-02, AUT-01 e ALG-05 */
+test('atleta virtuale, programma v2: 500 donne principianti (il campione di D.8.9): mediana <= 3 esposizioni, 95° percentile <= 5', { timeout: 900000 }, () => {
+  const app = conBilanciaV2(caricaApp({ ora: ORA }));
+  const N = Number(process.env.ATLETI) || 500;
+  const x = riassunto(Array.from({ length: N }, (_, i) => simulaNellApp(app, { sesso: 'F', livello: 'principiante', pesoCorpo: 50 + (i * 7) % 36, seme: 1000 + i, esposizioni: 6, programma: 'v2' })));
+  /* «mai» (chi non arriva entro ±10% in sei esposizioni) sale da circa il 2% al 4,4% con AUT-01: chi comincia non accelera piu con l RPE dopo la calibrazione (registro B3); il numero si dice, non si nasconde */
+  console.log('# atleta v2 donne (' + x.n + ' esercizi): mediana ' + x.mediana + ', p95 ' + x.p95 + ', mai ' + x.pc(x.mai) + '%; dalla seconda sopra RIR-1 ' + x.pc(x.dopoSopra) + '% (oltre il massimo ' + x.pc(x.dopoOltre) + '%)');
+  assert.ok(x.mediana <= 3, 'mediana ' + x.mediana);
+  assert.ok(x.p95 <= 5, '95° percentile ' + x.p95);
+  assert.ok(x.dopoOltre <= 0.12, 'dalla seconda esposizione le ripetizioni non si finiscono nel ' + x.pc(x.dopoOltre) + '% dei casi (D.8.9: al massimo 12%)');
 });
