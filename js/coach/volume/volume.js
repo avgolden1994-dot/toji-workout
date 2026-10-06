@@ -110,8 +110,10 @@ const VOLUME_IMPORTANZA = { petto: 1, dorsali: 1, quadricipiti: 1, femorali: 1, 
   addome: 0.35, adduttori: 0.25, abduttori: 0.25, deltoide_anteriore: 1 };
 /* pesi del solutore: dicono solo in che ordine prova le mosse (non sono soglie del coach). Per ogni serie e per bersaglio:
    sotto il mantenimento 4, fino al minimo 2,5, fino al bersaglio 1,5 (i prioritari valgono 1,4 volte), oltre il bersaglio niente (il tempo è un tetto), oltre il massimo -3;
-   tutto diviso per max(8, bersaglio): contano i deficit RELATIVI, senza che un muscolo piccolo pesi più di uno grande. */
-const VOLUME_PESI = { mantenimento: 4, minimo: 2.5, bersaglio: 1.5, importanzaPriorita: 1.4, eccesso: 3, direttePavimento: 3, riferimentoMin: 8, frequenza: 0.35, morbidoSeduta: 0.1, duroSeduta: 1, equilibrio: 0.2, recupero: 0.3, soglia: 0.004, sogliaScambio: 0.01, giriMax: 160 };
+   tutto diviso per max(8, bersaglio): contano i deficit RELATIVI, senza che un muscolo piccolo pesi più di uno grande.
+   P3-G: dolente = quanto costa una serie di un esercizio che carica una zona dolente dichiarata (stress >= 1, esercizioCaricaIlFastidio): a parità di volume il solutore toglie prima quella e non la sceglie
+   per le serie in più (una serie nella fascia vale 1,5 / 10 = 0,15: la cautela non toglie una serie che serve). */
+const VOLUME_PESI = { mantenimento: 4, minimo: 2.5, bersaglio: 1.5, importanzaPriorita: 1.4, eccesso: 3, direttePavimento: 3, riferimentoMin: 8, frequenza: 0.35, morbidoSeduta: 0.1, duroSeduta: 1, equilibrio: 0.2, recupero: 0.3, dolente: 0.03, soglia: 0.004, sogliaScambio: 0.01, giriMax: 160 };
 
 /* volume della settimana per scopo (come tipoObiettivoDi di tempo.js: tre tipi) */
 function volumeTipo(goals) { const g = goals[0]; return g === 'forza' ? 'forza' : ((g === 'salute' || g === 'dimagrimento') ? 'generale' : 'ipertrofia'); }
@@ -285,7 +287,8 @@ function volumeMotore(brief, sedute, b, opz) {
   GR.forEach((g, h) => { iG[g] = h; });
   const sommaG = GR.map(g => VOLUME_GRUPPI_SOMMA.indexOf(g) !== -1);
   const G = sedute.map(() => new Array(nG).fill(0));   /* serie per gruppo del recupero e per seduta, indicizzate come GR (INT-2b: niente chiavi di testo nel ciclo caldo) */
-  let PUSH = 0, PULL = 0, SCHIENA = 0, TV = 0, TO = 0;   /* TV, TO: serie di tirata verticale e orizzontale della settimana (pianiTirata) */
+  let PUSH = 0, PULL = 0, SCHIENA = 0, TV = 0, TO = 0, DOL = 0;   /* TV, TO: serie di tirata verticale e orizzontale della settimana (pianiTirata); DOL: serie che caricano una zona dolente */
+  const fastidiDich = (prefs && prefs.fastidi) || [];
   const pianiT = sogliaVolume('pianiTirata');
   /* il piano di tirata di un esercizio, come lo conta il collaudo EQ-02: 1 verticale (multiarticolare per i dorsali, o il pullover di riserva: schema tirataV negli attributi), 2 orizzontale (multiarticolare per lo spessore), 0 altro */
   const pianoTirata = (nome) => {
@@ -349,6 +352,7 @@ function volumeMotore(brief, sedute, b, opz) {
     const tempo = !isTimeBased(e.name);
     return { s: s, e: e, cr: crv, gr: gr, leg: vecchio, push: tempo && strEspinta(e), pull: tempo && strEtirata(e), tm: tempoSerie(e), sets0: e.sets, cap: capSerie(e), fond: !!fond, min: Math.min(e.sets, fond ? 3 : 2), bloccato: false,
       sch: Math.max(cr.dorsali || 0, cr.schiena_spessore || 0), pt: pianoTirata(e.name),
+      dol: fastidiDich.length && typeof esercizioCaricaIlFastidio === 'function' && esercizioCaricaIlFastidio(e.name, fastidiDich) ? 1 : 0,
       comp: tempo && (findExercise(e.name) || {}).type === 'compound', pes: tipoCarico(e.name) === 'pesante' };   /* ABB-08: multiarticolare (non a tempo) e carico pesante */
   };
   const muovi = (r, d) => {
@@ -382,6 +386,7 @@ function volumeMotore(brief, sedute, b, opz) {
     if (r.push) PUSH += d;
     if (r.pull) PULL += d;
     if (r.pt === 1) TV += d; else if (r.pt === 2) TO += d;
+    if (r.dol) DOL += d;
     SCHIENA += r.sch * d; SCHIENA_S[s] += r.sch * d;
   };
   sedute.forEach((sd, s) => {
@@ -453,6 +458,7 @@ function volumeMotore(brief, sedute, b, opz) {
       r += PS.frequenza * Math.min(seduteMin, nDir[k]);
     }
     if (PUSH + PULL >= minBilancio && PULL < rapportoTirate * PUSH) r -= (rapportoTirate * PUSH - PULL) * PS.equilibrio;
+    if (DOL > 0) r -= DOL * PS.dolente;   /* P3-G: la cautela con le zone dolenti dichiarate */
     if (sopraGruppo > 0) for (let s = 0; s < nS; s++) for (let h = 0; h < nG; h++) if (!sommaG[h] && G[s][h] > tettoGruppo) r -= (G[s][h] - tettoGruppo) * PS.duroSeduta;
     if (recuperoAttivo > 0) for (let k = 0; k < consecutive.length; k++) for (let h = 0; h < nG; h++) {   /* REC-01: due sedute in giorni consecutivi non hanno entrambe 4 serie frazionarie dello stesso grande muscolo */
       const m = Math.min(G[consecutive[k][0]][h], G[consecutive[k][1]][h]);

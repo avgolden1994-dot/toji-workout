@@ -477,18 +477,23 @@ function scalaDelTempoBase(brief, sd, sedute, opz, minutiEff, passi, larga) {
     if (!f) break;
     f.sets--; passi.tagli++;
   }
-  /* P3-G (M6, EQ-03:flessione): prima di togliere l unica flessione si toglie una serie alla volta (fino a 2 per esercizio, il fondamentale e i prioritari per ultimi, prima chi ne ha di piu) anche sotto i pavimenti
-     di volume del taglio: togliere la flessione porta i femorali piu sotto del loro pavimento di quanto faccia una serie in meno di panca o di lat machine (a 2 giorni e 30 minuti la panca e la lat machine
-     restavano a 4 serie, il leg curl usciva: 13 programmi su 144 della griglia M6). Se nemmeno cosi la seduta sta nei minuti, le serie tornano come erano */
+  /* P3-G (M6, EQ-03:flessione): prima di togliere l unica flessione, anche sotto i pavimenti di volume del taglio (togliere la flessione porta i femorali piu sotto del loro pavimento di quanto faccia una serie
+     in meno di panca o di lat machine: a 2 giorni e 30 minuti la panca e la lat machine restavano a 4 serie e il leg curl usciva, 13 programmi su 144 della griglia M6): a) il secondo multiarticolare di uno
+     schema che la seduta ha gia (gli affondi dopo la hack squat; prima quello che carica una zona dolente dichiarata), come faceva rinforzaFemorali dopo il taglio; b) una serie alla volta (fino a 2 per
+     esercizio, il fondamentale e i prioritari per ultimi, prima chi ne ha di piu). Se nemmeno cosi la seduta sta nei minuti, tutto torna com era */
   if (larga && T() > minutiEff * 1.10 && sd.esercizi.length > 3 && sd.esercizi.some(e => unicaFlessione(e) && !e.fisso)) {
-    const stato = sd.esercizi.map(e => [e, e.sets]);
+    const lista = sd.esercizi.slice(), stato = sd.esercizi.map(e => [e, e.sets, e.superset]);
+    const dolente = (e) => typeof esercizioCaricaIlFastidio === 'function' && !!esercizioCaricaIlFastidio(e.name, brief.lavoro.prefs.fastidi || []);
+    const doppio = sd.esercizi.filter(e => comp(e) && !e.fisso && !e.protetto && e !== fondamentale && !isTimeBased(e.name) && schemaDi(e.name) && !unicoPiano(e) &&
+      sd.esercizi.some(x => x !== e && comp(x) && schemaDi(x.name) === schemaDi(e.name))).sort((a, b) => dolente(b) - dolente(a))[0];
+    if (doppio && sd.esercizi.length > 4) togliEsercizio(sd, doppio);
     for (let g = 0; g < 40 && T() > limite; g++) {
       const c = sd.esercizi.filter(e => e.sets > 2 && !e.fisso).sort((a, b) => isPrio(a) - isPrio(b) || (a === fondamentale) - (b === fondamentale) || b.sets - a.sets || comp(a) - comp(b) || strEtirata(a) - strEtirata(b))[0];
       if (!c) break;
       c.sets--;
     }
     if (T() <= minutiEff * 1.10) passi.tagli++;
-    else stato.forEach(x => { x[0].sets = x[1]; });
+    else { sd.esercizi.splice(0, sd.esercizi.length, ...lista); stato.forEach(x => { x[0].sets = x[1]; if (x[2]) x[0].superset = x[2]; else delete x[0].superset; }); }
   }
   /* INT-2b: la scala non ce la fa nemmeno cosi (la seduta ha solo schemi di base, fissi e il fondamentale): l unica flessione esce per ultima, e la nota lo dice (REG-02: il programma dice quello che fa) */
   if (T() > minutiEff * 1.10 && sd.esercizi.length > 3) {
