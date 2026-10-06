@@ -354,7 +354,9 @@ function valuta(cfg, snap, ondaId, opz) {
       chiavi.forEach(k => {
         const cod = codiceDi(k);
         if (sicurezza.has(cod) || riscritti.has(cod) || snap.pesata[k] === undefined) return;
-        const proprio = ammesse[k] || (typeof (aperti[k] || {}).max === 'number' ? aperti[k] : null);
+        /* un tetto proprio (un'ammessa, o un aperto riscritto da un'ammessa, in QUALUNQUE onda fino a questa: la catena dei debiti lo tiene, con `tettoIniziale` e `rialzo`) sostituisce il tetto cumulativo */
+        let proprio = false;
+        for (let m = 0; m <= iOnda && !proprio; m++) { const o = (m === iOnda ? onda : cfg.onde[ordine[m]]) || {}; proprio = [o.ammesse, o.aperti].some(t => t && t[k] && typeof t[k].max === 'number'); }
         if (proprio) return;
         const r = rialzi[k], base = cum.classi[k] || 0;
         let tetto = base + cum.tolleranzaPunti;
@@ -848,6 +850,8 @@ function autotest() {
     eq(fallito(esito({}, pres(2, 1.3), pres(2, 0.9)), /tetto cumulativo ZZZ-99:nuova/), true, 'una classe nuova a 1,3 (prima misura 0) fallisce: +0,4 sull onda prima ma +1,3 sulla prima misura');
     /* le classi con un tetto proprio (un ammessa) o la sicurezza restano giudicate come prima */
     eq(esito({}, pres(4.4), pres(4.2), c => { c.onde['onda-2a'].ammesse = { [K]: { max: 4.5, tettoIniziale: 4.5, risolve: 'W2-T5', scade: 'onda-4', motivo: 'prova' } }; }).falliti, 0, 'una classe con un ammessa in vigore ha il suo tetto (4,5): il cumulativo non la giudica due volte');
+    eq(esito({}, pres(4.4), pres(4.2), c => { c.onde['onda-2a'].ammesse = { [K]: { max: 4.5, tettoIniziale: 4.5, risolve: 'W2-T5', scade: 'onda-2', motivo: 'prova' } }; c.onde['onda-3'].aperti = { [K]: { responsabile: 'P3-G', scade: 'onda-4', motivo: 'prova 2026-10-06' } }; }).falliti, 0, 'e una classe di un\'ammessa scaduta e riscritta in `aperti` (la catena dei debiti ne tiene il tetto) non e giudicata due volte dal cumulativo');
+    eq(fallito(esito({}, pres(4.6), pres(4.4), c => { c.onde['onda-2a'].ammesse = { [K]: { max: 4.5, tettoIniziale: 4.5, risolve: 'W2-T5', scade: 'onda-2', motivo: 'prova' } }; c.onde['onda-3'].aperti = { [K]: { responsabile: 'P3-G', scade: 'onda-4', motivo: 'prova 2026-10-06' } }; }), /oltre il tetto 4.5/), true, 'ma il suo tetto (4,5) resta quello della catena: a 4,6 fallisce');
     /* un riferimento di criteri o di matrice diversi non si confronta: avviso, non fallimento */
     const diverso = esito({ criteri: '9.9' }, pres(7), pres(2));
     eq(diverso.righe.some(x => x.esito === 'avviso' && /tetto cumulativo non controllato/.test(x.testo)), true, 'criteri diversi dal riferimento: l avviso lo dice');
