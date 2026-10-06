@@ -317,7 +317,8 @@ function volumeMotore(brief, sedute, b, opz) {
     GR.forEach((g, h) => { const v = VOLUME_GRUPPI_RECUPERO[g].map(u => cr[u] || 0), c0 = sommaG[h] ? v.reduce((t, x) => t + x, 0) : Math.max.apply(null, v), c = Math.max(c0, sommaG[h] ? 0 : (vecchio[g] || 0)); if (c > 0) gr.push([h, c]); });
     const tempo = !isTimeBased(e.name);
     return { s: s, e: e, cr: crv, gr: gr, leg: vecchio, push: tempo && strEspinta(e), pull: tempo && strEtirata(e), tm: tempoSerie(e), sets0: e.sets, cap: capSerie(e), fond: !!fond, min: Math.min(e.sets, fond ? 3 : 2), bloccato: false,
-      sch: Math.max(cr.dorsali || 0, cr.schiena_spessore || 0) };
+      sch: Math.max(cr.dorsali || 0, cr.schiena_spessore || 0),
+      comp: tempo && (findExercise(e.name) || {}).type === 'compound', pes: tipoCarico(e.name) === 'pesante' };   /* ABB-08: multiarticolare (non a tempo) e carico pesante */
   };
   const muovi = (r, d) => {
     r.e.sets += d;
@@ -361,6 +362,25 @@ function volumeMotore(brief, sedute, b, opz) {
       e.sets = 0; muovi(r, sets);
     });
   });
+  /* ABB-08 (INT-2b, prova in browser coerenza-schede.js: 83 programmi su 735): nella verifica finale (senzaCrescita, dopo strFinale) il solutore scambiava le serie e disfaceva
+     strFinale (Squat 4 vs Panca Inclinata Manubri 5). Qui il fondamentale pesante della seduta (il primo multiarticolare, non uno stacco da terra: ABB-09, non fisso) non resta con meno
+     serie di un altro multiarticolare non pesante sopra le 2 serie: una serie in piu all altro oltre il fondamentale, o una in meno al fondamentale sotto l altro, non si fa.
+     Solo nella verifica finale: nel primo giro le serie le sistema strFinale, dopo il taglio del tempo, spostandole (mappa ABB-08); un secondo fondamentale pesante ha le sue */
+  const fondAbb08 = sedute.map(() => null);
+  if (senzaCrescita) recs.forEach(r => { if (r.fond && r.pes && !r.e.fisso && !(typeof STR_FATICA !== 'undefined' && STR_FATICA.test(r.e.name))) fondAbb08[r.s] = r; });
+  const abb08Ok = (r, d) => {
+    const f = fondAbb08[r.s];
+    if (!f) return true;
+    if (r === f) {
+      if (d >= 0) return true;
+      const dopo = r.e.sets + d;
+      for (let k = 0; k < recs.length; k++) { const o = recs[k]; if (o.s === r.s && o !== f && o.comp && !o.pes && !o.e.fisso && o.e.sets > 2 && o.e.sets > dopo) return false; }
+      return true;
+    }
+    if (d <= 0 || !r.comp || r.pes) return true;
+    const dopo = r.e.sets + d;
+    return !(dopo > 2 && dopo > f.e.sets);
+  };
 
   /* ---- utilità ---- */
   const utilita = () => {
@@ -406,6 +426,7 @@ function volumeMotore(brief, sedute, b, opz) {
   const consente = (r, d, intero, senzaEquilibrio) => {   /* senzaEquilibrio (INT-2b): l equilibrio tra spinte e tirate lo giudica chi compone una mossa doppia (miglioreToglimentoCoppia) sullo stato finale */
     const e = r.e;
     if (e.fisso) return false;
+    if (!abb08Ok(r, d)) return false;   /* ABB-08 nella verifica finale */
     if (d > 0) {
       if (e.sets + d > r.cap) return false;
       for (let k = 0; k < r.cr.length; k++) { const i = r.cr[k][0]; if (S[r.s][i] + r.cr[k][1] * d > P[i].capDuro + 1e-9) return false; }   /* SES-01, IPE-06 */

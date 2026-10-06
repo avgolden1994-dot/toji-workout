@@ -265,3 +265,34 @@ test('SAF-05: Front Squat, Tirate al Mento e Ab Wheel sono vietati a chi inizia 
   }))));
   assert.ok(programmi >= 48, 'il campione: ' + programmi);
 });
+
+/* ---- 7) ABB-08 dopo la verifica finale del volume (prova in browser coerenza-schede.js: 83 programmi su 735 a onda 2b) ---- */
+test('ABB-08: il fondamentale pesante della seduta non resta con meno serie di un altro multiarticolare non pesante (sopra le 2 serie) nemmeno dopo validaVolume (il solutore scambiava le serie e disfaceva strFinale); 0 violazioni su 24 profili (prima 14) e il caso letto: Squat 4 vs Panca Inclinata Manubri 5', () => {
+  const info = (n) => ({ tipo: (app.dati(app.chiama('findExercise', n)) || {}).type, tempo: app.chiama('isTimeBased', n), carico: app.chiama('tipoCarico', n), fatica: app.g('STR_FATICA.test(' + JSON.stringify(n) + ')') });
+  const violazioni = (p) => {
+    const out = [];
+    p.sedute.forEach(sd => {
+      const comp = sd.esercizi.filter(e => { const i = info(e.name); return i.tipo === 'compound' && !i.tempo; });
+      if (comp.length < 2 || comp[0].fisso) return;
+      const i0 = info(comp[0].name);
+      if (i0.carico !== 'pesante' || i0.fatica) return;
+      const altro = comp.slice(1).find(e => e.sets > comp[0].sets && e.sets > 2 && !e.fisso && info(e.name).carico !== 'pesante');
+      if (altro) out.push(sd.titolo + ': ' + app.chiama('senzaEmoji', comp[0].name) + ' ' + comp[0].sets + ' vs ' + app.chiama('senzaEmoji', altro.name) + ' ' + altro.sets);
+    });
+    return out;
+  };
+  const BASE = { sex: 'M', age: 30, seme: 'audit', fastidi: [], sonno: 'bene', attrezzi: 'indifferente', usaProfilo: false };
+  const letto = costruisci(Object.assign({}, BASE, { level: 'intermedio', days: 2, goals: ['massa'], luogo: 'palestra', minutes: 90 }));
+  assert.deepStrictEqual(violazioni(letto), [], 'il caso letto nella prova in browser');
+  const colpe = [];
+  let programmi = 0;
+  ['intermedio', 'avanzato'].forEach(level => [2, 3].forEach(days => [['massa'], ['ricomposizione']].forEach(goals => [45, 60, 90].forEach(minutes => {
+    const p = costruisci(Object.assign({}, BASE, { level, days, goals, luogo: 'palestra', minutes }));
+    if (p.metodo) return;
+    programmi++;
+    violazioni(p).forEach(v => colpe.push(level + ' ' + days + 'gg ' + goals[0] + ' ' + minutes + 'min: ' + v));
+  }))));
+  assert.strictEqual(programmi, 24);
+  assert.deepStrictEqual(colpe, []);
+  assert.deepStrictEqual(app.errori, []);
+});
