@@ -263,7 +263,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 60. `js/coach/programma/mesociclo.js` — Mesociclo: durata, blocchi, rampa di volume, RIR per settimana e scarico (MES-01..03, PRN-03, OBI-03, PRG-01, PRG-38)
 
-`STRUTTURA_V1` · `CLASSI_PIANO` · `RIGA_RIR_DI_CLASSE` · `sogliaStruttura()` · `copiaPiano()` · `pianoAttivo()` · `strutturaProgramma()` · `fasiProgramma()` · `arrotonda2` · `colonnaDelBlocco()` · `rirConPiso()` · `contestoPiano()` · `doseInizialeScarico()` · `rirDellaSettimana()` · `fattoreVolumeSettimana()` · `costruisciPiano()` · `notaDelPiano()` · `pianoMesociclo()` · `esitoControlloPrincipiante()` · `settimanaDelPiano()` · `pianoDellaSettimana()` · `classeRirDi()` · `rirPianoSettimana()`
+`STRUTTURA_V1` · `CLASSI_PIANO` · `RIGA_RIR_DI_CLASSE` · `sogliaStruttura()` · `copiaPiano()` · `pianoAttivo()` · `strutturaProgramma()` · `fasiProgramma()` · `arrotonda2` · `colonnaDelBlocco()` · `rirConPiso()` · `contestoPiano()` · `doseInizialeScarico()` · `rirDellaSettimana()` · `fattoreVolumeSettimana()` · `costruisciPiano()` · `notaDelPiano()` · `pianoMesociclo()` · `esitoControlloPrincipiante()` · `segnaliControlloOttava()` · `CAUSE_CONTROLLO_OTTAVA` · `controlloOttavaPrincipiante()` · `settimanaDelPiano()` · `pianoDellaSettimana()` · `classeRirDi()` · `rirPianoSettimana()`
 
 ### 61. `js/coach/programma/completamenti.js` — Completamenti della settimana: schemi mancanti, copertura per regioni, femorali, ordine (PRG-21, PRG-23, ABB-03, CAS-14, ORD-03, B29)
 
@@ -279,7 +279,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 64. `js/coach/volume/volume.js` — Volume per muscolo: fasce per unità, solutore delle serie, tetti, verifica con la causa (IPE-01, IPE-02, IPE-06, OBI-04, EST-02, REG-02, VOL-01, VOL-02, SES-01, REC-01, ESI-01)
 
-`GRUPPI_FRAZIONARI` · `FRAZIONARI_NON_CONTATI` · `gruppoFrazionario()` · `creditoSerie()` · `frazionarieSettimana()` · `GRUPPI_RECUPERO` · `frazGruppoSeduta()` · `giornoSeduta()` · `recuperoOk()` · `sogliaVolume()` · `VOLUME_UNITA_GRANDI` · `VOLUME_UNITA_GENERALE` · `VOLUME_ETICHETTE` · `VOLUME_PRIORITA_UNITA` · `VOLUME_ZONA_UNITA` · `VOLUME_GRUPPI_RECUPERO` · `VOLUME_GRUPPI_SOMMA` · `VOLUME_FREQUENZA_UNITA` · `VOLUME_FREQUENZA_DIRETTE` · `VOLUME_IMPORTANZA` · `VOLUME_PESI` · `volumeTipo()` · `volumeEtichetta()` · `unitaPriorita()` · `puoSpecializzare()` · `bersagliVolume()` · `_creditiUnitaCache` · `creditiUnita()` · `volumeUnita()` · `volumeNuovoAttivo()` · `volumeMotore()` · `assegnaVolume()` · `puoSalireVolume()` · `noteVolume()` · `limitaVolume()` · `pavimentoVolume()` · `aggiungiSerieUtile()` · `validaVolume()` · `limitaVolumePerMuscolo()` · `assegnaVolumeGruppi()` · `limitaVolumeGruppi()`
+`GRUPPI_FRAZIONARI` · `FRAZIONARI_NON_CONTATI` · `gruppoFrazionario()` · `creditoSerie()` · `frazionarieSettimana()` · `GRUPPI_RECUPERO` · `frazGruppoSeduta()` · `giornoSeduta()` · `giorniAdiacenti()` · `recuperoRispettato()` · `recuperoOk()` · `sogliaVolume()` · `VOLUME_UNITA_GRANDI` · `VOLUME_UNITA_GENERALE` · `VOLUME_ETICHETTE` · `VOLUME_PRIORITA_UNITA` · `VOLUME_ZONA_UNITA` · `VOLUME_GRUPPI_RECUPERO` · `VOLUME_GRUPPI_SOMMA` · `VOLUME_FREQUENZA_UNITA` · `VOLUME_FREQUENZA_DIRETTE` · `VOLUME_IMPORTANZA` · `VOLUME_PESI` · `volumeTipo()` · `volumeEtichetta()` · `unitaPriorita()` · `puoSpecializzare()` · `bersagliVolume()` · `_creditiUnitaCache` · `creditiUnita()` · `volumeUnita()` · `volumeNuovoAttivo()` · `volumeMotore()` · `assegnaVolume()` · `puoSalireVolume()` · `noteVolume()` · `limitaVolume()` · `pavimentoVolume()` · `aggiungiSerieUtile()` · `NOTA_VOLUME_STRUTTURA` · `NOTA_VOLUME_MANTENIMENTO` · `validaVolume()` · `limitaVolumePerMuscolo()` · `assegnaVolumeGruppi()` · `limitaVolumeGruppi()`
 
 ### 65. `js/coach/volume/tempo.js` — Tempo della seduta: modello dei minuti, pause per classe, capacita, scala del taglio e fattore personale (CAS-05..08, CAS-18, PRG-03, PRG-13, PRG-20, PRG-33, IPE-04, IPE-12)
 
@@ -311,7 +311,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 72. `js/coach/regia/genera.js` — Generatore a stadi: buildProgram, giorni, verifica e smistamento della specialità (REG-02, REG-05, D-P6)
 
-`SPECIALITA_STRUTTURA` · `registraSpecialita()` · `specialitaStruttura()` · `GIORNI_PER_SEDUTE` · `NOTA_SEI_GIORNI` · `NOTA_PRINCIPIANTE_4_SEDUTE` · `tipiAdiacenti()` · `riordinaSenzaAdiacenti()` · `giorniSettimana()` · `applicaMetodo()` · `regolaDelPicco()` · `NOTA_POCO_TEMPO_SS` · `NOTA_POCO_TEMPO_SS_DROP` · `NOTA_SENZA_CEDIMENTO_SS` · `NOTA_SENZA_CEDIMENTO` · `noteDelProgramma()` · `applicaScelteUtente()` · `chiudiProgramma()` · `NOTE_REGIONALI` · `riconciliaNote()` · `verificaProgramma()` · `window.buildProgram()` · `generaProgramma()`
+`SPECIALITA_STRUTTURA` · `registraSpecialita()` · `specialitaStruttura()` · `GIORNI_PER_SEDUTE` · `NOTA_SEI_GIORNI` · `NOTA_SEI_GIORNI_DI_FILA` · `NOTA_SEI_GIORNI_48_ORE` · `NOTA_PRINCIPIANTE_4_SEDUTE` · `tipiAdiacenti()` · `riordinaSenzaAdiacenti()` · `giorniSettimana()` · `applicaMetodo()` · `regolaDelPicco()` · `NOTA_POCO_TEMPO_SS` · `NOTA_POCO_TEMPO_SS_DROP` · `NOTA_OVER65_POTENZA` · `NOTA_OVER65` · `NOTA_SENZA_CEDIMENTO_SS` · `NOTA_SENZA_CEDIMENTO` · `noteDelProgramma()` · `applicaScelteUtente()` · `chiudiProgramma()` · `NOTE_REGIONALI` · `riconciliaNote()` · `verificaProgramma()` · `window.buildProgram()` · `generaProgramma()`
 
 ## js/ui
 
@@ -391,7 +391,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 90. `js/coach/regole-ricerca.js` — Coach 2: regole nuove dalla ricerca
 
-`TECNICHE` · `profiloCoach()` · `BIL_PESANTI` · `tipoCarico()` · `RIR_TIPO` · `MES_RIR` · `primaSettimanaBlocco()` · `inDeficitCalorico()` · `pisoRirEsigenza()` · `pavimentoRirMinorenni()` · `rirBersaglio()` · `rirDalPiano()` · `rirBersaglioBase()` · `rirBersaglioPerLivello()` · `storicoProntezza()` · `rpeBersaglio()` · `testoRir()` · `PARAM_ANALISI` · `faseDelGiorno()` · `settimanaDellaSeduta()` · `inScarico()` · `sessioniConData()` · `ripresaDopoScarico()` · `rientroDopoPausa()` · `fmtKg` · `obiettivoForza()` · `caricoProssimoBase()` · `window.caricoProssimo()` · `window.applicaCaricoProgressivo()` · `carichiDelGiorno()` · `imparaDallaSeduta()` · `contaStalli()`
+`TECNICHE` · `profiloCoach()` · `BIL_PESANTI` · `tipoCarico()` · `RIR_TIPO` · `MES_RIR` · `primaSettimanaBlocco()` · `inDeficitCalorico()` · `pisoRirEsigenza()` · `pavimentoRirMinorenni()` · `pavimentoRirPrincipiante()` · `rirBersaglio()` · `rirDalPiano()` · `rirBersaglioBase()` · `rirBersaglioPerLivello()` · `storicoProntezza()` · `rpeBersaglio()` · `testoRir()` · `PARAM_ANALISI` · `faseDelGiorno()` · `settimanaDellaSeduta()` · `inScarico()` · `sessioniConData()` · `ripresaDopoScarico()` · `rientroDopoPausa()` · `fmtKg` · `obiettivoForza()` · `caricoProssimoBase()` · `window.caricoProssimo()` · `window.applicaCaricoProgressivo()` · `carichiDelGiorno()` · `imparaDallaSeduta()` · `contaStalli()`
 
 ### 91. `js/coach/regole-nuove.js` — Regole del coach aggiunte dalla ricerca (RIC-01..05)
 

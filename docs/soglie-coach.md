@@ -4,7 +4,7 @@
 > Forze: **Solida** (meta-analisi o posizione ufficiale), **Moderata** (pochi studi, o risultati che cambiano con la popolazione), **Contrastata** (studi in disaccordo), **Convenzione** (pratica dei coach: il foglio «Perché?» mostra «Scelta prudente del coach (Convenzione): non è un risultato di studi»), **Decisione** (scelta di prodotto: «Decisione di prodotto»), **Provvisoria** (numero di partenza in attesa di verifica: «Numero di partenza, in verifica»). Etichette: `etichettaForza` in `js/coach/regia/perche.js` (registro C.4).
 > Le tabelle di prima (`COACH_PARAMETRI`, `PARAM_PARTENZA`, `PARAM_INTENSITA`, `STR_PESI`, `DOSE_SCARICO`, `RIR_TIPO`) non sono ancora qui: passano in un file soglie quando il task che possiede il loro file le tocca.
 
-Totale: 112 soglie in 6 tabelle (Solida 2, Moderata 7, Convenzione 96, Decisione 5, Provvisoria 2).
+Totale: 115 soglie in 6 tabelle (Solida 2, Moderata 7, Convenzione 99, Decisione 5, Provvisoria 2).
 
 ## `SOGLIE_PARTENZA` — `js/coach/carichi/soglie-partenza.js` (bilancia)
 
@@ -40,6 +40,7 @@ Totale: 112 soglie in 6 tabelle (Solida 2, Moderata 7, Convenzione 96, Decisione
 | `strutturaPrudente` | principiante settimane 8, blocco 4, intermedio settimane 12, blocco 4, avanzato settimane 12, blocco 6 | Convenzione | registro coach v2 B4 («Prudenti: blocchi 3+1 come oggi»); ricerca-mesocicli-periodizzazione-scarichi §3.2 (modalità prudente: invariato rispetto a oggi) | MES-01, PRN-03, PRG-01 |
 | `scaricoAnticipabile` | settimaneCaricoMinime 4 | Convenzione | registro coach v2 B4 e B17 (scarico reattivo unico); ricerca-mesocicli-periodizzazione-scarichi §3.2 («anticipabile a 4+1») e §3.7 | MES-01 |
 | `controlloOttava` | scaricoSeFatica [«media», «alta»], dose «bassa» | Convenzione | registro coach v2 B4 (controllo all’8ª settimana dei principianti); ricerca-mesocicli-periodizzazione-scarichi §3.6.2 | PRN-03 |
+| `controlloOttavaSegnali` | checkInSonno 7, sonnoMaleMin 4, seduteUltime 3, seduteAlLimiteMin 2, doloreMinimo 4 | Convenzione | registro coach v2 B4; ricerca-mesocicli-periodizzazione-scarichi §3.7 (S5 sonno, S7 sRPE, S4 dolore: scarico locale) e DEC-02 (dolore da 4/10) | PRN-03 |
 | `rampaVolumePrincipiante` | [0.7, 0.7, 0.85, 0.85, 1] | Convenzione | ricerca-principianti-12-settimane §3.2 e PRI-04; ricerca-obiettivi-e-programmi OBI-10 (volume 70 → 100%); registro C.4 (fattori della rampa) | MES-03, PRN-03 |
 | `rampaVolumeIntermedio` | [0.75, 0.85, 0.95, 1, 1] | Convenzione | ricerca-mesocicli-periodizzazione-scarichi §3.2-3.3 e §6 A MES-03 (circa +1 serie per muscolo a settimana); a volume pari la periodizzazione non cambia la massa (Moesgaard 2022): serve a gestire fatica e dolenzia | MES-03 |
 | `rampaVolumeAvanzato` | [0.7, 0.8, 0.9, 1, 1] | Convenzione | ricerca-mesocicli-periodizzazione-scarichi §3.2-3.3 e §6 A MES-03 | MES-03 |
@@ -53,6 +54,7 @@ Totale: 112 soglie in 6 tabelle (Solida 2, Moderata 7, Convenzione 96, Decisione
 | `rirScarico` | [4, 5] | Convenzione | registro coach v2 B5 e B17; ricerca-mesocicli-periodizzazione-scarichi §3.6 (RIR mostrato in scarico) | MES-02 |
 | `rirMassimo` | 4 | Moderata | registro coach v2 B5 («il RIR non supera mai 4»); Halperin 2022, Remmert 2023 | MES-02 |
 | `pavimentoPesanti` | 1 | Convenzione | registro coach v2 B5 (PCO-02, collaudo RIR-02); ricerca-metodi-coach-pratici PCO-02; ACSM 2026 (il cedimento non serve) | MES-02 |
+| `pavimentoCore` | 1 | Convenzione | MAV-02 (niente cedimento sul core, sulle tenute e a peso zero); revisione INT-2d, minor 2; ACSM 2026 (il cedimento non serve) | MES-02, MAV-02 |
 | `pavimentoCasa` | 2 | Convenzione | registro coach v2 B5 (CAS-11); ricerca-casa-poco-tempo §4.4 e CAS-11 (cedimento sicuro senza spotter) | MES-02 |
 | `prontezzaPerZero` | 60 | Convenzione | registro coach v2 B5 («0 solo nell’ultima settimana, esercizi stabili, prontezza ≥ 60»); ricerca-mesocicli-periodizzazione-scarichi §3.4 | MES-02 |
 | `pavimentoMinorenni` | 2 | Convenzione | ETA-02 (registro coach v2 C.3); ricerca-fasce-di-eta §3.2 | MES-02 |
@@ -123,7 +125,7 @@ Totale: 112 soglie in 6 tabelle (Solida 2, Moderata 7, Convenzione 96, Decisione
 | `durataMaxPrincipiante` | settimane1e2 40, dopo 50 | Convenzione | registro coach v2 D-P10; ricerca-principianti-12-settimane PRI-08 e §1.11 (durata consigliata 35-45 minuti, poi 45-50) | CAS-06 |
 | `pavimentiTaglio` | schemiBase 4, serieBase 2, frazionarieGrandi 4, grandi [«petto», «dorsali», «quadricipiti», «femorali», «grande_gluteo»] | Moderata | ricerca-casa-poco-tempo §5.4 (passo 6: mai sotto P1 x 2 serie) e §3.8 di ricerca-ipertrofia-programmazione (sotto 4 serie frazionarie il muscolo non e da ipertrofia: Pelland, Iversen 2021) | CAS-07 |
 | `giornoForzaCorto` | minuti 45, ripetizioni 6, serie 3, pausa 135 | Moderata | ricerca-ipertrofia-programmazione IPE-04 (ACSM 2026: per la massa conta la serie vicina al cedimento, non il carico; Singer 2024) | IPE-04 |
-| `pocoTempo` | minuti 30, giorni 2, serieMin 4, serieMax 6 | Moderata | ricerca-ipertrofia-programmazione IPE-12 (dose minima: Iversen 2021, Androulakis-Korakakis) | IPE-12 |
+| `pocoTempo` | minuti 30, giorni 2, minutiDueGiorni 45, serieMin 4, serieMax 6 | Moderata | ricerca-ipertrofia-programmazione IPE-12 (dose minima: Iversen 2021, Androulakis-Korakakis) | IPE-12 |
 | `quotaLavoroUtile` | 0.75 | Decisione | registro coach v2 B12 e D-P10 (il tempo e un tetto, non un obiettivo: la seduta usa meno del 75% dei minuti solo se il volume utile e completo) | CAS-06, CAS-07 |
 
 ## `SOGLIE_VOLUME` — `js/coach/volume/soglie-volume.js` (dosatore)
@@ -140,6 +142,7 @@ Totale: 112 soglie in 6 tabelle (Solida 2, Moderata 7, Convenzione 96, Decisione
 | `pavimentiDirette` | deltoide_laterale g4 [6, 8], g3 [4, 6], g2 [3, 3], forza [2, 3], generale [0, 2], deltoide_posteriore g4 [4, 6], g3 [3, 4], g2 [2, 2], forza [2, 2], generale [0, 2], bicipiti g4 [4, 6], g3 [4, 4], g2 [2, 2], forza [2, 2], generale [0, 2], tricipiti g4 [4, 6], g3 [4, 4], g2 [2, 2], forza [2, 2], generale [0, 2], polpacci g4 [8, 8], g3 [6, 6], g2 [3, 4], forza [3, 3], generale [2, 2], femorali g4 [4, 6], g3 [4, 4], g2 [2, 2], forza [2, 2], generale [2, 2], addome g4 [4, 6], g3 [4, 4], g2 [2, 2], forza [2, 2], generale [2, 2] | Convenzione | registro coach v2 B6 (pavimenti IPE-02 per giorni); ricerca-specializzazione §6.1; Maeo 2023 e Baz-Valle 2022 per tricipiti e bicipiti (Moderata) | IPE-02 |
 | `tettoSeduta` | morbido 8, duro 11, specializzazione 8, specializzazionePiccole 6 | Provvisoria | Remmert 2025 (preprint, meta-regressione sul volume per seduta); Henselmans (≤ 6 per i piccoli in specializzazione); registro coach v2 B7 e C.4 | IPE-06, EST-05 |
 | `serieMaxEsercizio` | composto 5, isolamento 6 | Convenzione | Krieger 2010; Ralston 2017 (2-6 serie per esercizio: Solida/Moderata); stesso tetto del collaudo (SERIE_MAX_ESERCIZIO) | IPE-01 |
+| `serieMaxIsolamentoConFastidio` | 4 | Convenzione | revisione indipendente INT-2d, M7 (misurato: isolamenti a 6 serie in centinaia di programmi, Alzate Laterali 6 x 15 con la spalla dolente); regola di sicurezza (tolleranza zero, SAF-02: nessun esercizio aggiunto carica una zona dolente senza prudenza) | IPE-01, SAF-02 |
 | `serieMaxCore` | 3 | Convenzione | ABB-03 (un esercizio di core a fine seduta, 2-3 serie: strCopri, strCoreNuovo); ricerca-biomeccanica-esercizi §4 SEL-07 e D10 (core 2-6 serie a settimana, poco volume); registro B6 (addome 2-4 / 4-8 / 6-10 a settimana) | IPE-01, IPE-06 |
 | `eserciziMaxSeduta` | adulto 8, principiante 6 | Convenzione | collaudo del generatore (ES_MAX_SEDUTA, ES_MAX_PRINCIPIANTE); piano E.3 W2-T1 | IPE-01 |
 | `seduteMinimeUnita` | 2 | Solida | ACSM 2026 (137 revisioni): ogni grande gruppo almeno 2 sedute a settimana; collaudo FRQ-01 | IPE-01 |

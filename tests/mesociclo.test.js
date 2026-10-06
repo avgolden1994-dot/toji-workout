@@ -177,7 +177,9 @@ test('MES-02: la tabella del RIR per livello, classe e settimana (intermedio, av
   assert.deepStrictEqual(col(av, 'A', 0, 6), [[3, 4], [2, 3], [2, 3], [1, 2], [1, 2], [4, 5]]);
   assert.deepStrictEqual(col(av, 'C', 0, 6), [[3, 4], [2, 3], [1, 2], [1, 2], [0, 1], [4, 5]]);
   assert.deepStrictEqual(col(av, 'D', 0, 6), [[2, 3], [1, 2], [1, 2], [0, 1], [0, 1], [4, 5]]);
-  assert.deepStrictEqual(col(av, 'F', 0, 5), col(av, 'D', 0, 5), 'core e tenute come gli isolamenti');
+  /* INT-2d (minor 2 della revisione, MAV-02): core e tenute come gli isolamenti, ma mai a RIR 0 (pavimentoCore 1): prima la tabella dava [0, 1] a avanzato e intermedio dalla 4a-5a settimana */
+  assert.deepStrictEqual(col(av, 'F', 0, 5), col(av, 'D', 0, 5).map(r => r[0] < 1 ? [1, 2] : r), 'core e tenute come gli isolamenti, con il pavimento 1');
+  assert.ok([int, av].every(w => w.every(x => x.rir.F[0] >= 1)), 'il core non e mai a RIR 0');
   /* pavimento 1 sui pesanti col bilanciere (A) e sui multiarticolari liberi (B): mai RIR 0 */
   [int, av].forEach(w => w.forEach(x => { assert.ok(lo(x.rir.A) >= 1, 'A settimana ' + x.n); assert.ok(lo(x.rir.B) >= 1, 'B settimana ' + x.n); }));
   /* mai sopra 4 come limite basso, bersaglio sempre di due valori consecutivi */
