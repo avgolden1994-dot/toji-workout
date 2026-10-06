@@ -1,0 +1,96 @@
+{
+ "task": "W2-T6",
+ "script": [
+  {
+   "src": "js/coach/programma/soglie-selezione.js",
+   "dopo": "js/coach/programma/soglie-struttura.js"
+  }
+ ],
+ "frasi": {
+  "Hip Hinge a Corpo Libero": {
+   "en": "Bodyweight Hip Hinge",
+   "es": "Bisagra de cadera sin peso",
+   "de": "Hüftbeuge ohne Gewicht"
+  },
+  "Porta le anche indietro (hip hinge) facendo scivolare le mani lungo le cosce.": {
+   "en": "Push your hips back (hip hinge), sliding your hands down your thighs.",
+   "es": "Lleva las caderas atrás (hip hinge) haciendo deslizar las manos por los muslos.",
+   "de": "Schiebe die Hüfte nach hinten (Hip Hinge) und lasse die Hände an den Oberschenkeln entlanggleiten."
+  },
+  "Schiena che si arrotonda o testa che cade in avanti.": {
+   "en": "Back rounding or head dropping forward.",
+   "es": "Espalda que se redondea o cabeza que cae hacia delante.",
+   "de": "Rücken, der sich rund macht, oder Kopf, der nach vorn fällt."
+  },
+  "Chiudi una porta con il sedere e risali spingendo i fianchi in avanti.": {
+   "en": "Close a door with your backside and stand up by driving your hips forward.",
+   "es": "Cierra una puerta con el trasero y sube empujando las caderas hacia delante.",
+   "de": "Schließe mit dem Po eine Tür und richte dich auf, indem du die Hüfte nach vorn schiebst."
+  },
+  "Y-Raise a Corpo Libero": {
+   "en": "Bodyweight Y-Raise",
+   "es": "Elevación en Y sin peso",
+   "de": "Y-Raise ohne Gewicht"
+  },
+  "A pancia in giù su un tappetino, braccia a Y davanti a te": {
+   "en": "Face down on a mat, arms in a Y in front of you",
+   "es": "Boca abajo sobre una esterilla, brazos en Y delante de ti",
+   "de": "Bauchlage auf einer Matte, die Arme als Y vor dir"
+  },
+  "Solleva le braccia di pochi centimetri dal pavimento stringendo le scapole.": {
+   "en": "Lift your arms a few centimetres off the floor, squeezing your shoulder blades together.",
+   "es": "Levanta los brazos unos centímetros del suelo apretando las escápulas.",
+   "de": "Hebe die Arme einige Zentimeter vom Boden ab und ziehe die Schulterblätter zusammen."
+  },
+  "Inarcare la zona lombare per salire di più.": {
+   "en": "Arching your lower back to lift higher.",
+   "es": "Arquear la zona lumbar para subir más.",
+   "de": "Den unteren Rücken ins Hohlkreuz ziehen, um höher zu kommen."
+  },
+  "Pensa a portare le scapole verso le tasche posteriori dei pantaloni, senza alzare il collo.": {
+   "en": "Think of drawing your shoulder blades toward your back pockets, without lifting your neck.",
+   "es": "Piensa en llevar las escápulas hacia los bolsillos traseros del pantalón, sin levantar el cuello.",
+   "de": "Stell dir vor, die Schulterblätter zu den hinteren Hosentaschen zu ziehen, ohne den Nacken anzuheben."
+  },
+  "Con la spalla delicata ho aggiunto un lavoro leggero per la cuffia dei rotatori e per i deltoidi posteriori. Non cura il dolore: se non passa fatti vedere da un medico o da un fisioterapista.": {
+   "en": "Because your shoulder is sensitive I added light work for the rotator cuff and the rear deltoids. It does not treat the pain: if it doesn't go away, see a doctor or a physiotherapist.",
+   "es": "Como tienes el hombro delicado he añadido un trabajo ligero para el manguito de los rotadores y los deltoides posteriores. No cura el dolor: si no pasa, consulta a un médico o a un fisioterapeuta.",
+   "de": "Weil deine Schulter empfindlich ist, habe ich leichte Arbeit für die Rotatorenmanschette und die hinteren Schultermuskeln ergänzt. Sie heilt den Schmerz nicht: Wenn er nicht vergeht, lass dich von einem Arzt oder einer Physiotherapeutin untersuchen."
+  }
+ },
+ "regole": [
+  {
+   "capitolo": 29,
+   "riga": "- **SEL-06** (spegnibile) abilità non oltre il livello (W2-T6; assorbe PRI-05; dato `abilita` di `attributi-esercizi.js`, soglia `abilitaMax` in `js/coach/programma/soglie-selezione.js`, Convenzione: ricerca-principianti-12-settimane §3.4 e §5.3) chi inizia e i prudenti (over 65, PAR-Q positivo, minorenni) non ricevono esercizi di abilità 3 (Affondi Bulgari, Sissy Squat, Pike Push-up, Piegamenti Declinati, Dip, trazioni libere, Stacco da Terra, Good Morning…): la Sentinella (`vincoliSicurezza`) li mette tra i vietati leggendo il dato, e non più tre elenchi scritti a mano (il collaudo SAF-05 ne vedeva uno solo). Un metodo famoso scelto dall'utente porta i suoi esercizi (Starting Strength: lo stacco da terra). Per chi inizia, senza la forza come primo obiettivo, il bilanciere pesante non prende più il +3 del primo posto e i posti si riempiono con le prime scelte (macchine, manubri, corpo libero con appoggio: abilità 1; `primeScelte` in `componiSedute`, ricette.js): un esercizio di abilità 2 entra solo dove il posto non ne ha uno di abilità 1; con la forza il bilanciere resta. Dove il carico di partenza stimato di un bilanciere sarebbe sotto la barra da 20 kg il posto lo cede alla variante con manubri o macchina (PAR-08, `penalitaPartenza`). Non c'è il tetto «un solo esercizio di abilità 2 per seduta» della nota PRI-05."
+  },
+  {
+   "capitolo": 29,
+   "riga": "- **SEL-03** (sempre accesa: guardia, toglie; W0-T5, W1-T2, W2-T6; con CAS-01) un esercizio non si propone se chiede un attrezzo che il luogo non ha: l'attributo `serve` di `attributi-esercizi.js` (`serveAttrezzo`) dice quale (panca, sbarra, parallele, elastico…). A corpo libero niente esercizi che chiedono una panca (il Dip su Panca di chi inizia: collaudo SAF-04) finché la panca non è dichiarata tra gli attrezzi di casa (`prefs.attrezziCasa`, campo di W2-T5); a casa con i manubri la panca c'è (`chiedeAttrezzo`, `consentitoCalcolo` in motore.js)."
+  },
+  {
+   "capitolo": 30,
+   "riga": "- **PCO-08** (spegnibile) cuffia dei rotatori con la spalla delicata (W2-T6; collaudo SAF-06; Cressey: rotazione esterna una o due volte a settimana, 2-3 serie, al massimo 2 esercizi aggiunti; Convenzione, soglie `cuffia` di `soglie-selezione.js`) con il fastidio «spalle» la settimana ha almeno 2 serie dirette per i deltoidi posteriori o per la cuffia. Se mancano, `copriCuffia` (completamenti.js, prima di `strCopri`) aggiunge nella seduta di tirata con meno esercizi un lavoro che non carica la spalla (Face Pull, Face Pull con Elastico, Reverse Pec Deck, Alzate Posteriori, Y-Raise a corpo libero o su panca inclinata: il primo consentito, 2 serie da 15) e, con almeno 4 sedute (soglia provvisoria), l'Extrarotazione al Cavo in un'altra seduta; il lavoro che la ricetta ha già (un reverse pec deck) è protetto dai tagli del tempo e dal solutore del volume. La nota «Con la spalla delicata ho aggiunto…» rimanda al medico o al fisioterapista se il dolore non passa e sparisce se un passo dopo toglie il lavoro. Non con un metodo «essenziale»."
+  },
+  {
+   "capitolo": 5,
+   "riga": "- **ABB-01** ordine della seduta (`strOrdina`): prima i multiarticolari (i pesanti col bilanciere davanti alle macchine), poi gli isolamenti dei grandi muscoli, poi quelli dei piccoli (deltoidi, braccia, polpacci), il core sempre in fondo. Il giorno \"punti deboli\" resta nell'ordine di priorita dell'utente. Motivo: ACSM 2009 (grandi prima dei piccoli, multi prima dei mono); per la forza migliora di piu l'esercizio fatto per primo (Nunes 2021); per la massa l'ordine conta poco. W2-T6 (collaudo ORD-03): nessun multiarticolare di spalle o braccia prima di quelli delle gambe: `ordinaSedute` legge `strPiccoloMulti` e `strBassoMulti` (struttura-pro.js; il pull-through ai cavi e la spinta d'anca contano tra quelli delle gambe) e `strSuperserie` non porta una spinta sopra un multiarticolare delle gambe quando abbina la coppia. (storica: sempre accesa)",
+   "sostituisce": true
+  },
+  {
+   "capitolo": 5,
+   "riga": "- **ABB-02** niente esercizi doppi (`strRidondante`): due esercizi con stesso gruppo, stessa parte del muscolo (SOTTOGRUPPI), stesso tipo e stesso schema fanno lo stesso lavoro, e la seconda panca piana diventa una inclinata. Penalita di 4 punti nella scelta del posto. Fanno eccezione lo squat (macchina dopo il bilanciere: 2) e i glutei multiarticolari (2). W1-T6 (RID-01): il secondo posto dello stesso tipo (squat2, spintaO2, isoBic2) non diventa un terzo esercizio che fa lo stesso lavoro di due già scelti (`strTerzoUguale`, struttura-pro.js: nemmeno l'eccezione dello squat o dei glutei ne ammette tre): se i candidati sono tutti doppioni il posto resta vuoto e lo riempie il tempo (un isolamento) o l'EXN-01 (a corpo libero lo squat, gli affondi e lo squat su scatola finivano nella stessa seduta: 3 esercizi solo per i quadricipiti); una sola spinta d'anca per seduta (se il posto dell'hinge ha già preso l'hip thrust, il posto della spinta d'anca non ne mette un secondo); le famiglie dei glutei dell'obiettivo glutei (completaSettimana) non vanno in una seduta che ha già due multiarticolari per il grande gluteo; la spinta d'anca conta tra i multiarticolari delle gambe nell'ordine (ORD-03, `ordinaSedute`). INT-2a (M5 della revisione dell'onda 1): gli esercizi di avvio (attributo `soloAvvio` di `attributi-esercizi.js`: Squat su Scatola e Sit-to-Stand dalla Panca, la progressione verso lo squat carico) non sono per chi può fare lo squat con un carico (la Sentinella li vieta, `vincoliSicurezza`: restano a chi inizia e ai prudenti) e non stanno nella stessa seduta di un altro squat, in nessuno dei due ordini (`strSquatDoppio`, struttura-pro.js; due squat carichi, bilanciere e macchina, restano ammessi). W2-T6 (SES-03; collaudo RID-02): al massimo due varianti di squat o di affondo in una seduta (`squatOltreMax`, completamenti.js; soglia `squatPerSeduta` di `soglie-selezione.js`): la terza è la cerniera dell'anca o la flessione del ginocchio che la ricetta ha già; vale per i posti della ricetta e per gli esercizi che il solutore del volume aggiunge (il Cossack Squat per gli adduttori finiva dopo uno squat e un affondo). Lo stesso esercizio al massimo in due sedute a settimana (`RIPETIZIONI_SETTIMANA_MAX`): il posto prende l'esercizio meno usato dove la libreria ne ha uno (prima le prime scelte di chi inizia), non nei posti fissi della forza né nei metodi che ripetono la stessa seduta. A corpo libero la cerniera dell'anca è l'«Hip Hinge a Corpo Libero» (esercizio nuovo di libreria, `PRIORI` negativo: dove c'è un cavo o un manubrio vince la variante con il carico, in palestra non compare e a casa con i manubri al massimo una volta a settimana). (storica: sempre accesa)",
+   "sostituisce": true
+  },
+  {
+   "capitolo": 21,
+   "riga": "- **CAS-07** (sempre accesa: ordine d'intervento; W2-T2; assorbe IPE-03; il tempo è un tetto, non un obiettivo: D-P10, B12) se la seduta supera i minuti dichiarati (+5%) `scalaDelTempo` interviene in quest'ordine, fermandosi appena sta nei minuti: 1) le pause scendono verso il minimo della classe, 15 s alla volta partendo dalla più lunga (A 120, B 60, C 75, D e E 45, F 30; con la forza B e C 90 e la classe A non si taglia; oltre i 65 anni B e C 90 e A 120); 2) le coppie antagoniste (CAS-08), anche sopra i 45 minuti; 3) via il core e le braccia dirette (non quelli che coprono un buco della settimana), mai sotto 3 esercizi (EXN-01); 4) le serie da 3 a 2 sui non prioritari, prima gli isolamenti, poi i multiarticolari (le spinte prima delle tirate, ABB-04) e per ultimo il fondamentale; 5) gli isolamenti uno alla volta. Ultima risorsa (DUR-01): con la forza la classe A scende a 120 s, un isolamento protetto lascia il posto, poi un esercizio fuori dai quattro schemi di base (se un altro giorno tiene il suo piano), infine le serie del 5×5 fisso fino a 3. Prima di questi tagli (M6, W2-T6; collaudo EQ-03): se la seduta full body tiene l'unica flessione del ginocchio della settimana e non sta nei minuti, il secondo multiarticolare di gambe più caro in minuti (non il primo, non un posto fisso o protetto, e solo se il suo schema è anche in un'altra seduta) lascia il posto alla flessione invece di perderla (`secondoDiGambe` in completamenti.js, chiamata da `scalaDelTempo` in tempo.js; se anche così la flessione non starebbe, si torna al taglio di prima); nel completamento della settimana la flessione va nella seduta che resta più corta dopo lo scambio. A 2 giorni e 30 minuti in palestra la flessione manca da 107 a 15 programmi su 144 della griglia della prova (restano soprattutto forza e pavimenti di petto e dorsali). Mai sotto i pavimenti: i quattro schemi di base a 2 serie, 4 serie frazionarie a settimana per i grandi muscoli, i pavimenti di serie dirette di W2-T1 (`pavimentoVolume`). Il tempo che resta non si riempie: `serieSottoFascia` aggiunge una serie solo dove un muscolo è sotto il minimo (agli isolamenti, poi ai multiarticolari non di spalle, una spinta solo se le tirate la pareggiano) dentro i massimi di volume e i minuti dichiarati, poi il solutore di W2-T1 (`aggiungiSerieUtile`); `riempiTempo` non esiste più. Se non si riesce a stare nei minuti il programma lo dice («di mantenimento»).",
+   "sostituisce": true
+  }
+ ],
+ "mappaAgenti": [
+  "scelta degli esercizi per attributi (W2-T6, versione snella): soglie in js/coach/programma/soglie-selezione.js (`sogliaSelezione`: `abilitaMax`, `squatPerSeduta`, `cuffia`); SEL-06 in `vincoliSicurezza` (js/coach/sicurezza/vincoli.js: ogni esercizio con `abilita` sopra il tetto va tra i vietati di chi inizia e dei prudenti) e `primeScelte` in `componiSedute` (ricette.js: niente +3 al bilanciere del primo posto, prime scelte di abilità 1; `penPartenza` = `penalitaPartenza` di W2-T8 via `typeof`); SEL-03 in `consentitoCalcolo` (motore.js: `chiedeAttrezzo` legge `serveAttrezzo`)",
+  "cuffia con la spalla delicata (PCO-08): `copriCuffia`, `CUFFIA_ESERCIZI`, `RX_CUFFIA` in js/coach/programma/completamenti.js (marcatore `cuffia: 'aggiunto' | 'ricetta'` sull'esercizio, letto da `rimovibile` in js/coach/volume/volume.js); la nota si toglie in `NOTE_REGIONALI` di js/coach/regia/genera.js se il lavoro è stato tolto",
+  "flessione del ginocchio a 2 giorni e 30 minuti (M6): `secondoDiGambe`, `schemaDiGambe`, `eMultiDiGambe` in js/coach/programma/completamenti.js e il giro di prova in `scalaDelTempo` (wrapper di `scalaDelTempoBase`, js/coach/volume/tempo.js: stesso file, nessun altro file lo riassegna); `squatOltreMax` (ABB-02: al massimo due varianti di squat o affondo per seduta) è usata da ricette.js e da `provaNuovo` di volume.js; `strPiccoloMulti`, `strBassoMulti` (ORD-03) in js/coach/programma/struttura-pro.js; esercizi nuovi «Hip Hinge a Corpo Libero» (cerniera dell'anca senza carico, `PRIORI` negativo) e «Y-Raise a Corpo Libero» in libreria, dettagli, attributi e schede tecniche"
+ ],
+ "nota": "W2-T6 snella: chiuse M6, SEL-06 (e PRI-05), SEL-03 (panca a corpo libero), PCO-08, ABB-02/SES-03 (tre squat, cerniera dell'anca a corpo libero), ORD-03, PAT-01, RID-02 in parte. Aperte con nome: PRN-15 (IMC: il brief non ha peso e altezza, serve T5), SEL-04, SEL-07, SEL-08, SEL-13, SEL-15, SEL-16, IPE-09/EST-04, PRG-22 (enfasi glutei da obiettivo), MOD-04 (attrezzoDi dal dato), SLOT_DEF e SCHEMI_MOV dagli attributi, anziani (bulgari/instabili: ETA-65), RID-01/02 sotto il 5%. Il file soglie-selezione.js va in index.html dopo soglie-struttura.js: fino ad allora le funzioni leggono `typeof sogliaSelezione` e restano come prima."
+}
