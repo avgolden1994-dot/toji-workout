@@ -1,0 +1,8 @@
+{
+ "task": "P3-A",
+ "script": [
+  { "src": "js/coach/carichi/soglie-progressione.js", "dopo": "js/coach/carichi/soglie-partenza.js" },
+  { "src": "js/coach/carichi/attrezzi.js", "dopo": "js/coach/carichi/partenza.js" }
+ ],
+ "nota": "In lavorazione (P3-A, Bilancia essenziale): prima la prova che fallisce (tests/bilancia-v2.test.js), poi il codice; frasi, regole e righe della mappa arrivano con i commit seguenti."
+}
