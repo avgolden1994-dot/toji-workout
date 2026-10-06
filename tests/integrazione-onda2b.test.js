@@ -299,7 +299,7 @@ const PROFILI_SENZA_SPINTA_V = [
   {"goals":["forza","massa"],"level":"avanzato","days":3,"minutes":30,"luogo":"palestra","fastidi":["spalle"],"sex":"F","age":70,"sonno":"bene","attrezzi":"macchine","freq":"auto","parq":"no","priorita":[],"seme":"collaudo|forza+massa|avanzato|3|30|palestra|spalle|F|senior|2","usaProfilo":false}
 ];
 test('adattaAlTempo: a 30 minuti il Landmine Press, la sola spinta verticale per chi ha la spalla dolente, resta nella settimana (i 25 programmi che lo perdevano)', () => {
-  const a = conSoglieStruttura(caricaApp({ ora: ORA }));
+  const a = conSoglieStruttura(caricaApp({ ora: ORA, consenso: false }));   /* come il collaudo: senza consenso il coach non legge il profilo ne stima i carichi */
   const spintaV = p => [].concat.apply([], p.sedute.map(sd => sd.esercizi.map(e => e.name))).some(n => a.chiama('schemaDi', n) === 'spintaV' || /landmine/i.test(a.chiama('senzaEmoji', n)));
   const senza = PROFILI_SENZA_SPINTA_V.filter(d => !spintaV(a.dati(a.chiama('buildProgram', d))));
   assert.strictEqual(PROFILI_SENZA_SPINTA_V.length, 25);
