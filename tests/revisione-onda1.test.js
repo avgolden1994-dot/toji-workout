@@ -7,9 +7,10 @@
 'use strict';
 const test = require('node:test'), assert = require('node:assert');
 const { caricaApp } = require('./aiuto-app');
+const { conSoglieSelezione } = require('./aiuto-selezione');   /* W2-T6: le soglie della scelta degli esercizi (SEL-06) anche prima che index.html le citi */
 
 const ORA = '2026-10-05T12:00:00';
-const app = caricaApp({ ora: ORA });
+const app = conSoglieSelezione(caricaApp({ ora: ORA }));
 const senzaEmoji = n => app.g('senzaEmoji')(n);
 const BASE = { goals: ['massa'], level: 'intermedio', days: 4, minutes: 60, luogo: 'palestra', sex: 'F', age: 30, parq: 'no', fastidi: [], sonno: 'bene', attrezzi: 'indifferente', usaProfilo: false };
 const costruisci = p => app.dati(app.chiama('buildProgram', Object.assign({}, BASE, p)));
@@ -92,9 +93,11 @@ test('M5: su una griglia di 324 programmi nessun intermedio o avanzato sano rice
   assert.strictEqual(esperti.length, 54);
   assert.deepStrictEqual(esperti.filter(haScatola).map(x => x.p.seme), [], 'chi puo fare lo squat con un carico non riceve lo squat di avvio');
   /* lo ricevono ancora chi inizia e i prudenti (la progressione verso lo squat carico) */
-  assert.strictEqual(tutti.filter(x => x.p._persona === 'adulto' && x.p.level === 'principiante').filter(haScatola).length, 12);
+  /* W2-T6: 10 e non 12 (con le prime scelte di SEL-06 e la varieta di RID-02 lo squat di avvio resta a 10 principianti su 27: la progressione verso lo squat carico c e ancora) */
+  assert.strictEqual(tutti.filter(x => x.p._persona === 'adulto' && x.p.level === 'principiante').filter(haScatola).length, 10);
   /* W2-T2: 130 e non 128 (con la capacita di CAS-06 ai prudenti e ai principianti restano 2 programmi in piu con lo squat di avvio: e la progressione verso lo squat carico) */
-  assert.strictEqual(tutti.filter(x => x.p._persona !== 'adulto').filter(haScatola).length, 130);
+  /* W2-T6: 128 e non 130 (le prime scelte di SEL-06 e la varieta di RID-02 spostano lo squat di avvio dei prudenti: sempre la progressione verso lo squat carico) */
+  assert.strictEqual(tutti.filter(x => x.p._persona !== 'adulto').filter(haScatola).length, 128);
   let sedute = 0, conAvvioEAltroSquat = 0, conDueSquat = 0;
   tutti.forEach(x => x.prog.sedute.forEach(sd => {
     sedute++;
@@ -110,10 +113,10 @@ test('M5: su una griglia di 324 programmi nessun intermedio o avanzato sano rice
      (RID-01/RID-02, W2-T6). Il numero scende solo se il generatore migliora: si aggiorna con il motivo, mai a mano per far passare la prova */
   /* onda 2c (INT-2b): 41 e non 40: il Front Squat e vietato a chi inizia e ai prudenti (SAF-05, abilita 3: vincoli.js) e in una seduta della griglia il suo posto lo prende uno squat alla macchina
      accanto a un altro (un doppione di scelta, W2-T6); nessuna seduta con lo squat di avvio e un altro squat (sopra, 0) */
-  /* W2-T5 (PRG-02): 40 e non 41: con i giorni scelti perche lo stesso grande muscolo non lavori in due giorni di fila (frequenza 3 con 4 o 5 giorni, push/pull/legs) una seduta della griglia non ha piu il secondo squat
-     alla macchina. Non e una correzione mirata ma l effetto dei giorni sulla guardia delle 48 ore (recuperoOk) e quindi sul sorteggio dei posti: il controllo che conta, nessuno squat di avvio con un altro squat, resta a 0 sopra */
-  /* prima dell integrazione (index.html senza soglie-split.js) i giorni sono quelli di sempre e le sedute con due squat restano 41 */
-  assert.strictEqual(conDueSquat, app.g('typeof SOGLIE_SPLIT') === 'undefined' ? 41 : 40, 'doppi squat nella griglia: erano 71 sul codice di prima, 45 con la capacita di W2-T2, 40 con il volume per muscolo, 41 con il Front Squat vietato, 40 con i giorni di W2-T5');
+  /* W2-T6 (ABB-02, SES-03): 1 e non 41. Le sedute hanno al massimo due varianti di squat o di affondo (`squatOltreMax`): con un affondo gia in seduta (il posto dell unilaterale) il secondo squat, che era il doppione
+     di scelta di cui sopra (Hack + Leg Press, Hack + Pendulum, Goblet + Squat a Corpo Libero), non entra piu; la terza variante e la cerniera dell anca o la flessione del ginocchio. Era 41 sul codice di prima.
+     INT-2e: ricalcolato sul codice integrato (W2-T5 con i giorni ad anello + W2-T6): 1, lo stesso numero (i giorni di W2-T5 spostavano 1 seduta, che con ABB-02 non ha piu il secondo squat). */
+  assert.strictEqual(conDueSquat, 1, 'doppi squat nella griglia: erano 71 sul codice di prima, 45 con la capacita di W2-T2, 40 con il volume per muscolo, 41 con il Front Squat vietato, 1 con ABB-02 di W2-T6');
 });
 
 /* ============================================================================================================ M3 */

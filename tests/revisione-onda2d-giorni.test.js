@@ -4,12 +4,13 @@
 'use strict';
 const test = require('node:test'), assert = require('node:assert');
 const { caricaApp } = require('./aiuto-app');
+const { conSoglieSelezione } = require('./aiuto-selezione');   /* W2-T6: le soglie della scelta degli esercizi (SEL-06) anche prima che index.html le citi */
 
 const LUNEDI = '2026-10-05T12:00:00';
 const GIORNI_SEI = ['Lunedì', 'Martedì', 'Mercoledì', 'Venerdì', 'Sabato', 'Domenica'];
 
 test('M2: tipiAdiacenti e riordinaSenzaAdiacenti contano anche domenica-lunedi (prima solo i giorni consecutivi da lunedi a domenica)', () => {
-  const a = caricaApp({ ora: LUNEDI });
+  const a = conSoglieSelezione(caricaApp({ ora: LUNEDI }));
   const ind = [0, 1, 2, 4, 5, 6];
   assert.strictEqual(a.json('tipiAdiacenti(["push","pull","legs","push","pull","push"], ' + JSON.stringify(ind) + ')'), true, 'push di domenica e push di lunedi: giorni consecutivi');
   assert.strictEqual(a.json('tipiAdiacenti(["push","pull","legs","push","pull","legs"], ' + JSON.stringify(ind) + ')'), false, 'push pull legs due volte: nessuna coppia uguale in giorni consecutivi');
@@ -29,7 +30,7 @@ test('M2: tipiAdiacenti e riordinaSenzaAdiacenti contano anche domenica-lunedi (
 });
 
 test('M2: recuperoOk e giorniAdiacenti: domenica e lunedi sono consecutivi (48 ore del petto a fondo)', () => {
-  const a = caricaApp({ ora: LUNEDI });
+  const a = conSoglieSelezione(caricaApp({ ora: LUNEDI }));
   assert.strictEqual(a.json('giorniAdiacenti(6, 0)'), true);
   assert.strictEqual(a.json('giorniAdiacenti(0, 6)'), true);
   assert.strictEqual(a.json('giorniAdiacenti(0, 1) && giorniAdiacenti(3, 4)'), true);
@@ -43,7 +44,7 @@ test('M2: recuperoOk e giorniAdiacenti: domenica e lunedi sono consecutivi (48 o
 });
 
 test('M2: su 288 programmi da 6 giorni (uno ogni quattro dei 1.152 della griglia) nessun grande muscolo e a fondo sia domenica sia lunedi, le sedute stanno su lun-mar-mer-ven-sab-dom, e la nota dice la verita sui sei giorni di fila', { timeout: 280000 }, () => {
-  const a = caricaApp({ ora: LUNEDI });
+  const a = conSoglieSelezione(caricaApp({ ora: LUNEDI }));
   a.g(`globalThis.__sei = function (p) { const prog = buildProgram(p); let anello = 0, tutti = 0;
     prog.sedute.forEach((x, i) => prog.sedute.forEach((y, j) => { if (j > i) { const d = Math.abs(DAYS.indexOf(x.giorno) - DAYS.indexOf(y.giorno)); if (d !== 1 && d !== 6) return;
       GRUPPI_RECUPERO.forEach(g => { if (frazGruppoSeduta(x, g) >= PARAM_TEMPO.serieMinRecupero && frazGruppoSeduta(y, g) >= PARAM_TEMPO.serieMinRecupero) { tutti++; if (d === 6) anello++; } }); } }));
@@ -69,5 +70,5 @@ test('M2: su 288 programmi da 6 giorni (uno ogni quattro dei 1.152 della griglia
   assert.deepStrictEqual(falsi.slice(0, 5), [], 'giorni e note');
   assert.strictEqual(conAnello, 0, 'nessun grande muscolo a fondo sia domenica sia lunedi (2c: 12 programmi su 1.152)');
   assert.strictEqual(lunga + breve + cinque, 288);
-  assert.deepStrictEqual({ conAnello, conRec, breve, lunga, cinque }, { conAnello: 0, conRec: 8, breve: 8, lunga: 280, cinque: 0 }, 'numeri misurati: nessun anello (domenica-lunedi), 8 programmi con una coppia a fondo in giorni consecutivi non d anello (Mar-Mer) che riceve la nota breve, 280 con la garanzia');
+  assert.deepStrictEqual({ conAnello, conRec, breve, lunga, cinque }, { conAnello: 0, conRec: 6, breve: 6, lunga: 282, cinque: 0 }, 'numeri misurati: nessun anello (domenica-lunedi), 6 programmi con una coppia a fondo in giorni consecutivi non d anello (Mar-Mer) che riceve la nota breve, 282 con la garanzia');   /* W2-T6: 6 e 282, non 8 e 280 (i due esercizi nuovi cambiano quali profili hanno la coppia a fondo nello stesso giorno; il conto non e una regola) */
 });

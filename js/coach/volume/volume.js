@@ -500,7 +500,7 @@ function volumeMotore(brief, sedute, b, opz) {
   const femoraleSeduta = (e) => /leg curl|nordic|stacco|good morning|pull-through/i.test(senzaEmoji(e.name));   /* come SLOT_DEF.hinge e la flessione del ginocchio del collaudo */
   const rimovibile = (r, senzaVolume, senzaEquilibrio) => {
     const sd = sedute[r.s];
-    if (r.e.fisso || r.fond || sd.esercizi.length <= 3 || !consente(r, -r.e.sets, true, senzaEquilibrio)) return false;
+    if (r.e.fisso || r.e.cuffia || r.fond || sd.esercizi.length <= 3 || !consente(r, -r.e.sets, true, senzaEquilibrio)) return false;   /* PCO-08 (W2-T6): il lavoro per la cuffia che la spalla dolente chiede (copriCuffia) non si toglie per il volume */
     const att = typeof attributi === 'function' ? attributi(r.e.name) : null;
     if (att && att.soloAvvio) return false;   /* lo squat di avvio (Squat su Scatola, Sit-to-Stand) lo toglie la progressione, non il volume (M5) */
     const cat = categoria(r.e);
@@ -530,7 +530,7 @@ function volumeMotore(brief, sedute, b, opz) {
     if (sd.tipo === 'punti' && x.type === 'compound') return null;   /* il giorno dei punti deboli tiene l ordine di priorità: un multiarticolare in coda sarebbe dopo gli isolamenti (ORD-01, ORD-02) */
     if (usoSettimana(x.name) >= maxSettimana(x.name)) return null;
     if (typeof adattoAllaSeduta === 'function' && !adattoAllaSeduta(x, sd.tipo)) return null;
-    if (strRidondante(x, sd.esercizi) || strSquatDoppio(x, sd.esercizi)) return null;
+    if (strRidondante(x, sd.esercizi) || strSquatDoppio(x, sd.esercizi) || squatOltreMax(x, sd.esercizi)) return null;   /* ABB-02 (W2-T6): non la terza variante di squat o di affondo */
     const bers = bersaglioDi(x.name), stessi = sd.esercizi.filter(e => bersaglioDi(e.name) === bers && (findExercise(e.name) || {}).type === x.type && !isTimeBased(e.name)).length;
     if (bers && !isTimeBased(x.name) && stessi >= (((x.type === 'isolation' && (bers === 'bicipiti' || bers === 'tricipiti')) || (x.type === 'compound' && (bers === 'quadricipiti' || bers === 'grande_gluteo'))) ? 2 : 1)) return null;   /* RID-01 */
     if (x.group === 'core' && sd.esercizi.some(e => (findExercise(e.name) || {}).group === 'core')) return null;

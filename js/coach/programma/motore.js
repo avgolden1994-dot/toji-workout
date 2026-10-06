@@ -62,6 +62,12 @@ function senzaMacchine(prefs) {
 const ATTREZZI_NON_DI_CASA = /^(sbarra|parallele|sedia romana|panca per lombari|panca a 45°|ruota addominale|elastico|kettlebell|anelli)$/i;   /* W1-T5, D-P3: elastici, kettlebell e anelli finche W2-T5 non li fa dichiarare */
 const ATTREZZI_NON_CON_I_MANUBRI = /^(sbarra bassa o anelli)$/i;
 function attrezzoFisicoDi(nome) { const d = dettaglioEsercizio(nome); return d ? d.att : ''; }
+/* SEL-03 (W2-T6; D-P3, ricerca-casa-poco-tempo §4.1-4.2): l esercizio chiede un attrezzo oltre a pavimento, muro, una sedia robusta e un gradino? Si legge il DATO `serve` di attributi-esercizi.js
+   (serveAttrezzo, «sbarra|anelli» = a oppure b); senza attributi (fuori libreria, albero di prima) no: come prima */
+function chiedeAttrezzo(nome, attrezzo) {
+  const serve = typeof serveAttrezzo === 'function' ? serveAttrezzo(nome) : null;
+  return !!serve && serve.some(s => String(s).split('|').indexOf(attrezzo) !== -1);
+}
 function attrezzoDiCasaMancante(nome, luogo) {
   if (luogo !== 'manubri' && luogo !== 'corpo') return false;
   const att = attrezzoFisicoDi(nome);
@@ -98,6 +104,9 @@ function consentitoCalcolo(nome, prefs) {
   if (prefs.luogo === 'manubri' && (a === 'macchine' || a === 'bilanciere')) return false;
   if (prefs.luogo === 'corpo' && a !== 'corpo') return false;
   if (attrezzoDiCasaMancante(nome, prefs.luogo)) return false;   /* CAS-01 */
+  /* SEL-03 (collaudo SAF-04): a corpo libero niente esercizio che per dato chiede una panca (Dip su Panca: una sedia robusta fa lo stesso, ma il questionario non garantisce ne l una ne l altra); quando
+     W2-T5 fara dichiarare gli attrezzi di casa, la panca dichiarata arrivera in prefs.attrezziCasa e l esercizio tornera */
+  if (prefs.luogo === 'corpo' && chiedeAttrezzo(nome, 'panca') && !(prefs.attrezziCasa || []).some(x => /^panca$/i.test(x))) return false;
   return !(prefs.fastidi || []).some(f => RISCHIO[f] && RISCHIO[f].test(nome) && !eccezioneRischio(f, nome, prefs));
 }
 

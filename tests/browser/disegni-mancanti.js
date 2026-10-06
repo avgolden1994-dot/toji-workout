@@ -1,4 +1,4 @@
-/* Disegni mancanti (W1-T5, D-P2): i 29 esercizi nuovi escono con la scheda tecnica e senza disegno. La scheda di ognuno mostra il riquadro vuoto
+/* Disegni mancanti (W1-T5, D-P2): i 29 esercizi nuovi (e i 2 di W2-T6: Hip Hinge e Y-Raise a corpo libero) escono con la scheda tecnica e senza disegno. La scheda di ognuno mostra il riquadro vuoto
    (.ex-img-slot.vuoto) con «Immagine in arrivo» tradotto, senza errori; nessun consumatore del percorso del disegno (schedaUnica(nome).disegno,
    immagineEsercizio, slotImmagine) presume che il file esista. Quando un disegno arriva, si toglie il nome da NUOVI: la prova guarda comunque il file su disco. */
 const { chromium } = require('playwright-core');
@@ -11,7 +11,8 @@ const NUOVI = ['Stacco Rumeno con Manubri', 'Stacco Rumeno a una Gamba', 'Hip Th
   'Alzate Laterali con Elastico', 'Alzate Laterali Inclinate', 'Floor Press con Manubri', 'Chest Press Inclinata alla Macchina', 'Calf Raise con Manubrio sul Gradino', 'Tibialis Raise',
   'Cossack Squat', 'Copenhagen Plank', 'Suitcase Carry', 'Extrarotazione al Cavo', 'Belt Squat', 'Seal Row',
   'Squat con Pausa', 'Panca con Pausa', 'Stacco in Deficit', 'Sit-to-Stand dalla Panca', 'Scrollate con Manubri', 'Lat Pulldown con Elastico', 'Face Pull con Elastico', 'Kettlebell Swing',
-  'Rematore agli Anelli', 'Squat su Scatola', 'Step-up Basso'];
+  'Rematore agli Anelli', 'Squat su Scatola', 'Step-up Basso',
+  'Hip Hinge a Corpo Libero', 'Y-Raise a Corpo Libero'];   /* W2-T6 (SES-03, SAF-06): a corpo libero la cerniera dell anca e i deltoidi posteriori; il disegno arriva dopo */
 
 /* 1. i consumatori del disegno, letti dai sorgenti: solo slotImmagine (con onerror) e schedaUnica/bucchiNelleSchede, che guardano il percorso e non il file */
 function jsDi(dir) { return fs.readdirSync(path.join(R, dir), { withFileTypes: true }).flatMap(d => d.isDirectory() ? jsDi(path.join(dir, d.name)) : (/\.js$/.test(d.name) ? [path.join(dir, d.name)] : [])); }
@@ -47,11 +48,11 @@ ok(/typeof immagineEsercizio === 'function' \? immagineEsercizio\(nome\) : null/
           testo: window.tr('Immagine in arrivo') };
       });
     }, NUOVI);
-    ok(dati.every(d => !d.manca), 'tutti i 29 esercizi sono nella libreria');
+    ok(dati.every(d => !d.manca), 'tutti i 31 esercizi sono nella libreria');
     ok(dati.every(d => !d.manca && typeof d.disegno === 'string' && /^(img|esercizi)\//.test(d.disegno)), 'schedaUnica(nome).disegno e sempre un percorso (mai null), anche senza file');
     const senzaDisegno = dati.filter(d => !d.manca && !fs.existsSync(path.join(R, d.disegno))), conDisegno = dati.filter(d => !d.manca && fs.existsSync(path.join(R, d.disegno)));
     ok(senzaDisegno.length + conDisegno.length === NUOVI.length, 'ogni nuovo ha un percorso (' + senzaDisegno.length + ' senza file, ' + conDisegno.length + ' con il disegno)');
-    if (lang === 'it') ok(senzaDisegno.length === NUOVI.length && dati.every(d => !d.inMappa), 'D-P2: nessuno dei 29 ha ancora un disegno ne una voce in IMMAGINI_ESERCIZI');
+    if (lang === 'it') ok(senzaDisegno.length === NUOVI.length && dati.every(d => !d.inMappa), 'D-P2: nessuno dei 31 ha ancora un disegno ne una voce in IMMAGINI_ESERCIZI');
     ok(dati.every(d => d.tecnica), 'tutti hanno la scheda tecnica completa nella scheda unica');
     ok(dati.every(d => d.buchi.indexOf('scheda tecnica') === -1), 'bucchiNelleSchede non segnala la scheda tecnica di nessuno');
 
@@ -80,7 +81,7 @@ ok(/typeof immagineEsercizio === 'function' \? immagineEsercizio\(nome\) : null/
       }
       if (esito.titolo !== d.n && lang === 'it') male.push(d.n + ': titolo ' + esito.titolo);
     }
-    ok(male.length === 0, 'la scheda di ognuno dei 29 mostra .ex-img-slot.vuoto con «' + (dati[0].testo) + '» ' + male.slice(0, 5).join(' | '));
+    ok(male.length === 0, 'la scheda di ognuno dei 31 mostra .ex-img-slot.vuoto con «' + (dati[0].testo) + '» ' + male.slice(0, 5).join(' | '));
     await p.evaluate(() => closeExerciseInfo());
 
     /* 4. nessun errore: ne di pagina ne di console, a parte il file del disegno che manca di proposito (img/<slug>.png) */

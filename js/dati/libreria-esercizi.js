@@ -201,6 +201,9 @@ const EXERCISE_LIBRARY = [
   { name: '🛡️ Face Pull con Elastico', group: 'spalle', type: 'isolation', sets: 3, reps: 15, weight: 0, rest: 45 },
   { name: '🛡️ Scrollate con Manubri', group: 'spalle', type: 'isolation', sets: 3, reps: 15, weight: 16, rest: 60 },
   { name: '🎯 Suitcase Carry', group: 'core', type: 'isolation', sets: 3, reps: 30, weight: 14, rest: 60, lato: true, tempo: true },
+  /* W2-T6 (SES-03, SAF-06; MOD-12: a corpo libero hinge e deltoide posteriore avevano 0 esercizi): la cerniera dell anca senza carico e il lavoro per i deltoidi posteriori e la cuffia a pancia in giu, senza attrezzi */
+  { name: '🍑 Hip Hinge a Corpo Libero', group: 'glutei', type: 'compound', sets: 3, reps: 15, weight: 0, rest: 60 },
+  { name: '🛡️ Y-Raise a Corpo Libero', group: 'spalle', type: 'isolation', sets: 3, reps: 12, weight: 0, rest: 45 },
   /* D-P11: il pullover coi manubri allena i dorsali (bersaglio in DETTAGLI), quindi gruppo schiena. In fondo all elenco di proposito: buildProgram
      lo pesca per ultimo come riserva della tirata verticale (SCHEMI_MOV), dopo trazioni e lat machine */
   { name: '💪 Pullover con Manubrio', group: 'schiena', type: 'isolation', sets: 3, reps: 12, weight: 14, rest: 60 }

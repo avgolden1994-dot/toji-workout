@@ -180,9 +180,15 @@ test('vincoliSicurezza: oggi le regole di prima: Nordic Curl, serie massime, tec
   const unaGamba = app().g("nomeInLibreria('Stacco Rumeno a una Gamba')");
   /* Onda 2c (SAF-05 del collaudo, tolleranza zero): anche Front Squat, Tirate al Mento e Ab Wheel (abilita 3) sono vietati a chi inizia e ai prudenti */
   const abilita3 = ['Front Squat', 'Tirate al Mento (Upright Row)', 'Ab Wheel'].map(n => app().g("nomeInLibreria('" + n + "')"));
+  /* W2-T6 (SEL-06): con il file delle soglie (soglie-selezione.js) la Sentinella vieta a chi inizia e ai prudenti OGNI esercizio di abilita 3 del dato (attributi-esercizi.js), non solo i tre elenchi a mano di prima;
+     senza il file restano i cinque di prima */
+  const conSoglie = app().g("typeof sogliaSelezione") === 'function';
+  const abilita3Dato = conSoglie ? app().json("EXERCISE_LIBRARY.filter(e => (attributi(e.name) || {}).abilita > 2).map(e => e.name)") : [];
+  const attesi = [nordic, unaGamba].concat(abilita3).concat(abilita3Dato.filter(n => [nordic, unaGamba].concat(abilita3).indexOf(n) === -1));
   [{ level: 'principiante' }, { age: 70 }, { age: 16 }, { parq: 'si' }].forEach(d => {
     const r = v(Object.assign({ level: 'avanzato' }, d));
-    assert.deepStrictEqual(Object.keys(r.vietati), [nordic, unaGamba].concat(abilita3), 'Nordic Curl, Stacco Rumeno a una Gamba e i tre di abilita 3 vietati per ' + stringa(d));
+    assert.deepStrictEqual(Object.keys(r.vietati).sort(), attesi.slice().sort(), 'Nordic Curl, Stacco Rumeno a una Gamba, i tre di abilita 3 di prima' + (conSoglie ? ' e ogni esercizio di abilita 3 del dato' : '') + ' vietati per ' + stringa(d));
+    assert.deepStrictEqual(Object.keys(r.vietati).slice(0, 5), [nordic, unaGamba].concat(abilita3), 'in testa i cinque di prima, nell ordine di prima');
   });
   assert.deepStrictEqual(Object.keys(v({ level: 'avanzato', fastidi: ['ginocchia'] }).vietati).sort(), [nordic].concat(avvio).sort(), 'Nordic Curl vietato per le ginocchia dolenti (e gli esercizi di avvio, come per ogni avanzato)');
   [{ level: 'principiante' }, { age: 70 }, { age: 16 }, { parq: 'si' }].forEach(d => {
@@ -195,7 +201,7 @@ test('vincoliSicurezza: oggi le regole di prima: Nordic Curl, serie massime, tec
   assert.deepStrictEqual(v({}).rirMin, {});
   /* i vincoli arrivano a consentito(): prefs.esclusi li legge */
   const p = costruisci({ level: 'principiante' });
-  assert.deepStrictEqual(p.prefs.esclusi, [nordic, unaGamba].concat(abilita3));
+  assert.deepStrictEqual(p.prefs.esclusi.slice().sort(), attesi.slice().sort());
   assert.ok(!p.sedute.some(sd => sd.esercizi.some(e => /nordic|front squat|tirate al mento|ab wheel/i.test(e.name))));
 });
 
