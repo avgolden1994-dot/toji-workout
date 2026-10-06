@@ -142,7 +142,18 @@ function chiudiProgramma(brief, sedute) {
    passo dopo (il taglio per il tempo, il volume, le scelte dell utente) puo togliere o cambiare l esercizio: la nota «Aggiunto: Pullover con Manubrio» restava con il pullover tolto dai 30 minuti, e
    «senza leg curl restano meno allenati» con il leg curl con l asciugamano in scheda. Qui, alla fine: (1) via «Aggiunto: X» se X non e nella scheda (ne con il suo nome ne con quello originale
    di una scelta dell utente); (2) via la nota del ponte glutei se c e una flessione del ginocchio, e quella «serve la flessione» se non c e; (3) senza nessuna coppia: via le note «in superserie» del poco tempo, e le due frasi che le nominano (principianti, taglio per il tempo) senza la parte delle coppie;
-   (4) niente note identiche due volte */
+   (4) via le note delle aggiunte regionali (polpacci, deltoidi posteriori, bicipiti, tricipiti, core, retto femorale, spalle larghe) se l esercizio che nominano non c e piu; (5) niente note identiche due volte */
+/* le note delle aggiunte regionali (strCopri in struttura-pro.js, completaSettimana in completamenti.js): ognuna dice che un tipo di esercizio e in scheda; se un passo dopo l ha tolto (il taglio per il tempo,
+   il solutore del volume) la nota mente: «Polpacci: ... un esercizio dedicato a settimana» con 0 serie di polpacci. Il prefisso e la prova: e la stessa che usano le due funzioni che le scrivono */
+const NOTE_REGIONALI = [
+  ['Polpacci: squat e stacchi', e => /calf raise/i.test(senzaEmoji(e.name))],
+  ['Deltoidi posteriori: le spinte', e => STR_TIRATE_ALTE.test(senzaEmoji(e.name))],
+  ['Bicipiti: un curl a settimana', e => strMeta(e).group === 'braccia' && strSub(e) === 'Bicipiti'],
+  ['Tricipiti: un esercizio diretto', e => strMeta(e).group === 'braccia' && strSub(e) === 'Tricipiti' && strMeta(e).type !== 'compound'],
+  ['Core: un esercizio a fine seduta', e => strMeta(e).group === 'core'],
+  ['Retto femorale: cresce solo con la leg extension', e => /leg extension/i.test(senzaEmoji(e.name))],
+  ['Spalle larghe: la panca copre', e => /alzate laterali/i.test(senzaEmoji(e.name))]
+];
 function riconciliaNote(prog) {
   const nomi = [];
   prog.sedute.forEach(sd => sd.esercizi.forEach(e => { nomi.push(senzaEmoji(e.name)); if (e.originale) nomi.push(senzaEmoji(e.originale)); }));
@@ -154,6 +165,8 @@ function riconciliaNote(prog) {
     if (viste[t]) return false;
     viste[t] = true;
     if (m && nomi.indexOf(m[1]) === -1) return false;
+    const regionale = NOTE_REGIONALI.find(r => t.indexOf(r[0]) === 0);
+    if (regionale && !prog.sedute.some(sd => sd.esercizi.some(regionale[1]))) return false;   /* l esercizio che la nota nomina non c e piu */
     if (!haCoppie && (t === NOTA_POCO_TEMPO_SS || t === NOTA_POCO_TEMPO_SS_DROP)) return false;   /* «in superserie» senza nessuna coppia: la nota mentiva */
     if (t === NOTA_FEMORALI_SENZA_LEG_CURL) return !flessione;
     if (t === NOTA_FEMORALI_SERVE_FLESSIONE) return flessione;

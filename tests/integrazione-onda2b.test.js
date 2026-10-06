@@ -251,6 +251,28 @@ test('riconciliaNote: «in superserie» (poco tempo, o «per fare prima ti propo
   assert.deepStrictEqual(a.errori, []);
 });
 
+test('riconciliaNote: le note delle aggiunte regionali (polpacci, deltoidi posteriori, retto femorale, spalle larghe, core) restano solo se l esercizio che nominano e in scheda; il caso dei 30 minuti con 0 serie di polpacci non ha piu «un esercizio dedicato a settimana»', () => {
+  const a = conSoglieStruttura(caricaApp({ ora: ORA }));
+  const REGIONALI = [['Polpacci: squat e stacchi', /calf raise/i], ['Deltoidi posteriori: le spinte', /face pull|reverse|alzate posteriori|y-raise/i],
+    ['Retto femorale: cresce solo', /leg extension/i], ['Spalle larghe: la panca copre', /alzate laterali/i], ['Core: un esercizio a fine seduta', /dead bug|plank|crunch|pallof|ab wheel|sit-up|russian|leg raise|hollow|bird/i]];
+  const nomi = p => [].concat.apply([], p.sedute.map(sd => sd.esercizi.map(e => a.chiama('senzaEmoji', e.name)))).join(' | ');
+  const conNota = {}, perdute = [];
+  ['intermedio', 'avanzato'].forEach(level => ['palestra', 'manubri'].forEach(luogo => [3, 4, 5].forEach(days => [30, 45, 60].forEach(minutes => ['massa', 'ricomposizione'].forEach(g => {
+    const p = a.dati(a.chiama('buildProgram', Object.assign({}, BASE, { level, luogo, days, minutes, goals: [g], seme: 'regionali' + level + luogo + days + minutes + g })));
+    const ex = nomi(p);
+    REGIONALI.forEach(([prefisso, rx]) => p.note.filter(n => n.indexOf(prefisso) === 0).forEach(() => {
+      conNota[prefisso] = (conNota[prefisso] || 0) + 1;
+      if (!rx.test(ex)) perdute.push(level + ' ' + luogo + ' ' + days + 'gg ' + minutes + 'min ' + g + ': «' + prefisso + '» senza l esercizio');
+    }));
+  })))));
+  assert.deepStrictEqual(perdute, [], 'note regionali senza il loro esercizio');
+  assert.ok(Object.keys(conNota).length >= 4, 'il campione esercita le note regionali: ' + JSON.stringify(conNota));
+  /* il caso della prova: 4 giorni a 30 minuti, intermedio, in palestra: i polpacci non entrano e la nota non lo promette */
+  const p30 = a.dati(a.chiama('buildProgram', Object.assign({}, BASE, { level: 'intermedio', days: 4, minutes: 30, goals: ['massa'], age: 35, seme: 'x' })));
+  assert.strictEqual(/calf raise/i.test(nomi(p30)), p30.note.some(n => /^Polpacci: squat e stacchi/.test(n)), 'la nota dei polpacci c e se e solo se il calf raise e in scheda');
+  assert.deepStrictEqual(a.errori, []);
+});
+
 /* ---------------------------------------------------------------- 7) D-P19: i minorenni tengono le superserie di antagonisti non pesanti, non le tecniche al cedimento ---------------------------------------------------------------- */
 test('D-P19: per i 13-17 anni le superserie restano (antagonisti, mai un fondamentale pesante, il core o una tenuta) e nessuna tecnica al cedimento, cluster o potenza', () => {
   const a = conSoglieStruttura(caricaApp({ ora: ORA }));
