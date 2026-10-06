@@ -68,16 +68,19 @@ function htmlAttrezziCoach(p) {
     const extra = Array.isArray(p.extraPalestra) ? p.extraPalestra : [];
     return setGroup('Attrezzi della tua palestra', '<div class="fb-chips sr-chips-pad">' + ATTREZZI_PALESTRA.map(([k, t]) =>
       chipCoach(!p.attrezziPalestra || p.attrezziPalestra.indexOf(k) !== -1, "toggleCoachLista('attrezziPalestra','" + k + "')", t)).join('') + '</div>',
-      'Il coach propone solo esercizi che puoi fare davvero.') + (!dichiarabili ? '' :
+      'Togli quello che non trovi: sono tutti accesi e il coach propone solo esercizi che puoi fare davvero.') + (!dichiarabili ? '' :
       setGroup('Altri attrezzi in palestra', '<div class="fb-chips sr-chips-pad">' + ATTREZZI_EXTRA_PALESTRA_IDS.map(k =>
-        chipCoach(extra.indexOf(k) !== -1, "toggleCoachLista('extraPalestra','" + k + "')", ONB_ATTREZZI_NOMI[k])).join('') + '</div>',
-        'Tocca quelli che trovi. Se non rispondi, il coach pensa a una palestra completa.'));
+        chipCoach(extra.indexOf(k) !== -1, "toggleCoachLista('extraPalestra','" + k + "')", ONB_ATTREZZI_NOMI[k])).join('') +
+        chipCoach(Array.isArray(p.extraPalestra) && !p.extraPalestra.length, "setNessunoCoach('extraPalestra')", 'Nessuno di questi') + '</div>',
+        'Tocca quelli che trovi, o «Nessuno di questi» se non c’è niente di tutto questo. Se non rispondi, il coach pensa a una palestra completa.'));
   }
   const dichiarati = Array.isArray(p.attrezziCasa) ? p.attrezziCasa : [];
   return setGroup('Attrezzi di casa', '<div class="fb-chips sr-chips-pad">' + ATTREZZI_CASA_IDS.filter(k => k !== 'manubri').map(k =>
-    chipCoach(dichiarati.indexOf(k) !== -1, "toggleCoachLista('attrezziCasa','" + k + "')", ONB_ATTREZZI_NOMI[k])).join('') + '</div>' +
+    chipCoach(dichiarati.indexOf(k) !== -1, "toggleCoachLista('attrezziCasa','" + k + "')", ONB_ATTREZZI_NOMI[k])).join('') +
+    chipCoach(Array.isArray(p.attrezziCasa) && !p.attrezziCasa.length, "setNessunoCoach('attrezziCasa')", p.luogo === 'manubri' ? 'Solo i manubri' : 'Nessuno di questi') + '</div>' +
     (p.luogo === 'manubri' ? '<label class="sr-row sr-input"><span class="sr-name">Manubrio più pesante (kg)</span><input type="number" inputmode="decimal" min="1" max="100" step="0.5" value="' + (p.manubriKg || '') + '" onchange="setManubriKgCoach(this.value)"></label>' : ''),
-    'Pavimento, una sedia robusta e un gradino li do per scontati. Se tocchi qualcosa, scelgo gli esercizi solo con quello (e con i manubri, se ti alleni con quelli); se non rispondi, non conto su sbarra, elastici, kettlebell e anelli. Vale dal prossimo programma.');
+    'Pavimento, una sedia robusta e un gradino li do per scontati. Se tocchi qualcosa, scelgo gli esercizi solo con quello (e con i manubri, se ti alleni con quelli); ' +
+    (p.luogo === 'manubri' ? 'se non rispondi, penso ai manubri e a una panca, ma non a sbarra, elastici, kettlebell e anelli: se la panca non ce l’hai, tocca «Solo i manubri». Vale dal prossimo programma.' : 'se non rispondi, non conto su sbarra, elastici, kettlebell e anelli. Vale dal prossimo programma.'));
 }
 /* FRZ-01 (INT-2e, W2-T7): «Che forza?» e «Dove ti blocchi?» anche in Opzioni, per chi ha la forza come primo obiettivo: gli stessi campi dell onboarding (forzaTipo, puntiDeboli), letti da «Rifai il programma» */
 function htmlForzaCoach(p) {
@@ -127,6 +130,13 @@ window.toggleCoachLista = function(k, v) {
   const i = l.indexOf(v);
   if (i === -1) { if (k === 'priorita' && l.length >= 3) { showUndo('Al massimo tre: se tutto è prioritario, niente lo è'); return; } l.push(v); } else l.splice(i, 1);
   p[k] = (k === 'attrezziPalestra' && l.length === ATTREZZI_PALESTRA.length) ? null : l;
+  localStorage.setItem(PROFILE_KEY(), JSON.stringify(p));
+  renderSetPage();
+};
+/* INT-2f: «Nessuno di questi» (palestra) e «Solo i manubri» / «Nessuno di questi» (casa): la risposta [] e un tocco; un secondo tocco toglie la risposta (come chi non risponde) */
+window.setNessunoCoach = function(k) {
+  const p = getProfile() || {};
+  if (Array.isArray(p[k]) && !p[k].length) delete p[k]; else p[k] = [];
   localStorage.setItem(PROFILE_KEY(), JSON.stringify(p));
   renderSetPage();
 };

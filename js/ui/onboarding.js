@@ -315,18 +315,22 @@ function htmlAttrezziOnboarding() {
   if (typeof regolaAttiva === 'function' && !regolaAttiva('CAS-01')) return '';
   if (luogo === 'palestra') {
     const lista = onbAttrezziPalestra(), extra = Array.isArray(onbData.extraPalestra) ? onbData.extraPalestra : [];
+    const nessuno = Array.isArray(onbData.extraPalestra) && !onbData.extraPalestra.length;
     return '<div class="aw-sec">Cosa c’è nella tua palestra?</div>' +
-      '<div class="pref-note">Tocca quello che trovi (facoltativo). Se non rispondi, il coach pensa a una palestra completa.</div>' +
+      '<div class="pref-note">Togli quello che non trovi (facoltativo): sono tutti accesi. Se non tocchi niente, il coach pensa a una palestra completa.</div>' +
       '<div class="aw-groups">' + ATTREZZI_PALESTRA.map(a => chip(!lista || !lista.length || lista.indexOf(a[0]) !== -1, 'onbToggleAttrezzoPalestra(\'' + a[0] + '\')', a[1])).join('') + '</div>' +
-      '<div class="pref-note">Altro, se c’è:</div>' +
-      '<div class="aw-groups">' + ATTREZZI_EXTRA_PALESTRA_IDS.map(k => chip(extra.indexOf(k) !== -1, 'onbToggleExtraPalestra(\'' + k + '\')', ONB_ATTREZZI_NOMI[k])).join('') + '</div>';
+      '<div class="pref-note">Altro, se c’è: tocca quello che trovi. Se non c’è niente di tutto questo, tocca «Nessuno di questi».</div>' +
+      '<div class="aw-groups">' + ATTREZZI_EXTRA_PALESTRA_IDS.map(k => chip(extra.indexOf(k) !== -1, 'onbToggleExtraPalestra(\'' + k + '\')', ONB_ATTREZZI_NOMI[k])).join('') +
+      chip(nessuno, 'onbNessunoExtraPalestra()', 'Nessuno di questi') + '</div>';
   }
   if (luogo === 'manubri' || luogo === 'corpo') {
-    const casa = Array.isArray(onbData.attrezziCasa) ? onbData.attrezziCasa : [];
+    const casa = Array.isArray(onbData.attrezziCasa) ? onbData.attrezziCasa : [], nessuno = Array.isArray(onbData.attrezziCasa) && !onbData.attrezziCasa.length, conManubri = luogo === 'manubri';
     return '<div class="aw-sec">Cosa hai in casa?</div>' +
-      '<div class="pref-note">Tocca quello che hai (facoltativo). Pavimento, una sedia robusta e un gradino li do per scontati. Se tocchi qualcosa, scelgo gli esercizi solo con quello (e con i manubri, se ti alleni con quelli); se non rispondi, non conto su sbarra, elastici, kettlebell e anelli.</div>' +
-      '<div class="aw-groups">' + ATTREZZI_CASA_IDS.filter(k => k !== 'manubri').map(k => chip(casa.indexOf(k) !== -1, 'onbToggleAttrezzoCasa(\'' + k + '\')', ONB_ATTREZZI_NOMI[k])).join('') + '</div>' +
-      (luogo === 'manubri' ? '<div class="onb-fields"><label class="onb-field"><span>Manubrio più pesante (kg)</span><input type="number" inputmode="decimal" id="onb-manubri-kg" min="1" max="100" step="0.5" value="' + (onbData.manubriKg || '') + '" oninput="onbSetManubriKg(this.value)"></label><span></span></div>' +
+      '<div class="pref-note">Tocca quello che hai (facoltativo). Pavimento, una sedia robusta e un gradino li do per scontati. Se tocchi qualcosa, scelgo gli esercizi solo con quello (e con i manubri, se ti alleni con quelli); ' +
+      (conManubri ? 'se non rispondi, penso ai manubri e a una panca, ma non a sbarra, elastici, kettlebell e anelli: se la panca non ce l’hai, tocca «Solo i manubri».' : 'se non rispondi, non conto su sbarra, elastici, kettlebell e anelli.') + '</div>' +
+      '<div class="aw-groups">' + ATTREZZI_CASA_IDS.filter(k => k !== 'manubri').map(k => chip(casa.indexOf(k) !== -1, 'onbToggleAttrezzoCasa(\'' + k + '\')', ONB_ATTREZZI_NOMI[k])).join('') +
+      chip(nessuno, 'onbNessunoAttrezzoCasa()', conManubri ? 'Solo i manubri' : 'Nessuno di questi') + '</div>' +
+      (conManubri ? '<div class="onb-fields"><label class="onb-field"><span>Manubrio più pesante (kg)</span><input type="number" inputmode="decimal" id="onb-manubri-kg" min="1" max="100" step="0.5" value="' + (onbData.manubriKg || '') + '" oninput="onbSetManubriKg(this.value)"></label><span></span></div>' +
         '<div class="pref-note">Quanto pesa, a mano, il manubrio più pesante che hai (per i regolabili, il carico massimo di uno). Serve a non proporti carichi di partenza più pesanti di così.</div>' : '');
   }
   return '';
@@ -356,6 +360,9 @@ window.onbToggleAttrezzoPalestra = function(id) {
 };
 window.onbToggleExtraPalestra = function(id) { onbData.extraPalestra = onbCambiaLista(onbData.extraPalestra, id); renderOnb(); };
 window.onbToggleAttrezzoCasa = function(id) { onbData.attrezziCasa = onbCambiaLista(onbData.attrezziCasa, id); renderOnb(); };
+/* INT-2f: «Nessuno di questi» (palestra) e «Solo i manubri» / «Nessuno di questi» (casa): la risposta `[]` e un tocco, non un tocca-e-ritocca; un secondo tocco toglie la risposta (null = non risposto, come prima) */
+window.onbNessunoExtraPalestra = function() { onbData.extraPalestra = Array.isArray(onbData.extraPalestra) && !onbData.extraPalestra.length ? null : []; renderOnb(); };
+window.onbNessunoAttrezzoCasa = function() { onbData.attrezziCasa = Array.isArray(onbData.attrezziCasa) && !onbData.attrezziCasa.length ? null : []; renderOnb(); };
 window.onbSetManubriKg = function(v) {   /* senza ridisegnare il passo (il campo perderebbe il fuoco), come l eta */
   const n = Number(String(v === undefined || v === null ? '' : v).replace(',', '.'));
   onbData.manubriKg = String(v).trim() === '' || !isFinite(n) || n <= 0 ? null : n;
