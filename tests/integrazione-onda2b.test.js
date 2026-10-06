@@ -215,7 +215,9 @@ test('riconciliaNote: «Aggiunto: X» solo se X e nella scheda, la nota del pont
     if (p.note.indexOf(NOTA_PONTE) !== -1) { conPonte++; assert.ok(!flessione, 'nota del ponte con una flessione del ginocchio in scheda'); }
     if (p.note.indexOf(NOTA_SERVE) !== -1) { conServe++; assert.ok(flessione, 'nota «serve la flessione» senza nessuna flessione in scheda'); }
   })))));
-  assert.ok(programmi >= 150 && aggiunti > 30 && conPonte > 0, 'il campione esercita le note: programmi ' + programmi + ', note Aggiunto ' + aggiunti + ', ponte ' + conPonte + ', serve ' + conServe);
+  /* INT-2b (onda 2c): la nota del ponte non compare piu nel campione (a casa la flessione vera entra da B29 con il Leg Curl con Asciugamano: FLESSIONI_GINOCCHIO); la via del ponte e provata in
+     tests/generatore-onda0b.test.js con gli odiati. Il campione esercita la nota «serve la flessione» */
+  assert.ok(programmi >= 150 && aggiunti > 30 && conServe > 0, 'il campione esercita le note: programmi ' + programmi + ', note Aggiunto ' + aggiunti + ', ponte ' + conPonte + ', serve ' + conServe);
   assert.deepStrictEqual(a.errori, []);
 });
 
@@ -229,7 +231,9 @@ test('riconciliaNote: il caso del pullover a 30 minuti (casa, 2 giorni, forza) e
   const fem = costruisci({ level: 'principiante', days: 2, luogo: 'corpo', minutes: 45, goals: ['massa'] });
   assert.ok(nomi(fem).some(n => /Leg Curl con Asciugamano/.test(n)), 'il leg curl con l asciugamano e in scheda');
   assert.ok(!fem.note.some(n => /senza leg curl restano meno allenati/.test(n)), 'e la nota «senza leg curl» non c e');
-  assert.strictEqual(fem.note.filter(n => /^Aggiunto: Leg Curl con Asciugamano/.test(n)).length, 1, 'la nota «Aggiunto» c e una volta sola');
+  /* INT-2b (onda 2c): il leg curl con l asciugamano entra gia dal ponte dei femorali (B29, FLESSIONI_GINOCCHIO) e non piu dal solutore del volume: la nota «Aggiunto» puo non esserci; se c e, c e una volta sola */
+  assert.ok(fem.note.filter(n => /^Aggiunto: Leg Curl con Asciugamano/.test(n)).length <= 1, 'la nota «Aggiunto» al massimo una volta');
+  assert.ok(fem.note.some(n => /^Aggiunto: Leg Curl con Asciugamano/.test(n)) || fem.note.some(n => n === 'Femorali: squat e hip thrust non li fanno crescere, serve la flessione del ginocchio (leg curl).'), 'una nota dice che la flessione e in scheda: ' + fem.note.join(' | '));
 });
 
 test('riconciliaNote: «in superserie» (poco tempo, o «per fare prima ti propongo le superserie») solo se la scheda ha davvero delle coppie: un over 65 con PAR-Q positivo, che il cancello delle tecniche lascia senza superserie, non la legge piu', () => {

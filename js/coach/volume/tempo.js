@@ -328,6 +328,16 @@ function togliEsercizio(sd, e) {
   sd.esercizi.splice(k, 1);
   if (prossimo && prossimo.superset && !e.superset) prossimo.superset = false;   /* l esercizio era il primo di una coppia: il secondo resta solo */
 }
+/* INT-2b (registro B6, IPE-01; collaudo EQ-03:flessione): i femorali hanno bisogno di una flessione del ginocchio a settimana (Maeo 2021). L unica della settimana (leg curl, nordic) non lascia il
+   posto per il tempo o per il numero di esercizi, come l unico piano di spinta o di tirata (unicoPiano in scalaDelTempo): il solutore del volume la tiene gia (rimovibile, volume.js), qui la teneva solo
+   `protetto`, e l ultima risorsa del taglio (sforamento oltre il 10%) la toglieva per prima: a 30 minuti in palestra il leg curl usciva da 28 programmi su 720 della matrice standard, con lo stacco
+   rumeno che «copre» i femorali solo in estensione d anca. Vale con IPE-01 accesa e senza un metodo famoso (il metodo decide da se) */
+function eFlessioneGinocchio(e) { return /leg curl|nordic/i.test(senzaEmoji(e.name)); }
+function unicaFlessioneSettimana(brief, sedute, e) {
+  if (!eFlessioneGinocchio(e) || brief.metodo.attivo || !regolaAttiva('IPE-01')) return false;
+  return !sedute.some(o => o.esercizi.some(x => x !== e && eFlessioneGinocchio(x)));
+}
+const NOTA_FEMORALI_TEMPO = 'Femorali: con questi minuti la flessione del ginocchio (leg curl) non entra, lavorano solo con gli stacchi: meno completo.';   /* riconciliaNote (genera.js) la tiene solo se la scheda resta davvero senza flessione */
 /* i passi del taglio su UNA seduta (la scala di CAS-07, ricerca-casa-poco-tempo 5.4): 1) pause al minimo della classe (la classe A della forza non si taglia); 2) coppie antagoniste se fanno risparmiare,
    anche sopra i 45 minuti (ABB-06: mai con un fondamentale pesante); 3) via il core e le braccia dirette (non quelli che coprono un buco della settimana: `protetto`); 4) serie da 3 a 2 sui non prioritari;
    5) gli isolamenti uno alla volta; ultima risorsa (DUR-01): un isolamento protetto. Mai sotto i pavimenti, mai sotto i quattro schemi base per due serie. `passi` conta cosa e servito (le note) */
@@ -360,10 +370,13 @@ function scalaDelTempo(brief, sd, sedute, opz, minutiEff, passi) {
      spalla dolente, usciva come «isolamento» nei 30 minuti (25 programmi in palestra, PAT-01:spintaV) */
   const pianoDi = (e) => { const k = schemaDi(e.name); if (k === 'spintaV' || k === 'tirataV') return k; return /landmine/i.test(senzaEmoji(e.name)) ? 'spintaV' : (e.riservaTirataV ? 'tirataV' : null); };
   const unicoPiano = (e) => { const k = pianoDi(e); return !!k && !sedute.some(o => o.esercizi.some(x => x !== e && pianoDi(x) === k)); };
+  /* INT-2b: l unica flessione del ginocchio della settimana resta come l unico piano (registro B6: una flessione a settimana; unicaFlessioneSettimana) */
+  const unicaFlessione = (e) => unicaFlessioneSettimana(brief, sedute, e);
+  const intoccabile = (e) => unicoPiano(e) || unicaFlessione(e);
   /* 3) il core e le braccia dirette (P6 e P5), uno alla volta: non i protetti, non sotto i pavimenti */
   const via = (sel) => {
     for (let g = 0; g < 12 && T() > limite && sd.esercizi.length > 3; g++) {   /* mai sotto 3 esercizi (EXN-01) */
-      const c = sd.esercizi.filter(sel).filter(e => !e.fisso && !e.protetto && !unicoPiano(e) && pavimentoOk(brief, sedute, e, e.sets)).pop();
+      const c = sd.esercizi.filter(sel).filter(e => !e.fisso && !e.protetto && !intoccabile(e) && pavimentoOk(brief, sedute, e, e.sets)).pop();
       if (!c) break;
       togliEsercizio(sd, c); passi.tagli++;
     }
@@ -376,7 +389,7 @@ function scalaDelTempo(brief, sd, sedute, opz, minutiEff, passi) {
   for (let g = 0; g < 80 && T() > limite; g++) {
     const c = sd.esercizi.filter(e => e.sets > 2 && !e.fisso && pavimentoOk(brief, sedute, e, 1)).sort((a, b) => isPrio(a) - isPrio(b) || (a === fondamentale) - (b === fondamentale) || comp(a) - comp(b) || strEtirata(a) - strEtirata(b) || b.sets - a.sets)[0];
     if (c) { c.sets--; passi.tagli++; continue; }
-    const iso = sd.esercizi.filter(e => !comp(e) && !e.protetto && !e.fisso && !unicoPiano(e) && pavimentoOk(brief, sedute, e, e.sets));
+    const iso = sd.esercizi.filter(e => !comp(e) && !e.protetto && !e.fisso && !intoccabile(e) && pavimentoOk(brief, sedute, e, e.sets));
     const senzaCore = iso.filter(e => group(e) !== 'core'), v = (senzaCore.length ? senzaCore : iso).pop();
     if (v && sd.esercizi.length > 3) { togliEsercizio(sd, v); passi.tagli++; continue; }
     break;
@@ -386,17 +399,29 @@ function scalaDelTempo(brief, sd, sedute, opz, minutiEff, passi) {
     const min = sogliaTempo('pausaMinimo').A;
     sd.esercizi.forEach(e => { if (classePausa(e.name) === 'A' && e.rest > min) e.rest = min; });
   }
-  /* ultima risorsa (collaudo DUR-01): se sfora ancora di oltre il 10%, l ultima aggiunta protetta che non e core lascia il posto (meglio una copertura in meno che una seduta che non sta nei minuti) */
+  /* ultima risorsa (collaudo DUR-01): se sfora ancora di oltre il 10%, l ultima aggiunta protetta che non e core lascia il posto (meglio una copertura in meno che una seduta che non sta nei minuti);
+     non l unica flessione del ginocchio (INT-2b) */
   for (let g = 0; g < 12 && T() > minutiEff * 1.10 && sd.esercizi.length > 3; g++) {
-    const protette = sd.esercizi.filter(e => !comp(e) && e.protetto && group(e) !== 'core');
+    const protette = sd.esercizi.filter(e => !comp(e) && e.protetto && group(e) !== 'core' && !unicaFlessione(e));
     if (!protette.length) break;
     togliEsercizio(sd, protette[protette.length - 1]); passi.tagli++;
+  }
+  /* INT-2b (B6, EQ-03:flessione): la seduta che tiene l unica flessione del ginocchio e sfora ancora: prima di lei lasciano il posto il secondo multiarticolare di uno schema che la seduta ha gia (gli
+     affondi dopo la leg press: non il fondamentale, non l unico piano) e poi il core, se un altra seduta della settimana ne ha uno (ABB-03 resta coperta). La scala di priorita del poco tempo
+     (ricerca-casa-poco-tempo §5.4) mette la flessione (P4) sopra il core (P6) e sopra un doppione dello stesso schema */
+  for (let g = 0; g < 6 && T() > minutiEff * 1.10 && sd.esercizi.length > 3 && sd.esercizi.some(unicaFlessione); g++) {
+    const doppio = sd.esercizi.filter(e => comp(e) && !e.fisso && e !== fondamentale && !isTimeBased(e.name) && schemaDi(e.name) && !unicoPiano(e) && pavimentoOk(brief, sedute, e, e.sets) &&
+      sd.esercizi.some(x => x !== e && comp(x) && schemaDi(x.name) === schemaDi(e.name))).pop();
+    if (doppio) { togliEsercizio(sd, doppio); passi.tagli++; continue; }
+    const core = sd.esercizi.filter(e => group(e) === 'core' && !e.fisso && sedute.some(o => o !== sd && o.esercizi.some(x => group(x) === 'core'))).pop();
+    if (core) { togliEsercizio(sd, core); passi.tagli++; continue; }
+    break;
   }
   /* e se ancora non entra (30 minuti e 2 giorni con i glutei come obiettivo: i quattro schemi base a due serie piu la spinta d anca non stanno in 33 minuti) l ultimo esercizio fuori dai quattro schemi base
      (la spinta d anca, un secondo schema) lascia il posto, se la settimana non va sotto i pavimenti: gli schemi di base restano sempre, la seduta non ne ha mai meno di 4 */
   const SCHEMI_BASE = ['squat', 'hinge', 'spintaO', 'tirataO'];
-  /* un piano di spinta o di tirata (verticale) non sparisce dalla settimana: lascia il posto solo se un altra seduta lo tiene (EQ-02) */
-  const unicoNellaSettimana = (e) => unicoPiano(e);   /* INT-2b: stessa definizione dei passi sopra (anche il Landmine Press e il pullover di riserva) */
+  /* un piano di spinta o di tirata (verticale) non sparisce dalla settimana: lascia il posto solo se un altra seduta lo tiene (EQ-02); nemmeno l unica flessione del ginocchio (INT-2b) */
+  const unicoNellaSettimana = (e) => intoccabile(e);   /* INT-2b: stessa definizione dei passi sopra (anche il Landmine Press e il pullover di riserva) */
   for (let g = 0; g < 4 && T() > minutiEff * 1.10 && sd.esercizi.length > 4; g++) {
     const fuori = sd.esercizi.filter(e => !e.fisso && SCHEMI_BASE.indexOf(schemaDi(e.name)) === -1 && group(e) !== 'core' && !unicoNellaSettimana(e) && pavimentoOk(brief, sedute, e, e.sets));
     if (!fuori.length) break;
@@ -409,6 +434,11 @@ function scalaDelTempo(brief, sd, sedute, opz, minutiEff, passi) {
     const f = sd.esercizi.filter(e => e.fisso && e.sets > 3).sort((a, b) => b.sets - a.sets)[0];
     if (!f) break;
     f.sets--; passi.tagli++;
+  }
+  /* INT-2b: la scala non ce la fa nemmeno cosi (la seduta ha solo schemi di base, fissi e il fondamentale): l unica flessione esce per ultima, e la nota lo dice (REG-02: il programma dice quello che fa) */
+  if (T() > minutiEff * 1.10 && sd.esercizi.length > 3) {
+    const f = sd.esercizi.filter(e => unicaFlessione(e) && !e.fisso).pop();
+    if (f) { togliEsercizio(sd, f); passi.tagli++; if (brief.lavoro.note.indexOf(NOTA_FEMORALI_TEMPO) === -1) brief.lavoro.note.push(NOTA_FEMORALI_TEMPO); }
   }
 }
 
@@ -493,7 +523,7 @@ function adattaAlTempo(brief, sedute) {
   sedute.forEach(sd => {
     let giri = 0;
     while (sd.esercizi.length > maxEsSeduta && giri++ < 6) {
-      const iso = sd.esercizi.filter(e => !e.protetto && !e.fisso && (findExercise(e.name) || {}).type !== 'compound' && (findExercise(e.name) || {}).group !== 'core');   /* il core in fondo resta: ABB-03 */
+      const iso = sd.esercizi.filter(e => !e.protetto && !e.fisso && (findExercise(e.name) || {}).type !== 'compound' && (findExercise(e.name) || {}).group !== 'core' && !unicaFlessioneSettimana(brief, sedute, e));   /* il core in fondo resta: ABB-03; l unica flessione del ginocchio resta (B6, INT-2b) */
       /* un multiarticolare si toglie solo se la seduta ha un altro dello stesso schema (due spinte verticali): mai l unica spinta, tirata, squat o hinge (collaudo SES-03) */
       const doppi = sd.esercizi.filter(e => !e.protetto && !e.fisso && (findExercise(e.name) || {}).type === 'compound' && schemaDi(e.name) && sd.esercizi.filter(y => schemaDi(y.name) === schemaDi(e.name)).length > 1);
       /* se resta troppo lungo (EXN-02, anche con l 8 di CAS-06 le aggiunte di strCopri e dei completamenti possono portare a 9) lascia l ultima aggiunta protetta che non e core */

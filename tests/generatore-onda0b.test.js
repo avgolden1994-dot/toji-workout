@@ -250,7 +250,13 @@ test('B1 (premesse cambiate da W1-T5): a casa niente Nordic Curl a chi inizia; i
   });
   assert.deepStrictEqual(colpe, []);
   assert.ok(conVeri > 5, 'a casa i femorali hanno una flessione vera o lo stacco rumeno: ' + conVeri);
-  assert.ok(conPonteSenzaAltro >= 1, 'resta il ponte con la nota dove manca tutto il resto: ' + conPonteSenzaAltro);
+  /* INT-2b (onda 2c): la lista delle flessioni di B29 (FLESSIONI_GINOCCHIO) ha anche il Leg Curl con Asciugamano: a casa la flessione vera entra sempre e il ponte al posto della flessione non compare piu
+     nella griglia (era 1-2 programmi a 30 minuti). La via del ponte resta per chi ha escluso ogni flessione (odiati): si prova sotto, con la nota */
+  assert.strictEqual(conPonteSenzaAltro, 0, 'nella griglia il ponte al posto della flessione non c e piu: ' + conPonteSenzaAltro);
+  const odiati = [app().g("nomeInLibreria('Leg Curl con Asciugamano')"), app().g("nomeInLibreria('Nordic Curl')")].map(n => app().dati(n));
+  const soloPonte = costruisci({ level: 'principiante', days: 3, goals: ['massa'], luogo: 'corpo', minutes: 45, odiati: odiati });
+  assert.ok(!nomi(soloPonte).some(n => /Leg Curl|Nordic/.test(n)), 'senza flessioni ammesse non ce n e nessuna');
+  assert.ok(soloPonte.sedute.some(sd => sd.esercizi.some(e => /Ponte Glutei/.test(e.name))) && soloPonte.note.some(n => n === 'Femorali: senza leg curl restano meno allenati, il ponte glutei li aiuta.'), 'resta il ponte con la nota: ' + nomi(soloPonte).join(', ') + ' | ' + soloPonte.note.join(' | '));
   const prog = costruisci({ level: 'principiante', days: 3, goals: ['salute'], luogo: 'corpo', minutes: 45 });
   assert.ok(nomi(prog).some(n => FEMORALI_VERI.test(n)) || prog.note.some(n => n === 'Femorali: senza leg curl restano meno allenati, il ponte glutei li aiuta.'), prog.note.join(' | '));
   /* in palestra il leg curl c e: niente nota e niente ponte aggiunto per questo */

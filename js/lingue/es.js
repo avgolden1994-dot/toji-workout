@@ -4034,5 +4034,6 @@ window.I18N["es"] = {
 "gli altri restano al volume normale.": "los demás se quedan con el volumen normal.",
 "+#% di serie": "+#% de series",
 "gli altri muscoli a mantenimento con gli stessi carichi.": "los demás músculos en mantenimiento con las mismas cargas.",
-"Per farti stare nei minuti ho accorciato le pause e tolto il superfluo: gli schemi di base restano sempre.": "Para que quepa en tu tiempo acorté los descansos y quité lo superfluo: los patrones básicos siempre se quedan."
+"Per farti stare nei minuti ho accorciato le pause e tolto il superfluo: gli schemi di base restano sempre.": "Para que quepa en tu tiempo acorté los descansos y quité lo superfluo: los patrones básicos siempre se quedan.",
+"Femorali: con questi minuti la flessione del ginocchio (leg curl) non entra, lavorano solo con gli stacchi: meno completo.": "Femorales: con estos minutos la flexión de rodilla (leg curl) no cabe, trabajan solo con los pesos muertos: menos completo."
 };

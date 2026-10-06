@@ -4034,5 +4034,6 @@ window.I18N["de"] = {
 "gli altri restano al volume normale.": "die anderen bleiben beim normalen Volumen.",
 "+#% di serie": "+#% Sätze",
 "gli altri muscoli a mantenimento con gli stessi carichi.": "die anderen Muskeln im Erhaltungsmodus mit denselben Gewichten.",
-"Per farti stare nei minuti ho accorciato le pause e tolto il superfluo: gli schemi di base restano sempre.": "Damit es in deine Zeit passt, habe ich die Pausen verkürzt und das Überflüssige gestrichen: Die Grundmuster bleiben immer."
+"Per farti stare nei minuti ho accorciato le pause e tolto il superfluo: gli schemi di base restano sempre.": "Damit es in deine Zeit passt, habe ich die Pausen verkürzt und das Überflüssige gestrichen: Die Grundmuster bleiben immer.",
+"Femorali: con questi minuti la flessione del ginocchio (leg curl) non entra, lavorano solo con gli stacchi: meno completo.": "Beinbeuger: Mit dieser Zeit passt die Kniebeugung (Leg Curl) nicht hinein, sie arbeiten nur über das Kreuzheben: weniger vollständig."
 };

@@ -59,12 +59,16 @@ function frazionarieSettimana(sedute) {
 const GRUPPI_RECUPERO = ['petto', 'schiena', 'quadricipiti', 'femorali', 'glutei'];   /* i grandi muscoli del collaudo REC-01 (le spalle hanno la loro storia: i deltoidi posteriori stanno anche nei giorni di tirata) */
 function frazGruppoSeduta(sd, g) { return sd.esercizi.reduce((t, e) => t + e.sets * (creditoSerie(e.name)[g] || 0), 0); }
 function giornoSeduta(sd) { return DAYS.indexOf(sd.giorno); }
-function recuperoOk(sd, sedute, nome, sets) {
-  const cr = creditoSerie(nome);
+/* opz.obbligata (INT-2b): per la flessione del ginocchio obbligata della settimana (completaSettimana, B6) quando le serie sono ancora quelle della prescrizione (4 per esercizio): non il tetto di serie
+   per seduta (a casa coi manubri i glutei sono gia a 11-12 in una seduta di gambe e il leg curl con l asciugamano, credito 0,5 ai glutei, non entrava: il solutore del volume e il taglio per il tempo
+   riportano la seduta sotto il tetto, SES-01, subito dopo) e, per le 48 ore, solo i conflitti che la mossa CREA (un grande muscolo gia a 4 serie in due giorni di fila e un conflitto che c era prima) */
+function recuperoOk(sd, sedute, nome, sets, opz) {
+  const cr = creditoSerie(nome), obbligata = !!(opz && opz.obbligata);
   return Object.keys(cr).every(g => {
-    const dopo = frazGruppoSeduta(sd, g) + cr[g] * sets;
-    if (dopo > COACH_PARAMETRI.serieMaxMuscoloSeduta) return false;   /* SES-01 */
+    const prima = frazGruppoSeduta(sd, g), dopo = prima + cr[g] * sets;
+    if (dopo > COACH_PARAMETRI.serieMaxMuscoloSeduta && !obbligata) return false;   /* SES-01 */
     if (GRUPPI_RECUPERO.indexOf(g) === -1 || dopo < PARAM_TEMPO.serieMinRecupero) return true;
+    if (obbligata && prima >= PARAM_TEMPO.serieMinRecupero) return true;
     return !sedute.some(o => o !== sd && giornoSeduta(o) >= 0 && Math.abs(giornoSeduta(o) - giornoSeduta(sd)) === 1 && frazGruppoSeduta(o, g) >= PARAM_TEMPO.serieMinRecupero);   /* REC-01 */
   });
 }
@@ -462,6 +466,9 @@ function volumeMotore(brief, sedute, b, opz) {
       const k = classeSeduta(cat, sd.tipo);
       if (SCHEMI_SEDUTA[sd.tipo] && SCHEMI_SEDUTA[sd.tipo].indexOf(k) !== -1 && !sd.esercizi.some(x => x !== r.e && categoria(x) && classeSeduta(categoria(x), sd.tipo) === k)) return false;
       if (!sedute.some(o => o.esercizi.some(x => x !== r.e && categoria(x) === cat))) return false;
+      /* INT-2b (PAT-01, B15): la cerniera VERA (stacchi, good morning: schemaDi 'hinge') non lascia la settimana senza un altra cerniera vera; `categoria` conta come hinge anche la spinta d anca
+         (grande gluteo), che per il collaudo non e una cerniera. Con la flessione del ginocchio in scheda il solutore toglieva lo stacco rumeno dal giorno di gambe e teneva l hip thrust */
+      if (cat === 'hinge' && schemaDi(r.e.name) === 'hinge' && !sedute.some(o => o.esercizi.some(x => x !== r.e && schemaDi(x.name) === 'hinge'))) return false;
     }
     /* l unica flessione del ginocchio della settimana (leg curl, nordic) resta: i femorali hanno bisogno di una flessione (Maeo 2021, EQ-03) */
     if (/leg curl|nordic/i.test(senzaEmoji(r.e.name)) && !sedute.some(o => o.esercizi.some(x => x !== r.e && /leg curl|nordic/i.test(senzaEmoji(x.name))))) return false;

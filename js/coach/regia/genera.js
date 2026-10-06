@@ -170,6 +170,7 @@ function riconciliaNote(prog) {
     if (!haCoppie && (t === NOTA_POCO_TEMPO_SS || t === NOTA_POCO_TEMPO_SS_DROP)) return false;   /* «in superserie» senza nessuna coppia: la nota mentiva */
     if (t === NOTA_FEMORALI_SENZA_LEG_CURL) return !flessione;
     if (t === NOTA_FEMORALI_SERVE_FLESSIONE) return flessione;
+    if (typeof NOTA_FEMORALI_TEMPO !== 'undefined' && t === NOTA_FEMORALI_TEMPO) return !flessione;   /* INT-2b: il taglio per il tempo ha tolto l unica flessione; se un passo dopo l ha rimessa la nota mentirebbe */
     return true;
   });
   return prog;
