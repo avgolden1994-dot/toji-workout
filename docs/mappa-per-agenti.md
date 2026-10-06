@@ -31,6 +31,13 @@ Avvio: `js/avvio.js` (IIFE `boot`) → `chooseMode()` (js/core/modalita.js) → 
 
 | Nome | Sta in | Nota |
 |---|---|---|
+| `memoriaApri()`, `memoriaChiudi()`, `memoriaTabella()` | js/core/memoria-chiamata.js | INT-2b (onda 2c): la memoria di una chiamata di `buildProgram` (una Map per spazio, chiusa alla fine anche con un errore); vi si appoggiano `findExercise`, `senzaEmoji` e `_nomePulito`, `dettaglioEsercizio`, `nomeInLibreria`, `schemaDi`, `inAllungamento`, `strChiave`, `tipoCarico`, `attrezzoDi`, `consentito`, `creditoSerie`, `regolaAttiva`, `isTimeBased` (con la guardia `typeof`: fuori dal generatore calcolano come sempre) |
+| `generaProgramma()` | js/coach/regia/genera.js | il corpo di `buildProgram` (gli stadi); `buildProgram` apre e chiude la memoria di una chiamata intorno a lui |
+| `FLESSIONI_GINOCCHIO`, `eCernieraFemorali()` | js/coach/programma/completamenti.js | le flessioni del ginocchio che il ponte dei femorali e `rinforzaFemorali` propongono (macchine, leg curl con l asciugamano, Nordic per ultimo) |
+| `unicaFlessioneSettimana()`, `eFlessioneGinocchio()`, `NOTA_FEMORALI_TEMPO`, `togliEsercizio()` | js/coach/volume/tempo.js | la scala del tempo non toglie l unica flessione del ginocchio della settimana (B6); la nota se non entra nei minuti |
+| `puoSalireVolume()` | js/coach/volume/volume.js | lo chiede `strBilancia` (struttura-pro.js) prima di dare una serie in piu a una tirata: le unita restano dentro il massimo di B6 |
+| `riordinaSenzaAdiacenti()`, `tipiAdiacenti()`, `NOTA_SEI_GIORNI`, `NOTA_PRINCIPIANTE_4_SEDUTE`, `GIORNI_PER_SEDUTE` | js/coach/regia/genera.js | i giorni della settimana (6 giorni con il giovedi di riposo), il riordino delle sedute dello stesso tipo e il ripiego a 5 |
+| `esercizioCaricaIlFastidio()` | js/coach/sicurezza/tecnica-adatta.js | stress >= 1 su una zona dolente dichiarata: lo leggono anche le aggiunte (candidatiNuovi, serieSottoFascia, strCopri, aggiungiRegione) dall onda 2c |
 | `toggleSetDone()`, `annullaCedimento()` | js/ui/allenamento/macchinario-occupato.js | spunta della serie e tolta della fiamma |
 | `renderPiano()` | js/ui/piano/aggiungi-allenamento.js | |
 | `renderMonthCal()` | js/ui/calendario/gruppi.js | il calendario del mese |

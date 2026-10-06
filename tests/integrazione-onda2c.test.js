@@ -245,3 +245,23 @@ test('SAF-02: nessun esercizio aggiunto dopo la ricetta (solutore del volume, ri
   assert.strictEqual(app.g("esercizioCaricaIlFastidio(nomeInLibreria('Pulley Basso'), ['spalle'])"), false);
   assert.deepStrictEqual(app.errori, []);
 });
+
+/* ---- 6) SAF-05: tre esercizi di abilita 3 non arrivano a chi inizia ne ai prudenti (Sentinella, vincoliSicurezza) ---- */
+test('SAF-05: Front Squat, Tirate al Mento e Ab Wheel sono vietati a chi inizia e ai prudenti (vincoli.vietati, letti da consentito), restano agli intermedi sani; su 48 programmi di principianti e prudenti in palestra nessuno li ha', () => {
+  const vietati = (d) => app.json('(() => { const b = briefCoach(' + JSON.stringify(Object.assign({ usaProfilo: false, fastidi: [], priorita: [] }, d)) + ', {}); return Object.keys(vincoliSicurezza(b).vietati).map(senzaEmoji); })()');
+  const NOMI = ['Front Squat', 'Tirate al Mento (Upright Row)', 'Ab Wheel'];
+  const p = vietati({ goals: ['massa'], level: 'principiante', days: 3, minutes: 60, luogo: 'palestra', sex: 'M', age: 30 });
+  NOMI.forEach(n => assert.ok(p.includes(n), n + ' vietato a chi inizia: ' + p.join(', ')));
+  const c = vietati({ goals: ['massa'], level: 'intermedio', days: 3, minutes: 60, luogo: 'palestra', sex: 'M', age: 68, parq: 'si' });
+  NOMI.forEach(n => assert.ok(c.includes(n), n + ' vietato ai prudenti'));
+  const i = vietati({ goals: ['massa'], level: 'intermedio', days: 3, minutes: 60, luogo: 'palestra', sex: 'M', age: 30 });
+  NOMI.forEach(n => assert.ok(!i.includes(n), n + ' resta agli intermedi sani'));
+  let programmi = 0;
+  [['principiante', 30, 'no'], ['principiante', 45, 'no'], ['intermedio', 68, 'no'], ['intermedio', 40, 'si']].forEach(([level, age, parq]) => [['massa'], ['forza']].forEach(goals => [3, 4].forEach(days => [45, 60, 90].forEach(minutes => {
+    const prog = costruisci({ goals, level, days, minutes, luogo: 'palestra', sex: 'M', age, parq, seme: 'saf05|' + level + age + parq + goals[0] + days + minutes });
+    programmi++;
+    const ex = nomi(prog);
+    NOMI.forEach(n => assert.ok(!ex.includes(n), level + ' ' + age + ' ' + parq + ' ' + goals[0] + ' ' + days + 'gg ' + minutes + 'min: ' + n + ' in scheda'));
+  }))));
+  assert.ok(programmi >= 48, 'il campione: ' + programmi);
+});

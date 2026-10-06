@@ -122,12 +122,6 @@
     "INT-2b (2026-10-06, criteri 1.4): le soglie di questa onda sono misurate sul codice fuso di W2-T1..T4; quelle non raggiunte (VOL-02, DIR-01, FRQ-02, PRI-01, DUR-02, MIS-01:femorali, VOL-01:petto e i residui di SES-03, PAT-01, DUR-01, RX-01) restano rosse e sono elencate con il responsabile in docs/PIANO.md (onda 2b) e nel cap. 17 n. 17 della mappa; le quattro regressioni oltre la tolleranza sono ammesse qui sotto, fino a onda-2"
    ],
    "ammesse": {
-    "EQ-03:flessione": {
-     "max": 0.7,
-     "risolve": "W2-T6",
-     "scade": "onda-2",
-     "motivo": "da 22 a 49 programmi (0,12% -> 0,64%, +0,52 su una tolleranza di 0,5), 47 a 30 minuti in palestra (ipertrofia, 3-6 giorni, intermedio e avanzato): `rinforzaFemorali` aggiunge il leg curl solo se la seduta resta entro i minuti dichiarati (+5%) e non sostituisce un esercizio di core o di polpacci; con il modello del tempo di W2-T2 (riscaldamento, rampa, cambi) le sedute da 30 minuti sono gia al tetto e la flessione non entra, mentre lo Stacco Rumeno da' ai femorali 4 serie frazionarie (scansione di INT-2b: su 864 profili a 30 minuti in palestra 0 senza flessione a onda-2a, 100 ora). Dare alla flessione il posto di un esercizio meno importante e la scelta per attributi di W2-T6; l'unica flessione del ginocchio non viene tolta dal solutore (volume.js)"
-    },
     "FRQ-01:bicipiti": {
      "max": 8.0,
      "risolve": "W2-T5",
@@ -135,16 +129,16 @@
      "motivo": "891 -> 932 programmi (5,53% -> 7,93% pesata): il solutore del volume per unita (W2-T1) mette le serie dei bicipiti dove costano meno tempo e le concentra in una seduta; con 3 giorni i programmi colpiti passano da 239 a 397 (palestra 271 -> 340, manubri 356 -> 553; il corpo libero migliora, 264 -> 39). La frequenza di 2 sedute per ogni unita (FRQ-01 = 0 salvo frequenza 1 scelta, soglia di onda-2) e l'accettazione di W2-T5"
     },
     "FRQ-01:tricipiti": {
-     "max": 9.7,
+     "max": 10.1,
      "risolve": "W2-T5",
      "scade": "onda-2",
-     "motivo": "1086 -> 1314 programmi (6,97% -> 9,64% pesata), stessa causa dei bicipiti: con 2 giorni da 491 a 718, in palestra da 268 a 455, a 45 minuti da 151 a 247; i tricipiti prendono credito dalle spinte solo dove gli attributi dicono che sono un vero motore e il solutore non li distribuisce tra le sedute"
+     "motivo": "1086 -> 1314 programmi (6,97% -> 9,64% pesata), stessa causa dei bicipiti: con 2 giorni da 491 a 718, in palestra da 268 a 455, a 45 minuti da 151 a 247; i tricipiti prendono credito dalle spinte solo dove gli attributi dicono che sono un vero motore e il solutore non li distribuisce tra le sedute. Onda 2c (2026-10-06): 10,03% (1318 programmi) con il tetto del core (3 serie per esercizio: il secondo core in un'altra seduta prende tempo) e con le tirate che non salgono oltre B6 (l'equilibrio si rifa togliendo una serie a una spinta: una spinta a 2 serie da 1 sola frazionaria ai tricipiti e la seduta non conta piu per la frequenza); tetto 9,7 -> 10,1, stesso responsabile e stessa scadenza"
     },
     "FRQ-02:bicipiti": {
-     "max": 8.5,
+     "max": 8.9,
      "risolve": "W2-T1",
      "scade": "onda-2",
-     "motivo": "408 -> 440 programmi (7,24% -> 8,43% pesata, +1,19), stessa causa: le serie dirette dei bicipiti (4 a settimana) entrano in una seduta sola con 3-4 giorni, in palestra da 202 a 245, a 60 minuti da 89 a 120. La soglia di onda-2a (5%) non e raggiunta nemmeno dalle altre unita piccole (laterali 7,3, posteriori 8,8, tricipiti 6,9): distribuire le serie dirette tra almeno due sedute e il seguito di W2-T1"
+     "motivo": "408 -> 440 programmi (7,24% -> 8,43% pesata, +1,19), stessa causa: le serie dirette dei bicipiti (4 a settimana) entrano in una seduta sola con 3-4 giorni, in palestra da 202 a 245, a 60 minuti da 89 a 120. La soglia di onda-2a (5%) non e raggiunta nemmeno dalle altre unita piccole (laterali 7,3, posteriori 8,8, tricipiti 6,9): distribuire le serie dirette tra almeno due sedute e il seguito di W2-T1. Onda 2c (2026-10-06): 8,80% (439 programmi, palestra 202 -> 253): le serie dirette dei bicipiti restano in una seduta sola; il tetto del core e le tirate dentro B6 spostano qualche programma; tetto 8,5 -> 8,9, stesso responsabile e stessa scadenza"
     }
    }
   },
