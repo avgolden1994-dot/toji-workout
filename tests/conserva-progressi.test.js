@@ -5,9 +5,9 @@
 
    COSA PROVA (app vera in vm, tests/aiuto-app.js, orologio fisso: lunedi 2026-10-05):
    1. «Rifai il programma» (nuovoCiclo, il ciclo successivo) e il questionario rifatto da capo (restartOnboarding -> onbNext), anche cambiando livello,
-      giorni, minuti, luogo e attrezzi: lo storico delle sedute resta byte per byte lo stesso, come tutte le chiavi coach_plus_* / tz_* che la
-      rigenerazione non deve toccare (aggiusti, BIA, pesi, prontezza...); l'insieme delle chiavi non cambia (nessuna chiave nuova); i giorni gia fatti del
-      calendario restano.
+      giorni, minuti, luogo e attrezzi: lo storico delle sedute resta lo stesso record per record (byte per byte; l'unica aggiunta ammessa e `settimana`, la fase che il
+      programma buttato era l unico a sapere: fissaFasiDelloStorico), come tutte le chiavi coach_plus_* / tz_* che la rigenerazione non deve toccare (aggiusti, BIA,
+      pesi, prontezza...); l'insieme delle chiavi non cambia (nessuna chiave nuova); i giorni gia fatti del calendario restano.
    2. Gli ultimi carichi e il massimale stimato per nome di esercizio si leggono ancora uguali; un esercizio gia svolto riparte dal suo ultimo carico (nel Piano e quando
       si apre la seduta, mai `nuovo`), un esercizio nuovo (senza storico) dalla stima di partenza con il suo motivo.
    3. I dati personali che la rigenerazione non chiede (sesso, peso, altezza, questionario sulla salute, fastidi, referto BIA) non si perdono: sono quelli che
@@ -47,8 +47,8 @@ const UTENTI = {
 /* come si rifa il programma: da «Rifai il programma» / ciclo successivo, o rifacendo il questionario con qualche risposta cambiata
    (si risponde SOLO a cio che il questionario chiede per forza: obiettivi, livello, giorni, minuti, luogo, sonno, attrezzi, frequenza) */
 const VARIANTI = [
-  { id: 'ciclo successivo con lo stesso profilo (nuovoCiclo)', via: 'ciclo' },
-  { id: 'questionario rifatto, stesse risposte', via: 'questionario', risposte: {} },
+  { id: 'ciclo successivo con lo stesso profilo (nuovoCiclo)', via: 'ciclo', stesso: true },
+  { id: 'questionario rifatto, stesse risposte', via: 'questionario', risposte: {}, stesso: true },
   { id: 'questionario: livello avanzato, 5 giorni', via: 'questionario', risposte: { level: 'avanzato', days: 5 } },
   { id: 'questionario: principiante, 2 giorni, 45 minuti', via: 'questionario', risposte: { level: 'principiante', days: 2, minutes: 45 } },
   { id: 'questionario: a casa con i manubri', via: 'questionario', risposte: { luogo: 'manubri', attrezzi: 'liberi' } },
@@ -204,7 +204,7 @@ function preparaCaso(utente, variante) {
 
 Object.keys(UTENTI).forEach(nomeUtente => {
   const utente = UTENTI[nomeUtente];
-  VARIANTI.filter(v => !utente.scarichi || v.id.indexOf('stessa') !== -1 || v.via === 'ciclo').forEach(v => {
+  VARIANTI.filter(v => !utente.scarichi || v.stesso).forEach(v => {   /* chi ha lo scarico appena fatto: le due vie con lo stesso profilo, per confrontare le proposte */
     test('«Rifai il programma» (' + v.id + ') per ' + nomeUtente + ': storico e carichi si conservano', () => {
       const { app, X, prima } = preparaCaso(utente, v);
       assert.strictEqual(X.length >= 5, true, 'almeno 5 esercizi con lo storico');
