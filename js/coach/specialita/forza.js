@@ -55,6 +55,7 @@ function forzaPuntiDeboli(d, prof0) {
 /* ---- le frasi: le note del programma (L.note) e i perche con codice (REG-03). Le note di «non si attiva» dicono la causa vera: il programma di forza resta quello generale ---- */
 const FORZA_NOTA_STRUTTURA = 'Forza: squat e panca almeno due volte a settimana e lo stacco una volta, in giorni pesanti, medi e leggeri. Nei giorni medi e leggeri la stessa alzata cambia variante (con la pausa, a presa stretta).';
 const FORZA_NOTA_ONDA = 'Forza: squat e panca almeno due volte a settimana e lo stacco una volta, in giorni pesanti, medi e leggeri: cambiano serie e ripetizioni.';
+const FORZA_NOTA_PIATTA = 'Forza: squat e panca almeno due volte a settimana e lo stacco una volta, con la stessa prescrizione in ogni seduta.';
 const FORZA_NOTA_PRINCIPIANTE = 'Forza: squat e panca almeno due volte a settimana e lo stacco una volta, con la stessa prescrizione in ogni seduta: chi comincia non ha giorni pesanti e leggeri.';
 const FORZA_NOTA_MINUTI = 'Con i minuti che hai alcune alzate restano fuori da qualche seduta: la frequenza del powerlifting non è completa.';
 const FORZA_NOTA_MASSIMALE = 'Non serve provare il massimale: il coach lo stima dalle serie che fai, con meno rischio.';
@@ -232,7 +233,8 @@ if (typeof registraSpecialita === 'function') registraSpecialita('forza', specia
 /* ============================================================
    DOPO LA PRESCRIZIONE: le alzate nelle sedute (FRZ-02), l'onda (FRZ-05), le varianti (FRZ-03), gli accessori (FRZ-04), il testo sul massimale (STD-02).
    Le alzate sono `fisso` (le serie le decide la modalità, non il volume né il taglio per il tempo: lo stesso segno del 5x5 di sempre) e portano `alzata` e `onda` per chi
-   dopo le vuole leggere (W3-T6). L'accessorio di un punto debole e `protetto` (il taglio per il tempo non lo tocca: se non sta nei minuti non entra). Gli altri esercizi
+   dopo le vuole leggere (W3-T6). L'accessorio di un punto debole e `fisso` e `protetto` (ne il volume ne il taglio per il tempo lo tolgono: se non sta nei minuti non entra, e il perché
+   lo scrive solo se c'e). Gli altri esercizi
    della seduta restano quelli della ricetta, meno quelli che rifanno lo stesso schema di una alzata (un altro squat, un'altra spinta orizzontale, un'altra cerniera).
    ============================================================ */
 function forzaSedute(brief, sedute) {
@@ -283,18 +285,20 @@ function forzaSedute(brief, sedute) {
     if (nuovi.length) {
       /* la prescrizione di sempre per quel tipo di esercizio (ripetizioni, pausa), con le serie dell'accessorio */
       const pres = prescriviSeduta(brief, lifts.map(l => ({ name: l.name, weight: l.weight })).concat(nuovi), 'forza').slice(lifts.length);
-      nuovi.forEach((n, k) => { Object.assign(n, pres[k], { sets: Math.min(pres[k].sets, sogliaForza('serieAccessorio')), protetto: true, puntoDebole: n.puntoDebole }); });
+      nuovi.forEach((n, k) => { Object.assign(n, pres[k], { sets: Math.min(pres[k].sets, sogliaForza('serieAccessorio')), protetto: true, fisso: true, puntoDebole: n.puntoDebole }); });
     }
     /* una tirata col suo carico (almeno 3 serie, il taglio per il tempo non la tocca): le spinte della modalità sono fisse e le tirate devono restare almeno il 90% delle spinte (ABB-04, EQ-01) */
     const tirata = originali.find(e => ['tirataO', 'tirataV'].indexOf(forzaSchema(e.name)) !== -1 && (findExercise(e.name) || {}).type === 'compound' && !isTimeBased(e.name));
     if (tirata) { tirata.sets = Math.max(tirata.sets, sogliaForza('serieMinimeTirata')); tirata.protetto = true; }
     /* le alzate (e l'accessorio) stanno nei minuti PRIMA di scegliere cosa resta della ricetta: l'alzata che esce non lascia la seduta senza il suo schema */
     forzaAdattaAlTempo(brief, lifts, nuovi, tirata);
-    portati.forEach(p => { p.e.sets = Math.max(p.e.sets, sogliaForza('serieAccessorio')); p.e.protetto = true; p.e.puntoDebole = p.k; });
+    portati.forEach(p => { p.e.sets = Math.max(p.e.sets, sogliaForza('serieAccessorio')); p.e.protetto = true; p.e.fisso = true; p.e.puntoDebole = p.k; });
     /* gli altri esercizi: via quelli che rifanno lo schema di una alzata rimasta (con una alzata da gambe in seduta nessun altro squat o cerniera) */
     const schemi = lifts.map(l => forzaSchema(l.name));
     const gambe = schemi.indexOf('squat') !== -1 || schemi.indexOf('hinge') !== -1;
+    const portatiEs = portati.map(p => p.e);   /* gli esercizi della ricetta portati a 3 serie per il punto debole stanno subito dopo le alzate: il taglio al numero di esercizi non li toglie */
     const altri = originali.filter(e => {
+      if (portatiEs.indexOf(e) !== -1) return false;
       const s = forzaSchema(e.name);
       if ((findExercise(e.name) || {}).type !== 'compound') return true;
       if (s === 'spintaO' && lifts.some(l => forzaSchema(l.name) === 'spintaO' && /^petto/.test(bersaglioDi(l.name) || ''))) return false;
@@ -302,7 +306,7 @@ function forzaSedute(brief, sedute) {
       if (schemi.indexOf('hinge') !== -1 && SLOT_DEF.glutSpinta(findExercise(e.name))) return false;   /* una cerniera tra le alzate: la spinta d'anca fa lo stesso lavoro (RID-01) */
       return true;
     });
-    const dentro = lifts.concat(nuovi).concat(altri);
+    const dentro = lifts.concat(nuovi, portatiEs, altri);
     /* SES-03: una seduta lower ha uno squat e una cerniera: quello che l'alzata non da lo da un esercizio di supporto (leg press, hip thrust), non un secondo stacco o squat pesante */
     const completi = [];
     if (sd.tipo === 'lower') ['squat', 'hinge'].forEach(k => {
@@ -315,7 +319,7 @@ function forzaSedute(brief, sedute) {
       completi.forEach((n, k) => Object.assign(n, pres[k], { completamento: true }));
     }
     const max = Math.max(L.nEs || 0, lifts.length + 2);
-    const tutti = lifts.map(l => Object.assign({}, l)).concat(nuovi, completi, tirata ? [tirata] : [], altri.filter(e => e !== tirata)).slice(0, Math.max(max, lifts.length + nuovi.length + completi.length + (tirata ? 1 : 0)));
+    const tutti = lifts.map(l => Object.assign({}, l)).concat(nuovi, portatiEs, completi, tirata && portatiEs.indexOf(tirata) === -1 ? [tirata] : [], altri.filter(e => e !== tirata)).slice(0, Math.max(max, lifts.length + nuovi.length + portatiEs.length + completi.length + (tirata ? 1 : 0)));
     sd.esercizi = forzaPotaAlTempo(brief, tutti, tirata);
     sd.titolo = forzaTitolo(sd.esercizi.filter(e => e.alzata), conOnda) || sd.titolo;
     L.tipiGiorno[i] = 'forza';
@@ -380,7 +384,7 @@ function forzaNote(brief, conOnda, F, sedute) {
   const completa = FORZA_ALZATE_BARRA.every(a => sedutePer(a) >= min[a]);
   const tutti = [].concat.apply([], sedute.map(sd => sd.esercizi));
   const conVarianti = tutti.some(e => e.alzata && e.onda && e.onda !== 'pesante' && FORZA_ALZATE_BARRA.some(a => a === e.alzata && e.name !== forzaNomeGara(brief, a)));   /* c'e davvero una variante in scheda */
-  aggiungi(!completa ? FORZA_NOTA_MINUTI : (!conOnda ? FORZA_NOTA_PRINCIPIANTE : (conVarianti ? FORZA_NOTA_STRUTTURA : FORZA_NOTA_ONDA)));
+  aggiungi(!completa ? FORZA_NOTA_MINUTI : (!conOnda ? (brief.chi.principiante ? FORZA_NOTA_PRINCIPIANTE : FORZA_NOTA_PIATTA) : (conVarianti ? FORZA_NOTA_STRUTTURA : FORZA_NOTA_ONDA)));
   aggiungi(FORZA_NOTA_MASSIMALE);
   if (completa) aggiungiPerche(brief, 'FRZ-02', FORZA_PERCHE_STRUTTURA, { forza: SOGLIE_FORZA.frequenzaMinima.forza });
   if (completa && conOnda) aggiungiPerche(brief, 'FRZ-05', FORZA_PERCHE_ONDA, { forza: SOGLIE_FORZA.ondaGiornaliera.forza });
