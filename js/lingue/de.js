@@ -4059,5 +4059,14 @@ window.I18N["de"] = {
 "le sedute sono sei di fila": "die Einheiten sind sechs hintereinander",
 "da venerdì a mercoledì": "von Freitag bis Mittwoch",
 "e il giovedì si riposa.": "und am Donnerstag ruhst du.",
-"e il giovedì si riposa. Lo stesso muscolo grande non lavora a fondo in due giorni consecutivi.": "und am Donnerstag ruhst du. Derselbe große Muskel wird nicht an zwei aufeinanderfolgenden Tagen voll belastet."
+"e il giovedì si riposa. Lo stesso muscolo grande non lavora a fondo in due giorni consecutivi.": "und am Donnerstag ruhst du. Derselbe große Muskel wird nicht an zwei aufeinanderfolgenden Tagen voll belastet.",
+"Verifica": "Überprüfung",
+"con fatica media o alta": "bei mittlerer oder hoher Müdigkeit",
+"meno serie": "weniger Sätze",
+"meno serie e carichi più leggeri": "weniger Sätze und leichtere Gewichte",
+"o un segnale di stanchezza": "oder ein Zeichen von Müdigkeit",
+"per fare il punto": "um Bilanz zu ziehen",
+"questa settimana diventa uno scarico leggero": "diese Woche wird zu einem leichten Deload",
+"sempre sul carico che avevi prima dello scarico": "immer auf Basis des Gewichts von vor dem Deload",
+"stesso carico": "gleiches Gewicht"
 };

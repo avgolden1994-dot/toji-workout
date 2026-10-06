@@ -122,6 +122,11 @@ const SOGLIE_STRUTTURA = {
     forza: 'Convenzione', fonte: 'registro coach v2 B5 (PCO-02, collaudo RIR-02); ricerca-metodi-coach-pratici PCO-02; ACSM 2026 (il cedimento non serve)', regole: ['MES-02']
   },
   /* esercizi che possono cadere addosso, da soli in casa (pesi liberi o equilibrio, non il solo corpo libero): almeno 2 ripetizioni in riserva */
+  /* INT-2d (revisione, minor 2): il core (classe F) non ha il cedimento: MAV-02 dice «sul core non serve il cedimento», ma la tabella lo leggeva come un isolamento e alla 5ª settimana arrivava a [0, 1]. Mai 0 sul core */
+  pavimentoCore: {
+    v: 1,
+    forza: 'Convenzione', fonte: 'MAV-02 (niente cedimento sul core, sulle tenute e a peso zero); revisione INT-2d, minor 2; ACSM 2026 (il cedimento non serve)', regole: ['MES-02', 'MAV-02']
+  },
   pavimentoCasa: {
     v: 2,
     forza: 'Convenzione', fonte: 'registro coach v2 B5 (CAS-11); ricerca-casa-poco-tempo §4.4 e CAS-11 (cedimento sicuro senza spotter)', regole: ['MES-02']

@@ -128,6 +128,7 @@ function rirDellaSettimana(ctx, n, pos, carichi, fase) {
   /* pavimenti: mai 0 sui fondamentali col bilanciere (classe A) ne sui multiarticolari liberi (B); i minorenni mai sotto il loro */
   const pavimento = sogliaStruttura('pavimentoPesanti');
   out.A = rirConPiso(out.A, pavimento, massimo); out.B = rirConPiso(out.B, pavimento, massimo);
+  out.F = rirConPiso(out.F, sogliaStruttura('pavimentoCore'), massimo);   /* INT-2d: il core non ha il cedimento (MAV-02): mai 0 */
   if (ctx.modo === 'minore') CLASSI_PIANO.forEach(c => { out[c] = rirConPiso(out[c], minorenni, massimo); });
   CLASSI_PIANO.forEach(c => { out[c] = rirConPiso(out[c], 0, massimo); });
   if (ultima && ctx.obi && ctx.obiettivo === 'salute') ultima.D = rirConPiso(ultima.D, sogliaStruttura('obiettivoSalute').pavimento, massimo);
@@ -173,7 +174,7 @@ function costruisciPiano(brief, struttura, fasi) {
     w.dose = dose;
     w.tecniche = !scarico && !ctx.principiante && !ctx.cauto && pos > sogliaStruttura('tecnichePerPosizione').soloG1FinoAllaSettimana ? 'G2' : 'G1';
     w.nota = fase === 'controllo' ? 'Controllo: con fatica media o alta, o un segnale di stanchezza, questa settimana diventa uno scarico leggero'
-      : (scarico ? (ctx.lungo ? 'Verifica: meno serie, stesso carico, per fare il punto' : 'Scarico: meno serie e carichi più leggeri sul carico di prima') : '');
+      : (scarico ? (ctx.lungo ? 'Verifica: meno serie, stesso carico, per fare il punto' : 'Scarico: meno serie e carichi più leggeri, sempre sul carico che avevi prima dello scarico') : '');
     return w;
   });
   const piano = {

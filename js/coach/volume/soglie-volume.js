@@ -92,6 +92,12 @@ const SOGLIE_VOLUME = {
     v: { composto: 5, isolamento: 6 },
     forza: 'Convenzione', fonte: 'Krieger 2010; Ralston 2017 (2-6 serie per esercizio: Solida/Moderata); stesso tetto del collaudo (SERIE_MAX_ESERCIZIO)', regole: ['IPE-01']
   },
+  /* INT-2d (M7 della revisione, sicurezza): con un fastidio dichiarato a una zona (spalle, ginocchia, schiena) un isolamento che carica quella zona non va oltre 4 serie in una seduta: il solutore concentrava fino a 6 serie
+     su un esercizio solo (Alzate Laterali 6 x 15 con la spalla dolente, 4 e 2 di Extrarotazione al cavo come deltoidi posteriori). 4 e il limite alto della fascia 2-4 serie per esercizio di un isolamento di ricerca-ipertrofia-programmazione (Krieger 2010: 2-6, Ralston 2017) meno due, la dose che non chiede la fatica massima all articolazione */
+  serieMaxIsolamentoConFastidio: {
+    v: 4,
+    forza: 'Convenzione', fonte: 'revisione indipendente INT-2d, M7 (misurato: isolamenti a 6 serie in centinaia di programmi, Alzate Laterali 6 x 15 con la spalla dolente); regola di sicurezza (tolleranza zero, SAF-02: nessun esercizio aggiunto carica una zona dolente senza prudenza)', regole: ['IPE-01', 'SAF-02']
+  },
   /* ABB-03, SEL-07 (INT-2b, onda 2c): un esercizio di core non va oltre 3 serie (un esercizio di core a fine seduta, 2-3 serie; ricerca-biomeccanica §4 SEL-07 e D10: il core vuole poco volume,
      2-6 serie a settimana, un movimento «anti» e uno di flessione). Il resto del volume dell'addome lo porta un secondo esercizio in un'altra seduta, non il quinto o sesto giro di Pallof Press
      (misurato su 600 programmi in palestra: 77 esercizi di core a 4-6 serie). Il massimo a settimana e la fascia di B6 (fasceUnita.addome), tetto duro per il solutore */

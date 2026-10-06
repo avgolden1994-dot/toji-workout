@@ -313,6 +313,8 @@ function volumeMotore(brief, sedute, b, opz) {
     if (m.group === 'core') c = Math.min(c, sogliaVolume('serieMaxCore'));   /* INT-2b: il core non oltre 3 serie per esercizio (ABB-03, SEL-07); il resto in un altra seduta */
     if (prudente) c = Math.min(c, COACH_PARAMETRI.serieMaxPrudente);
     if (vincoli.serieMaxEsercizio) c = Math.min(c, vincoli.serieMaxEsercizio);
+    /* INT-2d (M7, sicurezza): un isolamento che carica la zona del fastidio dichiarato non va oltre 4 serie in una seduta (soglia serieMaxIsolamentoConFastidio) */
+    if (!comp && prefs && prefs.fastidi && prefs.fastidi.length && typeof esercizioCaricaIlFastidio === 'function' && esercizioCaricaIlFastidio(e.name, prefs.fastidi)) c = Math.min(c, sogliaVolume('serieMaxIsolamentoConFastidio'));
     if (typeof STR_FATICA !== 'undefined' && STR_FATICA.test(e.name)) c = Math.min(c, 3);        /* ABB-09 */
     if (typeof RX_NORDIC !== 'undefined' && RX_NORDIC.test(senzaEmoji(e.name))) c = Math.min(c, PARAM_NORDIC.serieMax);   /* B1 */
     return c;

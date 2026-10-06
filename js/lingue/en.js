@@ -4059,5 +4059,14 @@ window.I18N["en"] = {
 "le sedute sono sei di fila": "the sessions are six in a row",
 "da venerdì a mercoledì": "from Friday to Wednesday",
 "e il giovedì si riposa.": "and you rest on Thursday.",
-"e il giovedì si riposa. Lo stesso muscolo grande non lavora a fondo in due giorni consecutivi.": "and you rest on Thursday. The same large muscle is not worked hard on two days in a row."
+"e il giovedì si riposa. Lo stesso muscolo grande non lavora a fondo in due giorni consecutivi.": "and you rest on Thursday. The same large muscle is not worked hard on two days in a row.",
+"Verifica": "Review",
+"con fatica media o alta": "with moderate or high tiredness",
+"meno serie": "fewer sets",
+"meno serie e carichi più leggeri": "fewer sets and lighter loads",
+"o un segnale di stanchezza": "or a sign of tiredness",
+"per fare il punto": "to take stock",
+"questa settimana diventa uno scarico leggero": "this week becomes a light deload",
+"sempre sul carico che avevi prima dello scarico": "always on the load you had before the deload",
+"stesso carico": "same load"
 };

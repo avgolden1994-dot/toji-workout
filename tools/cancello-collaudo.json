@@ -85,6 +85,7 @@
     },
     "REC-01:spalle": {
      "max": 12.5,
+     "tettoIniziale": 12.5,
      "risolve": "W2-T5",
      "scade": "onda-2",
      "motivo": "rumore del sorteggio, non un difetto nuovo: la classe (spalle allenate in due giorni consecutivi, 11,44% a onda-1 e 13,4% di base) oscilla di circa mezzo punto con ogni modifica che sposta i candidati dei posti (11,75% dopo l'integrazione di W1-T6 e W2-T8, 12,19% dopo le correzioni M1 e M5 di INT-2a: i programmi colpiti sono 1336 a onda-1, 1342 e di nuovo 1336, ma cambia quali sono e quanto pesano nella popolazione assunta: 18 programmi nuovi per 0,64 punti, 24 tolti per 0,18, quasi tutti intermedi in palestra a 5-6 giorni). La causa strutturale (la divisione dei giorni e le 48 ore tra due sedute dello stesso muscolo) e di W2-T5 (soglia 0 a onda-2)"
@@ -123,19 +124,22 @@
    ],
    "ammesse": {
     "FRQ-01:bicipiti": {
-     "max": 8.2,
+     "max": 8,
+     "tettoIniziale": 8,
      "risolve": "W2-T5",
      "scade": "onda-2",
      "motivo": "891 -> 932 programmi (5,53% -> 7,93% pesata): il solutore del volume per unita (W2-T1) mette le serie dei bicipiti dove costano meno tempo e le concentra in una seduta; con 3 giorni i programmi colpiti passano da 239 a 397 (palestra 271 -> 340, manubri 356 -> 553; il corpo libero migliora, 264 -> 39). La frequenza di 2 sedute per ogni unita (FRQ-01 = 0 salvo frequenza 1 scelta, soglia di onda-2) e l'accettazione di W2-T5. Onda 2c (2026-10-06): 918 -> 923 programmi (7,97% -> 8,14%) con la sola correzione di sicurezza del cancello (Front Squat, Tirate al Mento e Ab Wheel vietati a chi inizia e ai prudenti: SAF-05 578 -> 571 programmi): nessuno dei tre da credito ai bicipiti, cambia il sorteggio dei posti di chi inizia (principianti 460 -> 464, palestra 334 -> 339, 3 giorni 386 -> 390, 30 minuti 510 -> 516); 930 programmi e 8,18% sull'istantanea finale (ABB-08 nella verifica del volume); tetto 8,0 -> 8,2, stesso responsabile e stessa scadenza"
     },
     "FRQ-01:tricipiti": {
-     "max": 10.1,
+     "max": 9.7,
+     "tettoIniziale": 9.7,
      "risolve": "W2-T5",
      "scade": "onda-2",
      "motivo": "1086 -> 1314 programmi (6,97% -> 9,64% pesata), stessa causa dei bicipiti: con 2 giorni da 491 a 718, in palestra da 268 a 455, a 45 minuti da 151 a 247; i tricipiti prendono credito dalle spinte solo dove gli attributi dicono che sono un vero motore e il solutore non li distribuisce tra le sedute. Onda 2c (2026-10-06): 10,03% (1318 programmi) con il tetto del core (3 serie per esercizio: il secondo core in un'altra seduta prende tempo) e con le tirate che non salgono oltre B6 (l'equilibrio si rifa togliendo una serie a una spinta: una spinta a 2 serie da 1 sola frazionaria ai tricipiti e la seduta non conta piu per la frequenza); tetto 9,7 -> 10,1, stesso responsabile e stessa scadenza"
     },
     "FRQ-02:bicipiti": {
-     "max": 8.9,
+     "max": 8.5,
+     "tettoIniziale": 8.5,
      "risolve": "W2-T1",
      "scade": "onda-2",
      "motivo": "408 -> 440 programmi (7,24% -> 8,43% pesata, +1,19), stessa causa: le serie dirette dei bicipiti (4 a settimana) entrano in una seduta sola con 3-4 giorni, in palestra da 202 a 245, a 60 minuti da 89 a 120. La soglia di onda-2a (5%) non e raggiunta nemmeno dalle altre unita piccole (laterali 7,3, posteriori 8,8, tricipiti 6,9): distribuire le serie dirette tra almeno due sedute e il seguito di W2-T1. Onda 2c (2026-10-06): 8,80% (439 programmi, palestra 202 -> 253): le serie dirette dei bicipiti restano in una seduta sola; il tetto del core e le tirate dentro B6 spostano qualche programma; tetto 8,5 -> 8,9, stesso responsabile e stessa scadenza"
@@ -149,6 +153,7 @@
    "riscritti": [],
    "dichiara": {
     "motivo": "versione snella dell'onda 2: W2-T5 (split e attrezzi), W2-T6 (scelta per attributi) e W2-T7 (forza) non sono in questa onda; le soglie assolute di onda-2a e onda-2 le presuppongono. Qui l'onda dichiara i criteri misurati verdi sull'istantanea onda-2c (matrice standard, criteri 1.4): da compilare con la misura, non con la speranza",
+    "criteriIniziali": ["ERR-01", "SAN-01", "MIS-01", "SES-01", "EXN-01", "EXN-02", "ORD-04", "SS-01", "SS-02", "EQ-03", "SPL-02", "RX-02", "RX-03", "RX-04", "GOA-01", "TEC-01", "DEL-01", "RIR-01", "RIR-02", "RIR-03", "SAF-01", "SAF-02", "SAF-03", "SAF-04", "gravi_pesata", "MOD-01", "MOD-03", "MOD-06", "MOD-07", "MOD-08", "MOD-09", "MOD-10", "MOD-11"],
     "criteri": ["ERR-01", "SAN-01", "MIS-01", "SES-01", "EXN-01", "EXN-02", "ORD-04", "SS-01", "SS-02", "EQ-03", "SPL-02", "RX-02", "RX-03", "RX-04", "GOA-01", "TEC-01", "DEL-01", "RIR-01", "RIR-02", "RIR-03", "SAF-01", "SAF-02", "SAF-03", "SAF-04", "gravi_pesata", "MOD-01", "MOD-03", "MOD-06", "MOD-07", "MOD-08", "MOD-09", "MOD-10", "MOD-11"],
     "misura": "istantanea onda-2c del 2026-10-06 (commit b7a42ce, matrice standard, criteri 1.4): ogni criterio dichiarato ha tutte le sue soglie assolute verdi e nessuna regressione ammessa; FRQ-01 non e dichiarato (femorali verde, ma bicipiti e tricipiti sono regressioni ammesse); VOL-01, VOL-02, DIR-01, FRQ-02, PRI-01, DUR-01, DUR-02, SES-03, PAT-01, RX-01 restano obiettivi aperti con il responsabile"
    },
@@ -324,6 +329,12 @@
   },
   "MOD-12": {
    "onda-2": [
+    "ok",
+    "info"
+   ]
+  },
+  "MOD-13": {
+   "onda-2b": [
     "ok",
     "info"
    ]
@@ -670,6 +681,17 @@
     "onda-2": 0,
     "finale": 0
    }
+  },
+  "NOT-01": {
+   "nome": "Una nota del programma dice una cosa falsa (volume, tempo, tecniche, giorni di fila)",
+   "sev": 3,
+   "prima": 0,
+   "task": "INT-2d (revisione, M1)",
+   "soglie": {
+    "onda-2b": 0,
+    "finale": 0
+   },
+   "nota": "criterio nuovo dei criteri 1.5 (REG-02): ogni nota sul volume, sul tempo, sulle tecniche e sui sei giorni di fila e vera per quel programma; 0 programmi dall'onda 2b (nessuna regressione ammessa)"
   },
   "SPL-01": {
    "nome": "Numero di sedute diverso dai giorni dichiarati",

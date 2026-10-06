@@ -297,3 +297,50 @@ test('M5: i minorenni non scendono mai sotto 2 ripetizioni in riserva, anche con
   const r = rirDiTutte(a);
   Object.keys(r).forEach(c => r[c].forEach((x, i) => assert.ok(x[0] >= 2, 'classe ' + c + ' settimana ' + (i + 1) + ': ' + JSON.stringify(x))));
 });
+
+/* ============ M7 (sicurezza) e minori ============ */
+
+test('M7: con un fastidio dichiarato nessun isolamento che carica quella zona va oltre 4 serie in una seduta (prima Leg Extension a 5 e 6 serie con le ginocchia dolenti)', () => {
+  const a = caricaApp({ ora: LUNEDI });
+  a.g(`globalThis.__f = function (p) { const prog = buildProgram(p), out = [];
+    prog.sedute.forEach(sd => sd.esercizi.forEach(e => { const m = findExercise(e.name) || {}; if (m.type !== 'compound' && !isTimeBased(e.name) && esercizioCaricaIlFastidio(e.name, p.fastidi)) out.push(e.sets); }));
+    return out; }`);
+  const base = { sex: 'M', age: 30, freq: 'auto', parq: 'no', sonno: 'bene', attrezzi: 'indifferente', priorita: [], usaProfilo: false };
+  const profili = [
+    { goals: ['massa'], level: 'intermedio', days: 4, minutes: 90, luogo: 'palestra', fastidi: ['ginocchia'], seme: 'f124' },
+    { goals: ['massa'], level: 'avanzato', days: 4, minutes: 90, luogo: 'palestra', fastidi: ['ginocchia'], seme: 'f196' },
+    { goals: ['ricomposizione'], level: 'avanzato', days: 4, minutes: 60, luogo: 'palestra', fastidi: ['ginocchia'], seme: 'f388' },
+    { goals: ['ricomposizione'], level: 'avanzato', days: 4, minutes: 90, luogo: 'palestra', fastidi: ['ginocchia'], seme: 'f412' },
+    { goals: ['massa'], level: 'avanzato', days: 5, minutes: 75, luogo: 'palestra', fastidi: ['spalle'], seme: 'sp1' },
+    { goals: ['massa'], level: 'intermedio', days: 4, minutes: 60, luogo: 'palestra', fastidi: ['spalle', 'schiena'], seme: 'sp2' }
+  ].map(p => Object.assign({}, base, p));
+  let isolamenti = 0;
+  profili.forEach(p => { const serie = a.json('__f(' + JSON.stringify(p) + ')'); isolamenti += serie.length; assert.ok(serie.every(n => n <= 4), JSON.stringify(p.goals) + ' ' + p.level + ' ' + p.fastidi + ': isolamenti che caricano la zona a ' + serie.join(', ') + ' serie'); });
+  assert.ok(isolamenti >= 4, 'la prova non e vuota: ' + isolamenti + ' isolamenti che caricano una zona dolente');
+  assert.strictEqual(a.json('SOGLIE_VOLUME.serieMaxIsolamentoConFastidio.v'), 4);
+  /* senza fastidi il tetto degli isolamenti resta quello di prima (6): la regola non tocca chi non ha fastidi */
+  assert.strictEqual(a.json('SOGLIE_VOLUME.serieMaxEsercizio.v.isolamento'), 6);
+});
+
+test('minor 2: il core (classe F) non scende mai a RIR 0 nel piano (MAV-02: sul core non serve il cedimento); prima [0, 1] alla 5ª settimana dell intermedio', () => {
+  const a = caricaApp({ ora: LUNEDI });
+  const p = a.dati(a.chiama('buildProgram', Object.assign({}, BASE, { level: 'intermedio', days: 4 })));
+  const carico = p.piano.settimane.filter(w => w.fase === 'carico');
+  assert.ok(carico.length >= 10, 'settimane di carico: ' + carico.length);
+  carico.forEach(w => assert.ok(w.rir.F[0] >= 1, 'settimana ' + w.n + ' classe F: ' + JSON.stringify(w.rir.F)));
+  assert.deepStrictEqual(p.piano.settimane[4].rir.E, [0, 1], 'gli isolamenti (classe E) alla 5a settimana restano a [0, 1]: il pavimento e solo del core');
+  assert.deepStrictEqual(p.piano.settimane[4].rir.F, [1, 2], 'il core alla 5a settimana: [1, 2]');
+  assert.strictEqual(a.json('SOGLIE_STRUTTURA.pavimentoCore.v'), 1);
+});
+
+test('minor 4: le tre frasi del piano settimana per settimana hanno la traduzione in en, es e de, come i pezzi che le compongono', () => {
+  const vm = require('vm'), fs = require('fs'), path = require('path');
+  const R = path.join(__dirname, '..');
+  const dic = {};
+  ['en', 'es', 'de'].forEach(l => { const ctx = { window: {} }; vm.runInNewContext(fs.readFileSync(path.join(R, 'js/lingue/' + l + '.js'), 'utf8'), ctx); dic[l] = ctx.window.I18N[l]; });
+  const frasi = ['Controllo: con fatica media o alta, o un segnale di stanchezza, questa settimana diventa uno scarico leggero', 'Verifica: meno serie, stesso carico, per fare il punto', 'Scarico: meno serie e carichi più leggeri, sempre sul carico che avevi prima dello scarico'];
+  const a = caricaApp({ ora: LUNEDI });
+  const note = new Set(); ['principiante', 'intermedio'].forEach(level => a.dati(a.chiama('buildProgram', Object.assign({}, BASE, { level: level }))).piano.settimane.forEach(w => { if (w.nota) note.add(w.nota); }));
+  frasi.forEach(f => assert.ok(note.has(f), 'la frase e nel piano: ' + f));
+  frasi.forEach(f => f.split(/: |, /).forEach(pezzo => ['en', 'es', 'de'].forEach(l => assert.ok(dic[l][pezzo] || dic[l][pezzo.replace(/\d+/g, '#')], l + ': manca «' + pezzo + '»'))));
+});
