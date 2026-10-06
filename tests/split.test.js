@@ -349,3 +349,52 @@ test('onboarding: i passi 0, 2, 3 e 4 mostrano l avviso massa+dimagrimento, il 4
   a.g('onbSetEta("40")');
   assert.strictEqual(els['onb-sonno-bene-desc'].textContent, 'dormo 7 ore o piu, stress sotto controllo');
 });
+
+/* ---------------------------------------------------------------- traduzioni ---------------------------------------------------------------- */
+test('ogni frase nuova di W2-T5 ha la voce in en, es e de (nei dizionari o nel JSON di integrazione docs/in-arrivo/W2-T5.json)', () => {
+  const a = caricaConSoglie();
+  const dizionario = (lingua) => {
+    const ctx = { window: {} }; vm.runInNewContext(fs.readFileSync(path.join(R, 'js/lingue/' + lingua + '.js'), 'utf8'), ctx);
+    const d = Object.assign({}, (ctx.window.I18N && ctx.window.I18N[lingua]) || {});
+    const json = path.join(R, 'docs/in-arrivo/W2-T5.json');
+    if (fs.existsSync(json)) { const frasi = JSON.parse(fs.readFileSync(json, 'utf8')).frasi || {}; Object.keys(frasi).forEach(k => { if (frasi[k][lingua]) d[k] = frasi[k][lingua]; }); }
+    return d;
+  };
+  const SEP = [' • ', ' · ', ' — ', ' – ', ' → ', ': ', ' / ', ', '];
+  /* i pezzi di una frase come li traduce trCore (traduttore.js): voce intera, numeri come #, maiuscola/minuscola, poi i separatori */
+  const mancano = (frase, d, prof) => {
+    if (Object.prototype.hasOwnProperty.call(d, frase)) return [];
+    const c0 = frase.charAt(0), alt = (c0 !== c0.toLowerCase() ? c0.toLowerCase() : c0.toUpperCase()) + frase.slice(1);
+    if (Object.prototype.hasOwnProperty.call(d, alt)) return [];
+    const k = frase.replace(/\d+(?:[.,]\d+)*/g, '#');
+    if (k !== frase && Object.prototype.hasOwnProperty.call(d, k)) return [];
+    for (const sep of SEP) {
+      if (frase.indexOf(sep) === -1 || (prof || 0) > 3) continue;
+      return [].concat(...frase.split(sep).filter(x => x.trim()).map(p => mancano(p.trim(), d, (prof || 0) + 1)));
+    }
+    return [frase];
+  };
+  const testi = (html) => String(html).split(/<[^>]*>/).map(x => x.replace(/&nbsp;/g, ' ').trim()).filter(x => /\p{L}/u.test(x));
+  const frasi = new Set();
+  const aggiungi = (html) => testi(html).forEach(t => frasi.add(t));
+  ['palestra', 'manubri', 'corpo'].forEach(luogo => {
+    a.g('onbData = Object.assign(nuovoOnbData(), { luogo: ' + JSON.stringify(luogo) + ', attrezziPalestra: undefined, attrezziCasa: undefined, extraPalestra: undefined, manubriKg: undefined })');
+    aggiungi(a.g('htmlAttrezziOnboarding()'));
+    aggiungi(a.g('htmlAttrezziCoach(' + JSON.stringify({ luogo: luogo }) + ')'));
+  });
+  aggiungi(a.g('htmlAvvisoObiettivi(["massa", "dimagrimento"])'));
+  aggiungi(a.g('htmlNotaTonificare(["ricomposizione"])'));
+  aggiungi(a.g('htmlAvvisoGiorni("principiante", 5)'));
+  frasi.add(a.g('descSonnoBene(16)')); frasi.add(a.g('descSonnoBene(40)'));
+  frasi.add(a.json('ONB_GOALS.find(g => g.id === "ricomposizione")').desc);
+  const sorgente = fs.readFileSync(path.join(R, 'js/ui/onboarding.js'), 'utf8');
+  const testoMinuti = (sorgente.match(/Con pochi minuti conta cosa metti[^<']*/) || [])[0];
+  assert.ok(testoMinuti, 'il testo dei minuti c e');
+  frasi.add(testoMinuti);
+  assert.ok(frasi.size >= 15, 'frasi raccolte: ' + frasi.size);
+  ['en', 'es', 'de'].forEach(lingua => {
+    const d = dizionario(lingua);
+    const senza = [].concat(...[...frasi].map(f => mancano(f, d)));
+    assert.deepStrictEqual([...new Set(senza)], [], lingua + ': frasi senza traduzione');
+  });
+});
