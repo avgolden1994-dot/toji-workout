@@ -95,3 +95,18 @@ test('Hip Hinge a corpo libero: il leg curl del ponte dei femorali non toglie il
   }))));
   assert.deepStrictEqual(manca, [], 'programmi con la spalla dolente senza lavoro per la cuffia');
 });
+
+test('ponte dei femorali: una seduta di gambe con il solo pull-through (femorali 0 negli attributi) non dispensa dal leg curl: le sedute senza lavoro per i femorali scendono da 41 a 14 su 216', () => {
+  /* sul codice di e6ac7ad il ponte (completamenti.js) saltava il leg curl dove la seduta aveva «una cerniera» per nome (SLOT_DEF.hinge: anche il pull-through): 41 sedute su 216 (principiante e intermedio, 2-3 giorni,
+     palestra, 30-90 minuti, nessun fastidio o spalle o ginocchia) senza un esercizio che allena i femorali, tutte con il pull-through; i femorali in una sola seduta (FRQ-01:femorali 6,53% contro 5,21% di 2d) */
+  const out = a.json(`(function () { const o = [];
+    ['principiante', 'intermedio'].forEach(level => [2, 3].forEach(days => [30, 45, 60, 90].forEach(minutes => [[], ['spalle'], ['ginocchia']].forEach(fastidi => ['F', 'M'].forEach(sex => {
+      const d = { sex: sex, age: 45, seme: 'ponte' + level + days + minutes + fastidi.join('') + sex, fastidi: fastidi, sonno: 'bene', attrezzi: 'liberi', usaProfilo: false, level: level, days: days, goals: ['massa'], luogo: 'palestra', minutes: minutes, freq: 'auto', parq: 'no', priorita: [] };
+      const prog = buildProgram(d);
+      prog.sedute.forEach(sd => { if (!/lower|legs|fullbody/.test(sd.tipo)) return; o.push(sd.esercizi.some(e => ((attributi(e.name) || { muscoli: {} }).muscoli.femorali || 0) > 0 && !/hip hinge/i.test(senzaEmoji(e.name)))); });
+    })))));
+    return o; })()`);
+  assert.strictEqual(out.length, 216);
+  const senza = out.filter(x => !x).length;
+  assert.ok(senza <= 20, 'sedute di gambe senza un esercizio per i femorali: ' + senza + ' su 216 (41 prima della correzione)');
+});
