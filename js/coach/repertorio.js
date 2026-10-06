@@ -143,7 +143,9 @@ function conAnnulla(testo, fn) {
   fn();
   renderPiano(); renderAllenamento();
   if (document.getElementById('agent-body')) renderAgent();
-  showUndo(testo, () => { if (prima !== null) localStorage.setItem(dataKey(), prima); if (primaAg !== null) localStorage.setItem(AGG_KEY(), primaAg); renderPiano(); renderAllenamento(); if (document.getElementById('agent-body')) renderAgent(); }, 6000);
+  /* una chiave che prima non c era si toglie (INT-3a): prima l annulla la lasciava con il valore di dopo, e P3-B la scriveva prima per aggirarlo */
+  const ripristina = (k, v) => { if (v !== null) localStorage.setItem(k, v); else localStorage.removeItem(k); };
+  showUndo(testo, () => { ripristina(dataKey(), prima); ripristina(AGG_KEY(), primaAg); renderPiano(); renderAllenamento(); if (document.getElementById('agent-body')) renderAgent(); }, 6000);
 }
 window.azioneCoach = function(tipo, nome) {
   const pul = senzaEmoji(nome);
@@ -181,12 +183,10 @@ window.azioneCoach = function(tipo, nome) {
     /* MES-07 (P3-B, programmi v2): anche col tocco dell utente lo scarico passa dalle protezioni (non vicino a un altro scarico, non nelle prime settimane del blocco, non se quello del programma e vicino) */
     const mes07 = typeof valutaScaricoReattivo === 'function' ? valutaScaricoReattivo('S7') : { ok: true };
     if (!mes07.ok) { showUndo(mes07.perche, null, 6000); return; }
-    if (localStorage.getItem(AGG_KEY()) === null) salvaAggiusti(aggiustiCoach());   /* conAnnulla ripristina solo una chiave che c era: cosi l annulla toglie anche lo scarico appena deciso */
     conAnnulla('Prossime due sedute di scarico', () => { const ag = aggiustiCoach(); ag.scarico = voceScaricoReattivo('carico della settimana troppo alto', 2); salvaAggiusti(ag); });   /* scarico deciso dal coach: la voce la fa sicurezza/scarico.js (W1-T3) */
   }
   /* MES-07: «Non ora» (programmi v2): la proposta di scarico non si ripete per qualche giorno; si annulla */
   if (tipo === 'scaricoNonOra') {
-    if (localStorage.getItem(AGG_KEY()) === null) salvaAggiusti(aggiustiCoach());
     conAnnulla('Va bene, non ora: te lo richiedo più avanti', () => { const ag = aggiustiCoach(); ag.scaricoNonOra = ymd(new Date()); salvaAggiusti(ag); });
   }
   /* STD-01: il livello cambia solo col tocco dell utente e si annulla (prima: solo in salita e senza annulla) */

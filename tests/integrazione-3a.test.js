@@ -179,3 +179,25 @@ test('(d) programma della v1 (senza piano, senza rampa): la prima volta toglie u
   assert.strictEqual(r.sets, 3);
   assert.match(r.motivo, /prima volta: una serie in meno/);
 });
+
+/* ============================================================================================================
+   (e) conAnnulla: l Annulla toglie anche una chiave che prima non c era (prima la lasciava, e P3-B la scriveva prima di ogni tocco per aggirarlo)
+   ============================================================================================================ */
+test('(e) conAnnulla («Non ora» e gli altri tocchi): se gli aggiusti non c erano, l Annulla li toglie del tutto (nessuna chiave lasciata)', () => {
+  const { a } = H.telefono({ sett: 4, giorno: 2, d: { level: 'intermedio' } });
+  a.g('globalThis.__msgs = []; window.showUndo = function (m, u) { __msgs.push(String(m)); lastUndo = u || null; }; renderPiano = function () {}; renderAllenamento = function () {};');
+  const chiave = a.g('AGG_KEY()');
+  const annulla = () => a.g('(() => { const f = lastUndo; lastUndo = null; if (f) f(); return !!f; })()');
+  delete a.store[chiave];
+  a.chiama('azioneCoach', 'scaricoNonOra', '');
+  assert.ok(a.store[chiave] !== undefined && JSON.parse(a.store[chiave]).scaricoNonOra, 'il tocco scrive gli aggiusti');
+  assert.ok(annulla());
+  assert.strictEqual(a.store[chiave], undefined, 'annullato: la chiave non c e piu, come prima del tocco');
+  /* se c erano, tornano com erano, byte per byte */
+  a.scrivi(chiave, { esercizi: {}, scarico: null, rirBias: 1.1 });
+  const prima = a.store[chiave];
+  a.chiama('azioneCoach', 'scaricoNonOra', '');
+  assert.notStrictEqual(a.store[chiave], prima);
+  assert.ok(annulla());
+  assert.strictEqual(a.store[chiave], prima);
+});
