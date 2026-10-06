@@ -89,6 +89,7 @@ function consigliAgente() {
   const sett = settimanaProgramma();
 
   if (sett && sett.fase === 'scarico') out.push('\u{1F4A4} Settimana di scarico: meno serie e carichi piu leggeri. Non e tempo perso, serve a ripartire piu forte.');
+  if (sett && sett.controllo) out.push(sett.controllo);   /* PRN-03: il controllo dell 8ª settimana, con il motivo scritto */
   if (sett && !sett.finito && sett.fase === 'carico' && sett.numero < sett.totale && getProgramma().fasi[sett.numero] === 'scarico') out.push('\u{1F4C5} La prossima settimana e di scarico.');
   if (sett && sett.finito) out.push('\u{1F3C1} Il programma e concluso. Fai una nuova BIA e ricrea il programma: ripartiremo dai carichi raggiunti.');
   consigliCoach2(hist).forEach(x => out.push(x));

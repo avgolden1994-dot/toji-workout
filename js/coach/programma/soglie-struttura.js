@@ -46,6 +46,14 @@ const SOGLIE_STRUTTURA = {
     v: { scaricoSeFatica: ['media', 'alta'], dose: 'bassa' },
     forza: 'Convenzione', fonte: 'registro coach v2 B4 (controllo all’8ª settimana dei principianti); ricerca-mesocicli-periodizzazione-scarichi §3.6.2', regole: ['PRN-03']
   },
+  /* i segnali che il controllo dell’8ª legge dai dati salvati (oltre alla fatica di livelloFatica, che già conta la prontezza e l’sRPE medio):
+     sonno «male» in almeno 4 delle ultime 7 check-in (S5); «Al limite», o «Dura» arrivando stanco, in almeno 2 delle ultime 3 sedute (S7: stessa
+     definizione di DEC-06, sedutaPesante); dolore da 4/10 in su nelle ultime 3 sedute (soglia di DEC-02: da lì in avanti il coach non chiede di allenarsi
+     attraverso il dolore). Il dolore per il registro non è fatica generale (S4): al controllo conta come prudenza in più, mai come diagnosi */
+  controlloOttavaSegnali: {
+    v: { checkInSonno: 7, sonnoMaleMin: 4, seduteUltime: 3, seduteAlLimiteMin: 2, doloreMinimo: 4 },
+    forza: 'Convenzione', fonte: 'registro coach v2 B4; ricerca-mesocicli-periodizzazione-scarichi §3.7 (S5 sonno, S7 sRPE, S4 dolore: scarico locale) e DEC-02 (dolore da 4/10)', regole: ['PRN-03']
+  },
 
   /* ---- MES-03: rampa di volume (fattore sul volume di base, settimane di carico del blocco) ---- */
   /* principiante: 2 serie nelle settimane 1-2 (2/3 del volume), 3 sui primi tre esercizi nelle 3-4, 3 su tutti dalla 5ª (volume pieno); poi 1 */

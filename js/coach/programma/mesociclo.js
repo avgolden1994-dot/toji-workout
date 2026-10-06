@@ -8,7 +8,9 @@
    blocco dopo. Il risultato va in prog.piano (versione 2); fasi e rirSett restano per chi li legge ancora.
    Livelli (registro coach v2 B4, B5; numeri in soglie-struttura.js):
    - principiante non prudente (PRN-03): 12 settimane, settimane 1-11 di carico, la 12ª una verifica (serie -35%, carico invariato, RIR 3-4);
-     all 8ª un controllo: scarico «basso» solo con fatica media o alta o un segnale di MES-07 (esitoControlloPrincipiante, lo chiama W3-T5)
+     all 8ª un controllo (INT-2d, revisione B1): con il consenso, alla prima lettura della settimana 8 il coach guarda la fatica e i segnali salvati
+     (controlloOttavaPrincipiante, chiamato da settimanaProgramma) e, con fatica media o alta o un segnale, scrive la settimana come scarico «basso»
+     (serie -35%, carico -5% sul riferimento di prima: non si compone) nel programma salvato, con il motivo e l annulla; altrimenti si continua
    - intermedio (MES-01): 12 settimane = 2 blocchi da 5 di carico + 1 di scarico; rampa di volume 0,75 · 0,85 · 0,95 · 1 · 1
    - avanzato (MES-01): come l intermedio con rampa 0,70 · 0,80 · 0,90 · 1 · 1 e +1 serie ai prioritari dalla 3ª settimana del blocco
    - prudenti (over 65, PAR-Q positivo, minorenni): blocchi 3+1 come prima della v2, nessuna rampa, RIR fisso (3-4; i minorenni mai sotto 2)
@@ -192,7 +194,7 @@ function notaDelPiano(ctx, piano) {
   if (ctx.cauto) return null;
   const st = piano.struttura;
   if (ctx.principiante) {
-    return ctx.lungo ? { codice: 'PRN-03', testo: 'Programma di ' + st.settimane + ' settimane: i carichi salgono con calma e lo scarico è solo alla fine. Alla settimana ' + st.controllo + ' c’è un controllo: se sei stanco, scarichi prima.' } : null;
+    return ctx.lungo ? { codice: 'PRN-03', testo: 'Programma di ' + st.settimane + ' settimane: i carichi salgono con calma e lo scarico è solo alla fine. Alla settimana ' + st.controllo + ' il coach guarda la tua stanchezza: se sei stanco, quella settimana diventa uno scarico leggero (serve il consenso ai dati del coach).' } : null;
   }
   if (!regolaAttiva('MES-01') || !ctx.rir || !ctx.rampa) return null;
   const carico = piano.settimane.filter(w => w.fase === 'carico' && w.blocco === 1), da = carico[0].rir.A[0], a = Math.min.apply(null, carico.map(w => w.rir.A[0]));
@@ -232,11 +234,91 @@ function pianoMesociclo(brief) {
 
 /* PRN-03 / B4: il controllo dell 8ª settimana del principiante. `fatica` = 'bassa' | 'media' | 'alta' (livelloFatica); `segnale` = vero se un segnale dello
    scarico reattivo (MES-07) e acceso. Ritorna { fase: 'scarico', dose: 'bassa' } se la fatica e media o alta o c e un segnale, altrimenti { fase: 'carico', dose: null }:
-   la settimana continua. Lo chiama W3-T5 con la fatica e i segnali veri. */
+   la settimana continua. La decisione vera (con i dati salvati, il consenso, il motivo e l annulla) e controlloOttavaPrincipiante, qui sotto. */
 function esitoControlloPrincipiante(fatica, segnale) {
   const c = sogliaStruttura('controlloOttava');
   if (!c) return { fase: 'carico', dose: null };
   return segnale || c.scaricoSeFatica.indexOf(fatica) !== -1 ? { fase: 'scarico', dose: c.dose } : { fase: 'carico', dose: null };
+}
+
+/* ---------------- il controllo dell 8ª settimana, eseguito (PRN-03, B4, D-P15; revisione INT-2d B1) ---------------- */
+
+/* i segnali accesi al controllo, letti dai dati gia salvati (soglie: controlloOttavaSegnali): { sonno, sedute, dolore, scarico } (vero = acceso).
+   La fatica generale (sRPE medio e prontezza) la da livelloFatica; qui i segnali del registro che livelloFatica non vede (MES-07 §3.7: S5 sonno, S7 sedute
+   al limite), il dolore (prudenza in piu, non fatica: S4) e uno scarico gia deciso dal coach (DEC-06, PRZ-04, STR-01) */
+function segnaliControlloOttava() {
+  const s = sogliaStruttura('controlloOttavaSegnali');
+  const out = { sonno: false, sedute: false, dolore: false, scarico: false };
+  if (!s) return out;
+  const fb = loadHistory().filter(h => h.feedback && !h.interrotta).slice(0, s.seduteUltime).map(h => h.feedback);
+  out.sedute = typeof sedutaPesante === 'function' && fb.filter(x => sedutaPesante(x)).length >= s.seduteAlLimiteMin;
+  out.dolore = fb.some(x => x.dolore && (Number(x.livello) || 0) >= s.doloreMinimo);
+  out.sonno = storicoProntezza().slice(-s.checkInSonno).filter(x => x && x.sonno === 0).length >= s.sonnoMaleMin;
+  const ag = typeof aggiustiCoach === 'function' ? aggiustiCoach() : null;
+  out.scarico = !!(ag && ag.scarico && Number(ag.scarico.sedute) > 0);
+  return out;
+}
+/* la frase del controllo: un pezzo per ogni causa, separati da « • » (il traduttore li traduce a pezzi) */
+const CAUSE_CONTROLLO_OTTAVA = {
+  alta: 'la stanchezza delle ultime sedute è alta', media: 'la stanchezza delle ultime sedute è media',
+  senzaDati: 'non ci sono ancora dati sulla tua stanchezza: per prudenza si scarica',
+  sonno: 'il sonno è stato scarso nelle ultime check-in', sedute: 'le ultime sedute erano al limite o fatte da stanco',
+  dolore: 'hai segnalato un dolore nelle ultime sedute', scarico: 'il coach aveva già deciso uno scarico'
+};
+
+/* PRN-03 / B4 (registro): all 8ª settimana di un programma da principiante a 12 settimane il coach guarda la stanchezza dai dati salvati e, se e media o alta o
+   c e un segnale, anticipa lo scarico (dose «bassa»: serie -35%, carico -5%, sul carico di riferimento di prima, MES-06: la dose non si compone); altrimenti
+   la settimana continua. Solo con il consenso (coachAttivo), una volta sola per programma (il risultato sta in piano.controllo: motivo, causa, data), e si
+   annulla (showUndo: il programma torna com era e il controllo non si ripete). Lo chiama settimanaProgramma (progressivo.js) con il programma gia letto: tutto
+   il resto (fasi, perche, carichi, analisi di MES-10) legge poi la settimana dal programma salvato. Ritorna vero se ha deciso. */
+function controlloOttavaPrincipiante(p) {
+  const piano = p && p.piano, n = piano && piano.struttura ? Number(piano.struttura.controllo) : 0;
+  if (!n || piano.controllo || !Array.isArray(piano.settimane) || !p.inizio || !Array.isArray(p.fasi)) return false;   /* le uscite economiche per prime: gira a ogni lettura della settimana */
+  const w = piano.settimane[n - 1];
+  if (!w || w.fase !== 'controllo' || !pianoAttivo() || !regolaAttiva('PRN-03') || typeof coachAttivo !== 'function' || !coachAttivo()) return false;
+  if (Math.floor(giorniTra(daYmd(p.inizio), lunediDi(new Date())) / 7) + 1 !== n) return false;
+  const fatica = livelloFatica(), seg = segnaliControlloOttava();
+  const senzaDati = !loadHistory().some(h => h.feedback && !h.interrotta) && !storicoProntezza().some(x => x && typeof x.punteggio === 'number');
+  const acceso = Object.keys(seg).filter(k => seg[k]);
+  const esito = esitoControlloPrincipiante(fatica, acceso.length > 0);
+  const quando = ymd(new Date()), dose = esito.dose;
+  const prima = JSON.stringify(p);
+  const cause = [];
+  if (esito.fase === 'scarico') {
+    if (senzaDati && !acceso.length) cause.push(CAUSE_CONTROLLO_OTTAVA.senzaDati);
+    else if (fatica === 'alta' || fatica === 'media') cause.push(CAUSE_CONTROLLO_OTTAVA[fatica]);
+    acceso.forEach(k => cause.push(CAUSE_CONTROLLO_OTTAVA[k]));
+  }
+  const nome = 'Controllo della settimana ' + n;
+  const sd = sogliaStruttura('scaricoSerie')[dose], cd = sogliaStruttura('scaricoCarico')[dose];
+  const motivo = esito.fase === 'scarico'
+    ? [nome].concat(cause, ['questa settimana è uno scarico leggero: serie -' + Math.round((1 - sd) * 100) + '% e carico -' + Math.round((1 - cd) * 100) + '%', 'poi si riprende dal carico di prima']).join(' • ')
+    : [nome, 'la stanchezza è bassa e non ci sono segnali di recupero scarso', 'la settimana continua come da programma'].join(' • ');
+  piano.controllo = { settimana: n, esito: esito.fase, dose: dose, fatica: fatica, segnali: acceso, senzaDati: senzaDati, data: quando, motivo: motivo };
+  if (esito.fase === 'scarico') {
+    /* la settimana diventa di scarico in tutto il programma salvato: fasi (le leggono settimanaProgramma, faseDelGiorno e le analisi), piano e RIR */
+    p.fasi[n - 1] = 'scarico';
+    const rirScarico = sogliaStruttura('verificaPrincipiante').rir;
+    w.fase = 'scarico'; w.dose = dose; w.volume = sd; w.carico = cd; w.rir = {}; CLASSI_PIANO.forEach(c => { w.rir[c] = rirScarico.slice(); });
+    delete w.rirUltima;
+    w.nota = 'Controllo: la stanchezza lo chiedeva, questa settimana è uno scarico leggero';
+    if (Array.isArray(p.rirSett)) p.rirSett[n - 1] = rirScarico[0];
+  } else w.fase = 'carico';
+  aggiungiPerche(p, 'PRN-03', motivo);
+  try { localStorage.setItem(progKey(), JSON.stringify(p)); } catch (e) { return false; }
+  if (typeof showUndo === 'function') {
+    try {
+      showUndo(esito.fase === 'scarico' ? nome + ' • ' + cause.concat(['questa settimana è uno scarico leggero']).join(' • ') : motivo, esito.fase === 'scarico' ? () => {
+        const prec = JSON.parse(prima);
+        prec.piano.controllo = { settimana: n, esito: 'carico', dose: null, fatica: fatica, segnali: acceso, senzaDati: senzaDati, data: quando, annullato: true,
+          motivo: nome + ' • annullato: la settimana continua come da programma' };
+        prec.piano.settimane[n - 1].fase = 'carico';
+        try { localStorage.setItem(progKey(), JSON.stringify(prec)); } catch (e) {}
+        if (typeof renderOggi === 'function') { try { renderOggi(); } catch (e) {} }
+      } : null, 9000);
+    } catch (e) {}
+  }
+  return true;
 }
 
 /* ---------------- leggere il piano dal programma salvato ---------------- */

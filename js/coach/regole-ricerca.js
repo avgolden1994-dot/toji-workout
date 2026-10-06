@@ -233,7 +233,7 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase) {
   const over65 = pc.eta >= 65;   /* ETA-18: gli aumenti si dimezzano anche dopo i 65 anni, come dice il capitolo 14 della mappa */
   const prudente = pc.sonnoMale || pc.prudente || over65;
   const sess = ultimeSessioni(nome, 2);
-  const dose = scarico ? DOSE_SCARICO[livelloFatica()] : null;
+  const dose = scarico ? DOSE_SCARICO[sett.doseFissa || livelloFatica()] : null;   /* PRN-03 (INT-2d): lo scarico del controllo dell 8ª ha la dose «bassa» del registro, non quella della fatica di oggi */
   const sets = scarico ? Math.max(2, Math.round((setsBase || 3) * dose.serie)) : (setsBase || 3);
 
   if (isTimeBased(nome)) {
