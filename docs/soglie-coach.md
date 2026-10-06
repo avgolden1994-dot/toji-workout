@@ -4,7 +4,7 @@
 > Forze: **Solida** (meta-analisi o posizione ufficiale), **Moderata** (pochi studi, o risultati che cambiano con la popolazione), **Contrastata** (studi in disaccordo), **Convenzione** (pratica dei coach: il foglio «Perché?» mostra «Scelta prudente del coach (Convenzione): non è un risultato di studi»), **Decisione** (scelta di prodotto: «Decisione di prodotto»), **Provvisoria** (numero di partenza in attesa di verifica: «Numero di partenza, in verifica»). Etichette: `etichettaForza` in `js/coach/regia/perche.js` (registro C.4).
 > Le tabelle di prima (`COACH_PARAMETRI`, `PARAM_PARTENZA`, `PARAM_INTENSITA`, `STR_PESI`, `DOSE_SCARICO`, `RIR_TIPO`) non sono ancora qui: passano in un file soglie quando il task che possiede il loro file le tocca.
 
-Totale: 136 soglie in 9 tabelle (Solida 3, Moderata 10, Contrastata 1, Convenzione 114, Decisione 6, Provvisoria 2).
+Totale: 137 soglie in 9 tabelle (Solida 3, Moderata 10, Contrastata 1, Convenzione 115, Decisione 6, Provvisoria 2).
 
 ## `SOGLIE_PARTENZA` — `js/coach/carichi/soglie-partenza.js` (bilancia)
 
@@ -180,6 +180,7 @@ Totale: 136 soglie in 9 tabelle (Solida 3, Moderata 10, Contrastata 1, Convenzio
 | `serieMaxEsercizio` | composto 5, isolamento 6 | Convenzione | Krieger 2010; Ralston 2017 (2-6 serie per esercizio: Solida/Moderata); stesso tetto del collaudo (SERIE_MAX_ESERCIZIO) | IPE-01 |
 | `serieMaxIsolamentoConFastidio` | 4 | Convenzione | revisione indipendente INT-2d, M7 (misurato: isolamenti a 6 serie in centinaia di programmi, Alzate Laterali 6 x 15 con la spalla dolente); regola di sicurezza (tolleranza zero, SAF-02: nessun esercizio aggiunto carica una zona dolente senza prudenza) | IPE-01, SAF-02 |
 | `serieMaxCore` | 3 | Convenzione | ABB-03 (un esercizio di core a fine seduta, 2-3 serie: strCopri, strCoreNuovo); ricerca-biomeccanica-esercizi §4 SEL-07 e D10 (core 2-6 serie a settimana, poco volume); registro B6 (addome 2-4 / 4-8 / 6-10 a settimana) | IPE-01, IPE-06 |
+| `ripiegoCerniera` | serieMax 2, ripetizioni 12 | Convenzione | revisione indipendente dell onda 2e (INT-2f, maggiore 2); ricerca-principianti §3.1 (il gesto della cerniera dell anca si impara con movimenti guidati e poche serie); registro B6 (credito 0,5 ai femorali negli attributi) | SES-03 |
 | `eserciziMaxSeduta` | adulto 8, principiante 6 | Convenzione | collaudo del generatore (ES_MAX_SEDUTA, ES_MAX_PRINCIPIANTE); piano E.3 W2-T1 | IPE-01 |
 | `seduteMinimeUnita` | 2 | Solida | ACSM 2026 (137 revisioni): ogni grande gruppo almeno 2 sedute a settimana; collaudo FRQ-01 | IPE-01 |
 | `serieMinSeduta` | 1.5 | Convenzione | collaudo FRQ-01 (una seduta conta da 1,5 serie frazionarie, cioè 3 serie sinergiche) | IPE-01 |

@@ -243,7 +243,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 55. `js/coach/programma/motore.js` — Coach engine: costruzione del programma
 
-`attrezzoDi()` · `attrezzoDiCalcolo()` · `RISCHIO` · `ECCEZIONI_RISCHIO` · `senzaMacchine()` · `ATTREZZI_NON_DI_CASA` · `ATTREZZI_NON_CON_I_MANUBRI` · `attrezzoFisicoDi()` · `chiedeAttrezzo()` · `attrezzoDiCasaMancante()` · `ATTREZZI_NON_DICHIARABILI_IN_PALESTRA` · `ATTREZZI_EXTRA_DEI_DATI` · `attrezzoExtraDi()` · `dichiaratiDi()` · `attrezziDichiaratiEsito()` · `eccezioneRischio()` · `consentito()` · `consentitoCalcolo()` · `sostituto()` · `alternativeStessoMuscolo()` · `schemaMisto()`
+`attrezzoDi()` · `attrezzoDiCalcolo()` · `RISCHIO` · `ECCEZIONI_RISCHIO` · `senzaMacchine()` · `ATTREZZI_NON_DI_CASA` · `ATTREZZI_NON_CON_I_MANUBRI` · `attrezzoFisicoDi()` · `chiedeAttrezzo()` · `attrezzoDiCasaMancante()` · `ATTREZZI_NON_DICHIARABILI_IN_PALESTRA` · `ATTREZZI_EXTRA_DEI_DATI` · `attrezzoExtraDi()` · `dichiaratiDi()` · `attrezziDichiaratiEsito()` · `eccezioneRischio()` · `consentito()` · `cerniereConCaricoConsentite()` · `consentitoCalcolo()` · `sostituto()` · `alternativeStessoMuscolo()` · `schemaMisto()`
 
 ### 56. `js/coach/programma/schemi.js` — Schemi di movimento e regole di costruzione
 
@@ -327,7 +327,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 76. `js/coach/specialita/forza.js` — Specialista Forza: la struttura del powerlifting (FRZ-02..05, STD-02)
 
-`sogliaForza()` · `FORZA_CAMPI_TIPO` · `modalitaForzaDa()` · `forzaPuntiDeboli()` · `FORZA_TIPI_TESTI` · `FORZA_NOTA_REQUISITI` · `FORZA_NOTA_PUNTI` · `FORZA_PUNTI_TESTI` · `forzaCambiaPunto()` · `forzaSalvata()` · `FORZA_NOTA_STRUTTURA` · `FORZA_NOTA_ONDA` · `FORZA_NOTA_PIATTA` · `FORZA_NOTA_PRINCIPIANTE` · `FORZA_NOTA_MINUTI` · `FORZA_NOTA_MASSIMALE` · `FORZA_NOTA_PRUDENTE` · `FORZA_NOTA_GIORNI` · `FORZA_NOTA_FREQUENZA` · `FORZA_NOTA_FREQUENZA_SOSTITUITA` · `FORZA_NOTA_MOMENTO` · `FORZA_NOTA_ATTREZZI` · `FORZA_NOTA_FASTIDIO` · `FORZA_PERCHE_STRUTTURA` · `FORZA_PERCHE_ONDA` · `FORZA_PERCHE_VARIANTE` · `FORZA_PERCHE_ACCESSORIO` · `FORZA_ALZATE_BARRA` · `FORZA_TITOLO` · `FORZA_AGGETTIVO` · `SPEC_FORZA` · `forzaAmmesso()` · `forzaNomeGara()` · `forzaSchema()` · `forzaElencoVarianti()` · `forzaPrescrizione()` · `forzaTitolo()` · `specialitaForza()` · `forzaSedute()` · `forzaFaSchema()` · `forzaAdattaAlTempo()` · `forzaPotaAlTempo()` · `forzaNote()`
+`sogliaForza()` · `FORZA_CAMPI_TIPO` · `modalitaForzaDa()` · `forzaPuntiDeboli()` · `FORZA_TIPI_TESTI` · `FORZA_NOTA_REQUISITI` · `FORZA_NOTA_PUNTI` · `FORZA_PUNTI_TESTI` · `forzaCambiaPunto()` · `forzaSalvata()` · `FORZA_NOTA_STRUTTURA` · `FORZA_NOTA_ONDA` · `FORZA_NOTA_PIATTA` · `FORZA_NOTA_PRINCIPIANTE` · `FORZA_NOTA_MINUTI` · `FORZA_NOTA_MASSIMALE` · `FORZA_NOTA_PRUDENTE` · `FORZA_NOTA_ETA` · `FORZA_NOTA_GIORNI` · `FORZA_NOTA_FREQUENZA` · `FORZA_NOTA_FREQUENZA_SOSTITUITA` · `FORZA_NOTA_MOMENTO` · `FORZA_NOTA_ATTREZZI` · `FORZA_NOTA_FASTIDIO` · `FORZA_PERCHE_STRUTTURA` · `FORZA_PERCHE_ONDA` · `FORZA_PERCHE_VARIANTE` · `FORZA_PERCHE_ACCESSORIO` · `FORZA_ALZATE_BARRA` · `FORZA_TITOLO` · `FORZA_AGGETTIVO` · `SPEC_FORZA` · `forzaAmmesso()` · `forzaNomeGara()` · `forzaSchema()` · `forzaElencoVarianti()` · `forzaPrescrizione()` · `forzaTitolo()` · `specialitaForza()` · `forzaSedute()` · `forzaFaSchema()` · `forzaAdattaAlTempo()` · `forzaPotaAlTempo()` · `forzaNote()`
 
 ## js/ui
 

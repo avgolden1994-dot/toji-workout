@@ -310,7 +310,8 @@ function valuta(cfg, snap, ondaId, opz) {
   /* INT-1: con --contro il totale non puo peggiorare oltre la tolleranza NEMMENO se ha una soglia esplicita (una soglia allentata, per esempio 21,5 contro un 2,7 misurato, non nasconde una regressione) */
   if (sTot === undefined || opz.contro) {
     const tolG = cfg.regressione.tolleranzaPunti;
-    (snap.gravi_pesata <= rif.gravi_pesata + tolG + EPS ? ok : (t => kn('gravi_pesata', t)))('gravi_pesata ' + f2(snap.gravi_pesata) + '% non peggiora (' + rif.etichetta + ' ' + f2(rif.gravi_pesata) + '%)');
+    if (snap.gravi_pesata <= rif.gravi_pesata + tolG + EPS) ok('gravi_pesata ' + f2(snap.gravi_pesata) + '% non peggiora (' + rif.etichetta + ' ' + f2(rif.gravi_pesata) + '%)');
+    else kn('gravi_pesata', 'gravi_pesata ' + f2(snap.gravi_pesata) + '% PEGGIORA contro ' + rif.etichetta + ' ' + f2(rif.gravi_pesata) + '% (tolleranza ' + tolG + ' punti)');   /* INT-2f: il messaggio diceva «non peggiora» anche quando peggiorava */
   }
   ok('regressione contro «' + rif.etichetta + '»: ' + controllate + (opz.contro ? ' classi controllate (anche quelle con una soglia esplicita)' : ' classi non coperte da una soglia') + ', ' + peggiorate + ' peggiorate' + (ammesseUsate ? ', ' + ammesseUsate + ' ammesse con il loro motivo' : '') + (riscritti.size ? ' (criteri riscritti, non confrontati: ' + Array.from(riscritti).join(', ') + ')' : ''));
 
@@ -514,7 +515,7 @@ function autotest() {
     eq(senza.falliti, 0, 'senza --contro il totale 20 e dentro la soglia 21,5 (e il limite del «prima»)');
     const con = esegui(peggio, 'onda-1', { contro });
     eq(con.falliti >= 1, true, 'con --contro il totale 2,7 -> 20 e una regressione anche dentro la soglia');
-    eq(con.righe.some(r => r.esito === 'fallito' && /gravi_pesata .* non peggiora/.test(r.testo)), true, 'il fallimento dice che il totale peggiora');
+    eq(con.righe.some(r => r.esito === 'fallito' && /gravi_pesata .* PEGGIORA contro/.test(r.testo)), true, 'il fallimento dice che il totale peggiora');
     /* una classe dentro la sua soglia ma peggiore dell'onda precedente: gia coperta dalla prova sopra (RID-01); qui la soglia e sulla sottoclasse */
     const c2 = daCollaudo(istantaneaBuona(cfg, 'onda-1', { pesata: { 'VOL-01:femorali': 40 }, conteggio: { 'VOL-01:femorali': 4000 } }));
     const p2 = istantaneaBuona(cfg, 'onda-1', { pesata: { 'VOL-01:femorali': 44.9 }, conteggio: { 'VOL-01:femorali': 4900 } });   /* soglia onda 0: 45 */
@@ -727,6 +728,11 @@ function autotest() {
     eq(fallito(riscritta({ max: 3.5 }, 3.9), /oltre il tetto.*3.5/), true, 'un tetto piu basso scritto dalla riscrittura vale (puo solo scendere senza rialzo)');
     eq(fallito(esito(c => { c.onde['onda-2a'].ammesse = { [K]: am() }; c.onde['onda-3'].aperti = { [K]: ap('oltre-v2') }; }, 4.3), /oltre il tetto.*4/), true, 'anche riscritta oltre-v2 la classe non sale oltre il tetto');
     eq(esito(c => { c.onde['onda-2a'].ammesse = { [K]: am() }; c.onde['onda-3'].aperti = { [K]: ap('onda-4') }; }, 3.9).falliti, 0, 'e sotto il tetto passa, anche con oltre-v2');
+    /* il totale che peggiora lo dice (prima il messaggio era sempre «non peggiora») */
+    const cc = nuda(), pegg = istantaneaBuona(cc, 'onda-3', presente(2)); pegg.riepilogo.gravi_pesata = 9;
+    const rg = valuta(cc, daCollaudo(pegg), 'onda-3', { contro: daCollaudo(istantaneaBuona(cc, 'onda-2', presente(2))) });
+    eq(rg.righe.some(x => x.esito === 'fallito' && /gravi_pesata 9% PEGGIORA contro/.test(x.testo)), true, 'gravi_pesata 9 contro un onda prima piu bassa: ' + rg.righe.filter(x => /gravi_pesata/.test(x.testo)).map(x => x.esito + ' ' + x.testo).join(' | '));
+    eq(rg.righe.some(x => /gravi_pesata.*non peggiora/.test(x.testo)), false, 'e non dice «non peggiora»');
     /* (c) oltre-v2: mai per la sicurezza, e il motivo porta una data */
     eq(fallito(esito(c => { c.onde['onda-3'].aperti = { 'SAF-02:spalle': ap('oltre-v2') }; }), /oltre-v2.*sicurezza/), true, 'una classe di sicurezza non va oltre la v2');
     eq(fallito(esito(c => { c.onde['onda-3'].aperti = { 'Cosa aperta': ap('oltre-v2', { motivo: 'senza data' }) }; }), /oltre-v2.*data/), true, 'oltre-v2 senza una data nel motivo fallisce');
