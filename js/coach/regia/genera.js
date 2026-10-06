@@ -133,6 +133,25 @@ function chiudiProgramma(brief, sedute) {
 
 /* ---- 17. la verifica finale (REG-02): chiama i controlli che esistono; ognuno ritorna le note (testi) di cio che non ha potuto riparare.
    Oggi c e solo validaVolume (di W1-T4, non fa niente): ogni onda aggiunge il suo (validaTempo, validaTecniche, validaSicurezza). ---- */
+/* REG-02 (INT-2b): le note dicono quello che il programma fa DAVVERO, non quello che uno stadio prima aveva in mente. Gli stadi scrivono la nota quando agiscono (completaSettimana, il volume) e un
+   passo dopo (il taglio per il tempo, il volume, le scelte dell utente) puo togliere o cambiare l esercizio: la nota «Aggiunto: Pullover con Manubrio» restava con il pullover tolto dai 30 minuti, e
+   «senza leg curl restano meno allenati» con il leg curl con l asciugamano in scheda. Qui, alla fine: (1) via «Aggiunto: X» se X non e nella scheda (ne con il suo nome ne con quello originale
+   di una scelta dell utente); (2) via la nota del ponte glutei se c e una flessione del ginocchio, e quella «serve la flessione» se non c e; (3) niente note identiche due volte */
+function riconciliaNote(prog) {
+  const nomi = [];
+  prog.sedute.forEach(sd => sd.esercizi.forEach(e => { nomi.push(senzaEmoji(e.name)); if (e.originale) nomi.push(senzaEmoji(e.originale)); }));
+  const flessione = nomi.some(n => /leg curl|nordic/i.test(n)), viste = {};
+  prog.note = prog.note.filter(testo => {
+    const t = String(testo), m = /^Aggiunto: (.+?) \u2014 /.exec(t);
+    if (viste[t]) return false;
+    viste[t] = true;
+    if (m && nomi.indexOf(m[1]) === -1) return false;
+    if (t === NOTA_FEMORALI_SENZA_LEG_CURL) return !flessione;
+    if (t === NOTA_FEMORALI_SERVE_FLESSIONE) return flessione;
+    return true;
+  });
+  return prog;
+}
 function verificaProgramma(brief, prog) {
   const esiti = [];
   if (typeof validaVolume === 'function') esiti.push(validaVolume(brief, prog.sedute));
@@ -140,7 +159,7 @@ function verificaProgramma(brief, prog) {
   if (typeof validaTecniche === 'function') esiti.push(validaTecniche(brief, prog.sedute));
   if (typeof validaSicurezza === 'function') esiti.push(validaSicurezza(brief, prog.sedute));
   esiti.forEach(r => { if (Array.isArray(r)) r.forEach(t => prog.note.push(t)); });
-  return prog;
+  return riconciliaNote(prog);
 }
 
 window.buildProgram = function(d) {

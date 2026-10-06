@@ -195,3 +195,39 @@ test('m9: «Principiante assoluto», «esperto», «Pro» e simili danno lo stes
   assert.strictEqual(senza.chi.livello, 'intermedio');
   assert.deepStrictEqual(a.errori, []);
 });
+
+/* ---------------------------------------------------------------- 6) le note dicono quello che il programma fa davvero (REG-02, riconciliaNote) ---------------------------------------------------------------- */
+test('riconciliaNote: «Aggiunto: X» solo se X e nella scheda, la nota del ponte glutei solo senza flessione del ginocchio, mai due note uguali (campione di 400 programmi)', () => {
+  const a = conSoglieStruttura(caricaApp({ ora: ORA }));
+  const nomi = p => [].concat.apply([], p.sedute.map(sd => sd.esercizi.map(e => a.chiama('senzaEmoji', e.name))));
+  const NOTA_PONTE = 'Femorali: senza leg curl restano meno allenati, il ponte glutei li aiuta.', NOTA_SERVE = 'Femorali: squat e hip thrust non li fanno crescere, serve la flessione del ginocchio (leg curl).';
+  let aggiunti = 0, conPonte = 0, conServe = 0, programmi = 0;
+  ['principiante', 'intermedio', 'avanzato'].forEach(level => ['palestra', 'manubri', 'corpo'].forEach(luogo => [2, 3, 5].forEach(days => [30, 45, 60, 90].forEach(minutes => ['massa', 'forza'].forEach(g => {
+    if (luogo !== 'palestra' && minutes === 90) return;
+    const p = a.dati(a.chiama('buildProgram', Object.assign({}, BASE, { level, luogo, days, minutes, goals: [g], sex: 'F', seme: 'riconcilia' + level + luogo + days + minutes + g })));
+    const ex = nomi(p), flessione = ex.some(n => /leg curl|nordic/i.test(n));
+    programmi++;
+    assert.strictEqual(new Set(p.note).size, p.note.length, 'nessuna nota ripetuta: ' + JSON.stringify(p.note.filter((n, i) => p.note.indexOf(n) !== i)));
+    p.note.forEach(n => {
+      const m = /^Aggiunto: (.+?) — /.exec(n);
+      if (m) { aggiunti++; assert.ok(ex.indexOf(m[1]) !== -1, level + ' ' + luogo + ' ' + days + 'gg ' + minutes + 'min ' + g + ': la nota dice «Aggiunto: ' + m[1] + '» ma non c e'); }
+    });
+    if (p.note.indexOf(NOTA_PONTE) !== -1) { conPonte++; assert.ok(!flessione, 'nota del ponte con una flessione del ginocchio in scheda'); }
+    if (p.note.indexOf(NOTA_SERVE) !== -1) { conServe++; assert.ok(flessione, 'nota «serve la flessione» senza nessuna flessione in scheda'); }
+  })))));
+  assert.ok(programmi >= 150 && aggiunti > 30 && conPonte > 0, 'il campione esercita le note: programmi ' + programmi + ', note Aggiunto ' + aggiunti + ', ponte ' + conPonte + ', serve ' + conServe);
+  assert.deepStrictEqual(a.errori, []);
+});
+
+test('riconciliaNote: il caso del pullover a 30 minuti (casa, 2 giorni, forza) e quello del leg curl con l asciugamano (corpo libero, principiante, 2 giorni, 45 minuti) non hanno piu la nota che mente', () => {
+  const a = conSoglieStruttura(caricaApp({ ora: ORA }));
+  const costruisci = d => a.dati(a.chiama('buildProgram', Object.assign({}, BASE, d)));
+  const nomi = p => [].concat.apply([], p.sedute.map(sd => sd.esercizi.map(e => a.chiama('senzaEmoji', e.name))));
+  const pull = costruisci({ level: 'intermedio', days: 2, luogo: 'manubri', minutes: 30, goals: ['forza'], seme: '{"level":"intermedio","days":2,"luogo":"manubri","minutes":30,"goals":["forza"]}' });
+  assert.ok(nomi(pull).indexOf('Pullover con Manubrio') === -1 || pull.note.some(n => /^Aggiunto: Pullover con Manubrio/.test(n)), 'il pullover e in scheda oppure la nota non c e');
+  assert.ok(!(pull.note.some(n => /^Aggiunto: Pullover con Manubrio/.test(n)) && nomi(pull).indexOf('Pullover con Manubrio') === -1));
+  const fem = costruisci({ level: 'principiante', days: 2, luogo: 'corpo', minutes: 45, goals: ['massa'] });
+  assert.ok(nomi(fem).some(n => /Leg Curl con Asciugamano/.test(n)), 'il leg curl con l asciugamano e in scheda');
+  assert.ok(!fem.note.some(n => /senza leg curl restano meno allenati/.test(n)), 'e la nota «senza leg curl» non c e');
+  assert.strictEqual(fem.note.filter(n => /^Aggiunto: Leg Curl con Asciugamano/.test(n)).length, 1, 'la nota «Aggiunto» c e una volta sola');
+});
