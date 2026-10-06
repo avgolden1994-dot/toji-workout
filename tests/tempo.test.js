@@ -473,11 +473,15 @@ test('IPE-04: il giorno «forza» del PHUL con 45 minuti o meno e a 6 ripetizion
   assert.ok(classeA(forzaGoal).every(e => e.reps <= 5), 'con la forza come obiettivo il giorno resta a 5 ripetizioni o meno');
 });
 
-test('IPE-12: con 30 minuti o meno, o 2 giorni al massimo, la nota onesta «4-6 serie per muscolo a settimana»; non con 60 minuti e 3 giorni', () => {
+test('IPE-12: con 30 minuti o meno, o 2 giorni al massimo con 45 minuti, la nota del lavoro essenziale (senza «4-6 serie per muscolo»); non con 2 giorni a 60 minuti ne con 60 minuti e 3 giorni (INT-2d, M1)', () => {
   const nota = prog => prog.note.some(n => /^Con poco tempo conta il lavoro essenziale/.test(n));
   assert.ok(nota(costruisci(Object.assign({}, BASE, { minutes: 30, seme: 'p12a' }))));
-  assert.ok(nota(costruisci(Object.assign({}, BASE, { days: 2, minutes: 60, seme: 'p12b' }))));
+  assert.ok(nota(costruisci(Object.assign({}, BASE, { days: 2, minutes: 45, seme: 'p12b' }))));
+  assert.ok(!nota(costruisci(Object.assign({}, BASE, { days: 2, minutes: 60, seme: 'p12b' }))), '2 giorni a 60 minuti: il tempo non manca');
+  assert.ok(!nota(costruisci(Object.assign({}, BASE, { days: 2, minutes: 90, seme: 'p12d' }))), '2 giorni a 90 minuti');
   assert.ok(!nota(costruisci(Object.assign({}, BASE, { days: 3, minutes: 60, seme: 'p12c' }))));
+  const testo = costruisci(Object.assign({}, BASE, { minutes: 30, seme: 'p12a' })).note.find(n => /^Con poco tempo conta/.test(n));
+  assert.ok(!/4-6|bastano per mantenere/.test(testo), 'nessun numero che il programma puo non rispettare: ' + testo);
 });
 
 /* ============================================================ PCO-04, CAS-10: i metodi ============================================================ */

@@ -198,7 +198,7 @@ function notaDelPiano(ctx, piano) {
   }
   if (!regolaAttiva('MES-01') || !ctx.rir || !ctx.rampa) return null;
   const carico = piano.settimane.filter(w => w.fase === 'carico' && w.blocco === 1), da = carico[0].rir.A[0], a = Math.min.apply(null, carico.map(w => w.rir.A[0]));
-  return { codice: 'MES-01', testo: 'Mesociclo: ' + carico.length + ' settimane di carico e una di scarico. Il volume sale piano e le ripetizioni in riserva scendono da ' + da + ' a ' + a + ' sui fondamentali.' };
+  return { codice: 'MES-01', testo: 'Mesociclo: ' + carico.length + ' settimane di carico e una di scarico. Le ripetizioni in riserva scendono da ' + da + ' a ' + a + ' sui fondamentali.' };   /* INT-2d (M1): senza «il volume sale piano»: la rampa del volume (MES-03) nessuna funzione la applica ancora (W3-T4) */
 }
 
 /* pianoMesociclo(brief) -> { struttura: { settimane, blocco }, fasi, rirSett, note, piano }

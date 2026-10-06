@@ -91,9 +91,9 @@ function assegnaTecniche(brief, sedute) {
       /* MAV-13 e MAV-01: il drop set (o i myo-reps) per fare prima, sull'ultimo isolamento che il cancello ammette; mai sul core, a tempo, a peso zero, sugli stacchi */
       if (bud.perSeduta > 0 && ps.intensita !== 'bassa') {
         const ammessi = es.filter(e => !e.tecnica && adatta('drop', e.name));
-        const iso = ammessi.filter(e => classeDE(e.name));
-        const leggeri = iso.length ? iso : ammessi;
-        const e = leggeri[leggeri.length - 1];
+        /* INT-2d (M1, MAV-13): solo sull'ultimo ISOLAMENTO ammesso (classi D ed E): senza, niente drop set. Prima ripiegava su qualunque esercizio ammesso (Lat Machine, Rematore alla Macchina: 49 programmi su 2.500)
+           e la nota «drop set sull'ultimo isolamento» mentiva */
+        const e = ammessi.filter(x => classeDE(x.name)).pop();
         /* W0-T7 (collaudo DUR-01): il drop set costa tempo (secDrop) e arriva dopo il taglio per il tempo: solo se la seduta ci sta ancora */
         if (e && durataSeduta(es) + PARAM_TEMPO.secDrop / 60 <= minuti * (1 + PARAM_TEMPO.tolleranzaSforamento)) cand.push({ e: e, tecnica: 'drop', rischio: rischioTecnica('drop', e.name), slot: 'poco' });
       }

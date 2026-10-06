@@ -47,7 +47,7 @@ function specialitaStruttura(brief) {
    (NOTA_PRINCIPIANTE_4_SEDUTE: la ricerca sui principianti §3.3, «detto all utente»). Scrive brief.lavoro.split se riordina o riduce le sedute. ---- */
 const GIORNI_PER_SEDUTE = { 2: [0, 3], 3: [0, 2, 4], 4: [0, 1, 3, 4], 5: [0, 1, 3, 4, 5], 6: [0, 1, 2, 4, 5, 6] };
 const NOTA_SEI_GIORNI = 'Con 6 giorni lo stesso gruppo cadrebbe in due giorni di fila: cinque sedute e due giorni di riposo, i muscoli recuperano meglio.';
-const NOTA_PRINCIPIANTE_4_SEDUTE = 'Chi comincia cresce di più con 4 sedute a settimana: gli altri giorni sono riposo o una camminata.';
+const NOTA_PRINCIPIANTE_4_SEDUTE = 'A chi comincia bastano 4 sedute a settimana: gli altri giorni sono riposo o una camminata.';   /* INT-2d (M1): prima «cresce di più con 4 sedute», senza fonte (la nota principianti §3.3: 2-3 sedute bastano, a volume pari full body e split sono uguali) */
 /* due sedute dello stesso tipo in due giorni consecutivi (indici di DAYS)? */
 function tipiAdiacenti(tipi, indici) { return tipi.some((t, i) => i > 0 && indici[i] - indici[i - 1] === 1 && t === tipi[i - 1]); }
 /* un ordine delle sedute senza due tipi uguali in giorni consecutivi, il piu vicino possibile all ordine di partenza (ricerca esaustiva: al massimo 6 sedute); null se non esiste */
@@ -117,6 +117,9 @@ function regolaDelPicco(brief, sedute) {
 /* le note sulle superserie del poco tempo: riconciliaNote le tiene solo se la scheda ha davvero delle coppie (il cancello delle tecniche di W2-T3 le toglie agli over 65 fuori da macchine e cavi) */
 const NOTA_POCO_TEMPO_SS = 'Poco tempo: spinte e tirate in superserie (-37% di tempo, stessi risultati).';
 const NOTA_POCO_TEMPO_SS_DROP = 'Poco tempo: spinte e tirate in superserie (-37% di tempo, stessi risultati) e drop set sull ultimo isolamento.';
+/* INT-2d (M1): la potenza va sul primo multiarticolare ammesso alla macchina, che non e sempre il primo esercizio della seduta (369 programmi su 2.500): «un esercizio alla macchina» */
+const NOTA_OVER65_POTENZA = 'Dai 65 anni: 2-3 serie da 8-12, niente cedimento, un esercizio alla macchina veloce in salita per la potenza e 5 minuti di equilibrio a fine seduta.';
+const NOTA_OVER65 = 'Dai 65 anni: 2-3 serie da 8-12, niente cedimento e 5 minuti di equilibrio a fine seduta.';
 const NOTA_SENZA_CEDIMENTO_SS = 'Per ora niente serie al cedimento: la tecnica viene prima. Per fare prima ti propongo le superserie.';
 const NOTA_SENZA_CEDIMENTO = 'Per ora niente serie al cedimento: la tecnica viene prima.';
 /* le note che dicono cosa ha fatto il programma, nell ordine di sempre: il ritratto del coach, il corpo, la BIA, il poco tempo, le popolazioni, i passi.
@@ -133,8 +136,7 @@ function noteDelProgramma(brief) {
     else note.push(NOTA_POCO_TEMPO_SS);
     if (!tecnicheOk) note.push(NOTA_SENZA_CEDIMENTO_SS);
   }
-  if (chi.over65) note.push(L.potenzaAssegnata ? 'Dai 65 anni: 2-3 serie da 8-12, niente cedimento, il primo esercizio veloce in salita per la potenza e 5 minuti di equilibrio a fine seduta.'
-    : 'Dai 65 anni: 2-3 serie da 8-12, niente cedimento e 5 minuti di equilibrio a fine seduta.');
+  if (chi.over65) note.push(L.potenzaAssegnata ? NOTA_OVER65_POTENZA : NOTA_OVER65);
   if (chi.minorenne) {   /* ETA-02 e ETA-03: profilo minorenne */
     note.push('Alla tua età conta imparare bene i movimenti: niente massimali né serie al limite, lascia sempre 2-3 ripetizioni in riserva.');
     note.push('Allenati con un adulto o un istruttore: la tecnica viene prima dei carichi.');
@@ -195,8 +197,14 @@ function riconciliaNote(prog) {
   const nomi = [];
   prog.sedute.forEach(sd => sd.esercizi.forEach(e => { nomi.push(senzaEmoji(e.name)); if (e.originale) nomi.push(senzaEmoji(e.originale)); }));
   const flessione = nomi.some(n => /leg curl|nordic/i.test(n)), viste = {}, haCoppie = prog.sedute.some(sd => sd.esercizi.some(e => e.superset));
+  /* INT-2d (M1): le note sulle tecniche dicono cosa c e nella scheda FINALE: «drop set sull ultimo isolamento» solo se un drop set e su un isolamento (classi D ed E; un passo dopo, validaTecniche, puo averlo tolto),
+     «un esercizio alla macchina veloce in salita» solo se un esercizio ha la potenza */
+  const haDrop = prog.sedute.some(sd => sd.esercizi.some(e => e.tecnica === 'drop' && ['D', 'E'].indexOf(classeTecnica(e.name)) !== -1));
+  const haPotenza = prog.sedute.some(sd => sd.esercizi.some(e => e.tecnica === 'potenza'));
   /* senza coppie la nota dei principianti resta solo con la prima meta, e la frase del taglio per il tempo non dice «abbinato esercizi opposti» */
   prog.note = prog.note.map(testo => !haCoppie && testo === NOTA_SENZA_CEDIMENTO_SS ? NOTA_SENZA_CEDIMENTO
+    : !haDrop && testo === NOTA_POCO_TEMPO_SS_DROP ? NOTA_POCO_TEMPO_SS
+    : !haPotenza && testo === NOTA_OVER65_POTENZA ? NOTA_OVER65
     : !haCoppie && typeof FRASE_TAGLIO_TEMPO !== 'undefined' && testo === FRASE_TAGLIO_TEMPO ? FRASE_TAGLIO_TEMPO_SENZA_COPPIE : testo).filter(testo => {
     const t = String(testo), m = /^Aggiunto: (.+?) \u2014 /.exec(t);
     if (viste[t]) return false;

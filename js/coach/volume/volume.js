@@ -949,6 +949,8 @@ function aggiungiSerieUtile(brief, sedute, unita) {
 
 /* REG-02, verifica finale: rimette in ordine con le serie che ci sono (si scambiano, non si aggiungono minuti: il tempo lo ha già deciso adattaAlTempo) e scrive la nota con la CAUSA
    di ciò che non entra. Ritorna le note (testi) che verificaProgramma aggiunge al programma */
+const NOTA_VOLUME_STRUTTURA = 'con i giorni e le sedute di questo programma non c’è un altro posto adatto';
+const NOTA_VOLUME_MANTENIMENTO = 'Con questi minuti è un programma di mantenimento: per crescere servono più sedute o sedute più lunghe.';
 function validaVolume(brief, sedute) {
   if (!volumeNuovoAttivo(brief) || !sedute.length) return;
   const b = (brief.lavoro && brief.lavoro.volumeBersagli) || bersagliVolume(brief);
@@ -966,18 +968,29 @@ function validaVolume(brief, sedute) {
      quello del conteggio per gruppo di adattaAlTempo (che vedeva i deltoidi posteriori sotto di mezza serie con tutte le unita nella fascia) */
   if (brief.lavoro) brief.lavoro.sottoFasciaUnita = mancano.map(x => x.u);
   const nTesto = (v) => { const r = Math.round(v * 2) / 2; return String(r).replace('.', ','); };
+  /* INT-2d (revisione M1, REG-02): la causa che la nota scrive e quella VERIFICATA sul programma finale. «tempo» (con N minuti non entra di piu) vale solo se il motore non trova posto e la seduta
+     piu lunga usa almeno la quota di lavoro utile dei minuti (quotaLavoroUtile: sotto, la seduta non e al limite); «attrezzi» solo se non c e nessun esercizio adatto. Il resto (il motore non ha trovato un
+     altro posto: divisione dei giorni, 48 ore, serie per seduta, nessun altro esercizio adatto) e «struttura»: una frase che non nomina un limite che in quel programma non e stato raggiunto
+     (prima «i limiti di serie e di esercizi per seduta non lasciano altro posto» usciva con sedute da 3-5 esercizi e meno dell 80% dei minuti: 155 programmi su 1.071) */
+  const opzT = typeof opzioniTempo === 'function' ? opzioniTempo(brief) : undefined;
+  const durMax = Math.max.apply(null, sedute.map(sd => durataSeduta(sd.esercizi, opzT)));
+  const minutiEff = typeof minutiEffettivi === 'function' ? minutiEffettivi(brief.agenda.minuti, brief.chi.livello) : brief.agenda.minuti;
+  const tempoAlLimite = durMax >= minutiEff * sogliaTempo('quotaLavoroUtile') - 1e-9;
+  const causaVera = (u) => { const c = m.causa(u); return c === 'attrezzi' ? 'attrezzi' : (c === 'tempo' && tempoAlLimite ? 'tempo' : 'struttura'); };
   const gruppi = {};
   const grande = (x) => VOLUME_UNITA_GRANDI.indexOf(x.u) !== -1 ? 0 : 1;
   mancano.sort((a, c) => (grande(a) - grande(c)) || ((c.min - c.v) / Math.max(1, c.min) - (a.min - a.v) / Math.max(1, a.min))).forEach(x => {   /* prima le unità grandi; tutte quelle sotto fascia hanno la loro nota (100% con la causa) */
     const dirette = x.floorD > 0 && x.d < x.floorD - 1e-9 && !(x.v < x.min - 1e-9);
-    (gruppi[m.causa(x.u)] = gruppi[m.causa(x.u)] || []).push(volumeEtichetta(x.u) + ' ' + nTesto(dirette ? x.d : x.v) + ' serie');
+    (gruppi[causaVera(x.u)] = gruppi[causaVera(x.u)] || []).push(volumeEtichetta(x.u) + ' ' + nTesto(dirette ? x.d : x.v) + ' serie');
   });
   const minutiDichiarati = brief.agenda.minuti;
   if (gruppi.tempo) note.push(gruppi.tempo.join(', ') + ': con ' + minutiDichiarati + ' minuti non entra di più');
-  if (gruppi.tetto) note.push(gruppi.tetto.join(', ') + ': i limiti di serie e di esercizi per seduta non lasciano altro posto');
+  if (gruppi.struttura) note.push(gruppi.struttura.join(', ') + ': ' + NOTA_VOLUME_STRUTTURA);
   if (gruppi.attrezzi) note.push(gruppi.attrezzi.join(', ') + ': con i tuoi attrezzi o i tuoi fastidi non c’è un esercizio adatto');
-  const grandi = VOLUME_UNITA_GENERALE.some(u => m.W[m.iU[u]] < 4 - 1e-9 && b.unita[u].minBanda >= 4);
-  if (grandi) note.push('Con questi minuti è un programma di mantenimento: per crescere servono più sedute o sedute più lunghe.');
+  /* il programma di mantenimento solo se il TEMPO e davvero la causa (INT-2d, revisione M1): un grande muscolo sotto le 4 serie per la causa «tempo» verificata (la seduta piu lunga usa
+     la quota di lavoro utile dei minuti); con la causa «attrezzi» o «struttura» la nota dice quella, non «servono sedute piu lunghe» (148 programmi su 706 con sedute da 27 minuti su 60) */
+  const grandi = VOLUME_UNITA_GENERALE.some(u => m.W[m.iU[u]] < 4 - 1e-9 && b.unita[u].minBanda >= 4 && causaVera(u) === 'tempo');
+  if (grandi) note.push(NOTA_VOLUME_MANTENIMENTO);
   return note;
 }
 

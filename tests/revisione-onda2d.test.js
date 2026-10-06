@@ -162,3 +162,83 @@ test('B1: la nota del programma dice quello che il codice fa (e c e la traduzion
   assert.ok(nota && /il coach guarda la tua stanchezza: se sei stanco, quella settimana diventa uno scarico leggero \(serve il consenso ai dati del coach\)/.test(nota), nota);
   assert.ok(!/scarichi prima/.test(nota));
 });
+
+/* ============ M1: nessuna nota falsa (REG-02): una nota esce solo se la sua condizione e vera per QUEL programma ============ */
+
+const GOAL_SET = [['massa'], ['forza'], ['ricomposizione'], ['dimagrimento'], ['salute'], ['glutei'], ['massa', 'forza'], ['forza', 'massa']];
+const LIVELLI = ['principiante', 'intermedio', 'avanzato'], GIORNI = [2, 3, 4, 5, 6], MINUTI = [30, 45, 60, 75, 90], LUOGHI = ['palestra', 'manubri', 'corpo'];
+const FASTIDI = [[], ['spalle'], ['ginocchia'], ['schiena'], ['spalle', 'schiena'], ['ginocchia', 'schiena']];
+/* un campione a passo fisso della matrice del collaudo (obiettivo x livello x giorni x minuti x luogo x fastidi: 10.800 profili): ogni `passo`-esimo, con sesso ed eta che variano (un profilo su cinque over 65) */
+function campioneMatrice(passo) {
+  const out = []; let i = 0;
+  GOAL_SET.forEach(o => LIVELLI.forEach(l => GIORNI.forEach(g => MINUTI.forEach(mi => LUOGHI.forEach(lu => FASTIDI.forEach(f => {
+    if (i++ % passo === 0) out.push({ goals: o.slice(), level: l, days: g, minutes: mi, luogo: lu, fastidi: f.slice(), sex: i % 3 === 0 ? 'F' : 'M', age: i % 5 === 0 ? 70 : (i % 2 ? 25 : 45), freq: 'auto', parq: 'no', sonno: 'bene', attrezzi: 'indifferente', priorita: [], usaProfilo: false, seme: 'm1|' + i });
+  }))))));
+  return out;
+}
+const NOTE_VECCHIE = [/Realisticamente 4-6 serie/, /i limiti di serie e di esercizi per seduta non lasciano altro posto/, /Il volume sale piano/, /Chi comincia cresce di più/, /bastano per mantenere e per crescere/, /il primo esercizio veloce in salita/];
+
+test('M1: su 1.543 profili della matrice del collaudo nessuna nota del volume, del tempo, delle tecniche o del mesociclo dice una cosa falsa', { timeout: 300000 }, () => {
+  const a = caricaApp({ ora: LUNEDI });
+  /* nel mondo dell app: il programma, la durata della seduta piu lunga e i minuti effettivi come li conta il programma, la classe (A-F) di ogni esercizio */
+  a.g(`globalThis.__m1 = function (p) { const prog = buildProgram(p), classi = {}; prog.sedute.forEach(sd => sd.esercizi.forEach(e => { classi[e.name] = classeTecnica(e.name); }));
+    return { prog: prog, classi: classi, durMax: Math.max.apply(null, prog.sedute.map(sd => durataSeduta(sd.esercizi))), minutiEff: minutiEffettivi(p.minutes, p.level) }; }`);
+  const campione = campioneMatrice(7);
+  assert.ok(campione.length >= 1500, 'il campione e di almeno 1.500 profili: ' + campione.length);
+  const viste = { pocoTempo: 0, mantenimento: 0, tempo: 0, struttura: 0, drop: 0, potenza: 0, quattroSedute: 0, mesociclo: 0 };
+  const falsi = [];
+  const falso = (p, msg) => { if (falsi.length < 12) falsi.push(msg + ' | ' + JSON.stringify({ g: p.goals, l: p.level, d: p.days, m: p.minutes, lu: p.luogo, f: p.fastidi, age: p.age })); };
+  campione.forEach(p => {
+    const r = a.dati(a.chiama('__m1', p)), prog = r.prog, durMax = r.durMax, minutiEff = r.minutiEff;
+    const note = prog.note, tutti = [].concat.apply([], prog.sedute.map(sd => sd.esercizi));
+    const classe = nome => r.classi[nome];
+    note.forEach(n => {
+      NOTE_VECCHIE.forEach(re => { if (re.test(n)) falso(p, 'nota vecchia: ' + n); });
+      if (/^Con poco tempo conta il lavoro essenziale/.test(n)) {
+        viste.pocoTempo++;
+        if (!(p.minutes <= 30 || (p.days <= 2 && p.minutes <= 45))) falso(p, 'poco tempo senza poco tempo: ' + p.days + ' giorni, ' + p.minutes + ' minuti');
+      }
+      if (/non entra di più$/.test(n)) {
+        viste.tempo++;
+        if (durMax < minutiEff * 0.75 - 1e-9) falso(p, 'non entra di piu ma la seduta piu lunga usa ' + Math.round(durMax) + ' minuti su ' + minutiEff + ': ' + n);
+      }
+      if (/non c’è un altro posto adatto$/.test(n)) viste.struttura++;
+      if (/^Con questi minuti è un programma di mantenimento/.test(n)) {
+        viste.mantenimento++;
+        if (durMax < minutiEff * 0.75 - 1e-9) falso(p, 'mantenimento con la seduta piu lunga a ' + Math.round(durMax) + ' minuti su ' + minutiEff);
+        if (!note.some(x => /non entra di più$/.test(x))) falso(p, 'mantenimento senza la causa «tempo»');
+      }
+      if (/drop set sull ultimo isolamento/.test(n)) {
+        viste.drop++;
+        if (!tutti.some(e => e.tecnica === 'drop' && ['D', 'E'].indexOf(classe(e.name)) !== -1)) falso(p, 'drop set sull ultimo isolamento ma nessun drop su un isolamento');
+      }
+      if (/un esercizio alla macchina veloce in salita per la potenza/.test(n)) {
+        viste.potenza++;
+        if (!tutti.some(e => e.tecnica === 'potenza' && classe(e.name) === 'C')) falso(p, 'potenza alla macchina senza una potenza su una macchina');
+      }
+      if (/^A chi comincia bastano 4 sedute/.test(n)) {
+        viste.quattroSedute++;
+        if (!(p.level === 'principiante' && p.days >= 5 && prog.sedute.length === 4)) falso(p, '4 sedute: ' + p.level + ', ' + p.days + ' giorni, ' + prog.sedute.length + ' sedute');
+      }
+      if (/^Mesociclo: /.test(n)) viste.mesociclo++;
+    });
+    /* i drop set sono sugli isolamenti (D, E): MAV-13 */
+    tutti.forEach(e => { if (e.tecnica === 'drop' && ['D', 'E'].indexOf(classe(e.name)) === -1) falso(p, 'drop set su ' + e.name + ' (classe ' + classe(e.name) + ')'); });
+  });
+  /* il controllo non e vuoto: le note ci sono, e il campione le esercita tutte */
+  assert.ok(viste.pocoTempo >= 100 && viste.tempo >= 20 && viste.struttura >= 20 && viste.drop >= 20 && viste.potenza >= 20 && viste.quattroSedute >= 20 && viste.mesociclo >= 100, JSON.stringify(viste));
+  assert.deepStrictEqual(falsi, [], 'note false: ' + falsi.join('\n'));
+});
+
+test('M1: riconciliaNote guarda la scheda finale: «drop set sull ultimo isolamento» senza un drop su un isolamento e «un esercizio alla macchina veloce in salita» senza potenza tornano alla frase vera', () => {
+  const a = caricaApp({ ora: LUNEDI });
+  const es = (name, tecnica, superset) => ({ name: name, sets: 3, reps: 10, rest: 90, tecnica: tecnica, superset: superset });
+  const prova = (sedute, note) => a.json('riconciliaNote({ sedute: ' + JSON.stringify(sedute) + ', note: ' + JSON.stringify(note) + ' }).note');
+  const DROP = a.json('NOTA_POCO_TEMPO_SS_DROP'), SS = a.json('NOTA_POCO_TEMPO_SS'), POT = a.json('NOTA_OVER65_POTENZA'), SENZA = a.json('NOTA_OVER65');
+  const coppia = [es('Panca Piana Bilanciere'), es('Rematore con Manubrio', undefined, true)];
+  assert.deepStrictEqual(prova([{ esercizi: coppia.concat([es('Lat Machine', 'drop')]) }], [DROP]), [SS], 'drop su un multiarticolare (Lat Machine): la nota non lo dice piu');
+  assert.deepStrictEqual(prova([{ esercizi: coppia }], [DROP]), [SS], 'nessun drop: la nota non lo dice');
+  assert.deepStrictEqual(prova([{ esercizi: coppia.concat([es('Curl Bilanciere Bicipiti', 'drop')]) }], [DROP]), [DROP], 'drop su un isolamento: resta');
+  assert.deepStrictEqual(prova([{ esercizi: [es('Leg Press')] }], [POT]), [SENZA], 'nessuna potenza: la frase senza la potenza');
+  assert.deepStrictEqual(prova([{ esercizi: [es('Leg Press', 'potenza')] }], [POT]), [POT]);
+});

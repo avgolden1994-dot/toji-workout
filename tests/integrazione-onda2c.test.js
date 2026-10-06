@@ -205,7 +205,7 @@ test('6 giorni, il ripiego: se nessun ordine evita lo stesso tipo in giorni cons
 });
 
 test('chi comincia con 5 o 6 giorni ha 4 sedute sui giorni delle 4 sedute (lunedi, martedi, giovedi, venerdi) con la nota che lo dice (PRG-02, ricerca principianti §3.3)', () => {
-  const NOTA = 'Chi comincia cresce di più con 4 sedute a settimana: gli altri giorni sono riposo o una camminata.';
+  const NOTA = 'A chi comincia bastano 4 sedute a settimana: gli altri giorni sono riposo o una camminata.';
   [5, 6].forEach(days => {
     const p = costruisci({ goals: ['massa'], level: 'principiante', days, minutes: 60, luogo: 'palestra', sex: 'F', age: 30, seme: 'quattro-' + days });
     assert.strictEqual(p.sedute.length, 4, days + ' giorni: 4 sedute');

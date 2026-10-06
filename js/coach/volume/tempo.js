@@ -595,7 +595,9 @@ const FRASE_FATTORE_PIU = 'Le tue sedute durano di solito il #% più del previst
 const FRASE_FATTORE_MENO = 'Le tue sedute durano di solito il #% meno del previsto: adatto il programma alla tua velocità.';
 const FRASE_MANTENIMENTO = 'Con questi minuti il programma tiene i muscoli e fa progredire chi comincia: per crescere in modo evidente servono più sedute o sedute più lunghe.';
 const FRASE_PRINCIPIANTE_DURATA = 'Per chi comincia bastano sedute da 40-50 minuti: più a lungo non serve e stanca, il tempo in più va al riscaldamento e al recupero.';
-const FRASE_POCO_TEMPO = 'Con poco tempo conta il lavoro essenziale: pochi esercizi completi, in coppia dove si può. Realisticamente 4-6 serie per muscolo a settimana: bastano per mantenere e per crescere da principiante.';
+/* INT-2d (revisione M1): senza «4-6 serie per muscolo… bastano per mantenere e per crescere»: misurato su 2.500 profili, un grande muscolo restava sotto le 4 serie in 491 programmi (il petto con 2) e la frase usciva
+   anche a 60-90 minuti (235 programmi). Resta quello che e vero per ogni programma con poco tempo: pochi esercizi completi, in coppia dove si puo */
+const FRASE_POCO_TEMPO = 'Con poco tempo conta il lavoro essenziale: pochi esercizi completi, in coppia dove si può.';
 /* ABB-06 (SS-01, SS-02): una coppia ha il secondo esercizio col segno `superset` e il primo accanto. Dopo che una funzione di struttura (strBilancia) toglie o cambia un esercizio il segno puo restare su un esercizio che non e
    piu in coppia con un antagonista (o con un pesante, un core, una tenuta): si toglie, l esercizio resta a serie dritte e il tempo lo conta cosi. Ritorna quanti segni ha tolto */
 const RX_BERSAGLIO_SPINTA = /^(petto|deltoide_anteriore)/, RX_BERSAGLIO_TIRATA = /^(dorsali|schiena_spessore|deltoide_posteriore)$/;
@@ -645,8 +647,9 @@ function validaTempo(brief, sedute) {
   if (Math.abs(f - 1) >= s) note.push((f > 1 ? FRASE_FATTORE_PIU : FRASE_FATTORE_MENO).replace('#', Math.round(Math.abs(f - 1) * 100)));
   if (durate.some(d => d > minutiEff * 1.10)) note.push(FRASE_MANTENIMENTO);
   if (level === 'principiante' && minuti > minutiEff) note.push(FRASE_PRINCIPIANTE_DURATA);
+  /* IPE-12, «poco tempo»: al massimo 30 minuti, oppure 2 giorni E al massimo 45 minuti (a 60-90 minuti con 2 giorni il tempo non manca: la nota mentiva) */
   const p = sogliaTempo('pocoTempo');
-  if ((minuti <= p.minuti || giorni <= p.giorni) && !brief.metodo.attivo && regolaAttiva('IPE-12')) note.push(FRASE_POCO_TEMPO);
+  if ((minuti <= p.minuti || (giorni <= p.giorni && minuti <= p.minutiDueGiorni)) && !brief.metodo.attivo && regolaAttiva('IPE-12')) note.push(FRASE_POCO_TEMPO);
   aggiungiPerche(brief, 'CAS-05', 'Durata stimata con riscaldamento, cambi, lato destro e sinistro e coppie: circa ' + media + ' minuti', { forza: SOGLIE_TEMPO.secRipetizione.forza });
   return note;
 }

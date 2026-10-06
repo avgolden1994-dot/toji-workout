@@ -131,9 +131,10 @@ const SOGLIE_TEMPO = {
     v: { minuti: 45, ripetizioni: 6, serie: 3, pausa: 135 },
     forza: 'Moderata', fonte: 'ricerca-ipertrofia-programmazione IPE-04 (ACSM 2026: per la massa conta la serie vicina al cedimento, non il carico; Singer 2024)', regole: ['IPE-04']
   },
-  /* IPE-12: poco tempo = al massimo 30 minuti o al massimo 2 giorni: la nota onesta («4-6 serie per muscolo») */
+  /* IPE-12: poco tempo = al massimo 30 minuti, oppure al massimo 2 giorni con al massimo 45 minuti (INT-2d: prima bastavano 2 giorni anche a 90 minuti). La nota non dice piu «4-6 serie per muscolo»:
+     serieMin e serieMax restano solo come dose minima di riferimento della nota di ricerca, nessuna frase le scrive */
   pocoTempo: {
-    v: { minuti: 30, giorni: 2, serieMin: 4, serieMax: 6 },
+    v: { minuti: 30, giorni: 2, minutiDueGiorni: 45, serieMin: 4, serieMax: 6 },
     forza: 'Moderata', fonte: 'ricerca-ipertrofia-programmazione IPE-12 (dose minima: Iversen 2021, Androulakis-Korakakis)', regole: ['IPE-12']
   },
   /* D-P10 / B12: la seduta che usa meno di questa quota dei minuti dichiarati, con il volume utile completo, lo dice («il lavoro utile per te e gia tutto qui»); e la stessa soglia di spreco del collaudo DUR-02 */
