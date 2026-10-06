@@ -383,6 +383,13 @@ function scalaDelTempo(brief, sd, sedute, opz, minutiEff, passi) {
   };
   via(e => group(e) === 'core');
   via(e => group(e) === 'braccia' && !comp(e));
+  /* M6 (W2-T6, revisione INT-2d; collaudo EQ-03:flessione): la seduta full body che tiene l unica flessione del ginocchio e ha due multiarticolari di gambe lascia il posto al piu caro dei due (secondoDiGambe,
+     completamenti.js) prima di togliere serie: prima la scala toglieva serie ai multiarticolari e poi, per ultima, la flessione */
+  for (let g = 0; g < 2 && T() > limite && sd.esercizi.some(unicaFlessione) && sd.esercizi.length > 3; g++) {
+    const secondo = secondoDiGambe(sd, sedute, opz);
+    if (!secondo) break;
+    togliEsercizio(sd, secondo); passi.tagli++;
+  }
   /* 4) le serie da 3 a 2 sui non prioritari, una alla volta: prima gli isolamenti, poi i multiarticolari (spinte prima delle tirate: ABB-04) e per ultimo il fondamentale della seduta (M4: il lavoro pesante e
      quello che conta); 5) poi gli isolamenti uno alla volta, il core per ultimo */
   const fondamentale = sd.esercizi.find(e => comp(e) && !isTimeBased(e.name));

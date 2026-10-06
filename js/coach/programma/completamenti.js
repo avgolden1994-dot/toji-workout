@@ -25,6 +25,29 @@ function eCernieraFemorali(e) {
   return a.schema === 'hinge' && 'ABC'.indexOf(a.classe) !== -1 && (a.muscoli.femorali || 0) > 0;
 }
 
+/* M6 (W2-T6, revisione INT-2d; collaudo EQ-03:flessione): lo schema delle gambe di un esercizio dal DATO (attributi: l affondo vale come lo squat, il pull-through ai cavi e una cerniera dell anca che
+   SCHEMI_MOV non riconosce dal nome); senza attributi ricade su schemaDi. null per tutto il resto (spinta d anca, isolamenti, core) */
+function schemaDiGambe(nome) {
+  const a = typeof attributi === 'function' ? attributi(nome) : null, s = a ? a.schema : schemaDi(nome);
+  return s === 'squat' || s === 'affondo' ? 'squat' : (s === 'hinge' ? 'hinge' : null);
+}
+/* un multiarticolare di gambe (non l isolamento, non il core, non l esercizio a tempo) */
+function eMultiDiGambe(e) {
+  const m = findExercise(e.name) || {};
+  return m.type === 'compound' && !isTimeBased(e.name) && schemaDiGambe(e.name) !== null;
+}
+/* M6: a 2 giorni e 30 minuti in palestra la seduta full body ha due multiarticolari di gambe di schema DIVERSO (squat e stacco rumeno) oltre a una spinta e a una tirata: non c e posto per la flessione
+   del ginocchio (leg curl), l unica della settimana (registro B6: una flessione a settimana, Maeo 2021). La flessione vale piu di una seconda cerniera dell anca o di un secondo squat: il piu caro in
+   minuti dei due (non il primo multiarticolare, non un posto fisso o protetto) lascia il posto, purche il suo schema sia anche in un altra seduta (PAT-01). Solo nel full body: nelle sedute lower e legs
+   squat e hinge servono entrambi (SES-03). Ritorna l esercizio da togliere, o null. Lo chiamano completaSettimana (dove mettere la flessione) e scalaDelTempo (tempo.js, quando i minuti non bastano) */
+function secondoDiGambe(sd, sedute, opz) {
+  if (sd.tipo !== 'fullbody' || sd.esercizi.filter(eMultiDiGambe).length < 2) return null;
+  const primo = sd.esercizi.find(e => (findExercise(e.name) || {}).type === 'compound' && !isTimeBased(e.name));
+  const minuti = (lista) => durataSeduta(lista, opz);
+  return sd.esercizi.filter(e => eMultiDiGambe(e) && !e.fisso && !e.protetto && e !== primo && sedute.some(o => o !== sd && o.esercizi.some(x => x !== e && eMultiDiGambe(x) && schemaDiGambe(x.name) === schemaDiGambe(e.name))))
+    .sort((a, b) => minuti(sd.esercizi.filter(x => x !== a)) - minuti(sd.esercizi.filter(x => x !== b)))[0] || null;
+}
+
 /* completaSettimana(brief, sedute): vedi sopra. Scrive le note nell ordine in cui le scrivevano i passi di buildProgram (brief.lavoro.note). */
 function completaSettimana(brief, sedute) {
   const chi = brief.chi, level = chi.livello, over65 = chi.over65, cauto = chi.cauto, scheme = brief.obiettivi.scheme, goals = brief.obiettivi.lista, giorni = brief.agenda.giorni;
@@ -125,7 +148,13 @@ function completaSettimana(brief, sedute) {
       /* INT-2b (registro B6, collaudo EQ-03:flessione): se ogni seduta di gambe e gia oltre nEs + 1 (le famiglie dei glutei, gli schemi mancanti: a 30 minuti con l obiettivo glutei) la flessione entra
          comunque nella piu corta sotto il tetto di esercizi (EXN-02): decide la scala del tempo, che tiene l unica flessione della settimana e toglie prima un doppione dello schema (scalaDelTempo) */
       const maxEs = level === 'principiante' ? PARAM_NUMERO_ESERCIZI.maxSedutaPrincipiante : PARAM_NUMERO_ESERCIZI.maxSeduta;
-      let sd = gambe.find(x => x.esercizi.length <= nEs + 1 && recOk(x)) || gambe.find(x => x.esercizi.length < maxEs && recOk(x)) || null;
+      /* M6 (W2-T6): se ogni seduta di gambe e gia piena (30 minuti: 4 esercizi) la flessione va dove prende il posto del secondo di gambe e la seduta resta piu corta (secondoDiGambe): la scala del tempo
+         (scalaDelTempo) lo toglie quando serve; nella seduta con un solo multiarticolare di gambe dovrebbe togliere una spinta o una tirata, o rinunciare alla flessione */
+      const piene = gambe.every(x => x.esercizi.length >= nEs);
+      const opzT = typeof opzioniTempo === 'function' && typeof durataSeduta === 'function' ? opzioniTempo(brief) : null;
+      const dopoLo = (x) => { const via = secondoDiGambe(x, sedute, opzT); return via ? durataSeduta(x.esercizi.filter(y => y !== via).concat([{ name: flessioni[0], sets: setsFlessione, reps: 12, rest: 75 }]), opzT) : Infinity; };
+      let sd = (piene && opzT ? gambe.filter(x => x.esercizi.length <= nEs + 1 && recOk(x) && isFinite(dopoLo(x))).sort((a, b) => dopoLo(a) - dopoLo(b))[0] : null) ||
+        gambe.find(x => x.esercizi.length <= nEs + 1 && recOk(x)) || gambe.find(x => x.esercizi.length < maxEs && recOk(x)) || null;
       if (!sd) {   /* ogni seduta di gambe e al tetto di esercizi, o di serie per muscolo (SES-01 contato prima del volume, con 4 serie per esercizio: a casa coi manubri i glutei sono gia a 11): la flessione
                       prende il posto del secondo esercizio di schema squat (la hack, gli affondi o lo squat a corpo libero dopo il primo), mai del fondamentale ne di un posto fisso */
         for (const x of gambe) {
