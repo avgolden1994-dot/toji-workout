@@ -445,7 +445,11 @@
     "tipoCarico di Panca Presa Stretta": {
      "responsabile": "W2-T6 seguito",
      "scade": "onda-2",
-     "motivo": "la Panca Presa Stretta e un esercizio per i tricipiti con il bilanciere: il tipo di carico (pesante o no) non e nei dati degli attributi"
+     "motivo": "la Panca Presa Stretta e un esercizio per i tricipiti con il bilanciere: il tipo di carico (pesante o no) non e nei dati degli attributi",
+     "chiuso": {
+      "data": "2026-10-06",
+      "motivo": "chiuso a INT-2f: «Panca Presa Stretta» e un fondamentale col bilanciere (classe A negli attributi) e BIL_PESANTI lo riconosce (tipoCarico «pesante», non «macchina»); prova in tests/forza-ordine-alzata.test.js"
+     }
     },
     "VOL-02:petto e le braccia nel powerlifting": {
      "responsabile": "W3-T6 (FRZ-06..10)",
@@ -578,7 +582,11 @@
     "tipoCarico di Panca Presa Stretta": {
      "responsabile": "W2-T6 seguito (rinviato oltre la v2)",
      "scade": "oltre-v2",
-     "motivo": "INT-2e (2026-10-06): scadenza di onda-2b arrivata, non chiuso (origine: onde.onda-2b.aperti, dove stanno il motivo e i numeri). Rinviato oltre la v2 il 2026-10-06 (INT-2e): nessun pacchetto delle onde 3-5 del piano snello (bozza, da confermare dal responsabile di prodotto) lo prende; si vede in ogni corsa del cancello e non lo ferma."
+     "motivo": "INT-2e (2026-10-06): scadenza di onda-2b arrivata, non chiuso (origine: onde.onda-2b.aperti, dove stanno il motivo e i numeri). Rinviato oltre la v2 il 2026-10-06 (INT-2e): nessun pacchetto delle onde 3-5 del piano snello (bozza, da confermare dal responsabile di prodotto) lo prende; si vede in ogni corsa del cancello e non lo ferma.",
+     "chiuso": {
+      "data": "2026-10-06",
+      "motivo": "chiuso a INT-2f: «Panca Presa Stretta» e un fondamentale col bilanciere (classe A negli attributi) e BIL_PESANTI lo riconosce (tipoCarico «pesante», non «macchina»); prova in tests/forza-ordine-alzata.test.js"
+     }
     },
     "FRZ-06..10 e powerlifting adattato": {
      "responsabile": "W3-T6 (carichi) e W4-T2 (adattato), rinviato oltre la v2",
