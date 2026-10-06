@@ -719,12 +719,23 @@ L'utente ha dato carta bianca («hai carta bianca»); le decisioni 1-9 sono stat
 
 | Voce (onda-1) | Tetto | Responsabile | Scade | Causa (misurata) | Stato |
 |---|---|---|---|---|---|
-| VOL-02:glutei | 32,5% | **W2-T1** (volume per muscolo con gli attributi) | onda-2a (soglia 0) | i crediti dei 29 esercizi nuovi, che il volume per gruppo non vede; a INT-2a i crediti sono allineati (M4) | aperta |
-| VOL-02:tricipiti | 2,6% | **W2-T1** | onda-2a (soglia 0) | **rumore del sorteggio** (+0,56 su una tolleranza di 0,5): il motivo scritto prima (Floor Press e Panca con Pausa) era falso, non entrano in nessun programma (0 su 2.034) | aperta |
-| FRQ-02:polpacci | 8,4% | **W2-T1** (serie dirette per muscolo) | onda-2a (soglia 5) | il Calf Raise con Manubrio sul Gradino entra in una sola seduta; in parte rumore (+0,55 su 0,5) | aperta |
+| VOL-02:glutei | 32,5% | **W2-T1** (volume per muscolo con gli attributi) | onda-2a (soglia 0) | i crediti dei 29 esercizi nuovi, che il volume per gruppo non vede; a INT-2a i crediti sono allineati (M4) | **scaduta a INT-2b (2026-10-06)**: con W2-T1 e i criteri 1.4 misurata 5,92% (755 programmi, soglia 0; 30,1% con i criteri 1.3): il cancello la giudica a soglia 0 e fallisce; seguito di W2-T1 e W2-T6 (n. 17 della mappa) |
+| VOL-02:tricipiti | 2,6% | **W2-T1** | onda-2a (soglia 0) | **rumore del sorteggio** (+0,56 su una tolleranza di 0,5): il motivo scritto prima (Floor Press e Panca con Pausa) era falso, non entrano in nessun programma (0 su 2.034) | **scaduta a INT-2b (2026-10-06)**: misurata 0,40% (34 programmi, soglia 0); il cancello la giudica a soglia 0 e fallisce; seguito di W2-T1 |
+| FRQ-02:polpacci | 8,4% | **W2-T1** (serie dirette per muscolo) | onda-2a (soglia 5) | il Calf Raise con Manubrio sul Gradino entra in una sola seduta; in parte rumore (+0,55 su 0,5) | **chiusa il 2026-10-06 (INT-2b)**: misurata 4,10% con i criteri 1.4 (soglia 5): voce tolta dalla soglia, non piu ammessa |
 | REC-01:spalle | 12,5% | **W2-T5** (divisione dei giorni e 48 ore) | onda-2 (soglia 0) | **rumore del sorteggio** (11,44% a onda-1, 11,75% e 12,19% dopo le integrazioni: +0,75 su una tolleranza di 0,5; i programmi colpiti sono 1336, 1342 e di nuovo 1336: cambia quali sono e il loro peso nella popolazione assunta); la causa strutturale non e toccata | aperta (aggiunta a INT-2a, 2026-10-05) |
 | REC-02 | — | W1-T6 (stesso lavoro di W2-T5, anticipato) | — | lo stacco rumeno coi manubri a casa contato come lombare pesante: `schienaLombare` legge ora il dato degli attributi | **chiusa il 2026-10-05**: misurata 0,00%, voce tolta |
 | RID-01:quadricipiti | — | W1-T6 (anticipo di W2-T6) | — | squat, affondi e squat su scatola nella stessa seduta: `strTerzoUguale` e, a INT-2a, `strSquatDoppio` (M5) | **chiusa il 2026-10-05**: misurata 0,00%, voce tolta |
+
+**Voci di onda-2a, ammesse a INT-2b (2026-10-06; fissate dal coordinatore dell'integrazione, il responsabile di prodotto le conferma o le toglie).** Il cancello di `onda-2a` si misura con i criteri 1.4 contro l'istantanea dell'onda 2a ricalcolata con gli stessi criteri (`--contro`): quattro classi peggiorano oltre la tolleranza di 0,5 punti. Nessuna è di sicurezza. Cause misurate:
+
+| Voce (onda-2a) | Tetto | Responsabile | Scade | Causa (misurata) | Stato |
+|---|---|---|---|---|---|
+| EQ-03:flessione | 0,7% | **W2-T6** (scelta per attributi, ponte dei femorali) | onda-2 | da 22 a 49 programmi (0,12% → 0,64%), 47 a 30 minuti in palestra: `rinforzaFemorali` aggiunge il leg curl solo se la seduta resta entro i minuti e non sostituisce un esercizio di core o polpacci; con il modello del tempo di W2-T2 le sedute da 30 minuti sono già al tetto (scansione: 0 profili su 864 senza flessione a onda-2a, 100 ora) | aperta |
+| FRQ-01:bicipiti | 8,0% | **W2-T5** (frequenza: FRQ-01 = 0 è la sua accettazione) | onda-2 | 891 → 932 programmi (5,53% → 7,93%): il solutore di W2-T1 concentra le serie dei bicipiti in una seduta; con 3 giorni da 239 a 397 programmi colpiti, il corpo libero migliora (264 → 39) | aperta |
+| FRQ-01:tricipiti | 9,7% | **W2-T5** | onda-2 | 1086 → 1314 programmi (6,97% → 9,64%), stessa causa; con 2 giorni da 491 a 718 | aperta |
+| FRQ-02:bicipiti | 8,5% | **W2-T1** (seguito: distribuire le serie dirette tra due sedute) | onda-2 | 408 → 440 programmi (7,24% → 8,43%), stessa causa; la soglia 5% di onda-2a non è raggiunta nemmeno da laterali (7,3), posteriori (8,8) e tricipiti (6,9) | aperta |
+
+Le soglie assolute di onda-2a **non raggiunte** (VOL-02, DIR-01, FRQ-02, PRI-01, DUR-02, MIS-01:femorali, VOL-01:petto e i residui di SES-03, PAT-01, DUR-01, RX-01: 30 controlli su 98) non sono regressioni e non si ammettono: restano rosse nel cancello e sono elencate con il responsabile in `docs/PIANO.md` (onda 2b) e nel cap. 17 n. 17 della mappa.
 
 Il responsabile di REC-02 e RID-01 nella versione di INT-1 era «W1-T6», un task che allora non esisteva ancora nel piano (l'onda 1 era chiusa con W1-T1..T5): è nato dopo, per questi residui, e li ha chiusi.
 
