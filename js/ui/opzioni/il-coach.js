@@ -21,9 +21,7 @@ function paginaCoach(p) {
     '<div class="fb-chips sr-chips-pad">' + chipCoach(p.sex === 'M' || p.sex === 'uomo', "setCoach('sex','M')", 'Uomo') + chipCoach(donna, "setCoach('sex','F')", 'Donna') + '</div>' +
     '<label class="sr-row sr-input"><span class="sr-name">Orario abituale</span><input type="time" value="' + (p.orario || '') + '" onchange="setCoach(\'orario\', this.value)"></label>',
     'L orario fisso aiuta a creare l abitudine: se passa senza allenamento, Oggi te lo ricorda.');
-  h += setGroup('Attrezzi della tua palestra', '<div class="fb-chips sr-chips-pad">' + ATTREZZI_PALESTRA.map(([k, t]) =>
-    chipCoach(!p.attrezziPalestra || p.attrezziPalestra.indexOf(k) !== -1, "toggleCoachLista('attrezziPalestra','" + k + "')", t)).join('') + '</div>',
-    'Il coach propone solo esercizi che puoi fare davvero.');
+  h += htmlAttrezziCoach(p);
   h += setGroup('Muscoli su cui puntare (fino a 3)', '<div class="fb-chips sr-chips-pad">' + GRUPPI_PRINCIPALI.map(g =>
     chipCoach((p.priorita || []).indexOf(g) !== -1, "toggleCoachLista('priorita','" + g + "')", MUSCLE_GROUPS[g].label)).join('') + '</div>',
     'Più serie per questi. Avanzati: specializzazione (+50%) a rotazione, mai in dimagrimento.');
@@ -62,6 +60,24 @@ function paginaCoach(p) {
     '<div class="sr-note">Gli allenamenti già fatti restano nello storico. Il nuovo programma parte da lunedì prossimo.</div>';
   return h;
 }
+/* CAS-01 (W2-T5): gli attrezzi di chi si allena in palestra (elenco e attrezzi in piu) o a casa (cosa ha e il manubrio piu pesante). Gli stessi campi dell onboarding e del brief (regia/brief.js) */
+function htmlAttrezziCoach(p) {
+  const casa = p.luogo === 'manubri' || p.luogo === 'corpo', dichiarabili = typeof regolaAttiva !== 'function' || regolaAttiva('CAS-01');   /* CAS-01 spenta: solo l elenco degli attrezzi della palestra, come prima */
+  if (!casa || !dichiarabili) {
+    const extra = Array.isArray(p.extraPalestra) ? p.extraPalestra : [];
+    return setGroup('Attrezzi della tua palestra', '<div class="fb-chips sr-chips-pad">' + ATTREZZI_PALESTRA.map(([k, t]) =>
+      chipCoach(!p.attrezziPalestra || p.attrezziPalestra.indexOf(k) !== -1, "toggleCoachLista('attrezziPalestra','" + k + "')", t)).join('') + '</div>',
+      'Il coach propone solo esercizi che puoi fare davvero.') + (!dichiarabili ? '' :
+      setGroup('Altri attrezzi in palestra', '<div class="fb-chips sr-chips-pad">' + ATTREZZI_EXTRA_PALESTRA_IDS.map(k =>
+        chipCoach(extra.indexOf(k) !== -1, "toggleCoachLista('extraPalestra','" + k + "')", ONB_ATTREZZI_NOMI[k])).join('') + '</div>',
+        'Tocca quelli che trovi. Se non rispondi, il coach pensa a una palestra completa.'));
+  }
+  const dichiarati = Array.isArray(p.attrezziCasa) ? p.attrezziCasa : [];
+  return setGroup('Attrezzi di casa', '<div class="fb-chips sr-chips-pad">' + ATTREZZI_CASA_IDS.filter(k => k !== 'manubri').map(k =>
+    chipCoach(dichiarati.indexOf(k) !== -1, "toggleCoachLista('attrezziCasa','" + k + "')", ONB_ATTREZZI_NOMI[k])).join('') + '</div>' +
+    (p.luogo === 'manubri' ? '<label class="sr-row sr-input"><span class="sr-name">Manubrio più pesante (kg)</span><input type="number" inputmode="decimal" min="1" max="100" step="0.5" value="' + (p.manubriKg || '') + '" onchange="setManubriKgCoach(this.value)"></label>' : ''),
+    'Pavimento, una sedia robusta e un gradino li do per scontati. Vale dal prossimo programma.');
+}
 function toggleCoach(k, on, nome, sub) {
   return '<button class="sr-row" onclick="setCoach(\'' + k + '\', ' + (!on) + ')" role="switch" aria-checked="' + on + '"><span class="sr-name">' + nome + '<small>' + sub + '</small></span><span class="switch ' + (on ? 'on' : '') + '"></span></button>';
 }
@@ -87,6 +103,13 @@ window.toggleCoachLista = function(k, v) {
   const i = l.indexOf(v);
   if (i === -1) { if (k === 'priorita' && l.length >= 3) { showUndo('Al massimo tre: se tutto è prioritario, niente lo è'); return; } l.push(v); } else l.splice(i, 1);
   p[k] = (k === 'attrezziPalestra' && l.length === ATTREZZI_PALESTRA.length) ? null : l;
+  localStorage.setItem(PROFILE_KEY(), JSON.stringify(p));
+  renderSetPage();
+};
+window.setManubriKgCoach = function(v) {
+  const n = Number(String(v).replace(',', '.'));
+  const p = getProfile() || {};
+  if (String(v).trim() === '' || !isFinite(n) || n <= 0) delete p.manubriKg; else p.manubriKg = n;
   localStorage.setItem(PROFILE_KEY(), JSON.stringify(p));
   renderSetPage();
 };

@@ -96,7 +96,7 @@ window.applyGeneratedProgram = function() {
      e cardio. Un programma salvato dalla v1 non ha questi campi (nessun `piano`): chi li legge ricade sul comportamento di prima (rirPianoSettimana ritorna null) */
   if (prog.versione === 2) Object.assign(salvato, { versione: 2, piano: prog.piano || null, volume: prog.volume || null, perche: prog.perche || [], modalita: prog.modalita || 'generale', cardio: prog.cardio || null });
   localStorage.setItem(progKey(), JSON.stringify(salvato));
-  localStorage.setItem(PROFILE_KEY(), JSON.stringify({
+  localStorage.setItem(PROFILE_KEY(), JSON.stringify(Object.assign({
     goal: prog.goals[0], goals: prog.goals, level: onbData.level, days: onbData.days, minutes: onbData.minutes,
     prefs: prog.prefs, sex: onbData.sex, age: onbData.age, bia: onbData.bia, parq: onbData.parq === 'si' || onbData.parq === true,
     weight: onbData.weight, height: onbData.height, luogo: onbData.luogo, fastidi: onbData.fastidi, sonno: onbData.sonno, attrezzi: onbData.attrezzi,
@@ -108,7 +108,7 @@ window.applyGeneratedProgram = function() {
     esigenza: (getProfile() || {}).esigenza || null,
     orario: onbData.orario || (getProfile() || {}).orario || '', fase: onbData.fase || (getProfile() || {}).fase || '', cicli: onbData.cicli || 0, bloccoTipo: onbData.bloccoTipo || 'ipertrofia',
     settimane: prog.settimane, split: prog.split.nome, creato: formatNow()
-  }));
+  }, typeof attrezziSalvati === 'function' ? attrezziSalvati(onbData, getProfile() || {}) : {})));   /* CAS-01 (W2-T5): attrezzi di casa, kg dei manubri, attrezzi in piu della palestra: solo se dichiarati */
   if (onbData.bia && Object.keys(onbData.bia).some(k => onbData.bia[k])) {
     (onbData.bia.storico || []).forEach(x => { if (x.data !== onbData.bia.data) aggiungiBia(x.valori, x.data); });
     aggiungiBia(onbData.bia, onbData.bia.data);
