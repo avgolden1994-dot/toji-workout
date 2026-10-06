@@ -12,6 +12,7 @@
    ============================================================ */
 const NOTA_REMATORE_INVERSO = 'Rematore inverso: fallo sotto un tavolo robusto o con una sbarra bassa, dopo aver controllato che regga il tuo peso.';
 const NOTA_FEMORALI_SENZA_LEG_CURL = 'Femorali: senza leg curl restano meno allenati, il ponte glutei li aiuta.';
+const NOTA_FEMORALI_SERVE_FLESSIONE = 'Femorali: squat e hip thrust non li fanno crescere, serve la flessione del ginocchio (leg curl).';   /* riconciliaNote (genera.js) la tiene solo se la scheda ha davvero una flessione */
 /* W1-T6: una cerniera dell anca che allena i femorali (credito > 0 negli attributi: stacco rumeno, a una gamba, good morning, stacchi; non l hyperextension, che e classe F, ne l hip thrust, che e
    una spinta d anca). Senza attributi ricade sul nome. */
 function eCernieraFemorali(e) {
@@ -124,7 +125,7 @@ function completaSettimana(brief, sedute) {
     }
     /* W1-T6: la nota «senza leg curl restano meno allenati» non c e dove i femorali hanno gia una cerniera dell anca vera (stacco rumeno coi manubri o col bilanciere, a una gamba,
        good morning, stacchi): rinforzaFemorali e il ponte guardavano solo le flessioni e la nota compariva anche con lo stacco rumeno in scheda (mappa, cap. 17 n. 15) */
-    if (aggiunti) note.push('Femorali: squat e hip thrust non li fanno crescere, serve la flessione del ginocchio (leg curl).');
+    if (aggiunti) note.push(NOTA_FEMORALI_SERVE_FLESSIONE);
     else if (aggiuntiPonte && !sedute.some(sd => sd.esercizi.some(eCernieraFemorali))) note.push(NOTA_FEMORALI_SENZA_LEG_CURL);
   }
   if (regioni && conGambe) {

@@ -106,7 +106,7 @@ window.renderOggi = function() {
       '<button class="btn-start-workout" onclick="switchTab(\'allenamento\')">Scegli un allenamento</button>';
   } else {
     const serie = lista.reduce((a, e) => a + e.sets, 0);
-    const minuti = Math.round(lista.reduce((a, e) => a + e.sets * (30 + e.rest), 0) / 60);
+    const minuti = Math.round(durataSeduta(lista));   /* CAS-05, B36: la stessa stima del generatore (riscaldamento, cambi, lati, coppie), non piu 30 s + pausa a serie senza gli 8 minuti fissi */
     let alzati = 0;
     if (coachAttivo()) lista.forEach(e => {
       try { if (caricoProssimo(e.name, e.weight, e.repsBase !== undefined ? e.repsBase : e.reps, e.setsBase !== undefined ? e.setsBase : e.sets).tipo === 'su') alzati++; } catch (err) {}

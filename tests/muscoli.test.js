@@ -299,7 +299,12 @@ test('B15: ogni scheda da palestra senza fastidi ha uno stacco vero (l hip thrus
   ['principiante', 'intermedio', 'avanzato'].forEach(level => [3, 4, 5].forEach(days => [['massa'], ['forza'], ['glutei'], ['salute']].forEach(goals => [45, 90].forEach(minutes => {
     const p = app.dati(app.chiama('buildProgram', { goals, level, days, minutes, luogo: 'palestra', fastidi: [], sex: 'F', age: 30, usaProfilo: false, seme: 'w0t6-' + (n++) }));
     const nomi = [].concat(...p.sedute.map(sd => sd.esercizi.map(e => e.name)));
-    assert.ok(nomi.some(x => app.chiama('schemaDi', x) === 'hinge'), level + ' ' + days + ' giorni ' + goals + ' ' + minutes + ' min: nessun hinge vero (' + nomi.length + ' esercizi)');
+    /* INT-2b: «hinge vero» e la cerniera dell anca degli attributi (stacchi, good morning, pull-through ai cavi: schema 'hinge'), come per il collaudo PAT-01 (hingeVero) e SLOT_DEF.hinge; l hip thrust e il ponte
+       glutei hanno schema 'spintaAnca' e non contano (B15). Prima la prova leggeva schemaDi (SCHEMI_MOV, per nome: stacco, good morning, hyperextension) e un solo programma della griglia (avanzato, 4 giorni,
+       glutei, 45 minuti) ha ora il pull-through come unica cerniera: lo stacco rumeno di 2 serie lo toglie il volume per muscolo (W2-T1) perche il pull-through e l hip thrust coprono i glutei. Il
+       conteggio degli schemi per attributi e di W2-T6 (SCHEMI_MOV derivato dagli attributi): fin li le due letture divergono su questo nome */
+    const hingeVero = x => { const a = app.chiama('attributi', x); return !!a && a.schema === 'hinge'; };
+    assert.ok(nomi.some(hingeVero), level + ' ' + days + ' giorni ' + goals + ' ' + minutes + ' min: nessun hinge vero (' + nomi.length + ' esercizi)');
   }))));
   assert.ok(n >= 70);
 });

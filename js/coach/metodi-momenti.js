@@ -11,6 +11,14 @@
 const ATTENZIONE_AMRAP = 'Con chi inizia, ai minorenni, sopra i 65 anni o in modalità prudente il coach toglie l’AMRAP: la serie finale resta a 1-2 ripetizioni dal cedimento.';
 const FB = (n) => ['fullbody'].concat(Array(Math.max(0, n - 1)).fill('fullbody'));
 const UL4 = { nome: 'Upper / Lower', giorni: ['upper', 'lower', 'upper', 'lower'] };
+/* PCO-04 (W2-T2): le coppie del metodo `rr` per MUSCOLO antagonista, non per indice. Prima i multiarticolari delle gambe, poi quelli di spinta e tirata, poi gli isolamenti, il core e le tenute in fondo (i grandi gruppi
+   prima dei piccoli e i multi prima dei mono: ORD-02, ORD-03; il core e le tenute mai in coppia: SS-02); poi strSuperserie accoppia gli antagonisti (spinta con tirata, quadricipiti con femorali), che a quel punto sono gia vicini */
+function coppiePerMuscolo(sd) {
+  const m = (e) => findExercise(e.name) || {}, nucleo = (e) => isTimeBased(e.name) || m(e).group === 'core', gambe = (e) => ['gambe', 'glutei'].indexOf(m(e).group) !== -1;
+  const livello = (e) => nucleo(e) ? 3 : (m(e).type !== 'compound' ? 2 : (gambe(e) ? 0 : 1));
+  sd.esercizi.sort((a, b) => livello(a) - livello(b));
+  strSuperserie(sd);
+}
 const METODI = [
   { id: 'coach', nome: 'Il metodo del coach', fonte: 'Ricerca 2018-2026 (Pelland, Robinson, Helms)', livelli: ['principiante', 'intermedio', 'avanzato'], giorni: [2, 3, 4, 5, 6], intensita: 'media', struttura: 'flessibile', varieta: 1, minuti: [30, 90], luoghi: ['palestra', 'manubri', 'corpo'], obiettivi: ['massa', 'forza', 'dimagrimento', 'salute', 'ricomposizione', 'glutei'], applicabile: true,
     come: 'Volume per muscolo, ripetizioni per tipo di esercizio, RIR che scende nel blocco, scarico dosato sulla fatica.', perChi: 'Tutti: si adatta a te da solo.', attenzione: '' },
@@ -53,18 +61,26 @@ const METODI = [
     come: 'Push/Pull/Legs: fondamentale 4×5 + 1×5+ AMRAP, accessori 3×8-12, +2,5 kg a seduta.',
     split: (g) => g >= 6 ? { nome: 'Push / Pull / Legs x2', giorni: ['push', 'pull', 'legs', 'push', 'pull', 'legs'] } : { nome: 'Push / Pull / Legs', giorni: ['push', 'pull', 'legs'] }, perChi: 'Chi ha tanto tempo e ama allenarsi spesso.', attenzione: '6 giorni: serve un buon recupero. ' + ATTENZIONE_AMRAP,
     schema: (e, i) => { if (i === 0) { e.sets = 5; e.reps = 5; e.rest = 180; e.tecnica = 'amrap'; } else { e.sets = 3; e.reps = 10; e.rest = 90; } } },
-  { id: 'minimo', tocco: 'superserie', nome: 'Dose minima', fonte: 'Iversen 2021, ACSM 2026', livelli: ['principiante', 'intermedio', 'avanzato'], giorni: [2], intensita: 'media', struttura: 'flessibile', varieta: 1, minuti: [30, 45], luoghi: ['palestra', 'manubri', 'corpo'], obiettivi: ['salute', 'massa', 'dimagrimento', 'ricomposizione', 'forza', 'glutei'], applicabile: true,
-    come: 'Due full body a settimana, 2 serie per esercizio da 6-15 ripetizioni vicino al cedimento, spinte e tirate in superserie.', perChi: 'Chi ha poco tempo o sta passando un periodo pieno.', attenzione: 'Progressi più lenti, ma veri.',
-    split: () => ({ nome: 'Full Body', giorni: FB(2) }), nEs: () => 5, superserie: true,
-    schema: (e) => { e.sets = 2; e.reps = isTimeBased(e.name) ? e.reps : 10; e.rest = 90; } },
+  { id: 'minimo', tocco: 'superserie', nome: 'Dose minima', fonte: 'Iversen 2021, ACSM 2026', livelli: ['principiante', 'intermedio', 'avanzato'], giorni: [2, 3], intensita: 'media', struttura: 'flessibile', varieta: 1, minuti: [20, 45], luoghi: ['palestra', 'manubri', 'corpo'], obiettivi: ['salute', 'massa', 'dimagrimento', 'ricomposizione', 'forza', 'glutei'], applicabile: true,
+    come: 'Due o tre full body a settimana, 2 serie per esercizio da 6-15 ripetizioni vicino al cedimento, spinte e tirate in superserie.', perChi: 'Chi ha poco tempo o sta passando un periodo pieno.', attenzione: 'Progressi più lenti, ma veri.',
+    /* PCO-04 e CAS-10 (W2-T2): anche 3 giorni (full body x3, 4-5 esercizi x 2 serie in coppia: ricerca-metodi-coach-pratici 5.5) e da 20 minuti; la pausa resta quella della classe (PRG-13), le coppie sono antagoniste (strSuperserie) */
+    split: (g) => ({ nome: 'Full Body', giorni: FB(Math.min(3, Number(g) || 2)) }), nEs: (n) => Math.max(4, Math.min(5, n)), superserie: true,
+    schema: (e) => { e.sets = 2; e.reps = isTimeBased(e.name) ? e.reps : 10; } },
   { id: 'mantenimento', nome: 'Mantenimento', fonte: 'Bickel 2011', livelli: ['principiante', 'intermedio', 'avanzato'], giorni: [1, 2], intensita: 'bassa', struttura: 'flessibile', varieta: 0, minuti: [20, 40], luoghi: ['palestra', 'manubri', 'corpo'], obiettivi: ['salute', 'massa', 'forza', 'dimagrimento', 'ricomposizione', 'glutei'], applicabile: true,
     come: 'Con un terzo (anche un nono) del volume e gli stessi carichi i muscoli restano. 1-2 sedute brevi.', perChi: 'Periodi difficili: lutto, esami, trasloco, nuovo bambino.', attenzione: 'Sopra i 60 anni serve un po’ più volume.',
     split: (g) => ({ nome: 'Full Body', giorni: FB(Math.min(2, g)) }), nEs: () => 4,
     schema: (e) => { e.sets = 2; e.rest = 90; } },
   { id: 'rr', nome: 'Recommended Routine (corpo libero)', fonte: 'r/bodyweightfitness', livelli: ['principiante', 'intermedio'], giorni: [3], intensita: 'media', struttura: 'rigida', varieta: 0, minuti: [45, 60], luoghi: ['corpo', 'manubri'], obiettivi: ['salute', 'massa', 'forza', 'ricomposizione'], applicabile: true,
-    come: 'Coppie: trazione + squat, dip + hinge, rematore + piegamenti, poi core. 3×5-8; a 3×8 passi alla variante più difficile.', perChi: 'Chi si allena a casa o si sente a disagio in palestra.', attenzione: 'Serve una sbarra o un appiglio per tirare.',
-    split: () => ({ nome: 'Full Body corpo libero', giorni: FB(3) }), luogo: 'corpo', superserie: true,
-    schema: (e) => { e.sets = 3; if (!isTimeBased(e.name)) e.reps = 8; e.rest = 90; } },
+    come: 'Coppie di esercizi opposti (spinta e tirata, quadricipiti e femorali), poi il core. 3×5-8; a 3×8 passi alla variante più difficile.', perChi: 'Chi si allena a casa o si sente a disagio in palestra.', attenzione: 'Serve una sbarra o un appiglio per tirare.',
+    /* H-07 (W2-T2): 3 serie da 5-8 ripetizioni (si parte dalla prescrizione del coach, fra 5 e 8: la forza a 6, il resto a 8); le coppie le fa `schema` sull ultimo esercizio, per MUSCOLO antagonista (strSuperserie: spinta con tirata,
+       quadricipiti con femorali; mai core ne tempi) e non per indice (prima: Rematore inverso + Ponte glutei, Squat + Piegamenti: collaudo SS-01). `superserie` e falso apposta: applicaMetodo non accoppia piu per indice.
+       La pausa e quella della classe (PRG-13: il Plank non aspetta 90 s, H-04) */
+    split: () => ({ nome: 'Full Body corpo libero', giorni: FB(3) }), luogo: 'corpo', superserie: false,
+    schema: (e, i, sd) => {
+      e.sets = 3;
+      if (!isTimeBased(e.name)) e.reps = Math.min(8, Math.max(5, e.reps));
+      if (i === sd.esercizi.length - 1) coppiePerMuscolo(sd);
+    } },
   { id: 'hit', nome: 'Alta intensità (HIT)', fonte: 'Mike Mentzer, Heavy Duty', livelli: ['intermedio', 'avanzato'], giorni: [2, 3], intensita: 'alta', struttura: 'rigida', varieta: 0.5, minuti: [30, 45], luoghi: ['palestra'], obiettivi: ['massa'], applicabile: true,
     come: 'Poche serie al cedimento, poi a casa. Mentzer: una serie per esercizio dopo il riscaldamento, 6-10 ripetizioni per la parte alta e 12-20 per le gambe, 4-7 giorni prima di rifare lo stesso muscolo.', perChi: 'Chi ama spingere al massimo e ha poco tempo.',
     attenzione: 'Una serie cresce meno di più serie (Krieger 2010): il coach ne tiene due. Tiene anche il fondamentale per primo: il pre-affaticamento non dà più crescita (Gentil e altri).',

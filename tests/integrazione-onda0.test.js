@@ -3,6 +3,7 @@
    soglia della fatica «alta» con le risposte 3/6/8/10 (MES-08, W0-T5), salvaguardie sempre accese. L'app vera in vm (tests/aiuto-app.js). */
 const test = require('node:test'), assert = require('node:assert');
 const { caricaApp } = require('./aiuto-app');
+const { conSoglieStruttura, senzaSoglie } = require('./aiuto-mesociclo');
 
 const ORA = '2026-10-05T12:00:00';
 const BASE = { goals: ['massa'], level: 'principiante', days: 2, minutes: 45, luogo: 'manubri', fastidi: [], sex: 'M', age: 30, usaProfilo: false, seme: 'int0' };
@@ -34,14 +35,19 @@ test('CAS-14: a casa senza sbarra il posto della tirata verticale prende il pull
   assert.deepStrictEqual(costruisci(app, prof), acceso, 'riaccesa, torna identica (stesso seme)');
 });
 
-test('PRN-03 e B4: il principiante ha lo scarico solo all\'8a settimana, ma over 65, PAR-Q positivo e minorenni restano a blocchi 3+1', () => {
-  const app = caricaApp({ ora: ORA });
+test('PRN-03 e B4 (W2-T4): il principiante ha 12 settimane con lo scarico solo alla 12a, ma over 65, PAR-Q positivo e minorenni restano a blocchi 3+1; l intermedio ha blocchi 5+1', () => {
+  const app = conSoglieStruttura(caricaApp({ ora: ORA }));
   const primoScarico = p => p.fasi.indexOf('scarico') + 1;
-  assert.strictEqual(primoScarico(costruisci(app, {})), 8, 'principiante adulto: scarico all\'8a');
+  assert.strictEqual(primoScarico(costruisci(app, {})), 12, 'principiante adulto: scarico alla 12a (verifica)');
   assert.strictEqual(primoScarico(costruisci(app, { age: 70 })), 4, 'principiante over 65: 3+1');
   assert.strictEqual(primoScarico(costruisci(app, { parq: 'si' })), 4, 'principiante con PAR-Q positivo: 3+1');
   assert.strictEqual(primoScarico(costruisci(app, { age: 16 })), 4, 'principiante minorenne: 3+1');
-  assert.strictEqual(primoScarico(costruisci(app, { level: 'intermedio' })), 4, 'intermedio: blocchi da 3+1 come prima');
+  assert.strictEqual(primoScarico(costruisci(app, { level: 'intermedio' })), 6, 'intermedio: blocchi da 5+1 (MES-01)');
+  /* senza soglie-struttura.js (o con le regole spente) il generatore e quello di prima: principiante 8 settimane con lo scarico all 8a, intermedio 3+1 */
+  const v1 = senzaSoglie(caricaApp({ ora: ORA }));
+  assert.strictEqual(primoScarico(costruisci(v1, {})), 8, 'ponte: principiante 8 settimane');
+  assert.strictEqual(primoScarico(costruisci(v1, { level: 'intermedio' })), 4, 'ponte: intermedio 3+1');
+  assert.strictEqual(costruisci(v1, {}).piano, undefined, 'senza soglie nessun piano');
 });
 
 test('ETA-01: «Crea il ciclo successivo» con un\'eta da 1 a 12 anni non lancia buildProgram (messaggio, nessun programma nuovo); un\'eta non detta resta adulto', () => {

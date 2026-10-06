@@ -265,7 +265,7 @@ function renderGruppi() {
     document.getElementById('group-templates').innerHTML = conStato.map(x => {
       const t = x.tpl;
       const totalSets = t.exercises.reduce((s2, e) => s2 + e.sets, 0);
-      const estMin = Math.round(t.exercises.reduce((s2, e) => s2 + e.sets * (30 + e.rest), 0) / 60);
+      const estMin = Math.round(durataSeduta(t.exercises));   /* CAS-05, B36 (INT-2b): la stessa stima del generatore, di Oggi e di Aggiungi allenamento */
       const etichetta = x.stato === 'done'
         ? '\u2713 gia caricata su ' + getDayTitle(currentDay)
         : (x.stato === 'partial'
