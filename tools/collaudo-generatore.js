@@ -63,7 +63,11 @@ const VERSIONE_CRITERI = '1.6';
      generatore) deve avere nella settimana squat (squat con bilanciere, con pausa o front squat) in almeno 2 sedute, panca col bilanciere (piana, con pausa, presa stretta, inclinata) in almeno 2 e uno stacco in almeno 1 (docs/ricerca-forza-progressione.md 1.6:
      la frequenza di 2-3 sedute per alzata e la pratica dei programmi da powerlifting; nessuna prova diretta che renda di piu: Convenzione). E la misura STRUTTURALE indipendente di W2-T7: il generatore e il collaudo contano le alzate dai nomi, non dalle etichette `alzata`
      del programma. Con la nota onesta di T7 sui minuti («alcune alzate restano fuori da qualche seduta: la frequenza del powerlifting non e completa», 30 minuti) il fallimento scende a severita 2 (sub `con-nota-minuti`). Su coach-v2-onda-2d il campo non si legge: la classe
-     e quella della forza di sempre e FRZ-01 scatta dove la forza generale non ha le frequenze, quindi il «prima» a pari criteri e informativo (la matrice e la stessa: il codice di prima ignora `forzaTipo`). */
+     e quella della forza di sempre e FRZ-01 scatta dove la forza generale non ha le frequenze, quindi il «prima» a pari criteri e informativo (la matrice e la stessa: il codice di prima ignora `forzaTipo`). 
+   - INT-2g (seconda revisione indipendente dell onda 2e; due correzioni di MISURA, la versione resta 1.6: nasce in questa stessa PR e non e mai stata pubblicata, e il «prima» a pari criteri si rigenera con questo file):
+     SAF-03 e SAF-04 (S sui falsi positivi) leggono gli attrezzi DICHIARATI («Cosa hai in casa?»): un esercizio che chiede un attrezzo dichiarato (stesso dato `serve` di ATT-01) non viola l attrezzatura del luogo; sulla matrice «attrezzi» erano
+     SAF-03 36 + 10 programmi e SAF-04 144 + 36, tutti le trazioni con la sbarra dichiarata, il rematore agli anelli e le alzate con l elastico dichiarati; senza risposta (matrice standard) e con un attrezzo NON dichiarato restano come prima.
+     SES-03 (L) conta la presa stretta (e ogni spinta multiarticolare dei tricipiti: `spintaT`) come spinta: 23 programmi della matrice «forza» (la terza panca del powerlifting) scattavano a torto. */
 /* 1.5 (INT-2d, revisione indipendente dell onda 2b/2c, docs/coach-v2-decisioni.md D-P21). Tutte correzioni DI MISURA dette dalla revisione, con il motivo e se la definizione si allarga (L) o si stringe (S); il «prima» a pari criteri
    si rigenera in un worktree del tag coach-v2-onda-2a copiandovi questo file, e i risultati si danno ANCORA a tre livelli (1.0, 1.3, 1.4, ciascuno con e senza DEL-01) piu questo:
    - VOL-01 (S): l esenzione per la nota della causa si crede solo se il FATTO nominato e vero nel modello del collaudo e coincide con l etichetta scritta: «con N minuti non entra di piu» solo se la seduta piu lunga usa
@@ -428,8 +432,9 @@ const CRITERI = [
   { id: 'SES-03', nome: 'Seduta senza uno schema di base per il suo tipo (full body senza squat/hinge, spinta o tirata; upper senza spinta o tirata; lower senza squat o hinge)', sev: 3, forza: 'Moderata', fonte: 'docs/ricerca-ipertrofia-programmazione.md 3.3 (un multiarticolare di ogni schema: Iversen 2021); piramide di Helms',
     dove: [TEMPO_JS + ': adattaAlTempo (taglio per il tempo toglie posti dalla ricetta)', RICETTE_JS + ': RICETTE (fullbody a 7 posti)', TEMPO_JS + ': stimaEsercizi'],
     check: (m, c) => {
+      /* 1.6 (INT-2g): una spinta multiarticolare per i tricipiti (panca a presa stretta, dip, piegamenti a diamante: `spintaT`, tutte spintaO per gli attributi) e una spinta: la presa stretta e la terza panca del powerlifting */
       const attesi = { fullbody: ['spinta', 'tirata', 'basso'], upper: ['spinta', 'tirata'], lower: ['squat', 'hinge'], legs: ['squat', 'hinge'], push: ['spinta'], pull: ['tirata'] };
-      const ha = (s, k) => s.es.some(e => (k === 'spinta' ? (e.inf.mov === 'spintaO' || e.inf.mov === 'spintaV') : (k === 'tirata' ? (e.inf.mov === 'tirataO' || e.inf.mov === 'tirataV') : (k === 'basso' ? (e.inf.mov === 'squat' || e.inf.mov === 'hinge') : e.inf.mov === k))));
+      const ha = (s, k) => s.es.some(e => (k === 'spinta' ? (e.inf.mov === 'spintaO' || e.inf.mov === 'spintaV' || e.inf.mov === 'spintaT') : (k === 'tirata' ? (e.inf.mov === 'tirataO' || e.inf.mov === 'tirataV') : (k === 'basso' ? (e.inf.mov === 'squat' || e.inf.mov === 'hinge') : e.inf.mov === k))));
       const out = [];
       m.sedute.forEach(s => (attesi[s.tipo] || []).forEach(k => { if (!ha(s, k)) out.push({ sub: s.tipo + '/' + k, msg: s.titolo + ' (' + s.giorno + '): manca ' + k + ' (' + s.es.length + ' esercizi)' + (c.metodo ? ' metodo ' + c.metodo : ''), gravita: 2 }); }));
       return out; } },
@@ -848,9 +853,21 @@ function antagonisti(a, b) {
   return false;
 }
 /* 'duro' = l esercizio non si puo fare col luogo dichiarato; 'quasi' = attrezzatura non garantita; null = ok */
+/* 1.6 (INT-2g, revisione indipendente dell onda 2f): SAF-03 e SAF-04 non leggevano gli attrezzi dichiarati e sulla matrice «attrezzi» davano falsi positivi (SAF-03 36 + 10 programmi, SAF-04 144 + 36): le trazioni con la sbarra
+   dichiarata, il rematore agli anelli e le alzate con l elastico con gli anelli e l elastico dichiarati. Un esercizio che chiede un attrezzo DICHIARATO («Cosa hai in casa?») e coperto dalla risposta, come per ATT-01
+   (stesso dato `serve`, una voce sola, alternative con «|»): non viola l attrezzatura del luogo. Senza risposta (attrezziCasa assente) tutto resta come prima. */
+function copertoDaDichiarati(e, c) {
+  const pr = c.prof || {};
+  if (!((c.luogo === 'manubri' || c.luogo === 'corpo') && Array.isArray(pr.attrezziCasa))) return false;
+  const casa = pr.attrezziCasa.concat(c.luogo === 'manubri' ? ['manubri'] : []);
+  const serve = e.inf.serve;
+  if (!serve || serve.length !== 1) return false;
+  return String(serve[0]).split('|').some(x => casa.indexOf(x) !== -1);
+}
 function violaAttrezzatura(e, c) {
   const att = e.inf.att;
   if (!att) return null;
+  if (copertoDaDichiarati(e, c)) return null;
   if (c.luogo === 'palestra') {
     if (!c.attrezziPalestra) return null;
     const cat = CATEGORIA_ATTREZZO[att];
@@ -1616,6 +1633,14 @@ const FIXTURES = [
   fixture('adulto intermedio con un drop set: nessun fallimento', { level: 'intermedio', age: 30 }, [['Lunedì', 'fullbody', [E('Curl ai Cavi', 3, 12, 60, { tecnica: 'drop' })]]], {}, [], ['TEC-01']),
   fixture('ginocchia dolenti con leg extension e squat a corpo libero: cautela, non controindicazione (INT-0)', { fastidi: ['ginocchia'] }, [['Lunedì', 'lower', [E('Squat a Corpo Libero', 3, 10, 90), E('Leg Extension', 3, 12, 60)]]], {}, ['SAF-02'], ['SAF-01']),
   fixture('ginocchia dolenti con l affondo bulgaro: controindicato', { fastidi: ['ginocchia'] }, [['Lunedì', 'lower', [E('Affondi Bulgari', 3, 10, 90)]]], {}, ['SAF-01']),
+  /* INT-2g (revisione 2f): SAF-03 e SAF-04 leggono gli attrezzi dichiarati; i veri difetti restano visibili */
+  fixture('INT-2g: a casa con la sbarra dichiarata le trazioni non sono attrezzatura non garantita (SAF-04)', { luogo: 'manubri', attrezziCasa: ['sbarra'] }, [['Lunedì', 'upper', [E('Trazioni alla Sbarra (Pull-ups)', 3, 8, 90)]]], {}, [], ['SAF-04', 'SAF-03']),
+  fixture('INT-2g: a casa con la sbarra NON dichiarata (risposta data, altri attrezzi) le trazioni scattano ancora: SAF-04 e ATT-01', { luogo: 'manubri', attrezziCasa: ['panca'] }, [['Lunedì', 'upper', [E('Trazioni alla Sbarra (Pull-ups)', 3, 8, 90)]]], {}, ['SAF-04', 'ATT-01'], ['SAF-03']),
+  fixture('INT-2g: a corpo libero con gli anelli e l elastico dichiarati il rematore agli anelli e le alzate con l elastico non violano l attrezzatura (SAF-03)', { luogo: 'corpo', attrezziCasa: ['anelli', 'elastico'] }, [['Lunedì', 'upper', [E('Rematore agli Anelli', 3, 10, 75), E('Alzate Laterali con Elastico', 3, 15, 45)]]], {}, [], ['SAF-03', 'SAF-04', 'ATT-01']),
+  fixture('INT-2g: a corpo libero con il solo elastico dichiarato un bilanciere e un rematore agli anelli scattano ancora: SAF-03 (il bilanciere), ATT-01 (gli anelli non dichiarati)', { luogo: 'corpo', attrezziCasa: ['elastico'] }, [['Lunedì', 'upper', [E('Squat con Bilanciere', 3, 8, 120), E('Rematore agli Anelli', 3, 10, 75)]]], {}, ['SAF-03', 'ATT-01']),
+  fixture('INT-2g: senza risposta sugli attrezzi (attrezziCasa assente) le trazioni a casa restano «non garantite» come prima', { luogo: 'manubri' }, [['Lunedì', 'upper', [E('Trazioni alla Sbarra (Pull-ups)', 3, 8, 90)]]], {}, ['SAF-04'], ['SAF-03', 'ATT-01']),
+  fixture('INT-2g: SES-03, la panca a presa stretta e una spinta (la terza panca del powerlifting): una seduta upper con presa stretta e rematore ha spinta e tirata', { goals: ['forza'], level: 'intermedio' }, [['Lunedì', 'upper', [E('Panca Presa Stretta', 3, 5, 150), E('Rematore con Bilanciere', 3, 6, 150)]]], {}, [], ['SES-03']),
+  fixture('INT-2g: SES-03 scatta ancora senza nessuna spinta (solo tirate)', { goals: ['forza'], level: 'intermedio' }, [['Lunedì', 'upper', [E('Rematore con Bilanciere', 3, 6, 150), E('Lat Machine', 3, 8, 90)]]], {}, ['SES-03']),
   fixture('corpo libero con il calf raise a un piede: il gradino c e in ogni casa (INT-0)', { luogo: 'corpo' }, [['Lunedì', 'lower', [E('Calf Raise a un Piede (Corpo Libero)', 3, 15, 60)]]], {}, [], ['SAF-04', 'SAF-03']),
   fixture('casa senza sbarra: il pullover coi manubri e la tirata verticale (D-P11, INT-0; con lo stacco rumeno coi manubri: dall INT-1 a casa c e e senza PAT-01 scattava a torto sull hinge)', { luogo: 'manubri', days: 3 }, [['Lunedì', 'fullbody', [E('Goblet Squat', 3, 10, 90), E('Panca Piana Manubri', 3, 10, 90), E('Rematore con Petto Appoggiato', 3, 10, 90), E('Lento Avanti Manubri', 3, 10, 90), E('Pullover con Manubrio', 3, 12, 75), E('Stacco Rumeno con Manubri', 3, 10, 90)]]], {}, [], ['PAT-01', 'SAF-03']),
   fixture('casa senza sbarra e senza pullover: manca la tirata verticale', { luogo: 'manubri', days: 3 }, [['Lunedì', 'fullbody', [E('Goblet Squat', 3, 10, 90), E('Panca Piana Manubri', 3, 10, 90), E('Rematore con Petto Appoggiato', 3, 10, 90), E('Lento Avanti Manubri', 3, 10, 90)]]], {}, ['PAT-01']),
