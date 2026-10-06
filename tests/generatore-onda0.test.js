@@ -144,11 +144,15 @@ test('B3 (MAV-03): over 65 e PAR-Q senza AMRAP, drop e parziali; la potenza solo
   })));
   assert.deepStrictEqual(colpe, []);
   assert.ok(potenza > 0, 'la potenza degli over 65 compare (' + potenza + ')');
-  /* una scheda a 45 minuti per un principiante: superserie si, drop set no, e la nota non promette il drop */
+  /* una scheda a 45 minuti per un principiante: drop set no, e la nota non promette il drop. INT-2b (REG-02, riconciliaNote): la nota «in superserie» c e solo se la scheda ha davvero delle coppie
+     (qui il taglio per il tempo non ne lascia: il fondamentale pesante resta solo), e il principiante legge comunque «per ora niente serie al cedimento» */
   const prog = costruisci(Object.assign({}, BASE, { level: 'principiante', minutes: 45, days: 3, seme: 'drop-1' }));
   assert.ok(!prog.sedute.some(sd => sd.esercizi.some(e => e.tecnica === 'drop')));
-  assert.ok(prog.note.some(n => /Poco tempo: spinte e tirate in superserie/.test(n)) && !prog.note.some(n => /drop set/.test(n)), 'la nota non nomina un drop set che non c e');
+  const haCoppie = prog.sedute.some(sd => sd.esercizi.some(e => e.superset));
+  assert.strictEqual(prog.note.some(n => /Poco tempo: spinte e tirate in superserie/.test(n)), haCoppie, 'la nota delle superserie c e se e solo se la scheda ha le coppie');
+  assert.ok(!prog.note.some(n => /drop set/.test(n)), 'la nota non nomina un drop set che non c e');
   assert.ok(prog.note.some(n => /Per ora niente serie al cedimento/.test(n)));
+  assert.strictEqual(prog.note.some(n => /propongo le superserie/.test(n)), haCoppie, 'e «ti propongo le superserie» solo con le coppie');
   /* un intermedio sano a 45 minuti il drop set ce l ha e la nota lo dice */
   const prog2 = costruisci(Object.assign({}, BASE, { level: 'intermedio', minutes: 45, days: 3, seme: 'drop-2', psico: undefined }));
   const haDrop = prog2.sedute.some(sd => sd.esercizi.some(e => e.tecnica === 'drop'));

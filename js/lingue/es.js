@@ -4033,5 +4033,6 @@ window.I18N["es"] = {
 "Al massimo due muscoli alla volta": "Como máximo dos músculos a la vez",
 "gli altri restano al volume normale.": "los demás se quedan con el volumen normal.",
 "+#% di serie": "+#% de series",
-"gli altri muscoli a mantenimento con gli stessi carichi.": "los demás músculos en mantenimiento con las mismas cargas."
+"gli altri muscoli a mantenimento con gli stessi carichi.": "los demás músculos en mantenimiento con las mismas cargas.",
+"Per farti stare nei minuti ho accorciato le pause e tolto il superfluo: gli schemi di base restano sempre.": "Para que quepa en tu tiempo acorté los descansos y quité lo superfluo: los patrones básicos siempre se quedan."
 };

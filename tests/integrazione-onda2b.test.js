@@ -232,6 +232,25 @@ test('riconciliaNote: il caso del pullover a 30 minuti (casa, 2 giorni, forza) e
   assert.strictEqual(fem.note.filter(n => /^Aggiunto: Leg Curl con Asciugamano/.test(n)).length, 1, 'la nota «Aggiunto» c e una volta sola');
 });
 
+test('riconciliaNote: «in superserie» (poco tempo, o «per fare prima ti propongo le superserie») solo se la scheda ha davvero delle coppie: un over 65 con PAR-Q positivo, che il cancello delle tecniche lascia senza superserie, non la legge piu', () => {
+  const a = conSoglieStruttura(caricaApp({ ora: ORA }));
+  const SS = /in superserie|propongo le superserie|abbinato esercizi opposti/;   /* anche la frase del taglio per il tempo: senza coppie dice solo pause e tagli */
+  const coppie = p => p.sedute.some(sd => sd.esercizi.some(e => e.superset));
+  const over65 = a.dati(a.chiama('buildProgram', Object.assign({}, BASE, { level: 'principiante', days: 3, minutes: 45, luogo: 'palestra', goals: ['salute'], sex: 'F', age: 68, parq: 'si' })));
+  assert.ok(!coppie(over65), 'il caso di prova non ha coppie (T3: niente superserie agli over 65 fuori da macchine e cavi)');
+  assert.deepStrictEqual(over65.note.filter(n => SS.test(n)), [], 'e le note non parlano di superserie');
+  /* il campione: ogni nota «superserie» ha le coppie, e il campione esercita entrambe le strade */
+  let conNota = 0, senzaNota = 0, senzaCoppie = 0, taglioSenzaCoppie = 0;
+  [{ age: 30 }, { age: 68 }, { age: 68, parq: 'si' }, { age: 15 }, { age: 25, sex: 'F' }].forEach(e => ['principiante', 'intermedio'].forEach(level => ['palestra', 'manubri', 'corpo'].forEach(luogo => [2, 3, 4].forEach(days => [30, 45].forEach(minutes => {
+    const p = a.dati(a.chiama('buildProgram', Object.assign({}, BASE, e, { level, luogo, days, minutes, goals: ['salute'], seme: 'ss' + JSON.stringify(e) + level + luogo + days + minutes })));
+    const dice = p.note.some(n => SS.test(n));
+    if (!coppie(p)) { senzaCoppie++; if (p.note.some(n => /^Per farti stare nei minuti ho accorciato le pause e tolto il superfluo/.test(n))) taglioSenzaCoppie++; }
+    if (dice) { conNota++; assert.ok(coppie(p), JSON.stringify(e) + ' ' + level + ' ' + luogo + ' ' + days + 'gg ' + minutes + 'min: la nota parla di superserie ma la scheda non ne ha'); } else senzaNota++;
+  })))));
+  assert.ok(conNota > 10 && senzaNota > 10 && senzaCoppie > 5 && taglioSenzaCoppie > 0, 'il campione esercita le strade: con nota ' + conNota + ', senza ' + senzaNota + ', senza coppie ' + senzaCoppie + ', taglio per il tempo senza coppie ' + taglioSenzaCoppie);
+  assert.deepStrictEqual(a.errori, []);
+});
+
 /* ---------------------------------------------------------------- 7) D-P19: i minorenni tengono le superserie di antagonisti non pesanti, non le tecniche al cedimento ---------------------------------------------------------------- */
 test('D-P19: per i 13-17 anni le superserie restano (antagonisti, mai un fondamentale pesante, il core o una tenuta) e nessuna tecnica al cedimento, cluster o potenza', () => {
   const a = conSoglieStruttura(caricaApp({ ora: ORA }));

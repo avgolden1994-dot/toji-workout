@@ -77,6 +77,11 @@ function regolaDelPicco(brief, sedute) {
   return sedute;
 }
 
+/* le note sulle superserie del poco tempo: riconciliaNote le tiene solo se la scheda ha davvero delle coppie (il cancello delle tecniche di W2-T3 le toglie agli over 65 fuori da macchine e cavi) */
+const NOTA_POCO_TEMPO_SS = 'Poco tempo: spinte e tirate in superserie (-37% di tempo, stessi risultati).';
+const NOTA_POCO_TEMPO_SS_DROP = 'Poco tempo: spinte e tirate in superserie (-37% di tempo, stessi risultati) e drop set sull ultimo isolamento.';
+const NOTA_SENZA_CEDIMENTO_SS = 'Per ora niente serie al cedimento: la tecnica viene prima. Per fare prima ti propongo le superserie.';
+const NOTA_SENZA_CEDIMENTO = 'Per ora niente serie al cedimento: la tecnica viene prima.';
 /* le note che dicono cosa ha fatto il programma, nell ordine di sempre: il ritratto del coach, il corpo, la BIA, il poco tempo, le popolazioni, i passi.
    La nota dei passi segue la fase del corpo (OBI-02): il dimagrimento, in qualunque posizione, e un deficit. */
 function noteDelProgramma(brief) {
@@ -87,9 +92,9 @@ function noteDelProgramma(brief) {
   if (!chi.cauto) statoBia(d, prof0).testi.forEach(t => note.push(t));   /* INT-01 */
   /* la nota dice quello che il programma fa davvero (B3, gap analysis: lo leggeva anche chi non ha il drop set o chi non deve andare al cedimento) */
   if (poco && !metodoAttivo) {
-    if (L.dropAssegnato) note.push('Poco tempo: spinte e tirate in superserie (-37% di tempo, stessi risultati) e drop set sull ultimo isolamento.');
-    else note.push('Poco tempo: spinte e tirate in superserie (-37% di tempo, stessi risultati).');
-    if (!tecnicheOk) note.push('Per ora niente serie al cedimento: la tecnica viene prima. Per fare prima ti propongo le superserie.');
+    if (L.dropAssegnato) note.push(NOTA_POCO_TEMPO_SS_DROP);
+    else note.push(NOTA_POCO_TEMPO_SS);
+    if (!tecnicheOk) note.push(NOTA_SENZA_CEDIMENTO_SS);
   }
   if (chi.over65) note.push(L.potenzaAssegnata ? 'Dai 65 anni: 2-3 serie da 8-12, niente cedimento, il primo esercizio veloce in salita per la potenza e 5 minuti di equilibrio a fine seduta.'
     : 'Dai 65 anni: 2-3 serie da 8-12, niente cedimento e 5 minuti di equilibrio a fine seduta.');
@@ -136,16 +141,20 @@ function chiudiProgramma(brief, sedute) {
 /* REG-02 (INT-2b): le note dicono quello che il programma fa DAVVERO, non quello che uno stadio prima aveva in mente. Gli stadi scrivono la nota quando agiscono (completaSettimana, il volume) e un
    passo dopo (il taglio per il tempo, il volume, le scelte dell utente) puo togliere o cambiare l esercizio: la nota «Aggiunto: Pullover con Manubrio» restava con il pullover tolto dai 30 minuti, e
    «senza leg curl restano meno allenati» con il leg curl con l asciugamano in scheda. Qui, alla fine: (1) via «Aggiunto: X» se X non e nella scheda (ne con il suo nome ne con quello originale
-   di una scelta dell utente); (2) via la nota del ponte glutei se c e una flessione del ginocchio, e quella «serve la flessione» se non c e; (3) niente note identiche due volte */
+   di una scelta dell utente); (2) via la nota del ponte glutei se c e una flessione del ginocchio, e quella «serve la flessione» se non c e; (3) senza nessuna coppia: via le note «in superserie» del poco tempo, e le due frasi che le nominano (principianti, taglio per il tempo) senza la parte delle coppie;
+   (4) niente note identiche due volte */
 function riconciliaNote(prog) {
   const nomi = [];
   prog.sedute.forEach(sd => sd.esercizi.forEach(e => { nomi.push(senzaEmoji(e.name)); if (e.originale) nomi.push(senzaEmoji(e.originale)); }));
-  const flessione = nomi.some(n => /leg curl|nordic/i.test(n)), viste = {};
-  prog.note = prog.note.filter(testo => {
+  const flessione = nomi.some(n => /leg curl|nordic/i.test(n)), viste = {}, haCoppie = prog.sedute.some(sd => sd.esercizi.some(e => e.superset));
+  /* senza coppie la nota dei principianti resta solo con la prima meta, e la frase del taglio per il tempo non dice «abbinato esercizi opposti» */
+  prog.note = prog.note.map(testo => !haCoppie && testo === NOTA_SENZA_CEDIMENTO_SS ? NOTA_SENZA_CEDIMENTO
+    : !haCoppie && typeof FRASE_TAGLIO_TEMPO !== 'undefined' && testo === FRASE_TAGLIO_TEMPO ? FRASE_TAGLIO_TEMPO_SENZA_COPPIE : testo).filter(testo => {
     const t = String(testo), m = /^Aggiunto: (.+?) \u2014 /.exec(t);
     if (viste[t]) return false;
     viste[t] = true;
     if (m && nomi.indexOf(m[1]) === -1) return false;
+    if (!haCoppie && (t === NOTA_POCO_TEMPO_SS || t === NOTA_POCO_TEMPO_SS_DROP)) return false;   /* «in superserie» senza nessuna coppia: la nota mentiva */
     if (t === NOTA_FEMORALI_SENZA_LEG_CURL) return !flessione;
     if (t === NOTA_FEMORALI_SERVE_FLESSIONE) return flessione;
     return true;

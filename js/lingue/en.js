@@ -4033,5 +4033,6 @@ window.I18N["en"] = {
 "Al massimo due muscoli alla volta": "At most two muscles at a time",
 "gli altri restano al volume normale.": "the others stay at the normal volume.",
 "+#% di serie": "+#% sets",
-"gli altri muscoli a mantenimento con gli stessi carichi.": "the other muscles at maintenance with the same loads."
+"gli altri muscoli a mantenimento con gli stessi carichi.": "the other muscles at maintenance with the same loads.",
+"Per farti stare nei minuti ho accorciato le pause e tolto il superfluo: gli schemi di base restano sempre.": "To fit your time I shortened the rests and cut the extras: the basic patterns always stay."
 };

@@ -527,6 +527,8 @@ function adattaAlTempo(brief, sedute) {
   return sedute;
 }
 const FRASE_TAGLIO_TEMPO = 'Per farti stare nei minuti ho accorciato prima le pause e abbinato esercizi opposti, poi tolto il superfluo: gli schemi di base restano sempre.';
+/* la stessa frase per la scheda che alla fine non ha nessuna coppia (riconciliaNote: gli esercizi opposti abbinati dal taglio possono cadere dopo, per un fondamentale pesante o per il cancello delle tecniche) */
+const FRASE_TAGLIO_TEMPO_SENZA_COPPIE = 'Per farti stare nei minuti ho accorciato le pause e tolto il superfluo: gli schemi di base restano sempre.';
 
 /* DUR-01 (W0-T7): strFinale sposta serie sul fondamentale (le pause lunghe pesano di piu) e dopo il taglio la seduta puo tornare sopra i minuti dichiarati: ultimo giro, solo serie
    (mai esercizi: la struttura e finita), dagli esercizi non fissi e non prioritari con piu serie */
