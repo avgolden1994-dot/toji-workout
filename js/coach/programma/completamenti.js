@@ -47,12 +47,13 @@ function squatOltreMax(x, lista) {
    del ginocchio (leg curl), l unica della settimana (registro B6: una flessione a settimana, Maeo 2021). La flessione vale piu di una seconda cerniera dell anca o di un secondo squat: il piu caro in
    minuti dei due (non il primo multiarticolare, non un posto fisso o protetto) lascia il posto, purche il suo schema sia anche in un altra seduta (PAT-01). Solo nel full body: nelle sedute lower e legs
    squat e hinge servono entrambi (SES-03). Ritorna l esercizio da togliere, o null. Lo chiamano completaSettimana (dove mettere la flessione) e scalaDelTempo (tempo.js, quando i minuti non bastano) */
-function secondoDiGambe(sd, sedute, opz) {
+function secondoDiGambe(sd, sedute, opz, costo) {
   if (sd.tipo !== 'fullbody' || sd.esercizi.filter(eMultiDiGambe).length < 2) return null;
   const primo = sd.esercizi.find(e => (findExercise(e.name) || {}).type === 'compound' && !isTimeBased(e.name));
   const minuti = (lista) => durataSeduta(lista, opz);
+  /* P3-G: `costo` (facoltativo, scalaDelTempo in tempo.js) mette per primo quello che costa meno alla settimana (la frequenza dei muscoli grandi), poi il piu caro in minuti */
   return sd.esercizi.filter(e => eMultiDiGambe(e) && !e.fisso && !e.protetto && e !== primo && sedute.some(o => o !== sd && o.esercizi.some(x => x !== e && eMultiDiGambe(x) && schemaDiGambe(x.name) === schemaDiGambe(e.name))))
-    .sort((a, b) => minuti(sd.esercizi.filter(x => x !== a)) - minuti(sd.esercizi.filter(x => x !== b)))[0] || null;
+    .sort((a, b) => (costo ? costo(a) - costo(b) : 0) || minuti(sd.esercizi.filter(x => x !== a)) - minuti(sd.esercizi.filter(x => x !== b)))[0] || null;
 }
 
 /* PCO-08 (W2-T6; Cressey, ricerca-metodi-coach-pratici H-08; collaudo SAF-06): con la spalla dolente dichiarata la settimana ha lavoro per la cuffia dei rotatori e per i deltoidi posteriori, 1-2 volte, leggero e

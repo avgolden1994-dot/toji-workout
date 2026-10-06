@@ -111,6 +111,12 @@ const SOGLIE_VOLUME = {
     v: { serieMax: 2, ripetizioni: 12 },
     forza: 'Convenzione', fonte: 'revisione indipendente dell onda 2e (INT-2f, maggiore 2); ricerca-principianti §3.1 (il gesto della cerniera dell anca si impara con movimenti guidati e poche serie); registro B6 (credito 0,5 ai femorali negli attributi)', regole: ['SES-03']
   },
+  /* P3-G (collaudo EQ-02): le tirate della settimana tengono i due piani, verticale (dorsali: trazioni, lat machine, il pullover di riserva) e orizzontale (spessore: rematori). Con almeno serieMin serie di
+     tirata nessuno dei due scende sotto la quota per far posto all altro: il solutore, cercando le serie per i bicipiti sotto il tetto della schiena, toglieva il pullover e alzava i rematori */
+  pianiTirata: {
+    v: { quota: 0.25, serieMin: 6 },
+    forza: 'Convenzione', fonte: 'collaudo del generatore, EQ-02 (QUOTA_TIRATA_MIN, SERIE_TIRATA_MIN: pratica dei coach, dorsali per la larghezza e spessore); ricerca-specializzazione-punti-deboli §3.1 (dorsali: sia tirate verticali sia orizzontali, Convenzione)', regole: ['IPE-01']
+  },
   /* collaudo EXN-02: al massimo 8 esercizi in una seduta, 6 per chi inizia */
   eserciziMaxSeduta: {
     v: { adulto: 8, principiante: 6 },
