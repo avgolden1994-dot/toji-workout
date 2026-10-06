@@ -139,9 +139,10 @@ window.startOnboarding = function(force) {
 };
 
 function nuovoOnbData() {
+  const salvato = (typeof getProfile === 'function' && getProfile()) || {};   /* P3-M: sesso, peso, altezza, salute e fastidi non si perdono rifacendo il questionario (decidono prudenza ed esclusioni) */
   return { inizio: undefined, goals: [], goal: null, level: null, days: null, minutes: null,
-           luogo: null, fastidi: [], sonno: null, attrezzi: null, parq: null, priorita: [],
-           sex: null, age: ((typeof getProfile === 'function' && getProfile()) || {}).age || null, height: null, weight: null, bia: null,   /* ETA-01: chi rifa il programma ha gia detto l eta */
+           luogo: null, fastidi: (salvato.fastidi || []).slice(), sonno: null, attrezzi: null, parq: salvato.parq ? 'si' : null, priorita: [],
+           sex: salvato.sex || null, age: ((typeof getProfile === 'function' && getProfile()) || {}).age || null, height: salvato.height || null, weight: salvato.weight || null, bia: null,   /* ETA-01: chi rifa il programma ha gia detto l eta */
            psico: Object.assign({}, ((typeof getProfile === 'function' && getProfile()) || {}).psico || {}),
            test: Object.assign({}, ((typeof getProfile === 'function' && getProfile()) || {}).test || {}),
            freq: ((typeof getProfile === 'function' && getProfile()) || {}).freq || null,
