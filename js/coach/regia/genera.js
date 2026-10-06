@@ -321,8 +321,11 @@ function riconciliaNote(prog) {
 function verificaProgramma(brief, prog) {
   const esiti = [];
   if (typeof validaVolume === 'function') esiti.push(validaVolume(brief, prog.sedute));
+  /* INT-2f: la verifica delle tecniche toglie una coppia non valida (superset) o una tecnica e cambia la durata della seduta: va PRIMA della verifica del tempo, che dice quanto durano le sedute (la nota diceva 63 minuti
+     e la scheda finale 64: tests/tempo.test.js B36). Le note restano nell ordine di prima (volume, tempo, tecniche, sicurezza) */
+  const noteTecniche = typeof validaTecniche === 'function' ? validaTecniche(brief, prog.sedute) : undefined;
   if (typeof validaTempo === 'function') esiti.push(validaTempo(brief, prog.sedute));
-  if (typeof validaTecniche === 'function') esiti.push(validaTecniche(brief, prog.sedute));
+  if (typeof validaTecniche === 'function') esiti.push(noteTecniche);
   if (typeof validaSicurezza === 'function') esiti.push(validaSicurezza(brief, prog.sedute));
   esiti.forEach(r => { if (Array.isArray(r)) r.forEach(t => prog.note.push(t)); });
   return riconciliaNote(prog);

@@ -174,7 +174,7 @@ function completaSettimana(brief, sedute) {
     const ponte = !FLESSIONI_GINOCCHIO.filter(n => !RX_NORDIC.test(n)).some(n => nomeInLibreria(n) && consentito(nomeInLibreria(n), prefs))
       ? ((level === 'principiante' || cauto) ? ['Ponte Glutei', 'Ponte Glutei a una Gamba'] : ['Ponte Glutei a una Gamba', 'Ponte Glutei']).map(nomeInLibreria).filter(n => n && consentito(n, prefs))[0] : null;
     sedute.filter(sd => /lower|legs|fullbody/.test(sd.tipo)).forEach(sd => {
-      if (sd.esercizi.some(e => (SLOT_DEF.hinge(e) && !RIPIEGO_HINGE.test(senzaEmoji(e.name))) || eFlessione(e)) || sd.esercizi.length > nEs + 1) return;   /* INT-2f: la cerniera senza carico (2 serie, credito 0,5: 1 serie frazionaria ai femorali) non dispensa dal leg curl: sotto 1,5 la seduta non conta per la frequenza (FRQ-01) */
+      if (sd.esercizi.some(e => eCernieraFemorali(e) || eFlessione(e)) || sd.esercizi.length > nEs + 1) return;   /* INT-2f: solo una cerniera che allena i femorali (credito > 0: lo stacco, il rumeno, il good morning) dispensa dal leg curl: non il pull-through (femorali 0) ne la cerniera senza carico (2 serie x 0,5 = 1 serie frazionaria: sotto 1,5 la seduta non conta per la frequenza, FRQ-01) */
       /* W0-T7: non il giorno dopo un altra seduta dello stesso grande muscolo, e non oltre il tetto di serie per muscolo in una seduta (REC-01, SES-01) */
       const nome = flessioni.filter(n => !sd.esercizi.some(e => e.name === n) && usi(n) < maxSettimana(n) && recuperoOk(sd, sedute, n, setsFlessione)).sort((a, b) => usi(a) - usi(b))[0];
       if (nome) {
