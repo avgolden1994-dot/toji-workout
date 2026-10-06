@@ -74,8 +74,10 @@ function copriCuffia(brief, sedute) {
   let aggiunti = 0;
   const aggiungi = (nome, usate) => {
     /* la seduta di tirata (pull, upper, full body, punti deboli) con meno esercizi che non ha gia un lavoro dietro e non e gia stata usata; il lavoro dietro sta con le tirate, non con le spinte */
-    const sd = sedute.filter(s => /pull|upper|fullbody|punti/.test(s.tipo) && usate.indexOf(s) === -1 && s.esercizi.length <= nEs + 1 && !s.esercizi.some(e => RX_CUFFIA.test(senzaEmoji(e.name))))
-      .sort((a, b) => a.esercizi.length - b.esercizi.length)[0];
+    const idonee = sedute.filter(s => /pull|upper|fullbody|punti/.test(s.tipo) && usate.indexOf(s) === -1 && !s.esercizi.some(e => RX_CUFFIA.test(senzaEmoji(e.name))));
+    /* INT-2f: se ogni seduta e gia oltre nEs + 1 (il ponte dei femorali ha aggiunto il leg curl a chi ha la cerniera senza carico) il lavoro per la cuffia entra comunque nella piu corta: e una salvaguardia (SAF-06) e non si rinuncia
+       a causa del numero di esercizi; il tetto di esercizi e il tempo tolgono prima altro (il lavoro aggiunto e protetto) */
+    const sd = idonee.filter(s => s.esercizi.length <= nEs + 1).sort((a, b) => a.esercizi.length - b.esercizi.length)[0] || idonee.sort((a, b) => a.esercizi.length - b.esercizi.length)[0];
     if (!sd) return null;
     const m = findExercise(nome) || {};
     sd.esercizi.push({ name: nome, sets: c.serieAggiunte, reps: isTimeBased(nome) ? (m.reps || 30) : (m.reps && m.reps > 8 ? m.reps : 15), weight: m.weight || 0, rest: 60, protetto: true, cuffia: 'aggiunto' });   /* cuffia: il solutore del volume non lo toglie (volume.js, rimovibile); 'aggiunto' = messo da PCO-08, 'ricetta' = c era gia */
@@ -172,7 +174,7 @@ function completaSettimana(brief, sedute) {
     const ponte = !FLESSIONI_GINOCCHIO.filter(n => !RX_NORDIC.test(n)).some(n => nomeInLibreria(n) && consentito(nomeInLibreria(n), prefs))
       ? ((level === 'principiante' || cauto) ? ['Ponte Glutei', 'Ponte Glutei a una Gamba'] : ['Ponte Glutei a una Gamba', 'Ponte Glutei']).map(nomeInLibreria).filter(n => n && consentito(n, prefs))[0] : null;
     sedute.filter(sd => /lower|legs|fullbody/.test(sd.tipo)).forEach(sd => {
-      if (sd.esercizi.some(e => SLOT_DEF.hinge(e) || eFlessione(e)) || sd.esercizi.length > nEs + 1) return;
+      if (sd.esercizi.some(e => (SLOT_DEF.hinge(e) && !RIPIEGO_HINGE.test(senzaEmoji(e.name))) || eFlessione(e)) || sd.esercizi.length > nEs + 1) return;   /* INT-2f: la cerniera senza carico (2 serie, credito 0,5: 1 serie frazionaria ai femorali) non dispensa dal leg curl: sotto 1,5 la seduta non conta per la frequenza (FRQ-01) */
       /* W0-T7: non il giorno dopo un altra seduta dello stesso grande muscolo, e non oltre il tetto di serie per muscolo in una seduta (REC-01, SES-01) */
       const nome = flessioni.filter(n => !sd.esercizi.some(e => e.name === n) && usi(n) < maxSettimana(n) && recuperoOk(sd, sedute, n, setsFlessione)).sort((a, b) => usi(a) - usi(b))[0];
       if (nome) {

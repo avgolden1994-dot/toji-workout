@@ -66,9 +66,9 @@ const PRIORI = {
   'Croci ai Cavi da Seduto': 3, 'Pectoral Machine (Butterfly)': 2.5, 'Croci ai Cavi dal Basso': 2,
   'Calf Raise in Piedi': 2.5, 'Calf Raise Seduto': 2, 'Calf Raise alla Leg Press': 2,
   'Plank': 2, 'Pallof Press': 2, 'Dead Bug': 2, 'Crunch al Cavo': 2,
-  'Hip Hinge a Corpo Libero': -1   /* W2-T6: ripiego (la cerniera dell anca senza carico): dove c e un cavo o un manubrio vince la variante con il carico; a corpo libero e l unica */
+  'Hip Hinge a Corpo Libero': -1   /* W2-T6: ripiego (la cerniera dell anca senza carico); INT-2f: consentito solo dove nessuna cerniera con carico lo e (cerniereConCaricoConsentite, motore.js): la varieta tra i giorni (-4) batteva questo -1 e lo portava in 7.449 programmi su 10.800 */
 };
-/* W2-T6: la cerniera dell anca senza carico e un ripiego per le sedute di gambe (SES-03), al massimo nel numero di sedute di RIPETIZIONI_SETTIMANA_MAX e mai come riempitivo di una seduta di tirata o di spinta:
+/* W2-T6: la cerniera dell anca senza carico e un ripiego per le sedute di gambe (SES-03), al massimo nel numero di sedute di RIPETIZIONI_SETTIMANA_MAX e mai come riempitivo di una seduta di tirata o di spinta; INT-2f: solo dove nessuna cerniera con carico e consentita (consentitoCalcolo), 2 serie da 12 (soglia ripiegoCerniera), mai prima di un altro multiarticolare (strRango):
    con 6 giorni a corpo libero finiva in 4 sedute e i femorali arrivavano a 13 serie frazionarie contro un massimo di 8 (collaudo VOL-02:femorali) */
 const RIPIEGO_HINGE = /^hip hinge a corpo libero$/i;
 const SCHEMI_ATTESI = { fullbody: ['spinta', 'tirata', 'basso'], upper: ['spinta', 'tirata'], lower: ['squat', 'hinge'], legs: ['squat', 'hinge'], push: ['spinta'], pull: ['tirata'] };

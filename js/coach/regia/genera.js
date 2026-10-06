@@ -254,6 +254,8 @@ function chiudiProgramma(brief, sedute) {
   const note = brief.lavoro.note;
   /* B1 (revisione dell onda 0): il tetto del Nordic Curl vale alla fine, qualunque passo abbia aggiunto serie (volume per muscolo, riempimento del tempo, metodo): 3 serie da 3-6 ripetizioni */
   sedute.forEach(sd => sd.esercizi.forEach(e => { if (RX_NORDIC.test(senzaEmoji(e.name))) { e.sets = Math.min(e.sets, PARAM_NORDIC.serieMax); e.reps = Math.min(e.reps, PARAM_NORDIC.ripetizioniMax); } }));
+  /* INT-2f: lo stesso per il ripiego della cerniera dell anca (2 serie da 12): qualunque passo abbia aggiunto serie (volume per muscolo, tempo) */
+  sedute.forEach(sd => sd.esercizi.forEach(e => { if (RIPIEGO_HINGE.test(senzaEmoji(e.name))) { const r = sogliaVolume('ripiegoCerniera'); e.sets = Math.min(e.sets, r.serieMax); e.reps = r.ripetizioni; } }));
   sedute.forEach(sd => sd.esercizi.forEach(e => { delete e.protetto; delete e.riservaTirataV; }));   /* ABB-03: serviva solo a non tagliare le aggiunte per il tempo */
   /* W0-T7 (decisione del committente, SAF-04): il rematore inverso e l unica tirata orizzontale senza attrezzi e resta anche a casa, con la nota che dice dove farlo e la prudenza sul tavolo */
   if (sedute.some(sd => sd.esercizi.some(e => /rematore inverso/i.test(senzaEmoji(e.name))))) note.push(NOTA_REMATORE_INVERSO);

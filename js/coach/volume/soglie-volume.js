@@ -105,6 +105,12 @@ const SOGLIE_VOLUME = {
     v: 3,
     forza: 'Convenzione', fonte: 'ABB-03 (un esercizio di core a fine seduta, 2-3 serie: strCopri, strCoreNuovo); ricerca-biomeccanica-esercizi §4 SEL-07 e D10 (core 2-6 serie a settimana, poco volume); registro B6 (addome 2-4 / 4-8 / 6-10 a settimana)', regole: ['IPE-01', 'IPE-06']
   },
+  /* INT-2f (revisione indipendente dell onda 2e, maggiore 2): «Hip Hinge a Corpo Libero» e un ripiego tecnico (la cerniera dell anca senza carico, per chi non ha altro): al massimo 2 serie da 12 ripetizioni (la fascia 12-15
+     dei movimenti senza carico, ricerca-principianti §3.1: «si impara il gesto con poche serie di tante ripetizioni»), e al massimo in 2 sedute a settimana (RIPETIZIONI_SETTIMANA_MAX) */
+  ripiegoCerniera: {
+    v: { serieMax: 2, ripetizioni: 12 },
+    forza: 'Convenzione', fonte: 'revisione indipendente dell onda 2e (INT-2f, maggiore 2); ricerca-principianti §3.1 (il gesto della cerniera dell anca si impara con movimenti guidati e poche serie); registro B6 (credito 0,5 ai femorali negli attributi)', regole: ['SES-03']
+  },
   /* collaudo EXN-02: al massimo 8 esercizi in una seduta, 6 per chi inizia */
   eserciziMaxSeduta: {
     v: { adulto: 8, principiante: 6 },

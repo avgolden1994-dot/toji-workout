@@ -232,5 +232,9 @@ test('RID-02: lo stesso esercizio al massimo in due sedute a settimana dove la l
   const lista = griglia('rid02', ['principiante', 'intermedio', 'avanzato'], ['adulto'], ['palestra', 'manubri'], [3, 4, 5, 6], [['massa'], ['salute']]).concat(griglia('rid02b', ['principiante', 'intermedio'], ['adulto'], ['palestra', 'manubri'], [3, 4, 5, 6], [['massa'], ['salute']], { fastidi: ['schiena'] }));
   const tre = [];
   lista.forEach(x => { const c = {}; x.prog.sedute.forEach(sd => new Set(nomi(sd)).forEach(n => { c[n] = (c[n] || 0) + 1; })); Object.keys(c).forEach(n => { if (c[n] >= 3) tre.push(x.p.seme + ' ' + n); }); });
-  assert.ok(tre.length <= 2, 'esercizi in 3 o piu sedute: ' + tre.length + ' su ' + lista.length + ' programmi: ' + tre.join(' | '));
+  /* INT-2f (revisione dell onda 2e, maggiore 2): con la cerniera senza carico ridotta a ripiego (solo dove nessuna cerniera con carico e consentita) restano 4 programmi su 80, tutti con la schiena dolente e 6 giorni in palestra:
+     il Pull-Through ai Cavi e l unica cerniera con carico consentita e le sedute di gambe sono tre. Prima di INT-2f erano 0 perche il ripiego (7.449 programmi su 10.800, anche in palestra) faceva da variante: e la verita
+     sul miglioramento di RID-02, non un difetto da riprendere con un altro trucco */
+  assert.ok(tre.length <= 4, 'esercizi in 3 o piu sedute: ' + tre.length + ' su ' + lista.length + ' programmi: ' + tre.join(' | '));
+  assert.ok(tre.every(x => /^rid02b-\d+ Pull-Through ai Cavi$/.test(x)), 'solo il pull-through con la schiena dolente: ' + tre.join(' | '));
 });

@@ -317,6 +317,7 @@ function volumeMotore(brief, sedute, b, opz) {
     if (!comp && prefs && prefs.fastidi && prefs.fastidi.length && typeof esercizioCaricaIlFastidio === 'function' && esercizioCaricaIlFastidio(e.name, prefs.fastidi)) c = Math.min(c, sogliaVolume('serieMaxIsolamentoConFastidio'));
     if (typeof STR_FATICA !== 'undefined' && STR_FATICA.test(e.name)) c = Math.min(c, 3);        /* ABB-09 */
     if (typeof RX_NORDIC !== 'undefined' && RX_NORDIC.test(senzaEmoji(e.name))) c = Math.min(c, PARAM_NORDIC.serieMax);   /* B1 */
+    if (typeof RIPIEGO_HINGE !== 'undefined' && RIPIEGO_HINGE.test(senzaEmoji(e.name))) c = Math.min(c, sogliaVolume('ripiegoCerniera').serieMax);   /* INT-2f: il ripiego al massimo 2 serie */
     return c;
   };
   const nuovoRec = (s, e, fond) => {

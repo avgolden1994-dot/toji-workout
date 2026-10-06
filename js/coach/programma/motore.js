@@ -123,10 +123,17 @@ function consentito(nome, prefs) {
   perPrefs.set(nome, r);
   return r;
 }
+/* INT-2f (revisione dell onda 2e, maggiore 2): la cerniera dell anca senza carico («Hip Hinge a Corpo Libero», RIPIEGO_HINGE in ricette.js) e un RIPIEGO: e consentita solo se nessuna cerniera con carico lo e per questa persona
+   (i posti dell hinge scelgono per nome: SLOT_DEF.hinge, stacchi, good morning, pull-through). Prima compariva in 7.449 programmi su 10.800, anche in palestra e con uno stacco con carico nella stessa settimana: la varieta tra i giorni
+   (-4 a un esercizio gia usato) batteva il suo punteggio negativo. Dipende solo dalle preferenze (luogo, attrezzi, fastidi): la risposta si ricorda con `consentito` */
+function cerniereConCaricoConsentite(prefs) {
+  return EXERCISE_LIBRARY.some(x => !RIPIEGO_HINGE.test(senzaEmoji(x.name)) && SLOT_DEF.hinge(x) && consentito(x.name, prefs));
+}
 function consentitoCalcolo(nome, prefs) {
   const a = attrezzoDi(nome);
   if ((prefs.odiati || []).indexOf(nome) !== -1) return false;
   if ((prefs.esclusi || []).indexOf(nome) !== -1) return false;   /* esclusi dal coach per sicurezza (revisione dell onda 0, B1: il Nordic Curl), non per gusto */
+  if (RIPIEGO_HINGE.test(senzaEmoji(nome)) && cerniereConCaricoConsentite(prefs)) return false;   /* INT-2f: il ripiego solo dove non c e una cerniera con carico */
   /* CAS-01 (INT-2e): gli attrezzi dichiarati; un elastico, un kettlebell o gli anelli dichiarati non passano dai filtri sull attrezzo di prima (che li leggono dal nome: «pulldown» = macchine) */
   const dichiarato = attrezziDichiaratiEsito(nome, prefs);
   if (dichiarato === false) return false;

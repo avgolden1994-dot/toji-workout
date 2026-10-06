@@ -34,7 +34,7 @@ function strTier(e) {
   if (['petto', 'schiena', 'gambe', 'glutei'].indexOf(m.group) !== -1 && strSub(e) !== 'Polpacci' && strSub(e) !== 'Adduttori' && strSub(e) !== 'Medio gluteo') return 1;
   return 2;
 }
-function strRango(e) { const t = strTier(e); return t * 10 + (t === 0 && tipoCarico(e.name) !== 'pesante' ? 1 : 0); }
+function strRango(e) { const t = strTier(e); return t * 10 + (t === 0 && tipoCarico(e.name) !== 'pesante' ? 1 : 0) + (t === 0 && RIPIEGO_HINGE.test(senzaEmoji(e.name)) ? 2 : 0); }   /* INT-2f: la cerniera senza carico (ripiego) mai prima di un altro multiarticolare */
 /* ordina una lista di esercizi (con almeno `name`); i giorni dei punti deboli restano nell ordine di priorita dell utente */
 /* ABB-10: a parita di tipo, il muscolo prioritario per primo (principio della priorita di Arnold: si allena per primo cio che si vuole far crescere;
    la forza e il lavoro migliorano di piu negli esercizi fatti all inizio, Nunes 2021) */

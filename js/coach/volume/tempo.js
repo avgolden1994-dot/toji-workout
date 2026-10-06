@@ -556,7 +556,7 @@ function adattaAlTempo(brief, sedute) {
       /* un multiarticolare si toglie solo se la seduta ha un altro dello stesso schema (due spinte verticali): mai l unica spinta, tirata, squat o hinge (collaudo SES-03) */
       const doppi = sd.esercizi.filter(e => !e.protetto && !e.fisso && (findExercise(e.name) || {}).type === 'compound' && schemaDi(e.name) && sd.esercizi.filter(y => schemaDi(y.name) === schemaDi(e.name)).length > 1);
       /* se resta troppo lungo (EXN-02, anche con l 8 di CAS-06 le aggiunte di strCopri e dei completamenti possono portare a 9) lascia l ultima aggiunta protetta che non e core */
-      const protette = sd.esercizi.filter(e => !e.fisso && e.protetto && (findExercise(e.name) || {}).type !== 'compound' && (findExercise(e.name) || {}).group !== 'core');
+      const protette = sd.esercizi.filter(e => !e.fisso && e.protetto && !e.cuffia && (findExercise(e.name) || {}).type !== 'compound' && (findExercise(e.name) || {}).group !== 'core');   /* INT-2f: non il lavoro per la cuffia (PCO-08, SAF-06): e una salvaguardia, lascia il posto prima una copertura di qualita (il leg curl del ponte) */
       /* il core si toglie solo se un altra seduta della settimana ne ha uno: la copertura (ABB-03) resta */
       const core = sd.esercizi.filter(e => !e.fisso && (findExercise(e.name) || {}).group === 'core' && sedute.some(o => o !== sd && o.esercizi.some(x => (findExercise(x.name) || {}).group === 'core')));
       const via = iso[iso.length - 1] || doppi[doppi.length - 1] || protette[protette.length - 1] || core[core.length - 1];

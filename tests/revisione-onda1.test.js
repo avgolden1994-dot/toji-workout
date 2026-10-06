@@ -94,10 +94,12 @@ test('M5: su una griglia di 324 programmi nessun intermedio o avanzato sano rice
   assert.deepStrictEqual(esperti.filter(haScatola).map(x => x.p.seme), [], 'chi puo fare lo squat con un carico non riceve lo squat di avvio');
   /* lo ricevono ancora chi inizia e i prudenti (la progressione verso lo squat carico) */
   /* W2-T6: 10 e non 12 (con le prime scelte di SEL-06 e la varieta di RID-02 lo squat di avvio resta a 10 principianti su 27: la progressione verso lo squat carico c e ancora) */
-  assert.strictEqual(tutti.filter(x => x.p._persona === 'adulto' && x.p.level === 'principiante').filter(haScatola).length, 10);
+  /* INT-2f: 9 e non 10 (il ripiego della cerniera senza carico non fa piu da variante tra i giorni: cambia il sorteggio degli squat di chi inizia, sempre la progressione verso lo squat carico) */
+  assert.strictEqual(tutti.filter(x => x.p._persona === 'adulto' && x.p.level === 'principiante').filter(haScatola).length, 9);
   /* W2-T2: 130 e non 128 (con la capacita di CAS-06 ai prudenti e ai principianti restano 2 programmi in piu con lo squat di avvio: e la progressione verso lo squat carico) */
   /* W2-T6: 128 e non 130 (le prime scelte di SEL-06 e la varieta di RID-02 spostano lo squat di avvio dei prudenti: sempre la progressione verso lo squat carico) */
-  assert.strictEqual(tutti.filter(x => x.p._persona !== 'adulto').filter(haScatola).length, 128);
+  /* INT-2f: 130 (la stessa causa: senza il ripiego come variante lo squat di avvio dei prudenti torna a 130, la progressione verso lo squat carico) */
+  assert.strictEqual(tutti.filter(x => x.p._persona !== 'adulto').filter(haScatola).length, 130);
   let sedute = 0, conAvvioEAltroSquat = 0, conDueSquat = 0;
   tutti.forEach(x => x.prog.sedute.forEach(sd => {
     sedute++;
