@@ -755,6 +755,11 @@
      "responsabile": "INT-3a (da assegnare: nessun pacchetto del piano snello lo possiede)",
      "scade": "onda-3",
      "motivo": "INT-2g (2026-10-06), trovato dalla correzione di SAF-03/SAF-04: ora che il collaudo legge gli attrezzi dichiarati, la tirata verticale con l'elastico, gli anelli o la sbarra dichiarati e un esercizio possibile, e il generatore non la sceglie sempre: sulla matrice «attrezzi» PAT-01:tirataV 0 → 28 programmi su 612 (2,17% pesata) e EQ-02:verticale 8 → 36 (2f) o 16 → 36 (2d), tutti a corpo libero, donne, massa o glutei, senza fastidi, con elastico e anelli dichiarati (esempio: massa|principiante|3|45|corpo|-|F|giovane|att|elastico+anelli). Prima erano nascosti dal falso positivo (con gli attrezzi dichiarati il collaudo vedeva l'elastico come attrezzatura non disponibile e la tirata verticale come non fattibile). Non e un peggioramento del generatore (2d non leggeva gli attrezzi dichiarati) ma una lacuna ora visibile; non e nella matrice standard."
+    },
+    "Residui del revisore dell'onda 2f non misurati: la nota «la panca copre il deltoide anteriore» a chi non ha la panca e la pausa di 120 s dell'Hip Hinge con la forza": {
+     "responsabile": "INT-3a (da assegnare: nessun pacchetto del piano snello lo possiede)",
+     "scade": "onda-3",
+     "motivo": "revisione indipendente dell'onda 2f (2026-10-06) e INT-2g: (a) la nota che dice che la panca copre il deltoide anteriore compare anche a chi non ha la panca dichiarata (sospetto da preparatore, non misurato); (b) con la forza come obiettivo «Hip Hinge a Corpo Libero» e ora 2x12 ma con la pausa della forza (120 s: 46 occorrenze su 55 nella griglia di prova, 90 e 105 s le altre): per un esercizio senza carico e troppo, e pesa sul tempo delle sedute corte. Non misurati con un criterio e non corretti in INT-2g."
     }
    }
   },
