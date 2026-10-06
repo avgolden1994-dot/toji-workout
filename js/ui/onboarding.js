@@ -273,8 +273,10 @@ const TESTO_AVVISO_MASSA_DIMAGRIMENTO = 'Costruire muscolo e perdere grasso insi
 const TESTO_AVVISO_MASSA_DIMAGRIMENTO_SE_RESTANO = 'Se li tieni entrambi, il primo che hai scelto guida il programma e passi e cardio seguono il dimagrimento.';
 function htmlAvvisoObiettivi(goals) {
   const g = goals || [];
-  if (g.indexOf('massa') === -1 || g.indexOf('dimagrimento') === -1) return '';
-  return '<div class="onb-note onb-avviso" id="onb-avviso-obiettivi">' + TESTO_AVVISO_MASSA_DIMAGRIMENTO + ' ' + TESTO_AVVISO_MASSA_DIMAGRIMENTO_SE_RESTANO + '</div>' +
+  if (g.indexOf('massa') === -1 || g.indexOf('dimagrimento') === -1 || (typeof regolaAttiva === 'function' && !regolaAttiva('OBI-01'))) return '';
+  /* due blocchi, non uno: il traduttore cerca ogni frase intera */
+  return '<div class="onb-note onb-avviso" id="onb-avviso-obiettivi">' + TESTO_AVVISO_MASSA_DIMAGRIMENTO + '</div>' +
+    '<div class="onb-note">' + TESTO_AVVISO_MASSA_DIMAGRIMENTO_SE_RESTANO + '</div>' +
     '<button class="set-row-btn" onclick="onbUsaRicomposizione()">Usa la ricomposizione</button>';
 }
 /* la scelta esplicita dell utente: massa e dimagrimento diventano la ricomposizione, nel posto del primo dei due (gli altri obiettivi restano) */
@@ -286,6 +288,11 @@ window.onbUsaRicomposizione = function() {
   onbData.goal = onbData.goals[0] || null;
   renderOnb();
 };
+/* OBI-07: chi sceglie la ricomposizione legge cosa vuol dire «tonificare» (un po piu di muscolo e meno grasso) e che serve il carico che sale, non solo tante ripetizioni (ACSM 2026, Schoenfeld 2017) */
+const TESTO_TONIFICARE = 'Tonificare vuol dire un po’ più di muscolo e meno grasso: per farlo servono pesi che salgono piano piano, non solo tante ripetizioni.';
+function htmlNotaTonificare(goals) {
+  return (goals || []).indexOf('ricomposizione') === -1 ? '' : '<div class="onb-note" id="onb-nota-tonificare">' + TESTO_TONIFICARE + '</div>';
+}
 /* PRG-02: chi comincia con 5 o 6 giorni ha 4 sedute: glielo dice il passo dei giorni (e la nota del programma, con la stessa frase) */
 function htmlAvvisoGiorni(livello, giorni) {
   const s = typeof sogliaSplit === 'function' ? sogliaSplit('principianteSedute') : null;
@@ -304,6 +311,7 @@ const ONB_ATTREZZI_NOMI = { sbarra: 'Sbarra', panca: 'Panca', elastico: 'Elastic
 function onbAttrezziPalestra() { return onbData.attrezziPalestra !== undefined ? onbData.attrezziPalestra : (((typeof getProfile === 'function' && getProfile()) || {}).attrezziPalestra || null); }
 function htmlAttrezziOnboarding() {
   const luogo = onbData.luogo;
+  if (typeof regolaAttiva === 'function' && !regolaAttiva('CAS-01')) return '';
   if (luogo === 'palestra') {
     const lista = onbAttrezziPalestra(), extra = Array.isArray(onbData.extraPalestra) ? onbData.extraPalestra : [];
     return '<div class="aw-sec">Cosa c’è nella tua palestra?</div>' +
@@ -361,7 +369,7 @@ function renderOnb() {
           '<span class="goal-rank">' + (pos !== -1 ? (pos === 0 ? '1\u00B0 \u2022 guida' : (pos + 1) + '\u00B0') : '') + '</span></button>';
       }).join('') +
       '<div class="onb-note">' + onbData.goals.length + ' di 3 scelti</div>' +
-      htmlAvvisoObiettivi(onbData.goals);
+      htmlAvvisoObiettivi(onbData.goals) + htmlNotaTonificare(onbData.goals);
   } else if (onbStep === 1) {
     body.innerHTML = '<div class="onb-q">Da quanto ti alleni?</div>' +
       '<div class="onb-why">Ai principianti conviene il full body, perche ogni muscolo viene stimolato piu volte. Chi ha piu esperienza regge una divisione piu spinta. Decide anche quanto dura il programma.</div>' +

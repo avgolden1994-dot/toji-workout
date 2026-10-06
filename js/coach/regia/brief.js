@@ -102,6 +102,7 @@ function listaAttrezziNota(x, validi) { return Array.isArray(x) ? validi.filter(
 /* i tre campi dichiarati da `d` (le risposte) o, se `d` non li dice, dal profilo salvato `prof0`; coerenti con il luogo (vedi sopra) */
 function attrezziDichiarati(d, prof0) {
   d = d || {}; prof0 = prof0 || {};
+  if (typeof regolaAttiva === 'function' && !regolaAttiva('CAS-01')) return { attrezziCasa: null, manubriKg: null, extraPalestra: null };   /* CAS-01 spenta: nessuna domanda, nessun campo */
   const prendi = k => d[k] !== undefined ? d[k] : prof0[k];
   const luogo = d.luogo || prof0.luogo || 'palestra', casa = luogo === 'manubri' || luogo === 'corpo';
   let attrezziCasa = casa ? listaAttrezziNota(prendi('attrezziCasa'), ATTREZZI_CASA_IDS) : null, manubriKg = null;

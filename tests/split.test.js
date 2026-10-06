@@ -247,6 +247,9 @@ test('OBI-07: «tonificare» e il sottotitolo della ricomposizione (le chiavi de
   const r = a.json('ONB_GOALS.find(g => g.id === "ricomposizione")');
   assert.strictEqual(r.desc, 'più muscolo, meno grasso: quello che molti chiamano tonificare');
   assert.deepStrictEqual(a.json('ONB_GOALS.map(g => g.id)'), ['massa', 'dimagrimento', 'forza', 'ricomposizione', 'salute', 'glutei']);
+  /* chi sceglie la ricomposizione legge anche cosa vuol dire (e solo lui) */
+  assert.ok(/Tonificare vuol dire un po’ più di muscolo e meno grasso: per farlo servono pesi che salgono piano piano, non solo tante ripetizioni\./.test(a.g('htmlNotaTonificare(["forza", "ricomposizione"])')));
+  assert.strictEqual(a.g('htmlNotaTonificare(["massa"])'), '');
 });
 
 test('CAS-10: il testo dei minuti non dice piu che sotto la mezz ora lo stimolo e scarso (nessuna fonte); dice cosa fa il coach con pochi minuti', () => {
@@ -304,12 +307,28 @@ function conDomFinto(a) {
   a.ctx.document = { getElementById: id => (els[id] = els[id] || el()), querySelector: () => null, querySelectorAll: () => [], createElement: () => el(), head: { appendChild() {} } };
   return els;
 }
+/* le regole spegnibili (tz_regole_spente) valgono solo se il catalogo le conosce: lo rigenera l integrazione (npm run catalogo), finche non c e la prova si salta */
+const catalogoConosce = (a, codice) => !!a.json('(function () { const v = regolaDescritta("' + codice + '"); return !!(v && v.spegnibile); })()');
+test('PRG-02, OBI-01, CAS-01: con la regola spenta (tz_regole_spente) tutto torna come prima: i giorni di sempre, nessun avviso, nessuna domanda ne campo', () => {
+  const a = caricaConSoglie();
+  if (!['PRG-02', 'OBI-01', 'CAS-01'].every(c => catalogoConosce(a, c))) return;   /* prima dell integrazione il catalogo non le ha */
+  a.spegni(['PRG-02', 'OBI-01', 'CAS-01']);
+  assert.deepStrictEqual(giorni(a, ['fullbody', 'upper', 'lower', 'fullbody'], 4).indici, [0, 1, 3, 4]);
+  assert.strictEqual(a.g('htmlAvvisoObiettivi(["massa", "dimagrimento"])'), '');
+  a.g('onbData = Object.assign(nuovoOnbData(), { luogo: "manubri" })');
+  assert.strictEqual(a.g('htmlAttrezziOnboarding()'), '');
+  assert.deepStrictEqual(a.json('attrezziDichiarati({ luogo: "manubri", attrezziCasa: ["sbarra"], manubriKg: 20 }, {})'), { attrezziCasa: null, manubriKg: null, extraPalestra: null });
+  assert.ok(!/Attrezzi di casa|Altri attrezzi in palestra/.test(a.g('htmlAttrezziCoach({ luogo: "manubri" })')));
+  a.riaccendi();
+  assert.deepStrictEqual(giorni(a, ['fullbody', 'upper', 'lower', 'fullbody'], 4).indici, [0, 2, 3, 5]);
+});
 test('onboarding: i passi 0, 2, 3 e 4 mostrano l avviso massa+dimagrimento, il 4 sedute di chi comincia, il nuovo testo dei minuti e la domanda sugli attrezzi', () => {
   const a = caricaConSoglie();
   const els = conDomFinto(a);
   const passo = (n, dati) => { a.g('onbData = Object.assign(nuovoOnbData(), ' + JSON.stringify(dati) + '); onbStep = ' + n + '; renderOnb()'); return els['onb-body'].innerHTML; };
   const p0 = passo(0, { goals: ['massa', 'dimagrimento'], goal: 'massa' });
-  assert.ok(/id="onb-avviso-obiettivi"/.test(p0) && /Usa la ricomposizione/.test(p0) && /quello che molti chiamano tonificare/.test(p0), 'passo 0');
+  assert.ok(/id="onb-avviso-obiettivi"/.test(p0) && /Usa la ricomposizione/.test(p0) && /quello che molti chiamano tonificare/.test(p0) && !/onb-nota-tonificare/.test(p0), 'passo 0');
+  assert.ok(/id="onb-nota-tonificare"/.test(passo(0, { goals: ['ricomposizione'], goal: 'ricomposizione' })), 'passo 0 con la ricomposizione');
   assert.ok(!/onb-avviso-obiettivi/.test(passo(0, { goals: ['massa'], goal: 'massa' })));
   assert.ok(/id="onb-avviso-giorni"/.test(passo(2, { level: 'principiante', days: 5 })), 'passo 2: principiante con 5 giorni');
   assert.ok(!/onb-avviso-giorni/.test(passo(2, { level: 'principiante', days: 3 })) && !/onb-avviso-giorni/.test(passo(2, { level: 'avanzato', days: 6 })));

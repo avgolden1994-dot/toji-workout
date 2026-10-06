@@ -62,15 +62,15 @@ function paginaCoach(p) {
 }
 /* CAS-01 (W2-T5): gli attrezzi di chi si allena in palestra (elenco e attrezzi in piu) o a casa (cosa ha e il manubrio piu pesante). Gli stessi campi dell onboarding e del brief (regia/brief.js) */
 function htmlAttrezziCoach(p) {
-  const casa = p.luogo === 'manubri' || p.luogo === 'corpo';
-  if (!casa) {
+  const casa = p.luogo === 'manubri' || p.luogo === 'corpo', dichiarabili = typeof regolaAttiva !== 'function' || regolaAttiva('CAS-01');   /* CAS-01 spenta: solo l elenco degli attrezzi della palestra, come prima */
+  if (!casa || !dichiarabili) {
     const extra = Array.isArray(p.extraPalestra) ? p.extraPalestra : [];
     return setGroup('Attrezzi della tua palestra', '<div class="fb-chips sr-chips-pad">' + ATTREZZI_PALESTRA.map(([k, t]) =>
       chipCoach(!p.attrezziPalestra || p.attrezziPalestra.indexOf(k) !== -1, "toggleCoachLista('attrezziPalestra','" + k + "')", t)).join('') + '</div>',
-      'Il coach propone solo esercizi che puoi fare davvero.') +
+      'Il coach propone solo esercizi che puoi fare davvero.') + (!dichiarabili ? '' :
       setGroup('Altri attrezzi in palestra', '<div class="fb-chips sr-chips-pad">' + ATTREZZI_EXTRA_PALESTRA_IDS.map(k =>
         chipCoach(extra.indexOf(k) !== -1, "toggleCoachLista('extraPalestra','" + k + "')", ONB_ATTREZZI_NOMI[k])).join('') + '</div>',
-        'Tocca quelli che trovi. Se non rispondi, il coach pensa a una palestra completa.');
+        'Tocca quelli che trovi. Se non rispondi, il coach pensa a una palestra completa.'));
   }
   const dichiarati = Array.isArray(p.attrezziCasa) ? p.attrezziCasa : [];
   return setGroup('Attrezzi di casa', '<div class="fb-chips sr-chips-pad">' + ATTREZZI_CASA_IDS.filter(k => k !== 'manubri').map(k =>

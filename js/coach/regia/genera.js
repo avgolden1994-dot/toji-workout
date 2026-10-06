@@ -165,7 +165,7 @@ function giorniSettimana(brief, split) {
   }
   /* PRG-02 (W2-T5): 3-5 sedute senza un metodo famoso: i giorni (e, se serve, l ordine) che non mettono lo stesso grande muscolo in due giorni di fila */
   const corrente = split && (L.split || split);
-  if (corrente && Array.isArray(corrente.giorni) && indici.length >= 3 && indici.length <= 5 && !(brief.metodo && brief.metodo.attivo)) {
+  if (corrente && Array.isArray(corrente.giorni) && indici.length >= 3 && indici.length <= 5 && !(brief.metodo && brief.metodo.attivo) && (typeof regolaAttiva !== 'function' || regolaAttiva('PRG-02'))) {
     const tipi = corrente.giorni.slice(0, indici.length);
     const scelta = giorniSenzaConflitti(tipi, indici, L && L.prefs);
     if (scelta) {
