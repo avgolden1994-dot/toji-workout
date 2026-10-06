@@ -58,8 +58,9 @@ const VERSIONE_CRITERI = '1.4';
      registro B6 «Conteggio», M4 di INT-2a) al posto dei secondari di DETTAGLI; le fasce sono quelle della tabella B6 `VOLUME_B6` (copiata qui dal registro: il collaudo non legge `soglie-volume.js`, che e del
      generatore), con i pavimenti di serie dirette per giorni (`PAVIMENTI_DIRETTE_B6`) anche per forza e salute, la tolleranza in alto scende da +15% a +10% (S: «VOL-02 = 0 oltre la tolleranza del +10%», piano E.3 W2-T1).
    - VOL-01 non conta (L) l'unita sotto fascia che il programma dichiara con la nota della causa (REG-02: «… con 45 minuti non entra di più», «… i limiti di serie …», «… attrezzi o fastidi …»): il registro B6
-     chiede «VOL-01 ≤ 2% e sempre con nota». Non e un lasciapassare: la nota del tempo vale solo se la seduta piu lunga e davvero vicina ai minuti (>= 80%, modello del collaudo) e deve nominare l'unita; `--senza-note`
-     spegne l'esenzione e il report dice quanti programmi erano esentati.
+     chiede «VOL-01 ≤ 2% e sempre con nota». Non e un lasciapassare: serve una nota che nomini l'unita E un fatto vero nel modello del collaudo (una seduta piena: la piu lunga usa almeno l'80% dei minuti; o una seduta al
+     tetto: 7 esercizi o un gruppo a 8 serie frazionarie; o nessun esercizio consentito che copra l'unita), qualunque sia l'etichetta che il generatore ha scelto; `--senza-note` spegne l'esenzione e il report dice quanti programmi
+     erano esentati.
    - DUR-02 (L, B12 e D-P10: «il tempo e un tetto, non un obiettivo»): una seduta corta e uno spreco solo se si poteva riempirla con lavoro utile, cioe se almeno un'unita e SOTTO la fascia B6 (quella di VOL-01, con
      la stessa tolleranza) E un esercizio consentito per quel profilo (luogo, attrezzi, fastidi: `consentito`, stress < 2, attrezzatura) la copre con credito almeno 0,5 E la seduta ha ancora posto (meno del massimo di esercizi
      o un esercizio dell'unita sotto le 6 serie). Chi inizia si misura contro i suoi minuti massimi (50: D-P10, PRI-08), non contro quelli dichiarati.
@@ -777,19 +778,18 @@ function eserciziUsabili(c) {
   return r;
 }
 const unitaRiempibile = (c, u) => eserciziUsabili(c).some(x => (x.cr[u] || 0) >= 0.5);
-/* 1.4: la causa che il programma dichiara per un'unita sotto fascia, se la nota c e, nomina l'unita ed e credibile; altrimenti null */
+/* 1.4: l'unita sotto fascia e dichiarata dal programma (una nota REG-02 la nomina, con una qualunque delle tre cause) E il fatto dichiarato e vero nel modello del collaudo: o le sedute sono piene (la piu lunga usa almeno
+   l'80% dei minuti: la causa «tempo»), o una seduta e al tetto (7 esercizi o un gruppo a 8 serie frazionarie: «tetto»), o nessun esercizio consentito la copre (le «attrezzi»). Il verdetto non dipende dall'etichetta che il generatore
+   ha scelto (il suo modello dei tempi, CAS-05, e meno prudente di quello del collaudo e puo chiamare «tetto» una seduta che il collaudo vede piena); dipende dal fatto. Ritorna la causa vera, o null */
 function causaDichiarata(m, c, g) {
   const u = UNITA_B6_DEL_GRUPPO[g], et = ETICHETTE_B6[u];
   if (SENZA_NOTE || !et) return null;
   const note = ((c.prog && c.prog.note) || []).map(String);
-  for (const [rx, causa] of NOTE_CAUSA) {
-    const n = note.find(x => rx.test(x) && x.replace(rx, '').split(', ').some(v => v.indexOf(et + ' ') === 0));
-    if (!n) continue;
-    if (causa === 'tempo') return Math.max.apply(null, m.sedute.map(sd => sd.minuti).concat([0])) >= SOGLIA_TEMPO_VINCOLANTE * minutiEffettivi(c) ? causa : null;
-    if (causa === 'tetto') return m.sedute.some(sd => sd.es.length >= (c.level === 'principiante' ? ES_MAX_PRINCIPIANTE : ES_MAX_SEDUTA) - 1 || Object.keys(sd.grp).some(k => sd.grp[k] >= TETTO_MORBIDO_SEDUTA)) ? causa : null;
-    return unitaRiempibile(c, u) ? null : causa;   /* «attrezzi»: vale solo se nessun esercizio consentito la copre davvero */
-  }
-  return null;
+  const nominata = NOTE_CAUSA.some(([rx]) => note.some(x => rx.test(x) && x.replace(rx, '').split(', ').some(v => v.indexOf(et + ' ') === 0)));
+  if (!nominata) return null;
+  if (Math.max.apply(null, m.sedute.map(sd => sd.minuti).concat([0])) >= SOGLIA_TEMPO_VINCOLANTE * minutiEffettivi(c)) return 'tempo';
+  if (m.sedute.some(sd => sd.es.length >= (c.level === 'principiante' ? ES_MAX_PRINCIPIANTE : ES_MAX_SEDUTA) - 1 || Object.keys(sd.grp).some(k => sd.grp[k] >= TETTO_MORBIDO_SEDUTA))) return 'tetto';
+  return unitaRiempibile(c, u) ? null : 'attrezzi';
 }
 /* volume per gruppo del collaudo: elenco di verdetti { g, tipo: mis|diretto|sotto|sopra, v, d, min, max, classe } */
 function volumeGruppi(m, c) {
