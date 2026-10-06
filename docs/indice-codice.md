@@ -263,7 +263,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 60. `js/coach/programma/completamenti.js` — Completamenti della settimana: schemi mancanti, copertura per regioni, femorali, ordine (PRG-21, PRG-23, ABB-03, CAS-14, ORD-03, B29)
 
-`NOTA_REMATORE_INVERSO` · `NOTA_FEMORALI_SENZA_LEG_CURL` · `eCernieraFemorali()` · `completaSettimana()` · `rinforzaFemorali()` · `ordinaSedute()`
+`NOTA_REMATORE_INVERSO` · `NOTA_FEMORALI_SENZA_LEG_CURL` · `NOTA_FEMORALI_SERVE_FLESSIONE` · `eCernieraFemorali()` · `completaSettimana()` · `rinforzaFemorali()` · `ordinaSedute()`
 
 ### 61. `js/coach/volume/serie-ripetizioni.js` — Serie, ripetizioni e pause di ogni esercizio (PRG-13, PRG-14, PRG-20, IPE-04, ETA-02, B2, B34)
 
@@ -279,7 +279,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 64. `js/coach/volume/tempo.js` — Tempo della seduta: modello dei minuti, pause per classe, capacita, scala del taglio e fattore personale (CAS-05..08, CAS-18, PRG-03, PRG-13, PRG-20, PRG-33, IPE-04, IPE-12)
 
-`PARAM_NUMERO_ESERCIZI` · `PARAM_TEMPO` · `sogliaTempo()` · `tipoObiettivoDi()` · `serieEffettive()` · `round15()` · `REGIONE_ALTO` · `REGIONE_BASSO` · `_infoTempo` · `infoTempo()` · `secSerieDa()` · `pausaDi()` · `durataEsercizio()` · `durataCoppia()` · `rampaDelleSerie()` · `minutiRampa()` · `minutiRiscaldamentoGenerale()` · `_contestoTempo` · `impostaContestoTempo()` · `liberaContestoTempo()` · `opzioniTempo()` · `opzioniTempoProfilo()` · `opzioniTempoCorrenti()` · `durataSeduta()` · `_cacheFattore` · `mediana()` · `fattoreTempo()` · `classePausa()` · `limitiPausa()` · `pausaPrescritta()` · `obiettivoDellaSeduta()` · `regoleDelCoach()` · `pausePerClasse()` · `minutiEffettivi()` · `durataMassimaPrincipiante()` · `obiettivoDaSchema()` · `stimaEsercizi()` · `numeroEsercizi()` · `pavimentoOk()` · `togliEsercizio()` · `scalaDelTempo()` · `sottoFascia()` · `serieSottoFascia()` · `adattaAlTempo()` · `FRASE_TAGLIO_TEMPO` · `rifinisciAlTempo()` · `FRASE_DURATA` · `FRASE_LAVORO_UTILE` · `FRASE_FATTORE_PIU` · `FRASE_FATTORE_MENO` · `FRASE_MANTENIMENTO` · `FRASE_PRINCIPIANTE_DURATA` · `FRASE_POCO_TEMPO` · `RX_BERSAGLIO_SPINTA` · `RX_BERSAGLIO_TIRATA` · `antagonistiPerMuscolo()` · `coppiaValida()` · `riparaCoppie()` · `riallineaPause()` · `validaTempo()` · `exerciseCountFor()` · `stimaMinutiSeduta()`
+`PARAM_NUMERO_ESERCIZI` · `PARAM_TEMPO` · `sogliaTempo()` · `tipoObiettivoDi()` · `serieEffettive()` · `round15()` · `REGIONE_ALTO` · `REGIONE_BASSO` · `_infoTempo` · `infoTempo()` · `secSerieDa()` · `pausaDi()` · `durataEsercizio()` · `durataCoppia()` · `rampaDelleSerie()` · `minutiRampa()` · `minutiRiscaldamentoGenerale()` · `_contestoTempo` · `impostaContestoTempo()` · `liberaContestoTempo()` · `opzioniTempo()` · `opzioniTempoProfilo()` · `opzioniTempoCorrenti()` · `durataSeduta()` · `_cacheFattore` · `mediana()` · `fattoreTempo()` · `classePausa()` · `limitiPausa()` · `pausaPrescritta()` · `obiettivoDellaSeduta()` · `regoleDelCoach()` · `pausePerClasse()` · `minutiEffettivi()` · `durataMassimaPrincipiante()` · `obiettivoDaSchema()` · `stimaEsercizi()` · `numeroEsercizi()` · `pavimentoOk()` · `togliEsercizio()` · `scalaDelTempo()` · `sottoFascia()` · `serieSottoFascia()` · `adattaAlTempo()` · `FRASE_TAGLIO_TEMPO` · `FRASE_TAGLIO_TEMPO_SENZA_COPPIE` · `rifinisciAlTempo()` · `FRASE_DURATA` · `FRASE_LAVORO_UTILE` · `FRASE_FATTORE_PIU` · `FRASE_FATTORE_MENO` · `FRASE_MANTENIMENTO` · `FRASE_PRINCIPIANTE_DURATA` · `FRASE_POCO_TEMPO` · `RX_BERSAGLIO_SPINTA` · `RX_BERSAGLIO_TIRATA` · `antagonistiPerMuscolo()` · `coppiaValida()` · `riparaCoppie()` · `riallineaPause()` · `validaTempo()` · `exerciseCountFor()` · `stimaMinutiSeduta()`
 
 ### 65. `js/coach/volume/soglie-tempo.js` — Soglie del tempo: tempi per serie e per cambio, riscaldamento, pause per classe, capacita e durata massima (CAS-05..08, CAS-18, PRG-13, PRG-20, IPE-04, IPE-12)
 
@@ -303,11 +303,11 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 70. `js/coach/regia/brief.js` — Brief del coach: chi sei, cosa vuoi, quando, con quali limiti (OBI-02, D-P6)
 
-`OBIETTIVI_NOTI` · `obiettiviDichiarati()` · `obiettiviEffettivi()` · `faseDaObiettivi()` · `faseCorpo()` · `LIVELLI_NOTI` · `livelloConosciuto()` · `chiDa()` · `briefCoach()` · `risolviMetodo()` · `prefsDelBrief()` · `briefOggi()`
+`OBIETTIVI_NOTI` · `obiettiviDichiarati()` · `obiettiviEffettivi()` · `faseDaObiettivi()` · `faseCorpo()` · `LIVELLI_NOTI` · `livelloConosciuto()` · `conLivelloNoto()` · `chiDa()` · `briefCoach()` · `risolviMetodo()` · `prefsDelBrief()` · `briefOggi()`
 
 ### 71. `js/coach/regia/genera.js` — Generatore a stadi: buildProgram, giorni, verifica e smistamento della specialità (REG-02, REG-05, D-P6)
 
-`SPECIALITA_STRUTTURA` · `registraSpecialita()` · `specialitaStruttura()` · `GIORNI_PER_SEDUTE` · `giorniSettimana()` · `applicaMetodo()` · `regolaDelPicco()` · `noteDelProgramma()` · `applicaScelteUtente()` · `chiudiProgramma()` · `verificaProgramma()` · `window.buildProgram()`
+`SPECIALITA_STRUTTURA` · `registraSpecialita()` · `specialitaStruttura()` · `GIORNI_PER_SEDUTE` · `giorniSettimana()` · `applicaMetodo()` · `regolaDelPicco()` · `NOTA_POCO_TEMPO_SS` · `NOTA_POCO_TEMPO_SS_DROP` · `NOTA_SENZA_CEDIMENTO_SS` · `NOTA_SENZA_CEDIMENTO` · `noteDelProgramma()` · `applicaScelteUtente()` · `chiudiProgramma()` · `NOTE_REGIONALI` · `riconciliaNote()` · `verificaProgramma()` · `window.buildProgram()`
 
 ## js/ui
 
