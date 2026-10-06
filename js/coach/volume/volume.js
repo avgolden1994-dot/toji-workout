@@ -690,7 +690,7 @@ function volumeMotore(brief, sedute, b, opz) {
       const k = s + (largo ? 'L' : '');
       if (donatori[k] !== undefined) return donatori[k];
       let mig = null;
-      recs.forEach(r => { if (r.s !== s || !rimovibile(r, largo)) return; const sets = r.e.sets; muovi(r, -sets); const du = utilita() - u0; muovi(r, sets); if (!mig || du > mig.du) mig = { r: r, du: du }; });
+      recs.forEach(r => { if (r.s !== s || (largo && r.comp) || !rimovibile(r, largo)) return; const sets = r.e.sets; muovi(r, -sets); const du = utilita() - u0; muovi(r, sets); if (!mig || du > mig.du) mig = { r: r, du: du }; });   /* P3-G: il donatore largo e solo un isolamento (un isolamento al posto di un altro): un multiarticolare non lascia il posto a un curl */
       return (donatori[k] = mig ? mig.r : null);
     };
     const servonoDirette = (u) => { const i = iU[u]; return dirU.indexOf(i) !== -1 && sedute.filter((sd, s) => SD[s][i] >= 1).length < Math.min(seduteMin, nS); };
