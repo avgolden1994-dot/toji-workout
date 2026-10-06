@@ -115,8 +115,9 @@ test('M5: su una griglia di 324 programmi nessun intermedio o avanzato sano rice
      accanto a un altro (un doppione di scelta, W2-T6); nessuna seduta con lo squat di avvio e un altro squat (sopra, 0) */
   /* W2-T6 (ABB-02, SES-03): 1 e non 41. Le sedute hanno al massimo due varianti di squat o di affondo (`squatOltreMax`): con un affondo gia in seduta (il posto dell unilaterale) il secondo squat, che era il doppione
      di scelta di cui sopra (Hack + Leg Press, Hack + Pendulum, Goblet + Squat a Corpo Libero), non entra piu; la terza variante e la cerniera dell anca o la flessione del ginocchio. Era 41 sul codice di prima.
-     INT-2e: ricalcolato sul codice integrato (W2-T5 con i giorni ad anello + W2-T6): 1, lo stesso numero (i giorni di W2-T5 spostavano 1 seduta, che con ABB-02 non ha piu il secondo squat). */
-  assert.strictEqual(conDueSquat, 1, 'doppi squat nella griglia: erano 71 sul codice di prima, 45 con la capacita di W2-T2, 40 con il volume per muscolo, 41 con il Front Squat vietato, 1 con ABB-02 di W2-T6');
+     INT-2e: 0 e non 1, ricalcolato sul codice integrato con le righe <script> applicate (W2-T5 con i giorni ad anello e soglie-split.js + W2-T6 con soglie-selezione.js): l unica seduta della griglia
+     che restava con due squat (misurata da T6 senza gli script nuovi in index.html) non l ha piu quando le soglie di T6 sono caricate; il controllo che conta (lo squat di avvio mai con un altro squat) resta a 0 sopra. */
+  assert.strictEqual(conDueSquat, 0, 'doppi squat nella griglia: erano 71 sul codice di prima, 45 con la capacita di W2-T2, 40 con il volume per muscolo, 41 con il Front Squat vietato, 0 con ABB-02 di W2-T6 e i giorni di W2-T5');
 });
 
 /* ============================================================================================================ M3 */
