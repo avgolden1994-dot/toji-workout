@@ -11,8 +11,8 @@
    - il principiante: le serie del piano (w.serie.multi sui primi tre esercizi della seduta, w.serie.altri sugli altri) finché w.volume < 1, poi il picco
    - nessuna rampa se il picco è 2 o meno; mai meno di 2 serie per esercizio (SOGLIE_RAMPA)
    - prudenti (over 65, PAR-Q positivo, minorenni) e settimane senza rampa: w.volume è 1, quindi niente cambia; un programma della v1 (senza piano) non cambia
-   - lo scarico non è di questa fase (tipo 'scarico': lo guarda sicurezza/scarico.js, MES-05); il rientro dopo una pausa (RIC-05, fase 60) e INT-04 (fase 70) vengono dopo e
-     tolgono ancora, mai sotto 2 (alla prima esposizione con un esercizio INT-04 toglie una serie anche dopo la rampa: è la sua regola, resta)
+   - lo scarico non è di questa fase (tipo 'scarico': lo guarda sicurezza/scarico.js, MES-05); il rientro dopo una pausa (RIC-05, fase 60) e INT-04 (fase 70) vengono dopo; il rientro
+     toglie ancora, mai sotto 2; INT-04 non si somma alla rampa (INT-3a: se le serie sono già sotto il picco la «prima volta» non ne toglie altre)
    Cosa NON fa: il volume autoregolato (PCO-03: +1 o -1 serie per unità secondo prontezza e dolenzia) e il +1 ai muscoli prioritari dell’avanzato (w.prioritari: per ora lo fa RIC-01
    nella settimana centrale del blocco, fase 60). Il piano si esegue, non si autoregola. Il collaudo (VOL-01, VOL-02) misura la settimana piena, cioè il picco: non descrive le prime settimane.
    Motivo: ogni esercizio con meno serie del picco dice perché (aggiungiPerche con codice MES-03, sotto-coach dosatore). Spegnibile (regolaAttiva('MES-03')), dietro coachAttivo().

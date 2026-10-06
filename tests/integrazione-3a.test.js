@@ -137,3 +137,45 @@ test('(c) Oggi senza consenso: la seduta e il piano com e (nessuna chiamata alla
   const picco = a.json('DAYS').reduce((t, d) => t + (a.json('(loadData()[' + JSON.stringify(d) + '] || [])').filter(e => a.json('categoriaDi(' + JSON.stringify(e.name) + ')')).reduce((s, e) => s + (e.setsBase || e.sets), 0)), 0);
   assert.strictEqual(Object.keys(ob).reduce((t, k) => t + ob[k].previste, 0), picco, 'senza consenso: il picco');
 });
+
+/* ============================================================================================================
+   (d) INT-04 e la rampa alla prima esposizione: non si sommano (prima: un esercizio da 4 serie nuovo alla settimana 1 faceva 2 serie: 3 per la rampa, 2 per la prima volta)
+   ============================================================================================================ */
+const nuovoEsercizio = (a, picco) => a.json('caricoProssimo(' + JSON.stringify(PANCA) + ', 40, 8, ' + picco + ')');   /* senza storico: tipo «nuovo» */
+
+test('(d) prima esposizione alla settimana 1 (rampa 0,75): da 4 serie a 3, non a 2; il RIR in piu della prima volta resta', () => {
+  const { a } = H.telefono({ d: { level: 'intermedio' } });
+  assert.strictEqual(a.json('settimanaProgramma().numero'), 1);
+  const r = nuovoEsercizio(a, 4);
+  assert.strictEqual(r.tipo, 'nuovo');
+  assert.strictEqual(r.sets, 3, 'rampa: round(4 x 0,75) = 3; la prima volta non toglie una seconda serie: ' + r.motivo);
+  assert.doesNotMatch(r.motivo, /prima volta: una serie in meno/);
+  assert.strictEqual(a.json('rirExtraIntensita(' + JSON.stringify(PANCA) + ')'), 1, 'il RIR in piu della prima volta resta');
+});
+
+test('(d) senza rampa (settimana 3, fattore 0,95 su 4 serie = 4) la prima volta toglie una serie come prima; con MES-03 spenta anche alla settimana 1', () => {
+  const { a } = H.telefono({ d: { level: 'intermedio' }, sett: 3 });
+  const r = nuovoEsercizio(a, 4);
+  assert.strictEqual(r.sets, 3);
+  assert.match(r.motivo, /prima volta: una serie in meno/);
+  const b = H.telefono({ d: { level: 'intermedio' } }).a;
+  b.spegni(['MES-03']);
+  const r1 = nuovoEsercizio(b, 4);
+  assert.strictEqual(r1.sets, 3, 'rampa spenta: le 4 serie del picco, una in meno alla prima volta');
+  assert.match(r1.motivo, /prima volta: una serie in meno/);
+});
+
+test('(d) mai sotto 2 serie: la prima volta di un esercizio da 3 serie alla settimana 1 (rampa 3 -> 2) resta a 2; da 2 serie niente', () => {
+  const { a } = H.telefono({ d: { level: 'intermedio' } });
+  assert.strictEqual(nuovoEsercizio(a, 3).sets, 2);
+  assert.strictEqual(nuovoEsercizio(a, 2).sets, 2);
+  const p = H.telefono({ d: { level: 'principiante', days: 3 } }).a;
+  assert.strictEqual(nuovoEsercizio(p, 4).sets, 2, 'principiante settimana 1: 2 serie (piano 2/2), non una in meno');
+});
+
+test('(d) programma della v1 (senza piano, senza rampa): la prima volta toglie una serie come sempre', () => {
+  const { a } = H.telefono({ d: { level: 'intermedio' }, v1: true });
+  const r = nuovoEsercizio(a, 4);
+  assert.strictEqual(r.sets, 3);
+  assert.match(r.motivo, /prima volta: una serie in meno/);
+});
