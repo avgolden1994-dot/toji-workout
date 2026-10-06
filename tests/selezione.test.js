@@ -227,8 +227,10 @@ test('ORD-03: nessun multiarticolare di spalle o braccia prima di quelli delle g
 /* ============================================================================================================ RID-02 */
 test('RID-02: lo stesso esercizio al massimo in due sedute a settimana dove la libreria ha una variante (palestra e casa con i manubri)', () => {
   /* sul codice di prima: lo stesso esercizio in 3 o piu sedute in 460 programmi su 1774 della matrice rapida (14,6% pesato: il posto sceglieva sempre il primo della classifica, la varieta pesava 1 o 4 punti) */
-  const lista = griglia('rid02', ['principiante', 'intermedio', 'avanzato'], ['adulto'], ['palestra', 'manubri'], [5, 6], [['massa'], ['salute'], ['glutei']]);
+  /* sul codice di prima la griglia di 80 programmi ha 9 esercizi in 3 sedute (Rematore con Petto Appoggiato, Pull-Through ai Cavi, Leg Curl...), ora 0. La griglia ha anche la schiena dolente (senza stacchi la settimana ha pochi
+     esercizi tra cui scegliere: il pull-through ai cavi finiva in 3 sedute) e i giorni da 3 a 6 */
+  const lista = griglia('rid02', ['principiante', 'intermedio', 'avanzato'], ['adulto'], ['palestra', 'manubri'], [3, 4, 5, 6], [['massa'], ['salute']]).concat(griglia('rid02b', ['principiante', 'intermedio'], ['adulto'], ['palestra', 'manubri'], [3, 4, 5, 6], [['massa'], ['salute']], { fastidi: ['schiena'] }));
   const tre = [];
   lista.forEach(x => { const c = {}; x.prog.sedute.forEach(sd => new Set(nomi(sd)).forEach(n => { c[n] = (c[n] || 0) + 1; })); Object.keys(c).forEach(n => { if (c[n] >= 3) tre.push(x.p.seme + ' ' + n); }); });
-  assert.ok(tre.length <= 6, 'esercizi in 3 o piu sedute: ' + tre.length + ' su ' + lista.length + ' programmi: ' + tre.join(' | '));
+  assert.ok(tre.length <= 2, 'esercizi in 3 o piu sedute: ' + tre.length + ' su ' + lista.length + ' programmi: ' + tre.join(' | '));
 });
