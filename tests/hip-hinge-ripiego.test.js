@@ -46,7 +46,7 @@ function griglia() {
     '["palestra", "manubri", "corpo"].forEach(luogo => ["principiante", "intermedio", "avanzato"].forEach(level => [3, 4, 5, 6].forEach(days => [[], ["schiena"], ["ginocchia"]].forEach(fastidi => [["massa"], ["glutei"]].forEach(goals => {' +
     'const d = Object.assign({}, ' + JSON.stringify(BASE) + ', { luogo: luogo, level: level, days: days, fastidi: fastidi, goals: goals, goal: goals[0], minutes: 60, seme: "hh" + luogo + level + days + fastidi.join("") + goals[0] });' +
     'const prog = buildProgram(d);' +
-    'o.push({ id: [luogo, level, days, fastidi.join("+") || "-", goals[0]].join("|"), luogo: luogo, fastidi: fastidi, sedute: prog.sedute.map(sd => ({ tipo: sd.tipo, es: sd.esercizi.map(e => ({ n: senzaEmoji(e.name), sets: e.sets, reps: e.reps, compound: (findExercise(e.name) || {}).type === "compound" })) })) }); }))))); return o; })()');
+    'o.push({ id: [luogo, level, days, fastidi.join("+") || "-", goals[0]].join("|"), luogo: luogo, fastidi: fastidi, sedute: prog.sedute.map(sd => ({ tipo: sd.tipo, titolo: sd.titolo, es: sd.esercizi.map(e => ({ n: senzaEmoji(e.name), sets: e.sets, reps: e.reps, compound: (findExercise(e.name) || {}).type === "compound" })) })) }); }))))); return o; })()');
   return out;
 }
 const G = griglia();
@@ -59,7 +59,7 @@ test('Hip Hinge a corpo libero: nei programmi compare solo dove nessuna cerniera
   assert.ok(con.some(x => x.luogo === 'corpo'), 'a corpo libero entra ancora: e l unica cerniera dell anca (SES-03)');
 });
 
-test('Hip Hinge a corpo libero: 2 serie da 12-15, in al massimo 2 sedute a settimana, mai prima di un altro multiarticolare', () => {
+test('Hip Hinge a corpo libero: 2 serie da 12 (6 o meno con la forza), in al massimo 2 sedute a settimana, mai prima di un altro multiarticolare', () => {
   const dove = { serie: [], sedute: [], primo: [] };
   G.forEach(x => {
     const n = x.sedute.filter(sd => sd.es.some(e => e.n === HH)).length;
@@ -68,7 +68,8 @@ test('Hip Hinge a corpo libero: 2 serie da 12-15, in al massimo 2 sedute a setti
       const i = sd.es.findIndex(e => e.n === HH);
       if (i === -1) return;
       const e = sd.es[i];
-      if (e.sets > 2 || e.reps < 12 || e.reps > 15) dove.serie.push(x.id + ' ' + e.sets + 'x' + e.reps);
+      const giornoForza = /forza/i.test(sd.tipo + ' ' + (sd.titolo || ''));   /* il giorno «forza» del PHUL ha le ripetizioni dei multiarticolari di quel giorno (8 per l intermedio che punta alla massa) */
+      if (e.sets > 2 || (giornoForza ? e.reps > 8 : (e.reps < 12 || e.reps > 15))) dove.serie.push(x.id + ' ' + e.sets + 'x' + e.reps);
       if (i === 0 && sd.es.some(y => y.compound && y.n !== HH)) dove.primo.push(x.id + ' ' + sd.tipo);
     });
   });
@@ -109,4 +110,23 @@ test('ponte dei femorali: una seduta di gambe con il solo pull-through (femorali
   assert.strictEqual(out.length, 216);
   const senza = out.filter(x => !x).length;
   assert.ok(senza <= 20, 'sedute di gambe senza un esercizio per i femorali: ' + senza + ' su 216 (41 prima della correzione)');
+});
+
+test('tetto di esercizi (EXN-02) e cuffia: un principiante con la spalla dolente non ha sedute oltre 6 esercizi e conserva il lavoro per la cuffia (obiettivo glutei, 2 giorni, palestra)', () => {
+  /* il ponte dei femorali aggiunge il leg curl e il tetto non toglie piu il lavoro per la cuffia: la seduta con lo stacco rumeno coi manubri, l hip thrust e il Face Pull arrivava a 7 esercizi e nessuno lasciava il posto
+     (EXN-02, 1 programma su 10.800 della matrice standard). La spinta d anca che ha accanto una cerniera vera lascia il posto (e il doppione della cerniera: una sola per seduta, RID-01) */
+  const d = { sex: 'F', age: 45, seme: 'collaudo|glutei|principiante|2|60|palestra|spalle|F|adulto|2', fastidi: ['spalle'], sonno: 'medio', attrezzi: 'macchine', usaProfilo: false, level: 'principiante', days: 2, goals: ['glutei'], luogo: 'palestra', minutes: 60, freq: 'auto', parq: 'no', priorita: ['schiena'] };
+  const prog = a.json('buildProgram(' + JSON.stringify(d) + ')');
+  assert.deepStrictEqual(prog.sedute.filter(sd => sd.esercizi.length > 6).map(sd => sd.giorno + ' ' + sd.esercizi.length), [], 'sedute oltre 6 esercizi per chi comincia');
+  assert.ok(prog.sedute.some(sd => sd.esercizi.some(e => e.cuffia)), 'il lavoro per la cuffia c e: ' + prog.sedute.map(sd => sd.esercizi.map(e => se(e.name)).join(', ')).join(' / '));
+});
+
+test('Hip Hinge a corpo libero con la forza come obiettivo: le ripetizioni sono quelle dei multiarticolari della forza (6 o meno, collaudo GOA-01), non 12', () => {
+  /* a casa con i manubri e la schiena dolente nessuna cerniera con carico e consentita: il ripiego entra, e con la forza le ripetizioni dei multiarticolari non vanno oltre 6 (4 programmi su 10.800 della matrice standard con 12) */
+  const out = [];
+  [{ luogo: 'manubri', fastidi: ['schiena'] }, { luogo: 'manubri', fastidi: ['ginocchia', 'schiena'] }, { luogo: 'corpo', fastidi: [] }].forEach((x, k) => ['forza', 'forza+massa'].forEach(g => {
+    const d = Object.assign({}, BASE, { goals: g.split('+'), goal: 'forza', level: 'intermedio', days: 3, minutes: 30, sex: 'M', age: 40, seme: 'goa' + k + g }, x);
+    a.json('buildProgram(' + JSON.stringify(d) + ')').sedute.forEach(sd => sd.esercizi.forEach(e => { if (se(e.name) === HH && (e.reps > 6 || e.sets > 2) && /forza/.test(sd.titolo + sd.tipo)) out.push(x.luogo + ' ' + g + ' ' + sd.titolo + ': ' + e.sets + 'x' + e.reps); }));
+  }));
+  assert.deepStrictEqual(out, []);
 });

@@ -559,7 +559,10 @@ function adattaAlTempo(brief, sedute) {
       const protette = sd.esercizi.filter(e => !e.fisso && e.protetto && !e.cuffia && (findExercise(e.name) || {}).type !== 'compound' && (findExercise(e.name) || {}).group !== 'core');   /* INT-2f: non il lavoro per la cuffia (PCO-08, SAF-06): e una salvaguardia, lascia il posto prima una copertura di qualita (il leg curl del ponte) */
       /* il core si toglie solo se un altra seduta della settimana ne ha uno: la copertura (ABB-03) resta */
       const core = sd.esercizi.filter(e => !e.fisso && (findExercise(e.name) || {}).group === 'core' && sedute.some(o => o !== sd && o.esercizi.some(x => (findExercise(x.name) || {}).group === 'core')));
-      const via = iso[iso.length - 1] || doppi[doppi.length - 1] || protette[protette.length - 1] || core[core.length - 1];
+      /* INT-2f: la spinta d anca (hip thrust, ponte glutei) che ha accanto una cerniera vera della stessa seduta e il doppione della cerniera (una sola per seduta, RID-01): lascia il posto prima del lavoro per la cuffia */
+      const ex = (e) => findExercise(e.name) || e;
+      const doppioCerniera = sd.esercizi.filter(e => !e.fisso && !e.cuffia && SLOT_DEF.glutSpinta(ex(e)) && sd.esercizi.some(y => y !== e && SLOT_DEF.hinge(ex(y)) && !RIPIEGO_HINGE.test(senzaEmoji(y.name))));
+      const via = iso[iso.length - 1] || doppi[doppi.length - 1] || protette[protette.length - 1] || doppioCerniera[doppioCerniera.length - 1] || core[core.length - 1];
       if (!via) break;
       sd.esercizi.splice(sd.esercizi.indexOf(via), 1);
     }
