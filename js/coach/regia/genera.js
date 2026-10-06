@@ -8,7 +8,7 @@
      1  briefCoach(d, prof0)                regia/brief.js                  chi, obiettivi (D-P6), agenda, preferenze, corpo, mente
      2  vincoliSicurezza(brief)             sicurezza/vincoli.js            i limiti (Sentinella): vietati, serie massime, tecniche ammesse
         risolviMetodo(brief)                regia/brief.js                  il metodo famoso e il tocco (dopo i vincoli: il tocco puo portare al cedimento)
-     3  specialitaStruttura(brief)          qui (smista)                    forza / estetica: oggi nessuna (registraSpecialita)
+     3  specialitaStruttura(brief)          qui (smista)                    forza (specialita/forza.js, W2-T7: { split, sedute }) / estetica: oggi nessuna (registraSpecialita)
      4  pianoMesociclo(brief)               programma/mesociclo.js          settimane, blocchi, scarichi, RIR per settimana
      5  scegliSplit + giorniSettimana       ui/onboarding.js, qui           la divisione e i giorni della settimana
         numeroEsercizi(brief)               volume/tempo.js                 quanti esercizi per seduta
@@ -349,6 +349,7 @@ function generaProgramma(d) {
   split = L.split;                                                      /* 5: con 6 giorni puo aver riordinato o ridotto le sedute (giorni di fila) */
   const sedute = componiSedute(brief, split);                           /* 6 */
   prescriviSerie(brief, sedute);                                        /* 8 */
+  if (spec && typeof spec.sedute === 'function') spec.sedute(brief, sedute);   /* 3: la modalita (forza, W2-T7) scrive le sue alzate dopo la prescrizione, prima dei completamenti */
   completaSettimana(brief, sedute);                                     /* 7 */
   assegnaVolume(brief, sedute);                                         /* 9: volume per muscolo e tetto per seduta */
   /* ABB-04 e ABB-08: tirate non meno delle spinte, il fondamentale non ha meno serie degli altri */
