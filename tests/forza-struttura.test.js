@@ -265,6 +265,7 @@ test('sicurezza: minorenni (13-17), over 65 e PAR-Q positivo non hanno la modali
   [13, 16, 17].forEach(age => cede({ age, days: 4, seme: 'min' + age }, NOTA('FORZA_NOTA_PRUDENTE')));
   [65, 70, 82].forEach(age => cede({ age, days: 4, seme: 'old' + age }, NOTA('FORZA_NOTA_PRUDENTE')));
   cede({ parq: 'si', days: 4, seme: 'parq' }, NOTA('FORZA_NOTA_PRUDENTE'));
+  cede({ age: undefined, days: 4, seme: 'senzaeta' }, NOTA('FORZA_NOTA_PRUDENTE'));   /* un'eta non detta non e un adulto: nessun carico da powerlifting */
   cede({ parq: true, days: 3, seme: 'parq2' }, NOTA('FORZA_NOTA_PRUDENTE'));
   /* i limiti di sempre valgono: minorenni e over 65 mai più di 3 serie, 8-15 e 8-12 ripetizioni, nessuna tecnica al cedimento */
   const minore = prog({ age: 16, days: 4, seme: 'min16' }), vecchio = prog({ age: 70, days: 4, seme: 'old70' });

@@ -89,7 +89,7 @@ const SPEC_FORZA = {
   attiva: function (brief) {
     const L = brief.lavoro, prefs = L.prefs, chi = brief.chi;
     if (brief.obiettivi.modalita !== 'forza' || brief.obiettivi.primo !== 'forza') return { ok: false, nota: null };
-    if (chi.cauto) return { ok: false, nota: FORZA_NOTA_PRUDENTE };
+    if (chi.cauto || !(chi.eta >= PARAM_ETA.maggiorenne)) return { ok: false, nota: FORZA_NOTA_PRUDENTE };   /* un'eta non detta (0) non e un adulto: carichi da powerlifting solo a chi dice di avere 18 anni o piu */
     const giorni = Number(brief.agenda.giorni) || 0, g = sogliaForza('giorni');
     if (giorni < g.min) return { ok: false, nota: FORZA_NOTA_GIORNI };
     if (brief.agenda.freqScelta === '1') return { ok: false, nota: FORZA_NOTA_FREQUENZA };   /* ogni muscolo una volta sola: il contrario del powerlifting, la scelta dell'utente vince */
@@ -150,7 +150,7 @@ const SPEC_FORZA = {
     'panca-petto':     ['Rematore con Petto Appoggiato', 'Lat Machine'],
     'panca-meta':      ['Pushdown Tricipiti ai Cavi', 'Estensione Tricipiti sopra la Testa ai Cavi'],
     'panca-chiusura':  ['Pushdown Tricipiti ai Cavi', 'Estensione Tricipiti sopra la Testa ai Cavi'],
-    'stacco-terra':    ['Rematore con Bilanciere', 'Lat Machine'],
+    'stacco-terra':    ['Rematore con Petto Appoggiato', 'Lat Machine'],   /* niente rematore col bilanciere nel giorno dello stacco pesante: ABB-07, REC-02 (lombari) */
     'stacco-chiusura': ['Hip Thrust', 'Affondi Bulgari']
   },
   /* SES-03: cosa prende una seduta lower che con le sue alzate non ha uno squat o una cerniera (una macchina o una spinta d'anca: mai un secondo squat o stacco pesante) */

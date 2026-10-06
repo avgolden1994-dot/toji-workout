@@ -225,7 +225,9 @@ test('specialitaStruttura: oggi nessuna (null); un task dopo registra la sua mod
     const b2 = app().g('(() => { const b = briefCoach(' + stringa(BASE) + ', {}); b.obiettivi.modalita = "prova"; return b; })()');
     assert.strictEqual(app().dati(app().chiama('specialitaStruttura', b2)).split.nome, 'Prova');
   } finally { app().g("delete SPECIALITA_STRUTTURA.prova"); }
-  assert.strictEqual(app().g('Object.keys(SPECIALITA_STRUTTURA).length'), 0);
+  /* W2-T7: la modalita Forza (specialita/forza.js) si registra al caricamento, quindi dopo l'integrazione il registro non e piu vuoto ma ha solo lei (l'estetica e di W5-T4);
+     la prova «oggi nessuna» fotografava l'algoritmo di prima. Con la modalita «generale» del brief la risposta resta null */
+  assert.deepStrictEqual(app().json('Object.keys(SPECIALITA_STRUTTURA)'), app().g('typeof SPEC_FORZA') === 'undefined' ? [] : ['forza']);
 });
 
 test('giorniSettimana e scegliSplit: i giorni di sempre (2 = lunedi e giovedi, 6 = lunedi-mercoledi e venerdi-domenica) e la divisione dal livello e dalla frequenza', () => {
