@@ -102,7 +102,6 @@
    "SES-03:fullbody/basso": 0.2,
    "SES-03:legs/hinge": 3.72,
    "SES-03:lower/hinge": 8.92,
-   "SES-03:upper/spinta": 0.01,
    "VOL-01:bicipiti": 0.49,
    "VOL-01:deltoidi_laterali": 2.37,
    "VOL-01:deltoidi_posteriori": 1.08,
@@ -325,7 +324,6 @@
      "RX-02",
      "RX-03",
      "RX-04",
-     "GOA-01",
      "TEC-01",
      "DEL-01",
      "RIR-01",
@@ -354,6 +352,11 @@
       "motivo": "tautologico (revisione INT-2d, M4d): il generatore e il collaudo leggono gli stessi crediti degli attributi da due percorsi, quindi «coincidono» non dice niente sulla qualita del volume (lo dicono VOL-01 e VOL-02); resta una verifica di coerenza richiesta «ok» dal modello, ma non e piu un criterio dichiarato verde",
       "data": "2026-10-06",
       "responsabile": "INT-2d"
+     },
+     "GOA-01": {
+      "motivo": "INT-2g (2026-10-06): «Hip Hinge a Corpo Libero» ora e sempre 2 serie da 12 ripetizioni (con la forza era 2x6 r120 e contava 2 serie «pesanti» di un esercizio senza carico: un errore di misura che nascondeva una serie mancante). Sulla standard GOA-01 passa da 0 a 4 programmi (0,01%), tutti con la forza per prima, livello intermedio, a casa con i manubri e la schiena dolente (nessuna cerniera con carico consentita): 8 serie a settimana sui multiarticolari con 6 ripetizioni o meno contro le 9 richieste. Il criterio esce dai dichiarati e resta un obiettivo aperto con responsabile e scadenza (`onde.onda-3.aperti`); non e una regressione oltre la tolleranza (+0,01 punti).",
+      "data": "2026-10-06",
+      "responsabile": "INT-2g"
      }
     }
    },
@@ -383,7 +386,7 @@
     "ORD-03": "W2-T6",
     "SAF-05": "W2-T6",
     "SAF-06": "W2-T6 (PCO-08)",
-    "GOA-01": "W2-T7",
+    "GOA-01": "P3-C (forza: giorno pesante e leggero; il ripiego della cerniera senza carico non e lavoro pesante)",
     "MOD-12": "W2-T5 e W2-T6",
     "MOD-04": "W2-T6"
    },
@@ -727,6 +730,21 @@
      "responsabile": "W2-T2 seguito (rinviato oltre la v2)",
      "scade": "oltre-v2",
      "motivo": "revisione indipendente dell'onda 2e (2026-10-06): a 2 giorni e 30 minuti il programma ha tre note quasi uguali sul «mantenimento» (poco tempo, volume sotto fascia, mantenimento): leggibili ma ripetitive. Rinviato oltre la v2 il 2026-10-06 (INT-2f): non e un errore, e rumore di lettura; si vede in ogni corsa del cancello e non lo ferma."
+    },
+    "GOA-01": {
+     "responsabile": "P3-C (forza: giorno pesante e leggero; il ripiego della cerniera senza carico non e lavoro pesante)",
+     "scade": "onda-4",
+     "motivo": "INT-2g (2026-10-06): 4 programmi su 10.800 (0,01%) con la forza per prima, livello intermedio, casa con i manubri e la schiena dolente hanno 8 serie a 6 ripetizioni o meno contro le 9 del criterio (ad esempio forza|intermedio|6|60|manubri|schiena|F|giovane: panca inclinata 3x6, rematore 2x6, goblet squat 3x6): fino a 2f «Hip Hinge a Corpo Libero» faceva 2x6 con la forza e contava 2 serie pesanti per un esercizio senza carico (la revisione indipendente dell'onda 2f lo ha chiesto sempre da 12). Il piano snello delle onde 3-5 (bozza, da confermare) mette la forza in P3-C: una serie di lavoro pesante in piu (o un altro multiarticolare con carico) in quelle sedute, o una soglia diversa per chi non puo caricare la schiena."
+    },
+    "Il ponte dei femorali a 2 giorni e 30 minuti prende il posto del secondo squat": {
+     "responsabile": "P3-G (muscoli piccoli distribuiti: le serie dirette su due sedute e il tetto di serie per isolamento)",
+     "scade": "onda-3",
+     "motivo": "revisione indipendente dell'onda 2f (2026-10-06), non corretto in INT-2g: e il compromesso M6/EQ-03 (il ponte dei femorali). A 2 giorni e 30 minuti il leg curl o il Nordic Curl del ponte prendono il posto del secondo squat: FRQ-01:quadricipiti (severita 4) passa da 2 programmi a 69 su 10.800 (0,02% → 0,19%; 66 a 2f, 30 a 2e), FRQ-01:glutei da 49 (2e) a 186 e poi 182 (2d 260). Esempio: massa|intermedio|2|30|manubri|schiena|F|giovane, lunedi solo tre esercizi (Goblet Squat, Panca, Rematore), giovedi nessuno squat ma Nordic Curl 2x6. Non si corregge ora: togliere il ponte rimette FRQ-01:femorali a 5,21% (ora 1,55%), tenerlo toglie lo squat; serve distribuire i muscoli piccoli e il tempo su due sedute (stesso pacchetto di M6 e dei pavimenti a 45 minuti)."
+    },
+    "Avanzato con la schiena dolente: Pull-Through tre volte a settimana e Leg Curl 6×10 due volte": {
+     "responsabile": "dati degli attributi e selezione (W2-T6 seguito; nessun pacchetto del piano snello lo possiede: da assegnare a INT-3a)",
+     "scade": "onda-3",
+     "motivo": "revisione indipendente dell'onda 2f (2026-10-06), sospetto da preparatore non misurato e non corretto in INT-2g: powerlifting avanzato con la schiena dolente, 5 giorni, 60 minuti, palestra (profilo con seme «rev|21» del revisore; la modalita Forza non si attiva con la schiena dolente e resta la forza generale): il Pull-Through ai Cavi compare in tre sedute (mercoledi, venerdi, domenica) e il Leg Curl Seduto 6x10 in due (venerdi, domenica). Si chiude con una misura (quanti programmi avanzati con la schiena dolente hanno lo stesso esercizio in tre sedute o la stessa flessione 6x10 due volte) e la scelta di un secondo esercizio per lo schema."
     }
    }
   },

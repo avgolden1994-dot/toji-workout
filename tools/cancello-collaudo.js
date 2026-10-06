@@ -700,9 +700,9 @@ function autotest() {
     const contro = daCollaudo(istantaneaBuona(cfg, 'onda-2a'));
     const esito = (modifica) => { const c = JSON.parse(JSON.stringify(cfg)); modifica(c.onde['onda-2b'].dichiara); return valuta(c, daCollaudo(istantaneaBuona(c, 'onda-2b')), 'onda-2b', { contro }); };
     eq(esito(() => {}).falliti, 0, 'la lista delle soglie in vigore passa (MOD-07 rimosso con il suo motivo)');
-    const tolto = esito(d => { delete d.rimossi; d.criteri = d.criteri.filter(x => x !== 'MOD-07'); });
+    const tolto = esito(d => { delete d.rimossi; d.criteri = d.criteri.filter(x => x !== 'MOD-07' && x !== 'GOA-01'); });
     eq(tolto.righe.some(r => r.esito === 'fallito' && /dichiara: MOD-07 era dichiarato prima della misura/.test(r.testo)), true, 'MOD-07 tolto dalla lista senza rimossi: fallisce');
-    eq(esito(d => { d.criteri = d.criteri.filter(x => x !== 'MOD-07'); d.rimossi = { 'MOD-07': { motivo: 'tautologico', data: '2026-10-06', responsabile: 'INT-2d' } }; }).falliti, 0, 'con motivo, data e responsabile passa');
+    eq(esito(d => { d.criteri = d.criteri.filter(x => x !== 'MOD-07'); d.rimossi = Object.assign({}, d.rimossi, { 'MOD-07': { motivo: 'tautologico', data: '2026-10-06', responsabile: 'INT-2d' } }); }).falliti, 0, 'con motivo, data e responsabile passa');
     eq(esito(d => { d.criteri = d.criteri.concat(['MOD-07']); }).falliti >= 1, true, 'un rimosso ancora dichiarato e incoerente');
     eq(esito(d => { delete d.criteriIniziali; }).righe.some(r => r.esito === 'fallito' && /criteriIniziali manca/.test(r.testo)), true, 'senza criteriIniziali fallisce');
     eq(esito(d => { d.criteri = d.criteri.concat(['VOL-01']); }).falliti, 0, 'aggiungere un criterio alla lista e piu severo: non serve niente (ma VOL-01 e rosso: qui l istantanea e buona)');
