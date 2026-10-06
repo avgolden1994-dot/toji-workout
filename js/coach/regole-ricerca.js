@@ -235,6 +235,95 @@ function obiettivoForza() {
   return ((pr && pr.goals && pr.goals[0]) || (p.goals && p.goals[0]) || p.goal) === 'forza';
 }
 
+/* ============================================================
+   BILANCIA ESSENZIALE (coach v2, P3-A: una parte di W3-T1; docs/piano-coach-v2.md W3-T1, registro B3, D-P5; numeri in carichi/soglie-progressione.js)
+   - ALG-06 per TUTTI i programmi (correzione di calcolo della seduta, D-P5 a): ogni carico di caricoProssimoBase sta sulla griglia dell attrezzo (carichi/attrezzi.js):
+     caricoInGriglia (il piu vicino), caricoSalito (un aumento: almeno un passo vero), caricoSceso (una riduzione: almeno un passo, se c e). Con ALG-06 spenta, o senza
+     attrezzi.js (prove che caricano pochi script), l arrotondamento di prima a 0,5 kg. Un aumento che la griglia rende piu grande del previsto (il mezzo incremento dei
+     prudenti: +1,25 kg non si caricano sul bilanciere) passa prima dalle ripetizioni, come i micro-incrementi. Il tetto dei manubri dichiarato (CAS-01b) e la griglia
+     dei carichi delle fasi dopo sono la fase 95 (attrezzi.js).
+   - Solo per i programmi v2 (prog.versione >= 2): quelli salvati prima continuano con le regole di prima (REG-04, D-P5), tranne la griglia.
+     ALG-02 il carico di lavoro e il piu frequente tra le serie fatte (a parita il piu alto; con il back-off la serie piu pesante), non il massimo; la seduta e «ok» solo
+       se nessuna serie e sotto quel carico (U10: chi abbassava il peso a meta seduta vedeva salire il carico).
+     AUT-01 un punto di RPE vale caricoPer sul massimale (2,4-2,9% di carico, registro B3), al massimo puntiRpeMax punti per volta, mai meno del passo normale, solo
+       con 0-4 ripetizioni in riserva e fino a 12 ripetizioni; chi comincia e i minorenni lo usano solo per frenare (la calibrazione dei principianti e CAR-18), i
+       prudenti a meta; nelle prime sedute degli altri resta CAR-16.
+     ALG-05 fase 'carico' 20 (ricalcoloDalMassimale): le ripetizioni efficaci (bersaglio + ripetizioni in riserva) cambiano di 2 o piu rispetto alla seduta prima ->
+       carico = caricoPer sul massimale recente stimato, per difetto, con i tetti +10% / -30%.
+   ============================================================ */
+/* il programma salvato e v2 (REG-04) e i file della bilancia ci sono */
+function progressioneV2() {
+  const p = getProgramma();
+  return !!(p && Number(p.versione) >= 2) && typeof sogliaProgressione === 'function';
+}
+/* ALG-06: la griglia dell attrezzo vale (carichi/attrezzi.js caricato e regola accesa) */
+function grigliaAttiva() { return typeof arrotondaAttrezzo === 'function' && regolaAttiva('ALG-06'); }
+/* ALG-06: il peso della griglia per kg (ctx: modo), o null se la griglia non lo rappresenta: sotto il minimo dell attrezzo (un bilanciere da 13 kg dei dati
+   vecchi: la barra pesa 20) il primo peso della griglia e piu di un passo sopra, e un carico non si alza di nascosto fino alla barra (la fase 95 lo dice) */
+function pesoGriglia(kg, nome, ctx) {
+  const w = arrotondaAttrezzo(kg, nome, ctx);
+  return w > kg + passoAttrezzo(nome, { kg: kg }) + 1e-9 ? null : w;
+}
+/* ALG-06: il carico piu vicino sulla griglia dell attrezzo (prima: 0,5 kg per tutti) */
+function caricoInGriglia(kg, nome) {
+  const w = grigliaAttiva() ? pesoGriglia(kg, nome) : null;
+  return w === null ? arrotonda(kg) : w;
+}
+/* ALG-06: un aumento di `inc` da `da`: il peso della griglia piu vicino, almeno il primo sopra `da` */
+function caricoSalito(da, inc, nome) {
+  if (!grigliaAttiva()) return arrotonda(da + inc);
+  const w = pesoGriglia(da + inc, nome);
+  if (w === null) return arrotonda(da + inc);
+  if (w > da + 1e-9) return w;
+  const s = pesoGriglia(da + 1e-6, nome, { modo: 'su' });
+  return s === null ? arrotonda(da + inc) : s;
+}
+/* ALG-06: una riduzione di `da` del fattore `f`: il peso della griglia piu vicino, almeno il primo sotto `da` se c e (mai sotto la barra o 1 kg), mai sopra `da` */
+function caricoSceso(da, f, nome) {
+  if (!grigliaAttiva()) return arrotonda(da * f);
+  const w = pesoGriglia(da * f, nome);
+  if (w === null || w > da + 1e-9) return arrotonda(da * f);
+  if (w < da - 1e-9) return w;
+  const g = arrotondaAttrezzo(da - 1e-6, nome, { modo: 'giu' });
+  return g < da - 1e-9 ? g : w;
+}
+/* ALG-06: nello scarico la dose non sempre si carica (12 kg di manubri x 0,9): se il peso vero si allontana piu di scostamentoNota, il motivo lo dice */
+function notaPesoVicino(w, voluto) {
+  if (!grigliaAttiva() || !(voluto > 0) || Math.abs(w - voluto) / voluto <= sogliaProgressione('scostamentoNota') + 1e-9) return '';
+  return ' • ' + fraseGrigliaPiuVicino(w);
+}
+/* ALG-02: il carico di lavoro di una seduta (un esercizio dello storico): il piu frequente tra le serie fatte con un carico (a parita il piu alto); con il
+   back-off (obiettivo.tecnica, CAR-13) la serie piu pesante, come prima. 0 senza serie fatte con un carico */
+function caricoDiLavoro(ex) {
+  const pesi = ((ex && ex.sets) || []).filter(s => s.done && Number(s.weight) > 0).map(s => Number(s.weight));
+  if (!pesi.length) return 0;
+  const max = Math.max.apply(null, pesi);
+  if (ex.obiettivo && ex.obiettivo.tecnica === 'backoff') return max;
+  const conta = new Map();
+  pesi.forEach(w => conta.set(w, (conta.get(w) || 0) + 1));
+  let W = 0, n = 0;
+  conta.forEach((c, w) => { if (c > n || (c === n && w > W)) { W = w; n = c; } });
+  return W;
+}
+/* ALG-02: l esito al carico di lavoro W: «ok» solo se, oltre a esito() (tutte le serie fatte alle ripetizioni previste), nessuna serie e sotto W (salvo il back-off) */
+function esitoDiLavoro(ex, repsTarget, W) {
+  const e = esito(ex, repsTarget);
+  if (e !== 'ok' || (ex.obiettivo && ex.obiettivo.tecnica === 'backoff')) return e;
+  return ex.sets.some(s => s.done && Number(s.weight) > 0 && Number(s.weight) < W - 1e-9) ? 'mancato' : 'ok';
+}
+const FRASE_PESO_CAMBIATO = 'Hai cambiato peso a metà seduta: parto dal peso con cui hai fatto più serie';
+/* MES-05 / N10: a cosa serve lo scarico, senza promettere di «ripartire piu forte» (ricerca-mesocicli-periodizzazione-scarichi §5 riga 20, §2 B: Moderata) */
+const FRASE_SCOPO_SCARICO = 'serve a smaltire la fatica accumulata: non fa crescere di più, ma fermarsi del tutto può costare forza';
+/* AUT-01: il carico (non arrotondato) che un RPE piu basso del bersaglio permette, registro B3: massimale stimato con le ripetizioni in riserva osservate (dentro
+   rirAffidabile, al massimo puntiRpeMax punti sopra quelle del bersaglio), poi caricoPer con quelle del bersaglio. Vale circa 1/(30 + ripetizioni + RIR) per punto:
+   2,4-2,9% tra 3 e 10 ripetizioni. Epley senza il taglio a 12 ripetizioni efficaci di e1rm (lo stesso di caricoPer): vale fino a 12 ripetizioni e 4 in riserva */
+function salitaDaRpe(W, reps, rirOss, rirB) {
+  const lim = sogliaProgressione('rirAffidabile');
+  const oss = Math.max(lim[0], Math.min(lim[1], Number(rirOss) || 0));
+  const usati = Math.max(0, Math.min(sogliaProgressione('puntiRpeMax'), oss - rirB));
+  return caricoPer(W * (1 + (reps + rirB + usati) / 30), reps, rirB);
+}
+
 function caricoProssimoBase(nome, base, repsTarget, setsBase) {
   const sett = settimanaProgramma();
   const scarico = sett && sett.fase === 'scarico';
@@ -251,18 +340,21 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase) {
   }
 
   if (!sess.length) {
-    return { weight: scarico ? arrotonda(base * COACH_PARAMETRI.scaricoReattivoCarico) : base, reps: repsTarget, sets: sets, tipo: scarico ? 'scarico' : 'nuovo',
+    return { weight: scarico ? caricoInGriglia(base * COACH_PARAMETRI.scaricoReattivoCarico, nome) : base, reps: repsTarget, sets: sets, tipo: scarico ? 'scarico' : 'nuovo',
              motivo: scarico ? 'Settimana di scarico: carico e serie ridotti' : 'Prima volta: parti dal carico del programma' };
   }
 
+  /* ALG-02 (programmi v2): il carico di lavoro e il piu frequente tra le serie fatte, non il massimo (U10); i programmi v1 come prima (REG-04) */
+  const v2 = progressioneV2(), alg02 = v2 && regolaAttiva('ALG-02');
   const fatteUltima = sess[0].sets.filter(x => x.done);
-  const pesoUltimo = fatteUltima.length ? Math.max.apply(null, fatteUltima.map(x => Number(x.weight) || 0)) : base;
+  const pesoUltimo = fatteUltima.length ? (alg02 ? caricoDiLavoro(sess[0]) : Math.max.apply(null, fatteUltima.map(x => Number(x.weight) || 0))) : base;
   /* prime sedute con questo esercizio: il carico di partenza e una stima, quindi si corregge piu in fretta */
   const calibrazione = ultimeSessioni(nome, 3).length < 3;
   const lista = sessioniConData(nome, 40);   /* una sola lettura dello storico per le ultime sedute e le ultime di carico */
   const sd = lista.slice(0, 3);              /* allineata a sess: stesse sedute, stesso ordine */
-  const e1 = esito(sess[0], repsTarget);
-  const e2 = sess[1] && !(sd[1] && sd[1].scarico) ? esito(sess[1], repsTarget) : null;   /* una seduta di scarico non conta come mancata */
+  const esitoDi = ex => alg02 ? esitoDiLavoro(ex, repsTarget, caricoDiLavoro(ex)) : esito(ex, repsTarget);
+  const e1 = esitoDi(sess[0]);
+  const e2 = sess[1] && !(sd[1] && sd[1].scarico) ? esitoDi(sess[1]) : null;   /* una seduta di scarico non conta come mancata */
   const freno = frenoBia();
 
   /* MES-06 (W0-T3 + W0-T4, l unica implementazione): lo scarico si calcola sul carico di riferimento (caricoRiferimento: l ultima seduta
@@ -274,8 +366,10 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase) {
   const rif = mes06 && (scarico || ultimaDiScarico) ? caricoRiferimento(nome) : 0;   /* serve solo in scarico e subito dopo */
   if (scarico) {
     const gia = mes06 && rif <= 0 && ultimaDiScarico;
-    return { weight: gia ? pesoUltimo : arrotonda((rif > 0 ? rif : pesoUltimo) * dose.carico), reps: repsTarget, sets: sets, tipo: 'scarico',
-      motivo: 'Settimana di scarico: ' + dose.t + ', per recuperare e ripartire piu forte (mai stop totale: la forza calerebbe)' + (rif > 0 ? ' \u2022 sul carico di riferimento (' + fmtKg(rif) + ' kg), lo stesso in tutte le sedute della settimana' : '') };
+    const voluto = (rif > 0 ? rif : pesoUltimo) * dose.carico, w = gia ? pesoUltimo : caricoInGriglia(voluto, nome);
+    /* MES-05 (N10 della nota mesocicli): niente \u00abripartire piu forte\u00bb (gli studi visti non mostrano piu crescita ne piu forza dopo lo scarico; uno stop completo costa forza alle gambe) */
+    return { weight: w, reps: repsTarget, sets: sets, tipo: 'scarico',
+      motivo: 'Settimana di scarico: ' + dose.t + ' \u2022 ' + FRASE_SCOPO_SCARICO + (rif > 0 ? ' \u2022 sul carico di riferimento (' + fmtKg(rif) + ' kg), lo stesso in tutte le sedute della settimana' : '') + (gia ? '' : notaPesoVicino(w, voluto)) };
   }
 
   /* MES-06: la seduta di prima era di scarico e c e un riferimento. Scarico riuscito (tutte le serie fatte alle ripetizioni previste): si
@@ -283,21 +377,21 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase) {
      al massimo +25% sull ultima seduta (dati vecchi con lo scarico gia composto: si risale per gradi). Scarico mancato: il carico resta
      com e e il motore decide. Il RIR in piu lo da rirBersaglio (ripresaDopoScarico), il testo lo scrive testoRir. */
   const scaricoRiuscito = rif > 0 && ultimaDiScarico && e1 === 'ok';
-  const tettoRipresa = pesoUltimo > 0 ? arrotonda(pesoUltimo * PARAM_ANALISI.saltoMaxRipresa) : Infinity;
+  const tettoRipresa = pesoUltimo > 0 ? caricoInGriglia(pesoUltimo * PARAM_ANALISI.saltoMaxRipresa, nome) : Infinity;
 
   /* rientro dopo una pausa su questo esercizio (dopo uno scarico riuscito il calo si applica al riferimento, non al carico di scarico) */
   const giorni = sd[0] && sd[0].data ? giorniTra(sd[0].data, new Date()) : 0;
   const rientro = rientroDopoPausa(giorni);
   const pesoRientro = scaricoRiuscito ? rif : pesoUltimo;
   if (rientro && pesoRientro > 0) {
-    const w = arrotonda(pesoRientro * rientro.f);
+    const w = caricoSceso(pesoRientro, rientro.f, nome);
     return { weight: scaricoRiuscito ? Math.min(w, tettoRipresa) : w, reps: repsTarget, sets: sets, tipo: 'giu',
              motivo: 'Rientro dopo ' + giorni + ' giorni: carico ' + rientro.t + ' e 3 ripetizioni in riserva, si risale in fretta' };
   }
   if (scaricoRiuscito) {
     const pr = storicoProntezza().slice(-3).map(x => x.punteggio).filter(x => typeof x === 'number');
     const stanco = prudente || (pr.length > 0 && pr.reduce((t, x) => t + x, 0) / pr.length < PARAM_ANALISI.prontezzaRipresa);
-    const f = stanco ? PARAM_ANALISI.ripresaPrudente : 1, pieno = arrotonda(rif * f), da = Math.min(pieno, tettoRipresa);
+    const f = stanco ? PARAM_ANALISI.ripresaPrudente : 1, pieno = caricoInGriglia(rif * f, nome), da = Math.min(pieno, tettoRipresa);
     if (da > pesoUltimo) {   /* se in scarico si e gia lavorato a quel carico o oltre, la ripresa non c e: vale la progressione normale */
       const perGradi = da < pieno;
       return { weight: da, reps: repsTarget, sets: sets, tipo: perGradi ? 'su' : 'fermo',
@@ -316,6 +410,8 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase) {
   if (e1 === 'ok') {
     if (freno) return { weight: pesoUltimo, reps: repsTarget, sets: sets, tipo: 'fermo', motivo: freno };
     const inc = prudente ? Math.max(0.5, incrementoPer(nome) / 2) : incrementoPer(nome);
+    /* ALG-06: il testo dice il salto vero della griglia (con la griglia spenta l incremento, come prima) */
+    const griglia = grigliaAttiva(), kgPiu = w => griglia ? fmtKg(w - pesoUltimo) : String(inc);
     const nota = (pc.prudente ? ' (modalita prudente)' : (pc.sonnoMale ? ' (aumento prudente: recupero scarso)' : '')) + (over65 && !pc.prudente && !pc.sonnoMale ? ' \u2022 aumento dimezzato: dopo i 65 anni si sale più piano' : '');
     /* autoregolazione dall RPE segnato sulle serie */
     const bias = Number((aggiustiCoach() || {}).rirBias) || 0;
@@ -326,11 +422,22 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase) {
       const delta = media - bers;
       if (delta >= 1) return { weight: pesoUltimo, reps: repsTarget, sets: sets, tipo: 'fermo',
         motivo: 'Serie complete ma RPE ' + String(media).replace('.', ',') + ', sopra il bersaglio ' + String(bers).replace('.', ',') + ': stesso carico, consolida' };
-      if (delta <= -1) {
+      /* AUT-01 (programmi v2, registro B3): il punto di RPE vale caricoPer sul massimale (salitaDaRpe), al massimo 2 punti; chi comincia e i minorenni solo frenano
+         (la calibrazione dei principianti e CAR-18), i prudenti a meta. Nelle prime sedute degli altri resta CAR-16 (+5% per punto); i programmi v1 come prima (+4%) */
+      const aut01 = v2 && regolaAttiva('AUT-01');
+      const regolaDiPrima = !aut01 || (calibrazione && pc.livello !== 'principiante' && !pc.minorenne);
+      if (delta <= -1 && regolaDiPrima) {
         const pct = (calibrazione ? Math.min(0.15, -delta * 0.05) : Math.min(0.1, -delta * 0.04)) * (prudente ? 0.5 : 1);   /* aumenti dimezzati: anche quello a percentuale */
-        const w = Math.max(arrotonda(pesoUltimo + inc), arrotonda(pesoUltimo * (1 + pct)));
+        const w = Math.max(caricoSalito(pesoUltimo, inc, nome), caricoInGriglia(pesoUltimo * (1 + pct), nome));
         return { weight: w, reps: repsTarget, sets: sets, tipo: 'su',
           motivo: 'Serie facili (RPE ' + String(media).replace('.', ',') + ', bersaglio ' + String(bers).replace('.', ',') + '): +' + fmtKg(w - pesoUltimo) + ' kg' + nota + (calibrazione ? ' \u2022 prime sedute: mi avvicino piu in fretta' : '') };
+      }
+      if (delta <= -1 && pc.livello !== 'principiante' && !pc.minorenne && (Number(repsTarget) || 0) <= sogliaProgressione('ripetizioniMaxRpe')) {
+        let t = salitaDaRpe(pesoUltimo, Number(repsTarget) || 0, 10 - media, 10 - bers);
+        if (prudente) t = pesoUltimo + (t - pesoUltimo) / 2;
+        const w = Math.max(caricoSalito(pesoUltimo, inc, nome), caricoInGriglia(t, nome));
+        return { weight: w, reps: repsTarget, sets: sets, tipo: 'su',
+          motivo: 'Serie facili (RPE ' + String(media).replace('.', ',') + ', bersaglio ' + String(bers).replace('.', ',') + '): +' + fmtKg(w - pesoUltimo) + ' kg' + nota };
       }
     }
     /* serie finale AMRAP: aumento proporzionale alle ripetizioni in piu (nSuns) */
@@ -340,8 +447,9 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase) {
       const gambe = /gambe|glutei/.test((findExercise(nome) || {}).group || '');
       const salto = extra >= 6 ? (gambe ? 7.5 : 5) : (extra >= 4 ? (gambe ? 5 : 2.5) : 2.5);
       const tot = prudente ? Math.max(inc, salto / 2) : Math.max(inc, salto);
-      return { weight: arrotonda(pesoUltimo + tot), reps: repsTarget, sets: sets, tipo: 'su',
-        motivo: 'Ultima serie con ' + extra + ' ripetizioni in piu: +' + fmtKg(tot) + ' kg' + nota };
+      const w = caricoSalito(pesoUltimo, tot, nome);
+      return { weight: w, reps: repsTarget, sets: sets, tipo: 'su',
+        motivo: 'Ultima serie con ' + extra + ' ripetizioni in piu: +' + fmtKg(griglia ? w - pesoUltimo : tot) + ' kg' + nota };
     }
     /* isolamenti: doppia progressione, prima le ripetizioni fino alla cima del range */
     if (tipoCarico(nome) === 'isolamento') {
@@ -349,29 +457,33 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase) {
       const cima = (Number(repsTarget) || 0) + 3;
       if (repsFatte < cima) return { weight: pesoUltimo, reps: Math.max(Number(repsTarget) || 0, repsFatte) + 1, sets: sets, tipo: 'su',
         motivo: 'Doppia progressione: una ripetizione in piu (' + (Math.max(Number(repsTarget) || 0, repsFatte) + 1) + ' su ' + cima + '), poi il peso' };
-      return { weight: arrotonda(pesoUltimo + inc), reps: repsTarget, sets: sets, tipo: 'su',
-        motivo: 'Cima del range raggiunta (' + repsFatte + '): +' + inc + ' kg e si riparte da ' + repsTarget + nota };
+      const w = caricoSalito(pesoUltimo, inc, nome);
+      return { weight: w, reps: repsTarget, sets: sets, tipo: 'su',
+        motivo: 'Cima del range raggiunta (' + repsFatte + '): +' + kgPiu(w) + ' kg e si riparte da ' + repsTarget + nota };
     }
-    /* micro-incrementi: un salto oltre il 5% si fa prima con le ripetizioni */
-    if (inc / pesoUltimo > 0.05) {
+    /* micro-incrementi: un salto oltre il 5% si fa prima con le ripetizioni. ALG-06: il salto e quello vero della griglia (caricoSalito); se la griglia lo rende piu
+       grande dell incremento voluto (il mezzo incremento dei prudenti: +1,25 kg non si caricano sul bilanciere) si passa anche qui prima dalle ripetizioni */
+    const salitoA = caricoSalito(pesoUltimo, inc, nome), quanto = griglia ? salitoA - pesoUltimo : inc;
+    if (quanto / pesoUltimo > 0.05 || (griglia && quanto > inc + 1e-9)) {
       const repsFatte = Math.min.apply(null, fatteUltima.map(x => Number(x.reps) || 0));
       const tetto = (Number(repsTarget) || 0) + 2;
       if (repsFatte < tetto) {
         return { weight: pesoUltimo, reps: repsFatte + 1, sets: sets, tipo: 'su',
-          motivo: '+' + inc + ' kg sarebbe un salto del ' + Math.round(inc / pesoUltimo * 100) + '%: prima una ripetizione in piu (' + (repsFatte + 1) + ')' };
+          motivo: quanto / pesoUltimo > 0.05 ? '+' + kgPiu(salitoA) + ' kg sarebbe un salto del ' + Math.round(quanto / pesoUltimo * 100) + '%: prima una ripetizione in piu (' + (repsFatte + 1) + ')'
+            : 'Aumento dimezzato: il passo più piccolo dell’attrezzo (+' + kgPiu(salitoA) + ' kg) è troppo, prima una ripetizione in più (' + (repsFatte + 1) + ')' };
       }
-      return { weight: arrotonda(pesoUltimo + inc), reps: repsTarget, sets: sets, tipo: 'su',
-        motivo: 'Arrivato a ' + repsFatte + ' ripetizioni: ora +' + inc + ' kg e si riparte da ' + repsTarget + nota };
+      return { weight: salitoA, reps: repsTarget, sets: sets, tipo: 'su',
+        motivo: 'Arrivato a ' + repsFatte + ' ripetizioni: ora +' + kgPiu(salitoA) + ' kg e si riparte da ' + repsTarget + nota };
     }
-    return { weight: arrotonda(pesoUltimo + inc), reps: repsTarget, sets: sets, tipo: 'su',
-             motivo: 'Tutte le serie complete la volta scorsa: +' + inc + ' kg' + nota };
+    return { weight: salitoA, reps: repsTarget, sets: sets, tipo: 'su',
+             motivo: 'Tutte le serie complete la volta scorsa: +' + kgPiu(salitoA) + ' kg' + nota };
   }
   /* prime sedute: se le serie sono molto sotto il previsto il carico di partenza era troppo alto: -5% subito, senza aspettare il secondo errore */
   if (calibrazione && e1 === 'mancato' && e2 !== 'mancato' && pesoUltimo > 0) {
     const totSerie = sess[0].sets.length || 1;
     const repsMedie = fatteUltima.length ? fatteUltima.reduce((t, x) => t + (Number(x.reps) || 0), 0) / fatteUltima.length : 0;
     if (fatteUltima.length < Math.ceil(totSerie * 0.6) || repsMedie <= (Number(repsTarget) || 0) - 3)
-      return { weight: arrotonda(pesoUltimo * 0.95), reps: repsTarget, sets: sets, tipo: 'giu',
+      return { weight: caricoSceso(pesoUltimo, 0.95, nome), reps: repsTarget, sets: sets, tipo: 'giu',
         motivo: 'Prime sedute: serie molto sotto il previsto, il carico di partenza era troppo alto: -5% e poi si risale' };
   }
   if (e1 === 'mancato' && e2 === 'mancato') {
@@ -381,15 +493,15 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase) {
     if (pc.livello === 'principiante' && tipoCarico(nome) === 'pesante' && stalli >= 1 && obiettivoForza())
       return { weight: pesoUltimo, reps: 3, sets: 5, tipo: 'fermo', stallo: true,
         motivo: 'Secondo stallo: stesso peso ma schema 5\u00D73 (poi 6\u00D72 e 10\u00D71), come nel GZCLP' };
-    if (pc.livello === 'principiante') return { weight: arrotonda(pesoUltimo * 0.95), reps: repsTarget, sets: sets, tipo: 'giu', stallo: true, motivo: 'Due volte di fila non completato: -5% e si ricostruisce' };
-    return { weight: arrotonda(pesoUltimo * COACH_PARAMETRI.dopoDueMancateCarico), reps: repsTarget, sets: sets, tipo: 'giu', stallo: true, motivo: 'Due volte di fila non completato: -10% e si ricostruisce' };
+    if (pc.livello === 'principiante') return { weight: caricoSceso(pesoUltimo, 0.95, nome), reps: repsTarget, sets: sets, tipo: 'giu', stallo: true, motivo: 'Due volte di fila non completato: -5% e si ricostruisce' };
+    return { weight: caricoSceso(pesoUltimo, COACH_PARAMETRI.dopoDueMancateCarico, nome), reps: repsTarget, sets: sets, tipo: 'giu', stallo: true, motivo: 'Due volte di fila non completato: -10% e si ricostruisce' };
   }
   /* scarico mirato (CAR-08): massimale stimato in calo per due sedute di fila, senza contare le sedute di scarico e solo oltre il 3% (il rumore del RIR: MES-10) */
   const sc = lista.filter(x => !x.scarico).slice(0, 3);
   if (sc.length >= 3) {
     const m = sc.map(x => e1rmSeduta(x.ex)), r = regolaAttiva('MES-10') ? 1 - PARAM_ANALISI.rumoreE1rm : 1;
     if (m[0] && m[1] && m[2] && m[0] < m[1] * r && m[1] < m[2] * r) {
-      return { weight: arrotonda(pesoUltimo * COACH_PARAMETRI.scaricoReattivoCarico), reps: repsTarget, sets: Math.max(2, Math.round(sets * COACH_PARAMETRI.scaricoProgressioneSerie)), tipo: 'scarico',
+      return { weight: caricoSceso(pesoUltimo, COACH_PARAMETRI.scaricoReattivoCarico, nome), reps: repsTarget, sets: Math.max(2, Math.round(sets * COACH_PARAMETRI.scaricoProgressioneSerie)), tipo: 'scarico',
                motivo: 'Massimale stimato in calo da due sedute: scarico solo qui (-10% e meta serie), il resto non cambia' };
     }
   }
@@ -399,13 +511,98 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase) {
 };
 
 /* CARICO PROSSIMO: la catena 'carico' (regia/fasi.js, piano B.3). L ordine e scritto nelle fasi, non e quello degli script: 10 BIL qui
-   (caricoProssimoBase: progressione, scarico del programma e ripresa), 50 AGG in dolore-mattina.js (aggiusti del coach e frase del RIR),
-   60 RIC in regole-nuove.js, 70 INT in intensita.js. Ogni fase vede il risultato delle precedenti (r.motivo contiene gia i pezzi aggiunti
-   prima, r.tipo puo essere gia 'scarico') e restituisce la stessa forma { weight, reps, sets, tipo, motivo, piuPausa?, stallo? } */
-window.caricoProssimo = function(nome, base, repsTarget, setsBase) {
-  return eseguiFasi('carico', undefined, { nome: nome, base: base, repsTarget: repsTarget, setsBase: setsBase });
+   (caricoProssimoBase: progressione, scarico del programma e ripresa), 15 CAR-18 in carichi/calibrazione.js, 20 ALG-05 qui (ricalcolo dal massimale),
+   50 AGG in dolore-mattina.js (aggiusti del coach e frase del RIR), 60 RIC in regole-nuove.js, 70 INT in intensita.js, 95 ALG-06 in carichi/attrezzi.js
+   (griglia e tetto dei manubri), 99 REG-03 in regia/perche.js. Ogni fase vede il risultato delle precedenti (r.motivo contiene gia i pezzi aggiunti
+   prima, r.tipo puo essere gia 'scarico') e restituisce la stessa forma { weight, reps, sets, tipo, motivo, piuPausa?, stallo?, perche? }.
+
+   CONTRATTO c.voce (P3-A; lo usano P3-C, fase 25 sull onda della modalita Forza, e P4-F, fastidi): il contesto di ogni fase e
+   { nome, base, repsTarget, setsBase, voce }. `voce` e la voce del piano della settimana per questo esercizio (loadData()[giorno][i], come la scrive
+   salvaProgramma da buildProgram e la aggiorna carichiDelGiorno), passata da applicaCaricoProgressivo; null quando chi chiama non ce l ha (renderOggi,
+   renderAgent, «Macchinario occupato», prove). SOLA LETTURA: una fase non la modifica (carichiDelGiorno la riscrive dopo con il risultato). Campi che si possono leggere
+   (tutti facoltativi tranne name): name, reps (le ripetizioni di oggi, gia cambiate dalla doppia progressione), repsBase (il bersaglio del piano: = c.repsTarget),
+   sets, setsBase, weight, rest, restBase, tecnica, stimato (fonte della stima di partenza), partenzaBassa, fisso (alzata della modalita Forza), alzata
+   ('squat' | 'panca' | 'stacco'), onda ('pesante' | 'medio' | 'leggero', FRZ-05), originale (l esercizio sostituito). Una fase che ne ha bisogno
+   controlla c.voce prima di leggerla (c.voce && c.voce.onda). */
+window.caricoProssimo = function(nome, base, repsTarget, setsBase, voce) {
+  return eseguiFasi('carico', undefined, { nome: nome, base: base, repsTarget: repsTarget, setsBase: setsBase, voce: voce && typeof voce === 'object' ? voce : null });
 };
-registraFase('carico', 10, 'BIL', (r, c) => caricoProssimoBase(c.nome, c.base, c.repsTarget, c.setsBase));
+/* fase 10: la progressione; ALG-02 (programmi v2) dice nel perche quando l ultima seduta aveva serie a carichi diversi e il carico di lavoro non e il massimo */
+function caricoProgressione(r, c) {
+  const out = caricoProssimoBase(c.nome, c.base, c.repsTarget, c.setsBase);
+  if (out && out.weight > 0 && out.tipo !== 'scarico' && out.tipo !== 'nuovo' && !isTimeBased(c.nome) && progressioneV2() && regolaAttiva('ALG-02')) {
+    const ex = ultimeSessioni(c.nome, 1)[0];
+    const fatte = ex ? (ex.sets || []).filter(s => s.done && Number(s.weight) > 0) : [];
+    if (fatte.length && caricoDiLavoro(ex) < Math.max.apply(null, fatte.map(s => Number(s.weight))) - 1e-9) aggiungiPerche(out, 'ALG-02', FRASE_PESO_CAMBIATO, { forza: 'Convenzione' });
+  }
+  return out;
+}
+registraFase('carico', 10, 'BIL', caricoProgressione);
+
+/* ALG-05 (fase 'carico' 20, solo programmi v2): il massimale recente stimato di un esercizio: le sedute di lavoro (non di scarico) entro giorniMassimaleRecente,
+   al massimo 3, la media delle due migliori (ricerca-algoritmi §3.2). Per ogni serie al carico di lavoro: e1rm con le ripetizioni in riserva dall RPE (con rirBias,
+   dentro rirAffidabile, fino a ripetizioniMaxRpe), 0 al cedimento, altrimenti quelle previste allora (obiettivo.rir) o oggi (rirOggi). null se non c e niente;
+   conRpe = almeno una serie aveva l RPE */
+function massimaleRecente(nome, rirOggi) {
+  const bias = Number((aggiustiCoach() || {}).rirBias) || 0, lim = sogliaProgressione('rirAffidabile'), maxRip = sogliaProgressione('ripetizioniMaxRpe');
+  const giorni = sogliaProgressione('giorniMassimaleRecente'), oggi = new Date();
+  let conRpe = false;
+  const valori = sessioniConData(nome, 12).filter(x => !x.eraDiScarico && x.data && giorniTra(x.data, oggi) <= giorni).slice(0, 3).map(x => {
+    const W = caricoDiLavoro(x.ex), o = x.ex.obiettivo || {};
+    const rirAllora = Array.isArray(o.rir) && o.rir.length === 2 && isFinite(o.rir[0]) && isFinite(o.rir[1]) ? (Number(o.rir[0]) + Number(o.rir[1])) / 2 : rirOggi;
+    const e = (x.ex.sets || []).filter(s => s.done && Number(s.weight) > 0 && Number(s.weight) >= W - 1e-9).map(s => {
+      const reps = Number(s.reps) || 0, rpe = Number(s.rpe);
+      let rir = rirAllora;
+      if (s.wasBerserk) rir = 0;
+      else if (rpe > 0 && reps <= maxRip) { rir = Math.max(lim[0], Math.min(lim[1], 10 - (rpe - bias))); conRpe = true; }
+      return e1rm(Number(s.weight), reps, rir);
+    });
+    return e.length ? Math.max.apply(null, e) : 0;
+  }).filter(v => v > 0).sort((a, b) => b - a);
+  if (!valori.length) return null;
+  return { e1: valori.length >= 2 ? (valori[0] + valori[1]) / 2 : valori[0], conRpe: conRpe };
+}
+/* ALG-05: se le ripetizioni efficaci (bersaglio del piano + ripetizioni in riserva di oggi) cambiano di cambioRipetizioniEfficaci o piu rispetto alla seduta prima
+   (obiettivo.base + obiettivo.rir, salvati da endWorkout: senza la base salvata non si ricalcola), il carico e caricoPer sul massimale recente, per difetto sulla griglia,
+   tra -30% e +10% del carico di lavoro di prima; oltre 12 ripetizioni di bersaglio non si converte (almeno -10%); senza RPE una ripetizione in riserva in piu.
+   Gli aumenti: fermi con il freno della BIA, a meta per prudenti, over 65, sonno scarso e minorenni. Non tocca scarico, prima volta, tempi, corpo libero, la ripresa
+   dopo uno scarico (MES-06), il rientro dopo una pausa (CAR-04) e la calibrazione (CAR-18). Risolve B7 e B8 (stesso esercizio con bersagli diversi nella settimana,
+   cambio di blocco, onda della Forza). Solo con il consenso e i programmi v2 (REG-04). */
+const fraseRicalcolo = (da, a, e1) => (da !== a ? 'Passi da ' + da + ' a ' + a + ' ripetizioni' : 'Ripetizioni in riserva cambiate') + ': peso ricalcolato dal massimale stimato (' + fmtKg(e1) + ' kg)';
+function ricalcoloDalMassimale(r, c) {
+  const nome = c.nome;
+  if (!r || r.tipo === 'scarico' || r.tipo === 'nuovo' || !(Number(r.weight) > 0) || isTimeBased(nome)) return r;
+  if (!coachAttivo() || !progressioneV2() || !regolaAttiva('ALG-05')) return r;
+  if (Array.isArray(r.perche) && r.perche.some(p => p && p.codice === 'CAR-18')) return r;
+  const ultima = sessioniConData(nome, 1)[0];
+  if (!ultima || ultima.eraDiScarico || (ultima.data && rientroDopoPausa(giorniTra(ultima.data, new Date())))) return r;
+  const o = ultima.ex.obiettivo || {}, prima = Number(o.base), ora = Number(c.repsTarget) || 0;
+  if (!(prima > 0) || !(ora > 0)) return r;
+  const rOggi = rirBersaglio(nome), mOggi = (rOggi[0] + rOggi[1]) / 2;
+  const mPrima = Array.isArray(o.rir) && o.rir.length === 2 && isFinite(o.rir[0]) && isFinite(o.rir[1]) ? (Number(o.rir[0]) + Number(o.rir[1])) / 2 : mOggi;
+  if (Math.abs((ora + mOggi) - (prima + mPrima)) < sogliaProgressione('cambioRipetizioniEfficaci') - 1e-9) return r;
+  const M = massimaleRecente(nome, mOggi), W = caricoDiLavoro(ultima.ex);
+  if (!M || !(W > 0)) return r;
+  let t = caricoPer(M.e1, ora, mOggi + (M.conRpe ? 0 : sogliaProgressione('rirInPiuSenzaRpe')));
+  if (ora > sogliaProgressione('ripetizioniMaxConversione')) t = Math.min(t, W * (1 - sogliaProgressione('riduzioneOltreConversione')));
+  const tetti = sogliaProgressione('tettiRicalcolo');
+  t = Math.max(W * (1 - tetti.giu), Math.min(W * (1 + tetti.su), t));
+  if (t > W) {
+    const pc = profiloCoach();
+    if (frenoBia()) t = W;
+    else if (pc.prudente || pc.sonnoMale || pc.eta >= 65 || pc.minorenne) t = W + (t - W) / 2;
+  }
+  const g = grigliaAttiva() ? pesoGriglia(t, nome, { modo: 'giu' }) : null;
+  const w = g !== null && g <= t + 1e-9 ? g : Math.floor(t * 2 + 1e-9) / 2;   /* per difetto: mai sopra il calcolo (sotto la barra vuota resta il calcolo, la fase 95 lo dice) */
+  r.weight = w > 0 ? w : W;
+  r.reps = ora;
+  r.tipo = r.weight > W + 1e-9 ? 'su' : (r.weight < W - 1e-9 ? 'giu' : 'fermo');
+  delete r.stallo; delete r.piuPausa;
+  r.motivo = fraseRicalcolo(prima, ora, M.e1);
+  aggiungiPerche(r, 'ALG-05', r.motivo, { forza: 'Convenzione' });
+  return r;
+}
+registraFase('carico', 20, 'ALG-05', ricalcoloDalMassimale);
 
 /* Applicato quando si apre una seduta: solo se c e il consenso e solo se
    la seduta non e ancora iniziata (non tocca serie gia fatte). La catena 'apertura' (regia/fasi.js): 10 BIL qui (carichiDelGiorno),
@@ -422,8 +619,8 @@ function carichiDelGiorno(day) {
   list.forEach(e => {
     if (e.completedSets.some(s => s.done)) return;
     if (e.setsBase === undefined) e.setsBase = e.sets;
-    const t = caricoProssimo(e.name, e.weight, e.repsBase !== undefined ? e.repsBase : e.reps, e.setsBase);
     if (e.repsBase === undefined) e.repsBase = e.reps;
+    const t = caricoProssimo(e.name, e.weight, e.repsBase, e.setsBase, e);   /* c.voce: la voce del piano (contratto sopra caricoProssimo) */
     e.weight = t.weight;
     e.reps = t.reps;
     e.sets = t.sets;
@@ -433,7 +630,7 @@ function carichiDelGiorno(day) {
     if (e.restBase === undefined) e.restBase = e.rest;
     e.rest = e.restBase + (t.piuPausa || 0);
     /* avanzati: dopo la serie piu pesante, serie a -5% (RTS) */
-    if (e.tecnica === 'backoff' && t.weight > 0 && t.tipo !== 'scarico') e.completedSets.forEach((x, i) => { if (i > 0) x.weight = arrotonda(t.weight * 0.95); });
+    if (e.tecnica === 'backoff' && t.weight > 0 && t.tipo !== 'scarico') { const b = caricoSceso(t.weight, 0.95, e.name); e.completedSets.forEach((x, i) => { if (i > 0) x.weight = b; }); }   /* ALG-06: sulla griglia */
     e.tecnicaSeduta = '';
     cambiati++;
   });
