@@ -112,10 +112,15 @@ function componiSedute(brief, split) {
   /* SEL-06 / PRI-05 (W2-T6): per chi inizia (e non punta alla forza) il bilanciere pesante non prende piu il bonus del primo posto e i posti si riempiono con le prime scelte della tabella 3.4 della nota dei
      principianti (macchine, manubri e corpo libero con appoggio: abilita 1); il bilanciere arriva dopo. Senza il file delle soglie (soglie-selezione.js) resta com era */
   const primeScelte = level === 'principiante' && !metodoAttivo && goals[0] !== 'forza' && typeof sogliaSelezione === 'function' && sogliaSelezione('abilitaMax') !== null && regolaAttiva('SEL-06');
-  /* ABB-02 (W2-T6, SES-03): al massimo due varianti di squat o di affondo in una seduta; la terza e la cerniera dell anca o la flessione del ginocchio, che la ricetta ha gia (senza il file delle soglie: come prima) */
+  /* W2-T6: i due ripieghi senza carico (la cerniera dell anca e il Y-Raise a pancia in giu, per chi non ha attrezzi) sono dei programmi del coach: un metodo famoso ha i suoi esercizi e le sue serie (la Recommended
+     Routine a 3 serie in 60 minuti: con due esercizi in piu il tempo le portava a 2). Escluderli qui vale per ogni passo che li cerca (i posti, i «schemi mancanti» di completaSettimana, strCopri). Con la spalla
+     delicata il Y-Raise resta (PCO-08: il lavoro per la cuffia c e anche con un metodo che non sia «essenziale») */
+  if (metodoAttivo) ['Hip Hinge a Corpo Libero'].concat((prefs.fastidi || []).indexOf('spalle') === -1 ? ['Y-Raise a Corpo Libero'] : []).map(nomeInLibreria).forEach(n => { if (n && (prefs.esclusi || []).indexOf(n) === -1) (prefs.esclusi = prefs.esclusi || []).push(n); });
   /* PAR-08 (W2-T8, penalitaPartenza): il bilanciere che per questa persona partirebbe sotto la barra da 20 kg vale -3 nel posto; una volta per nome e per programma */
   const penalita = {};
-  const penPartenza = (x) => { if (typeof penalitaPartenza !== 'function') return 0; if (penalita[x.name] === undefined) penalita[x.name] = penalitaPartenza(x, brief) || 0; return penalita[x.name]; };
+  /* il livello che penalitaPartenza legge e quello normalizzato del brief (m9: «esperto», un livello mancante: come il resto del programma), non il campo grezzo */
+  const briefPartenza = { grezzo: { d: Object.assign({}, (brief.grezzo || {}).d, { level: level }), prof0: (brief.grezzo || {}).prof0 } };
+  const penPartenza = (x) => { if (typeof penalitaPartenza !== 'function') return 0; if (penalita[x.name] === undefined) penalita[x.name] = penalitaPartenza(x, briefPartenza) || 0; return penalita[x.name]; };
 
   /* variazione: ogni programma (e ogni ciclo) esce diverso, ma e ripetibile col suo seme */
   const rng = rngDa(brief.seme);

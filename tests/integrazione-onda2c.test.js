@@ -13,7 +13,7 @@ const ORA = '2026-10-05T12:00:00';
 const app = caricaApp({ ora: ORA });
 const costruisci = d => app.dati(app.chiama('buildProgram', Object.assign({ usaProfilo: false, sonno: 'bene', attrezzi: 'indifferente', parq: 'no', priorita: [], fastidi: [] }, d)));
 const nomi = p => [].concat.apply([], p.sedute.map(sd => sd.esercizi.map(e => app.chiama('senzaEmoji', e.name))));
-const FLESSIONE = /leg curl|nordic/i, CERNIERA = /stacco|good morning|hyperextension \(lombari\)/i;
+const FLESSIONE = /leg curl|nordic/i, CERNIERA = /stacco|good morning|hyperextension \(lombari\)|pull-through/i;   /* W2-T6: il pull-through ai cavi e una cerniera dell anca (attributo schema «hinge», abilita 1): a chi inizia il posto dell hinge lo da lui, senza lo stacco rumeno col bilanciere (abilita 2) */
 const NOTA_TEMPO = 'Femorali: con questi minuti la flessione del ginocchio (leg curl) non entra, lavorano solo con gli stacchi: meno completo.';
 const haFlessione = p => nomi(p).some(n => FLESSIONE.test(n));
 /* una flessione del ginocchio e disponibile per queste preferenze? (consentito, come la vede il generatore) */

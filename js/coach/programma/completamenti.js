@@ -22,7 +22,7 @@ const NOTA_FEMORALI_SERVE_FLESSIONE = 'Femorali: squat e hip thrust non li fanno
 function eCernieraFemorali(e) {
   const a = typeof attributi === 'function' ? attributi(e.name) : null;
   if (!a) return /stacco|good morning/i.test(senzaEmoji(e.name));
-  return a.schema === 'hinge' && 'ABC'.indexOf(a.classe) !== -1 && (a.muscoli.femorali || 0) > 0;
+  return a.schema === 'hinge' && 'ABC'.indexOf(a.classe) !== -1 && (a.muscoli.femorali || 0) > 0 && a.attrezzo !== 'corpo';   /* W2-T6: la cerniera dell anca senza carico (Hip Hinge a Corpo Libero) non dispensa dalla nota: i femorali senza leg curl restano meno allenati */
 }
 
 /* M6 (W2-T6, revisione INT-2d; collaudo EQ-03:flessione): lo schema delle gambe di un esercizio dal DATO (attributi: l affondo vale come lo squat, il pull-through ai cavi e una cerniera dell anca che

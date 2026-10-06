@@ -5,6 +5,7 @@
    Il grosso e su 300 profili con seme fisso (stessi 300 a ogni esecuzione), poi le prove puntuali. */
 const test = require('node:test'), assert = require('node:assert');
 const { caricaApp } = require('./aiuto-app');
+const { conSoglieSelezione } = require('./aiuto-selezione');   /* W2-T6: le soglie della scelta degli esercizi (SEL-06) anche prima che index.html le citi */
 
 const ORA = '2026-10-05T12:00:00';
 const pulito = n => String(n).replace(/^[^\p{L}]+/u, '').trim();
@@ -35,7 +36,7 @@ const PROFILI = profili(300);
 
 /* il programma del profilo: p e il profilo, prog il risultato (o l errore) */
 let _app = null, _tutti = null;
-const app = () => _app || (_app = caricaApp({ ora: ORA }));
+const app = () => _app || (_app = conSoglieSelezione(caricaApp({ ora: ORA })));
 const costruisci = d => app().dati(app().chiama('buildProgram', d));
 function tutti() {
   if (_tutti) return _tutti;

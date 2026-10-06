@@ -240,7 +240,7 @@ test('riconciliaNote: «in superserie» (poco tempo, o «per fare prima ti propo
   const a = conSoglieStruttura(caricaApp({ ora: ORA }));
   const SS = /in superserie|propongo le superserie|abbinato esercizi opposti/;   /* anche la frase del taglio per il tempo: senza coppie dice solo pause e tagli */
   const coppie = p => p.sedute.some(sd => sd.esercizi.some(e => e.superset));
-  const over65 = a.dati(a.chiama('buildProgram', Object.assign({}, BASE, { level: 'principiante', days: 3, minutes: 45, luogo: 'palestra', goals: ['salute'], sex: 'F', age: 68, parq: 'si' })));
+  const over65 = a.dati(a.chiama('buildProgram', Object.assign({}, BASE, { level: 'principiante', days: 3, minutes: 45, luogo: 'manubri', goals: ['salute'], sex: 'F', age: 68, parq: 'si' })));   /* W2-T6: in palestra, con SEL-06, chi inizia e prudente ha macchine e cavi (abilita 1): li le coppie sono ammesse (T3); con i manubri no */
   assert.ok(!coppie(over65), 'il caso di prova non ha coppie (T3: niente superserie agli over 65 fuori da macchine e cavi)');
   assert.deepStrictEqual(over65.note.filter(n => SS.test(n)), [], 'e le note non parlano di superserie');
   /* il campione: ogni nota «superserie» ha le coppie, e il campione esercita entrambe le strade */
