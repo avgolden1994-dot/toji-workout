@@ -29,11 +29,20 @@
    INT-2e (2026-10-06): i DEBITI delle onde passate non si perdono in silenzio. Valutando un'onda, ogni `aperti` e ogni `ammesse` di un'onda PRIMA con la scadenza arrivata (scade <= onda valutata) deve essere riscritto da un'onda
    successiva con una nuova scadenza futura (`onde.<onda>.aperti`, stessa chiave; `oltre-v2` = fuori dalla v2: si stampa in ogni corsa e non ferma mai), oppure chiuso (`chiuso: { motivo, data }`), oppure (un'ammessa) la
    classe non e piu colpita: altrimenti il cancello FALLISCE. Un aperto con scadenza futura, non riscritto, si stampa a ogni corsa con il responsabile.
+   INT-2g (2026-10-06, seconda revisione indipendente dell'onda 2e): tre scappatoie chiuse, con prove rosse nell'autotest. (1) Una voce `chiuso: { motivo, data }` di un'ammessa (o di un aperto che porta il tetto `max`) si DIMOSTRA: la classe e assente
+   dall'istantanea o misura sotto il tetto (`tettoIniziale`, altrimenti `max`); prima `chiuso` saltava anche il controllo del tetto. (2) Tetto CUMULATIVO (`cumulativo` nelle soglie): ogni classe ha la sua prima misura (tag 2d, standard, criteri 1.6) piu 1,0 punti
+   (due tolleranze d'onda); oltre il tetto fallisce senza `cumulativo.rialzi.<classe>` con max, motivo, data e responsabile: una classe non sale piu di 0,49 a onda per sempre (2,00 -> 4,45 in cinque onde). (3) `oltre-v2` vuole date ISO vere, non prima
+   dell'inizio della v2 (`riferimento.inizioV2`) e non oltre 12 mesi da oggi, e una RIGA datata nel registro (docs/coach-v2-decisioni.md) con la stessa data e le parole «oltre la v2». Le matrici «forza» e «attrezzi» non hanno ancora un cancello di
+   regressione: e un obiettivo aperto (`onde.onda-3.aperti`, responsabile INT-3a), perche 2d ignora `forzaTipo` e gli attrezzi dichiarati e servirebbe un tetto per matrice.
    Esce con 0 se passa, 1 se fallisce, 2 per un errore d'uso (file mancante, onda sconosciuta). */
 'use strict';
 const fs = require('fs'), path = require('path'), os = require('os'), cp = require('child_process');
 const SOGLIE_FILE = path.join(__dirname, 'cancello-collaudo.json');
 const EPS = 0.005;   /* le percentuali del collaudo sono arrotondate a due decimali */
+const REGISTRO_FILE = path.join(__dirname, '..', 'docs', 'coach-v2-decisioni.md');
+/* INT-2g: le date ISO (AAAA-MM-GG) di un testo e se una e un giorno vero (2026-13-45 e 1999-02-30 non lo sono) */
+const dateIso = (t) => String(t || '').match(/\b\d{4}-\d{2}-\d{2}\b/g) || [];
+const giornoVero = (s) => { const d = new Date(s + 'T00:00:00Z'); return !isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s ? d : null; };
 
 /* ----------------------------------------------------------------------------------------------- soglie e istantanee */
 function leggiSoglie(file) {
@@ -207,6 +216,14 @@ function valuta(cfg, snap, ondaId, opz) {
   /* INT-2a (M2 della revisione dell onda 1): ogni ammessa ha un RESPONSABILE (`risolve`: il task che la chiude) e una SCADENZA (`scade`: l onda entro cui deve sparire, una tra `ordineOnde`).
      Valutando quell onda (o una dopo) l ammessa e scaduta: il cancello FALLISCE e la classe torna giudicata dalla tolleranza, anche se il valore sta sotto il tetto. Il meccanismo e la sua
      approvazione stanno nel registro (docs/coach-v2-decisioni.md, tabella E): una riga datata per ogni voce. */
+  const chiusoCon = (x) => !!(x && x.chiuso && x.chiuso.motivo && x.chiuso.data);   /* INT-2e: `chiuso: { motivo, data }` = il debito e chiuso, con il motivo scritto: resta nei dati come storia */
+  /* INT-2g (revisione 2f, scappatoia 1): `chiuso` non si crede sulla parola. Una ammessa chiusa (o un aperto che porta il tetto `max` di un ammessa riscritta) deve DIMOSTRARLO con la misura: la classe e assente
+     dall istantanea o sta sotto il tetto (`tettoIniziale`, altrimenti `max`). Prima `if (chiusoCon(e)) return;` saltava anche il controllo del tetto: con la classe a 9 e un tetto di 4 la riga «oltre il tetto» spariva. */
+  const provaChiusura = (tipo, k, e, dove) => {
+    const tetto = typeof e.tettoIniziale === 'number' ? e.tettoIniziale : (typeof e.max === 'number' ? e.max : null);
+    if (tetto === null || snap.pesata[k] === undefined) return;
+    if (val(k) > tetto + EPS) ko(tipo + ' ' + k + ' (' + dove + ') chiuso a parole: la classe misura ancora ' + f2(val(k)) + '%, oltre il tetto ' + f2(tetto) + '%: una voce `chiuso` si dimostra con la misura sotto il tetto');
+  };
   const iOnda = ordine.indexOf(ondaId);
   const scaduta = (am) => !(am && am.scade && ordine.indexOf(am.scade) > iOnda);
   Object.keys(proprie).sort().forEach(k => {
@@ -227,10 +244,9 @@ function valuta(cfg, snap, ondaId, opz) {
   });
   /* INT-2d (M4/M6/M7): `onde.<onda>.aperti` = obiettivi aperti scritti con il responsabile e la SCADENZA (una tra ordineOnde): si stampano ogni volta e, valutando l'onda di scadenza o una dopo, fanno fallire il cancello */
   const aperti = (onda && onda.aperti) || {};
-  const chiusoCon = (x) => !!(x && x.chiuso && x.chiuso.motivo && x.chiuso.data);   /* INT-2e: `chiuso: { motivo, data }` = il debito e chiuso, con il motivo scritto: resta nei dati come storia */
   Object.keys(aperti).sort().forEach(k => {
     const a = aperti[k] || {};
-    if (chiusoCon(a)) ok('aperto ' + k + ' chiuso il ' + a.chiuso.data + ': ' + a.chiuso.motivo);
+    if (chiusoCon(a)) { ok('aperto ' + k + ' chiuso il ' + a.chiuso.data + ': ' + a.chiuso.motivo); provaChiusura('aperto', k, a, ondaId); }
     else if (!a.responsabile || !a.motivo) ko('aperto ' + k + ': manca il responsabile o il motivo');
     else if (!a.scade || ordine.indexOf(a.scade) === -1) ko('aperto ' + k + ': manca la scadenza (una tra ' + ordine.join(', ') + ')');
     else if (ordine.indexOf(a.scade) <= ordine.indexOf(ondaId)) ko('aperto ' + k + ' SCADUTO: doveva chiudersi entro ' + a.scade + ' (' + a.responsabile + ')');
@@ -246,14 +262,29 @@ function valuta(cfg, snap, ondaId, opz) {
      il suo tetto `max`: la classe non sale oltre il tetto in nessuna onda dopo (prima poteva salire di 0,49 a ogni onda, la tolleranza, per sempre: FRQ-02:bicipiti era a 8,99 contro un tetto di 8,8 e passava); il tetto puo scendere, e
      salire solo con `rialzo: { motivo, data, responsabile }`; (c) `oltre-v2` non vale per le classi di sicurezza e il motivo porta una data (il «motivo datato» che il messaggio chiede). */
   const SIC = new Set(cfg.regressione.sicurezza);
-  const dataValida = (t) => /\b\d{4}-\d{2}-\d{2}\b/.test(String(t || ''));
+  /* INT-2g (revisione 2f, scappatoia 3): `oltre-v2` accettava qualunque data nel motivo («1999-01-01» passava). Ora ogni data ISO del motivo deve essere un giorno vero, non prima dell inizio della v2
+     (`riferimento.inizioV2`) e non oltre 12 mesi da oggi, e il registro (docs/coach-v2-decisioni.md) deve avere una RIGA datata con quella data che dice «oltre la v2»: il rinvio fuori dalla v2 e una decisione scritta, non un campo */
+  const oggi = opz.oggi instanceof Date ? opz.oggi : new Date(), limiteData = new Date(oggi.getTime()); limiteData.setUTCFullYear(limiteData.getUTCFullYear() + 1);
+  const inizioV2 = giornoVero(String((cfg.riferimento || {}).inizioV2 || '2026-10-05')) || new Date('2026-10-05T00:00:00Z');
+  let registroRighe = null;
+  const righeRegistro = () => { if (registroRighe === null) { try { registroRighe = String(typeof opz.registro === 'string' ? opz.registro : fs.readFileSync(REGISTRO_FILE, 'utf8')).split('\n'); } catch (x) { registroRighe = []; } } return registroRighe; };
+  const registroHa = (d) => righeRegistro().some(r => r.indexOf(d) !== -1 && /oltre(?: la v2|-v2)/i.test(r));
+  const problemaData = (t) => {
+    const d = dateIso(t);
+    if (!d.length) return 'senza una data nel motivo (AAAA-MM-GG): il rinvio fuori dalla v2 e datato';
+    const brutte = d.filter(x => { const g = giornoVero(x); return !g || g < inizioV2 || g > limiteData; });
+    if (brutte.length) return 'con una data non valida o non plausibile (' + brutte.join(', ') + '; tra ' + inizioV2.toISOString().slice(0, 10) + ' e ' + limiteData.toISOString().slice(0, 10) + ')';
+    if (!d.some(registroHa)) return 'senza una riga datata nel registro (docs/coach-v2-decisioni.md): serve una riga con ' + d.join(' o ') + ' che dica «oltre la v2»';
+    return null;
+  };
   for (let m = 0; m <= iOnda; m++) {
     const o = (m === iOnda ? onda : cfg.onde[ordine[m]]) || {};
     [['ammessa', o.ammesse, 'motivo'], ['aperto', o.aperti, 'motivo']].forEach(([tipo, t, campo]) => Object.keys(t || {}).sort().forEach(k => {
       const e = t[k] || {};
       if (e.scade !== 'oltre-v2' || chiusoCon(e)) return;
       if (SIC.has(codiceDi(k)) || /^SAF-/.test(k)) ko(tipo + ' ' + k + ' (' + ordine[m] + '): scade oltre-v2 ma e una classe di sicurezza: oltre-v2 non vale per la sicurezza');
-      if (!dataValida(e[campo])) ko(tipo + ' ' + k + ' (' + ordine[m] + '): scade oltre-v2 senza una data nel motivo (AAAA-MM-GG): il rinvio fuori dalla v2 e datato');
+      const pd = problemaData(e[campo]);
+      if (pd) ko(tipo + ' ' + k + ' (' + ordine[m] + '): scade oltre-v2 ' + pd);
     }));
   }
   if (!opz.senzaDebiti) {
@@ -263,7 +294,7 @@ function valuta(cfg, snap, ondaId, opz) {
       const o = cfg.onde[ordine[j]] || {};
       [['ammessa', o.ammesse], ['aperto', o.aperti]].forEach(([tipo, t]) => Object.keys(t || {}).sort().forEach(k => {
         const e = t[k] || {}, sc = ordine.indexOf(e.scade);
-        if (chiusoCon(e)) return;
+        if (chiusoCon(e)) { provaChiusura(tipo, k, e, ordine[j]); return; }
         if (sc === -1) return ko('debito di ' + ordine[j] + ' con scadenza non valida: ' + tipo + ' ' + k + ' (' + (e.risolve || e.responsabile || 'senza responsabile') + ', scade «' + (e.scade === undefined ? '' : e.scade) + '»): la scadenza e una tra ' + ordine.join(', '));
         const carried = riscrittoDopo(k, j) || Object.prototype.hasOwnProperty.call(aperti, k) || !!(onda && onda.ammesse && onda.ammesse[k]);
         /* (b) il tetto dell ammessa dura quanto il debito: la catena delle riscritture lo puo solo abbassare, o alzare con `rialzo` */
@@ -307,6 +338,32 @@ function valuta(cfg, snap, ondaId, opz) {
       peggiorate++; kn(k, 'regressione ' + k + ': ' + f2(val(k)) + '% contro ' + f2(valRif(k)) + '% (' + rif.etichetta + '), tolleranza ' + tol + ' punti');
     }
   });
+  /* INT-2g (revisione 2f, scappatoia 2, «cricchetto»): il confronto con l onda prima ammette +0,5 punti a onda, e una classe senza ammessa ne soglia assoluta saliva cosi per sempre (2,00 -> 4,45 in 5 onde, sempre «passa»).
+     Ora ogni classe ha anche un TETTO CUMULATIVO fisso: la sua prima misura (`cumulativo.classi`, standard, stessi criteri, il tag 2d = origine/main) piu `cumulativo.tolleranzaPunti` (1,0: due tolleranze d onda, decisione
+     di INT-2g, D-P22). Una classe che non c era (o non c e nella tabella) parte da 0. Oltre il tetto il cancello FALLISCE, salvo `cumulativo.rialzi.<classe>: { max, motivo, data, responsabile }` (come il `rialzo` di un ammessa:
+     un tetto rialzato dopo la misura senza motivo non e un tetto). Fuori dal controllo: la sicurezza (zero tolleranza per onda), i criteri riscritti, le classi con un tetto proprio (un ammessa o un aperto con `max`: `tettoIniziale`
+     e `rialzo` valgono per loro) e le matrici diverse da quella del riferimento. */
+  const cum = cfg.cumulativo;
+  if (cum && ordine.indexOf(ondaId) >= ordine.indexOf('onda-2b')) {
+    if (snap.criteri !== cum.criteri) av('tetto cumulativo non controllato: i criteri del collaudo sono v' + snap.criteri + ' e il riferimento cumulativo (' + cum.riferimento + ') e a v' + cum.criteri);
+    else if (snap.matrice !== cum.matrice) { if (!campione) av('tetto cumulativo non controllato: la matrice e «' + snap.matrice + '», il riferimento e «' + cum.matrice + '»'); }
+    else {
+      let oltre = 0, rialzate = 0;
+      const rialzi = cum.rialzi || {};
+      Object.keys(rialzi).sort().forEach(k => { const r = rialzi[k] || {}; if (typeof r.max !== 'number' || !r.motivo || !r.data || !r.responsabile) ko('cumulativo.rialzi.' + k + ': serve `max` (numero), `motivo`, `data` e `responsabile`'); });
+      chiavi.forEach(k => {
+        const cod = codiceDi(k);
+        if (sicurezza.has(cod) || riscritti.has(cod) || snap.pesata[k] === undefined) return;
+        const proprio = ammesse[k] || (typeof (aperti[k] || {}).max === 'number' ? aperti[k] : null);
+        if (proprio) return;
+        const r = rialzi[k], base = cum.classi[k] || 0;
+        let tetto = base + cum.tolleranzaPunti;
+        if (r && typeof r.max === 'number' && r.motivo && r.data && r.responsabile && r.max > tetto) { tetto = r.max; rialzate++; }
+        if (val(k) > tetto + EPS) { oltre++; kn(k, 'tetto cumulativo ' + k + ': ' + f2(val(k)) + '% oltre ' + f2(tetto) + '% (prima misura ' + f2(base) + '% di ' + cum.riferimento + ' + ' + cum.tolleranzaPunti + ' punti): una classe non sale di mezzo punto a onda per sempre; serve un `rialzo` scritto in cumulativo.rialzi con motivo, data e responsabile'); }
+      });
+      ok('tetto cumulativo contro ' + cum.riferimento + ' (+' + cum.tolleranzaPunti + ' punti sulla prima misura): ' + oltre + ' classi oltre' + (rialzate ? ', ' + rialzate + ' con il loro rialzo' : ''));
+    }
+  }
   /* INT-1: con --contro il totale non puo peggiorare oltre la tolleranza NEMMENO se ha una soglia esplicita (una soglia allentata, per esempio 21,5 contro un 2,7 misurato, non nasconde una regressione) */
   if (sTot === undefined || opz.contro) {
     const tolG = cfg.regressione.tolleranzaPunti;
@@ -357,6 +414,7 @@ function stampa(r, snap, json) {
 
 function elenco(cfg, ondaId) {
   const ordine = cfg.ordineOnde, onde = ondaId ? [ondaId] : ordine;
+  if (cfg.cumulativo) console.log('== tetto cumulativo (INT-2g): prima misura di ' + Object.keys(cfg.cumulativo.classi).length + ' classi su ' + cfg.cumulativo.riferimento + ' (criteri ' + cfg.cumulativo.criteri + ', ' + cfg.cumulativo.matrice + ') + ' + cfg.cumulativo.tolleranzaPunti + ' punti; rialzi: ' + (Object.keys(cfg.cumulativo.rialzi || {}).join(', ') || 'nessuno'));
   onde.forEach(o => {
     const info = cfg.onde[o];
     console.log('== ' + o + ' (' + info.int + ', matrice ' + info.matrice + '): ' + info.titolo);
@@ -401,6 +459,11 @@ function istantaneaBuona(cfg, ondaId, modifiche) {
       else if (base.pesata[k] > limite) { pesata[k] = Math.max(0.01, limite - 0.5); conteggio[k] = Math.max(1, Math.round(base.conteggio[k] * pesata[k] / base.pesata[k])); }
     });
   });
+  /* INT-2g: una voce `chiuso` e una classe misurata sotto il suo tetto (provaChiusura): l istantanea buona la porta sotto, come sarebbe in una misura vera */
+  ord.forEach(o => ['ammesse', 'aperti'].forEach(t => Object.keys((cfg.onde[o] || {})[t] || {}).forEach(k => {
+    const e = cfg.onde[o][t][k] || {}, tetto = typeof e.tettoIniziale === 'number' ? e.tettoIniziale : (typeof e.max === 'number' ? e.max : null);
+    if (e.chiuso && tetto !== null && base.pesata[k] > tetto && pesata[k] === undefined) { pesata[k] = Math.max(0.01, tetto - 0.5); conteggio[k] = Math.max(1, Math.round(base.conteggio[k] * pesata[k] / base.pesata[k])); }
+  })));
   Object.keys(cfg.modello || {}).forEach(id => { const a = risolvi(cfg.modello[id], ord, ondaId); if (a) modello[id] = a[0]; });
   const tot = risolvi(cfg.totali.gravi_pesata, ord, ondaId);
   const matrice = cfg.onde[ondaId].matrice;
@@ -418,6 +481,7 @@ function autotest() {
   const prova = (nome, f) => { let e = null; try { f(); } catch (x) { e = x.message; } esiti.push({ nome, e }); };
   const eq = (a, b, m) => { if (a !== b) throw new Error((m || '') + ' atteso ' + b + ', ottenuto ' + a); };
   const base = daPrima(cfg.prima);
+  const REG_PROVA = '| 2026-10-06 | prova: rinviato oltre la v2 |';   /* INT-2g: il registro delle prove di `oltre-v2` e hermetico (una riga datata con «oltre la v2») */
   /* `soloSoglie`: le prove delle soglie assolute non danno il confronto con l'onda prima, obbligatorio dall'onda-2b (le prove del confronto lo danno o lo tolgono apposta) */
   const esegui = (snapJson, onda, opz) => { const s = daCollaudo(snapJson); return valuta(cfg, s, onda, Object.assign({ soloSoglie: true, senzaDebiti: true }, opz)); };
   const cli = (snapJson, args) => {
@@ -667,7 +731,7 @@ function autotest() {
   prova('INT-2e: un debito di un\'onda passata (aperto o ammessa) con la scadenza arrivata fa fallire l\'onda dopo, salvo che sia riscritto con una nuova scadenza, chiuso con il motivo o (ammessa) la classe sia sparita', () => {
     const nuda = () => { const c = JSON.parse(JSON.stringify(cfg)); c.ordineOnde.forEach(o => { delete c.onde[o].aperti; c.onde[o].ammesse = {}; }); return c; };
     const K = 'RID-01:grande_gluteo', presente = { pesata: { [K]: 2 }, conteggio: { [K]: 200 } };
-    const esito = (modifica, mod) => { const c = nuda(); modifica(c); return valuta(c, daCollaudo(istantaneaBuona(c, 'onda-3', mod || presente)), 'onda-3', { contro: daCollaudo(istantaneaBuona(c, 'onda-2', presente)) }); };
+    const esito = (modifica, mod) => { const c = nuda(); modifica(c); return valuta(c, daCollaudo(istantaneaBuona(c, 'onda-3', mod || presente)), 'onda-3', { contro: daCollaudo(istantaneaBuona(c, 'onda-2', presente)), registro: REG_PROVA }); };
     const debiti = r => r.righe.filter(x => x.esito === 'fallito' && /debito di .* SCADUTO e non risolto/.test(x.testo));
     const ap = (scade, extra) => Object.assign({ responsabile: 'W2-T1 seguito', scade, motivo: 'prova 2026-10-06' }, extra);   /* la data nel motivo: oltre-v2 la vuole (INT-2f) */
     const am = (scade, extra) => Object.assign({ max: 4, tettoIniziale: 4, risolve: 'W2-T5', scade, motivo: 'prova' }, extra);
@@ -704,12 +768,15 @@ function autotest() {
     eq(debiti(rv).length, 0, 'nei dati veri nessun debito si perde in silenzio a onda-3: ' + debiti(rv).map(x => x.testo).join(' | '));
     const rv2 = valuta(vero, daCollaudo(istantaneaBuona(vero, 'onda-2b', presente)), 'onda-2b', { contro: daCollaudo(istantaneaBuona(vero, 'onda-2a', presente)) });
     eq(debiti(rv2).length, 0, 'e a onda-2b: ' + debiti(rv2).map(x => x.testo).join(' | '));
+    /* INT-2g: e ogni `oltre-v2` dei dati veri ha una data plausibile e la sua riga datata nel registro vero (docs/coach-v2-decisioni.md) */
+    const senzaRiga = rv.righe.concat(rv2.righe).filter(x => x.esito === 'fallito' && /oltre-v2/.test(x.testo));
+    eq(senzaRiga.length, 0, 'nei dati veri ogni oltre-v2 ha la sua data e la sua riga nel registro: ' + senzaRiga.map(x => x.testo).join(' | '));
   });
   prova('INT-2f (revisione 2e, minore 7): una scadenza non valida non si salta, un\'ammessa riscritta non perde il tetto, e `oltre-v2` non vale per la sicurezza e vuole una data nel motivo', () => {
     const nuda = () => { const c = JSON.parse(JSON.stringify(cfg)); c.ordineOnde.forEach(o => { delete c.onde[o].aperti; c.onde[o].ammesse = {}; }); return c; };
     const K = 'RID-01:grande_gluteo', presente = (v) => ({ pesata: { [K]: v }, conteggio: { [K]: Math.round(v * 100) } });
     /* il confronto e con un onda prima identica (nessuna regressione): cio che si prova e il tetto assoluto, non la tolleranza */
-    const esito = (modifica, v) => { const c = nuda(); modifica(c); v = v === undefined ? 2 : v; return valuta(c, daCollaudo(istantaneaBuona(c, 'onda-3', presente(v))), 'onda-3', { contro: daCollaudo(istantaneaBuona(c, 'onda-2', presente(v))) }); };
+    const esito = (modifica, v) => { const c = nuda(); modifica(c); v = v === undefined ? 2 : v; return valuta(c, daCollaudo(istantaneaBuona(c, 'onda-3', presente(v))), 'onda-3', { contro: daCollaudo(istantaneaBuona(c, 'onda-2', presente(v))), registro: REG_PROVA }); };
     const fallito = (r, re) => r.righe.some(x => x.esito === 'fallito' && re.test(x.testo));
     const ap = (scade, extra) => Object.assign({ responsabile: 'W2-T1 seguito', scade, motivo: 'prova 2026-10-06' }, extra);
     const am = (extra) => Object.assign({ max: 4, tettoIniziale: 4, risolve: 'W2-T5', scade: 'onda-2', motivo: 'prova' }, extra);
@@ -738,6 +805,75 @@ function autotest() {
     eq(fallito(esito(c => { c.onde['onda-3'].aperti = { 'Cosa aperta': ap('oltre-v2', { motivo: 'senza data' }) }; }), /oltre-v2.*data/), true, 'oltre-v2 senza una data nel motivo fallisce');
     eq(esito(c => { c.onde['onda-3'].aperti = { 'Cosa aperta': ap('oltre-v2') }; }).falliti, 0, 'con la data e senza sicurezza passa');
     eq(fallito(esito(c => { c.onde['onda-2b'].aperti = { 'SAF-05:prudente': ap('oltre-v2') }; }), /oltre-v2.*sicurezza/), true, 'vale anche per una voce scritta in un onda prima');
+  });
+  prova('INT-2g (revisione 2f, scappatoia 1): una voce `chiuso` si dimostra con la misura: la classe oltre il tetto fa fallire anche se e chiusa; assente o sotto il tetto passa', () => {
+    const nuda = () => { const c = JSON.parse(JSON.stringify(cfg)); c.ordineOnde.forEach(o => { delete c.onde[o].aperti; c.onde[o].ammesse = {}; }); return c; };
+    const K = 'RID-01:grande_gluteo', presente = (v) => ({ pesata: { [K]: v }, conteggio: { [K]: Math.round(v * 100) } });
+    const esito = (modifica, v) => { const c = nuda(); modifica(c); const m = v === null ? { pesata: { [K]: null } } : presente(v === undefined ? 2 : v); return valuta(c, daCollaudo(istantaneaBuona(c, 'onda-3', m)), 'onda-3', { contro: daCollaudo(istantaneaBuona(c, 'onda-2', m)), registro: REG_PROVA }); };
+    const fallito = (r, re) => r.righe.some(x => x.esito === 'fallito' && re.test(x.testo));
+    const chiuso = { motivo: 'fatto e provato', data: '2026-10-06' };
+    const am = (extra) => Object.assign({ max: 4, tettoIniziale: 4, risolve: 'W2-T5', scade: 'onda-2', motivo: 'prova', chiuso }, extra);
+    const ap = (extra) => Object.assign({ responsabile: 'W2-T1 seguito', scade: 'onda-4', motivo: 'prova 2026-10-06', chiuso }, extra);
+    eq(fallito(esito(c => { c.onde['onda-2a'].ammesse = { [K]: am() }; }, 9), /chiuso a parole.*9.*tetto 4/), true, 'un ammessa di onda-2a chiusa con la classe a 9 e un tetto di 4: fallisce (prima la riga «oltre il tetto» spariva)');
+    eq(esito(c => { c.onde['onda-2a'].ammesse = { [K]: am() }; }, 3.9).falliti, 0, 'chiusa e sotto il tetto: passa');
+    eq(esito(c => { c.onde['onda-2a'].ammesse = { [K]: am() }; }, null).falliti, 0, 'chiusa e la classe non c e piu nell istantanea: passa');
+    eq(fallito(esito(c => { c.onde['onda-2a'].ammesse = { [K]: am({ max: 9, rialzo: { motivo: 'misurata 9', data: '2026-10-06', responsabile: 'W2-T5' } }) }; }, 9), /chiuso a parole.*9.*tetto 4/), true, 'anche con un tetto rialzato la chiusura si prova col tetto iniziale (4): una classe a 9 non e chiusa');
+    eq(fallito(esito(c => { c.onde['onda-2a'].ammesse = { [K]: { max: 4, risolve: 'W2-T5', scade: 'onda-2', motivo: 'prova', chiuso } }; }, 9), /chiuso a parole/), true, 'senza tettoIniziale vale il tetto max');
+    eq(fallito(esito(c => { c.onde['onda-2a'].ammesse = { [K]: am() }; c.onde['onda-3'].aperti = { [K]: ap({ max: 4 }) }; }, 9), /aperto .* chiuso a parole/), true, 'un aperto che porta il tetto di un ammessa riscritta e chiuso a parole: fallisce');
+    eq(esito(c => { c.onde['onda-2b'].aperti = { 'Cosa aperta': ap({ scade: 'onda-2' }) }; }).falliti, 0, 'un aperto senza classe (testo libero) chiuso con motivo e data passa come prima');
+    eq(fallito(esito(c => { c.onde['onda-3'].aperti = { [K]: ap({ max: 4 }) }; }, 9), /aperto .* chiuso a parole/), true, 'e lo stesso per un aperto di onda-3 (l onda che si valuta)');
+  });
+  prova('INT-2g (revisione 2f, scappatoia 2): una classe senza ammessa ne soglia non sale di 0,49 a ogni onda per sempre: il tetto cumulativo parte dalla prima misura', () => {
+    const K = 'RID-01:grande_gluteo', J = 'ZZZ-99:nuova', matrice = cfg.onde['onda-3'].matrice;   /* K: una classe vera senza ammessa; J: una classe nuova (nessun criterio, nessuna soglia, non nella tabella) */
+    const tabella = Object.assign({}, daPrima(cfg.prima).pesata, { [K]: 2 }); delete tabella[J];   /* tutte le classi del «prima» hanno la loro prima misura; la classe nuova non c e (parte da 0) */
+    const nuda = (cum) => { const c = JSON.parse(JSON.stringify(cfg)); c.ordineOnde.forEach(o => { delete c.onde[o].aperti; c.onde[o].ammesse = {}; }); c.cumulativo = Object.assign({ riferimento: 'prova', criteri: cfg.prima.criteri, matrice, tolleranzaPunti: 1, classi: tabella, rialzi: {} }, cum || {}); return c; };
+    const pres = (v, w) => ({ pesata: { [K]: v, [J]: w === undefined ? 1 : w }, conteggio: { [K]: Math.round(v * 100), [J]: 100 } });
+    const esito = (cum, ora, prima, modifica) => { const c = nuda(cum); if (modifica) modifica(c); return valuta(c, daCollaudo(istantaneaBuona(c, 'onda-3', ora)), 'onda-3', { contro: daCollaudo(istantaneaBuona(c, 'onda-2', prima)), registro: REG_PROVA }); };
+    const fallito = (r, re) => r.righe.some(x => x.esito === 'fallito' && re.test(x.testo));
+    /* cinque onde da +0,49: 2,00 -> 4,45. Ogni passo e dentro la tolleranza d onda, il cumulo no */
+    let v = 2; const passi = [];
+    for (let i = 1; i <= 5; i++) { const r = esito({}, pres(v + 0.49), pres(v)); passi.push([v + 0.49, r.falliti]); v += 0.49; }
+    eq(passi.slice(0, 2).every(x => x[1] === 0), true, 'le prime due onde (2,49 e 2,98, dentro 2 + 1) passano: ' + JSON.stringify(passi));
+    eq(passi.slice(2).every(x => x[1] >= 1), true, 'dalla terza (3,47) in poi fallisce: ' + JSON.stringify(passi));
+    eq(fallito(esito({}, pres(3.47), pres(2.98)), /tetto cumulativo RID-01:grande_gluteo.*3\.47.*oltre 3%.*prima misura 2%/), true, 'e dice il tetto e la prima misura');
+    eq(esito({}, pres(2.98), pres(2.5)).falliti, 0, 'sotto il tetto cumulativo (3) passa');
+    /* il rialzo: motivo, data e responsabile, altrimenti niente */
+    const rialzo = (extra) => ({ rialzi: { [K]: Object.assign({ max: 4, motivo: 'misurata 3,47: la causa e la stessa di P3-G', data: '2026-10-06', responsabile: 'P3-G' }, extra) } });
+    eq(esito(rialzo(), pres(3.47), pres(2.98)).falliti, 0, 'con il rialzo (max, motivo, data, responsabile) passa e il nuovo tetto vale');
+    eq(fallito(esito(rialzo(), pres(4.2), pres(3.9)), /tetto cumulativo.*4\.2.*oltre 4%/), true, 'e il tetto rialzato non e infinito');
+    eq(fallito(esito(rialzo({ motivo: undefined }), pres(3.47), pres(2.98)), /cumulativo\.rialzi\.RID-01:grande_gluteo: serve/), true, 'un rialzo senza motivo fallisce');
+    eq(fallito(esito(rialzo({ responsabile: undefined }), pres(3.47), pres(2.98)), /cumulativo\.rialzi\.RID-01:grande_gluteo: serve/), true, 'un rialzo senza responsabile fallisce');
+    /* una classe che non e nella tabella parte da 0: puo salire fino a 1, non oltre */
+    eq(esito({}, pres(2, 0.9), pres(2, 0.5)).falliti, 0, 'una classe nuova a 0,9 (sotto 0 + 1) passa');
+    eq(fallito(esito({}, pres(2, 1.3), pres(2, 0.9)), /tetto cumulativo ZZZ-99:nuova/), true, 'una classe nuova a 1,3 (prima misura 0) fallisce: +0,4 sull onda prima ma +1,3 sulla prima misura');
+    /* le classi con un tetto proprio (un ammessa) o la sicurezza restano giudicate come prima */
+    eq(esito({}, pres(4.4), pres(4.2), c => { c.onde['onda-2a'].ammesse = { [K]: { max: 4.5, tettoIniziale: 4.5, risolve: 'W2-T5', scade: 'onda-4', motivo: 'prova' } }; }).falliti, 0, 'una classe con un ammessa in vigore ha il suo tetto (4,5): il cumulativo non la giudica due volte');
+    /* un riferimento di criteri o di matrice diversi non si confronta: avviso, non fallimento */
+    const diverso = esito({ criteri: '9.9' }, pres(7), pres(2));
+    eq(diverso.righe.some(x => x.esito === 'avviso' && /tetto cumulativo non controllato/.test(x.testo)), true, 'criteri diversi dal riferimento: l avviso lo dice');
+    /* i dati veri: il riferimento cumulativo c e, ha le classi con la loro misura e una tolleranza */
+    const vero = leggiSoglie();
+    eq(!!vero.cumulativo && typeof vero.cumulativo.tolleranzaPunti === 'number' && Object.keys(vero.cumulativo.classi || {}).length > 50, true, 'nei dati veri c e `cumulativo` (riferimento, criteri, matrice, tolleranza e almeno 50 classi)');
+    eq(Object.values(vero.cumulativo.classi).every(x => typeof x === 'number'), true, 'e le misure sono numeri');
+  });
+  prova('INT-2g (revisione 2f, scappatoia 3): `oltre-v2` vuole una data vera e plausibile (non prima dell inizio della v2, non oltre 12 mesi da oggi) e una riga datata nel registro', () => {
+    const nuda = () => { const c = JSON.parse(JSON.stringify(cfg)); c.ordineOnde.forEach(o => { delete c.onde[o].aperti; c.onde[o].ammesse = {}; }); return c; };
+    const K = 'RID-01:grande_gluteo', pres = { pesata: { [K]: 2 }, conteggio: { [K]: 200 } };
+    const OGGI = new Date('2026-10-06T12:00:00Z');
+    const esito = (motivo, registro) => { const c = nuda(); c.onde['onda-3'].aperti = { 'Cosa aperta': { responsabile: 'INT-3a', scade: 'oltre-v2', motivo } }; return valuta(c, daCollaudo(istantaneaBuona(c, 'onda-3', pres)), 'onda-3', { contro: daCollaudo(istantaneaBuona(c, 'onda-2', pres)), registro: registro === undefined ? REG_PROVA : registro, oggi: OGGI }); };
+    const fallito = (r, re) => r.righe.some(x => x.esito === 'fallito' && re.test(x.testo));
+    eq(esito('rinviato il 2026-10-06 (prova)').falliti, 0, 'una data vera, nel periodo e con la sua riga nel registro: passa');
+    eq(fallito(esito('rinviato il 1999-01-01'), /oltre-v2 con una data non valida o non plausibile \(1999-01-01/), true, 'una data lontana nel passato («1999-01-01», prima dell inizio della v2) fallisce: prima passava');
+    eq(fallito(esito('rinviato il 2026-13-45'), /non valida o non plausibile \(2026-13-45/), true, 'un giorno che non esiste fallisce');
+    eq(fallito(esito('rinviato il 2026-02-30'), /non valida o non plausibile \(2026-02-30/), true, 'il 30 febbraio fallisce');
+    eq(fallito(esito('rinviato il 2028-01-01'), /non valida o non plausibile \(2028-01-01/), true, 'oltre 12 mesi nel futuro fallisce');
+    eq(fallito(esito('rinviato il 2026-10-06 e il 1999-01-01'), /non valida o non plausibile \(1999-01-01/), true, 'una data buona non copre una cattiva nello stesso motivo');
+    eq(esito('rinviato il 2027-09-01').falliti >= 1, true, 'una data plausibile ma senza riga nel registro (2027-09-01) fallisce');
+    eq(fallito(esito('rinviato il 2027-09-01'), /senza una riga datata nel registro.*2027-09-01/), true, 'e dice quale riga manca');
+    eq(fallito(esito('rinviato il 2026-10-06', '| 2026-10-06 | altra decisione, nessun rinvio |'), /senza una riga datata nel registro/), true, 'una riga con la data ma senza «oltre la v2» non basta');
+    eq(fallito(esito('rinviato il 2026-10-06', ''), /senza una riga datata nel registro/), true, 'un registro vuoto o illeggibile non basta');
+    eq(esito('rinviato il 2026-10-06 e il 2027-09-01', '| 2027-09-01 | oltre-v2: decisione |').falliti, 0, 'la riga puo essere per una qualunque delle date del motivo (qui la seconda)');
+    eq(fallito(esito('senza data'), /oltre-v2 senza una data nel motivo/), true, 'senza data fallisce come prima');
   });
   prova('nomi delle onde e etichette del collaudo', () => {
     eq(normalizzaOnda('INT-0', cfg), 'onda-0'); eq(normalizzaOnda('coach-v2-onda-2', cfg), 'onda-2'); eq(normalizzaOnda('2a', cfg), 'onda-2a');
