@@ -599,7 +599,9 @@ function validaTempo(brief, sedute) {
   if (!sedute.length) return note;
   if (regoleDelCoach(brief.metodo.attivo)) { riparaCoppie(sedute); riallineaPause(brief, sedute); }
   const durate = sedute.map(sd => durataSeduta(sd.esercizi, opz)), media = Math.round(durate.reduce((t, x) => t + x, 0) / durate.length);
-  const utileCompleto = !(L.sottoFascia && L.sottoFascia.length) && media < minutiEff * sogliaTempo('quotaLavoroUtile') && !brief.metodo.attivo;
+  /* INT-2b: con il volume per unita (W2-T1) il verdetto sulle unita sotto fascia e quello di validaVolume (L.sottoFasciaUnita, scritto prima di questa verifica); senza (IPE-01 spenta, un metodo famoso) quello del conteggio per gruppo */
+  const sottoFascia = Array.isArray(L.sottoFasciaUnita) ? L.sottoFasciaUnita : (L.sottoFascia || []);
+  const utileCompleto = !sottoFascia.length && media < minutiEff * sogliaTempo('quotaLavoroUtile') && !brief.metodo.attivo;
   note.push((utileCompleto ? FRASE_LAVORO_UTILE : FRASE_DURATA).replace('#', media));
   const f = opz.fattore, s = sogliaTempo('fattorePersonale').sogliaNota;
   if (Math.abs(f - 1) >= s) note.push((f > 1 ? FRASE_FATTORE_PIU : FRASE_FATTORE_MENO).replace('#', Math.round(Math.abs(f - 1) * 100)));

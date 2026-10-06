@@ -253,3 +253,17 @@ test('D-P19: per i 13-17 anni le superserie restano (antagonisti, mai un fondame
   assert.ok(programmi >= 100 && coppie > 0, 'il campione ha coppie di superserie per i minorenni: ' + coppie + ' in ' + programmi + ' programmi (' + conTecnica + ' tecniche, tutte leggere)');
   assert.deepStrictEqual(a.errori, []);
 });
+
+/* ---------------------------------------------------------------- 8) volume e tempo: «il lavoro utile per te e gia tutto qui» (B12, D-P10) ---------------------------------------------------------------- */
+test('volume e tempo: «il lavoro utile e gia tutto qui» c e solo se nessuna unita e sotto fascia (nessuna nota di mancanza), e non con un metodo famoso', () => {
+  const a = conSoglieStruttura(caricaApp({ ora: ORA }));
+  const MANCANZA = /non entra di più|non lasciano altro posto|non c’è un esercizio adatto|programma di mantenimento/;
+  let utili = 0, programmi = 0;
+  ['principiante', 'intermedio', 'avanzato'].forEach(level => ['salute', 'massa', 'forza', 'dimagrimento'].forEach(g => [2, 3, 4].forEach(days => [45, 60, 90].forEach(minutes => {
+    const p = a.dati(a.chiama('buildProgram', Object.assign({}, BASE, { level, days, minutes, goals: [g], seme: 'utile' + level + g + days + minutes })));
+    programmi++;
+    if (p.note.some(n => /già tutto qui/.test(n))) { utili++; assert.ok(!p.note.some(n => MANCANZA.test(n)), level + ' ' + g + ' ' + days + 'gg ' + minutes + 'min: «gia tutto qui» con una nota di mancanza: ' + JSON.stringify(p.note.filter(n => MANCANZA.test(n)))); assert.strictEqual(p.metodo, null, 'con un metodo famoso non si dice'); }
+  }))));
+  assert.ok(utili > 5 && utili < programmi, 'il campione ha programmi con e senza la promessa: ' + utili + ' su ' + programmi);
+  assert.deepStrictEqual(a.errori, []);
+});

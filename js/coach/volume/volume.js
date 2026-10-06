@@ -833,6 +833,9 @@ function validaVolume(brief, sedute) {
   }
   const note = [];
   const mancano = m.sotto();
+  /* INT-2b: validaTempo (W2-T2) dice «il lavoro utile per te e gia tutto qui» solo se nessuna unita e sotto fascia: con il volume per unita il verdetto e questo (le fasce B6 e i crediti degli attributi), non
+     quello del conteggio per gruppo di adattaAlTempo (che vedeva i deltoidi posteriori sotto di mezza serie con tutte le unita nella fascia) */
+  if (brief.lavoro) brief.lavoro.sottoFasciaUnita = mancano.map(x => x.u);
   const nTesto = (v) => { const r = Math.round(v * 2) / 2; return String(r).replace('.', ','); };
   const gruppi = {};
   const grande = (x) => VOLUME_UNITA_GRANDI.indexOf(x.u) !== -1 ? 0 : 1;

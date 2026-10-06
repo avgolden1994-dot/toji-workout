@@ -556,9 +556,14 @@ test('validaTempo: la nota dice quanto durano le sedute (la media di durataSedut
   assert.ok(nota.indexOf('circa ' + media + ' minuti') !== -1, nota + ' (media ' + media + ')');
   assert.ok(media < 90 * 0.75, 'sotto il 75% dei minuti: ' + media);
   assert.ok(/il lavoro utile per te è già tutto qui/.test(nota), 'tutti i muscoli nella fascia e sedute corte: lo dice (D-P10): ' + nota);
-  /* con soli 2 giorni i muscoli non arrivano alla fascia: la seduta e corta lo stesso ma il lavoro utile NON e «gia tutto qui» (non lo si dice se non e vero) */
+  /* INT-2b: con soli 2 giorni la salute (B6, colonna «generale»: unita grandi 6-10, le piccole almeno 2) sta nella fascia con il volume per unita di W2-T1: la nota «il lavoro utile e gia tutto qui» c e ed e vera
+     (prima, con il conteggio per gruppo di adattaAlTempo, i deltoidi posteriori risultavano sotto di mezza serie e la nota non c era: era l esito del vecchio conteggio, non la regola). Un metodo famoso non fa
+     questa promessa: la Dose minima a 90 minuti ha sedute corte per costruzione ma la nota e quella della durata, non «gia tutto qui» (non lo si dice se non e vero) */
   const due = costruisci(Object.assign({}, BASE, { goals: ['salute'], days: 2, minutes: 90, level: 'intermedio', seme: 'utile1' }));
-  assert.ok(due.note.some(n => /^Le sedute durano circa \d+ minuti: nel conto ci sono riscaldamento/.test(n)), 'due giorni: ' + JSON.stringify(due.note.filter(n => /durano/.test(n))));
+  assert.ok(due.note.some(n => /^Le sedute durano circa \d+ minuti: (il lavoro utile per te è già tutto qui|nel conto ci sono riscaldamento)/.test(n)), 'due giorni: ' + JSON.stringify(due.note.filter(n => /durano/.test(n))));
+  const minimo = costruisci(Object.assign({}, BASE, { goals: ['salute'], days: 2, minutes: 90, level: 'intermedio', seme: 'utile1', metodo: 'minimo' }));
+  assert.strictEqual(minimo.metodo, 'minimo');
+  assert.ok(minimo.note.some(n => /^Le sedute durano circa \d+ minuti: nel conto ci sono riscaldamento/.test(n)) && !minimo.note.some(n => /già tutto qui/.test(n)), 'con un metodo famoso niente «gia tutto qui»: ' + JSON.stringify(minimo.note.filter(n => /durano/.test(n))));
   const lunga = costruisci(Object.assign({}, BASE, { goals: ['massa'], days: 5, minutes: 45, level: 'avanzato', seme: 'utile2' }));
   assert.ok(lunga.note.some(n => /^Le sedute durano circa \d+ minuti: nel conto ci sono riscaldamento/.test(n)), 'con i muscoli non ancora nella fascia il lavoro utile non e «gia tutto qui»');
 });
