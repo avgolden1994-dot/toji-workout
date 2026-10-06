@@ -191,7 +191,11 @@ test('m9: un livello sconosciuto («esperto») non fa lanciare buildProgram: ric
   assert.strictEqual(forma(p('esperto')), forma(p('avanzato')), 'esperto: struttura da avanzato (12 settimane, blocchi da 6, rampa del RIR)');
   assert.strictEqual(forma(p('Principiante assoluto')), forma(p('principiante')));
   assert.strictEqual(forma(p('boh')), forma(p('intermedio')), 'un livello che non si capisce vale intermedio');
-  assert.strictEqual(forma(p(undefined)), forma(p('intermedio')), 'un livello mancante vale intermedio, come prima');
+  /* INT-2e: il livello mancante vale intermedio per la STRUTTURA (settimane, blocco, fasi, rampa del RIR, divisione, numero di sedute); non per quanti esercizi ha ogni seduta: per i carichi di partenza vale principiante (PAR-01, D-P12) e per una
+     donna il bilanciere che partirebbe sotto la barra cede il posto a una variante (PAR-08 a, penalitaPartenza dentro la scelta dei posti): i due programmi scelgono esercizi diversi e strBilancia li bilancia diversamente. Prima la parita del conto degli
+     esercizi per seduta ([6,6,5,8]) era una coincidenza: con la correzione di INT-2e (schemaDi vede le spinte come i dati) intermedio ne ha 6 nella prima seduta e il livello mancante 7 */
+  const struttura = prog => JSON.stringify({ settimane: prog.settimane, blocco: prog.blocco, fasi: prog.fasi, rirSett: prog.rirSett, split: prog.split.nome, sedute: prog.sedute.length });
+  assert.strictEqual(struttura(p(undefined)), struttura(p('intermedio')), 'un livello mancante vale intermedio per la struttura, come prima');
   assert.strictEqual(JSON.stringify(p('esperto').sedute), JSON.stringify(p('avanzato').sedute), 'esperto e avanzato: le stesse sedute (anche il metodo famoso lo sceglie il livello normalizzato)');
   assert.strictEqual(p('esperto').settimane, 12);
   assert.ok(Array.isArray(p('esperto').rirSett), 'la rampa del RIR degli avanzati');
