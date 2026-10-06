@@ -54,14 +54,45 @@ function renderAlternative() {
     '<button class="btn-start-workout" onclick="applicaAlternative()">Applica le scelte</button>' +
     '<button class="set-row-btn" onclick="rimescolaAlternative()">Rimescola tutto</button>';
 }
+/* P3-M (D-P23): rifare il programma azzera il piano, non i progressi. Un esercizio gia svolto (con il consenso) compare nel piano nuovo con il suo carico di lavoro (caricoRiferimento: l ultima
+   seduta non di scarico, entro 28 giorni; altrimenti l ultimo carico usato), non con la stima di partenza che applicaPartenze fa dal corpo e dagli altri esercizi (era il 20% sopra l ultimo carico
+   di una donna di 52 anni: il Piano mostrava un peso che nessuno aveva sollevato). Chi decide la progressione e sempre caricoProssimo all apertura della seduta, che per un esercizio con
+   lo storico non guarda questo peso. Senza storico (o a tempo, o a corpo libero) resta la stima. */
+function caricoDelloStorico(e) {
+  if (!coachAttivo()) return e;
+  const u = pesoUltimoDi(e.name), kg = caricoRiferimento(e.name) || (u ? u.weight : 0);
+  return kg > 0 ? Object.assign({}, e, { weight: kg }) : e;
+}
+/* P3-M (D-P23): la fase di una seduta vecchia (carico, scarico...) che la voce non ha scritto si ricava dal programma di adesso (faseSedutaSalvata, progressivo.js: «finche il programma c e»).
+   Rifare il programma lo butta, e con lui il fatto che quella seduta era di scarico: la proposta di carico ripartirebbe dal peso dello scarico (82 kg di stacco rumeno diventavano 66,5 kg).
+   Prima di sostituire il programma si scrive sulle voci che non l hanno la settimana e la fase (la stessa etichetta che scrive la fine seduta, MES-09, e che normalizeHistoryEntry conserva):
+   nient altro cambia nel record, e dove il programma non sa niente (seduta fuori dalle sue settimane) non si scrive niente. Idempotente. Solo con il consenso. */
+function fissaFasiDelloStorico() {
+  const p = getProgramma();
+  if (!coachAttivo() || !p || !p.inizio || !Array.isArray(p.fasi)) return;
+  let lista = null;
+  try { lista = JSON.parse(localStorage.getItem(historyKey()) || 'null'); } catch (e) { return; }
+  if (!Array.isArray(lista)) return;
+  let scritte = 0;
+  lista.forEach(h => {
+    if (!h || typeof h !== 'object' || (h.settimana && h.settimana.fase)) return;
+    const d = dataSessione(h);
+    if (!d) return;
+    const w = Math.floor(giorniTra(daYmd(p.inizio), lunediDi(d)) / 7) + 1, fase = w >= 1 && w <= p.fasi.length ? p.fasi[w - 1] : null;
+    if (typeof fase === 'string' && fase) { h.settimana = { numero: w, fase: fase.slice(0, 20) }; scritte++; }
+  });
+  if (scritte) localStorage.setItem(historyKey(), JSON.stringify(lista));
+}
 window.applyGeneratedProgram = function() {
   const prog = buildProgram(onbData);
+  fissaFasiDelloStorico();   /* P3-M: prima di sostituire il programma */
+  const profPrima = getProfile() || {};   /* il profilo di prima di questa creazione (P3-M: quello che il questionario non chiede si conserva) */
   const data = loadData();
   const titles = loadTitles();
 
   DAYS.forEach(g => { data[g] = []; });
   prog.sedute.forEach(s => {
-    data[s.giorno] = s.esercizi.map(e => normalizeExerciseRecord(Object.assign({}, e, { completedSets: [] })));
+    data[s.giorno] = s.esercizi.map(e => normalizeExerciseRecord(Object.assign({}, caricoDelloStorico(e), { completedSets: [] })));
     titles[s.giorno] = s.titolo;
   });
   saveData(data);
@@ -98,7 +129,7 @@ window.applyGeneratedProgram = function() {
   localStorage.setItem(progKey(), JSON.stringify(salvato));
   localStorage.setItem(PROFILE_KEY(), JSON.stringify(Object.assign({
     goal: prog.goals[0], goals: prog.goals, level: onbData.level, days: onbData.days, minutes: onbData.minutes,
-    prefs: prog.prefs, sex: onbData.sex, age: onbData.age, bia: onbData.bia, parq: onbData.parq === 'si' || onbData.parq === true,
+    prefs: prog.prefs, sex: onbData.sex, age: onbData.age, bia: onbData.bia || profPrima.bia || onbData.bia, parq: onbData.parq === 'si' || onbData.parq === true,
     weight: onbData.weight, height: onbData.height, luogo: onbData.luogo, fastidi: onbData.fastidi, sonno: onbData.sonno, attrezzi: onbData.attrezzi,
     priorita: onbData.priorita || [], attrezziPalestra: onbData.attrezziPalestra !== undefined ? onbData.attrezziPalestra : ((getProfile() || {}).attrezziPalestra || null),
     graditi: onbData.graditi || (getProfile() || {}).graditi || [], odiati: onbData.odiati || (getProfile() || {}).odiati || [], cicloTraccia: (getProfile() || {}).cicloTraccia || false,
@@ -110,7 +141,8 @@ window.applyGeneratedProgram = function() {
     settimane: prog.settimane, split: prog.split.nome, creato: formatNow()
   }, typeof attrezziSalvati === 'function' ? attrezziSalvati(onbData, getProfile() || {}) : {},   /* CAS-01 (W2-T5): attrezzi di casa, kg dei manubri, attrezzi in piu della palestra: solo se dichiarati */
     typeof forzaSalvata === 'function' ? forzaSalvata(onbData, getProfile() || {}, prog.goals) : {})));   /* FRZ-01 (INT-2e): «Che forza?» e i punti deboli, solo con la forza come primo obiettivo e solo se detti */
-  if (onbData.bia && Object.keys(onbData.bia).some(k => onbData.bia[k])) {
+  /* P3-M: un referto uguale a quello gia nel profilo (nuovoCiclo lo ripassa) e gia nello storico dei referti: non si aggiunge una misura con la data di oggi */
+  if (onbData.bia && Object.keys(onbData.bia).some(k => onbData.bia[k]) && JSON.stringify(onbData.bia) !== JSON.stringify(profPrima.bia)) {
     (onbData.bia.storico || []).forEach(x => { if (x.data !== onbData.bia.data) aggiungiBia(x.valori, x.data); });
     aggiungiBia(onbData.bia, onbData.bia.data);
   }
