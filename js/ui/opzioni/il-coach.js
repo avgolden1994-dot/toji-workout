@@ -67,7 +67,7 @@ function htmlAttrezziCoach(p) {
   if (!casa || !dichiarabili) {
     const extra = Array.isArray(p.extraPalestra) ? p.extraPalestra : [];
     return setGroup('Attrezzi della tua palestra', '<div class="fb-chips sr-chips-pad">' + ATTREZZI_PALESTRA.map(([k, t]) =>
-      chipCoach(!p.attrezziPalestra || p.attrezziPalestra.indexOf(k) !== -1, "toggleCoachLista('attrezziPalestra','" + k + "')", t)).join('') + '</div>',
+      chipCoach(!p.attrezziPalestra || !p.attrezziPalestra.length || p.attrezziPalestra.indexOf(k) !== -1, "toggleCoachLista('attrezziPalestra','" + k + "')", t)).join('') + '</div>',   /* INT-2g: [] (di una versione di prima) vale palestra completa: chip accesi come il programma */
       'Togli quello che non trovi: sono tutti accesi e il coach propone solo esercizi che puoi fare davvero.') + (!dichiarabili ? '' :
       setGroup('Altri attrezzi in palestra', '<div class="fb-chips sr-chips-pad">' + ATTREZZI_EXTRA_PALESTRA_IDS.map(k =>
         chipCoach(extra.indexOf(k) !== -1, "toggleCoachLista('extraPalestra','" + k + "')", ONB_ATTREZZI_NOMI[k])).join('') +
@@ -125,10 +125,12 @@ window.setFreqCoach = function(v) {
 window.toggleCoachLista = function(k, v) {
   const p = getProfile() || {};
   let l = p[k];
-  if (k === 'attrezziPalestra' && !l) l = ATTREZZI_PALESTRA.map(x => x[0]);
+  if (k === 'attrezziPalestra' && (!l || !l.length)) l = ATTREZZI_PALESTRA.map(x => x[0]);
   l = (l || []).slice();
   const i = l.indexOf(v);
-  if (i === -1) { if (k === 'priorita' && l.length >= 3) { showUndo('Al massimo tre: se tutto è prioritario, niente lo è'); return; } l.push(v); } else l.splice(i, 1);
+  if (i === -1) { if (k === 'priorita' && l.length >= 3) { showUndo('Al massimo tre: se tutto è prioritario, niente lo è'); return; } l.push(v); }
+  else if (k === 'attrezziPalestra' && l.length === 1) { showUndo(NOTA_ULTIMO_ATTREZZO); return; }   /* INT-2g: l ultimo attrezzo acceso non si toglie ([] varrebbe palestra completa) */
+  else l.splice(i, 1);
   p[k] = (k === 'attrezziPalestra' && l.length === ATTREZZI_PALESTRA.length) ? null : l;
   localStorage.setItem(PROFILE_KEY(), JSON.stringify(p));
   renderSetPage();

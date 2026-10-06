@@ -309,6 +309,9 @@ function descSonnoBene(eta) {
 /* CAS-01 (D-P3): la domanda sugli attrezzi, di palestra o di casa. Facoltativa: senza risposta il coach si comporta come prima (palestra completa; a casa solo cio che non chiede un attrezzo da dichiarare).
    I nomi dei campi sono quelli del brief (regia/brief.js: attrezziCasa, manubriKg, extraPalestra; attrezziPalestra com era) */
 const ONB_ATTREZZI_NOMI = { sbarra: 'Sbarra', panca: 'Panca', elastico: 'Elastici', kettlebell: 'Kettlebell', anelli: 'Anelli' };
+/* INT-2g (revisione 2f): l ultimo attrezzo acceso della palestra non si toglie, in onboarding e in Opzioni: un elenco vuoto vale «palestra completa» (consentito) e i chip riapparirebbero accesi.
+   Chi in palestra non trova niente di tutto questo si allena a corpo libero */
+const NOTA_ULTIMO_ATTREZZO = 'Ne serve almeno uno acceso. Se in palestra non c’è niente di tutto questo, scegli «Corpo libero» come luogo.';
 function onbAttrezziPalestra() { return onbData.attrezziPalestra !== undefined ? onbData.attrezziPalestra : (((typeof getProfile === 'function' && getProfile()) || {}).attrezziPalestra || null); }
 function htmlAttrezziOnboarding() {
   const luogo = onbData.luogo;
@@ -319,6 +322,7 @@ function htmlAttrezziOnboarding() {
     return '<div class="aw-sec">Cosa c’è nella tua palestra?</div>' +
       '<div class="pref-note">Togli quello che non trovi (facoltativo): sono tutti accesi. Se non tocchi niente, il coach pensa a una palestra completa.</div>' +
       '<div class="aw-groups">' + ATTREZZI_PALESTRA.map(a => chip(!lista || !lista.length || lista.indexOf(a[0]) !== -1, 'onbToggleAttrezzoPalestra(\'' + a[0] + '\')', a[1])).join('') + '</div>' +
+      (lista && lista.length === 1 ? '<div class="onb-note" id="onb-avviso-ultimo-attrezzo">' + NOTA_ULTIMO_ATTREZZO + '</div>' : '') +   /* INT-2g: l ultimo chip acceso non si toglie */
       '<div class="pref-note">Altro, se c’è: tocca quello che trovi. Se non c’è niente di tutto questo, tocca «Nessuno di questi».</div>' +
       '<div class="aw-groups">' + ATTREZZI_EXTRA_PALESTRA_IDS.map(k => chip(extra.indexOf(k) !== -1, 'onbToggleExtraPalestra(\'' + k + '\')', ONB_ATTREZZI_NOMI[k])).join('') +
       chip(nessuno, 'onbNessunoExtraPalestra()', 'Nessuno di questi') + '</div>';
@@ -355,6 +359,7 @@ function onbCambiaLista(lista, id) {
 }
 window.onbToggleAttrezzoPalestra = function(id) {
   const tutti = ATTREZZI_PALESTRA.map(a => a[0]), l = onbCambiaLista(onbAttrezziPalestra() && onbAttrezziPalestra().length ? onbAttrezziPalestra() : tutti, id);
+  if (!l.length) { renderOnb(); return; }   /* INT-2g: l ultimo non si toglie (la nota sotto i chip dice perche): [] varrebbe palestra completa */
   onbData.attrezziPalestra = l.length === tutti.length ? null : l;   /* tutti = palestra completa = nessun elenco, come in Opzioni */
   renderOnb();
 };

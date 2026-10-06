@@ -45,6 +45,13 @@ const path = require('path'), url = require('url');
     for (const n of ['Bilanciere', 'Manubri', 'Macchine e cavi', 'Sbarra']) ok(await chipOn(await p.evaluate(x => tr(x), n)) === true, 'passo 4 (palestra): «' + n + '» parte acceso');
     await p.click('button.aw-group:has-text("' + (await p.evaluate(() => tr('Sbarra'))) + '")');
     ok(JSON.stringify(await p.evaluate(() => onbData.attrezziPalestra)) === '["bilanciere","manubri","macchine"]', 'passo 4 (palestra): il tocco sulla sbarra la toglie, restano gli altri tre: ' + JSON.stringify(await p.evaluate(() => onbData.attrezziPalestra)));
+    /* INT-2g: l ultimo chip acceso non si toglie (un elenco vuoto varrebbe palestra completa e i chip riapparirebbero accesi) e una nota dice cosa fare */
+    for (const n of ['Macchine e cavi', 'Manubri']) await p.click('button.aw-group:has-text("' + (await p.evaluate(x => tr(x), n)) + '")');
+    ok(JSON.stringify(await p.evaluate(() => onbData.attrezziPalestra)) === '["bilanciere"]', 'passo 4 (palestra): tolti sbarra, macchine e manubri resta il bilanciere: ' + JSON.stringify(await p.evaluate(() => onbData.attrezziPalestra)));
+    await p.click('button.aw-group:has-text("' + (await p.evaluate(() => tr('Bilanciere'))) + '")');
+    ok(JSON.stringify(await p.evaluate(() => onbData.attrezziPalestra)) === '["bilanciere"]', 'passo 4 (palestra): il tocco sull ultimo attrezzo acceso non lo toglie (niente [])');
+    ok(await chipOn(await p.evaluate(() => tr('Bilanciere'))) === true && await chipOn(await p.evaluate(() => tr('Manubri'))) === false, 'passo 4 (palestra): i chip restano come erano, non tornano tutti accesi');
+    ok((await testo()).includes(await p.evaluate(() => tr('Ne serve almeno uno acceso. Se in palestra non c’è niente di tutto questo, scegli «Corpo libero» come luogo.'))), 'passo 4 (palestra): la nota dice perche e cosa fare');
     await p.click('button.aw-group:has-text("' + (await p.evaluate(() => tr('Nessuno di questi'))) + '")');
     ok(JSON.stringify(await p.evaluate(() => onbData.extraPalestra)) === '[]', 'passo 4 (palestra): «Nessuno di questi» dichiara []');
     ok(await chipOn(await p.evaluate(() => tr('Nessuno di questi'))) === true, 'passo 4 (palestra): e il chip e acceso');

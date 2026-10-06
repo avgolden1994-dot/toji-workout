@@ -91,3 +91,39 @@ test('CAS-01 (Opzioni › Il coach): lo stesso «Nessuno di questi» in palestra
   a.g('setNessunoCoach("attrezziCasa")');
   assert.deepStrictEqual(a.leggi(a.chiave('PROFILE_KEY')).attrezziCasa, []);
 });
+
+/* INT-2g (revisione 2f, MINORE residuo di MAGGIORE 1): chi toglieva tutti e 4 i chip della palestra otteneva `[]`, che `consentito` legge come palestra completa, e i 4 chip riapparivano accesi.
+   Soluzione piu semplice e onesta: l ultimo attrezzo acceso non si puo togliere, e una nota dice cosa fare se in palestra non c e niente (il luogo «Corpo libero»). Il caso `[]` non nasce piu dall interfaccia. */
+test('INT-2g (onboarding, palestra): l ultimo chip acceso non si toglie (un elenco vuoto varrebbe palestra completa) e una nota dice perche', () => {
+  const a = caricaApp({ ora: LUNEDI });
+  onb(a, { luogo: 'palestra' });
+  const principali = () => gruppi(a.g('htmlAttrezziOnboarding()')).map(chips)[0];
+  a.g('onbToggleAttrezzoPalestra("sbarra"); onbToggleAttrezzoPalestra("macchine"); onbToggleAttrezzoPalestra("manubri")');
+  assert.deepStrictEqual(a.json('onbData.attrezziPalestra'), ['bilanciere'], 'ne resta uno solo');
+  assert.deepStrictEqual(principali().map(c => c.on), [true, false, false, false]);
+  assert.ok(/Ne serve almeno uno acceso/.test(a.g('htmlAttrezziOnboarding()')), 'con un solo attrezzo acceso la nota dice che non si toglie');
+  a.g('onbToggleAttrezzoPalestra("bilanciere")');
+  assert.deepStrictEqual(a.json('onbData.attrezziPalestra'), ['bilanciere'], 'il tocco sull ultimo non fa niente: niente [] (= palestra completa)');
+  assert.deepStrictEqual(principali().map(c => c.on), [true, false, false, false], 'e i chip non riappaiono tutti accesi');
+  /* con piu di un chip acceso la nota non c e, e un attrezzo rimesso torna normale */
+  a.g('onbToggleAttrezzoPalestra("manubri")');
+  assert.deepStrictEqual(a.json('onbData.attrezziPalestra'), ['bilanciere', 'manubri']);
+  assert.ok(!/Ne serve almeno uno acceso/.test(a.g('htmlAttrezziOnboarding()')));
+  a.g('onbToggleAttrezzoPalestra("manubri")');
+  assert.deepStrictEqual(a.json('onbData.attrezziPalestra'), ['bilanciere']);
+});
+
+test('INT-2g (Opzioni › Il coach, palestra): l ultimo attrezzo acceso non si toglie; un elenco vuoto gia salvato si legge come palestra completa (chip accesi come il programma)', () => {
+  const a = caricaApp({ ora: LUNEDI });
+  a.profilo({ goals: ['massa'], goal: 'massa', level: 'intermedio', age: 30, luogo: 'palestra', attrezziPalestra: ['sbarra'] });
+  a.g('toggleCoachLista("attrezziPalestra", "sbarra")');
+  assert.deepStrictEqual(a.leggi(a.chiave('PROFILE_KEY')).attrezziPalestra, ['sbarra'], 'l ultimo non si toglie');
+  /* un profilo di una versione di prima con [] (palestra completa per il generatore): i chip lo mostrano come e */
+  a.profilo({ goals: ['massa'], goal: 'massa', level: 'intermedio', age: 30, luogo: 'palestra', attrezziPalestra: [] });
+  const chipsOpz = a.g('htmlAttrezziCoach(getProfile())').match(/<button class="fb-chip[^"]*" onclick="toggleCoachLista\('attrezziPalestra'[^>]*>[^<]*<\/button>/g) || [];
+  assert.strictEqual(chipsOpz.length, 4);
+  assert.ok(chipsOpz.every(c => /fb-chip on/.test(c)), 'con [] il programma usa la palestra completa: i chip sono accesi, non spenti');
+  /* il tocco su un chip con [] parte da «tutti» e toglie quello: restano gli altri tre */
+  a.g('toggleCoachLista("attrezziPalestra", "sbarra")');
+  assert.deepStrictEqual(a.leggi(a.chiave('PROFILE_KEY')).attrezziPalestra, ['bilanciere', 'manubri', 'macchine']);
+});
