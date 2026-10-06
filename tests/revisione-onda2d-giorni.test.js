@@ -47,7 +47,7 @@ test('M2: su 288 programmi da 6 giorni (uno ogni quattro dei 1.152 della griglia
   a.g(`globalThis.__sei = function (p) { const prog = buildProgram(p); let anello = 0, tutti = 0;
     prog.sedute.forEach((x, i) => prog.sedute.forEach((y, j) => { if (j > i) { const d = Math.abs(DAYS.indexOf(x.giorno) - DAYS.indexOf(y.giorno)); if (d !== 1 && d !== 6) return;
       GRUPPI_RECUPERO.forEach(g => { if (frazGruppoSeduta(x, g) >= PARAM_TEMPO.serieMinRecupero && frazGruppoSeduta(y, g) >= PARAM_TEMPO.serieMinRecupero) { tutti++; if (d === 6) anello++; } }); } }));
-    return { n: prog.sedute.length, giorni: prog.sedute.map(s => s.giorno), anello: anello, tutti: tutti, rec: recuperoRispettato(prog.sedute), note: prog.note.filter(n => /^Con 6 giorni/.test(n)) }; }`);
+    return { n: prog.sedute.length, giorni: prog.sedute.map(s => s.giorno), anello: anello, tutti: tutti, rec: recuperoRispettato(prog.sedute), note: prog.note.filter(n => /^Con 6 giorni|^Petto, schiena, gambe e glutei non lavorano/.test(n)) }; }`);
   const GOALS = [['massa'], ['forza'], ['ricomposizione'], ['salute']], LIV = ['intermedio', 'avanzato'], MIN = [30, 60, 90], LU = ['palestra', 'manubri'], PR = [[], ['petto'], ['spalle', 'braccia'], ['gambe']], FQ = ['auto', '1', '2'];
   let tot = 0, conAnello = 0, conRec = 0, i = 0, breve = 0, lunga = 0, cinque = 0;
   const falsi = [];
@@ -59,9 +59,10 @@ test('M2: su 288 programmi da 6 giorni (uno ogni quattro dei 1.152 della griglia
     if (r.tutti) conRec++;
     if (r.n === 6) {
       if (JSON.stringify(r.giorni) !== JSON.stringify(GIORNI_SEI)) falsi.push('giorni ' + r.giorni.join(','));
-      if (r.note.length !== 1 || !/Con 6 giorni hai un solo giorno di riposo: le sedute sono sei di fila, da venerdì a mercoledì, e il giovedì si riposa\./.test(r.note[0])) falsi.push('nota: ' + r.note.join(' | '));
-      if (/Lo stesso muscolo grande non lavora a fondo in due giorni consecutivi/.test(r.note.join(' ')) !== r.rec) falsi.push('la seconda frase e le 48 ore non coincidono: rec=' + r.rec + ' ' + r.note.join(' | '));
-      if (r.note[0] && /Lo stesso muscolo/.test(r.note[0])) lunga++; else breve++;
+      const prima = r.note[0] || '';
+      if (!/^Con 6 giorni hai un solo giorno di riposo: le sedute sono sei di fila, da venerdì a mercoledì, e il giovedì si riposa\.$/.test(prima) || r.note.length > 2) falsi.push('nota: ' + r.note.join(' | '));
+      if ((r.note.length === 2 && r.note[1] === 'Petto, schiena, gambe e glutei non lavorano a fondo in due giorni consecutivi.') !== r.rec) falsi.push('la seconda nota e le 48 ore non coincidono: rec=' + r.rec + ' ' + r.note.join(' | '));
+      if (r.note.length === 2) lunga++; else breve++;
     } else { cinque++; if (!r.note.length) falsi.push('5 sedute senza nota'); }
   })))))));
   assert.strictEqual(tot, 288);

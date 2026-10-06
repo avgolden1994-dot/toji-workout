@@ -49,10 +49,10 @@ function specialitaStruttura(brief) {
    (NOTA_PRINCIPIANTE_4_SEDUTE: la ricerca sui principianti §3.3, «detto all utente»). Scrive brief.lavoro.split se riordina o riduce le sedute. ---- */
 const GIORNI_PER_SEDUTE = { 2: [0, 3], 3: [0, 2, 4], 4: [0, 1, 3, 4], 5: [0, 1, 3, 4, 5], 6: [0, 1, 2, 4, 5, 6] };
 const NOTA_SEI_GIORNI = 'Con 6 giorni lo stesso gruppo cadrebbe in due giorni di fila: cinque sedute e due giorni di riposo, i muscoli recuperano meglio.';
-/* INT-2d (M2): 6 sedute in 7 giorni sono sempre sei giorni di fila (venerdi-mercoledi, il giovedi si riposa), perche la settimana e un anello: il «giovedi di riposo» non spezza niente. La nota lo dice, e la seconda frase
-   (nessun grande muscolo a fondo in due giorni consecutivi, domenica e lunedi compresi) resta solo se la scheda finale la rispetta (riconciliaNote) */
-const NOTA_SEI_GIORNI_DI_FILA_BREVE = 'Con 6 giorni hai un solo giorno di riposo: le sedute sono sei di fila, da venerdì a mercoledì, e il giovedì si riposa.';
-const NOTA_SEI_GIORNI_DI_FILA = NOTA_SEI_GIORNI_DI_FILA_BREVE + ' Lo stesso muscolo grande non lavora a fondo in due giorni consecutivi.';
+/* INT-2d (M2): 6 sedute in 7 giorni sono sempre sei giorni di fila (venerdi-mercoledi, il giovedi si riposa), perche la settimana e un anello: il «giovedi di riposo» non spezza niente. La nota lo dice; la seconda nota
+   (petto, schiena, gambe e glutei non a fondo in due giorni consecutivi, domenica e lunedi compresi: i cinque di GRUPPI_RECUPERO) la mette riconciliaNote solo se la scheda finale la rispetta */
+const NOTA_SEI_GIORNI_DI_FILA = 'Con 6 giorni hai un solo giorno di riposo: le sedute sono sei di fila, da venerdì a mercoledì, e il giovedì si riposa.';
+const NOTA_SEI_GIORNI_48_ORE = 'Petto, schiena, gambe e glutei non lavorano a fondo in due giorni consecutivi.';
 const NOTA_PRINCIPIANTE_4_SEDUTE = 'A chi comincia bastano 4 sedute a settimana: gli altri giorni sono riposo o una camminata.';   /* INT-2d (M1): prima «cresce di più con 4 sedute», senza fonte (la nota principianti §3.3: 2-3 sedute bastano, a volume pari full body e split sono uguali) */
 /* due sedute dello stesso tipo in due giorni consecutivi (indici di DAYS)? */
 function tipiAdiacenti(tipi, indici) {
@@ -216,7 +216,6 @@ function riconciliaNote(prog) {
   prog.note = prog.note.map(testo => !haCoppie && testo === NOTA_SENZA_CEDIMENTO_SS ? NOTA_SENZA_CEDIMENTO
     : !haDrop && testo === NOTA_POCO_TEMPO_SS_DROP ? NOTA_POCO_TEMPO_SS
     : !haPotenza && testo === NOTA_OVER65_POTENZA ? NOTA_OVER65
-    : testo === NOTA_SEI_GIORNI_DI_FILA && !recuperoRispettato(prog.sedute) ? NOTA_SEI_GIORNI_DI_FILA_BREVE   /* INT-2d (M2): la seconda frase solo se le 48 ore reggono, anche attraverso il lunedi */
     : !haCoppie && typeof FRASE_TAGLIO_TEMPO !== 'undefined' && testo === FRASE_TAGLIO_TEMPO ? FRASE_TAGLIO_TEMPO_SENZA_COPPIE : testo).filter(testo => {
     const t = String(testo), m = /^Aggiunto: (.+?) \u2014 /.exec(t);
     if (viste[t]) return false;
@@ -230,6 +229,9 @@ function riconciliaNote(prog) {
     if (typeof NOTA_FEMORALI_TEMPO !== 'undefined' && t === NOTA_FEMORALI_TEMPO) return !flessione;   /* INT-2b: il taglio per il tempo ha tolto l unica flessione; se un passo dopo l ha rimessa la nota mentirebbe */
     return true;
   });
+  /* INT-2d (M2): la seconda nota dei sei giorni di fila (le 48 ore) solo se la scheda finale le rispetta, anche attraverso il lunedi */
+  const k = prog.note.indexOf(NOTA_SEI_GIORNI_DI_FILA);
+  if (k !== -1 && recuperoRispettato(prog.sedute) && prog.note.indexOf(NOTA_SEI_GIORNI_48_ORE) === -1) prog.note.splice(k + 1, 0, NOTA_SEI_GIORNI_48_ORE);
   return prog;
 }
 function verificaProgramma(brief, prog) {

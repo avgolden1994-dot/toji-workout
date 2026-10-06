@@ -23,7 +23,9 @@
    INT-2d (revisione indipendente dell'onda 2b/2c, M4): dall'onda-2b `--contro <json dell'onda prima>` e OBBLIGATORIO (senza, una classe con una soglia esplicita non si confrontava con l'onda prima e una
    regressione come FRQ-02:bicipiti 7,24 -> 8,80 passava); ogni `ammessa` porta `tettoIniziale` (il tetto fissato PRIMA di misurare: valore misurato sull'onda prima piu la tolleranza) e, se `max` lo supera,
    `rialzo: { motivo, data, responsabile }` (altrimenti il cancello fallisce); `dichiara.criteriIniziali` e la lista dichiarata prima della misura: un criterio che ne esce serve `dichiara.rimossi.<COD>` con
-   motivo, data e responsabile. La matrice del cancello e quella dell'onda (standard per onda-2b): la matrice rapida e per iterare, il verdetto si da sulla standard.
+   motivo, data e responsabile. La matrice del cancello e quella dell'onda (standard per onda-2b) e SOLO la standard da il verdetto sulle classi: con --qualsiasi-matrice (rapida: un profilo su sei) le soglie numeriche, i tetti
+   e le regressioni sono «indicativi» (avviso, non fallimento: le percentuali di un campione si spostano di punti interi, FRQ-02:bicipiti 8,80 sulla standard e 10,79 sulla rapida) mentre restano fallimenti gli errori, la
+   sicurezza (SAF-*), le regole di struttura (--contro, tettoIniziale, dichiara) e le scadenze: standard e rapida non si contraddicono mai sul verdetto che conta. `onde.<onda>.aperti` = obiettivi aperti con responsabile e scadenza.
    Esce con 0 se passa, 1 se fallisce, 2 per un errore d'uso (file mancante, onda sconosciuta). */
 'use strict';
 const fs = require('fs'), path = require('path'), os = require('os'), cp = require('child_process');
@@ -98,7 +100,7 @@ function valuta(cfg, snap, ondaId, opz) {
   const assoluto = (cod, passa, testo) => {
     if (passa) return ok(testo);
     if (dichiara && !dichiara.has(cod)) return righe.push({ esito: 'aperto', testo: testo, codice: cod, responsabile: responsabile(cod) });
-    return ko(testo);
+    return kn(cod, testo);
   };
 
   /* -- 1. l'istantanea e confrontabile? -- */
@@ -107,6 +109,9 @@ function valuta(cfg, snap, ondaId, opz) {
     const t = 'matrice «' + snap.matrice + '» (' + snap.profili + ' profili): per ' + ondaId + ' serve «' + matriceAttesa + '»';
     (opz.qualsiasiMatrice ? av : ko)(t + (opz.qualsiasiMatrice ? ' (ignorato: --qualsiasi-matrice)' : ''));
   } else ok('matrice ' + snap.matrice + ', ' + snap.profili + ' profili');
+  /* INT-2d (M4): su una matrice diversa da quella dell'onda (--qualsiasi-matrice) le soglie numeriche non danno un verdetto: avviso «indicativo», tranne la sicurezza */
+  const campione = !prima && snap.matrice !== matriceAttesa && !!opz.qualsiasiMatrice, sicurezzaSet = new Set((cfg.regressione && cfg.regressione.sicurezza) || []);
+  const kn = (cod, t) => (campione && !sicurezzaSet.has(codiceDi(cod))) ? av('indicativo (matrice ' + snap.matrice + '): ' + t) : ko(t);
   if (snap.pesi !== 'popolazione') ko('pesi «' + snap.pesi + '»: le soglie valgono per i pesi della popolazione (non usare --pesi uniformi)');
   if (snap.errori !== 0) ko('il generatore ha dato errori su ' + snap.errori + ' profili (ERR-01 deve essere 0)');
   else ok('generatore senza errori');
@@ -217,6 +222,15 @@ function valuta(cfg, snap, ondaId, opz) {
       if (!r.motivo || !r.data || !r.responsabile) ko('ammessa ' + k + ': il tetto e stato rialzato da ' + ini + ' a ' + am.max + ' senza `rialzo` con motivo, data e responsabile (un tetto rialzato dopo la misura non e un tetto)');
     }
   });
+  /* INT-2d (M4/M6/M7): `onde.<onda>.aperti` = obiettivi aperti scritti con il responsabile e la SCADENZA (una tra ordineOnde): si stampano ogni volta e, valutando l'onda di scadenza o una dopo, fanno fallire il cancello */
+  const aperti = (onda && onda.aperti) || {};
+  Object.keys(aperti).sort().forEach(k => {
+    const a = aperti[k] || {};
+    if (!a.responsabile || !a.motivo) ko('aperto ' + k + ': manca il responsabile o il motivo');
+    else if (!a.scade || ordine.indexOf(a.scade) === -1) ko('aperto ' + k + ': manca la scadenza (una tra ' + ordine.join(', ') + ')');
+    else if (ordine.indexOf(a.scade) <= ordine.indexOf(ondaId)) ko('aperto ' + k + ' SCADUTO: doveva chiudersi entro ' + a.scade + ' (' + a.responsabile + ')');
+    else righe.push({ esito: 'aperto', testo: k + (typeof val(k) === 'number' && (snap.pesata[k] !== undefined) ? ': ' + f2(val(k)) + '%' : '') + ' [scade ' + a.scade + '] ' + a.motivo, codice: codiceDi(k), responsabile: a.responsabile });
+  });
   /* INT-2d (M4): i criteri dichiarati sono fissati prima della misura (`dichiara.criteriIniziali`); uno che ne esce dopo la misura ha bisogno di `dichiara.rimossi.<COD>` con motivo, data e responsabile */
   if (onda && onda.dichiara && ordine.indexOf(ondaId) >= ordine.indexOf('onda-2b')) {
     const d = onda.dichiara, ini = Array.isArray(d.criteriIniziali) ? d.criteriIniziali : null, attuali = new Set(d.criteri || []), rim = d.rimossi || {};
@@ -235,15 +249,15 @@ function valuta(cfg, snap, ondaId, opz) {
       const am = ammesse[k];
       if (am && !scaduta(am) && !sicurezza.has(cod) && typeof am.max === 'number' && am.motivo) {
         if (val(k) <= am.max + EPS) { ammesseUsate++; ok('regressione AMMESSA ' + k + ': ' + f2(val(k)) + '% contro ' + f2(valRif(k)) + '% (' + rif.etichetta + '), tetto ' + am.max + '%: ' + am.motivo + (am.risolve ? ' [' + am.risolve + ']' : '')); return; }
-        peggiorate++; return ko('regressione ' + k + ': ' + f2(val(k)) + '% oltre il tetto ammesso di ' + am.max + '% (contro ' + f2(valRif(k)) + '% di ' + rif.etichetta + ')');
+        peggiorate++; return kn(k, 'regressione ' + k + ': ' + f2(val(k)) + '% oltre il tetto ammesso di ' + am.max + '% (contro ' + f2(valRif(k)) + '% di ' + rif.etichetta + ')');
       }
-      peggiorate++; ko('regressione ' + k + ': ' + f2(val(k)) + '% contro ' + f2(valRif(k)) + '% (' + rif.etichetta + '), tolleranza ' + tol + ' punti');
+      peggiorate++; kn(k, 'regressione ' + k + ': ' + f2(val(k)) + '% contro ' + f2(valRif(k)) + '% (' + rif.etichetta + '), tolleranza ' + tol + ' punti');
     }
   });
   /* INT-1: con --contro il totale non puo peggiorare oltre la tolleranza NEMMENO se ha una soglia esplicita (una soglia allentata, per esempio 21,5 contro un 2,7 misurato, non nasconde una regressione) */
   if (sTot === undefined || opz.contro) {
     const tolG = cfg.regressione.tolleranzaPunti;
-    (snap.gravi_pesata <= rif.gravi_pesata + tolG + EPS ? ok : ko)('gravi_pesata ' + f2(snap.gravi_pesata) + '% non peggiora (' + rif.etichetta + ' ' + f2(rif.gravi_pesata) + '%)');
+    (snap.gravi_pesata <= rif.gravi_pesata + tolG + EPS ? ok : (t => kn('gravi_pesata', t)))('gravi_pesata ' + f2(snap.gravi_pesata) + '% non peggiora (' + rif.etichetta + ' ' + f2(rif.gravi_pesata) + '%)');
   }
   ok('regressione contro «' + rif.etichetta + '»: ' + controllate + (opz.contro ? ' classi controllate (anche quelle con una soglia esplicita)' : ' classi non coperte da una soglia') + ', ' + peggiorate + ' peggiorate' + (ammesseUsate ? ', ' + ammesseUsate + ' ammesse con il loro motivo' : '') + (riscritti.size ? ' (criteri riscritti, non confrontati: ' + Array.from(riscritti).join(', ') + ')' : ''));
 
@@ -542,33 +556,56 @@ function autotest() {
     eq(valuta(cfg, daCollaudo(buona), 'onda-2b', { contro: daCollaudo(istantaneaBuona(cfg, 'onda-2a')) }).falliti, 0, 'con --contro passa');
     eq(valuta(cfg, daCollaudo(istantaneaBuona(cfg, 'onda-2a')), 'onda-2a', {}).falliti, 0, 'onda-2a: non obbligatorio');
     eq(cli(buona, ['onda-2b']).status, 1, 'da riga di comando: esce 1');
-    /* la regressione che prima passava: una classe con una soglia esplicita e un tetto ammesso (FRQ-02:bicipiti 7,24 -> 8,80 contro un tetto di 8,5) */
+    /* la regressione che prima passava: una classe con un tetto ammesso (FRQ-02:bicipiti 7,24 -> 9,2 contro un tetto di 8,8) */
     const c = JSON.parse(JSON.stringify(cfg)), contro = daCollaudo(istantaneaBuona(c, 'onda-2a', { pesata: { 'FRQ-02:bicipiti': 7.24 }, conteggio: { 'FRQ-02:bicipiti': 408 } }));
     const peggio = (v) => istantaneaBuona(c, 'onda-2b', { pesata: { 'FRQ-02:bicipiti': v }, conteggio: { 'FRQ-02:bicipiti': Math.round(v * 56) } });
-    const r880 = valuta(c, daCollaudo(peggio(8.8)), 'onda-2b', { contro });
-    eq(r880.righe.some(r => r.esito === 'fallito' && /oltre il tetto ammesso di 8.5%/.test(r.testo) && /FRQ-02:bicipiti/.test(r.testo)), true, 'FRQ-02:bicipiti 8,80 oltre il tetto di 8,5: fallisce anche se la classe ha una soglia');
+    const r920 = valuta(c, daCollaudo(peggio(9.2)), 'onda-2b', { contro });
+    eq(r920.righe.some(r => r.esito === 'fallito' && /oltre il tetto ammesso di 8.8%/.test(r.testo) && /FRQ-02:bicipiti/.test(r.testo)), true, 'FRQ-02:bicipiti 9,2 oltre il tetto di 8,8: fallisce anche se la classe ha una soglia');
     eq(valuta(c, daCollaudo(peggio(8.4)), 'onda-2b', { contro }).falliti, 0, '8,4 e sotto il tetto ammesso: passa');
   });
   prova('INT-2d (M4b): un tetto ammesso rialzato senza `rialzo` (motivo, data, responsabile) fa fallire il cancello; ogni ammessa in vigore ha `tettoIniziale`', () => {
     const contro = (c) => daCollaudo(istantaneaBuona(c, 'onda-2a', { pesata: { 'FRQ-02:bicipiti': 7.24 }, conteggio: { 'FRQ-02:bicipiti': 408 } }));
     const esito = (modifica) => { const c = JSON.parse(JSON.stringify(cfg)); modifica(c.onde['onda-2a'].ammesse['FRQ-02:bicipiti']); return valuta(c, daCollaudo(istantaneaBuona(c, 'onda-2b', { pesata: { 'FRQ-02:bicipiti': 8.4 }, conteggio: { 'FRQ-02:bicipiti': 470 } })), 'onda-2b', { contro: contro(c) }); };
     eq(esito(() => {}).falliti, 0, 'i tetti delle soglie in vigore passano');
-    const rialzato = esito(a => { a.max = 8.9; });
-    eq(rialzato.righe.some(r => r.esito === 'fallito' && /rialzato da 8.5 a 8.9 senza `rialzo`/.test(r.testo)), true, 'tetto 8,5 -> 8,9 senza rialzo: fallisce');
+    const rialzato = esito(a => { delete a.rialzo; });
+    eq(rialzato.righe.some(r => r.esito === 'fallito' && /rialzato da 8.5 a 8.8 senza `rialzo`/.test(r.testo)), true, 'tetto 8,5 -> 8,8 senza rialzo: fallisce');
     eq(esito(a => { a.max = 8.9; a.rialzo = { motivo: 'prova', data: '2026-10-06', responsabile: 'W2-T1' }; }).falliti, 0, 'con motivo, data e responsabile passa');
-    eq(esito(a => { a.max = 8.9; a.rialzo = { motivo: 'prova', data: '2026-10-06' }; }).falliti >= 1, true, 'senza il responsabile fallisce');
+    eq(esito(a => { a.rialzo = { motivo: 'prova', data: '2026-10-06' }; }).falliti >= 1, true, 'senza il responsabile fallisce');
     eq(esito(a => { delete a.tettoIniziale; }).righe.some(r => r.esito === 'fallito' && /manca `tettoIniziale`/.test(r.testo)), true, 'senza tettoIniziale fallisce');
   });
   prova('INT-2d (M4b): un criterio dichiarato prima della misura che sparisce dalla lista serve `dichiara.rimossi` con motivo, data e responsabile', () => {
     const contro = daCollaudo(istantaneaBuona(cfg, 'onda-2a'));
     const esito = (modifica) => { const c = JSON.parse(JSON.stringify(cfg)); modifica(c.onde['onda-2b'].dichiara); return valuta(c, daCollaudo(istantaneaBuona(c, 'onda-2b')), 'onda-2b', { contro }); };
-    eq(esito(() => {}).falliti, 0, 'la lista delle soglie in vigore passa');
-    const tolto = esito(d => { d.criteri = d.criteri.filter(x => x !== 'MOD-07'); });
+    eq(esito(() => {}).falliti, 0, 'la lista delle soglie in vigore passa (MOD-07 rimosso con il suo motivo)');
+    const tolto = esito(d => { delete d.rimossi; d.criteri = d.criteri.filter(x => x !== 'MOD-07'); });
     eq(tolto.righe.some(r => r.esito === 'fallito' && /dichiara: MOD-07 era dichiarato prima della misura/.test(r.testo)), true, 'MOD-07 tolto dalla lista senza rimossi: fallisce');
     eq(esito(d => { d.criteri = d.criteri.filter(x => x !== 'MOD-07'); d.rimossi = { 'MOD-07': { motivo: 'tautologico', data: '2026-10-06', responsabile: 'INT-2d' } }; }).falliti, 0, 'con motivo, data e responsabile passa');
-    eq(esito(d => { d.rimossi = { 'MOD-07': { motivo: 'tautologico', data: '2026-10-06', responsabile: 'INT-2d' } }; }).falliti >= 1, true, 'un rimosso ancora dichiarato e incoerente');
+    eq(esito(d => { d.criteri = d.criteri.concat(['MOD-07']); }).falliti >= 1, true, 'un rimosso ancora dichiarato e incoerente');
     eq(esito(d => { delete d.criteriIniziali; }).righe.some(r => r.esito === 'fallito' && /criteriIniziali manca/.test(r.testo)), true, 'senza criteriIniziali fallisce');
     eq(esito(d => { d.criteri = d.criteri.concat(['VOL-01']); }).falliti, 0, 'aggiungere un criterio alla lista e piu severo: non serve niente (ma VOL-01 e rosso: qui l istantanea e buona)');
+  });
+  prova('INT-2d (M4): standard e rapida non si contraddicono: sulla rapida (--qualsiasi-matrice) le soglie numeriche sono indicative (avviso), la sicurezza, gli errori e le regole di struttura restano fallimenti', () => {
+    const c = JSON.parse(JSON.stringify(cfg)), contro = daCollaudo(istantaneaBuona(c, 'onda-2a', { matrice: 'rapida', profili: 1774, pesata: { 'FRQ-02:bicipiti': 7.09 }, conteggio: { 'FRQ-02:bicipiti': 126 } }));
+    const rapida = (m) => daCollaudo(istantaneaBuona(c, 'onda-2b', Object.assign({ matrice: 'rapida', profili: 1774 }, m)));
+    const alto = { pesata: { 'FRQ-02:bicipiti': 10.79 }, conteggio: { 'FRQ-02:bicipiti': 191 } };
+    const std = valuta(c, daCollaudo(istantaneaBuona(c, 'onda-2b', { pesata: { 'FRQ-02:bicipiti': 10.79 }, conteggio: { 'FRQ-02:bicipiti': 1165 } })), 'onda-2b', { contro: daCollaudo(istantaneaBuona(c, 'onda-2a', { pesata: { 'FRQ-02:bicipiti': 7.24 }, conteggio: { 'FRQ-02:bicipiti': 408 } })) });
+    eq(std.falliti >= 1, true, 'sulla standard FRQ-02:bicipiti 10,79 contro un tetto di 8,5 fallisce');
+    const r = valuta(c, rapida(alto), 'onda-2b', { contro, qualsiasiMatrice: true });
+    eq(r.falliti, 0, 'sulla rapida lo stesso valore e indicativo: ' + r.righe.filter(x => x.esito === 'fallito').map(x => x.testo).join(' | '));
+    eq(r.righe.some(x => x.esito === 'avviso' && /^indicativo \(matrice rapida\): regressione FRQ-02:bicipiti/.test(x.testo)), true, 'e lo dice: indicativo');
+    const sic = valuta(c, rapida({ pesata: { 'SAF-02:spalle': 10.2 }, conteggio: { 'SAF-02:spalle': 180 } }), 'onda-2b', { contro: daCollaudo(istantaneaBuona(c, 'onda-2a', { matrice: 'rapida', profili: 1774, pesata: { 'SAF-02:spalle': 10.0 }, conteggio: { 'SAF-02:spalle': 177 } })), qualsiasiMatrice: true });
+    eq(sic.righe.some(x => x.esito === 'fallito' && /regressione SAF-02:spalle/.test(x.testo)), true, 'la sicurezza resta un fallimento anche sulla rapida');
+    eq(valuta(c, rapida({ errori: 2 }), 'onda-2b', { contro, qualsiasiMatrice: true }).falliti >= 1, true, 'gli errori del generatore restano un fallimento');
+    eq(valuta(c, rapida(alto), 'onda-2b', { qualsiasiMatrice: true }).righe.some(x => x.esito === 'fallito' && /OBBLIGATORIO/.test(x.testo)), true, 'e --contro resta obbligatorio');
+  });
+  prova('INT-2d (M6, M7): gli obiettivi aperti (`aperti`) hanno responsabile e scadenza; alla scadenza il cancello fallisce', () => {
+    const esito = (a, onda) => { const c = JSON.parse(JSON.stringify(cfg)); c.onde['onda-2b'].aperti = { 'EQ-03:flessione': a }; return valuta(c, daCollaudo(istantaneaBuona(c, onda || 'onda-2b')), onda || 'onda-2b', { contro: daCollaudo(istantaneaBuona(c, 'onda-2a')) }); };
+    const ok = { responsabile: 'W2-T6', scade: 'onda-2', motivo: 'prova' };
+    eq(esito(ok).falliti, 0, 'con responsabile, scadenza futura e motivo passa');
+    eq(esito(ok).perResponsabile['W2-T6'].length >= 1, true, 'e si stampa con il responsabile');
+    eq(esito(Object.assign({}, ok, { scade: 'onda-2b' })).righe.some(x => x.esito === 'fallito' && /SCADUTO/.test(x.testo)), true, 'scade nell\'onda che si valuta: fallisce');
+    eq(esito({ scade: 'onda-2', motivo: 'prova' }).righe.some(x => x.esito === 'fallito' && /manca il responsabile/.test(x.testo)), true, 'senza responsabile fallisce');
+    eq(esito({ responsabile: 'W2-T6', motivo: 'prova' }).righe.some(x => x.esito === 'fallito' && /manca la scadenza/.test(x.testo)), true, 'senza scadenza fallisce');
   });
   prova('nomi delle onde e etichette del collaudo', () => {
     eq(normalizzaOnda('INT-0', cfg), 'onda-0'); eq(normalizzaOnda('coach-v2-onda-2', cfg), 'onda-2'); eq(normalizzaOnda('2a', cfg), 'onda-2a');

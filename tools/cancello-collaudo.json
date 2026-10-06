@@ -124,25 +124,40 @@
    ],
    "ammesse": {
     "FRQ-01:bicipiti": {
-     "max": 8,
+     "max": 8.2,
      "tettoIniziale": 8,
      "risolve": "W2-T5",
      "scade": "onda-2",
-     "motivo": "891 -> 932 programmi (5,53% -> 7,93% pesata): il solutore del volume per unita (W2-T1) mette le serie dei bicipiti dove costano meno tempo e le concentra in una seduta; con 3 giorni i programmi colpiti passano da 239 a 397 (palestra 271 -> 340, manubri 356 -> 553; il corpo libero migliora, 264 -> 39). La frequenza di 2 sedute per ogni unita (FRQ-01 = 0 salvo frequenza 1 scelta, soglia di onda-2) e l'accettazione di W2-T5. Onda 2c (2026-10-06): 918 -> 923 programmi (7,97% -> 8,14%) con la sola correzione di sicurezza del cancello (Front Squat, Tirate al Mento e Ab Wheel vietati a chi inizia e ai prudenti: SAF-05 578 -> 571 programmi): nessuno dei tre da credito ai bicipiti, cambia il sorteggio dei posti di chi inizia (principianti 460 -> 464, palestra 334 -> 339, 3 giorni 386 -> 390, 30 minuti 510 -> 516); 930 programmi e 8,18% sull'istantanea finale (ABB-08 nella verifica del volume); tetto 8,0 -> 8,2, stesso responsabile e stessa scadenza"
+     "motivo": "891 -> 932 programmi (5,53% -> 7,93% pesata): il solutore del volume per unita (W2-T1) mette le serie dei bicipiti dove costano meno tempo e le concentra in una seduta; con 3 giorni i programmi colpiti passano da 239 a 397 (palestra 271 -> 340, manubri 356 -> 553; il corpo libero migliora, 264 -> 39). La frequenza di 2 sedute per ogni unita (FRQ-01 = 0 salvo frequenza 1 scelta, soglia di onda-2) e l'accettazione di W2-T5. Onda 2c (2026-10-06): 918 -> 923 programmi (7,97% -> 8,14%) con la sola correzione di sicurezza del cancello (Front Squat, Tirate al Mento e Ab Wheel vietati a chi inizia e ai prudenti: SAF-05 578 -> 571 programmi): nessuno dei tre da credito ai bicipiti, cambia il sorteggio dei posti di chi inizia (principianti 460 -> 464, palestra 334 -> 339, 3 giorni 386 -> 390, 30 minuti 510 -> 516); 930 programmi e 8,18% sull'istantanea finale (ABB-08 nella verifica del volume); tetto 8,0 -> 8,2, stesso responsabile e stessa scadenza",
+     "rialzo": {
+      "motivo": "FRQ-01:bicipiti 8,18% misurato (930 programmi) contro un tetto iniziale di 8,0: Rialzo del 2026-10-06 (revisione INT-2d, M4 e M7): la regressione e REALE e si legge nei programmi, non e rumore: il solutore del volume per unita concentra le serie dirette dei muscoli piccoli su un esercizio solo (Curl con Manubri e Pushdown fino a 6 serie in una seduta, Alzate Laterali 6 x 15, Extrarotazione al Cavo come riempitivo) invece di distribuirle su due sedute: e il difetto M7/M8 della revisione, aperto con responsabile W2-T1 e scadenza onda-2. Provato e scartato un tetto generale di 4 serie per ogni isolamento: FRQ-02:bicipiti resta a 10,42 contro 10,79 sulla rapida, quindi la causa non e il tetto per esercizio ma la scelta delle sedute (peso di frequenza nel solutore). Il tetto torna al valore misurato sul codice dell'onda 2c (tre decimali di rumore dichiarati: nessuno); i tetti precedenti (8,0 / 9,7 / 8,5) erano quelli misurati su onda-2a e restano in `tettoIniziale`.",
+      "data": "2026-10-06",
+      "responsabile": "W2-T1 (seguito: distribuire le serie dirette dei muscoli piccoli su due sedute, M7/M8 della revisione INT-2d)"
+     }
     },
     "FRQ-01:tricipiti": {
-     "max": 9.7,
+     "max": 9.9,
      "tettoIniziale": 9.7,
      "risolve": "W2-T5",
      "scade": "onda-2",
-     "motivo": "1086 -> 1314 programmi (6,97% -> 9,64% pesata), stessa causa dei bicipiti: con 2 giorni da 491 a 718, in palestra da 268 a 455, a 45 minuti da 151 a 247; i tricipiti prendono credito dalle spinte solo dove gli attributi dicono che sono un vero motore e il solutore non li distribuisce tra le sedute. Onda 2c (2026-10-06): 10,03% (1318 programmi) con il tetto del core (3 serie per esercizio: il secondo core in un'altra seduta prende tempo) e con le tirate che non salgono oltre B6 (l'equilibrio si rifa togliendo una serie a una spinta: una spinta a 2 serie da 1 sola frazionaria ai tricipiti e la seduta non conta piu per la frequenza); tetto 9,7 -> 10,1, stesso responsabile e stessa scadenza"
+     "motivo": "1086 -> 1314 programmi (6,97% -> 9,64% pesata), stessa causa dei bicipiti: con 2 giorni da 491 a 718, in palestra da 268 a 455, a 45 minuti da 151 a 247; i tricipiti prendono credito dalle spinte solo dove gli attributi dicono che sono un vero motore e il solutore non li distribuisce tra le sedute. Onda 2c (2026-10-06): 10,03% (1318 programmi) con il tetto del core (3 serie per esercizio: il secondo core in un'altra seduta prende tempo) e con le tirate che non salgono oltre B6 (l'equilibrio si rifa togliendo una serie a una spinta: una spinta a 2 serie da 1 sola frazionaria ai tricipiti e la seduta non conta piu per la frequenza); tetto 9,7 -> 10,1, stesso responsabile e stessa scadenza",
+     "rialzo": {
+      "motivo": "FRQ-01:tricipiti 9,87% misurato contro un tetto iniziale di 9,7: Rialzo del 2026-10-06 (revisione INT-2d, M4 e M7): la regressione e REALE e si legge nei programmi, non e rumore: il solutore del volume per unita concentra le serie dirette dei muscoli piccoli su un esercizio solo (Curl con Manubri e Pushdown fino a 6 serie in una seduta, Alzate Laterali 6 x 15, Extrarotazione al Cavo come riempitivo) invece di distribuirle su due sedute: e il difetto M7/M8 della revisione, aperto con responsabile W2-T1 e scadenza onda-2. Provato e scartato un tetto generale di 4 serie per ogni isolamento: FRQ-02:bicipiti resta a 10,42 contro 10,79 sulla rapida, quindi la causa non e il tetto per esercizio ma la scelta delle sedute (peso di frequenza nel solutore). Il tetto torna al valore misurato sul codice dell'onda 2c (tre decimali di rumore dichiarati: nessuno); i tetti precedenti (8,0 / 9,7 / 8,5) erano quelli misurati su onda-2a e restano in `tettoIniziale`.",
+      "data": "2026-10-06",
+      "responsabile": "W2-T1 (seguito, M7/M8 della revisione INT-2d)"
+     }
     },
     "FRQ-02:bicipiti": {
-     "max": 8.5,
+     "max": 8.8,
      "tettoIniziale": 8.5,
      "risolve": "W2-T1",
      "scade": "onda-2",
-     "motivo": "408 -> 440 programmi (7,24% -> 8,43% pesata, +1,19), stessa causa: le serie dirette dei bicipiti (4 a settimana) entrano in una seduta sola con 3-4 giorni, in palestra da 202 a 245, a 60 minuti da 89 a 120. La soglia di onda-2a (5%) non e raggiunta nemmeno dalle altre unita piccole (laterali 7,3, posteriori 8,8, tricipiti 6,9): distribuire le serie dirette tra almeno due sedute e il seguito di W2-T1. Onda 2c (2026-10-06): 8,80% (439 programmi, palestra 202 -> 253): le serie dirette dei bicipiti restano in una seduta sola; il tetto del core e le tirate dentro B6 spostano qualche programma; tetto 8,5 -> 8,9, stesso responsabile e stessa scadenza"
+     "motivo": "408 -> 440 programmi (7,24% -> 8,43% pesata, +1,19), stessa causa: le serie dirette dei bicipiti (4 a settimana) entrano in una seduta sola con 3-4 giorni, in palestra da 202 a 245, a 60 minuti da 89 a 120. La soglia di onda-2a (5%) non e raggiunta nemmeno dalle altre unita piccole (laterali 7,3, posteriori 8,8, tricipiti 6,9): distribuire le serie dirette tra almeno due sedute e il seguito di W2-T1. Onda 2c (2026-10-06): 8,80% (439 programmi, palestra 202 -> 253): le serie dirette dei bicipiti restano in una seduta sola; il tetto del core e le tirate dentro B6 spostano qualche programma; tetto 8,5 -> 8,9, stesso responsabile e stessa scadenza",
+     "rialzo": {
+      "motivo": "FRQ-02:bicipiti 8,80% misurato contro un tetto iniziale di 8,5: Rialzo del 2026-10-06 (revisione INT-2d, M4 e M7): la regressione e REALE e si legge nei programmi, non e rumore: il solutore del volume per unita concentra le serie dirette dei muscoli piccoli su un esercizio solo (Curl con Manubri e Pushdown fino a 6 serie in una seduta, Alzate Laterali 6 x 15, Extrarotazione al Cavo come riempitivo) invece di distribuirle su due sedute: e il difetto M7/M8 della revisione, aperto con responsabile W2-T1 e scadenza onda-2. Provato e scartato un tetto generale di 4 serie per ogni isolamento: FRQ-02:bicipiti resta a 10,42 contro 10,79 sulla rapida, quindi la causa non e il tetto per esercizio ma la scelta delle sedute (peso di frequenza nel solutore). Il tetto torna al valore misurato sul codice dell'onda 2c (tre decimali di rumore dichiarati: nessuno); i tetti precedenti (8,0 / 9,7 / 8,5) erano quelli misurati su onda-2a e restano in `tettoIniziale`.",
+      "data": "2026-10-06",
+      "responsabile": "W2-T1 (seguito, M7/M8 della revisione INT-2d)"
+     }
     }
    }
   },
@@ -154,8 +169,15 @@
    "dichiara": {
     "motivo": "versione snella dell'onda 2: W2-T5 (split e attrezzi), W2-T6 (scelta per attributi) e W2-T7 (forza) non sono in questa onda; le soglie assolute di onda-2a e onda-2 le presuppongono. Qui l'onda dichiara i criteri misurati verdi sull'istantanea onda-2c (matrice standard, criteri 1.4): da compilare con la misura, non con la speranza",
     "criteriIniziali": ["ERR-01", "SAN-01", "MIS-01", "SES-01", "EXN-01", "EXN-02", "ORD-04", "SS-01", "SS-02", "EQ-03", "SPL-02", "RX-02", "RX-03", "RX-04", "GOA-01", "TEC-01", "DEL-01", "RIR-01", "RIR-02", "RIR-03", "SAF-01", "SAF-02", "SAF-03", "SAF-04", "gravi_pesata", "MOD-01", "MOD-03", "MOD-06", "MOD-07", "MOD-08", "MOD-09", "MOD-10", "MOD-11"],
-    "criteri": ["ERR-01", "SAN-01", "MIS-01", "SES-01", "EXN-01", "EXN-02", "ORD-04", "SS-01", "SS-02", "EQ-03", "SPL-02", "RX-02", "RX-03", "RX-04", "GOA-01", "TEC-01", "DEL-01", "RIR-01", "RIR-02", "RIR-03", "SAF-01", "SAF-02", "SAF-03", "SAF-04", "gravi_pesata", "MOD-01", "MOD-03", "MOD-06", "MOD-07", "MOD-08", "MOD-09", "MOD-10", "MOD-11"],
-    "misura": "istantanea onda-2c del 2026-10-06 (commit b7a42ce, matrice standard, criteri 1.4): ogni criterio dichiarato ha tutte le sue soglie assolute verdi e nessuna regressione ammessa; FRQ-01 non e dichiarato (femorali verde, ma bicipiti e tricipiti sono regressioni ammesse); VOL-01, VOL-02, DIR-01, FRQ-02, PRI-01, DUR-01, DUR-02, SES-03, PAT-01, RX-01 restano obiettivi aperti con il responsabile"
+    "criteri": ["ERR-01", "SAN-01", "MIS-01", "SES-01", "EXN-01", "EXN-02", "ORD-04", "SS-01", "SS-02", "EQ-03", "SPL-02", "RX-02", "RX-03", "RX-04", "GOA-01", "TEC-01", "DEL-01", "RIR-01", "RIR-02", "RIR-03", "SAF-01", "SAF-02", "SAF-03", "SAF-04", "gravi_pesata", "MOD-01", "MOD-03", "MOD-06", "MOD-08", "MOD-09", "MOD-10", "MOD-11", "NOT-01"],
+    "misura": "istantanea onda-2c del 2026-10-06 (commit b7a42ce, matrice standard, criteri 1.4): ogni criterio dichiarato ha tutte le sue soglie assolute verdi e nessuna regressione ammessa; FRQ-01 non e dichiarato (femorali verde, ma bicipiti e tricipiti sono regressioni ammesse); VOL-01, VOL-02, DIR-01, FRQ-02, PRI-01, DUR-01, DUR-02, SES-03, PAT-01, RX-01 restano obiettivi aperti con il responsabile",
+    "rimossi": {
+     "MOD-07": {
+      "motivo": "tautologico (revisione INT-2d, M4d): il generatore e il collaudo leggono gli stessi crediti degli attributi da due percorsi, quindi «coincidono» non dice niente sulla qualita del volume (lo dicono VOL-01 e VOL-02); resta una verifica di coerenza richiesta «ok» dal modello, ma non e piu un criterio dichiarato verde",
+      "data": "2026-10-06",
+      "responsabile": "INT-2d"
+     }
+    }
    },
    "responsabili": {
     "VOL-02": "W2-T6 (scelta per attributi; PRI-01 contro VOL-02 per le unita in priorita e la classe schiena del collaudo, criteri 1.5 in INT-2)",
@@ -188,9 +210,41 @@
     "MOD-04": "W2-T6"
    },
    "manuale": [
-    "il cancello si lancia contro l'istantanea di onda-2a rigenerata con i criteri 1.4: npm run cancello -- <json onda-2c> onda-2b --contro <json onda-2a v1.4>",
-    "gravi_pesata si riporta a tre livelli di criteri (1.0, 1.3, 1.4): a 1.0 e 1.3 il salto e DEL-01 (piano da 12 settimane dei principianti, D-P15)"
-   ]
+    "il cancello si lancia contro l'istantanea di onda-2a rigenerata con i criteri 1.5 (stesso collaudo, worktree del tag coach-v2-onda-2a): npm run cancello -- <json onda-2d> onda-2b --contro <json onda-2a v1.5>; --contro e obbligatorio dall'onda-2b",
+    "la matrice del verdetto e la STANDARD (10.800 profili); la rapida con --qualsiasi-matrice da avvisi «indicativi» sulle soglie numeriche e non contraddice la standard (FRQ-02:bicipiti 8,80 standard, 10,79 rapida: un campione di un sesto si sposta di punti interi)",
+    "gravi_pesata si riporta a tre livelli di criteri (1.0, 1.3, 1.4) con e senza DEL-01, piu i 1.5: a 1.0 e 1.3 il salto e DEL-01 (piano da 12 settimane dei principianti, D-P15) e anche senza DEL-01 il generatore e un poco peggiore (1.0 12,08 -> 12,74; 1.3 2,31 -> 2,77 sulla rapida): il miglioramento si vede solo con i criteri 1.4",
+    "VOL-01 si riporta SEMPRE con e senza l'esenzione della nota (`riepilogo.vol01` del JSON del collaudo): con l'esenzione stretta dei criteri 1.5 (tempo verificato, attrezzi) e senza"
+   ],
+   "ammesse": {
+    "VOL-01:deltoidi_laterali": {
+     "max": 2.4,
+     "tettoIniziale": 2.4,
+     "risolve": "W2-T1",
+     "scade": "onda-2",
+     "motivo": "2,37% (276 programmi su 10.800; 0,40% a onda-2a): visibile solo con i criteri 1.5 (INT-2d, M4): con i criteri 1.4 la nota «struttura» (prima «tetto»: «i limiti di serie e di esercizi per seduta non lasciano altro posto») esentava l'unita da VOL-01; ora la nota non nomina un fatto verificabile e l'unita conta. E una regressione reale di W2-T1 contro onda-2a (il solutore non trova posto per le serie dirette dei muscoli piccoli con sedute da 3-5 esercizi e tempo non esaurito: la stessa causa M7/M8 di FRQ-01/02), ammessa con tetto = misura dell'istantanea 2026-10-06 e scadenza onda-2"
+    },
+    "VOL-01:deltoidi_posteriori": {
+     "max": 1.1,
+     "tettoIniziale": 1.1,
+     "risolve": "W2-T1",
+     "scade": "onda-2",
+     "motivo": "1,08% (169 programmi; 0,20% a onda-2a): visibile solo con i criteri 1.5 (INT-2d, M4): con i criteri 1.4 la nota «struttura» (prima «tetto»: «i limiti di serie e di esercizi per seduta non lasciano altro posto») esentava l'unita da VOL-01; ora la nota non nomina un fatto verificabile e l'unita conta. E una regressione reale di W2-T1 contro onda-2a (il solutore non trova posto per le serie dirette dei muscoli piccoli con sedute da 3-5 esercizi e tempo non esaurito: la stessa causa M7/M8 di FRQ-01/02), ammessa con tetto = misura dell'istantanea 2026-10-06 e scadenza onda-2"
+    },
+    "VOL-01:polpacci": {
+     "max": 1.9,
+     "tettoIniziale": 1.9,
+     "risolve": "W2-T1",
+     "scade": "onda-2",
+     "motivo": "1,81% (188 programmi, 161 con 3 giorni; 0,45% a onda-2a): visibile solo con i criteri 1.5 (INT-2d, M4): con i criteri 1.4 la nota «struttura» (prima «tetto»: «i limiti di serie e di esercizi per seduta non lasciano altro posto») esentava l'unita da VOL-01; ora la nota non nomina un fatto verificabile e l'unita conta. E una regressione reale di W2-T1 contro onda-2a (il solutore non trova posto per le serie dirette dei muscoli piccoli con sedute da 3-5 esercizi e tempo non esaurito: la stessa causa M7/M8 di FRQ-01/02), ammessa con tetto = misura dell'istantanea 2026-10-06 e scadenza onda-2"
+    }
+   },
+   "aperti": {
+    "EQ-03:flessione": {
+     "responsabile": "W2-T6",
+     "scade": "onda-2",
+     "motivo": "M6 della revisione INT-2d: con 2 giorni a 30 minuti in palestra 29 programmi su 45 della griglia non hanno una flessione del ginocchio (la scala del tempo toglie il Leg Curl prima del secondo multiarticolare di gambe di schema diverso, es. Pendulum Squat dopo la Trap Bar); il criterio 1.5 guarda tutte le frequenze (prima solo da 3 giorni). Correzione: in `scalaDelTempo` togliere o ridurre il secondo multiarticolare di gambe anche di schema diverso prima dell'unica flessione"
+    }
+   }
   },
   "onda-2": {
    "int": "INT-2",

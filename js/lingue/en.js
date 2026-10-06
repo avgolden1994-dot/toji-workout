@@ -4059,7 +4059,7 @@ window.I18N["en"] = {
 "le sedute sono sei di fila": "the sessions are six in a row",
 "da venerdì a mercoledì": "from Friday to Wednesday",
 "e il giovedì si riposa.": "and you rest on Thursday.",
-"e il giovedì si riposa. Lo stesso muscolo grande non lavora a fondo in due giorni consecutivi.": "and you rest on Thursday. The same large muscle is not worked hard on two days in a row.",
+"Petto, schiena, gambe e glutei non lavorano a fondo in due giorni consecutivi.": "Chest, back, legs and glutes are not worked hard on two days in a row.",
 "Verifica": "Review",
 "con fatica media o alta": "with moderate or high tiredness",
 "meno serie": "fewer sets",

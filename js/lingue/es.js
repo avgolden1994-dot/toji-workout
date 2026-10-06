@@ -4059,7 +4059,7 @@ window.I18N["es"] = {
 "le sedute sono sei di fila": "las sesiones son seis seguidas",
 "da venerdì a mercoledì": "de viernes a miércoles",
 "e il giovedì si riposa.": "y el jueves se descansa.",
-"e il giovedì si riposa. Lo stesso muscolo grande non lavora a fondo in due giorni consecutivi.": "y el jueves se descansa. El mismo músculo grande no se trabaja a fondo dos días seguidos.",
+"Petto, schiena, gambe e glutei non lavorano a fondo in due giorni consecutivi.": "Pecho, espalda, piernas y glúteos no se trabajan a fondo dos días seguidos.",
 "Verifica": "Revisión",
 "con fatica media o alta": "con cansancio medio o alto",
 "meno serie": "menos series",

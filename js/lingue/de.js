@@ -4059,7 +4059,7 @@ window.I18N["de"] = {
 "le sedute sono sei di fila": "die Einheiten sind sechs hintereinander",
 "da venerdì a mercoledì": "von Freitag bis Mittwoch",
 "e il giovedì si riposa.": "und am Donnerstag ruhst du.",
-"e il giovedì si riposa. Lo stesso muscolo grande non lavora a fondo in due giorni consecutivi.": "und am Donnerstag ruhst du. Derselbe große Muskel wird nicht an zwei aufeinanderfolgenden Tagen voll belastet.",
+"Petto, schiena, gambe e glutei non lavorano a fondo in due giorni consecutivi.": "Brust, Rücken, Beine und Gesäß werden nicht an zwei aufeinanderfolgenden Tagen voll belastet.",
 "Verifica": "Überprüfung",
 "con fatica media o alta": "bei mittlerer oder hoher Müdigkeit",
 "meno serie": "weniger Sätze",
