@@ -4128,5 +4128,21 @@ window.I18N["en"] = {
 "Forza: Lower / Upper x#": "Strength: Lower / Upper x#",
 "Forza: Upper / Lower x# + Upper": "Strength: Upper / Lower x# + Upper",
 "Forza: Upper / Lower x#": "Strength: Upper / Lower x#",
-"Con i manubri i carichi di partenza non superano il più pesante che hai (# kg).": "With dumbbells, starting loads do not go above the heaviest one you have (# kg)."
+"Con i manubri i carichi di partenza non superano il più pesante che hai (# kg).": "With dumbbells, starting loads do not go above the heaviest one you have (# kg).",
+"Che forza?": "What kind of strength?",
+"Facoltativo: senza risposta il programma di forza resta quello di sempre.": "Optional: if you don't answer, the strength program stays the usual one.",
+"Forza generale": "General strength",
+"i fondamentali con #-# ripetizioni e recuperi lunghi, come sempre": "the main lifts with #-# reps and long rests, as always",
+"Powerlifting": "Powerlifting",
+"squat, panca e stacco più volte a settimana, con giorni pesanti, medi e leggeri": "squat, bench and deadlift several times a week, with heavy, medium and light days",
+"Il powerlifting è per chi ha tra # e # anni e ha risposto no al questionario sulla salute; servono almeno # giorni a settimana, un bilanciere, un rack e una panca. Se qualcosa non va, il programma di forza resta quello generale e te lo dico.": "Powerlifting is for people aged # to # who answered no on the health questionnaire; you need at least # days a week, a barbell, a rack and a bench. If something doesn't fit, the strength program stays the general one and I tell you so.",
+"Dove ti blocchi?": "Where do you get stuck?",
+"Facoltativo, al massimo due, uno per alzata. Nei giorni medi e leggeri metto la variante che allena quel punto; nel giorno pesante, se i minuti bastano, aggiungo un esercizio per il muscolo che di solito cede.": "Optional, at most two, one per lift. On medium and light days I put in the variant that trains that point; on the heavy day, if the minutes allow, I add an exercise for the muscle that usually gives out.",
+"Squat in buca": "Squat in the hole",
+"Squat a metà risalita": "Squat mid-ascent",
+"Panca al petto": "Bench off the chest",
+"Panca a metà": "Bench mid-range",
+"Panca in chiusura": "Bench lockout",
+"Stacco da terra": "Deadlift off the floor",
+"Stacco in chiusura": "Deadlift lockout"
 };

@@ -21,6 +21,7 @@ function paginaCoach(p) {
     '<div class="fb-chips sr-chips-pad">' + chipCoach(p.sex === 'M' || p.sex === 'uomo', "setCoach('sex','M')", 'Uomo') + chipCoach(donna, "setCoach('sex','F')", 'Donna') + '</div>' +
     '<label class="sr-row sr-input"><span class="sr-name">Orario abituale</span><input type="time" value="' + (p.orario || '') + '" onchange="setCoach(\'orario\', this.value)"></label>',
     'L orario fisso aiuta a creare l abitudine: se passa senza allenamento, Oggi te lo ricorda.');
+  h += htmlForzaCoach(p);
   h += htmlAttrezziCoach(p);
   h += setGroup('Muscoli su cui puntare (fino a 3)', '<div class="fb-chips sr-chips-pad">' + GRUPPI_PRINCIPALI.map(g =>
     chipCoach((p.priorita || []).indexOf(g) !== -1, "toggleCoachLista('priorita','" + g + "')", MUSCLE_GROUPS[g].label)).join('') + '</div>',
@@ -78,6 +79,29 @@ function htmlAttrezziCoach(p) {
     (p.luogo === 'manubri' ? '<label class="sr-row sr-input"><span class="sr-name">Manubrio più pesante (kg)</span><input type="number" inputmode="decimal" min="1" max="100" step="0.5" value="' + (p.manubriKg || '') + '" onchange="setManubriKgCoach(this.value)"></label>' : ''),
     'Pavimento, una sedia robusta e un gradino li do per scontati. Se tocchi qualcosa, scelgo gli esercizi solo con quello (e con i manubri, se ti alleni con quelli); se non rispondi, non conto su sbarra, elastici, kettlebell e anelli. Vale dal prossimo programma.');
 }
+/* FRZ-01 (INT-2e, W2-T7): «Che forza?» e «Dove ti blocchi?» anche in Opzioni, per chi ha la forza come primo obiettivo: gli stessi campi dell onboarding (forzaTipo, puntiDeboli), letti da «Rifai il programma» */
+function htmlForzaCoach(p) {
+  const goals = p.goals || (p.goal ? [p.goal] : []);
+  if (goals[0] !== 'forza' || typeof FORZA_TIPI_TESTI === 'undefined' || (typeof regolaAttiva === 'function' && !regolaAttiva('FRZ-02'))) return '';
+  const pl = String(p.forzaTipo || '') === 'powerlifting';
+  return setGroup('Che forza?', '<div class="fb-chips sr-chips-pad">' + FORZA_TIPI_TESTI.map(t => chipCoach(String(p.forzaTipo || '') === t[0], "setForzaTipoCoach('" + t[0] + "')", t[1])).join('') + '</div>',
+    FORZA_NOTA_REQUISITI) + (pl ? setGroup('Dove ti blocchi?', '<div class="fb-chips sr-chips-pad">' + Object.keys(FORZA_PUNTI_TESTI).map(k =>
+      chipCoach((p.puntiDeboli || []).indexOf(k) !== -1, "togglePuntoDeboleCoach('" + k + "')", FORZA_PUNTI_TESTI[k])).join('') + '</div>', FORZA_NOTA_PUNTI) : '');
+}
+window.setForzaTipoCoach = function(v) {
+  const p = getProfile() || {};
+  if (p.forzaTipo === v) delete p.forzaTipo; else p.forzaTipo = v;   /* un secondo tocco toglie la risposta: torna la forza di sempre */
+  if (p.forzaTipo !== 'powerlifting') delete p.puntiDeboli;
+  localStorage.setItem(PROFILE_KEY(), JSON.stringify(p));
+  renderSetPage();
+};
+window.togglePuntoDeboleCoach = function(k) {
+  const p = getProfile() || {};
+  const l = forzaCambiaPunto(p.puntiDeboli, k);
+  if (l.length) p.puntiDeboli = l; else delete p.puntiDeboli;
+  localStorage.setItem(PROFILE_KEY(), JSON.stringify(p));
+  renderSetPage();
+};
 function toggleCoach(k, on, nome, sub) {
   return '<button class="sr-row" onclick="setCoach(\'' + k + '\', ' + (!on) + ')" role="switch" aria-checked="' + on + '"><span class="sr-name">' + nome + '<small>' + sub + '</small></span><span class="switch ' + (on ? 'on' : '') + '"></span></button>';
 }

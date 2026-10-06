@@ -108,7 +108,8 @@ window.applyGeneratedProgram = function() {
     esigenza: (getProfile() || {}).esigenza || null,
     orario: onbData.orario || (getProfile() || {}).orario || '', fase: onbData.fase || (getProfile() || {}).fase || '', cicli: onbData.cicli || 0, bloccoTipo: onbData.bloccoTipo || 'ipertrofia',
     settimane: prog.settimane, split: prog.split.nome, creato: formatNow()
-  }, typeof attrezziSalvati === 'function' ? attrezziSalvati(onbData, getProfile() || {}) : {})));   /* CAS-01 (W2-T5): attrezzi di casa, kg dei manubri, attrezzi in piu della palestra: solo se dichiarati */
+  }, typeof attrezziSalvati === 'function' ? attrezziSalvati(onbData, getProfile() || {}) : {},   /* CAS-01 (W2-T5): attrezzi di casa, kg dei manubri, attrezzi in piu della palestra: solo se dichiarati */
+    typeof forzaSalvata === 'function' ? forzaSalvata(onbData, getProfile() || {}, prog.goals) : {})));   /* FRZ-01 (INT-2e): «Che forza?» e i punti deboli, solo con la forza come primo obiettivo e solo se detti */
   if (onbData.bia && Object.keys(onbData.bia).some(k => onbData.bia[k])) {
     (onbData.bia.storico || []).forEach(x => { if (x.data !== onbData.bia.data) aggiungiBia(x.valori, x.data); });
     aggiungiBia(onbData.bia, onbData.bia.data);

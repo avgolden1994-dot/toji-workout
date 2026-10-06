@@ -52,6 +52,42 @@ function forzaPuntiDeboli(d, prof0) {
   return out;
 }
 
+/* FRZ-01 (INT-2e): le domande «Che forza?» e «Dove ti blocchi?» dell onboarding (js/ui/onboarding.js) e di Opzioni (js/ui/opzioni/il-coach.js): i testi stanno qui, una volta, accanto a cio che i valori
+   vogliono dire per il generatore. Il tipo e il punto debole sono facoltativi: senza risposta il programma di forza e quello di sempre. */
+const FORZA_TIPI_TESTI = [
+  ['generale', 'Forza generale', 'i fondamentali con 2-6 ripetizioni e recuperi lunghi, come sempre'],
+  ['powerlifting', 'Powerlifting', 'squat, panca e stacco più volte a settimana, con giorni pesanti, medi e leggeri']
+];
+const FORZA_NOTA_REQUISITI = 'Il powerlifting è per chi ha tra 18 e 64 anni e ha risposto no al questionario sulla salute; servono almeno 3 giorni a settimana, un bilanciere, un rack e una panca. Se qualcosa non va, il programma di forza resta quello generale e te lo dico.';
+const FORZA_NOTA_PUNTI = 'Facoltativo, al massimo due, uno per alzata. Nei giorni medi e leggeri metto la variante che allena quel punto; nel giorno pesante, se i minuti bastano, aggiungo un esercizio per il muscolo che di solito cede.';
+const FORZA_PUNTI_TESTI = {
+  'squat-buca': 'Squat in buca', 'squat-uscita': 'Squat a metà risalita',
+  'panca-petto': 'Panca al petto', 'panca-meta': 'Panca a metà', 'panca-chiusura': 'Panca in chiusura',
+  'stacco-terra': 'Stacco da terra', 'stacco-chiusura': 'Stacco in chiusura'
+};
+/* il tocco su un punto debole: lo toglie se c e, altrimenti lo mette al posto di un altro punto della stessa alzata, fino a puntiDeboliMax in tutto; ritorna il nuovo elenco (mai l elenco di prima modificato) */
+function forzaCambiaPunto(lista, k) {
+  const l = (Array.isArray(lista) ? lista : []).filter(x => SPEC_FORZA.varianti.punti[x]);
+  if (l.indexOf(k) !== -1) return l.filter(x => x !== k);
+  const p = SPEC_FORZA.varianti.punti[k];
+  if (!p) return l;
+  const senzaAlzata = l.filter(x => SPEC_FORZA.varianti.punti[x].alzata !== p.alzata);
+  return senzaAlzata.length >= sogliaForza('puntiDeboliMax') ? l : senzaAlzata.concat([k]);
+}
+/* FRZ-01: cosa si salva nel profilo perche «Rifai il programma» e il ciclo dopo ritrovino la scelta (alternative.js): forzaTipo ('generale' | 'powerlifting') e puntiDeboli, solo se il primo obiettivo e la forza
+   e la persona ha risposto (le risposte `d` vincono sul profilo, come in modalitaForzaDa); una risposta che non si riconosce non si salva. Chi non risponde ha un profilo identico a quello di prima. */
+function forzaSalvata(d, prof0, goals) {
+  const out = {};
+  if (!goals || goals[0] !== 'forza') return out;
+  const detto = [d || {}, prof0 || {}].some(f => FORZA_CAMPI_TIPO.some(k => f[k] !== undefined && f[k] !== null && f[k] !== ''));
+  if (modalitaForzaDa(d, prof0, goals) === 'forza') {
+    out.forzaTipo = 'powerlifting';
+    const punti = forzaPuntiDeboli(d, prof0);
+    if (punti.length) out.puntiDeboli = punti;
+  } else if (detto) out.forzaTipo = 'generale';
+  return out;
+}
+
 /* ---- le frasi: le note del programma (L.note) e i perche con codice (REG-03). Le note di «non si attiva» dicono la causa vera: il programma di forza resta quello generale ---- */
 const FORZA_NOTA_STRUTTURA = 'Forza: squat e panca almeno due volte a settimana e lo stacco una volta, in giorni pesanti, medi e leggeri. Nei giorni medi e leggeri la stessa alzata cambia variante (con la pausa, a presa stretta).';
 const FORZA_NOTA_ONDA = 'Forza: squat e panca almeno due volte a settimana e lo stacco una volta, in giorni pesanti, medi e leggeri: cambiano serie e ripetizioni.';

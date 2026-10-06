@@ -4128,5 +4128,21 @@ window.I18N["de"] = {
 "Forza: Lower / Upper x#": "Kraft: Lower / Upper x#",
 "Forza: Upper / Lower x# + Upper": "Kraft: Upper / Lower x# + Upper",
 "Forza: Upper / Lower x#": "Kraft: Upper / Lower x#",
-"Con i manubri i carichi di partenza non superano il più pesante che hai (# kg).": "Mit Kurzhanteln gehen die Startlasten nicht über die schwerste hinaus, die du hast (# kg)."
+"Con i manubri i carichi di partenza non superano il più pesante che hai (# kg).": "Mit Kurzhanteln gehen die Startlasten nicht über die schwerste hinaus, die du hast (# kg).",
+"Che forza?": "Welche Kraft?",
+"Facoltativo: senza risposta il programma di forza resta quello di sempre.": "Optional: ohne Antwort bleibt das Krafttraining wie gewohnt.",
+"Forza generale": "Allgemeine Kraft",
+"i fondamentali con #-# ripetizioni e recuperi lunghi, come sempre": "die Grundübungen mit #-# Wiederholungen und langen Pausen, wie immer",
+"Powerlifting": "Powerlifting",
+"squat, panca e stacco più volte a settimana, con giorni pesanti, medi e leggeri": "Kniebeuge, Bankdrücken und Kreuzheben mehrmals pro Woche, mit schweren, mittleren und leichten Tagen",
+"Il powerlifting è per chi ha tra # e # anni e ha risposto no al questionario sulla salute; servono almeno # giorni a settimana, un bilanciere, un rack e una panca. Se qualcosa non va, il programma di forza resta quello generale e te lo dico.": "Powerlifting ist für Menschen zwischen # und # Jahren, die den Gesundheitsfragebogen mit Nein beantwortet haben; du brauchst mindestens # Tage pro Woche, eine Langhantel, ein Rack und eine Bank. Wenn etwas nicht passt, bleibt das Krafttraining das allgemeine und ich sage es dir.",
+"Dove ti blocchi?": "Wo bleibst du hängen?",
+"Facoltativo, al massimo due, uno per alzata. Nei giorni medi e leggeri metto la variante che allena quel punto; nel giorno pesante, se i minuti bastano, aggiungo un esercizio per il muscolo che di solito cede.": "Optional, höchstens zwei, einer pro Übung. An mittleren und leichten Tagen nehme ich die Variante, die diesen Punkt trainiert; am schweren Tag füge ich, wenn die Minuten reichen, eine Übung für den Muskel hinzu, der meistens nachgibt.",
+"Squat in buca": "Kniebeuge unten",
+"Squat a metà risalita": "Kniebeuge in der Mitte des Aufstiegs",
+"Panca al petto": "Bankdrücken an der Brust",
+"Panca a metà": "Bankdrücken in der Mitte",
+"Panca in chiusura": "Bankdrücken im Lockout",
+"Stacco da terra": "Kreuzheben vom Boden",
+"Stacco in chiusura": "Kreuzheben im Lockout"
 };

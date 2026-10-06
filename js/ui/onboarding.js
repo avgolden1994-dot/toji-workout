@@ -146,7 +146,8 @@ function nuovoOnbData() {
            test: Object.assign({}, ((typeof getProfile === 'function' && getProfile()) || {}).test || {}),
            freq: ((typeof getProfile === 'function' && getProfile()) || {}).freq || null,
            attrezziPalestra: ((typeof getProfile === 'function' && getProfile()) || {}).attrezziPalestra, attrezziCasa: ((typeof getProfile === 'function' && getProfile()) || {}).attrezziCasa,   /* CAS-01 (W2-T5): chi rifa il programma ritrova quello che ha dichiarato */
-           manubriKg: ((typeof getProfile === 'function' && getProfile()) || {}).manubriKg, extraPalestra: ((typeof getProfile === 'function' && getProfile()) || {}).extraPalestra };
+           manubriKg: ((typeof getProfile === 'function' && getProfile()) || {}).manubriKg, extraPalestra: ((typeof getProfile === 'function' && getProfile()) || {}).extraPalestra,
+           forzaTipo: ((typeof getProfile === 'function' && getProfile()) || {}).forzaTipo, puntiDeboli: (((typeof getProfile === 'function' && getProfile()) || {}).puntiDeboli || []).slice() };   /* FRZ-01 (INT-2e): chi rifa il programma ritrova «Che forza?» */
 }
 
 window.onbSkipAll = function() {
@@ -330,6 +331,19 @@ function htmlAttrezziOnboarding() {
   }
   return '';
 }
+/* FRZ-01 (INT-2e, W2-T7): «Che forza?» (forza generale o powerlifting) solo se il primo obiettivo e la forza; con il powerlifting anche «Dove ti blocchi?». Facoltative: senza risposta il programma di
+   forza e quello di sempre. I valori sono quelli che legge modalitaForzaDa (forzaTipo: 'generale' | 'powerlifting') e forzaPuntiDeboli (puntiDeboli); i testi stanno in specialita/forza.js */
+function htmlForzaOnboarding(goals) {
+  if (!goals || goals[0] !== 'forza' || typeof FORZA_TIPI_TESTI === 'undefined' || (typeof regolaAttiva === 'function' && !regolaAttiva('FRZ-02'))) return '';
+  const pl = String(onbData.forzaTipo || '') === 'powerlifting';
+  return '<div id="onb-forza"><div class="aw-sec">Che forza?</div>' +
+    '<div class="pref-note">Facoltativo: senza risposta il programma di forza resta quello di sempre.</div>' +
+    FORZA_TIPI_TESTI.map(t => optHtml('forzaTipo', { id: t[0], emoji: ico('bilanciere'), name: t[1], desc: t[2] })).join('') +
+    (pl ? '<div class="onb-note" id="onb-forza-requisiti">' + FORZA_NOTA_REQUISITI + '</div>' +
+      '<div class="aw-sec">Dove ti blocchi?</div><div class="pref-note">' + FORZA_NOTA_PUNTI + '</div>' +
+      '<div class="aw-groups">' + Object.keys(FORZA_PUNTI_TESTI).map(k => chip((onbData.puntiDeboli || []).indexOf(k) !== -1, 'onbTogglePuntoDebole(\'' + k + '\')', FORZA_PUNTI_TESTI[k])).join('') + '</div>' : '') + '</div>';
+}
+window.onbTogglePuntoDebole = function(k) { onbData.puntiDeboli = forzaCambiaPunto(onbData.puntiDeboli, k); renderOnb(); };
 function onbCambiaLista(lista, id) {
   const l = (Array.isArray(lista) ? lista : []).slice(), i = l.indexOf(id);
   if (i === -1) l.push(id); else l.splice(i, 1);
@@ -369,7 +383,7 @@ function renderOnb() {
           '<span class="goal-rank">' + (pos !== -1 ? (pos === 0 ? '1\u00B0 \u2022 guida' : (pos + 1) + '\u00B0') : '') + '</span></button>';
       }).join('') +
       '<div class="onb-note">' + onbData.goals.length + ' di 3 scelti</div>' +
-      htmlAvvisoObiettivi(onbData.goals) + htmlNotaTonificare(onbData.goals);
+      htmlAvvisoObiettivi(onbData.goals) + htmlNotaTonificare(onbData.goals) + htmlForzaOnboarding(onbData.goals);
   } else if (onbStep === 1) {
     body.innerHTML = '<div class="onb-q">Da quanto ti alleni?</div>' +
       '<div class="onb-why">Ai principianti conviene il full body, perche ogni muscolo viene stimolato piu volte. Chi ha piu esperienza regge una divisione piu spinta. Decide anche quanto dura il programma.</div>' +

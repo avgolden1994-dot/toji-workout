@@ -4128,5 +4128,21 @@ window.I18N["es"] = {
 "Forza: Lower / Upper x#": "Fuerza: Lower / Upper x#",
 "Forza: Upper / Lower x# + Upper": "Fuerza: Upper / Lower x# + Upper",
 "Forza: Upper / Lower x#": "Fuerza: Upper / Lower x#",
-"Con i manubri i carichi di partenza non superano il più pesante che hai (# kg).": "Con las mancuernas, las cargas de partida no superan la más pesada que tienes (# kg)."
+"Con i manubri i carichi di partenza non superano il più pesante che hai (# kg).": "Con las mancuernas, las cargas de partida no superan la más pesada que tienes (# kg).",
+"Che forza?": "¿Qué tipo de fuerza?",
+"Facoltativo: senza risposta il programma di forza resta quello di sempre.": "Opcional: si no respondes, el programa de fuerza sigue siendo el de siempre.",
+"Forza generale": "Fuerza general",
+"i fondamentali con #-# ripetizioni e recuperi lunghi, come sempre": "los ejercicios básicos con #-# repeticiones y descansos largos, como siempre",
+"Powerlifting": "Powerlifting",
+"squat, panca e stacco più volte a settimana, con giorni pesanti, medi e leggeri": "sentadilla, press de banca y peso muerto varias veces por semana, con días pesados, medios y ligeros",
+"Il powerlifting è per chi ha tra # e # anni e ha risposto no al questionario sulla salute; servono almeno # giorni a settimana, un bilanciere, un rack e una panca. Se qualcosa non va, il programma di forza resta quello generale e te lo dico.": "El powerlifting es para quien tiene entre # y # años y ha respondido no al cuestionario de salud; hacen falta al menos # días por semana, una barra, un rack y un banco. Si algo no encaja, el programa de fuerza sigue siendo el general y te lo digo.",
+"Dove ti blocchi?": "¿Dónde te atascas?",
+"Facoltativo, al massimo due, uno per alzata. Nei giorni medi e leggeri metto la variante che allena quel punto; nel giorno pesante, se i minuti bastano, aggiungo un esercizio per il muscolo che di solito cede.": "Opcional, como máximo dos, uno por ejercicio. En los días medios y ligeros pongo la variante que trabaja ese punto; en el día pesado, si los minutos alcanzan, añado un ejercicio para el músculo que suele fallar.",
+"Squat in buca": "Sentadilla en el fondo",
+"Squat a metà risalita": "Sentadilla a mitad de subida",
+"Panca al petto": "Press de banca en el pecho",
+"Panca a metà": "Press de banca a mitad de recorrido",
+"Panca in chiusura": "Press de banca en el bloqueo",
+"Stacco da terra": "Peso muerto desde el suelo",
+"Stacco in chiusura": "Peso muerto en el bloqueo"
 };
