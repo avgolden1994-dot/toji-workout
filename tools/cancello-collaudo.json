@@ -123,10 +123,10 @@
    ],
    "ammesse": {
     "FRQ-01:bicipiti": {
-     "max": 8.0,
+     "max": 8.2,
      "risolve": "W2-T5",
      "scade": "onda-2",
-     "motivo": "891 -> 932 programmi (5,53% -> 7,93% pesata): il solutore del volume per unita (W2-T1) mette le serie dei bicipiti dove costano meno tempo e le concentra in una seduta; con 3 giorni i programmi colpiti passano da 239 a 397 (palestra 271 -> 340, manubri 356 -> 553; il corpo libero migliora, 264 -> 39). La frequenza di 2 sedute per ogni unita (FRQ-01 = 0 salvo frequenza 1 scelta, soglia di onda-2) e l'accettazione di W2-T5"
+     "motivo": "891 -> 932 programmi (5,53% -> 7,93% pesata): il solutore del volume per unita (W2-T1) mette le serie dei bicipiti dove costano meno tempo e le concentra in una seduta; con 3 giorni i programmi colpiti passano da 239 a 397 (palestra 271 -> 340, manubri 356 -> 553; il corpo libero migliora, 264 -> 39). La frequenza di 2 sedute per ogni unita (FRQ-01 = 0 salvo frequenza 1 scelta, soglia di onda-2) e l'accettazione di W2-T5. Onda 2c (2026-10-06): 918 -> 923 programmi (7,97% -> 8,14%) con la sola correzione di sicurezza del cancello (Front Squat, Tirate al Mento e Ab Wheel vietati a chi inizia e ai prudenti: SAF-05 578 -> 571 programmi): nessuno dei tre da credito ai bicipiti, cambia il sorteggio dei posti di chi inizia (principianti 460 -> 464, palestra 334 -> 339, 3 giorni 386 -> 390, 30 minuti 510 -> 516); tetto 8,0 -> 8,2, stesso responsabile e stessa scadenza"
     },
     "FRQ-01:tricipiti": {
      "max": 10.1,
@@ -149,7 +149,8 @@
    "riscritti": [],
    "dichiara": {
     "motivo": "versione snella dell'onda 2: W2-T5 (split e attrezzi), W2-T6 (scelta per attributi) e W2-T7 (forza) non sono in questa onda; le soglie assolute di onda-2a e onda-2 le presuppongono. Qui l'onda dichiara i criteri misurati verdi sull'istantanea onda-2c (matrice standard, criteri 1.4): da compilare con la misura, non con la speranza",
-    "criteri": []
+    "criteri": ["ERR-01", "SAN-01", "MIS-01", "SES-01", "EXN-01", "EXN-02", "ORD-04", "SS-01", "SS-02", "EQ-03", "SPL-02", "RX-02", "RX-03", "RX-04", "GOA-01", "TEC-01", "DEL-01", "RIR-01", "RIR-02", "RIR-03", "SAF-01", "SAF-02", "SAF-03", "SAF-04", "gravi_pesata", "MOD-01", "MOD-03", "MOD-06", "MOD-07", "MOD-08", "MOD-09", "MOD-10", "MOD-11"],
+    "misura": "istantanea onda-2c del 2026-10-06 (commit 9c6aaaa, matrice standard, criteri 1.4): ogni criterio dichiarato ha tutte le sue soglie assolute verdi e nessuna regressione ammessa; FRQ-01 non e dichiarato (femorali verde, ma bicipiti e tricipiti sono regressioni ammesse); VOL-01, VOL-02, DIR-01, FRQ-02, PRI-01, DUR-01, DUR-02, SES-03, PAT-01, RX-01 restano obiettivi aperti con il responsabile"
    },
    "responsabili": {
     "VOL-02": "W2-T6 (scelta per attributi; PRI-01 contro VOL-02 per le unita in priorita e la classe schiena del collaudo, criteri 1.5 in INT-2)",
