@@ -11,7 +11,8 @@
    CAS-01b: il manubrio piu pesante dichiarato a casa (manubriKg, CAS-01 di W2-T5: contestoCarichi) era il tetto solo della partenza; ora vale anche per la progressione:
    mai un carico proposto sopra il tetto (il tetto stesso e un peso vero, anche fuori dai passi: 12,5 kg); arrivati al tetto si sale con le ripetizioni fino al bersaglio
    + cimaRipetizioniTetto, poi il coach lo dice (serve un manubrio piu pesante o una variante piu difficile).
-   Fase 95 della catena 'carico' (regia/fasi.js): dopo i tetti della Sentinella (90) e prima dei perche (99). Puo solo ABBASSARE il carico (o lasciarlo): riporta in
+   Fase 95 della catena 'carico' (regia/fasi.js): dopo i tetti della Sentinella (90) e prima dei perche (99). Puo solo ABBASSARE il carico (o lasciarlo: sotto la
+   barra vuota non lo alza, dice che il bilanciere pesa 20 kg): riporta in
    griglia, per difetto, i carichi delle fasi che arrotondano ancora a 0,5 kg (aggiusti del questionario, fase 50 di dolore-mattina.js) e applica il tetto dei manubri
    anche al salto della calibrazione (CAR-18, fase 15) e all «extra» degli aggiusti. caricoProssimoBase (fase 10) usa gia la griglia (caricoSalito, caricoSceso, regole-ricerca.js).
    Fuori dalla catena 'carico' restano da portare sulla griglia la prontezza (prontezza.js, catena 'prontezza': x0,96 / x0,9) e gli aggiusti della fase 50: file di P3-B.
@@ -109,6 +110,11 @@ function faseGrigliaETetto(r, c) {
   if (tetto > 0 && r.weight > tetto + 1e-9) return alTettoDeiManubri(r, c, tetto);
   if (!regolaAttiva('ALG-06')) return r;
   const w = arrotondaAttrezzo(r.weight, c.nome, { modo: 'giu', tetto: tetto });
+  if (w > r.weight + 1e-9) {
+    /* sotto il minimo dell attrezzo (un bilanciere sotto la barra vuota: dati vecchi o un tetto della Sentinella) questa fase non alza il carico: lo dice (PAR-08) */
+    if (String(r.motivo || '').indexOf(NOTA_SENZA_BARRA) === -1) r.motivo = (r.motivo ? r.motivo + ' • ' : '') + NOTA_SENZA_BARRA;
+    return r;
+  }
   if (Math.abs(w - r.weight) > 1e-9) {
     r.weight = w;
     const t = fraseGrigliaPiuVicino(w);

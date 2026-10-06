@@ -159,6 +159,15 @@ test('ALG-06: un aumento e almeno un passo dell attrezzo e il motivo dice il sal
   assert.deepStrictEqual([rp.weight, rp.reps], [60, 9], rp.motivo);
 });
 
+test('ALG-06, fase 95: sotto la barra vuota il carico non sale (la fase puo solo abbassare): resta e il motivo dice che il bilanciere pesa 20 kg', () => {
+  const app = nuovaApp({}, PROG_V1);
+  STORIE.ok(20, 8).forEach(([g, s]) => registra(app, g, PANCA, s));
+  app.aggiusti({ scarico: null, esercizi: { [PANCA]: { fattore: 0.8, sedute: 1, motivo: 'Dolore segnalato: carico ridotto (20%)' } } });
+  const r = carico(app, PANCA, 20, 8, 3);
+  assert.ok(r.weight <= 20 * 1.0 && r.weight < 20, 'mai alzato fino alla barra: ' + r.weight);
+  assert.match(r.motivo, /Il bilanciere vuoto pesa 20 kg/);
+});
+
 test('ALG-06 spenta: l arrotondamento di prima (0,5 kg)', () => {
   const app = nuovaApp({}, PROG_V1);
   spegnibileNelCatalogo(app, 'ALG-06');
