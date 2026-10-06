@@ -231,3 +231,25 @@ test('riconciliaNote: il caso del pullover a 30 minuti (casa, 2 giorni, forza) e
   assert.ok(!fem.note.some(n => /senza leg curl restano meno allenati/.test(n)), 'e la nota «senza leg curl» non c e');
   assert.strictEqual(fem.note.filter(n => /^Aggiunto: Leg Curl con Asciugamano/.test(n)).length, 1, 'la nota «Aggiunto» c e una volta sola');
 });
+
+/* ---------------------------------------------------------------- 7) D-P19: i minorenni tengono le superserie di antagonisti non pesanti, non le tecniche al cedimento ---------------------------------------------------------------- */
+test('D-P19: per i 13-17 anni le superserie restano (antagonisti, mai un fondamentale pesante, il core o una tenuta) e nessuna tecnica al cedimento, cluster o potenza', () => {
+  const a = conSoglieStruttura(caricaApp({ ora: ORA }));
+  const INTENSE = ['drop', 'riposopausa', 'myo', 'amrap', 'backoff', 'parziali', 'cluster', 'potenza', 'negativa'];
+  let coppie = 0, programmi = 0, conTecnica = 0;
+  [13, 15, 17].forEach(age => ['principiante', 'intermedio', 'avanzato'].forEach(level => [30, 45, 60].forEach(minutes => [3, 4].forEach(days => ['palestra', 'manubri'].forEach(luogo => {
+    const p = a.dati(a.chiama('buildProgram', Object.assign({}, BASE, { age, level, minutes, days, luogo, goals: ['massa'], seme: 'dp19' + age + level + minutes + days + luogo })));
+    programmi++;
+    p.sedute.forEach(sd => sd.esercizi.forEach((e, i) => {
+      if (e.tecnica) { conTecnica++; assert.ok(INTENSE.indexOf(e.tecnica) === -1, 'minorenne di ' + age + ' anni con la tecnica ' + e.tecnica + ' su ' + e.name); }
+      if (!e.superset) return;
+      coppie++;
+      const prima = sd.esercizi[i - 1], carico = x => a.chiama('tipoCarico', x.name), gr = x => a.json('(findExercise(' + JSON.stringify(x.name) + ') || {}).group');
+      assert.ok(carico(e) !== 'pesante' && carico(prima) !== 'pesante', 'coppia con un fondamentale pesante: ' + prima.name + ' + ' + e.name);
+      assert.ok(gr(e) !== 'core' && gr(prima) !== 'core' && !a.chiama('isTimeBased', e.name) && !a.chiama('isTimeBased', prima.name), 'coppia con core o tenuta: ' + prima.name + ' + ' + e.name);
+    }));
+    assert.ok(p.rirSett.every(r => r >= 2), 'minorenne: il RIR non scende sotto 2 (ETA-02): ' + p.rirSett.join(','));
+  })))));
+  assert.ok(programmi >= 100 && coppie > 0, 'il campione ha coppie di superserie per i minorenni: ' + coppie + ' in ' + programmi + ' programmi (' + conTecnica + ' tecniche, tutte leggere)');
+  assert.deepStrictEqual(a.errori, []);
+});
