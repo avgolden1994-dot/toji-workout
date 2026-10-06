@@ -117,7 +117,8 @@ test('briefCoach: la forma di B.2 (versione 2, seme, chi, obiettivi, agenda, pre
   assert.strictEqual(b.obiettivi.primo, 'salute');
   assert.strictEqual(b.obiettivi.fase, 'massa');   /* la fase guarda tutti gli obiettivi: nessun dimagrimento, il primo tra ricomposizione e massa = massa (anche se la massa e il secondo) */
   assert.strictEqual(b.obiettivi.modalita, 'generale');
-  assert.deepStrictEqual(b.agenda, { giorni: 3, minuti: 45, luogo: 'manubri', attrezziPalestra: null, passiPalestra: null, freqScelta: '2', indiciGiorni: null });
+  /* W2-T5 (CAS-01): il brief ha tre campi in piu, null se l utente non ha detto niente (regia/brief.js: attrezziCasa, manubriKg, extraPalestra); i campi di prima sono quelli di prima (contratto con W2-T6: solo aggiunte) */
+  assert.deepStrictEqual(b.agenda, { giorni: 3, minuti: 45, luogo: 'manubri', attrezziPalestra: null, passiPalestra: null, freqScelta: '2', indiciGiorni: null, attrezziCasa: null, manubriKg: null, extraPalestra: null });
   assert.deepStrictEqual(b.preferenze.priorita, ['spalle']);
   assert.deepStrictEqual(b.sicurezza.fastidi, ['ginocchia'], 'nessuno non e un fastidio');
   assert.strictEqual(b.sicurezza.vincoli, null, 'i vincoli li riempie vincoliSicurezza(brief)');

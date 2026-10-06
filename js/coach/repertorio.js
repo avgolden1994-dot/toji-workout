@@ -111,7 +111,7 @@ window.livelloStimato = function() {
 function prefsCoach() {
   const p = getProfile() || {};
   return Object.assign({ luogo: p.luogo || (p.prefs && p.prefs.luogo) || 'palestra', fastidi: p.fastidi || (p.prefs && p.prefs.fastidi) || [], attrezzi: p.attrezzi || (p.prefs && p.prefs.attrezzi) || 'indifferente',
-    attrezziPalestra: p.attrezziPalestra || null, graditi: p.graditi || [], odiati: p.odiati || [] }, attrezziSalvati(p, null));   /* CAS-01 (W2-T5) */
+    attrezziPalestra: p.attrezziPalestra || null, graditi: p.graditi || [], odiati: p.odiati || [] }, typeof attrezziSalvati === 'function' ? attrezziSalvati(p, null) : {});   /* CAS-01 (W2-T5) */
 }
 function sostituisciNelPiano(da, a, nota) {
   const data = loadData();
