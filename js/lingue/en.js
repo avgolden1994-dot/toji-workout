@@ -4035,5 +4035,7 @@ window.I18N["en"] = {
 "+#% di serie": "+#% sets",
 "gli altri muscoli a mantenimento con gli stessi carichi.": "the other muscles at maintenance with the same loads.",
 "Per farti stare nei minuti ho accorciato le pause e tolto il superfluo: gli schemi di base restano sempre.": "To fit your time I shortened the rests and cut the extras: the basic patterns always stay.",
-"Femorali: con questi minuti la flessione del ginocchio (leg curl) non entra, lavorano solo con gli stacchi: meno completo.": "Hamstrings: with these minutes the knee flexion (leg curl) does not fit, they work only through the deadlifts: less complete."
+"Femorali: con questi minuti la flessione del ginocchio (leg curl) non entra, lavorano solo con gli stacchi: meno completo.": "Hamstrings: with these minutes the knee flexion (leg curl) does not fit, they work only through the deadlifts: less complete.",
+"Con 6 giorni lo stesso gruppo cadrebbe in due giorni di fila: cinque sedute e due giorni di riposo, i muscoli recuperano meglio.": "With 6 days the same muscle group would fall on two days in a row: five sessions and two rest days, the muscles recover better.",
+"Chi comincia cresce di più con 4 sedute a settimana: gli altri giorni sono riposo o una camminata.": "Beginners grow more with 4 sessions a week: the other days are rest or a walk."
 };

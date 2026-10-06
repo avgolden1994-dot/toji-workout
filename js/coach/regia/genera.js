@@ -40,10 +40,47 @@ function specialitaStruttura(brief) {
   return fn ? (fn(brief) || null) : null;
 }
 
-/* ---- 5. i giorni della settimana: lunedi-giovedi per 2 sedute, 6 giorni = lunedi-sabato di fila (indici di DAYS) ---- */
-const GIORNI_PER_SEDUTE = { 2: [0, 3], 3: [0, 2, 4], 4: [0, 1, 3, 4], 5: [0, 1, 3, 4, 5], 6: [0, 1, 2, 3, 4, 5] };
+/* ---- 5. i giorni della settimana (indici di DAYS): lunedi-giovedi per 2 sedute; 6 giorni = lunedi-mercoledi e venerdi-domenica, con il giovedi di riposo (INT-2b, anticipo di W2-T5: un giorno
+   di riposo in sette e mai piu di 4 giorni di fila, collaudo REC-03; prima lunedi-sabato di fila, 1.754 programmi della matrice). Ogni grande gruppo torna dopo almeno 48 ore: con 6 giorni
+   due sedute dello stesso tipo non stanno in giorni consecutivi; se la divisione lo impone (tre giorni di punti deboli con la frequenza 1) l ordine delle sedute si riordina, e se nemmeno
+   cosi riesce le sedute diventano 5 con la nota (NOTA_SEI_GIORNI). Chi comincia con 5-6 giorni ha 4 sedute (splitFor, PRG-02): stanno sui giorni delle 4 sedute, con la nota
+   (NOTA_PRINCIPIANTE_4_SEDUTE: la ricerca sui principianti §3.3, «detto all utente»). Scrive brief.lavoro.split se riordina o riduce le sedute. ---- */
+const GIORNI_PER_SEDUTE = { 2: [0, 3], 3: [0, 2, 4], 4: [0, 1, 3, 4], 5: [0, 1, 3, 4, 5], 6: [0, 1, 2, 4, 5, 6] };
+const NOTA_SEI_GIORNI = 'Con 6 giorni lo stesso gruppo cadrebbe in due giorni di fila: cinque sedute e due giorni di riposo, i muscoli recuperano meglio.';
+const NOTA_PRINCIPIANTE_4_SEDUTE = 'Chi comincia cresce di più con 4 sedute a settimana: gli altri giorni sono riposo o una camminata.';
+/* due sedute dello stesso tipo in due giorni consecutivi (indici di DAYS)? */
+function tipiAdiacenti(tipi, indici) { return tipi.some((t, i) => i > 0 && indici[i] - indici[i - 1] === 1 && t === tipi[i - 1]); }
+/* un ordine delle sedute senza due tipi uguali in giorni consecutivi, il piu vicino possibile all ordine di partenza (ricerca esaustiva: al massimo 6 sedute); null se non esiste */
+function riordinaSenzaAdiacenti(tipi, indici) {
+  let trovato = null;
+  const cerca = (ordine, resto) => {
+    if (trovato) return;
+    if (!resto.length) { trovato = ordine; return; }
+    const visti = {};
+    for (let k = 0; k < resto.length && !trovato; k++) {
+      const t = resto[k], i = ordine.length;
+      if (visti[t]) continue;
+      visti[t] = true;
+      if (i > 0 && indici[i] - indici[i - 1] === 1 && t === ordine[i - 1]) continue;
+      cerca(ordine.concat([t]), resto.slice(0, k).concat(resto.slice(k + 1)));
+    }
+  };
+  cerca([], tipi.slice());
+  return trovato;
+}
 function giorniSettimana(brief, split) {
-  const indici = GIORNI_PER_SEDUTE[brief.agenda.giorni] || [0, 2, 4];
+  const giorni = brief.agenda.giorni, L = brief.lavoro;
+  const sedute = split && Array.isArray(split.giorni) ? Math.min(split.giorni.length, giorni) : giorni;
+  let indici = (GIORNI_PER_SEDUTE[sedute] || GIORNI_PER_SEDUTE[giorni] || [0, 2, 4]).slice();
+  if (split && sedute < giorni && brief.chi.livello === 'principiante' && giorni >= 5 && L && L.note && L.note.indexOf(NOTA_PRINCIPIANTE_4_SEDUTE) === -1) L.note.push(NOTA_PRINCIPIANTE_4_SEDUTE);
+  if (split && sedute === 6) {
+    const tipi = split.giorni.slice(0, 6);
+    if (tipiAdiacenti(tipi, indici)) {
+      const nuovo = riordinaSenzaAdiacenti(tipi, indici);
+      if (nuovo) L.split = Object.assign({}, split, { giorni: nuovo.concat(split.giorni.slice(6)) });
+      else { L.split = Object.assign({}, split, { giorni: split.giorni.slice(0, 5) }); indici = GIORNI_PER_SEDUTE[5].slice(); if (L.note.indexOf(NOTA_SEI_GIORNI) === -1) L.note.push(NOTA_SEI_GIORNI); }
+    }
+  }
   brief.agenda.indiciGiorni = indici;
   return indici;
 }
@@ -206,6 +243,7 @@ function generaProgramma(d) {
   L.split = split;
   L.nEs = numeroEsercizi(brief);
   giorniSettimana(brief, split);
+  split = L.split;                                                      /* 5: con 6 giorni puo aver riordinato o ridotto le sedute (giorni di fila) */
   const sedute = componiSedute(brief, split);                           /* 6 */
   prescriviSerie(brief, sedute);                                        /* 8 */
   completaSettimana(brief, sedute);                                     /* 7 */

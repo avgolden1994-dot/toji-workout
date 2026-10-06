@@ -311,7 +311,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 72. `js/coach/regia/genera.js` — Generatore a stadi: buildProgram, giorni, verifica e smistamento della specialità (REG-02, REG-05, D-P6)
 
-`SPECIALITA_STRUTTURA` · `registraSpecialita()` · `specialitaStruttura()` · `GIORNI_PER_SEDUTE` · `giorniSettimana()` · `applicaMetodo()` · `regolaDelPicco()` · `NOTA_POCO_TEMPO_SS` · `NOTA_POCO_TEMPO_SS_DROP` · `NOTA_SENZA_CEDIMENTO_SS` · `NOTA_SENZA_CEDIMENTO` · `noteDelProgramma()` · `applicaScelteUtente()` · `chiudiProgramma()` · `NOTE_REGIONALI` · `riconciliaNote()` · `verificaProgramma()` · `window.buildProgram()` · `generaProgramma()`
+`SPECIALITA_STRUTTURA` · `registraSpecialita()` · `specialitaStruttura()` · `GIORNI_PER_SEDUTE` · `NOTA_SEI_GIORNI` · `NOTA_PRINCIPIANTE_4_SEDUTE` · `tipiAdiacenti()` · `riordinaSenzaAdiacenti()` · `giorniSettimana()` · `applicaMetodo()` · `regolaDelPicco()` · `NOTA_POCO_TEMPO_SS` · `NOTA_POCO_TEMPO_SS_DROP` · `NOTA_SENZA_CEDIMENTO_SS` · `NOTA_SENZA_CEDIMENTO` · `noteDelProgramma()` · `applicaScelteUtente()` · `chiudiProgramma()` · `NOTE_REGIONALI` · `riconciliaNote()` · `verificaProgramma()` · `window.buildProgram()` · `generaProgramma()`
 
 ## js/ui
 

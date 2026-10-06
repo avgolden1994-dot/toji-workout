@@ -160,3 +160,59 @@ test('strBilancia: la serie in piu a una tirata solo se l unita resta dentro il 
   assert.strictEqual(app.g('puoSalireVolume(__b, __s, __s[0].esercizi[2])'), false, 'dorsali e spessore al tetto (12 serie di schiena con massimo ' + bersagli.gruppiLimite.schiena.max + '): la tirata non sale');
   assert.strictEqual(app.g('puoSalireVolume(__b, __s, __s[0].esercizi[1])'), true, 'la panca (petto 6 di 8) puo salire');
 });
+
+/* ---- 4) sei giorni: un giorno di riposo in sette, mai lo stesso tipo di seduta in due giorni di fila (collaudo REC-03, REC-01; anticipo di W2-T5) ---- */
+test('6 giorni: lunedi-mercoledi e venerdi-domenica con il giovedi di riposo (PPL x2, Upper/Lower x3, Arnold); mai piu di 3 giorni di fila e mai lo stesso tipo in giorni consecutivi; con la frequenza 1 i tre giorni di punti deboli si riordinano', () => {
+  const giorno = g => app.json('DAYS').indexOf(g);
+  const diFila = p => { const gi = p.sedute.map(sd => giorno(sd.giorno)).sort((x, y) => x - y); let mx = 1, cur = 1; for (let i = 1; i < gi.length; i++) { cur = gi[i] - gi[i - 1] === 1 ? cur + 1 : 1; mx = Math.max(mx, cur); } return mx; };
+  const adiacentiUguali = p => p.sedute.some((sd, i) => i > 0 && giorno(sd.giorno) - giorno(p.sedute[i - 1].giorno) === 1 && sd.tipo === p.sedute[i - 1].tipo);
+  const casi = [
+    { goals: ['massa'], level: 'avanzato', days: 6, minutes: 75, luogo: 'palestra', sex: 'M', age: 30, seme: 'sei-1' },
+    { goals: ['massa'], level: 'intermedio', days: 6, minutes: 60, luogo: 'palestra', sex: 'M', age: 30, freq: '1', seme: 'sei-2' },
+    { goals: ['massa'], level: 'intermedio', days: 6, minutes: 60, luogo: 'palestra', sex: 'M', age: 30, freq: '3', seme: 'sei-3' },
+    { goals: ['massa'], level: 'avanzato', days: 6, minutes: 75, luogo: 'palestra', sex: 'M', age: 30, metodo: 'arnold6', seme: 'sei-5' },
+    { goals: ['forza'], level: 'avanzato', days: 6, minutes: 60, luogo: 'manubri', sex: 'F', age: 28, seme: 'sei-6' }
+  ];
+  casi.forEach(c => {
+    const p = costruisci(c);
+    assert.strictEqual(p.sedute.length, 6, JSON.stringify(c) + ': 6 sedute');
+    assert.deepStrictEqual(p.sedute.map(sd => giorno(sd.giorno)), [0, 1, 2, 4, 5, 6], JSON.stringify(c) + ': i giorni');
+    assert.deepStrictEqual(p.riposo, ['Giovedì']);
+    assert.ok(diFila(p) <= 3, 'al massimo 3 giorni di fila');
+    assert.ok(!adiacentiUguali(p), JSON.stringify(c) + ': stesso tipo in due giorni di fila: ' + p.sedute.map(sd => sd.giorno.slice(0, 3) + ':' + sd.tipo).join(' '));
+    assert.ok(!p.note.some(n => /6 giorni/.test(n)), 'le sedute restano 6: niente nota del ripiego');
+  });
+  const ppl = costruisci(casi[0]);
+  assert.deepStrictEqual(ppl.sedute.map(sd => sd.tipo), ['push', 'pull', 'legs', 'push', 'pull', 'legs'], 'il PPL x2 resta nell ordine: ogni gruppo torna dopo 72 ore');
+  const punti = costruisci(casi[1]);
+  assert.strictEqual(punti.sedute.filter(sd => sd.tipo === 'punti').length, 3, 'i tre giorni di punti deboli ci sono tutti');
+});
+
+test('6 giorni, il ripiego: se nessun ordine evita lo stesso tipo in giorni consecutivi le sedute diventano 5 (lunedi, martedi, giovedi, venerdi, sabato) con la nota; riordinaSenzaAdiacenti e tipiAdiacenti', () => {
+  assert.deepStrictEqual(app.json("riordinaSenzaAdiacenti(['push', 'pull', 'legs', 'punti', 'punti', 'punti'], [0, 1, 2, 4, 5, 6])"), ['push', 'pull', 'punti', 'punti', 'legs', 'punti']);
+  assert.strictEqual(app.g("riordinaSenzaAdiacenti(['push', 'push', 'push', 'push', 'push', 'pull'], [0, 1, 2, 4, 5, 6])"), null, 'cinque spinte su sei posti non stanno senza giorni consecutivi');
+  assert.deepStrictEqual(app.json("riordinaSenzaAdiacenti(['push', 'push', 'push', 'push', 'pull', 'legs'], [0, 1, 2, 4, 5, 6])"), ['push', 'pull', 'push', 'push', 'legs', 'push'], 'quattro spinte si: nei giorni 0, 2, 4 e 6');
+  assert.strictEqual(app.g("tipiAdiacenti(['push', 'pull', 'legs', 'push', 'pull', 'legs'], [0, 1, 2, 3, 4, 5])"), false);
+  assert.strictEqual(app.g("tipiAdiacenti(['push', 'pull', 'legs', 'punti', 'punti', 'punti'], [0, 1, 2, 4, 5, 6])"), true);
+  /* il ripiego dentro giorniSettimana: una divisione impossibile da sistemare */
+  app.ctx.__b = app.g('(() => { const b = briefCoach(' + JSON.stringify({ goals: ['massa'], level: 'intermedio', days: 6, minutes: 60, luogo: 'palestra', sex: 'M', age: 30, usaProfilo: false, fastidi: [] }) + ', {}); b.lavoro.note = []; return b; })()');
+  const indici = app.json("(() => { const split = { nome: 'prova', giorni: ['push', 'push', 'push', 'push', 'push', 'pull'] }; __b.lavoro.split = split; return giorniSettimana(__b, split); })()");
+  assert.deepStrictEqual(indici, [0, 1, 3, 4, 5]);
+  assert.strictEqual(app.g('__b.lavoro.split.giorni.length'), 5);
+  assert.ok(app.json('__b.lavoro.note').some(n => /6 giorni/.test(n) && /giorni/.test(n)), 'la nota del ripiego c e e nomina i giorni (collaudo SPL-01)');
+  assert.strictEqual(app.g('__b.agenda.giorni'), 6, 'i giorni dichiarati restano 6');
+});
+
+test('chi comincia con 5 o 6 giorni ha 4 sedute sui giorni delle 4 sedute (lunedi, martedi, giovedi, venerdi) con la nota che lo dice (PRG-02, ricerca principianti §3.3)', () => {
+  const NOTA = 'Chi comincia cresce di più con 4 sedute a settimana: gli altri giorni sono riposo o una camminata.';
+  [5, 6].forEach(days => {
+    const p = costruisci({ goals: ['massa'], level: 'principiante', days, minutes: 60, luogo: 'palestra', sex: 'F', age: 30, seme: 'quattro-' + days });
+    assert.strictEqual(p.sedute.length, 4, days + ' giorni: 4 sedute');
+    assert.deepStrictEqual(p.sedute.map(sd => sd.giorno), ['Lunedì', 'Martedì', 'Giovedì', 'Venerdì']);
+    assert.ok(p.note.includes(NOTA), 'la nota: ' + p.note.join(' | '));
+  });
+  const quattro = costruisci({ goals: ['massa'], level: 'principiante', days: 4, minutes: 60, luogo: 'palestra', sex: 'F', age: 30, seme: 'quattro-4' });
+  assert.ok(!quattro.note.includes(NOTA), 'con 4 giorni dichiarati nessuna nota');
+  const tre = costruisci({ goals: ['massa'], level: 'intermedio', days: 5, minutes: 60, luogo: 'palestra', sex: 'M', age: 30, seme: 'cinque-i' });
+  assert.strictEqual(tre.sedute.length, 5); assert.ok(!tre.note.includes(NOTA));
+});

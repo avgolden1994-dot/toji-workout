@@ -4035,5 +4035,7 @@ window.I18N["es"] = {
 "+#% di serie": "+#% de series",
 "gli altri muscoli a mantenimento con gli stessi carichi.": "los demás músculos en mantenimiento con las mismas cargas.",
 "Per farti stare nei minuti ho accorciato le pause e tolto il superfluo: gli schemi di base restano sempre.": "Para que quepa en tu tiempo acorté los descansos y quité lo superfluo: los patrones básicos siempre se quedan.",
-"Femorali: con questi minuti la flessione del ginocchio (leg curl) non entra, lavorano solo con gli stacchi: meno completo.": "Femorales: con estos minutos la flexión de rodilla (leg curl) no cabe, trabajan solo con los pesos muertos: menos completo."
+"Femorali: con questi minuti la flessione del ginocchio (leg curl) non entra, lavorano solo con gli stacchi: meno completo.": "Femorales: con estos minutos la flexión de rodilla (leg curl) no cabe, trabajan solo con los pesos muertos: menos completo.",
+"Con 6 giorni lo stesso gruppo cadrebbe in due giorni di fila: cinque sedute e due giorni di riposo, i muscoli recuperano meglio.": "Con 6 días el mismo grupo caería en dos días seguidos: cinco sesiones y dos días de descanso, los músculos recuperan mejor.",
+"Chi comincia cresce di più con 4 sedute a settimana: gli altri giorni sono riposo o una camminata.": "Quien empieza crece más con 4 sesiones a la semana: los demás días son descanso o un paseo."
 };

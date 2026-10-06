@@ -4035,5 +4035,7 @@ window.I18N["de"] = {
 "+#% di serie": "+#% Sätze",
 "gli altri muscoli a mantenimento con gli stessi carichi.": "die anderen Muskeln im Erhaltungsmodus mit denselben Gewichten.",
 "Per farti stare nei minuti ho accorciato le pause e tolto il superfluo: gli schemi di base restano sempre.": "Damit es in deine Zeit passt, habe ich die Pausen verkürzt und das Überflüssige gestrichen: Die Grundmuster bleiben immer.",
-"Femorali: con questi minuti la flessione del ginocchio (leg curl) non entra, lavorano solo con gli stacchi: meno completo.": "Beinbeuger: Mit dieser Zeit passt die Kniebeugung (Leg Curl) nicht hinein, sie arbeiten nur über das Kreuzheben: weniger vollständig."
+"Femorali: con questi minuti la flessione del ginocchio (leg curl) non entra, lavorano solo con gli stacchi: meno completo.": "Beinbeuger: Mit dieser Zeit passt die Kniebeugung (Leg Curl) nicht hinein, sie arbeiten nur über das Kreuzheben: weniger vollständig.",
+"Con 6 giorni lo stesso gruppo cadrebbe in due giorni di fila: cinque sedute e due giorni di riposo, i muscoli recuperano meglio.": "Mit 6 Tagen würde dieselbe Muskelgruppe an zwei Tagen hintereinander fallen: fünf Einheiten und zwei Ruhetage, die Muskeln erholen sich besser.",
+"Chi comincia cresce di più con 4 sedute a settimana: gli altri giorni sono riposo o una camminata.": "Wer anfängt, wächst mit 4 Einheiten pro Woche mehr: Die anderen Tage sind Ruhe oder ein Spaziergang."
 };

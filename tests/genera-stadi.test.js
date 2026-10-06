@@ -226,14 +226,15 @@ test('specialitaStruttura: oggi nessuna (null); un task dopo registra la sua mod
   assert.strictEqual(app().g('Object.keys(SPECIALITA_STRUTTURA).length'), 0);
 });
 
-test('giorniSettimana e scegliSplit: i giorni di sempre (2 = lunedi e giovedi, 6 = lunedi-sabato) e la divisione dal livello e dalla frequenza', () => {
+test('giorniSettimana e scegliSplit: i giorni di sempre (2 = lunedi e giovedi, 6 = lunedi-mercoledi e venerdi-domenica) e la divisione dal livello e dalla frequenza', () => {
   const g = (days) => app().json('(() => { const b = briefCoach(' + stringa(Object.assign({}, BASE, { days })) + ', {}); return { indici: giorniSettimana(b, null), nelBrief: b.agenda.indiciGiorni }; })()');
   assert.deepStrictEqual(g(2).indici, [0, 3]);
   assert.deepStrictEqual(g(3).indici, [0, 2, 4]);
   assert.deepStrictEqual(g(4).indici, [0, 1, 3, 4]);
   assert.deepStrictEqual(g(5).indici, [0, 1, 3, 4, 5]);
-  assert.deepStrictEqual(g(6).indici, [0, 1, 2, 3, 4, 5]);
-  assert.deepStrictEqual(g(6).nelBrief, [0, 1, 2, 3, 4, 5], 'i giorni restano nel brief');
+  /* INT-2b (onda 2c): 6 giorni = lunedi-mercoledi e venerdi-domenica, il giovedi di riposo (collaudo REC-03: mai 6 giorni di fila; prima lunedi-sabato) */
+  assert.deepStrictEqual(g(6).indici, [0, 1, 2, 4, 5, 6]);
+  assert.deepStrictEqual(g(6).nelBrief, [0, 1, 2, 4, 5, 6], 'i giorni restano nel brief');
   const s = (d) => app().dati(app().chiama('scegliSplit', app().chiama('briefCoach', Object.assign({}, BASE, d), {}))).nome;
   assert.strictEqual(s({ level: 'intermedio', days: 4 }), 'Upper / Lower x2');
   assert.strictEqual(s({ level: 'principiante', days: 3 }), 'Full Body 3x');
