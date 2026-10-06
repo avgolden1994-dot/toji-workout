@@ -67,3 +67,18 @@ function rampaAlCarico(r, c) {
   return r;
 }
 registraFase('carico', 40, 'MES-03', rampaAlCarico);
+
+/* Le serie che il piano prescrive QUESTA settimana per un esercizio con `picco` serie: la rampa di MES-03 nelle settimane di carico, la dose di MES-05 in quelle di scarico; il picco
+   se non c e piano (programma v1), consenso o regola. Non guarda lo storico (RIC-05, INT-04): e l obiettivo della settimana per la scheda Oggi (obiettiviSettimana), che non deve
+   cambiare mentre la settimana passa (lo stesso numero che la fase 40 e la fase 30 danno in seduta quando nessuna fase dopo di loro toglie ancora). */
+function serieDelPianoQuestaSettimana(nome, picco) {
+  const n = Number(picco) || 0;
+  if (!(n > 0) || typeof coachAttivo !== 'function' || !coachAttivo()) return n;
+  const p = typeof programmaConPiano === 'function' ? programmaConPiano() : null;
+  const sett = p ? settimanaProgramma() : null;
+  const w = sett && !sett.finito && sett.numero >= 1 ? p.piano.settimane[sett.numero - 1] : null;
+  if (!w) return n;
+  if (sett.fase === 'scarico') return regolaAttiva('MES-05') && typeof serieDelloScarico === 'function' ? serieDelloScarico(w, sett, n) : n;
+  if (!regolaAttiva('MES-03') || !(w.volume > 0) || w.volume > 1) return n;
+  return serieDellaSettimana(w, n, nome, w.serie && w.volume < 1 ? posizioneNelPiano(nome) : null);
+}

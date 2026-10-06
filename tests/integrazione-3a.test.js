@@ -74,3 +74,66 @@ test('(b) «extra» degli aggiusti: l incremento in piu sta sulla griglia e il m
   assert.strictEqual(r.weight, 16, '14 kg + 1 kg di incremento e 1 kg di extra: dalla griglia dei manubri (passi di 2 kg) il primo peso sopra e 16');
   assert.match(r.motivo, /\+2 kg in più: l ultima volta era leggero/);
 });
+
+/* ============================================================================================================
+   (c) la scheda Oggi conta la rampa di P3-B: le serie e i minuti della seduta sono quelli che la seduta avra quando si apre, e gli obiettivi della settimana le serie del piano
+   (prima: 23 serie e 65 minuti alla settimana 1, la seduta ne aveva 18 e 54; «Obiettivi della settimana» sommava il picco, setsBase)
+   ============================================================================================================ */
+const FB = srpe => ({ srpe: srpe, arrivo: 'normale', carichi: 'giusti', dolore: false, zone: [], livello: 0, esercizi: [] });
+/* una seduta di tre giorni prima del lunedi della settimana n con tutti gli esercizi del piano: niente «prima volta» (INT-04) ne rientro (RIC-05), che non sono del piano */
+function vaiConStoria(a, n) {
+  H.vaiA(a, n, 0);
+  const nomi = [];
+  a.json('DAYS').forEach(g => (a.json('loadData()')[g] || []).forEach(e => { if (nomi.indexOf(e.name) === -1) nomi.push(e.name); }));
+  const t = new Date(2026, 9, 5 + 7 * (n - 1) - 3, 12, 0, 0).getTime();
+  a.storia([{ id: t, day: 'Venerdì', date: '02/10/2026', minuti: 50, prontezza: 80, exercises: [], feedback: FB(6),
+    sessione: nomi.map(nome => ({ name: nome, rest: 90, sets: [1, 2, 3].map(() => ({ weight: 20, reps: 10, done: true, wasBerserk: false, rpe: 8 })) })) }]);
+}
+const PROFILI_OGGI = [{ nome: 'principiante', d: { level: 'principiante', days: 3 } }, { nome: 'intermedio', d: { level: 'intermedio', days: 4 } }, { nome: 'avanzato', d: { level: 'avanzato', days: 4 } }];
+
+PROFILI_OGGI.forEach(pr => {
+  test('(c) Oggi, ' + pr.nome + ': in ogni settimana del programma serie, ripetizioni, pause e minuti della scheda sono quelli della seduta aperta; gli obiettivi sono le serie del piano', () => {
+    const { a, p } = H.telefono({ d: pr.d });
+    const giorni = H.giorniDiAllenamento(a);
+    let ridotte = 0, confrontate = 0;
+    for (let n = 1; n <= p.settimane; n++) {
+      vaiConStoria(a, n);
+      const fase = a.json('settimanaProgramma().fase');
+      /* le serie previste della settimana PRIMA di aprire i giorni: come le legge Oggi, e non cambiano mentre la settimana passa */
+      const ob = a.json('obiettiviSettimana()');
+      const previste = Object.keys(ob).reduce((t, k) => t + ob[k].previste, 0);
+      let sedute = 0, apertaTot = 0, piccoTot = 0;
+      giorni.forEach(g => {
+        const stima = a.json('stimaSeduta(loadData()[' + JSON.stringify(g) + '])');
+        const aperta = H.apriGiorno(a, g);
+        const dopo = a.json('loadData()[' + JSON.stringify(g) + ']');
+        assert.strictEqual(stima.esercizi.length, aperta.length);
+        stima.esercizi.forEach((e, i) => {
+          const o = dopo[i];
+          assert.deepStrictEqual([e.sets, e.reps, e.weight, e.rest], [o.sets, o.reps, o.weight, o.rest], pr.nome + ' sett. ' + n + ' ' + g + ' ' + e.name);
+          confrontate++; if (o.sets < o.setsBase) ridotte++;
+          if (a.json('categoriaDi(' + JSON.stringify(o.name) + ')')) { apertaTot += o.sets; piccoTot += o.setsBase; }   /* Oggi conta spinta, tirata e gambe: non il core */
+        });
+        assert.strictEqual(stima.serie, dopo.reduce((t, e) => t + e.sets, 0), 'serie della scheda = serie della seduta');
+        assert.strictEqual(stima.minuti, Math.round(a.json('durataSeduta(loadData()[' + JSON.stringify(g) + '])')), 'minuti della scheda = minuti della seduta aperta');
+        sedute++;
+      });
+      assert.strictEqual(previste, apertaTot, pr.nome + ' settimana ' + n + ' (' + fase + '): le serie previste della settimana sono quelle del piano (non il picco ' + piccoTot + ')');
+      if (n === 1) assert.ok(apertaTot < piccoTot, pr.nome + ': alla settimana 1 il volume e sotto il picco (rampa): ' + apertaTot + ' contro ' + piccoTot);
+      assert.ok(sedute >= 2);
+    }
+    assert.ok(confrontate > 40 && ridotte > 0, 'la prova guarda esercizi con la rampa (' + ridotte + ' su ' + confrontate + ')');
+  });
+});
+
+test('(c) Oggi senza consenso: la seduta e il piano com e (nessuna chiamata alla catena dei carichi)', () => {
+  const { a } = H.telefono({ d: { level: 'intermedio' }, consenso: false });
+  const g = H.giorniDiAllenamento(a)[0];
+  const piano = a.json('loadData()[' + JSON.stringify(g) + ']');
+  const stima = a.json('stimaSeduta(loadData()[' + JSON.stringify(g) + '])');
+  assert.deepStrictEqual(stima.esercizi.map(e => e.sets), piano.map(e => e.sets));
+  assert.strictEqual(stima.alzati, 0);
+  const ob = a.json('obiettiviSettimana()');
+  const picco = a.json('DAYS').reduce((t, d) => t + (a.json('(loadData()[' + JSON.stringify(d) + '] || [])').filter(e => a.json('categoriaDi(' + JSON.stringify(e.name) + ')')).reduce((s, e) => s + (e.setsBase || e.sets), 0)), 0);
+  assert.strictEqual(Object.keys(ob).reduce((t, k) => t + ob[k].previste, 0), picco, 'senza consenso: il picco');
+});

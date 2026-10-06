@@ -82,6 +82,18 @@ function serieDiScarico(picco, fattore) {
   return Math.max(n >= 3 ? min.daTreInSu : min.daDue, Math.min(n, Math.round(n * fattore)));
 }
 
+/* la dose della settimana di scarico `w` (voce del piano) di `sett` (settimanaProgramma): la verifica del principiante (carico del piano 1) ha la sua, le altre quella della fatica */
+function doseDellaSettimana(w, sett) {
+  return Number(w.carico) >= 1 ? { serie: w.volume, carico: w.carico } : DOSE_SCARICO[sett.doseFissa || livelloFatica()];
+}
+/* le serie dell esercizio con `picco` serie in quella settimana di scarico: la dose unica col minimo di 2 (e l esercizio da 2 serie scende a 1: N6); nella verifica del principiante la tabella
+   del piano (2 serie: da 3 sono -33%, un esercizio da 2 resta a 2). La usano la fase 30 e la scheda Oggi (serieDelPianoQuestaSettimana, volume/rampa-settimana.js) */
+function serieDelloScarico(w, sett, picco) {
+  const dose = doseDellaSettimana(w, sett);
+  if (!dose) return picco;
+  return Number(w.carico) >= 1 && w.serie ? Math.min(picco, Math.max(w.serie.multi, w.serie.altri)) : serieDiScarico(picco, dose.serie);
+}
+
 /* Fase 30 «MES-05» della catena 'carico' (regia/fasi.js): lo scarico del programma v2 (settimana di scarico e verifica del principiante), sopra caricoProssimoBase (fase 10).
    - serie: la dose unica con il minimo di 2 serie, e un esercizio da 2 serie scende a 1 (N6); anche la tenuta a tempo (il plank) ha la dose
    - verifica del principiante (la 12a settimana, PRN-03: piano.settimane[].carico = 1): carico = il riferimento di prima dello scarico, non ridotto, serie -35%; mai composto
@@ -96,10 +108,9 @@ function scaricoAlCarico(r, c) {
   if (!w) return r;
   const nome = c.nome, picco = Number(c.setsBase) || 3;
   const verifica = Number(w.carico) >= 1;
-  const dose = verifica ? { serie: w.volume, carico: w.carico } : DOSE_SCARICO[sett.doseFissa || livelloFatica()];
+  const dose = doseDellaSettimana(w, sett);
   if (!dose) return r;
-  /* le serie: la dose unica col minimo di 2 (e l esercizio da 2 serie scende a 1: N6); nella verifica del principiante la tabella del piano (2 serie: da 3 sono -33%, un esercizio da 2 resta a 2) */
-  const serie = verifica && w.serie ? Math.min(picco, Math.max(w.serie.multi, w.serie.altri)) : serieDiScarico(picco, dose.serie);
+  const serie = serieDelloScarico(w, sett, picco);
   if (r.tipo !== 'scarico') {                                                        /* la tenuta a tempo non ha tipo 'scarico' ma le serie della dose si */
     if (isTimeBased(nome)) r.sets = serie;
     return r;
