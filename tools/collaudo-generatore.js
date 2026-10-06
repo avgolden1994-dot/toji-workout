@@ -69,6 +69,11 @@ const VERSIONE_CRITERI = '1.4';
    - MOD-06 e RIR-01..03 (S/neutro, B5): il RIR pianificato si chiede a `rirBersaglioBase` con il piano del programma (`prog.piano`), non piu con un programma finto senza piano: la tabella del registro e quella che si misura.
      MOD-06 diventa «ok» se tutti i programmi hanno il piano; MOD-09 se la durata dello schema coincide con quella del piano.
    - GOA-01 (L, B9, B10, ETA-02): non si chiede lavoro a 6 ripetizioni o meno a chi ha una prescrizione di prudenza per decisione (over 65 e PAR-Q: 8-12 ripetizioni; minorenni: 8-15, niente massimali).
+   - MOD-07 e MOD-08 (verifiche del modello, da righe fisse a misure): erano due esiti scritti a mano («incoerente», «manca») che descrivevano il generatore di prima di W2-T1 e W2-T2, e il cancello li chiede «ok» dall'onda 2a.
+     Un esito scritto a mano non si cambia a mano: ora si misurano. MOD-07 e «ok» se il motore del volume per unita c'e (`volumeMotore`), IPE-01 e accesa e in ogni programma senza metodo famoso il conteggio per unita del
+     generatore (`contaVolume`) e quello del collaudo (stessi crediti, due percorsi) coincidono: 0 programmi diversi; resta «incoerente» altrimenti. Con un metodo famoso il generatore conta ancora per gruppo e li esclude. Non giudica
+     se il volume e giusto (lo fanno VOL-01 e VOL-02): dice che le due misure parlano della stessa cosa. MOD-08 e «ok» se il modello del tempo del generatore (`durataSeduta`, CAS-05) conta il riscaldamento e la rampa (oltre il tempo
+     delle serie), il cambio tra esercizi e il lato degli esercizi a un braccio o una gamba (tre prove su esercizi della libreria), e «manca» se una manca. Non e un confronto di minuti: il modello del tempo del collaudo resta indipendente (DUR-01 sotto).
    - DUR-01 e SS-01: ESAMINATI, NON CAMBIATI. DUR-01 «con il modello CAS-05» (candidato di W2-T2): il modello del collaudo (riscaldamento, cambi, tempo sotto tensione, unilaterali) e piu prudente di CAS-05 e sul codice fuso
      da gia DUR-01 a 0,06% pesata (10 programmi su 10.800; 0,12% nell'onda 2a): adottare CAS-05 non serve, e farebbe misurare il generatore con la sua stessa funzione (B11 chiede un modello solo a generatore e schermate, non al collaudo).
      SS-01 «per muscolo» (candidato di W2-T2): con `antagonisti` per schemi di movimento SS-01 e a 0 programmi sul codice fuso (2,12% nell'onda 2a): niente da allargare. MOD-09 e DEL-01 per gli altri livelli: invariati. */
@@ -914,6 +919,13 @@ function creditoGruppo(cr, g) {
   GRUPPI[g].muscoli.forEach(mu => { const u = G.unitaDiMuscolo(mu); if (u && (cr[u] || 0) > mx) mx = cr[u]; });
   return mx;
 }
+/* 1.4 (MOD-07): il conteggio per unita del generatore (contaVolume, la misura del suo motore del volume) e quello del collaudo (creditiAttributi) sullo stesso programma: le stesse serie frazionarie per ogni unita? */
+function volumeUnitaDiverso(prog) {
+  let gen; try { gen = G.contaVolume(prog.sedute); } catch (e) { return true; }
+  const mio = {};
+  prog.sedute.forEach(sd => sd.esercizi.forEach(e => { const cr = creditiAttributi(e.name), n = Number(e.sets); if (cr && n > 0) Object.keys(cr).forEach(u => { mio[u] = (mio[u] || 0) + n * cr[u]; }); }));
+  return Object.keys(gen).some(u => Math.abs(((gen[u] && gen[u].frazionarie) || 0) - (mio[u] || 0)) > 1e-6);
+}
 function secTut(e) { return ((e.inf.tempo ? e.reps : e.reps * SEC_PER_RIPETIZIONE) * (e.inf.meta && e.inf.meta.lato ? FATTORE_LATO : 1)) + SEC_SETUP_SERIE; }
 function stimaMinuti(es) {
   let sec = MIN_RISCALDAMENTO_GENERALE * 60;
@@ -1071,7 +1083,7 @@ function profiloCompatto(p) {
 function eseguiMatrice(profili, opz) {
   const classi = new Map();
   const dimensioni = { livello: {}, obiettivo: {}, giorni: {}, minuti: {}, luogo: {}, fastidi: {}, sesso: {}, fasciaEta: {}, metodo: {} };
-  const tot = { erroriCriteri: {}, pesoTotale: 0, profili: 0, errori: 0, conFallimenti: 0, conGravi: 0, conMetodo: 0, perSev: {}, perMetodo: {}, scemaSettimaneDiverse: 0, fallimentiTotali: 0, conPiano: 0, esentiNota: 0, esentiNotaPeso: 0 };
+  const tot = { erroriCriteri: {}, pesoTotale: 0, profili: 0, errori: 0, conFallimenti: 0, conGravi: 0, conMetodo: 0, perSev: {}, perMetodo: {}, scemaSettimaneDiverse: 0, fallimentiTotali: 0, conPiano: 0, esentiNota: 0, esentiNotaPeso: 0, volUnitaConfronti: 0, volUnitaDiversi: 0 };
   const rngRes = mulberry32(20261005);
   const K = 40;
   const t0 = Date.now();
@@ -1085,6 +1097,7 @@ function eseguiMatrice(profili, opz) {
     if (a.prog && a.prog.metodo) { tot.conMetodo++; tot.perMetodo[a.prog.metodo] = (tot.perMetodo[a.prog.metodo] || 0) + 1; }
     if (a.prog && a.prog.scheme && a.prog.scheme.settimane !== a.prog.settimane) tot.scemaSettimaneDiverse++;
     if (a.prog && a.prog.versione === 2 && a.prog.piano && Array.isArray(a.prog.piano.settimane) && a.prog.piano.settimane.length === a.prog.settimane) tot.conPiano++;   /* 1.4: MOD-06, MOD-09 */
+    if (a.prog && !a.prog.metodo && a.m) { tot.volUnitaConfronti++; if (volumeUnitaDiverso(a.prog)) tot.volUnitaDiversi++; }   /* 1.4: MOD-07 */
     if (a.m && a.m.esentiNota && a.m.esentiNota.length) { tot.esentiNota++; tot.esentiNotaPeso += wp; }   /* 1.4: i programmi con VOL-01 esentato dalla nota della causa */
     const viste = new Map(), conteggi = new Map();
     const tagViste = new Map();
@@ -1180,10 +1193,26 @@ function verificheModello(risultato) {
   /* 6. prescrizione per settimana */
   const validi = risultato.tot.profili - risultato.tot.errori, conPiano = risultato.tot.conPiano || 0;
   v.push({ id: 'MOD-06', esito: validi && conPiano === validi ? 'ok' : 'parziale', titolo: 'Prescrizione per settimana nel programma', nota: conPiano === validi && validi ? 'Ogni programma porta il piano settimana per settimana (`prog.piano`, versione 2): fase, RIR per classe, fattore di volume, serie, ripetizioni, tecniche e nota di ogni settimana (' + conPiano + ' programmi su ' + validi + '). Il collaudo chiede il RIR a `rirBersaglioBase` con quel piano (RIR-01..03 misurano la tabella del registro). Carichi e progressione delle settimane successive restano a runtime (caricoProssimo).' : 'Il programma salva sedute identiche per tutte le settimane + fasi + rirSett; il piano settimana per settimana (`prog.piano`) c\'e in ' + conPiano + ' programmi su ' + validi + ': gli altri (v1) si leggono come prima. Volume, carichi e RIR delle altre settimane si decidono a runtime.' });
-  /* 7. volume per gruppo, non per muscolo */
-  v.push({ id: 'MOD-07', esito: 'incoerente', titolo: 'Conteggio frazionario nel generatore', nota: 'buildProgram conta le sinergie per GRUPPO (MUSCLE_GROUPS[g].synergists: la panca vale 0,5 per tutte le spalle e tutte le braccia) e ignora i muscoli secondari di DETTAGLI (colonna 9), che sono per MUSCOLO. Il collaudo conta per muscolo: le due misure possono divergere (es. deltoidi laterali, polpacci, femorali).' });
-  /* 8. riscaldamento e durata */
-  v.push({ id: 'MOD-08', esito: 'manca', titolo: 'Riscaldamento e transizioni nel modello del tempo', nota: 'La stima del coach e 8 min + serie x (35 s + recupero): non conta riscaldamento specifico, transizioni tra macchine, ne il doppio tempo degli esercizi unilaterali (lato). Il collaudo usa un modello piu prudente (vedi costanti SEC_*).' });
+  /* 7. volume per unita fine (1.4: misurato, non scritto a mano) */
+  let motore = false; try { motore = typeof G.volumeMotore === 'function' && !!G.regolaAttiva('IPE-01'); } catch (e) { motore = false; }
+  const tc = risultato.tot, confronti = tc.volUnitaConfronti || 0, diversi = tc.volUnitaDiversi || 0;
+  v.push({ id: 'MOD-07', esito: motore && confronti > 0 && diversi === 0 ? 'ok' : 'incoerente', titolo: 'Conteggio frazionario nel generatore',
+    nota: motore && confronti > 0 && diversi === 0 ? 'Il generatore conta le serie per unita fine (le 15 di B6) con i crediti degli attributi (`volumeMotore`, `contaVolume`, IPE-01 accesa), come il collaudo dalla 1.4: lo stesso conteggio in ' + confronti + ' programmi su ' + confronti + ' (senza metodo famoso: con un metodo il generatore conta ancora per gruppo e il programma e escluso: ' + (tc.conMetodo || 0) + ' programmi). La misura non giudica il volume (lo fanno VOL-01 e VOL-02): dice che le due parlano della stessa cosa.'
+      : 'buildProgram conta le serie per GRUPPO (MUSCLE_GROUPS[g].synergists: la panca vale 0,5 per tutte le spalle e tutte le braccia) e ignora i crediti per unita degli attributi' + (motore ? ': ' + diversi + ' programmi su ' + confronti + ' hanno un conteggio diverso da quello del collaudo' : ' (il motore del volume per unita non c\'e o IPE-01 e spenta)') + '. Il collaudo conta per unita: le due misure possono divergere (es. deltoidi laterali, polpacci, femorali).' });
+  /* 8. riscaldamento, rampa, cambi e lato nel modello del tempo del generatore (1.4: tre prove, non una riga fissa) */
+  const prove = [];
+  try {
+    const nome = (pulito) => { const x = lib.find(y => G.senzaEmoji(y.name) === pulito); return x ? x.name : pulito; };
+    const press = { name: nome('Leg Press'), sets: 1, reps: 10, rest: 90 };
+    const extra = G.durataSeduta([press], { minuti: 60 }) - (G.durataEsercizio(press) - press.rest / 60);   /* quello che c'e oltre la serie: riscaldamento e rampa */
+    prove.push({ cosa: 'riscaldamento e rampa', ok: extra >= G.sogliaTempo('riscaldamentoGenerale').min, valore: extra.toFixed(1) + ' min' });
+    const cambio = G.infoTempo(press.name).cambio;
+    prove.push({ cosa: 'cambio tra esercizi', ok: cambio > 0, valore: cambio + ' s' });
+    prove.push({ cosa: 'lato degli esercizi a un braccio o una gamba', ok: G.infoTempo(nome('Affondi Bulgari')).unilaterale === true && G.infoTempo(press.name).unilaterale === false, valore: 'Affondi Bulgari unilaterale, Leg Press no' });
+  } catch (e) { prove.push({ cosa: 'modello del tempo (durataSeduta)', ok: false, valore: 'non risponde: ' + (e && e.message) }); }
+  const tutte = prove.length === 3 && prove.every(x => x.ok);
+  v.push({ id: 'MOD-08', esito: tutte ? 'ok' : 'manca', titolo: 'Riscaldamento e transizioni nel modello del tempo',
+    nota: (tutte ? 'La stima del coach (`durataSeduta`, CAS-05) conta oltre le serie: ' : 'La stima del coach non conta tutto: ') + prove.map(x => x.cosa + ' ' + (x.ok ? 'si' : 'NO') + ' (' + x.valore + ')').join('; ') + '. Il modello del tempo del collaudo resta indipendente (costanti SEC_*, piu prudente): DUR-01 non lo sostituisce con questo.' });
   /* 9. scheme.settimane */
   v.push({ id: 'MOD-09', esito: risultato.tot.scemaSettimaneDiverse ? 'incoerente' : 'ok', titolo: 'Durata dello schema (schemeFor.settimane) contro durata del programma', nota: risultato.tot.scemaSettimaneDiverse ? 'schemeFor() dichiara una durata per obiettivo che non coincide con quella del programma (strutturaProgramma / piano): programmi con le due durate diverse: ' + risultato.tot.scemaSettimaneDiverse + ' su ' + risultato.tot.profili : 'La durata viene dal piano (`prog.piano`, W2-T4) e lo schema la dice uguale: nessun programma con le due durate diverse (' + risultato.tot.profili + ' programmi).' });
   /* 10. funzioni di progressione presenti */
