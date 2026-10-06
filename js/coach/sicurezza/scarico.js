@@ -214,7 +214,10 @@ function valutaScaricoReattivo(causa) {
   const ag = aggiustiCoach();
   if (ag.scarico && ag.scarico.sedute > 0) return no('giaDeciso', 'Il coach ha già deciso uno scarico: si fa quello.');
   const blocco = p.piano.struttura && Number(p.piano.struttura.blocco) > 0 ? Number(p.piano.struttura.blocco) : 0;
-  if (sett && !sett.finito && blocco && sett.numero >= 1 && ((sett.numero - 1) % blocco) + 1 <= prot.primeSettimaneDelBlocco)
+  const primeNelBlocco = sett && !sett.finito && blocco && sett.numero >= 1 && ((sett.numero - 1) % blocco) + 1 <= prot.primeSettimaneDelBlocco;
+  /* chi comincia: nelle prime 3 settimane del programma, salvo un segnale forte (la dolenzia e l abitudine dei primi giorni si scambiano per fatica) */
+  const primeDelPrincipiante = sett && !sett.finito && p.piano.livello === 'principiante' && p.piano.modo === 'normale' && sett.numero >= 1 && sett.numero <= prot.principiantiPrimeSettimane && !segnaliFatica().forte;
+  if (primeNelBlocco || primeDelPrincipiante)
     return no('primeSettimane', 'Siamo nelle prime settimane del blocco: la dolenzia dei primi giorni non è fatica accumulata, per ora nessuno scarico.');
   if (typeof scaricoRecente === 'function' && scaricoRecente(prot.giorniDalloScarico))
     return no('distanza', 'C’è stato uno scarico da meno di ' + prot.giorniDalloScarico + ' giorni: per ora nessun altro scarico.');

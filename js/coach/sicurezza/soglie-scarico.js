@@ -27,10 +27,10 @@ const SOGLIE_SCARICO = {
     forza: 'Convenzione', fonte: 'registro coach v2 B17 («una dose e una durata»); ricerca-mesocicli-periodizzazione-scarichi §3.7 («per le prossime 3 sedute o 7 giorni, minimo 2 sedute»); PRZ-04 e STR-01 erano già a 2 sedute', regole: ['MES-07']
   },
   /* le protezioni (MES-07): non nelle prime N settimane del blocco; non prima di N giorni dall’ultimo scarico; uno ogni N giorni al massimo; se lo scarico del programma è entro N giorni
-     si fa quello; «Non ora» rimanda la proposta di N giorni */
+     si fa quello; «Non ora» rimanda la proposta di N giorni. Chi comincia: le prime N settimane del programma (salvo un segnale forte) */
   reattivoProtezioni: {
-    v: { primeSettimaneDelBlocco: 2, giorniDalloScarico: 14, unoOgniGiorni: 21, programmatoEntroGiorni: 7, nonOraGiorni: 7 },
-    forza: 'Convenzione', fonte: 'registro coach v2 B17 (protezioni di distanza); ricerca-mesocicli-periodizzazione-scarichi §3.7 («non nelle prime 2 settimane del blocco; non a meno di 14 giorni dall’ultimo scarico; al massimo uno ogni 3 settimane; se lo scarico programmato è entro 7 giorni si anticipa quello; bottone Non ora»)', regole: ['MES-07']
+    v: { primeSettimaneDelBlocco: 2, principiantiPrimeSettimane: 3, giorniDalloScarico: 14, unoOgniGiorni: 21, programmatoEntroGiorni: 7, nonOraGiorni: 7 },
+    forza: 'Convenzione', fonte: 'registro coach v2 B17 (protezioni di distanza); ricerca-mesocicli-periodizzazione-scarichi §3.7 («non nelle prime 2 settimane del blocco; non a meno di 14 giorni dall’ultimo scarico; al massimo uno ogni 3 settimane; se lo scarico programmato è entro 7 giorni si anticipa quello; bottone Non ora»; principianti: «non nelle prime 3 settimane salvo S1 forte»)', regole: ['MES-07']
   },
   /* mai da un solo segnale: almeno N segnali distinti e almeno uno tra S1 (prontezza), S2 (forza), S3 (deriva dell’RPE); oppure un segnale forte */
   reattivoSegnali: {

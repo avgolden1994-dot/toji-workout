@@ -5,7 +5,8 @@
    messaggio della stanchezza che non passa (CST-09: riposo o camminate e il medico, mai «sovrallenamento»).
    Cio che NON c e: S3 (deriva dell RPE: il piano non salva ancora l RPE bersaglio per serie), lo spostamento dello scarico del programma (le settimane sono fisse: «anticipare» vuol dire
    non scaricare due volte vicino), la dose «reattiva mirata» di CAR-08 (regole-ricerca.js, di P3-A: resta COACH_PARAMETRI.scaricoReattivoCarico).
-   Ogni prova e scritta per fallire sul codice di coach-v2-onda-2g. Prove in node con l app vera in vm (tests/aiuto-app.js, orologio finto). */
+   Le prove che dicono «ora c e» falliscono sul codice di coach-v2-onda-2g; le guardie («i v1 tengono la dose di prima», «lo scarico non si compone», la storia dei v1) passano anche li.
+   Prove in node con l app vera in vm (tests/aiuto-app.js, orologio finto). */
 'use strict';
 const test = require('node:test'), assert = require('node:assert');
 const fs = require('fs'), path = require('path');
@@ -190,6 +191,20 @@ test('PRN-03: la 12a settimana ha il carico del riferimento di prima (entro un p
   assert.ok(provati >= 4, 'esercizi confrontati: ' + provati);
 });
 
+test('PRN-03: la 12a settimana vale anche per una donna che punta alla forza: carico invariato, serie da 3 a 2', () => {
+  const { a, ultimoCarico } = dodiciSettimane({ d: { goals: ['forza'], sex: 'F', age: 41, days: 3, minutes: 50 } });
+  H.vaiA(a, 12, 0);
+  let provati = 0;
+  H.giorniDiAllenamento(a).forEach(g => H.apriGiorno(a, g).forEach(e => {
+    const rif = ultimoCarico[e.name];
+    if (!rif || !(e.weight > 0)) return;
+    assert.strictEqual(e.weight, rif.weight, e.name + ': carico invariato');
+    assert.ok(e.sets <= Math.min(e.setsBase, 2) || e.setsBase <= 2, e.name + ': ' + e.sets + ' serie da ' + e.setsBase);
+    provati++;
+  }));
+  assert.ok(provati >= 3, 'esercizi con carico confrontati: ' + provati);
+});
+
 test('PRN-03: la verifica non si compone: la seconda seduta della 12a settimana ha lo stesso carico della prima, e senza storia il carico e quello del programma', () => {
   const { a, ultimoCarico } = dodiciSettimane();
   H.vaiA(a, 12, 0);
@@ -299,9 +314,16 @@ test('MES-07 protezione 2: non nelle prime 2 settimane del blocco (la dolenzia d
   const { a } = intermedioStanco(2);
   assert.ok(/prime settimane del blocco/.test(a.json("valutaScaricoReattivo('S7')").perche));
   /* anche i principianti: il blocco e di 12 settimane, le prime 2 sono quelle della dolenzia */
-  const pr = H.telefono({ sett: 2, giorno: 2, d: { level: 'principiante' } });
-  storiaFb(pr.a, [{ ggFa: 1, fb: FB(10) }, { ggFa: 3, fb: FB(10) }, { ggFa: 5, fb: FB(10) }]); prontezza(pr.a, [70, 45, 40, 38]);
-  assert.strictEqual(pr.a.json("valutaScaricoReattivo('S7')").codice, 'primeSettimane');
+  const principiante = (sett, punteggi) => {
+    const pr = H.telefono({ sett: sett, giorno: 2, d: { level: 'principiante' } });
+    storiaFb(pr.a, [{ ggFa: 1, fb: FB(10) }, { ggFa: 3, fb: FB(10) }, { ggFa: 5, fb: FB(10) }]); prontezza(pr.a, punteggi);
+    return pr.a.json("valutaScaricoReattivo('S7')");
+  };
+  assert.strictEqual(principiante(2, [70, 45, 40, 38]).codice, 'primeSettimane');
+  /* chi comincia ha tre settimane, salvo un segnale forte (prontezza media sotto 40): la dolenzia e l abitudine dei primi giorni non sono fatica */
+  assert.strictEqual(principiante(3, [70, 45, 40, 38]).codice, 'primeSettimane', 'settimana 3 del principiante: ancora presto');
+  assert.strictEqual(principiante(3, [60, 35, 30, 38]).ok, true, 'settimana 3 con un segnale forte: si');
+  assert.strictEqual(principiante(4, [70, 45, 40, 38]).ok, true, 'settimana 4: si');
 });
 
 /* una seduta in cui il coach aveva scaricato tutti gli esercizi (scarico deciso, non quello del programma), `giorni` giorni fa, nella storia di chi e stanco alla settimana 4 */

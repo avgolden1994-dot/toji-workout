@@ -18,7 +18,7 @@
   "Settimana di scarico: volume -#% e carico -#%": {
    "en": "Deload week: volume -#% and load -#%",
    "es": "Semana de descarga: volumen -#% y carga -#%",
-   "de": "Entlastungswoche: Volumen -#% und Gewicht -#%"
+   "de": "Deload-Woche: Volumen -#% und Gewicht -#%"
   },
   "Settimana di verifica: volume -#%, stesso carico di prima": {
    "en": "Check-up week: volume -#%, same load as before",
@@ -33,7 +33,7 @@
   "È già una settimana di scarico: il coach non ne aggiunge un altro.": {
    "en": "It is already a deload week: the coach does not add another one.",
    "es": "Ya es una semana de descarga: el coach no añade otra.",
-   "de": "Es ist schon eine Entlastungswoche: der Coach fügt keine weitere hinzu."
+   "de": "Es ist schon eine Deload-Woche: der Coach fügt keine weitere hinzu."
   },
   "Il coach ha già deciso uno scarico: si fa quello.": {
    "en": "The coach has already decided on a deload: that is the one you do.",
@@ -62,8 +62,8 @@
   },
   "Un solo segnale di stanchezza non basta per scaricare: il coach aspetta un secondo segnale (prontezza bassa, forza in calo).": {
    "en": "A single sign of tiredness is not enough to deload: the coach waits for a second sign (low readiness, strength dropping).",
-   "es": "Una sola señal de cansancio no basta para descargar: el coach espera una segunda señal (preparación baja, fuerza en descenso).",
-   "de": "Ein einzelnes Zeichen von Müdigkeit reicht nicht für eine Entlastung: der Coach wartet auf ein zweites (niedrige Bereitschaft, nachlassende Kraft)."
+   "es": "Una sola señal de cansancio no basta para descargar: el coach espera una segunda señal (disposición baja, fuerza en descenso).",
+   "de": "Ein einzelnes Zeichen von Müdigkeit reicht nicht für eine Entlastung: der Coach wartet auf ein zweites (geringe Bereitschaft, nachlassende Kraft)."
   },
   "segnali": {
    "en": "signs",
@@ -102,8 +102,8 @@
   },
   "Prontezza bassa da giorni e altri segnali di recupero scarso: le prossime # sedute sono di scarico": {
    "en": "Low readiness for days and other signs of poor recovery: the next # sessions are deload sessions",
-   "es": "Preparación baja desde hace días y otras señales de recuperación escasa: las próximas # sesiones son de descarga",
-   "de": "Seit Tagen niedrige Bereitschaft und weitere Zeichen schlechter Erholung: die nächsten # Einheiten sind Entlastung"
+   "es": "Disposición baja desde hace días y otras señales de recuperación escasa: las próximas # sesiones son de descarga",
+   "de": "Seit Tagen geringe Bereitschaft und weitere Zeichen schlechter Erholung: die nächsten # Einheiten sind Entlastung"
   },
   "stanchezza alta per piu giorni di fila": {
    "en": "high tiredness for several days in a row",
@@ -178,7 +178,7 @@
   },
   {
    "capitolo": 33,
-   "riga": "- **MES-07** (spegnibile) lo scarico deciso dal coach ha le sue protezioni (P3-B = W3-T5 snella, solo programmi con `prog.versione` 2; `valutaScaricoReattivo(causa)`, `segnaliFatica()` in `js/coach/sicurezza/scarico.js`, soglie in `sicurezza/soglie-scarico.js`). Le tre vie che scrivevano `ag.scarico` (DEC-06: due sedute su tre «Al limite»; PRZ-04: tre giorni di prontezza sotto 50; STR-01: lo strain in salita, con il tocco su «Scarico ora») non bastano più da sole: ognuna è UN segnale (S7, S1, S7) e lo scarico c'è solo con almeno due segnali distinti, di cui uno tra S1 prontezza bassa (media delle ultime 3 check-in sotto 50, o 3 giorni su 7), S2 forza in calo (massimale -5% sul migliore delle ultime 3 settimane non di scarico su almeno 2 multiarticolari) e S3 (deriva dell'RPE: **non implementato**, il piano non salva ancora l'RPE bersaglio per serie), più S5 sonno «male» e S6 voglia «poca» in 4 check-in su 7 (la voce voglia la salva `prontezza.js` solo nei programmi v2) e S7 sedute al limite; un segnale forte basta da solo (prontezza media delle ultime 3 sotto 40, o forza in calo su almeno 3 esercizi). Protezioni, una prova per ciascuna in `tests/scarichi.test.js`: non nelle prime 2 settimane del blocco (la dolenzia dei primi giorni non è fatica accumulata), non entro 14 giorni da un altro scarico (`scaricoRecente`), uno solo ogni 3 settimane (`scarichiReattiviRecenti`), non se lo scarico del programma è entro 7 giorni (si fa quello: nessun doppio scarico), né nella settimana di scarico o con uno scarico già deciso; il motivo del «no» lo dice («Un solo segnale di stanchezza non basta per scaricare…»). Dose e durata uniche: la dose di MES-05 della fatica di adesso, per 2 sedute (prima 1 in DEC-06 e 2 in PRZ-04 e STR-01); lo scarico si annulla (`applicaDecisioni`, il messaggio di `applicaProntezza`, `conAnnulla`) e la proposta di STR-01 ha «Non ora» (7 giorni, annullabile). **Non fa**: spostare lo scarico del programma (le settimane del piano sono fisse: «anticipare» vuol dire non scaricare due volte vicino) né far ripartire il blocco da una settimana k-1. I programmi v1 e la regola spenta decidono come prima. Convenzione + Contrastata (nessuna soglia di fatica è validata nei pesi: Saw 2016; individualizzare lo scarico: Delphi 2023)."
+   "riga": "- **MES-07** (spegnibile) lo scarico deciso dal coach ha le sue protezioni (P3-B = W3-T5 snella, solo programmi con `prog.versione` 2; `valutaScaricoReattivo(causa)`, `segnaliFatica()` in `js/coach/sicurezza/scarico.js`, soglie in `sicurezza/soglie-scarico.js`). Le tre vie che scrivevano `ag.scarico` (DEC-06: due sedute su tre «Al limite»; PRZ-04: tre giorni di prontezza sotto 50; STR-01: lo strain in salita, con il tocco su «Scarico ora») non bastano più da sole: ognuna è UN segnale (S7, S1, S7) e lo scarico c'è solo con almeno due segnali distinti, di cui uno tra S1 prontezza bassa (media delle ultime 3 check-in sotto 50, o 3 giorni su 7), S2 forza in calo (massimale -5% sul migliore delle ultime 3 settimane non di scarico su almeno 2 multiarticolari) e S3 (deriva dell'RPE: **non implementato**, il piano non salva ancora l'RPE bersaglio per serie), più S5 sonno «male» e S6 voglia «poca» in 4 check-in su 7 (la voce voglia la salva `prontezza.js` solo nei programmi v2) e S7 sedute al limite; un segnale forte basta da solo (prontezza media delle ultime 3 sotto 40, o forza in calo su almeno 3 esercizi). Protezioni, una prova per ciascuna in `tests/scarichi.test.js`: non nelle prime 2 settimane del blocco, 3 per chi comincia salvo un segnale forte (la dolenzia dei primi giorni non è fatica accumulata), non entro 14 giorni da un altro scarico (`scaricoRecente`), uno solo ogni 3 settimane (`scarichiReattiviRecenti`), non se lo scarico del programma è entro 7 giorni (si fa quello: nessun doppio scarico), né nella settimana di scarico o con uno scarico già deciso; il motivo del «no» lo dice («Un solo segnale di stanchezza non basta per scaricare…»). Dose e durata uniche: la dose di MES-05 della fatica di adesso, per 2 sedute (prima 1 in DEC-06 e 2 in PRZ-04 e STR-01); lo scarico si annulla (`applicaDecisioni`, il messaggio di `applicaProntezza`, `conAnnulla`) e la proposta di STR-01 ha «Non ora» (7 giorni, annullabile). **Non fa**: spostare lo scarico del programma (le settimane del piano sono fisse: «anticipare» vuol dire non scaricare due volte vicino) né far ripartire il blocco da una settimana k-1. I programmi v1 e la regola spenta decidono come prima. Convenzione + Contrastata (nessuna soglia di fatica è validata nei pesi: Saw 2016; individualizzare lo scarico: Delphi 2023)."
   },
   {
    "capitolo": 26,

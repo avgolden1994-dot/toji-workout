@@ -5,7 +5,8 @@
    mai meno di 2 serie per esercizio e mai sopra il picco; i programmi della v1 (senza piano) e i prudenti (nessuna rampa) restano com erano.
    Cio che questa prova NON dice: «volume autoregolato» (PCO-03: qui il piano si esegue, non si autoregola), il +1 ai prioritari dell avanzato (w.prioritari: resta RIC-01), e il collaudo
    (VOL-01/VOL-02 misurano la settimana piena, cioe il picco: non descrivono la settimana 1).
-   Ogni prova e scritta per fallire sul codice di coach-v2-onda-2g (senza rampa-settimana.js). Prove in node con l app vera in vm (tests/aiuto-app.js, orologio finto). */
+   Le prove che dicono «la rampa c e» falliscono sul codice di coach-v2-onda-2g (senza rampa-settimana.js); quelle che dicono «non cambia» (v1, prudenti, regola spenta, senza consenso) sono le guardie
+   e passano anche li. Prove in node con l app vera in vm (tests/aiuto-app.js, orologio finto). */
 'use strict';
 const test = require('node:test'), assert = require('node:assert');
 const H = require('./aiuto-atleta-piano');
