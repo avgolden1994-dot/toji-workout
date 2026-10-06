@@ -154,6 +154,22 @@ test('lo scarico non si compone: due sedute della stessa settimana hanno lo stes
   assert.ok(rip.weight >= 100, 'dopo lo scarico si riparte dal riferimento: ' + rip.weight);
 });
 
+test('lo scarico non si compone con un altro scarico: un ag.scarico attivo nella settimana di scarico del programma non taglia ancora, e dopo lo scarico quello del coach parte dal riferimento', () => {
+  const { a } = H.telefono({ d: { level: 'intermedio' } });
+  const pesi = (n, ...ex) => a.seduta(2, [{ nome: SQUAT, serie: ex.map(w => [w, 5, true, 8]) }], { feedback: FB(6), settimana: { numero: n, fase: n === 6 ? 'scarico' : 'carico' } });
+  H.vaiA(a, 6, 0);
+  a.storia([pesi(5, 100, 100, 100)]);
+  a.aggiusti({ esercizi: {}, scarico: { sedute: 2, motivo: 'fatica accumulata nelle ultime sedute', dose: 'alta' } });
+  const programmato = a.json('caricoProssimo(' + JSON.stringify(SQUAT) + ', 100, 5, 4)');
+  assert.deepStrictEqual([programmato.tipo, programmato.weight, programmato.sets], ['scarico', 95, 3], 'una dose sola: quella del programma (bassa: 100 x 0,95, 4 x 0,65), non anche x 0,90 dell altro');
+  assert.ok(!/Scarico deciso dal coach/.test(programmato.motivo), programmato.motivo);
+  /* la settimana dopo: la seduta di scarico (95 kg) e fatta, il coach decide il suo: parte dal riferimento (100), non da 95 */
+  H.vaiA(a, 7, 0);
+  a.storia([pesi(6, 95, 95, 95), pesi(5, 100, 100, 100)]);
+  const coach = a.json('caricoProssimo(' + JSON.stringify(SQUAT) + ', 100, 5, 4)');
+  assert.strictEqual(coach.weight, 90, '100 kg x 0,90 (e non 95 x 0,90 = 85,5)');
+});
+
 /* ============ PRN-03: la 12a settimana del principiante (verifica) ============ */
 
 function dodiciSettimane(opz) {
