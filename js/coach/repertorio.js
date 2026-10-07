@@ -313,6 +313,9 @@ function corpoCoach() {
   const p = getProfile() || {};
   /* ETA-04: sotto i 18 anni niente numeri su peso, cibo e integratori (proteine, passi, creatina, ritmo di calo): si rimanda a un adulto e a un medico o dietista */
   if (regolaAttiva('ETA-04') && Number(p.age) > 0 && Number(p.age) < 18) return [TESTO_NUTRIZIONE_MINORENNE];
+  /* NUT-01 (INT-4): minorenni (anche con ETA-04 spenta), over 65 e gravidanza non ricevono ritmo di calo, passi in deficit, creatina ne grammi di proteine: solo il testo prudente, con il rinvio */
+  const guardiaCorpo = guardiaNutrizione({}, p);
+  if (guardiaCorpo) return [guardiaCorpo.testo];
   const goals = p.goals || (p.goal ? [p.goal] : []);
   const fase = faseCorpo(p);   /* OBI-02: una sola fase del corpo per tutta l app (regia/brief.js) */
   const st = getBiaStorico().filter(x => x.valori && x.valori.peso && x.data);

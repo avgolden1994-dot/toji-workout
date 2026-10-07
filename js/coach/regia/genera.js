@@ -235,7 +235,11 @@ function noteDelProgramma(brief) {
   }
   /* PRG-20 (W2-T2, INT-2b): la nota c e solo se almeno una pausa e davvero scesa sotto quella degli uomini (pausePerClasse la scrive in brief.lavoro.pauseDonneAccorciate: mai con il PAR-Q positivo, con la regola spenta o con un metodo che ha le sue pause) */
   if (chi.donna && brief.lavoro.pauseDonneAccorciate) note.push('Pause un po piu corte: le donne recuperano piu in fretta tra una serie e l altra.');
-  if (faseDaObiettivi(brief.obiettivi.lista) === 'deficit') note.push('Passi: 10-12 mila al giorno, aumentandoli di 500-1000 a settimana. Il cardio non toglie muscolo.');
+  if (faseDaObiettivi(brief.obiettivi.lista) === 'deficit') {
+    const guardia = guardiaNutrizione(d, prof0);   /* NUT-01 (INT-4): minorenni, over 65 e gravidanza non ricevono un numero di passi per dimagrire: il testo prudente (una volta sola) */
+    if (!guardia) note.push('Passi: 10-12 mila al giorno, aumentandoli di 500-1000 a settimana. Il cardio non toglie muscolo.');
+    else if (note.indexOf(guardia.testo) === -1) note.push(guardia.testo);
+  }
 }
 
 /* ---- 14. gli esercizi alternativi scelti dall utente (PRG-39): stessi muscoli, stesso posto ---- */

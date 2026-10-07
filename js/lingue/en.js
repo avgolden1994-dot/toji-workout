@@ -1952,7 +1952,7 @@ window.I18N["en"] = {
 "Sì, tutto normale": "Yes, all normal",
 "No, ancora": "No, still there",
 "il dolore è passato, carichi normali": "the pain is gone, normal loads",
-"Il carico resta ridotto del #%. Se continua a crescere, senti un fisioterapista.": "The load stays #% lower. If it keeps growing, see a physiotherapist.",
+"Il carico resta ridotto del #%. Se continua a crescere, senti un fisioterapista. Non sono un medico e non faccio diagnosi.": "The load stays #% lower. If it keeps growing, see a physiotherapist. I am not a doctor and I do not diagnose.",
 "Salute: hai uno di questi?": "Health: do you have any of these?",
 "problemi al cuore o pressione alta · dolore al petto a riposo o sotto sforzo · capogiri o svenimenti · problemi a ossa o articolazioni che peggiorano col movimento · farmaci per cuore o pressione · gravidanza o parto recente · un medico ti ha sconsigliato lo sforzo.": "heart problems or high blood pressure · chest pain at rest or during exertion · dizziness or fainting · bone or joint problems that get worse with movement · medication for heart or blood pressure · pregnancy or recent childbirth · a doctor advised you against exertion.",
 "No, nessuno": "No, none",

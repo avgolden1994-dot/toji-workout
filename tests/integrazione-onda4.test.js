@@ -159,3 +159,106 @@ test('c. nei dizionari non resta nessuna voce con la ripresa dopo il parto di pr
     assert.deepStrictEqual(rimaste, [], l + ': voci con il pavimento pelvico');
   });
 });
+
+/* ============================================================ d. le guardie del corpo (P4-C) valgono per tutte le righe di cibo, passi e integratori */
+const GRUPPI = {
+  minorenne: [{ age: 13 }, { age: 16 }, { age: 17 }],
+  over65: [{ age: 65 }, { age: 72 }],
+  gravidanza: [{ age: 30, sex: 'F', gravidanza: true }]
+};
+const ADULTI = [{ age: 18 }, { age: 30 }, { age: 40, sex: 'F' }, { age: 64 }];
+const tuttiIGruppi = f => Object.keys(GRUPPI).forEach(g => GRUPPI[g].forEach(p => f(g, p)));
+const TESTO_PER = {
+  minorenne: /^Alla tua età non do numeri su peso o cibo/,
+  over65: /^Alla tua età non do grammi di proteine né calorie/,
+  gravidanza: /^In gravidanza o dopo il parto non do grammi di proteine né calorie/
+};
+/* ritmo di calo o di salita (% a settimana), passi, creatina, kcal, grammi, «ideale»: tutto ciò che è un numero di corpo o di cibo */
+const NUMERO_DI_CORPO = /\d[\d,.\-– ]*\s?(%|mila|kcal|g\b)|creatina|\bideale\b|ritmo giusto/i;
+const DUE_BIA = [{ data: '2026-09-01', valori: { peso: 75, altezza: 175, fmPerc: 20, ffm: 60 } }, { data: '2026-09-15', valori: { peso: 74, altezza: 175, fmPerc: 19, ffm: 60 } }];
+function conBia(app, profilo, voci) { app.profilo(profilo); voci.forEach(v => app.chiama('aggiungiBia', v.valori, v.data)); }
+
+test('d. corpoCoach: per minorenni (anche con ETA-04 spenta), over 65 e gravidanza solo il testo prudente: niente ritmo di calo, passi in deficit né creatina', () => {
+  tuttiIGruppi((g, p) => ['deficit', 'massa'].forEach(fase => [[], DUE_BIA].forEach((bia, i) => [false, true].forEach(spenta => {
+    const app = caricaApp({ ora: '2026-10-05T12:00:00' });
+    conBia(app, Object.assign({ sex: 'M', weight: 75, goals: [fase === 'deficit' ? 'dimagrimento' : 'massa'], fase: fase }, p), bia);
+    if (spenta) app.spegni(['ETA-04']);
+    const out = app.dati(app.chiama('corpoCoach'));
+    const e = g + ' ' + JSON.stringify(p) + ' ' + fase + (i ? ' con BIA' : ' senza BIA') + (spenta ? ' ETA-04 spenta' : '');
+    assert.deepStrictEqual(out.filter(t => NUMERO_DI_CORPO.test(t)), [], e + ': ' + JSON.stringify(out));
+    assert.ok(out.some(t => TESTO_PER[g].test(t)), e + ': manca il testo prudente in ' + JSON.stringify(out));
+    assert.ok(!out.some(t => /^Passi|^Creatina/i.test(t)), e);
+  }))));
+});
+test('d. corpoCoach: per un adulto restano ritmo di calo, passi e creatina di prima (nessuna differenza)', () => {
+  ADULTI.forEach(p => {
+    const app = caricaApp({ ora: '2026-10-05T12:00:00' });
+    conBia(app, Object.assign({ sex: 'M', weight: 75, goals: ['dimagrimento'], fase: 'deficit' }, p), DUE_BIA);
+    const out = app.dati(app.chiama('corpoCoach'));
+    assert.ok(out.some(t => /^Passi: 10-12 mila/.test(t)) && out.some(t => /^Creatina 3-5 g/.test(t)) && out.some(t => /ideale e 0,5-1%|ritmo ideale/.test(t)), JSON.stringify(p) + ' ' + JSON.stringify(out));
+  });
+});
+const TENDENZE = { deficitVeloce: ['deficit', -1.4], deficitGiusto: ['deficit', -0.7], deficitFermo: ['deficit', -0.1], massaVeloce: ['massa', 0.8], massaGiusta: ['massa', 0.3], massaFerma: ['massa', 0.05], mantenimentoSale: ['mantenimento', 0.8] };
+test('d. consiglioPeso: i tre gruppi non ricevono mai «Ritmo giusto… 0,5-1% a settimana», né un ritmo di salita, né calorie; un adulto sì, come prima', () => {
+  const consiglio = (p, k) => {
+    const app = caricaApp({ ora: '2026-10-05T12:00:00' });
+    app.profilo(Object.assign({ sex: 'M', weight: 75, goals: ['dimagrimento'], fase: TENDENZE[k][0] }, p));
+    return app.dati(app.chiama('consiglioPeso', { settimana: 0, perc: TENDENZE[k][1] }));
+  };
+  tuttiIGruppi((g, p) => Object.keys(TENDENZE).forEach(k => {
+    const t = consiglio(p, k);
+    assert.ok(!NUMERO_DI_CORPO.test(t), g + ' ' + JSON.stringify(p) + ' ' + k + ': ' + t);
+    assert.ok(TESTO_PER[g].test(t), g + ' ' + k + ': manca il testo prudente: ' + t);
+  }));
+  ADULTI.forEach(p => {
+    assert.strictEqual(consiglio(p, 'deficitGiusto'), 'Ritmo giusto per dimagrire tenendo il muscolo (0,5-1% a settimana).');
+    assert.strictEqual(consiglio(p, 'massaGiusta'), 'Ritmo giusto per la massa (0,25-0,5% a settimana).');
+    assert.strictEqual(consiglio(p, 'massaVeloce'), 'Sali in fretta: oltre lo 0,5% a settimana si accumula soprattutto grasso.');
+  });
+});
+test('d. buildProgram: la nota dei passi in deficit (10-12 mila) non va ai tre gruppi (al suo posto il testo prudente); la nota del grasso sopra la media (8-10 mila passi) neppure', () => {
+  const app = caricaApp({ ora: '2026-10-05T12:00:00' });
+  const base = { goals: ['dimagrimento'], level: 'intermedio', days: 3, minutes: 60, luogo: 'palestra', sex: 'M', fastidi: [], parq: 'no', sonno: 'bene', attrezzi: 'indifferente', usaProfilo: false, seme: 'int4', bia: { peso: 90, altezza: 175, fmPerc: 38, ffm: 56 } };
+  tuttiIGruppi((g, p) => {
+    const prog = app.dati(app.chiama('buildProgram', Object.assign({}, base, p)));
+    assert.deepStrictEqual(prog.note.filter(t => /mila/i.test(t)), [], g + ' ' + JSON.stringify(p) + ': ' + JSON.stringify(prog.note));
+    assert.ok(prog.note.some(t => TESTO_PER[g].test(t)), g + ': manca il testo prudente');
+    assert.strictEqual(prog.note.filter(t => TESTO_PER[g].test(t)).length, 1, g + ': il testo prudente una volta sola');
+  });
+  ADULTI.forEach(p => {
+    const prog = app.dati(app.chiama('buildProgram', Object.assign({}, base, p)));
+    assert.ok(prog.note.indexOf('Passi: 10-12 mila al giorno, aumentandoli di 500-1000 a settimana. Il cardio non toglie muscolo.') !== -1, JSON.stringify(p) + ': la nota dei passi dell adulto c e');
+    assert.ok(prog.note.some(t => /^Grasso sopra la media: .*8-10 mila/.test(t)), JSON.stringify(p) + ': la nota del grasso dell adulto c e');
+  });
+});
+
+/* ============================================================ e. «un fisioterapista» dice anche che il coach non fa diagnosi */
+function stringheDi(src) {
+  const acorn = require('acorn'), out = [];
+  acorn.parse(src, { ecmaVersion: 'latest', onToken: t => { if (t.type.label === 'string' || t.type.label === 'template') out.push(String(t.value)); } });
+  return out;
+}
+function fileJs(dir) {
+  return fs.readdirSync(path.join(R, dir), { withFileTypes: true }).flatMap(e => e.isDirectory() ? fileJs(path.join(dir, e.name)) : (/\.js$/.test(e.name) ? [path.join(dir, e.name)] : []));
+}
+test('e. ogni frase di dolore-mattina.js e delle decisioni dopo la seduta che manda da un fisioterapista dice «Non sono un medico e non faccio diagnosi», e le tre traduzioni la dicono', () => {
+  const FRASE = 'Non sono un medico e non faccio diagnosi';
+  const senza = [], frasi = [];
+  /* dolore-mattina.js e le decisioni dopo la seduta (DEC-03/04); le note per zona di sicurezza/fastidi.js e la nota della cuffia (completamenti.js) hanno il loro rinvio, aperto per la formula (onda-5) */
+  fileJs('js').filter(f => /dolore-mattina|questionario-decisioni/.test(f)).forEach(f => stringheDi(fs.readFileSync(path.join(R, f), 'utf8')).forEach(s => {
+    if (/fisioterapist/i.test(s)) { if (/dolore-mattina/.test(f)) frasi.push(s); if (s.indexOf(FRASE) === -1) senza.push(f + ': ' + s.slice(0, 100)); }
+  }));
+  assert.ok(frasi.length >= 1, 'c e la frase di dolore-mattina.js');
+  assert.deepStrictEqual(senza, []);
+  ['en', 'es', 'de'].forEach(l => {
+    const d = dizionario(l);
+    frasi.forEach(s => {
+      const chiave = s.replace(/\d+/g, '#');
+      assert.ok(d[chiave] || d[s], l + ': manca «' + chiave + '»');
+    });
+  });
+  const d = dizionario('en'), k = 'Il carico resta ridotto del #%. Se continua a crescere, senti un fisioterapista. Non sono un medico e non faccio diagnosi.';
+  assert.ok(/not a doctor/i.test(d[k] || ''), 'en');
+  assert.ok(/no soy m[ée]dico/i.test(dizionario('es')[k] || ''), 'es');
+  assert.ok(/kein arzt/i.test(dizionario('de')[k] || ''), 'de');
+});

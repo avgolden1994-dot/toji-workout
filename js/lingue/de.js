@@ -1952,7 +1952,7 @@ window.I18N["de"] = {
 "Sì, tutto normale": "Ja, alles normal",
 "No, ancora": "Nein, noch da",
 "il dolore è passato, carichi normali": "der Schmerz ist weg, normale Gewichte",
-"Il carico resta ridotto del #%. Se continua a crescere, senti un fisioterapista.": "Das Gewicht bleibt um #% reduziert. Wenn es weiter zunimmt, geh zum Physiotherapeuten.",
+"Il carico resta ridotto del #%. Se continua a crescere, senti un fisioterapista. Non sono un medico e non faccio diagnosi.": "Das Gewicht bleibt um #% reduziert. Wenn es weiter zunimmt, geh zum Physiotherapeuten. Ich bin kein Arzt und stelle keine Diagnosen.",
 "Salute: hai uno di questi?": "Gesundheit: Trifft etwas davon zu?",
 "problemi al cuore o pressione alta · dolore al petto a riposo o sotto sforzo · capogiri o svenimenti · problemi a ossa o articolazioni che peggiorano col movimento · farmaci per cuore o pressione · gravidanza o parto recente · un medico ti ha sconsigliato lo sforzo.": "Herzprobleme oder Bluthochdruck · Brustschmerzen in Ruhe oder bei Belastung · Schwindel oder Ohnmacht · Knochen- oder Gelenkprobleme, die bei Bewegung schlimmer werden · Medikamente für Herz oder Blutdruck · Schwangerschaft oder kürzliche Geburt · ein Arzt hat dir von Anstrengung abgeraten.",
 "No, nessuno": "Nein, nichts",

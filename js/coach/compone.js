@@ -53,11 +53,11 @@ function fattoreFisico(d, prof0) {
   }
   const ffm = bia && bia.ffm ? Number(bia.ffm) : null;
   const t = [];
+  const guardia = guardiaNutrizione(d, prof0);   /* NUT-01: minorenni, over 65, gravidanza: niente grammi, niente passi per il deficit */
   if (ffmiBasso) t.push('Massa magra bassa per la tua altezza: più serie per la crescita, il muscolo viene prima.');
-  if (grassoAlto) t.push('Grasso sopra la media: si tengono i carichi per salvare il muscolo, il dispendio arriva da passi (8-10 mila) e cardio leggero.');
+  if (grassoAlto && !guardia) t.push('Grasso sopra la media: si tengono i carichi per salvare il muscolo, il dispendio arriva da passi (8-10 mila) e cardio leggero.');   /* INT-4: i tre gruppi non ricevono un numero di passi per dimagrire */
   if (magraInCalo) t.push('Massa magra in calo nell’ultima BIA: volume giù del 15% e carichi fermi finché risale.');
   if (ffm) {
-    const guardia = guardiaNutrizione(d, prof0);   /* NUT-01: minorenni, over 65, gravidanza: niente grammi */
     const gKg = proteineGKg('proteineMassaMagraMin');   /* COR-03, «Convenzione» (non validato) */
     t.push(guardia ? guardia.testo : 'Proteine: circa ' + Math.round(ffm * gKg) + ' g al giorno (' + String(gKg).replace('.', ',') + ' g per kg di massa magra).');
   }

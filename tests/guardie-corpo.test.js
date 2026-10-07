@@ -117,7 +117,7 @@ function conBia(app, profilo, voci) {
   voci.forEach(v => app.chiama('aggiungiBia', v.valori, v.data));
 }
 const DUE_BIA = [{ data: '2026-09-01', valori: { peso: 75, altezza: 175, fmPerc: 20, ffm: 60 } }, { data: '2026-09-15', valori: { peso: 74, altezza: 175, fmPerc: 19, ffm: 60 } }];
-test('corpoCoach: nessun grammo di proteine per i tre gruppi, con la massa magra della BIA e con il solo peso; il resto delle informazioni resta', () => {
+test('corpoCoach: nessun grammo di proteine per i tre gruppi, con la massa magra della BIA e con il solo peso; niente passi né creatina', () => {
   tuttiIGruppi((g, p) => {
     [DUE_BIA, []].forEach((bia, i) => {
       const app = nuovaApp();
@@ -125,7 +125,8 @@ test('corpoCoach: nessun grammo di proteine per i tre gruppi, con la massa magra
       const out = app.dati(app.chiama('corpoCoach'));
       assert.deepStrictEqual(numeriDiCibo(out), [], g + ' ' + JSON.stringify(p) + (i ? ' (solo peso)' : ' (con BIA)') + ': ' + JSON.stringify(out));
       verso(g, out);
-      if (g !== 'minorenne') assert.ok(out.some(t => /^Passi:/.test(t)), g + ': le altre informazioni (passi) restano');
+      /* INT-4: dei tre gruppi resta solo il testo prudente: niente ritmo di calo, passi in deficit né creatina (tests/integrazione-onda4.test.js) */
+      assert.ok(!out.some(t => /^Passi|^Creatina/.test(t)), g + ': nessun numero di passi o di integratori');
     });
   });
 });

@@ -31,7 +31,7 @@ window.rispostaDolore = function(passato) {
     showUndo('Bene: il dolore è passato, carichi normali');
   } else {
     segnaDoloreEsigenza();
-    showUndo('Il carico resta ridotto del 10%. Se continua a crescere, senti un fisioterapista.');
+    showUndo('Il carico resta ridotto del 10%. Se continua a crescere, senti un fisioterapista. Non sono un medico e non faccio diagnosi.');
   }
   ag.controlloDolore = null;
   salvaAggiusti(ag);
