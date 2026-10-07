@@ -1,0 +1,175 @@
+{
+ "task": "P4-F",
+ "frasi": {
+  "Spalle, esclusi per il fastidio": {
+   "en": "Shoulders, left out because of the discomfort",
+   "es": "Hombros, excluidos por la molestia",
+   "de": "Schultern, wegen der Beschwerden nicht dabei"
+  },
+  "Ginocchia, esclusi per il fastidio": {
+   "en": "Knees, left out because of the discomfort",
+   "es": "Rodillas, excluidos por la molestia",
+   "de": "Knie, wegen der Beschwerden nicht dabei"
+  },
+  "Schiena bassa, esclusi per il fastidio": {
+   "en": "Lower back, left out because of the discomfort",
+   "es": "Zona lumbar, excluidos por la molestia",
+   "de": "Unterer Rücken, wegen der Beschwerden nicht dabei"
+  },
+  "military press": {
+   "en": "military press",
+   "es": "press militar",
+   "de": "Military Press"
+  },
+  "dip": {
+   "en": "dips",
+   "es": "fondos",
+   "de": "Dips"
+  },
+  "tirate al mento": {
+   "en": "upright rows",
+   "es": "remo al mentón",
+   "de": "aufrechtes Rudern"
+  },
+  "panca col bilanciere": {
+   "en": "barbell bench press",
+   "es": "press de banca con barra",
+   "de": "Bankdrücken mit der Langhantel"
+  },
+  "squat con il carico": {
+   "en": "loaded squats",
+   "es": "sentadillas con peso",
+   "de": "Kniebeugen mit Gewicht"
+  },
+  "affondi": {
+   "en": "lunges",
+   "es": "zancadas",
+   "de": "Ausfallschritte"
+  },
+  "step-up su panca": {
+   "en": "bench step-ups",
+   "es": "step-ups al banco",
+   "de": "Step-ups auf die Bank"
+  },
+  "stacchi": {
+   "en": "deadlifts",
+   "es": "peso muerto",
+   "de": "Kreuzheben"
+  },
+  "good morning": {
+   "en": "good mornings",
+   "es": "good mornings",
+   "de": "Good Mornings"
+  },
+  "rematori col bilanciere": {
+   "en": "barbell rows",
+   "es": "remos con barra",
+   "de": "Langhantelrudern"
+  },
+  "squat col bilanciere": {
+   "en": "barbell squats",
+   "es": "sentadillas con barra",
+   "de": "Kniebeugen mit Langhantel"
+  },
+  "restano, da fare nell’ampiezza che non fa male": {
+   "en": "these stay, done only in the range that does not hurt",
+   "es": "se quedan, en el recorrido que no duele",
+   "de": "bleiben, nur im schmerzfreien Bereich"
+  },
+  "restano, da fare con discesa lenta e profondità che non fa male": {
+   "en": "these stay, with a slow lowering and a depth that does not hurt",
+   "es": "se quedan, con bajada lenta y una profundidad que no duele",
+   "de": "bleiben, mit langsamem Absenken und einer Tiefe, die nicht wehtut"
+  },
+  "restano, da fare con la schiena ferma e un carico che non fa male": {
+   "en": "these stay, with a steady back and a load that does not hurt",
+   "es": "se quedan, con la espalda firme y una carga que no duele",
+   "de": "bleiben, mit stabilem Rücken und einer Last, die nicht wehtut"
+  },
+  "se il fastidio supera #/# o peggiora, fermati; se non passa, fatti vedere da un medico o da un fisioterapista.": {
+   "en": "if the discomfort goes above #/# or gets worse, stop; if it does not go away, see a doctor or a physiotherapist.",
+   "es": "si la molestia supera #/# o empeora, para; si no se pasa, acude a un médico o a un fisioterapeuta.",
+   "de": "wenn die Beschwerden über #/# steigen oder schlimmer werden, hör auf; wenn sie nicht vergehen, geh zu einem Arzt oder Physiotherapeuten."
+  },
+  "Dolore forte: se non passa o peggiora, fatti vedere da un medico o da un fisioterapista. Non sono un medico e non faccio diagnosi.": {
+   "en": "Strong pain: if it does not go away or gets worse, see a doctor or a physiotherapist. I am not a doctor and I do not diagnose.",
+   "es": "Dolor fuerte: si no se pasa o empeora, acude a un médico o a un fisioterapeuta. No soy médico y no hago diagnósticos.",
+   "de": "Starke Schmerzen: wenn sie nicht vergehen oder schlimmer werden, geh zu einem Arzt oder Physiotherapeuten. Ich bin kein Arzt und stelle keine Diagnosen."
+  },
+  "Il dolore al gomito cresce di seduta in seduta: fatti vedere da un medico o da un fisioterapista. Non sono un medico e non faccio diagnosi.": {
+   "en": "Elbow pain is growing session after session: see a doctor or a physiotherapist. I am not a doctor and I do not diagnose.",
+   "es": "El dolor en el codo aumenta sesión tras sesión: consulta a un médico o a un fisioterapeuta. No soy médico y no hago diagnósticos.",
+   "de": "Die Ellbogenschmerzen nehmen von Einheit zu Einheit zu: geh zu einem Arzt oder Physiotherapeuten. Ich bin kein Arzt und stelle keine Diagnosen."
+  },
+  "Il dolore al ginocchio cresce di seduta in seduta: fatti vedere da un medico o da un fisioterapista. Non sono un medico e non faccio diagnosi.": {
+   "en": "Knee pain is growing session after session: see a doctor or a physiotherapist. I am not a doctor and I do not diagnose.",
+   "es": "El dolor en la rodilla aumenta sesión tras sesión: consulta a un médico o a un fisioterapeuta. No soy médico y no hago diagnósticos.",
+   "de": "Die Knieschmerzen nehmen von Einheit zu Einheit zu: geh zu einem Arzt oder Physiotherapeuten. Ich bin kein Arzt und stelle keine Diagnosen."
+  },
+  "Il dolore alla spalla cresce di seduta in seduta: fatti vedere da un medico o da un fisioterapista. Non sono un medico e non faccio diagnosi.": {
+   "en": "Shoulder pain is growing session after session: see a doctor or a physiotherapist. I am not a doctor and I do not diagnose.",
+   "es": "El dolor en el hombro aumenta sesión tras sesión: consulta a un médico o a un fisioterapeuta. No soy médico y no hago diagnósticos.",
+   "de": "Die Schulterschmerzen nehmen von Einheit zu Einheit zu: geh zu einem Arzt oder Physiotherapeuten. Ich bin kein Arzt und stelle keine Diagnosen."
+  },
+  "Il dolore al polso cresce di seduta in seduta: fatti vedere da un medico o da un fisioterapista. Non sono un medico e non faccio diagnosi.": {
+   "en": "Wrist pain is growing session after session: see a doctor or a physiotherapist. I am not a doctor and I do not diagnose.",
+   "es": "El dolor en la muñeca aumenta sesión tras sesión: consulta a un médico o a un fisioterapeuta. No soy médico y no hago diagnósticos.",
+   "de": "Die Handgelenkschmerzen nehmen von Einheit zu Einheit zu: geh zu einem Arzt oder Physiotherapeuten. Ich bin kein Arzt und stelle keine Diagnosen."
+  },
+  "Il dolore alla schiena bassa cresce di seduta in seduta: fatti vedere da un medico o da un fisioterapista. Non sono un medico e non faccio diagnosi.": {
+   "en": "Lower back pain is growing session after session: see a doctor or a physiotherapist. I am not a doctor and I do not diagnose.",
+   "es": "El dolor lumbar aumenta sesión tras sesión: consulta a un médico o a un fisioterapeuta. No soy médico y no hago diagnósticos.",
+   "de": "Die Schmerzen im unteren Rücken nehmen von Einheit zu Einheit zu: geh zu einem Arzt oder Physiotherapeuten. Ich bin kein Arzt und stelle keine Diagnosen."
+  },
+  "Il dolore all’anca cresce di seduta in seduta: fatti vedere da un medico o da un fisioterapista. Non sono un medico e non faccio diagnosi.": {
+   "en": "Hip pain is growing session after session: see a doctor or a physiotherapist. I am not a doctor and I do not diagnose.",
+   "es": "El dolor en la cadera aumenta sesión tras sesión: consulta a un médico o a un fisioterapeuta. No soy médico y no hago diagnósticos.",
+   "de": "Die Hüftschmerzen nehmen von Einheit zu Einheit zu: geh zu einem Arzt oder Physiotherapeuten. Ich bin kein Arzt und stelle keine Diagnosen."
+  },
+  "Il dolore alla caviglia cresce di seduta in seduta: fatti vedere da un medico o da un fisioterapista. Non sono un medico e non faccio diagnosi.": {
+   "en": "Ankle pain is growing session after session: see a doctor or a physiotherapist. I am not a doctor and I do not diagnose.",
+   "es": "El dolor en el tobillo aumenta sesión tras sesión: consulta a un médico o a un fisioterapeuta. No soy médico y no hago diagnósticos.",
+   "de": "Die Sprunggelenkschmerzen nehmen von Einheit zu Einheit zu: geh zu einem Arzt oder Physiotherapeuten. Ich bin kein Arzt und stelle keine Diagnosen."
+  }
+ },
+ "script": [
+  {
+   "src": "js/coach/sicurezza/soglie-fastidi.js",
+   "dopo": "js/coach/sicurezza/tecnica-adatta.js"
+  },
+  {
+   "src": "js/coach/sicurezza/fastidi.js",
+   "dopo": "js/coach/sicurezza/soglie-fastidi.js"
+  }
+ ],
+ "regole": [
+  {
+   "capitolo": 24,
+   "riga": "- **REC-04** (spegnibile) fastidio dichiarato: modifica scritta, non solo esclusione (W4-T1 versione snella, P4-F; assorbe SEL-10). Parte fatta: con un fastidio dichiarato (spalle, ginocchia, schiena bassa: le tre zone dell'onboarding di oggi; gli altri livelli del piano, verde, giallo e rosso per 8 zone con le domande «da quanto» e «formicolio» in onboarding, non ci sono: restano da fare) la scheda dice cosa non c'è e cosa resta con cautela, in UNA nota per zona scritta sulla scheda FINALE (`applicaNoteFastidi` in `js/coach/sicurezza/fastidi.js`, chiamata da `riconciliaNote`: dopo i tagli per il tempo e il solutore del volume, quindi ogni nota è vera per quel programma): «esclusi per il fastidio» (gli esercizi che la zona toglie e che davvero non ci sono: military press, dip, tirate al mento e panca col bilanciere per le spalle; squat con il carico, affondi e step-up su panca per le ginocchia; stacchi, good morning, rematori e squat col bilanciere per la schiena), «restano» (ogni esercizio della scheda con attributo `stress` >= 1 per la zona, nominato uno per uno, con come farlo: nell'ampiezza, o con la discesa lenta, che non fa male) e «se il fastidio supera 3/10 o peggiora, fermati; se non passa, fatti vedere da un medico o da un fisioterapista» (nessuna diagnosi, nessuna promessa di guarigione; i due numeri sono in `soglie-fastidi.js`). Sostituisce le note generiche di SCALE_DOLORE (BIO-06, PRG-24), che dicevano «presa stretta o neutra» senza che la scheda l'avesse, presentavano l'isometrico della leg extension e il riscaldamento di McGill come una cura (ricerca-recupero §6: non supportati come antidolorifico) e promettevano «si torna al pieno quando il fastidio cala». Il collaudo SAF-02 (criteri 1.7) conta solo il caso senza nota. Spalla dolente: niente panca col bilanciere (inclinata e declinata come la piana e quella con pausa, che RISCHIO.spalle toglieva già: presa fissa, `esclusoDalFastidio` legge `attrezzo` e `schema` dei dati), restano manubri, macchine, landmine (presa neutra) e piegamenti. Ginocchia (cap. 17 n. 16 c): lo Squat su Scatola, lo Step-up Basso e il Sit-to-Stand dalla Panca (stress 1, pensati per le ginocchia delicate; li ricevono solo chi inizia e i prudenti, `vincoliSicurezza`) non sono più tolti per il nome (`ECCEZIONI_RISCHIO` in motore.js). Spenta: tornano le note di SCALE_DOLORE, le eccezioni e la panca come prima. Forza: Moderata per il limite del dolore (Silbernagel 2007: fino a 3-5/10 se la mattina dopo è normale, qui il limite basso) e per «l'esercizio sì» nella schiena (Cochrane 2021); Convenzione per gli elenchi per zona (ricerca-recupero §3)."
+  },
+  {
+   "capitolo": 9,
+   "riga": "- **BIO-06** scale di modifica per zona (SCALE_DOLORE, Lehman): spalle (spinte con presa stretta o manubri a presa neutra), ginocchia (leg extension isometrica 5x45 s, dolore max 3/10, discesa 3-4 s), schiena bassa (riscaldamento McGill: curl-up, plank laterale, bird dog; tenute 8-6-4 s). Dalla P4-F, con REC-04 accesa, queste note generiche non sono più nel programma: le sostituisce la nota vera di REC-04 (cosa non c'è, cosa resta con cautela, quando fermarsi), perché dicevano «presa stretta o neutra» senza che la scheda l'avesse e presentavano l'isometrico e il riscaldamento di McGill come una cura (ricerca-recupero §6). Con REC-04 spenta restano come prima. (storica: sempre accesa, è una correzione)",
+   "sostituisce": true
+  },
+  {
+   "capitolo": 5,
+   "riga": "- **PRG-24** note sui fastidi (SCALE_DOLORE) aggiunte al programma per ogni fastidio dichiarato. Dalla P4-F, con REC-04 accesa, la nota generica di ogni zona è sostituita da una nota vera per quel programma (`applicaNoteFastidi`, `riconciliaNote`). (storica: sempre accesa, è una correzione di sicurezza o di calcolo)",
+   "sostituisce": true
+  },
+  {
+   "capitolo": 10,
+   "riga": "- **DEC-03** dolore >=6/10, oppure tornato nella stessa zona (>=4/10) nelle ultime 2 sedute: l'esercizio si SOSTITUISCE con una variante dello STESSO muscolo bersaglio (o della stessa famiglia per gli stacchi: alternativeStessoMuscolo), che non sia tra gli esercizi che caricano di piu quella zona (STRESS_ZONA), con attrezzi e fastidi consentiti e non gia presente in quel giorno (B14, onda 0: la vecchia tabella SOSTITUZIONI cambiava muscolo, per esempio squat -> hip thrust, ed e stata tolta). Se non c'e, resta lo stesso esercizio a -20% per 2 sedute con la nota \"ampiezza senza dolore, discesa in 3 s\" (mai un altro muscolo). Con >=6/10 anche l'avviso «Dolore forte: se non passa o peggiora, fatti vedere da un medico o da un fisioterapista. Non sono un medico e non faccio diagnosi.» (P4-F: prima «se non passa in pochi giorni», senza dire che non è una diagnosi). (storica: sempre accesa, e una correzione di sicurezza o di calcolo)",
+   "sostituisce": true
+  },
+  {
+   "capitolo": 10,
+   "riga": "- **DEC-04** dolore che cresce per tre sedute di fila nella stessa zona: «fatti vedere da un medico o da un fisioterapista. Non sono un medico e non faccio diagnosi.» (P4-F). (storica: sempre accesa, è una correzione di sicurezza o di calcolo)",
+   "sostituisce": true
+  }
+ ],
+ "mappaAgenti": [
+  "fastidi, modifica scritta (REC-04, P4-F): js/coach/sicurezza/fastidi.js (`FASTIDI_ZONE`, `datiNotaFastidio`, `applicaNoteFastidi` chiamata da `riconciliaNote` in js/coach/regia/genera.js: la nota di ogni zona dichiarata sulla scheda finale, al posto delle note generiche di SCALE_DOLORE; `esclusoDalFastidio`, letta da `consentito` in motore.js: niente panca col bilanciere con la spalla dolente) e js/coach/sicurezza/soglie-fastidi.js (`stressNominato`, `doloreMassimo`); le eccezioni per le ginocchia (Squat su Scatola, Step-up Basso, Sit-to-Stand) sono in `ECCEZIONI_RISCHIO` di motore.js; il rinvio al medico di DEC-03/04 è `FRASE_RINVIO_MEDICO` in js/coach/questionario-decisioni.js; prova: tests/fastidi.test.js"
+ ],
+ "nota": "P4-F (fastidi, modifica scritta). Le frasi sono i pezzi che il traduttore cerca uno per uno nella nota di ogni zona (separatori « — », «: » e «, ») e le frasi di rinvio al medico di DEC-03/04 (una per zona per il dolore in crescita). Frasi da rivedere dal proprietario: «Non sono un medico e non faccio diagnosi.» è la formula di ricerca-recupero §5.4."
+}

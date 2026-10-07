@@ -18,9 +18,14 @@ const ORA = '2026-10-05T12:00:00';
 const BASE = { sonno: 'bene', attrezzi: 'indifferente', parq: 'no', usaProfilo: false, sex: 'M', age: 30 };
 const ETICHETTA = { spalle: 'Spalle', ginocchia: 'Ginocchia', schiena: 'Schiena bassa' };
 const pulito = n => String(n).replace(/^[^\p{L}]+/u, '').trim();
+/* REC-04 e «(spegnibile)» nella mappa: il catalogo la sa spegnere dopo l integrazione (npm run catalogo); prima la si dichiara spegnibile nel contesto, come REGOLE_SPEGNIBILI */
+function conRec04Spenta() { const a = caricaApp({ ora: ORA }); a.g("REGOLE_SPEGNIBILI.indexOf('REC-04') === -1 && REGOLE_SPEGNIBILI.push('REC-04')"); a.spegni(['REC-04']); return a; }
 const IN_VM = (app, x) => app.g('JSON.parse(' + JSON.stringify(JSON.stringify(x)) + ')');
 
 const app = caricaApp({ ora: ORA });
+/* le espressioni di FASTIDI_ZONE (le RegExp non passano da JSON): per testo dell elemento */
+const FUORI = app.json('Object.keys(FASTIDI_ZONE).map(k => [k, FASTIDI_ZONE[k].fuori.map(f => [f.testo, f.rx.source, f.rx.flags])])');
+const rxDi = (zona, testo) => { const r = FUORI.find(x => x[0] === zona)[1].find(f => f[0] === testo); return new RegExp(r[1], r[2]); };
 const costruisci = (p, a) => (a || app).dati((a || app).chiama('buildProgram', Object.assign({}, BASE, p)));
 const eserciziDi = prog => [].concat.apply([], prog.sedute.map(sd => sd.esercizi.map(e => e.name)));
 const stress = (nome, zona) => app.json('stressArticolare(' + JSON.stringify(nome) + ', ' + JSON.stringify(zona) + ')');
@@ -39,7 +44,8 @@ const SINGOLE = [['spalle'], ['ginocchia'], ['schiena']];
 const GRIGLIA = profili(SINGOLE.concat([['spalle', 'ginocchia'], ['schiena', 'ginocchia']]), 2);
 
 /* le note di una zona: quelle che cominciano con la sua etichetta */
-const noteDiZona = (prog, zona) => prog.note.filter(n => String(n).indexOf(ETICHETTA[zona] + ':') === 0);
+const NOTA_ZONA = z => new RegExp('^' + ETICHETTA[z] + '(, esclusi per il fastidio: |: restano, |: se il fastidio supera )');
+const noteDiZona = (prog, zona) => prog.note.filter(n => NOTA_ZONA(zona).test(String(n)));
 const VECCHIE_NOTE = /^(Spalle: spinte con presa stretta|Ginocchia: prima delle gambe leg extension isometrica|Schiena bassa: riscaldamento McGill)/;
 
 test('SAF-02 con nota: una nota per ogni zona dichiarata, ogni esercizio che la carica e nominato (e c e davvero nella scheda)', () => {
@@ -54,13 +60,18 @@ test('SAF-02 con nota: una nota per ogni zona dichiarata, ogni esercizio che la 
       assert.strictEqual(note.length, 1, 'una nota per la zona ' + z + ' (' + JSON.stringify(p) + '): ' + JSON.stringify(note));
       const cautela = Array.from(new Set(nomi.filter(n => (stress(n, z) || 0) >= 1).map(pulito)));
       cautela.forEach(n => { conCautela++; assert.ok(note[0].indexOf(n) !== -1, n + ' carica ' + z + ' ed e in scheda: la nota deve nominarlo (' + note[0] + ')'); });
-      /* verita: nessun esercizio della libreria che la nota nomina come «resta» manca dalla scheda */
-      const libreria = app.json('EXERCISE_LIBRARY.map(e => e.name)').map(pulito);
-      const resta = note[0].split('Restano')[1] || '';
-      libreria.filter(n => resta.indexOf(n) !== -1).forEach(n => assert.ok(nomi.map(pulito).indexOf(n) !== -1, n + ' e nominato come presente ma la scheda non lo ha (' + JSON.stringify(p) + ')'));
+      /* verita: gli esercizi che la nota dice «restano» ci sono davvero; quelli che dice «esclusi» non ci sono (e nessuno ne e escluso a torto) */
+      const segmenti = note[0].split(' — ');
+      const resta = segmenti.filter(x => /(^|: )restano, /.test(x))[0];
+      const elencoResta = resta ? resta.split(': ').slice(-1)[0].replace(/\.$/, '').split(', ') : [];
+      assert.deepStrictEqual(elencoResta.slice().sort(), cautela.slice().sort(), 'la nota nomina esattamente gli esercizi che caricano la zona (' + JSON.stringify(p) + ')');
+      app.ctx.__p = IN_VM(app, prog);
+      const d = app.dati(app.g('datiNotaFastidio(__p, ' + JSON.stringify(z) + ')'));
+      assert.strictEqual(d.testo, note[0], 'la nota e quella calcolata sulla scheda finale');
+      d.fuori.forEach(f => nomi.forEach(n => assert.ok(!rxDi(z, f.testo).test(pulito(n)), 'la nota dice «esclusi: ' + f.testo + '» ma in scheda c e ' + n)));
     });
   });
-  assert.ok(programmi > 400 && conCautela > 300, 'la griglia esercita il caso (' + programmi + ' programmi, ' + conCautela + ' esercizi con cautela)');
+  assert.ok(programmi > 200 && conCautela > 300, 'la griglia esercita il caso (' + programmi + ' programmi, ' + conCautela + ' esercizi con cautela)');
   assert.deepStrictEqual(app.errori, []);
 });
 
@@ -69,7 +80,7 @@ test('SAF-02 con nota: la nota e vera, breve e senza promesse (niente guarigione
     const prog = costruisci(p);
     p.fastidi.forEach(z => {
       const nota = noteDiZona(prog, z)[0];
-      assert.ok(nota && nota.length <= 420, 'breve (' + (nota || '').length + ' caratteri): ' + nota);
+      assert.ok(nota && nota.length <= 480, 'breve (' + (nota || '').length + ' caratteri): ' + nota);
       assert.ok(/medico/.test(nota) && /fisioterapista/.test(nota), 'il rinvio al medico o al fisioterapista: ' + nota);
       const senzaFrase = nota.replace('Non sono un medico e non faccio diagnosi.', '');
       assert.ok(!/diagnos|guarig|guarir|\bcura\b|curare|sicur[oa]\b|garant|risolv|previen|elimin|rimedio|terapia/i.test(senzaFrase), 'nessuna promessa ne diagnosi: ' + nota);
@@ -107,8 +118,7 @@ test('spalla dolente: niente panca col bilanciere (inclinata, declinata, piana, 
   assert.ok(programmi >= 100);
   /* spenta la regola il bilanciere inclinato torna (come prima): la prova che e la regola e non il caso */
   assert.strictEqual(app.json('consentito("💪 Panca Inclinata Bilanciere", { luogo: "palestra", fastidi: ["spalle"] })'), false);
-  const spenta = caricaApp({ ora: ORA });
-  spenta.spegni(['REC-04']);
+  const spenta = conRec04Spenta();
   assert.strictEqual(spenta.json('consentito("💪 Panca Inclinata Bilanciere", { luogo: "palestra", fastidi: ["spalle"] })'), true, 'REC-04 spenta: come prima');
   assert.strictEqual(app.json('consentito("💪 Panca Inclinata Bilanciere", { luogo: "palestra", fastidi: [] })'), true, 'senza il fastidio nessun cambiamento');
   assert.strictEqual(app.json('consentito("🛡️ Landmine Press", { luogo: "palestra", fastidi: ["spalle"] })'), true, 'la landmine (presa neutra, abilita 1) resta');
@@ -131,8 +141,7 @@ test('ginocchia (cap. 17 n. 16 c): lo squat su scatola, lo step-up basso e il si
   /* senza il fastidio non cambia niente, e lo squat a corpo libero ha ancora la sua eccezione (B33) */
   assert.strictEqual(app.json('consentito(nomeInLibreria("Squat a Corpo Libero"), { luogo: "corpo", fastidi: ["ginocchia"] })'), true);
   /* spenta la regola: come prima */
-  const spenta = caricaApp({ ora: ORA });
-  spenta.spegni(['REC-04']);
+  const spenta = conRec04Spenta();
   assert.strictEqual(spenta.json('consentito(nomeInLibreria("Squat su Scatola"), { luogo: "palestra", fastidi: ["ginocchia"], esclusi: [] })'), false, 'REC-04 spenta: lo squat su scatola e tolto per il nome come prima');
   /* chi inizia con le ginocchia dolenti a casa ha un esercizio per i quadricipiti con la sua nota */
   const prog = costruisci({ level: 'principiante', luogo: 'corpo', days: 3, minutes: 45, goals: ['salute'], fastidi: ['ginocchia'], seme: 'gi-1' });

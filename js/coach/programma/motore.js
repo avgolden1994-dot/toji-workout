@@ -8,7 +8,7 @@
    - piu obiettivi insieme: uno guida, gli altri correggono. Massimizzare
      tutto nello stesso blocco non funziona meglio che alternare.
    Sicurezza e segnali (onda 0, W0-T5): RISCHIO e consentito sotto (SAF-01, SEL-11,
-   REC-04 ponte per il ginocchio, CAS-01 guardia degli attrezzi di casa).
+   REC-04 ponte per il ginocchio, CAS-01 guardia degli attrezzi di casa; P4-F: REC-04 le eccezioni per le ginocchia e la panca col bilanciere con la spalla dolente, js/coach/sicurezza/fastidi.js).
    ============================================================ */
 
 /* Durata e struttura del programma (strutturaProgramma, fasiProgramma, pianoMesociclo): js/coach/programma/mesociclo.js dal generatore a stadi (W1-T4). */
@@ -49,8 +49,13 @@ const RISCHIO = {
 /* B33 (REC-04 ponte): con le ginocchia dolenti resta almeno un esercizio per i quadricipiti. Con le macchine c e la leg press; senza
    (a casa, o in una palestra con solo pesi liberi) lo squat a corpo libero, ad ampiezza senza dolore (la nota e in SCALE_DOLORE), passa
    anche se il regex dello squat lo toglierebbe: senza di lui i quadricipiti restano a zero (collaudo MIS-01). Wall Sit e leg extension
-   passano gia: non sono nel regex. quando(prefs): dove vale l eccezione (solo senza macchine: con le macchine non serve). */
-const ECCEZIONI_RISCHIO = { ginocchia: { nome: /^squat a corpo libero$/i, quando: p => senzaMacchine(p) } };
+   passano gia: non sono nel regex. quando(prefs): dove vale l eccezione (solo senza macchine: con le macchine non serve).
+   REC-04 (P4-F, cap. 17 n. 16 c): lo Squat su Scatola, lo Step-up Basso e il Sit-to-Stand dalla Panca hanno stress 1 (cautela) sulle ginocchia, non 2: sono la progressione verso lo squat pensata per
+   chi le ha delicate (attributo soloAvvio, riservati a chi inizia e ai prudenti da vincoliSicurezza). Il regex /squat|step-up/ li toglieva per il nome: ora passano, con la nota di modifica della zona. Spenta REC-04 tornano tolti. */
+const ECCEZIONI_RISCHIO = { ginocchia: [
+  { nome: /^squat a corpo libero$/i, quando: p => senzaMacchine(p) },
+  { nome: /^(squat su scatola|step-up basso|sit-to-stand dalla panca)$/i, quando: () => typeof fastidiAttivi === 'function' && fastidiAttivi() }
+] };
 function senzaMacchine(prefs) {
   if (prefs.luogo === 'manubri' || prefs.luogo === 'corpo') return true;
   return !!(prefs.attrezziPalestra && prefs.attrezziPalestra.length && prefs.attrezziPalestra.indexOf('macchine') === -1);
@@ -107,8 +112,8 @@ function attrezziDichiaratiEsito(nome, prefs) {
   return alternative.length === 1 && dichiarabili.indexOf(alternative[0]) !== -1 ? false : null;
 }
 function eccezioneRischio(f, nome, prefs) {
-  const e = ECCEZIONI_RISCHIO[f];
-  return !!(e && e.nome.test(senzaEmoji(nome).trim()) && e.quando(prefs));
+  const pulito = senzaEmoji(nome).trim();
+  return (ECCEZIONI_RISCHIO[f] || []).some(e => e.nome.test(pulito) && e.quando(prefs));
 }
 
 /* dentro buildProgram la risposta per un nome si ricorda finche le preferenze sono lo stesso oggetto (prefsDelBrief non cambia dopo i posti); con un altro oggetto si ricomincia */
@@ -150,6 +155,7 @@ function consentitoCalcolo(nome, prefs) {
   /* SEL-03 (collaudo SAF-04): a corpo libero niente esercizio che per dato chiede una panca (Dip su Panca: una sedia robusta fa lo stesso, ma il questionario non garantisce ne l una ne l altra);
      con la panca dichiarata (prefs.attrezziCasa, CAS-01 di W2-T5) l esercizio torna */
   if (prefs.luogo === 'corpo' && chiedeAttrezzo(nome, 'panca') && !(dichiaratiDi(prefs, 'attrezziCasa') || []).some(x => /^panca$/i.test(x))) return false;
+  if (typeof esclusoDalFastidio === 'function' && esclusoDalFastidio(nome, prefs)) return false;   /* REC-04 (P4-F): con la spalla dolente niente panca col bilanciere (fastidi.js) */
   return !(prefs.fastidi || []).some(f => RISCHIO[f] && RISCHIO[f].test(nome) && !eccezioneRischio(f, nome, prefs));
 }
 
