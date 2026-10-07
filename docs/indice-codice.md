@@ -113,7 +113,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 26. `js/ui/oggi.js` — Schermata Oggi
 
-`CATEGORIE` · `categoriaDi()` · `window.obiettiviSettimana()` · `window.settimaneDiFila()` · `window.renderOggi()` · `window.iniziaOggi()` · `window.switchTab()`
+`CATEGORIE` · `categoriaDi()` · `stimaSeduta()` · `window.obiettiviSettimana()` · `window.settimaneDiFila()` · `window.renderOggi()` · `window.iniziaOggi()` · `window.switchTab()`
 
 ## js/core
 
@@ -307,7 +307,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 71. `js/coach/volume/rampa-settimana.js` — Rampa del volume in seduta: le serie seguono il piano della settimana (MES-03)
 
-`sogliaRampa()` · `posizioneNelPiano()` · `serieDellaSettimana()` · `rampaAlCarico()`
+`sogliaRampa()` · `posizioneNelPiano()` · `serieDellaSettimana()` · `rampaAlCarico()` · `serieDelPianoQuestaSettimana()`
 
 ### 72. `js/coach/sicurezza/vincoli.js` — Vincoli di sicurezza del programma (SENTINELLA, MAV-02, MAV-03, B1)
 
@@ -403,7 +403,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 93. `js/coach/sicurezza/scarico.js` — Scarico: dose unica, fatica, scarico del programma e scarico deciso dal coach con le sue protezioni (CAR-03, CAR-10, MES-05, MES-07, MES-08, CST-09, W1-T3, P3-B)
 
-`programmaConPiano()` · `sogliaScarico()` · `SOGLIA_SRPE_ALTA` · `livelloFatica()` · `testoDose()` · `doseDelLivello()` · `DOSE_SCARICO` · `serieDiScarico()` · `scaricoAlCarico()` · `scaricoReattivo()` · `voceScaricoReattivo()` · `eserciziInCalo()` · `segnaliFatica()` · `NOMI_SEGNALI` · `scarichiReattiviRecenti()` · `valutaScaricoReattivo()` · `testoSegnali()` · `stanchezzaPersistente()` · `htmlStanchezzaPersistente()` · `window.nascondiStanchezza()`
+`programmaConPiano()` · `sogliaScarico()` · `SOGLIA_SRPE_ALTA` · `livelloFatica()` · `testoDose()` · `doseDelLivello()` · `DOSE_SCARICO` · `serieDiScarico()` · `doseDellaSettimana()` · `serieDelloScarico()` · `scaricoAlCarico()` · `scaricoReattivo()` · `voceScaricoReattivo()` · `eserciziInCalo()` · `segnaliFatica()` · `NOMI_SEGNALI` · `scarichiReattiviRecenti()` · `valutaScaricoReattivo()` · `testoSegnali()` · `stanchezzaPersistente()` · `htmlStanchezzaPersistente()` · `window.nascondiStanchezza()`
 
 ### 94. `js/coach/questionario-decisioni.js` — Questionario di fine allenamento e decisioni
 
