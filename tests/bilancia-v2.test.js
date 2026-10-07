@@ -387,9 +387,11 @@ test('atleta virtuale, programma v2: 500 donne principianti (il campione di D.8.
   const app = conBilanciaV2(caricaApp({ ora: ORA }));
   const N = Number(process.env.ATLETI) || 500;
   const x = riassunto(Array.from({ length: N }, (_, i) => simulaNellApp(app, { sesso: 'F', livello: 'principiante', pesoCorpo: 50 + (i * 7) % 36, seme: 1000 + i, esposizioni: 6, programma: 'v2' })));
-  /* «mai» (chi non arriva entro ±10% in sei esposizioni) sale da circa il 2% al 4,4% con AUT-01: chi comincia non accelera piu con l RPE dopo la calibrazione (registro B3); il numero si dice, non si nasconde */
+  /* «mai» (chi non arriva entro ±10% in sei esposizioni): con AUT-01 e quattro esposizioni di calibrazione saliva da circa il 2% al 4,2-4,4% (chi comincia non accelera piu con l RPE dopo la
+     calibrazione, registro B3); con cinque esposizioni (CAR-18, INT-3a) e 1,6%: il limite e 2,5% */
   console.log('# atleta v2 donne (' + x.n + ' esercizi): mediana ' + x.mediana + ', p95 ' + x.p95 + ', mai ' + x.pc(x.mai) + '%; dalla seconda sopra RIR-1 ' + x.pc(x.dopoSopra) + '% (oltre il massimo ' + x.pc(x.dopoOltre) + '%)');
   assert.ok(x.mediana <= 3, 'mediana ' + x.mediana);
   assert.ok(x.p95 <= 5, '95° percentile ' + x.p95);
+  assert.ok(x.mai <= 0.025, '«mai» ' + x.pc(x.mai) + '%: al massimo 2,5% (INT-3a; con quattro esposizioni di calibrazione era 4,2%)');
   assert.ok(x.dopoOltre <= 0.12, 'dalla seconda esposizione le ripetizioni non si finiscono nel ' + x.pc(x.dopoOltre) + '% dei casi (D.8.9: al massimo 12%)');
 });

@@ -433,9 +433,9 @@ test('CAR-18: PAR-Q, sonno scarso o da 65 anni dimezzano i salti; i principianti
   assert.strictEqual(senza.weight, 82.5);
 });
 
-test('CAR-18: si chiude alla quarta esposizione (salti dopo le prime quattro, la quinta prescrizione e chiusa); mai oltre +25% e mai un salto piu grosso di un passo che gia lo supera', () => {
+test('CAR-18: si chiude alla quinta esposizione (salti dopo le prime cinque, la sesta prescrizione e chiusa; INT-3a: erano quattro); mai oltre +25% e mai un salto piu grosso di un passo che gia lo supera', () => {
   const a = nuovaApp();
-  /* sei esposizioni sempre «facili»: la calibrazione decide il carico delle esposizioni 2-5, poi la progressione di prima */
+  /* sei esposizioni sempre «facili»: la calibrazione decide il carico delle esposizioni 2-6, poi la progressione di prima */
   let w = 40; const esp = [], motivi = [];
   for (let t = 0; t < 6; t++) {
     const r = scenario(a, { base: 40, esp: esp.slice() })();
@@ -444,7 +444,8 @@ test('CAR-18: si chiude alla quarta esposizione (salti dopo le prime quattro, la
     w = r.weight;
   }
   const salti = motivi.map(m => /^Calibrazione: RPE/.test(m));
-  assert.deepStrictEqual(salti, [false, true, true, true, true, false], 'esposizioni 1..6: salti dopo le esposizioni 1-4 (' + motivi.map(m => m.slice(0, 40)).join(' | ') + ')');
+  assert.deepStrictEqual(salti, [false, true, true, true, true, true], 'esposizioni 1..6: salti dopo le esposizioni 1-5 (prima 1-4: INT-3a) (' + motivi.map(m => m.slice(0, 40)).join(' | ') + ')');
+  scenario(a, { base: 40, esp: esp.slice() })();   /* con sei esposizioni nello storico la calibrazione e chiusa (con cinque decide ancora la quinta) */
   assert.strictEqual(a.g('calibrazioneChiusa')(CE), true);
   /* tetto +25%: da 8 kg il +15% e 1,2 (un passo di 2 kg dei manubri), mai oltre il quarto */
   const piccolo = scenario(a, { nome: '🛡️ Alzate Laterali', base: 3, reps: 12, esp: [{ w: 3, rpe: 6 }] })();

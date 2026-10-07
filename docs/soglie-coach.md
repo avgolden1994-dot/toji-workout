@@ -4,7 +4,7 @@
 > Forze: **Solida** (meta-analisi o posizione ufficiale), **Moderata** (pochi studi, o risultati che cambiano con la popolazione), **Contrastata** (studi in disaccordo), **Convenzione** (pratica dei coach: il foglio «Perché?» mostra «Scelta prudente del coach (Convenzione): non è un risultato di studi»), **Decisione** (scelta di prodotto: «Decisione di prodotto»), **Provvisoria** (numero di partenza in attesa di verifica: «Numero di partenza, in verifica»). Etichette: `etichettaForza` in `js/coach/regia/perche.js` (registro C.4).
 > Le tabelle di prima (`COACH_PARAMETRI`, `PARAM_PARTENZA`, `PARAM_INTENSITA`, `STR_PESI`, `DOSE_SCARICO`, `RIR_TIPO`) non sono ancora qui: passano in un file soglie quando il task che possiede il loro file le tocca.
 
-Totale: 162 soglie in 12 tabelle (Solida 3, Moderata 12, Contrastata 1, Convenzione 137, Decisione 7, Provvisoria 2).
+Totale: 162 soglie in 12 tabelle (Solida 3, Moderata 12, Contrastata 1, Convenzione 136, Decisione 7, Provvisoria 3).
 
 ## `SOGLIE_PARTENZA` — `js/coach/carichi/soglie-partenza.js` (bilancia)
 
@@ -22,7 +22,7 @@ Totale: 162 soglie in 12 tabelle (Solida 3, Moderata 12, Contrastata 1, Convenzi
 | `barraVuota` | ripetizioni [6, 8], serieInMeno 1 | Convenzione | ricerca-donne-carichi-iniziali §3.7 punto 3 (DON-03); piano D.4 | PAR-08 |
 | `corpoLiberoPulite` | [10, 15] | Convenzione | ricerca-donne-carichi-iniziali §1.8 (progressioni dei piegamenti e delle trazioni: salto con 3 serie da 10-15 ripetizioni pulite) | PAR-09 |
 | `calibrazioneChi` | livelli [«principiante»], donneConFattore true | Decisione | registro coach v2 D-P1 e B22 (la calibrazione vale per tutti i principianti; il fattore basso solo per le donne fino all’intermedio); piano D.1 | CAR-18 |
-| `calibrazioneEsposizioni` | 4 | Convenzione | piano D.5; ricerca-donne-carichi-iniziali §3.6 (prime 3-4 esposizioni) | CAR-18 |
+| `calibrazioneEsposizioni` | 5 | Provvisoria | piano D.5; ricerca-donne-carichi-iniziali §3.6 (prime 3-4 esposizioni: la quinta e una misura dell INT-3a, atleta virtuale D.8.9, docs/coach-v2-decisioni.md D-P24); da rivedere con dati veri | CAR-18 |
 | `calibrazioneBersaglioRpe` | 8 | Convenzione | ricerca-donne-carichi-iniziali §3.6 (stop al primo RPE ≥ 8); registro B1 | CAR-18 |
 | `calibrazioneTolleranzaRpe` | 0.5 | Convenzione | piano D.5 (entro ±0,5 di RPE si chiude) | CAR-18 |
 | `calibrazioneSalti` | bassa 1 alto 0.1, basso 0.1, iso 0.1, 2 alto 0.15, basso 0.2, iso 0.15, 3 alto 0.2, basso 0.25, iso 0.2, normale 1 0.05, 2 0.075, 3 0.1 | Convenzione | ricerca-donne-carichi-iniziali §3.6 (tabella dei salti per RPE, scelta di prodotto); registro B1 (per scarto di RPE, non dal massimale); piano D.5 | CAR-18 |
