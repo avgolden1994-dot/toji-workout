@@ -98,3 +98,31 @@ test('B1, storia di 12 settimane (uomo, intermedio, 4 giorni, RPE sul bersaglio)
   const lc = tab[LEGCURL].filter(s => s.fase !== 'scarico');
   assert.ok(lc[lc.length - 1].w >= lc[0].w, 'il Leg Curl a fine corsa non e sotto la partenza: ' + lc.map(s => s.w).join(' '));
 });
+
+/* ============================================================================================================
+   M2 · il manubrio piu pesante dichiarato vale anche per gli esercizi «corpo» con carico (Affondi Bulgari, Inversi, Step-up, Russian Twist, Kettlebell Swing...)
+   ============================================================================================================ */
+const CASA20 = { luogo: 'manubri', manubriKg: 20 };
+test('M2: Affondi Bulgari (corpo con carico) con manubri fino a 20 kg: non si propone mai oltre (prima: 26 kg dopo tre sedute a 20 kg con 10 ripetizioni, bersaglio 8)', () => {
+  const app = nuovaApp(CASA20, PROG_V2);
+  [10, 6, 3].forEach(g => registra(app, g, BULGARI, serie(3, 20, 10), { reps: 10, base: 8, sets: 3 }));
+  const r = carico(app, BULGARI, 20, 8, 3);
+  assert.ok(r.weight <= 20, r.weight + ' kg · ' + r.motivo);
+  assert.match(r.motivo, /manubrio più pesante che hai \(20 kg\)/);
+  /* sotto il tetto con un salto che lo supererebbe: fino al tetto, come per i manubri */
+  const sotto = nuovaApp(CASA20, PROG_V2);
+  [10, 6, 3].forEach(g => registra(sotto, g, BULGARI, serie(3, 18, 10), { reps: 10, base: 8, sets: 3 }));
+  assert.strictEqual(carico(sotto, BULGARI, 18, 8, 3).weight, 20, 'da 18 kg il salto (+6) supererebbe il tetto: si sale fino al tetto');
+  /* senza dichiarazione (palestra) o con CAS-01 spenta: come prima */
+  const palestra = nuovaApp({}, PROG_V2);
+  [10, 6, 3].forEach(g => registra(palestra, g, BULGARI, serie(3, 20, 10), { reps: 10, base: 8, sets: 3 }));
+  assert.ok(carico(palestra, BULGARI, 20, 8, 3).weight > 20, 'nessuna dichiarazione: nessun tetto');
+});
+
+test('M2, storia di 12 settimane a casa con manubri fino a 20 kg (seme casa1): nessun esercizio con i manubri o «corpo» sopra 20 kg (prima: Affondi Bulgari a 24 kg alla settimana 11)', { timeout: 120000 }, () => {
+  const { tab, a } = storia({ d: { level: 'intermedio', days: 3, minutes: 45, goals: ['massa'], sex: 'M', luogo: 'manubri', manubriKg: 20, seme: 'casa1' }, profilo: CASA20 }, 12, 'bersaglio');
+  const sopra = [];
+  Object.keys(tab).forEach(nome => { const att = a.chiama('attrezzoDi', nome); if (att === 'manubri' || att === 'corpo') tab[nome].forEach(s => { if (s.w > 20 + 1e-9) sopra.push(nome + ' s' + s.n + ' ' + s.w); }); });
+  assert.deepStrictEqual(sopra, []);
+  assert.ok(Object.keys(tab).some(n => a.chiama('attrezzoDi', n) === 'corpo' && tab[n].some(s => s.w > 0)), 'il programma ha un esercizio «corpo» con carico');
+});

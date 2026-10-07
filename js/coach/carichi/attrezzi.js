@@ -38,13 +38,13 @@ function passoAttrezzo(attrezzo, ctx) {
 }
 
 /* il carico sulla griglia di base dell attrezzo: ctx.modo 'vicino' (default: il piu vicino, come la partenza), 'giu' (per difetto) o 'su' (il primo peso della griglia
-   da kg in su); mai sotto il minimo (barra vuota, 1 kg di manubrio). ctx.tetto (CAS-01b, solo manubri): il manubrio piu pesante dichiarato e un peso vero e il massimo.
+   da kg in su); mai sotto il minimo (barra vuota, 1 kg di manubrio). ctx.tetto (CAS-01b, manubri e «corpo» con carico): il manubrio piu pesante dichiarato e un peso vero e il massimo.
    0 o meno resta 0 (corpo libero) */
 function arrotondaAttrezzo(kg, attrezzo, ctx) {
   const x = Number(kg) || 0;
   if (x <= 0) return 0;
   const o = ctx || {}, m = voceAttrezzo(attrezzo);
-  const tetto = Number(o.tetto) > 0 && attrezzoDi(m.name) === 'manubri' ? Number(o.tetto) : 0;
+  const tetto = Number(o.tetto) > 0 && esercizioConManubri(m.name) ? Number(o.tetto) : 0;
   if (tetto && x >= tetto - 1e-9) return tetto;
   let w;
   if (o.modo === 'su') {
@@ -54,9 +54,13 @@ function arrotondaAttrezzo(kg, attrezzo, ctx) {
   return tetto ? Math.min(w, tetto) : w;
 }
 
+/* CAS-01b: l esercizio si fa con i manubri in mano: «manubri» e anche «corpo» (con un carico: Affondi Bulgari, Inversi, in Camminata, Step-up, Russian Twist, Kettlebell Swing),
+   come in passoAttrezzo. Revisione di 3a (M2): il tetto non valeva per questi e con manubri fino a 20 kg gli Affondi Bulgari salivano a 24 kg. Un carico c e solo se il peso e > 0 (chi chiama) */
+function esercizioConManubri(nome) { const a = attrezzoDi(nome); return a === 'manubri' || a === 'corpo'; }
+
 /* CAS-01b: il manubrio piu pesante dichiarato per questo esercizio (0 se non e con i manubri, se non c e la dichiarazione o se CAS-01 e spenta: contestoCarichi) */
 function tettoManubriDi(nome) {
-  if (attrezzoDi(nome) !== 'manubri') return 0;
+  if (!esercizioConManubri(nome)) return 0;
   const cc = contestoCarichi({}, getProfile() || {});
   return cc.manubriKg > 0 ? cc.manubriKg : 0;
 }
