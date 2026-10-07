@@ -447,7 +447,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 104. `js/coach/repertorio.js` — Coach 2: repertorio completo
 
-`STANDARD_FORZA` · `ALZATE_BASE` · `pesoCorporeo()` · `STD_SOGLIA_INTERMEDIO` · `STD_SOGLIA_AVANZATO` · `STD_MINIMO_ALZATE` · `COACH_GIORNI_REVISIONE_LIVELLO` · `livelloStandardForza()` · `proposteLivello()` · `window.livelloStimato()` · `prefsCoach()` · `sostituisciNelPiano()` · `cambiaSerieNelPiano()` · `conAnnulla()` · `window.azioneCoach()` · `bloccoCorrente()` · `eserciziFermi()` · `strainSettimane()` · `scaricoRecente()` · `controlloSchemi()` · `azioniCoach()` · `corpoCoach()` · `sedutaSaltata()` · `prossimoGiornoLibero()` · `htmlSedutaSaltata()` · `window.sceltaSaltata()` · `aderenzaDueSettimane()` · `htmlAderenza()` · `window.rispostaAderenza()` · `htmlOrario()` · `verdettoCiclo()` · `htmlFineCiclo()` · `window.nuovoCiclo()`
+`STANDARD_FORZA` · `ALZATE_BASE` · `pesoCorporeo()` · `STD_SOGLIA_INTERMEDIO` · `STD_SOGLIA_AVANZATO` · `STD_MINIMO_ALZATE` · `COACH_GIORNI_REVISIONE_LIVELLO` · `livelloStandardForza()` · `proposteLivello()` · `window.livelloStimato()` · `prefsCoach()` · `sostituisciNelPiano()` · `cambiaSerieNelPiano()` · `conAnnulla()` · `window.azioneCoach()` · `bloccoCorrente()` · `eserciziFermi()` · `strainSettimane()` · `scaricoRecente()` · `controlloSchemi()` · `azioniCoach()` · `rigaMinutiSalute()` · `corpoCoach()` · `sedutaSaltata()` · `prossimoGiornoLibero()` · `htmlSedutaSaltata()` · `window.sceltaSaltata()` · `aderenzaDueSettimane()` · `htmlAderenza()` · `window.rispostaAderenza()` · `htmlOrario()` · `verdettoCiclo()` · `htmlFineCiclo()` · `window.nuovoCiclo()`
 
 ### 105. `js/coach/dolore-mattina.js` — Controllo del dolore la mattina dopo
 

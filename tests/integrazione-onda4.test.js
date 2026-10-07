@@ -190,6 +190,14 @@ test('d. corpoCoach: per minorenni (anche con ETA-04 spenta), over 65 e gravidan
     assert.ok(!out.some(t => /^Passi|^Creatina/i.test(t)), e);
   }))));
 });
+test('d. corpoCoach: un over 65 con l\'obiettivo salute tiene i minuti di attività dell\'OMS (non sono cibo né corpo); minorenni e gravidanza no', () => {
+  const dopo = p => { const a = caricaApp({ ora: '2026-10-05T12:00:00' }); conBia(a, Object.assign({ sex: 'M', weight: 75, goals: ['salute'], fase: 'mantenimento' }, p), DUE_BIA); return a.dati(a.chiama('corpoCoach')); };
+  const over = dopo({ age: 70 });
+  assert.strictEqual(over.length, 2, JSON.stringify(over));
+  assert.ok(TESTO_PER.over65.test(over[0]) && /^Questa settimana \d+ minuti di pesi/.test(over[1]) && /150-300 minuti/.test(over[1]), JSON.stringify(over));
+  assert.deepStrictEqual(over.slice(1).filter(t => /Passi|Creatina|Proteine|g al giorno/i.test(t)), []);
+  [{ age: 16 }, { age: 30, sex: 'F', gravidanza: true }].forEach(p => { const o = dopo(p); assert.strictEqual(o.length, 1, JSON.stringify(p) + ' ' + JSON.stringify(o)); });
+});
 test('d. corpoCoach: per un adulto restano ritmo di calo, passi e creatina di prima (nessuna differenza)', () => {
   ADULTI.forEach(p => {
     const app = caricaApp({ ora: '2026-10-05T12:00:00' });

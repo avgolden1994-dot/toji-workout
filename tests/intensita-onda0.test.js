@@ -498,7 +498,10 @@ test('ETA-04: sotto i 18 anni niente numeri su peso, cibo e integratori; niente 
   assert.ok(/Creatina/.test(corpo(0)), 'eta mancante: come un adulto (la decide l\'onboarding, W0-T2)');
   const spento = caricaApp({ ora: LUNEDI });
   spegnibili(spento, ['ETA-04']); spento.spegni(['ETA-04']); spento.profilo({ age: 16, weight: 70, sex: 'M' });
-  assert.ok(/Creatina/.test(spento.json('corpoCoach()').join(' ')), 'regola spenta: come prima');
+  /* INT-4: la guardia NUT-01 (P4-C, sempre accesa) vale per minorenni, over 65 e gravidanza anche con ETA-04 spenta: prima di INT-4 con la regola spenta il minore vedeva creatina e passi («come prima») e,
+     dopo P4-C, nessun grammo di proteine ma ancora creatina e passi: una guardia a meta. Ora senza numeri di corpo o di cibo e con il rinvio, qualunque cosa dica ETA-04 */
+  const spentoTesto = spento.json('corpoCoach()').join(' ');
+  assert.ok(!/Creatina|Proteine|Passi|calando|g al giorno/i.test(spentoTesto) && /medico o un dietista/.test(spentoTesto), 'regola spenta: NUT-01 tiene comunque il testo prudente: ' + spentoTesto);
   /* BIA: i valori di riferimento sono da adulti */
   const bia = { phase: 3.5, ecw: 20, tbw: 40 };
   const app = caricaApp({ ora: LUNEDI });

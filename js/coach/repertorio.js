@@ -307,6 +307,11 @@ function azioniCoach() {
   return out;
 }
 
+/* obiettivo salute: i minuti di pesi della settimana e i minuti di attivita aerobica dell OMS (non e una riga di cibo ne di corpo: la guardia NUT-01 la lascia agli over 65) */
+function rigaMinutiSalute() {
+  const min = loadHistory().filter(h => h.minuti && h.id && Date.now() - h.id < 7 * 864e5).reduce((t, h) => t + h.minuti, 0);
+  return 'Questa settimana ' + min + ' minuti di pesi: tra 30 e 60 si hanno gia i massimi benefici per la salute. Aggiungi 150-300 minuti di attivita aerobica moderata (OMS).';
+}
 /* ---- corpo, cardio e alimentazione: solo informazione ---- */
 function corpoCoach() {
   const out = [];
@@ -315,7 +320,7 @@ function corpoCoach() {
   if (regolaAttiva('ETA-04') && Number(p.age) > 0 && Number(p.age) < 18) return [TESTO_NUTRIZIONE_MINORENNE];
   /* NUT-01 (INT-4): minorenni (anche con ETA-04 spenta), over 65 e gravidanza non ricevono ritmo di calo, passi in deficit, creatina ne grammi di proteine: solo il testo prudente, con il rinvio */
   const guardiaCorpo = guardiaNutrizione({}, p);
-  if (guardiaCorpo) return [guardiaCorpo.testo];
+  if (guardiaCorpo) return guardiaCorpo.gruppo === 'over65' && (p.goals || (p.goal ? [p.goal] : [])).indexOf('salute') !== -1 ? [guardiaCorpo.testo, rigaMinutiSalute()] : [guardiaCorpo.testo];
   const goals = p.goals || (p.goal ? [p.goal] : []);
   const fase = faseCorpo(p);   /* OBI-02: una sola fase del corpo per tutta l app (regia/brief.js) */
   const st = getBiaStorico().filter(x => x.valori && x.valori.peso && x.data);
@@ -344,10 +349,7 @@ function corpoCoach() {
   else if (bw) out.push('Proteine: circa ' + Math.round(bw * gPeso) + ' g al giorno (' + virg(gPeso) + ' g per kg). Informazione, non prescrizione.');
   if (fase === 'deficit') out.push('Passi: 10-12 mila al giorno, aumentandoli di 500-1000 a settimana. Il cardio non toglie muscolo ne forza.');
   else out.push('Passi: almeno 6-8 mila al giorno. Il cardio non toglie muscolo ne forza, solo un po di esplosivita.');
-  if (goals.indexOf('salute') !== -1) {
-    const min = loadHistory().filter(h => h.minuti && h.id && Date.now() - h.id < 7 * 864e5).reduce((t, h) => t + h.minuti, 0);
-    out.push('Questa settimana ' + min + ' minuti di pesi: tra 30 e 60 si hanno gia i massimi benefici per la salute. Aggiungi 150-300 minuti di attivita aerobica moderata (OMS).');
-  }
+  if (goals.indexOf('salute') !== -1) out.push(rigaMinutiSalute());
   out.push('Creatina 3-5 g al giorno: sicura ed efficace con i pesi. Solo un informazione, facoltativa.');
   return out;
 }
