@@ -41,6 +41,7 @@ function atleta(extra, opz) {
   const a = caricaApp({ ora: A.LUNEDI, consenso: true });
   A.conP3B(a);
   if (o.conFase) conForzaCarichi(a);
+  else a.g("if (typeof FASI_PUNTI !== 'undefined') FASI_PUNTI.carico = FASI_PUNTI.carico.filter(f => f.codice !== 'FRZ-11')");   /* «prima»: senza la fase, anche se index.html (dopo l'integrazione) la carica */
   if (o.spente.length) a.spegni(o.spente);
   const d = Object.assign({}, A.BASE, PL, extra || {});
   const p = a.dati(a.chiama('buildProgram', d));
@@ -150,12 +151,15 @@ test('FRZ-11, FRZ-03 spenta (nessuna variante: la stessa alzata, con lo stesso n
 });
 
 /* ============================================================ spenta, consenso, sicurezza, bloccate ============================================================ */
-test('FRZ-11 spenta con tz_regole_spente: i carichi sono quelli di prima (la fase non agisce)', () => {
+test('FRZ-11 spenta con tz_regole_spente: i carichi sono quelli di prima (la fase non agisce); accesa cambia i carichi', () => {
   const con = atleta({ days: 3 }, { spente: ['FRZ-11'] });
   const senza = atleta({ days: 3 }, { conFase: false });
+  const acceso = atleta({ days: 3 });
   const x = dodiciSettimane(con.a, con.p).map(r => r.n + r.nome + r.w + 'x' + r.reps);
   const y = dodiciSettimane(senza.a, senza.p).map(r => r.n + r.nome + r.w + 'x' + r.reps);
+  const z = dodiciSettimane(acceso.a, acceso.p).map(r => r.n + r.nome + r.w + 'x' + r.reps);
   assert.deepStrictEqual(x, y);
+  assert.notDeepStrictEqual(z, y, 'con la regola accesa i carichi dei giorni medi e leggeri cambiano');
 });
 
 test('FRZ-11: senza consenso il coach non sceglie i carichi (nessuna fase) e un programma di forza generale (senza onda) non ha mai il tetto', () => {
