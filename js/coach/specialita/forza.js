@@ -93,6 +93,7 @@ const FORZA_NOTA_STRUTTURA = 'Forza: squat e panca almeno due volte a settimana 
 const FORZA_NOTA_ONDA = 'Forza: squat e panca almeno due volte a settimana e lo stacco una volta, in giorni pesanti, medi e leggeri: cambiano serie e ripetizioni.';
 const FORZA_NOTA_PIATTA = 'Forza: squat e panca almeno due volte a settimana e lo stacco una volta, con la stessa prescrizione in ogni seduta.';
 const FORZA_NOTA_PRINCIPIANTE = 'Forza: squat e panca almeno due volte a settimana e lo stacco rumeno una volta (lo stacco da terra, più tecnico, non è per chi comincia), con la stessa prescrizione in ogni seduta: chi comincia non ha giorni pesanti e leggeri.';
+const FORZA_NOTA_PRINCIPIANTE_TERZA = 'Forza: squat e panca almeno due volte a settimana e lo stacco rumeno una volta (lo stacco da terra, più tecnico, non è per chi comincia), con la stessa prescrizione in ogni seduta, tranne la terza panca della settimana che ha due serie: chi comincia non ha giorni pesanti e leggeri.';
 const FORZA_NOTA_MINUTI = 'Con i minuti che hai alcune alzate restano fuori da qualche seduta: la frequenza del powerlifting non è completa.';
 const FORZA_NOTA_MASSIMALE = 'Non serve provare il massimale: il coach lo stima dalle serie che fai, con meno rischio.';
 const FORZA_NOTA_PRUDENTE = 'Il powerlifting non è per chi ha meno di 18 anni o 65 o più, né per chi ha risposto sì al questionario sulla salute: il tuo programma di forza resta quello generale, con carichi e ripetizioni più prudenti.';
@@ -292,11 +293,11 @@ function forzaSedute(brief, sedute) {
   FORZA_ALZATE_BARRA.forEach(a => { gara[a] = forzaNomeGara(brief, a); varianti[a] = conVarianti ? forzaElencoVarianti(brief, a, F.puntiDeboli, gara[a]) : []; });
   /* il nome di ogni esposizione. Le non pesanti, dalla piu intensa (media) alla meno intensa (leggera): ognuna la sua variante (storia di carichi propria), senza varianti l'alzata intera.
      Chi comincia ha la stessa prescrizione ovunque: l'alzata intera le prime due volte, dalla terza una variante (RID-02: lo stesso esercizio in tre sedute) */
-  const ordineOnda = { pesante: 0, media: 1, leggera: 2 }, nomeDi = {};
+  const ordineOnda = { pesante: 0, media: 1, leggera: 2 }, nomeDi = {}, terza = {};   /* terza: chi comincia, la terza volta della stessa alzata nella settimana (la panca a 3 giorni) ha meno serie (P3-C, VOL-02:petto e EQ-01) */
   FORZA_ALZATE_BARRA.forEach(a => {
     const esposizioni = [];
     piano.forEach((riga, i) => riga.forEach((x, j) => { if (x[0] === a) esposizioni.push({ i: i, j: j, onda: x[1] }); }));
-    if (chi.principiante) { esposizioni.forEach((e, k) => { nomeDi[e.i + '|' + e.j] = k < 2 ? gara[a] : (varianti[a][k - 2] || gara[a]); }); return; }
+    if (chi.principiante) { esposizioni.forEach((e, k) => { nomeDi[e.i + '|' + e.j] = k < 2 ? gara[a] : (varianti[a][k - 2] || gara[a]); if (k >= 2) terza[e.i + '|' + e.j] = true; }); return; }
     esposizioni.filter(e => e.onda === 'pesante').forEach(e => { nomeDi[e.i + '|' + e.j] = gara[a]; });
     esposizioni.filter(e => e.onda !== 'pesante').sort((p, q) => ordineOnda[p.onda] - ordineOnda[q.onda] || p.i - q.i).forEach((e, k) => { nomeDi[e.i + '|' + e.j] = varianti[a][k] || gara[a]; });
   });
@@ -311,7 +312,7 @@ function forzaSedute(brief, sedute) {
       else nome = nomeDi[i + '|' + j];
       if (!nome || lifts.some(l => l.name === nome)) return;
       const pr = forzaPrescrizione(brief, nome, conOnda ? x[1] : sogliaForza('ondaPrincipiante'));
-      lifts.push({ name: nome, weight: (findExercise(nome) || {}).weight || 0, sets: pr.sets, reps: pr.reps, rest: pr.rest, fisso: true, alzata: x[0] === 'varStacco' ? 'stacco' : x[0], onda: conOnda ? x[1] : undefined });
+      lifts.push({ name: nome, weight: (findExercise(nome) || {}).weight || 0, sets: terza[i + '|' + j] ? Math.min(pr.sets, sogliaForza('serieTerzaEsposizione')) : pr.sets, reps: pr.reps, rest: pr.rest, fisso: true, alzata: x[0] === 'varStacco' ? 'stacco' : x[0], onda: conOnda ? x[1] : undefined });
     });
     if (!lifts.length) return;
     /* FRZ-04: l'accessorio del punto debole nella seduta pesante dell'alzata (uno solo per punto debole) */
@@ -394,9 +395,10 @@ function forzaEquilibra(brief, sedute, registro) {
   const tutti = () => [].concat.apply([], sedute.map(sd => sd.esercizi.filter(e => !e.fantasma)));
   const spinte = () => tutti().reduce((t, e) => t + (e.fisso && !isTimeBased(e.name) && strEspinta(e) ? e.sets : 0), 0) + 2;
   const serve = () => Math.ceil(spinte() * STR_PESI.tirateSuSpinte - 1e-9);
-  /* le tirate che resteranno di sicuro: le tirate alte di qui, per intero; ogni tirata multiarticolare della ricetta a 2 serie (il taglio per il tempo non la porta sotto); gli isolamenti no (possono uscire) */
-  const sicure = () => tutti().reduce((t, e) => t + (isTimeBased(e.name) || !strEtirata(e) ? 0 : (e.tirataAlta ? e.sets : ((findExercise(e.name) || {}).type === 'compound' ? Math.min(e.sets, minimo) : 0))), 0);
   const libero = r => M - stima(r.sd);
+  /* le tirate che resteranno di sicuro: le tirate alte di qui, per intero; ogni tirata multiarticolare della ricetta a 2 serie (il taglio per il tempo, che aggiunge poi i completamenti e taglia le
+     sedute, la porta li e non sotto: a 60 minuti per chi comincia tre tirate da 3 serie diventavano 3, 2 e 3); gli isolamenti no (possono uscire) */
+  const sicure = () => tutti().reduce((t, e) => t + (isTimeBased(e.name) || !strEtirata(e) ? 0 : (e.tirataAlta ? e.sets : ((findExercise(e.name) || {}).type === 'compound' ? Math.min(e.sets, minimo) : 0))), 0);
   if (!registro.length) return;
   const nomi = (SPEC_FORZA.tirateAlte || []).map(n => nomeInLibreria(n)).filter(n => n && forzaAmmesso(brief, n));
   if (!nomi.length) return;
@@ -410,29 +412,33 @@ function forzaEquilibra(brief, sedute, registro) {
   };
   if (!tutti().some(e => (findExercise(e.name) || {}).group === 'core')) fantasma(nomeInLibreria('Plank') || nomeInLibreria('Dead Bug'));
   if (!tutti().some(e => schemaDi(e.name) === 'spintaV')) fantasma(nomeInLibreria('Military Press'));
-  /* la tirata alta in una seduta: se la seduta non sta nei minuti lascia il posto, come fa forzaPotaAlTempo, agli ultimi esercizi della ricetta che non sono alzate, accessori del punto debole,
-     completamenti o tirata (mai sotto il numero minimo di esercizi); se nemmeno cosi sta nei minuti, la seduta resta com'è */
-  const provaTirataAlta = (r, nome) => {
+  /* la tirata alta in una seduta, di `serie` serie: se la seduta non sta nei minuti lascia il posto, come fa forzaPotaAlTempo, agli ultimi esercizi della ricetta che non sono alzate, accessori
+     del punto debole, completamenti o tirata (mai sotto il numero minimo di esercizi); prima quelli il cui muscolo lavora anche in un'altra seduta (togliere l'unico curl o l'unico calf raise
+     della settimana costava FRQ-01 e DIR-01), poi gli altri dalla fine; se nemmeno cosi sta nei minuti, la seduta resta com'è */
+  const provaTirataAlta = (r, nome, serie) => {
     if (r.sd.esercizi.some(e => e.tirataAlta)) return false;
     const m = findExercise(nome) || {}, pres = prescriviSeduta(brief, [{ name: nome, weight: m.weight || 0 }], 'forza')[0];
-    const lista = r.sd.esercizi.concat([Object.assign({ name: nome, weight: m.weight || 0 }, pres, { sets: sogliaForza('serieTirataAlta'), protetto: true, fisso: true, tirataAlta: true })]);
+    const lista = r.sd.esercizi.concat([Object.assign({ name: nome, weight: m.weight || 0 }, pres, { sets: serie, protetto: true, fisso: true, tirataAlta: true })]);
     const prima = r.sd.esercizi;
+    const altrove = e => { const b = bersaglioDi(e.name); return !!b && sedute.some(sd => sd !== r.sd && sd.esercizi.some(x => x !== e && bersaglioDi(x.name) === b)); };
     r.sd.esercizi = lista;
     for (let g = 0; (stima(r.sd) > M || lista.length > massimoEsercizi) && g < 10; g++) {
-      let k = -1;
-      for (let i = lista.length - 1; i >= 0 && k === -1; i--) { const e = lista[i]; if (!e.alzata && !e.puntoDebole && !e.completamento && !e.tirataAlta && !e.fantasma && e !== r.tirata) k = i; }
-      if (k === -1 || lista.length <= PARAM_NUMERO_ESERCIZI.min) break;
-      lista.splice(k, 1);
+      const togliibili = lista.filter(e => !e.alzata && !e.puntoDebole && !e.completamento && !e.tirataAlta && !e.fantasma && e !== r.tirata && (typeof pavimentoOk !== 'function' || pavimentoOk(brief, sedute, e, e.sets)));   /* mai sotto i pavimenti di volume (tempo.js) */
+      const e = togliibili.filter(altrove).pop() || togliibili.pop();
+      if (!e || lista.length <= PARAM_NUMERO_ESERCIZI.min) break;
+      lista.splice(lista.indexOf(e), 1);
     }
     if (stima(r.sd) <= M && lista.length <= massimoEsercizi) return true;
     r.sd.esercizi = prima;
     return false;
   };
-  /* una tirata alta al massimo in due sedute (RID-02: lo stesso esercizio non tre volte a settimana): la prima della lista che ha meno di due sedute */
+  /* una tirata alta al massimo in due sedute (RID-02: lo stesso esercizio non tre volte a settimana: la prima della lista che ha meno di due sedute), di tante serie quante ne mancano (da 2 a 3:
+     ogni serie di tirata alta vale mezza serie di schiena per il volume, B6, e per chi comincia il massimo è 8) */
   const usi = nome => tutti().filter(e => e.name === nome).length;
   for (let giri = 0; sicure() < serve() && giri < 12; giri++) {
-    const nome = nomi.find(n => usi(n) < 2);
-    if (!nome || !registro.slice().sort((x, y) => libero(y) - libero(x)).some(r => provaTirataAlta(r, nome))) break;
+    const nome = nomi.find(n => usi(n) < 2), mancano = serve() - sicure();
+    const serie = Math.max(sogliaForza('serieTirataAlta'), Math.min(sogliaForza('serieTirataAltaMax'), mancano));
+    if (!nome || !registro.slice().sort((x, y) => libero(y) - libero(x)).some(r => provaTirataAlta(r, nome, serie))) break;
   }
   fantasmi.forEach(x => { x.sd.esercizi.splice(x.sd.esercizi.indexOf(x.f), 1); });
 }
@@ -493,7 +499,8 @@ function forzaNote(brief, conOnda, F, sedute) {
   const completa = FORZA_ALZATE_BARRA.every(a => sedutePer(a) >= min[a]);
   const tutti = [].concat.apply([], sedute.map(sd => sd.esercizi));
   const conVarianti = tutti.some(e => e.alzata && e.onda && e.onda !== 'pesante' && FORZA_ALZATE_BARRA.some(a => a === e.alzata && e.name !== forzaNomeGara(brief, a)));   /* c'e davvero una variante in scheda */
-  aggiungi(!completa ? FORZA_NOTA_MINUTI : (!conOnda ? (brief.chi.principiante ? FORZA_NOTA_PRINCIPIANTE : FORZA_NOTA_PIATTA) : (conVarianti ? FORZA_NOTA_STRUTTURA : FORZA_NOTA_ONDA)));
+  const conTerza = FORZA_ALZATE_BARRA.some(a => sedutePer(a) >= 3);   /* la terza volta della stessa alzata: ha due serie (serieTerzaEsposizione) */
+  aggiungi(!completa ? FORZA_NOTA_MINUTI : (!conOnda ? (brief.chi.principiante ? (conTerza ? FORZA_NOTA_PRINCIPIANTE_TERZA : FORZA_NOTA_PRINCIPIANTE) : FORZA_NOTA_PIATTA) : (conVarianti ? FORZA_NOTA_STRUTTURA : FORZA_NOTA_ONDA)));
   aggiungi(FORZA_NOTA_MASSIMALE);
   if (completa) aggiungiPerche(brief, 'FRZ-02', FORZA_PERCHE_STRUTTURA, { forza: SOGLIE_FORZA.frequenzaMinima.forza });
   if (completa && conOnda) aggiungiPerche(brief, 'FRZ-05', FORZA_PERCHE_ONDA, { forza: SOGLIE_FORZA.ondaGiornaliera.forza });

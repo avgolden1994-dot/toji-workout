@@ -7,8 +7,11 @@
    Non fa: percentuali del massimale come prescrizione, test del massimale, AMRAP di appoggio (FRZ-06..10, oltre la v2) né il taper.
    L'atleta virtuale: 12 settimane di un powerlifter vero (buildProgram con il powerlifting, le sedute vissute con l'orologio finto, tutte le serie complete a RPE sul bersaglio; lo storico salva
    anche obiettivo.base e obiettivo.rir, come endWorkout: senza, la progressione per bersaglio di ALG-05 non scatta, lezione di N1).
+   In fondo, le altre due correzioni di forza.js dello stesso pacchetto: EQ-01 del powerlifting a 3 giorni (le tirate non restano sotto il 90% delle spinte: una tirata alta di 2 serie, fissa,
+   dove sta nei minuti; FRZ-01 e DUR-01 invariati) e l'accessorio della panca a metà o in chiusura anche con i manubri (FRZ-04).
    I file nuovi (soglie-forza-carichi.js e forza-carichi.js) li mette in index.html l'integrazione (docs/in-arrivo/P3-C.json): se mancano la prova li carica da sola. Sul codice di origin/main
-   la prova fallisce sulle asserzioni (nessuna fase, giorno medio e leggero allo stesso peso), non per un file mancante. */
+   la prova fallisce sulle asserzioni (nessuna fase, giorno medio e leggero allo stesso peso, 36 programmi su 90 sbilanciati, nessun accessorio con i manubri), non per un file mancante.
+   Restano fuori (aperti, vedi docs/in-arrivo/P3-C.json e il report): le percentuali di un massimale di lavoro, i test del massimale, gli AMRAP di appoggio e il taper (mai). */
 'use strict';
 const test = require('node:test'), assert = require('node:assert');
 const fs = require('fs'), path = require('path'), vm = require('vm');
@@ -214,7 +217,7 @@ test('EQ-01: 4, 5 e 6 giorni restano in equilibrio (le tirate bastano già: ness
   [4, 5, 6].forEach(days => ['principiante', 'intermedio', 'avanzato'].forEach(level => [45, 60, 90].forEach(minutes => {
     const c = conto(a, { level, days, minutes, seme: 'e' + level + days + minutes });
     assert.ok(!c.sbilanciato, level + ' ' + days + ' giorni ' + minutes + ' min: spinte ' + c.sp + ' tirate ' + c.ti);
-    c.p.sedute.forEach(sd => sd.esercizi.filter(e => e.tirataAlta).forEach(e => assert.ok(e.fisso && !e.alzata && e.sets === 2, 'la tirata alta è fissa e di 2 serie: ' + JSON.stringify(e))));
+    c.p.sedute.forEach(sd => sd.esercizi.filter(e => e.tirataAlta).forEach(e => assert.ok(e.fisso && !e.alzata && e.sets >= 2 && e.sets <= 3, 'la tirata alta è fissa e di 2-3 serie: ' + JSON.stringify(e))));
   })));
 });
 
@@ -232,4 +235,19 @@ test('FRZ-04: l\'accessorio della panca a metà o in chiusura entra anche con i 
   const conCavi = a.dati(a.chiama('buildProgram', Object.assign({}, PL, { days: 5, minutes: 90, puntiDeboli: ['panca-meta'], seme: 'accCavi' })));
   const acc = [].concat.apply([], conCavi.sedute.map(sd => sd.esercizi)).find(e => e.puntoDebole === 'panca-meta');
   assert.ok(acc && /Cavi|Cavo/i.test(pulito(acc.name)) || a.g('attrezzoDi')(acc.name) === 'cavo', 'con i cavi l\'accessorio resta quello ai cavi: ' + (acc && acc.name));
+});
+
+test('VOL-02:petto e EQ-01 per chi comincia: la terza panca della settimana (tre giorni) ha due serie (3+3+2 = 8, il massimo di petto di B6), la nota lo dice; a 4 giorni la panca è due volte da 3 serie come prima', () => {
+  const { a } = atleta();
+  const panca = p => [].concat.apply([], p.sedute.map(sd => sd.esercizi.filter(e => e.alzata === 'panca'))).map(e => e.sets);
+  const tre = a.dati(a.chiama('buildProgram', Object.assign({}, PL, { level: 'principiante', days: 3, minutes: 60, seme: 'terza3' })));
+  assert.deepStrictEqual(panca(tre), [3, 3, 2], 'tre giorni: tre volte la panca, la terza da 2 serie');
+  assert.ok(tre.note.indexOf(a.g('FORZA_NOTA_PRINCIPIANTE_TERZA')) !== -1 && tre.note.indexOf(a.g('FORZA_NOTA_PRINCIPIANTE')) === -1, 'la nota dice della terza panca: ' + tre.note.filter(n => /Forza: squat/.test(n)).join(' | '));
+  assert.ok(/tranne la terza panca della settimana che ha due serie/.test(a.g('FORZA_NOTA_PRINCIPIANTE_TERZA')) && /chi comincia non ha giorni pesanti e leggeri/.test(a.g('FORZA_NOTA_PRINCIPIANTE_TERZA')));
+  const quattro = a.dati(a.chiama('buildProgram', Object.assign({}, PL, { level: 'principiante', days: 4, minutes: 60, seme: 'terza4' })));
+  assert.deepStrictEqual(panca(quattro), [3, 3], 'quattro giorni: due volte la panca, 3 serie');
+  assert.ok(quattro.note.indexOf(a.g('FORZA_NOTA_PRINCIPIANTE')) !== -1 && quattro.note.indexOf(a.g('FORZA_NOTA_PRINCIPIANTE_TERZA')) === -1, 'a 4 giorni la nota è quella di sempre');
+  /* chi non è principiante ha l'onda (4+3+2): non cambia */
+  const intermedio = a.dati(a.chiama('buildProgram', Object.assign({}, PL, { days: 3, minutes: 90, seme: 'terzaI' })));
+  assert.deepStrictEqual(panca(intermedio).sort(), [2, 3, 4]);
 });
