@@ -75,6 +75,16 @@ test('SAF-02 con nota: una nota per ogni zona dichiarata, ogni esercizio che la 
   assert.deepStrictEqual(app.errori, []);
 });
 
+test('REC-04 spenta: le note generiche di SCALE_DOLORE come prima e nessuna nota nuova', () => {
+  const spenta = conRec04Spenta();
+  ['spalle', 'ginocchia', 'schiena'].forEach(z => {
+    const prog = costruisci({ level: 'intermedio', luogo: 'palestra', days: 4, minutes: 60, goals: ['massa'], fastidi: [z], seme: 'sp-' + z }, spenta);
+    assert.ok(prog.note.some(n => VECCHIE_NOTE.test(String(n))), 'la nota generica di ' + z + ' c e ancora');
+    assert.ok(!prog.note.some(n => NOTA_ZONA(z).test(String(n))), 'nessuna nota nuova per ' + z);
+  });
+  assert.deepStrictEqual(spenta.errori, []);
+});
+
 test('SAF-02 con nota: la nota e vera, breve e senza promesse (niente guarigione, diagnosi, «e sicuro»), con il rinvio al medico', () => {
   GRIGLIA.filter((p, i) => i % 3 === 0).forEach(p => {
     const prog = costruisci(p);
