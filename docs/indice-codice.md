@@ -331,7 +331,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 77. `js/coach/sicurezza/fastidi.js` — Fastidi: la modifica scritta (REC-04 parte a, SAF-02, PRG-24, BIO-06)
 
-`FASTIDI_ZONE` · `fastidiAttivi()` · `esclusoDalFastidio()` · `nomiDelProgramma()` · `datiNotaFastidio()` · `eNotaDelFastidio()` · `applicaNoteFastidi()`
+`FASTIDI_ZONE` · `fastidiAttivi()` · `pavimentoRirFastidi()` · `esclusoDalFastidio()` · `nomiDelProgramma()` · `datiNotaFastidio()` · `eNotaDelFastidio()` · `applicaNoteFastidi()`
 
 ### 78. `js/coach/regia/brief.js` — Brief del coach: chi sei, cosa vuoi, quando, con quali limiti (OBI-02, D-P6)
 
@@ -431,7 +431,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 100. `js/coach/sicurezza/popolazioni.js` — Popolazioni e rientro dopo una pausa: base degli over 65, gravidanza, calendario fermo, rampa e risalita del rientro (ETA-08 a, REC-12 a, CST-01, CST-02, CAR-04, ALG-14)
 
-`sogliaPopolazione()` · `inGravidanza()` · `inBaseOver65()` · `potenzaAmmessaOver65()` · `pavimentoRirPopolazioni()` · `programmaV2Rientro()` · `MEMORIA_RIENTRO` · `ricordaRientro()` · `seduteAllaSettimana()` · `giorniNulla()` · `giorniContatiPausa()` · `giorniDoppiAttivi()` · `giorniPausaContati()` · `giorniRientroPiano()` · `statoRientro()` · `rirExtraRientro()` · `primaSettimanaDelBlocco()` · `settimaneFermePerPausa()` · `rientroRecente()` · `FRASI_POPOLAZIONI` · `fasePopolazioni()`
+`sogliaPopolazione()` · `inGravidanza()` · `gravidanzaDaRiportare()` · `inBaseOver65()` · `potenzaAmmessaOver65()` · `pavimentoRirPopolazioni()` · `programmaV2Rientro()` · `MEMORIA_RIENTRO` · `ricordaRientro()` · `seduteAllaSettimana()` · `giorniNulla()` · `giorniContatiPausa()` · `giorniDoppiAttivi()` · `giorniPausaContati()` · `giorniRientroPiano()` · `statoRientro()` · `rirExtraRientro()` · `primaSettimanaDelBlocco()` · `settimaneFermePerPausa()` · `rientroRecente()` · `senzaMotivoDellaProgressione()` · `FRASI_POPOLAZIONI` · `fasePopolazioni()`
 
 ### 101. `js/coach/questionario-decisioni.js` — Questionario di fine allenamento e decisioni
 

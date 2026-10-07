@@ -4,7 +4,7 @@
 > Forze: **Solida** (meta-analisi o posizione ufficiale), **Moderata** (pochi studi, o risultati che cambiano con la popolazione), **Contrastata** (studi in disaccordo), **Convenzione** (pratica dei coach: il foglio «Perché?» mostra «Scelta prudente del coach (Convenzione): non è un risultato di studi»), **Decisione** (scelta di prodotto: «Decisione di prodotto»), **Provvisoria** (numero di partenza in attesa di verifica: «Numero di partenza, in verifica»). Etichette: `etichettaForza` in `js/coach/regia/perche.js` (registro C.4).
 > Le tabelle di prima (`COACH_PARAMETRI`, `PARAM_PARTENZA`, `PARAM_INTENSITA`, `STR_PESI`, `DOSE_SCARICO`, `RIR_TIPO`) non sono ancora qui: passano in un file soglie quando il task che possiede il loro file le tocca.
 
-Totale: 184 soglie in 16 tabelle (Solida 3, Moderata 13, Contrastata 1, Convenzione 155, Decisione 9, Provvisoria 3).
+Totale: 185 soglie in 16 tabelle (Solida 3, Moderata 13, Contrastata 1, Convenzione 156, Decisione 9, Provvisoria 3).
 
 ## `SOGLIE_BIA` — `js/coach/bia/soglie-bia.js` (preparatore)
 
@@ -128,6 +128,7 @@ Totale: 184 soglie in 16 tabelle (Solida 3, Moderata 13, Contrastata 1, Convenzi
 | Voce | Valore | Forza | Fonte | Regole |
 |---|---|---|---|---|
 | `stressNominato` | 1 | Convenzione | attributo `stress` di W1-T2 (matrice di ricerca-recupero-infortuni-popolazioni §3, elenchi del collaudo): 1 = cautela, 2 = controindicato; stesso criterio di esercizioCaricaIlFastidio e del collaudo SAF-02 | REC-04 |
+| `rirConFastidio` | 2 | Convenzione | revisione indipendente dell onda 4 (m9); ricerca-recupero-infortuni-popolazioni §3 e §5.1 (lavoro lontano dal cedimento sulla zona dolente: prudenza, non una prova); stessa soglia del pavimento dei minorenni (MES_RIR.pisoMinorenni) | REC-04 |
 | `doloreMassimo` | 3 | Convenzione | DEC-01 (fastidio lieve, fino a 3/10: si continua e si osserva); modello del dolore di Silbernagel 2007 (fino a 5/10 se al mattino è normale: Moderata sul tendine, consenso per le altre zone), qui il limite basso; ricerca-recupero-infortuni-popolazioni §5.1 | REC-04, DEC-01 |
 
 ## `SOGLIE_POPOLAZIONI` — `js/coach/sicurezza/soglie-popolazioni.js` (sentinella)

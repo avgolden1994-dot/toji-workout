@@ -1262,7 +1262,7 @@
     "FRQ-01:bicipiti nel powerlifting": {
      "responsabile": "nessuno (il generatore: strCopri protegge i bicipiti solo con l ipertrofia, non nella forza; tempo.js)",
      "scade": "oltre-v2",
-     "motivo": "P3-C e INT-4 (2026-10-07, matrice «forza», criteri 1.7, contro origin/main): la tirata alta in piu (EQ-01) prende tempo ai curl e il taglio per il tempo, dopo il passo della forza, li toglie: FRQ-01:bicipiti 11,49% -> 14,93% (177 -> 198 programmi), DIR-01:polpacci 4,45% -> 5,41% (45 -> 55), VOL-02:schiena 18,78% -> 19,39% (213 -> 218), FRQ-01:femorali 2,01% -> 2,44%, VOL-01:petto 4,14% -> 4,54%: nessuno supera 0,5 punti sulla standard (0 peggiorate), la matrice «forza» non ha un cancello di regressione (aperto). Rinviato oltre la v2 il 2026-10-07 (D-P25)."
+     "motivo": "P3-C e INT-4 (2026-10-07, matrice «forza», criteri 1.7, contro origin/main): la tirata alta in piu (EQ-01) prende tempo ai curl e il taglio per il tempo, dopo il passo della forza, li toglie: FRQ-01:bicipiti 11,49% -> 14,93% (177 -> 198 programmi), DIR-01:polpacci 4,45% -> 5,41% (45 -> 55), VOL-02:schiena 18,78% -> 19,39% (213 -> 218), FRQ-01:femorali 2,01% -> 2,44%, VOL-01:petto 4,14% -> 4,54%: nessuno supera 0,5 punti sulla standard (0 peggiorate), la matrice «forza» non ha un cancello di regressione (aperto). Rinviato oltre la v2 il 2026-10-07 (D-P25). INT-4b (m10): la revisione indipendente la giudica accettabile (non riguarda la sicurezza, dichiarata); manca il cancello della matrice forza."
     },
     "Stacco in Deficit come variante «leggera» il giorno dello squat pesante": {
      "responsabile": "nessuno (decisione di prodotto: il punto debole «stacco da terra»)",
@@ -1277,7 +1277,7 @@
     "Doppia progressione e il giorno pesante della Forza": {
      "responsabile": "nessuno (la doppia progressione di sempre: caricoProssimoBase)",
      "scade": "oltre-v2",
-     "motivo": "P3-C (2026-10-07): la doppia progressione fa salire le ripetizioni oltre il bersaglio prima di alzare il peso (pesante 4x5, leggero 2x7) e con FRZ-03 spenta o varianti non ammesse alla prima settimana il pesante puo eguagliare il medio (ALG-05 converte per difetto sulla griglia); dalla seconda settimana l ordine e stretto. Le percentuali di un massimale di lavoro e gli AMRAP (FRZ-06..10) restano oltre la v2. Rinviato oltre la v2 il 2026-10-07 (D-P25)."
+     "motivo": "P3-C (2026-10-07): la doppia progressione fa salire le ripetizioni oltre il bersaglio prima di alzare il peso (pesante 4x5, leggero 2x7) e con FRZ-03 spenta o varianti non ammesse alla prima settimana il pesante puo eguagliare il medio (ALG-05 converte per difetto sulla griglia); dalla seconda settimana l ordine e stretto. Le percentuali di un massimale di lavoro e gli AMRAP (FRZ-06..10) restano oltre la v2. Rinviato oltre la v2 il 2026-10-07 (D-P25). INT-4b (m8): alla settimana 1, con la barra vuota (20 kg: donne intermedie, 12 simulazioni su 108) i tre giorni della panca coincidono a 20 kg: documentato nella riga di FRZ-11."
     },
     "Over 65: esercizi da favorire (ETA-65)": {
      "responsabile": "W5 (punteggio della scelta in motore.js, di P4-F) o oltre la v2",
@@ -1394,6 +1394,31 @@
      "responsabile": "W5-T2 (la scheda Oggi: un azione per applicare il consiglio)",
      "scade": "onda-5",
      "motivo": "INT-4 (2026-10-07): non fatto (interfaccia con la sua prova in browser). INT-3b (2026-10-07): CST-09 dice «questa settimana riposa o fai solo camminate» ma la scheda Oggi (`renderOggi`) e la seduta propongono comunque la seduta piena e non c'e un'azione per applicare il co"
+    },
+    "M1 (revisione dell onda 4): con un RIR fisso il peso spesso non sale in 12 settimane (minorenni, over 65, PAR-Q positivo, gravidanza)": {
+     "responsabile": "W5 (carichi: ripresa dopo lo scarico e doppia progressione; decide il proprietario, serve un agente piu forte)",
+     "scade": "onda-5",
+     "motivo": "INT-4b (2026-10-07, revisione indipendente dell onda 4, 1.008 simulazioni da 12 settimane, RPE sul bersaglio): coppie esercizio-bersaglio degli intermedi v2 che non salgono mai (escluso il tetto del manubrio): minorenni 84-89%, over 65 36-39%, adulti con PAR-Q 37%, gravidanza 11%; avanzati, programmi v1 e adulti senza PAR-Q 0%; circa il 5% finisce sotto il carico di partenza (esempio over 66: Lat Machine 40 -> 37,5 -> 35 kg). Identico su origin/main: non e una regressione dell onda 4, ma la scansione citata prima copriva solo adulti di 30 anni senza PAR-Q. Causa: senza la rampa del RIR (ALG-05 non ricalcola mai) il peso sale solo con la doppia progressione, che chiede 4 sedute (tre per le ripetizioni da 8 a 10, una per il peso) in un blocco di 3 settimane di lavoro; dopo lo scarico si riparte dal -5% della ripresa prudente (MES-06) e dalle ripetizioni dello scarico (m3). Prototipo non applicato (INT-4b): tenere le ripetizioni dell ultima seduta di lavoro dopo lo scarico toglie il calo (40 -> 40 invece di 40 -> 37,5 -> 35) ma non da nessuna salita netta, perche il -5% della ripresa cancella il passo guadagnato a ogni blocco. Per far salire il peso serve una decisione sul -5% della ripresa per chi e prudente per eta o PAR-Q (una convenzione di MES-06, non una prova) o sulla lunghezza del blocco: non e piccola e cambia i carichi di tutti i prudenti."
+    },
+    "m1 (revisione dell onda 4): con 1 seduta a settimana una seduta saltata e una pausa vera (CST-01, CST-02, CAR-04)": {
+     "responsabile": "W5 (soglia di pausa per chi fa una seduta a settimana: da confermare dal proprietario)",
+     "scade": "onda-5",
+     "motivo": "INT-4b (2026-10-07): `giorniNulla()` vale 13 con 1 seduta a settimana: 7 giorni tra due sedute sono normali ma una seduta saltata (14 giorni) e una pausa vera: il blocco riparte dalla prima settimana, il carico scende del 10% (sopra i 65 anni, con i giorni doppi, 14 giorni valgono 28 e danno -20%, da 15 giorni -30%) e le serie del 25% (CST-02). Documentato in mappa (CST-01) e in D-P25; la soglia `pausaPerFrequenza` e «Convenzione»."
+    },
+    "m5 (revisione dell onda 4): la gravidanza dichiarata solo nel PAR-Q lascia creatina, proteine e kcal": {
+     "responsabile": "W5 (onboarding.js e repertorio.js)",
+     "scade": "onda-5",
+     "motivo": "INT-4b (2026-10-07): con il PAR-Q positivo per la gravidanza (senza la bandiera di Opzioni) restano la creatina «sicura ed efficace», i grammi di proteine e le kcal (`repertorio.js` ~349-353, `peso.js`); l allenamento e gia prudente. Il momento «bambino» (`metodi-momenti.js`) non propone la bandiera e applica volume x0,6 e +1 RIR per 12 settimane. Proposta: per `parq` niente creatina ne deficit e alle donne con il PAR-Q positivo chiedere la bandiera."
+    },
+    "m6 (revisione dell onda 4): SAF-02 a 0 e una ridefinizione del criterio, non una riduzione dell esposizione": {
+     "responsabile": "W5 (REC-04 completa: livelli verde/giallo/rosso)",
+     "scade": "onda-5",
+     "motivo": "INT-4b (2026-10-07): i programmi con un esercizio da usare con cautela sono 6.695 (31,6% pesata) prima e dopo, sulla standard, e 1.119 sulla rapida: il criterio 1.7 conta solo i programmi senza la nota di REC-04, quindi SAF-02 -> 0 dice che la scheda lo dichiara, non che l esposizione e calata. Oltre-v2 non vale per la sicurezza."
+    },
+    "m7 (revisione dell onda 4): il tetto cumulativo del cancello non e controllato (criteri 1.7 contro un riferimento a 1.6)": {
+     "responsabile": "INT-5 (rigenerare il riferimento cumulativo con il collaudo 1.7)",
+     "scade": "onda-5",
+     "motivo": "INT-4b (2026-10-07): il cancello avvisa «tetto cumulativo non controllato» perche il riferimento (coach-v2-onda-2d, origin/main 231a8f9) e a criteri 1.6 e il collaudo e a 1.7; la regressione contro l onda prima (tolleranza 0,5, zero per SAF-*) invece e controllata. SAF-05 sugli over 65 (113 programmi su 21.600) si vede solo sulla matrice completa."
     }
    },
    "responsabili": {
