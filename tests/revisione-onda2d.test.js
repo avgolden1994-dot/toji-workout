@@ -312,7 +312,11 @@ test('M7: con un fastidio dichiarato nessun isolamento che carica quella zona va
     { goals: ['ricomposizione'], level: 'avanzato', days: 4, minutes: 60, luogo: 'palestra', fastidi: ['ginocchia'], seme: 'f388' },
     { goals: ['ricomposizione'], level: 'avanzato', days: 4, minutes: 90, luogo: 'palestra', fastidi: ['ginocchia'], seme: 'f412' },
     { goals: ['massa'], level: 'avanzato', days: 5, minutes: 75, luogo: 'palestra', fastidi: ['spalle'], seme: 'sp1' },
-    { goals: ['massa'], level: 'intermedio', days: 4, minutes: 60, luogo: 'palestra', fastidi: ['spalle', 'schiena'], seme: 'sp2' }
+    { goals: ['massa'], level: 'intermedio', days: 4, minutes: 60, luogo: 'palestra', fastidi: ['spalle', 'schiena'], seme: 'sp2' },
+    /* P4-F (REC-04): con le eccezioni per le ginocchia (Squat su Scatola, Step-up Basso, Sit-to-Stand) il sorteggio dei posti cambia: f388 non ha piu la Leg Extension e f412 ne ha 3 serie, e i quattro
+       isolamenti della prova scendevano a 3 («la prova non e vuota»). Due profili in piu con le ginocchia dolenti, avanzati, che la Leg Extension a 4 serie la hanno: il tetto di 4 si prova ancora */
+    { goals: ['massa'], level: 'avanzato', days: 4, minutes: 90, luogo: 'palestra', fastidi: ['ginocchia'], seme: 'm7-1' },
+    { goals: ['massa'], level: 'avanzato', days: 4, minutes: 90, luogo: 'palestra', fastidi: ['ginocchia'], seme: 'm7-2' }
   ].map(p => Object.assign({}, base, p));
   let isolamenti = 0;
   profili.forEach(p => { const serie = a.json('__f(' + JSON.stringify(p) + ')'); isolamenti += serie.length; assert.ok(serie.every(n => n <= 4), JSON.stringify(p.goals) + ' ' + p.level + ' ' + p.fastidi + ': isolamenti che caricano la zona a ' + serie.join(', ') + ' serie'); });
