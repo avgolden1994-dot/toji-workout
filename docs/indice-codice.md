@@ -387,7 +387,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 89. `js/coach/carichi/attrezzi.js` — Griglia dei pesi per attrezzo e manubrio più pesante dichiarato nella progressione (ALG-06, CAS-01)
 
-`sogliaProgressione()` · `voceAttrezzo()` · `passoAttrezzo()` · `arrotondaAttrezzo()` · `tettoManubriDi()` · `fmtPeso` · `fraseGrigliaPiuVicino` · `fraseTettoRipetizioni` · `fraseTettoCima` · `fraseTettoSali` · `fraseTettoNonOltre` · `alTettoDeiManubri()` · `faseGrigliaETetto()`
+`sogliaProgressione()` · `voceAttrezzo()` · `passoAttrezzo()` · `arrotondaAttrezzo()` · `esercizioConManubri()` · `tettoManubriDi()` · `fmtPeso` · `fraseGrigliaPiuVicino` · `fraseTettoRipetizioni` · `fraseTettoCima` · `fraseTettoSali` · `fraseTettoNonOltre` · `alTettoDeiManubri()` · `faseGrigliaETetto()`
 
 ### 90. `js/coach/carichi/calibrazione.js` — Calibrazione rapida dei carichi stimati (CAR-18, CAR-19)
 
@@ -427,7 +427,7 @@ _solo istruzioni, nessun nome pubblico_
 
 ### 99. `js/coach/regole-ricerca.js` — Coach 2: regole nuove dalla ricerca
 
-`TECNICHE` · `profiloCoach()` · `BIL_PESANTI` · `tipoCarico()` · `RIR_TIPO` · `MES_RIR` · `primaSettimanaBlocco()` · `inDeficitCalorico()` · `pisoRirEsigenza()` · `pavimentoRirMinorenni()` · `pavimentoRirPrincipiante()` · `rirBersaglio()` · `rirDalPiano()` · `rirBersaglioBase()` · `rirBersaglioPerLivello()` · `storicoProntezza()` · `rpeBersaglio()` · `testoRir()` · `PARAM_ANALISI` · `faseDelGiorno()` · `settimanaDellaSeduta()` · `inScarico()` · `sessioniConData()` · `ripresaDopoScarico()` · `rientroDopoPausa()` · `fmtKg` · `obiettivoForza()` · `progressioneV2()` · `grigliaAttiva()` · `pesoGriglia()` · `caricoInGriglia()` · `caricoSalito()` · `caricoSceso()` · `notaPesoVicino()` · `caricoDiLavoro()` · `esitoDiLavoro()` · `FRASE_PESO_CAMBIATO` · `FRASE_SCOPO_SCARICO` · `salitaDaRpe()` · `caricoProssimoBase()` · `window.caricoProssimo()` · `caricoProgressione()` · `massimaleRecente()` · `fraseRicalcolo` · `ricalcoloDalMassimale()` · `window.applicaCaricoProgressivo()` · `carichiDelGiorno()` · `imparaDallaSeduta()` · `contaStalli()`
+`TECNICHE` · `profiloCoach()` · `BIL_PESANTI` · `tipoCarico()` · `RIR_TIPO` · `MES_RIR` · `primaSettimanaBlocco()` · `inDeficitCalorico()` · `pisoRirEsigenza()` · `pavimentoRirMinorenni()` · `pavimentoRirPrincipiante()` · `rirBersaglio()` · `rirDalPiano()` · `rirBersaglioBase()` · `rirBersaglioPerLivello()` · `storicoProntezza()` · `rpeBersaglio()` · `testoRir()` · `PARAM_ANALISI` · `faseDelGiorno()` · `settimanaDellaSeduta()` · `inScarico()` · `sessioniConData()` · `ripresaDopoScarico()` · `rientroDopoPausa()` · `fmtKg` · `obiettivoForza()` · `progressioneV2()` · `grigliaAttiva()` · `pesoGriglia()` · `caricoInGriglia()` · `caricoSalito()` · `caricoSceso()` · `notaPesoVicino()` · `caricoDiLavoro()` · `esitoDiLavoro()` · `FRASE_PESO_CAMBIATO` · `FRASE_SCOPO_SCARICO` · `salitaDaRpe()` · `caricoProssimoBase()` · `window.caricoProssimo()` · `sedutaStessaBase()` · `caricoProgressione()` · `massimaleRecente()` · `fraseRicalcolo` · `ricalcoloDalMassimale()` · `window.applicaCaricoProgressivo()` · `carichiDelGiorno()` · `imparaDallaSeduta()` · `contaStalli()`
 
 ### 100. `js/coach/regole-nuove.js` — Regole del coach aggiunte dalla ricerca (RIC-01..05)
 

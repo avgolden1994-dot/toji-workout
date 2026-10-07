@@ -353,7 +353,7 @@ test('c.voce: applicaCaricoProgressivo passa alla catena la voce del piano (bers
 /* ============================================================================================================
    Atleta virtuale: 500 donne e 500 uomini x 6 esposizioni, programmi v1 e v2, meta a casa con i manubri dichiarati
    ============================================================================================================ */
-test('atleta virtuale: 0 carichi fuori griglia e 0 sopra il manubrio piu pesante (500 donne e 500 uomini x 6 esposizioni, programmi v1 e v2, meta con i manubri dichiarati)', { timeout: 900000 }, () => {
+test('atleta virtuale: 0 carichi fuori griglia e 0 sopra il manubrio piu pesante sui 6 esercizi di CONTROLLO, a ripetizioni fisse (500 donne e 500 uomini x 6 esposizioni, programmi v1 e v2, meta con i manubri dichiarati; su TUTTI gli esercizi dei programmi: tests/revisione-onda3a.test.js)', { timeout: 900000 }, () => {
   const app = conBilanciaV2(caricaApp({ ora: ORA }));
   const N = Number(process.env.ATLETI) || 500;
   const TETTI = [8, 10, 12, 12.5, 14, 16, 20];

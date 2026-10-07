@@ -578,7 +578,7 @@
    "riscritti": [],
    "manuale": [
     "collaudo non peggiore di INT-2 su nessun criterio: npm run cancello -- <json-onda-3> onda-3 --contro <json-onda-2>",
-    "atleta virtuale rifatto con la bilancia v2 e lo scarico di W3-T5 (W3-T6 per la modalita Forza); 0 carichi fuori griglia; golden v1 con sole differenze elencate",
+    "atleta virtuale rifatto con la bilancia v2 e lo scarico di W3-T5 (W3-T6 per la modalita Forza); 0 carichi fuori griglia sui 6 esercizi di CONTROLLO (ripetizioni fisse) e, dalla revisione di INT-3b, su TUTTI gli esercizi con carico di 8 programmi x 12 settimane (tests/revisione-onda3a.test.js); golden v1 con sole differenze elencate",
     "regole bloccate ancora spente (cancello E.0 punto 0)"
    ],
    "aperti": {
@@ -820,6 +820,21 @@
      "responsabile": "libreria degli esercizi a corpo libero (esercizi nuovi: tra i «da non fare» del piano snello)",
      "scade": "oltre-v2",
      "motivo": "INT-3a (2026-10-07, istantanea onda-3a: commit 5c50e95, standard 10.800 profili, criteri 1.6, contro onda-2g rigenerata con lo stesso collaudo): MIS-01:deltoidi_laterali 440 programmi (2,03% pesata; 441 a 2g), tutti a corpo libero, livello intermedio o avanzato, 3-6 giorni: nessun esercizio per il deltoide laterale senza carichi ne elastici (lacuna MOD-12 «deltoidi laterali (corpo)»); inoltre MIS-01:bicipiti 28, core 16, polpacci 4, deltoidi posteriori 2, femorali 1 (stessi numeri di 2g). MIS-01 era dichiarato a onda-2b con le sole soglie di onda-0; la soglia 0 di onda-2 e in forza dall'onda-3 e il criterio esce dai dichiarati (`dichiara.rimossi`). Rinviato oltre la v2 il 2026-10-07 (INT-3a, D-P24): nessun pacchetto delle onde 3-5 del piano snello (bozza, da confermare dal responsabile di prodotto) lo prende; si vede in ogni corsa del cancello e non lo ferma. "
+    },
+    "gravi_pesata <= 1% (obiettivo assoluto di onda-2, non piu dichiarato)": {
+     "responsabile": "FRQ-01 e FRQ-02 (INT-4); MIS-01 e DUR-01 oltre la v2",
+     "scade": "onda-4",
+     "motivo": "INT-3b (2026-10-07, revisione indipendente di 3a): `gravi_pesata` e uscito dai criteri dichiarati con `rimossi` a INT-3a (1,74% standard, 412 programmi contro il 2,21% di 2g; rapida 1,11% contro 3,32%) e il controllo di regressione resta (nessuna classe peggiora), ma l'obiettivo assoluto <= 1% di onda-2 non e piu in forza da nessuna parte: resta scritto qui perche si veda in ogni corsa. Restano FRQ-01 (bicipiti 813, tricipiti 765, petto 309, femorali 291, glutei 130, spalle 123, quadricipiti 7), MIS-01 (deltoidi laterali 440 a corpo libero, bicipiti 28, core 16, polpacci 4) e DUR-01 (17 programmi). La correzione dei carichi di INT-3b non tocca il generatore e non cambia questi numeri."
+    },
+    "m3 (revisione di 3a): dopo lo scarico la doppia progressione riparte dalle ripetizioni dello scarico": {
+     "responsabile": "P3-A seguito (bilancia: la ripresa dopo lo scarico), onda 4",
+     "scade": "onda-4",
+     "motivo": "INT-3b (2026-10-07): verificato con una storia di 12 settimane (principiante F, 3 giorni, seme pr1, RPE sul bersaglio): il Leg Curl arriva a 15 ripetizioni a 17,5 kg alla settimana 7, la settimana di scarico (8) lo porta a 12 ripetizioni con lo stesso peso e alla settimana 9 riparte da 13 («Doppia progressione: una ripetizione in piu (13 su 15)»): due settimane per tornare alla cima del range a ogni blocco. Non e una regressione di 3a e la correzione giusta non e piccola: dopo uno scarico riuscito il peso resta e le ripetizioni dovrebbero ripartire da quelle dell'ultima seduta di lavoro, ma senza salire di peso subito (MES-05, «niente ripartire piu forte»): serve decidere cosa fa la ripresa nel ramo dell'isolamento (ripetizioni della seduta di riferimento, una in meno come ripresa o il bersaglio) e una prova per il principiante, l'intermedio e l'avanzato."
+    },
+    "m5 (revisione di 3a): CST-09 non si collega al piano, Oggi e la seduta propongono la seduta piena": {
+     "responsabile": "INT-3b / onda 4 (CST-09 e la scheda Oggi: un'azione per applicare il consiglio)",
+     "scade": "onda-4",
+     "motivo": "INT-3b (2026-10-07): CST-09 dice «questa settimana riposa o fai solo camminate» ma la scheda Oggi (`renderOggi`) e la seduta propongono comunque la seduta piena e non c'e un'azione per applicare il consiglio (nessun «riposa oggi» che saltasse la seduta senza perdere il piano). Non e un difetto dei carichi e non si chiude in INT-3b (economia di utilizzo: una correzione di interfaccia con la sua prova in browser); lo prende l'onda 4 (sicurezza e recupero) con il suo compito dell'interfaccia."
     }
    },
    "dichiara": {
