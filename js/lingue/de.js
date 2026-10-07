@@ -4240,5 +4240,6 @@ window.I18N["de"] = {
 "Gravidanza o parto recente": "Schwangerschaft oder kürzliche Geburt",
 "Il coach resta in modalità prudente": "Der Coach bleibt im vorsichtigen Modus",
 "Parlane con l’ostetrica o con il medico: sono loro a dirti come allenarti adesso. Il coach resta in modalità prudente: niente serie al limite, niente tecniche intense e carichi che salgono piano. Non è un parere medico.": "Sprich mit deiner Hebamme oder deiner Ärztin bzw. deinem Arzt: sie sagen dir, wie du jetzt trainieren kannst. Der Coach bleibt im vorsichtigen Modus: keine Sätze bis ans Limit, keine intensiven Techniken und Gewichte, die langsam steigen. Das ist keine ärztliche Beratung.",
-"Con la gravidanza o un parto recente la modalità prudente resta accesa: se è cambiato qualcosa, togli prima «Gravidanza o parto recente».": "Bei einer Schwangerschaft oder einer kürzlichen Geburt bleibt der vorsichtige Modus an: wenn sich etwas geändert hat, schalte zuerst «Schwangerschaft oder kürzliche Geburt» aus."
+"Con la gravidanza o un parto recente la modalità prudente resta accesa: se è cambiato qualcosa, togli prima «Gravidanza o parto recente».": "Bei einer Schwangerschaft oder einer kürzlichen Geburt bleibt der vorsichtige Modus an: wenn sich etwas geändert hat, schalte zuerst «Schwangerschaft oder kürzliche Geburt» aus.",
+"In dimagrimento il coach tiene i carichi.": "Beim Fettabbau hält der Coach die Gewichte."
 };

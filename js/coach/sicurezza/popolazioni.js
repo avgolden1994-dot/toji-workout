@@ -193,7 +193,7 @@ function settimaneFermePerPausa(p) {
       const G = giorniTra(prec, d);
       let w = wCal;
       if (G > P.ferma) w = Math.min(wCal, primaSettimanaDelBlocco(p, wPrec));
-      else if (G > nulla) w = Math.min(wCal, wPrec);
+      else if (G > nulla && p.fasi[wPrec - 1] !== 'scarico') w = Math.min(wCal, wPrec);   /* INT-4b (m2): una pausa breve dopo una seduta della settimana di scarico non la fa rifare: lo scarico e gia riposo */
       ferme += wCal - w;
       return w;
     };

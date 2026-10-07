@@ -361,3 +361,34 @@ function rientroDopoScarico(eta, pausa) {
   if (eta === 30) assert.ok(pesi[pesi.length - 1] >= lavoro * 0.9 - 1e-9, 'a 30 anni in tre sedute si e a 0,9 del carico di prima o piu: ' + pesi.join(' ') + ' contro ' + lavoro);
   assert.ok(conRisalita.length >= 1, 'la risalita c e: ' + JSON.stringify(dopo));
 }));
+
+/* ============================================================ INT-4b, m4: Opzioni › Il coach non dice «0,5-1% a settimana» ai tre gruppi protetti */
+test('m4. la pagina «Il coach» non mostra il ritmo di calo (0,5-1% a settimana) a minorenni, over 65 e gravidanza; agli adulti sì, come prima', () => {
+  const pagina = p => { const a = caricaApp({ ora: '2026-10-05T12:00:00' }); a.profilo(Object.assign({ level: 'intermedio', sex: 'F', weight: 60, goals: ['dimagrimento'], fase: 'deficit' }, p)); return a.g('paginaCoach(getProfile())'); };
+  tuttiIGruppi((g, p) => { const h = pagina(p); assert.ok(!/0,5-1%|a settimana/.test(h.replace(/<[^>]*>/g, '')) || !/peso scenda/.test(h), g + ' ' + JSON.stringify(p) + ': ' + (h.match(/In dimagrimento[^<]*/) || [''])[0]); assert.ok(/In dimagrimento il coach tiene i carichi/.test(h), g + ': la frase senza ritmo c e'); });
+  ADULTI.forEach(p => assert.ok(/peso scenda dello 0,5-1% a settimana/.test(pagina(p)), JSON.stringify(p)));
+  ['en', 'es', 'de'].forEach(l => assert.ok(dizionario(l)['In dimagrimento il coach tiene i carichi.'], l + ': manca la traduzione'));
+});
+
+/* ============================================================ INT-4b, m2: una pausa durante lo scarico non fa rifare la settimana di scarico */
+test('m2. una pausa di 7-13 giorni nella settimana di scarico non la fa rifare: dopo si va avanti (3 e 2 sedute a settimana)', () => {
+  [3, 2].forEach(d => {
+    const { a } = telefono({ d: { level: 'intermedio', days: d, minutes: 60 } });
+    const nomi = a.json('DAYS'), giorni = a.giorniAllenamento();
+    const wS = a.json('getProgramma().fasi').indexOf('scarico') + 1;
+    assert.ok(wS >= 2);
+    for (let n = 1; n < wS; n++) giorni.forEach(g => { vaiA(a, n, nomi.indexOf(g)); vivi(a, g, { rpe: 'bersaglio' }); });
+    vaiA(a, wS, nomi.indexOf(giorni[0])); vivi(a, giorni[0], { rpe: 'bersaglio' });   /* solo la prima seduta dello scarico, poi la pausa */
+    vaiA(a, wS + 1, nomi.indexOf(giorni[0]));   /* 7 giorni dopo */
+    const sett = a.json('settimanaProgramma()');
+    assert.strictEqual(sett.numero, wS + 1, d + ' a settimana: la settimana dopo lo scarico e la ' + (wS + 1) + ', non una seconda ' + wS + ' (' + sett.numero + ' ' + sett.fase + ')');
+    assert.notStrictEqual(sett.fase, 'scarico', 'non si rifa lo scarico');
+  });
+});
+test('m2. una pausa di 7-13 giorni FUORI dallo scarico ferma ancora la settimana (la rampa non avanza), come prima', () => {
+  const { a } = telefono({ d: { level: 'intermedio', days: 3, minutes: 60 } });
+  const nomi = a.json('DAYS'), giorni = a.giorniAllenamento();
+  for (let n = 1; n <= 2; n++) giorni.forEach(g => { vaiA(a, n, nomi.indexOf(g)); vivi(a, g, { rpe: 'bersaglio' }); });
+  vaiA(a, 3, nomi.indexOf(giorni[giorni.length - 1]) + 1);   /* 9 giorni dopo l ultima seduta della settimana 2 */
+  assert.strictEqual(a.json('settimanaProgramma()').numero, 2, 'la settimana 2 si rifa');
+});

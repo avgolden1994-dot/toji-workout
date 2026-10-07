@@ -14,7 +14,7 @@ function paginaCoach(p) {
   let h = setGroup('Livello', '<div class="fb-chips sr-chips-pad">' + livelli.map(([k, t]) => chipCoach(p.level === k, "setCoach('level','" + k + "')", t)).join('') + '</div>',
     l ? '<span>Dal tuo storico:</span> ' + l.livello + ' \u2014 ' + l.testo : 'Il livello dipende da quanto e come ti alleni: dopo qualche settimana il coach lo verifica sul tuo storico.');
   h += setGroup('Fase', '<div class="fb-chips sr-chips-pad">' + FASI_CORPO.map(([k, t]) => chipCoach(p.fase === k, "setCoach('fase','" + k + "')", t)).join('') + '</div>',
-    'In dimagrimento il coach tiene i carichi e controlla che il peso scenda dello 0,5-1% a settimana.');
+    guardiaNutrizione({}, p) ? 'In dimagrimento il coach tiene i carichi.' : 'In dimagrimento il coach tiene i carichi e controlla che il peso scenda dello 0,5-1% a settimana.');   /* INT-4b (m4): minorenni, over 65 e gravidanza non ricevono il ritmo di calo (NUT-01) */
   h += setGroup('Su di te',
     '<label class="sr-row sr-input"><span class="sr-name">Peso corporeo (kg)</span><input type="number" inputmode="decimal" value="' + (p.weight || '') + '" onchange="setCoach(\'weight\', Number(this.value) || null)"></label>' +
     '<label class="sr-row sr-input"><span class="sr-name">Età</span><input type="number" inputmode="numeric" min="' + PARAM_ETA.min + '" max="' + PARAM_ETA.max + '" step="1" value="' + (p.age || '') + '" onchange="setCoach(\'age\', Number(this.value) || null)"></label>' +
