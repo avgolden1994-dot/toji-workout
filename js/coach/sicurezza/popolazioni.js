@@ -152,9 +152,9 @@ function primaSettimanaDelBlocco(p, w) {
   return i + 1;
 }
 /* CST-01: quante settimane del calendario non contano perché c'è stata una pausa (si tolgono dalla settimana di settimanaProgramma). Dallo storico, seduta dopo seduta
-   dall'inizio del programma (che vale come una seduta della settimana 1) fino a oggi: per ogni intervallo di G giorni veri senza sedute, con G <= `nulla` niente, fino a `ferma`
-   la settimana resta quella dell'ultima seduta (la rampa non avanza), oltre si riparte dalla prima settimana del blocco. Solo programmi v2, con il consenso e la regola accesa;
-   la settimana non va mai sotto 1 e mai oltre quella del calendario */
+   (la prima conta dall'ultima seduta prima dell'inizio del programma, se c'è) fino a oggi: per ogni intervallo di G giorni veri senza sedute, con G <= `nulla` niente, fino a
+   `ferma` la settimana resta quella dell'ultima seduta (la rampa non avanza), oltre si riparte dalla prima settimana del blocco. Chi non ha mai fatto una seduta segue il
+   calendario, come prima (non c'è una pausa da misurare). Solo programmi v2, con il consenso e la regola accesa; la settimana non va mai sotto 1 e mai oltre quella del calendario */
 function settimaneFermePerPausa(p) {
   const P = sogliaPopolazione('pausa');
   if (!P || !p || !p.inizio || !programmaV2Rientro(p) || !Array.isArray(p.fasi) || typeof sedutePassate !== 'function') return 0;
@@ -162,10 +162,13 @@ function settimaneFermePerPausa(p) {
   return ricordaRientro('ferme', p.inizio + '|' + p.fasi.join(','), () => {
     const inizio = daYmd(p.inizio), oggi = new Date();
     const settCal = d => Math.floor(giorniTra(inizio, lunediDi(d)) / 7) + 1;
-    const date = sedutePassate().map(x => x.d).filter(d => giorniTra(inizio, d) >= 0).reverse();   /* dalla piu vecchia */
-    let ferme = 0, prec = inizio, wPrec = 1;
+    const tutte = sedutePassate().map(x => x.d);   /* dalla piu recente */
+    const date = tutte.filter(d => giorniTra(inizio, d) >= 0).reverse();   /* le sedute del programma, dalla piu vecchia */
+    let ferme = 0, prec = tutte.find(d => giorniTra(inizio, d) < 0) || null, wPrec = 1;
     const intervallo = d => {
-      const G = giorniTra(prec, d), wCal = Math.max(1, settCal(d) - ferme);
+      const wCal = Math.max(1, settCal(d) - ferme);
+      if (!prec) return wCal;
+      const G = giorniTra(prec, d);
       let w = wCal;
       if (G > P.ferma) w = Math.min(wCal, primaSettimanaDelBlocco(p, wPrec));
       else if (G > P.nulla) w = Math.min(wCal, wPrec);

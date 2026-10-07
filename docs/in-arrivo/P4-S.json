@@ -41,6 +41,11 @@
    "es": "después de la pausa se vuelve a subir hacia la carga de antes (# kg), alrededor de un #% por sesión",
    "de": "nach der Pause geht es zurück zum vorherigen Gewicht (# kg), um etwa #% pro Einheit"
   },
+  "rientro dopo # giorni": {
+   "en": "back after # days",
+   "es": "vuelta tras # días",
+   "de": "Rückkehr nach # Tagen"
+  },
   "meno serie su tutto il piano, poi si torna al solito": {
    "en": "fewer sets across the whole plan, then back to normal",
    "es": "menos series en todo el plan, luego se vuelve a lo de siempre",

@@ -204,10 +204,12 @@ test('CST-01 (28 giorni o più): nuovo blocco dalla sua prima settimana; carico 
   assert.strictEqual(settimana(tS), 7, 'ultima seduta nella settimana di scarico (6): si riparte dalla 7');
 });
 
-test('CST-01: chi comincia il programma in ritardo parte dalla settimana 1; spenta, senza consenso o con un programma v1 la settimana è quella del calendario', () => {
+test('CST-01: una pausa che comincia prima del programma conta; senza nessuna seduta, spenta, senza consenso o con un programma v1 la settimana è quella del calendario', () => {
   const { a } = telP4S({ d: { level: 'intermedio' }, sett: 3 });
   a.storia([]);
-  assert.strictEqual(a.json('settimanaProgramma()').numero, 1, 'nessuna seduta in due settimane: settimana 1');
+  assert.strictEqual(a.json('settimanaProgramma()').numero, 3, 'nessuna seduta: non c è una pausa da misurare, il calendario (come prima)');
+  a.storia([a.seduta(17, [{ nome: nomeLib(a, 'Chest Press Machine'), serie: serie(4, 100, 10) }])]);
+  assert.strictEqual(a.json('settimanaProgramma()').numero, 1, 'ultima seduta 3 giorni prima dell inizio, poi due settimane senza sedute: si parte dalla settimana 1');
   a.spegni(['CST-01']);
   assert.strictEqual(a.json('settimanaProgramma()').numero, 3, 'CST-01 spenta: il calendario');
   a.riaccendi(); a.consenso(false);
