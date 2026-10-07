@@ -270,3 +270,58 @@ test('e. ogni frase di dolore-mattina.js e delle decisioni dopo la seduta che ma
   assert.ok(/no soy m[ée]dico/i.test(dizionario('es')[k] || ''), 'es');
   assert.ok(/kein arzt/i.test(dizionario('de')[k] || ''), 'de');
 });
+
+/* ============================================================ INT-4b, B1: la bandiera della gravidanza resta quando il profilo si riscrive (nuovo ciclo, «Rifai il programma», questionario rifatto) */
+function conGravidanza() {
+  const app = caricaApp({ ora: '2026-10-05T12:00:00' });
+  app.profilo({ level: 'intermedio', sex: 'donna', age: 31, weight: 64, height: 165, days: 3, minutes: 60, luogo: 'palestra', goals: ['dimagrire'], fastidi: [], sonno: 'bene', attrezzi: 'indifferente', freq: '2', parq: false });
+  app.scrivi('tz_onboarded', '1'); app.scrivi('tz_consenso', 'si');
+  app.g('nuovoCiclo(true)');
+  app.g("setCoach('gravidanza', true)");
+  return app;
+}
+const rifaiQuestionario = (app, risposte) => {
+  const p = app.leggi(app.chiave('PROFILE_KEY'));
+  app.ctx.confirm = () => true; app.ctx.alert = () => {};
+  app.g('restartOnboarding()');
+  app.g('Object.assign(onbData, ' + J(Object.assign({ goals: p.goals, level: p.level, days: p.days, minutes: p.minutes, luogo: p.luogo, sonno: p.sonno, attrezzi: p.attrezzi, freq: p.freq }, risposte || {})) + '); onbStep = ONB_ULTIMO; onbNext()');
+};
+const SOLO_PRUDENTE = out => assert.ok(out.length === 1 && TESTO_PER.gravidanza.test(out[0]), JSON.stringify(out));
+[['nuovo ciclo', app => app.g('nuovoCiclo(true)')], ['«Rifai il programma» con il questionario', app => rifaiQuestionario(app)],
+ ['questionario rifatto con il PAR-Q a «no»', app => rifaiQuestionario(app, { parq: 'no' })]].forEach(([via, fai]) => {
+  test('B1. la bandiera gravidanza e la modalità prudente restano dopo: ' + via + ' (e il testo prudente al posto di proteine, passi e creatina)', () => {
+    const app = conGravidanza();
+    const p0 = app.leggi(app.chiave('PROFILE_KEY'));
+    assert.strictEqual(p0.gravidanza, true); assert.strictEqual(p0.parq, true); assert.strictEqual(p0.parqDaGravidanza, true);
+    fai(app);
+    const p1 = app.leggi(app.chiave('PROFILE_KEY'));
+    assert.strictEqual(p1.gravidanza, true, 'la bandiera resta');
+    assert.strictEqual(p1.parq, true, 'la modalità prudente resta');
+    assert.strictEqual(p1.parqDaGravidanza, true, 'ricorda che la modalità prudente l ha accesa la bandiera: spenta la bandiera torna la risposta di prima');
+    SOLO_PRUDENTE(app.dati(app.chiama('corpoCoach')));
+    assert.ok(app.errori.length === 0, app.errori.join('\n'));
+    /* il programma nuovo e quello di chi e prudente: nessuna tecnica al cedimento, RIR >= 3 */
+    assert.ok(app.json('getProgramma()').prefs !== undefined);
+    assert.ok(app.g('inGravidanza(getProfile())'));
+    /* spenta la bandiera, torna la risposta di prima al questionario */
+    app.g("setCoach('gravidanza', false)");
+    const p2 = app.leggi(app.chiave('PROFILE_KEY'));
+    assert.strictEqual(p2.gravidanza, undefined); assert.strictEqual(p2.parq, false, 'senza bandiera torna il «no» di prima');
+  });
+});
+test('B1. senza la bandiera il profilo si riscrive come prima (nessun campo di gravidanza dal nulla)', () => {
+  const app = caricaApp({ ora: '2026-10-05T12:00:00' });
+  app.profilo({ level: 'intermedio', sex: 'donna', age: 31, weight: 64, height: 165, days: 3, minutes: 60, luogo: 'palestra', goals: ['dimagrire'], fastidi: [], sonno: 'bene', attrezzi: 'indifferente', freq: '2', parq: false });
+  app.scrivi('tz_onboarded', '1'); app.scrivi('tz_consenso', 'si');
+  app.g('nuovoCiclo(true)'); app.g('nuovoCiclo(true)');
+  const p = app.leggi(app.chiave('PROFILE_KEY'));
+  assert.ok(!('gravidanza' in p) && !('parqDaGravidanza' in p) && p.parq === false, JSON.stringify([p.gravidanza, p.parqDaGravidanza, p.parq]));
+});
+test('B1. un backup fatto con la bandiera accesa la riporta (il ripristino non riscrive il profilo)', () => {
+  const app = conGravidanza();
+  const foto = app.dati(app.g('fotografia()'));
+  const altro = caricaApp({ ora: '2026-10-05T12:00:00' });
+  altro.ctx.__foto = altro.g('JSON.parse(' + J(J(foto)) + ')');
+  altro.g('applicaFotografia(__foto, true)');
+  assert.strictEqual(altro.leggi(altro.chiave('PROFILE_KEY')).gravidanza, true);
+});

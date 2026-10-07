@@ -34,6 +34,13 @@ function inGravidanza(profilo) {
   return !!(profilo && profilo.gravidanza === true);
 }
 
+/* INT-4b (B1): il profilo si riscrive da zero (applyGeneratedProgram: nuovo ciclo, «Rifai il programma», questionario rifatto): i campi della gravidanza del profilo di prima vanno riportati, con
+   la modalità prudente accesa (e il ricordo che l'ha accesa la bandiera, perché spenta la bandiera torni la risposta di prima). Senza bandiera: niente, il profilo è quello di sempre */
+function gravidanzaDaRiportare(profPrima) {
+  if (!inGravidanza(profPrima)) return {};
+  return Object.assign({ gravidanza: true, parq: true }, profPrima.parqDaGravidanza ? { parqDaGravidanza: true } : {});
+}
+
 /* B10 (ETA-08 parte a, solo la base): l'over 65 è nella base? Sì nelle prime `settimaneBase` settimane del programma (numero = settimana del programma, 0 o
    assente = non si sa: base), sempre dai `etaSempreBase` anni. Sotto i 65 anni: no */
 function inBaseOver65(eta, numero) {
