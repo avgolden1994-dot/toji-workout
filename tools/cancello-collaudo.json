@@ -831,6 +831,11 @@
      "scade": "onda-4",
      "motivo": "INT-3b (2026-10-07): verificato con una storia di 12 settimane (principiante F, 3 giorni, seme pr1, RPE sul bersaglio): il Leg Curl arriva a 15 ripetizioni a 17,5 kg alla settimana 7, la settimana di scarico (8) lo porta a 12 ripetizioni con lo stesso peso e alla settimana 9 riparte da 13 («Doppia progressione: una ripetizione in piu (13 su 15)»): due settimane per tornare alla cima del range a ogni blocco. Non e una regressione di 3a e la correzione giusta non e piccola: dopo uno scarico riuscito il peso resta e le ripetizioni dovrebbero ripartire da quelle dell'ultima seduta di lavoro, ma senza salire di peso subito (MES-05, «niente ripartire piu forte»): serve decidere cosa fa la ripresa nel ramo dell'isolamento (ripetizioni della seduta di riferimento, una in meno come ripresa o il bersaglio) e una prova per il principiante, l'intermedio e l'avanzato."
     },
+    "N2 (ricontrollo di 3b): con bersagli alterni il giorno pesante resta piu leggero di quello leggero": {
+     "responsabile": "P3-A seguito (bilancia: bersagli alterni), onda 4",
+     "scade": "onda-4",
+     "motivo": "INT-3b (2026-10-07, ricontrollo del revisore, N2): con lo stesso esercizio a due bersagli nella settimana il giorno pesante resta piu leggero di quello leggero per tutto il programma (Affondi Bulgari 9 x 6 contro 14 x 10 e Pull-Through 30 x 6 contro 35 x 10, semi `xintermedio460forzaF` e `xintermedio445forzaF`): ogni bersaglio ha la sua storia (M1) e non c'e un legame tra i due. La correzione indicata (mai sotto l'ultimo carico «ok» del bersaglio piu facile entro 42 giorni) non e piccola: salta fino al +55% in una seduta (9 -> 14 kg), serve un tetto per volta (+10%) o salire per gradi, la scelta di cosa fare con le sedute non complete e una prova per i tre livelli; la causa di fondo e il salto di +5 kg a un carico di 9-10 kg del giorno leggero (incremento delle gambe con i manubri leggeri, c'era gia). Non e una regressione di 3a e non e pericoloso (il giorno pesante e piu leggero del dovuto, non piu pesante). Lo prende l'onda 4."
+    },
     "m5 (revisione di 3a): CST-09 non si collega al piano, Oggi e la seduta propongono la seduta piena": {
      "responsabile": "INT-3b / onda 4 (CST-09 e la scheda Oggi: un'azione per applicare il consiglio)",
      "scade": "onda-4",
