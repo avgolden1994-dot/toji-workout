@@ -31,10 +31,11 @@ function prontezzaRecente() {
   const v = sedutePassate().map(x => x.h.prontezza).filter(x => typeof x === 'number').slice(0, 2);
   return v.length ? v.reduce((t, x) => t + x, 0) / v.length : null;
 }
-/* RIC-05: pausa lunga su tutto il piano. I giorni sono quelli veri, per tutti: oltre i 65 anni non si contano doppi, come per il singolo esercizio (CAR-04). Il registro B20 li
-   voleva doppi, ma 5 giorni di pausa (normali con 2 sedute a settimana) facevano scattare il -10% e il -25% delle serie: deroga del 2026-10-05 finche W4-T2 non porta la catena
-   completa di B20 con le sue soglie (CST-01, CST-02, MES-15). */
+/* RIC-05: pausa lunga su tutto il piano: i giorni veri della pausa, o 0. Programmi v1: 14 giorni veri, per tutti, come prima. CST-02 (W4-T2, P4-S, registro B20): nei programmi
+   v2, con il consenso, la soglia e la stessa ma oltre i 65 anni i giorni di una pausa vera (piu di 6 giorni senza sedute) contano doppi (giorniRientroPiano,
+   sicurezza/popolazioni.js): con il ritmo normale di 2 sedute a settimana non scatta (era la deroga del 2026-10-05). La seconda seduta (-10%) e +1 RIR sono nella fase 90 */
 function rientroPiano() {
+  if (typeof giorniRientroPiano === 'function') return giorniRientroPiano();
   const g = giorniDallUltimaSeduta();
   return g >= 14 ? g : 0;
 }

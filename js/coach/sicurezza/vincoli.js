@@ -14,7 +14,11 @@
    - serieMaxEsercizio: chi inizia e i prudenti fanno al massimo COACH_PARAMETRI.serieMaxPrudente serie per esercizio (CAS-14, femorali, riempimento);
    - gruppiTecniche: le tecniche al cedimento (G2, G2b, G3) mai a chi inizia, ai minorenni, agli over 65 e in modalita prudente (MAV-02, MAV-03:
      Convenzione, prudenza); la superserie antagonista (G1b) vale per tutti. La matrice completa delle tecniche per persona e di W2-T3 (MAV-01).
-   modifiche e rirMin restano vuoti: li riempiono i task che li possiedono (dolore, popolazioni: W4-T1, W4-T2). tettoCarico 1 = nessun tetto.
+   modifiche e rirMin restano vuoti: li riempiono i task che li possiedono (dolore: W4-T1). tettoCarico 1 = nessun tetto.
+   Popolazioni (W4-T2, P4-S): i limiti che dipendono dalla SETTIMANA del programma (la base di 8 settimane degli over 65, il rientro dopo una pausa) non stanno nel programma,
+   che si ripete uguale ogni settimana, ma in sicurezza/popolazioni.js: il pavimento delle ripetizioni in riserva a ogni seduta (pavimentoRirPopolazioni, letto da rirBersaglio),
+   la potenza solo dopo la base (potenzaAmmessaOver65, letto dal cancello delle tecniche: nella generazione e la base) e i tetti della fase 'carico' 90. La gravidanza
+   (inGravidanza, REC-12 a) arriva qui come modalita prudente (chi.parq: la bandiera in Opzioni la tiene accesa), quindi con tutti i vincoli dei prudenti.
    Le fonti e le regole dei singoli numeri sono dove sono sempre state (ricette.js, tecniche.js, parametri.js): qui si decide solo CHI e vincolato.
    ============================================================ */
 function vincoliSicurezza(brief) {
