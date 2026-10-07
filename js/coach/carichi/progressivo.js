@@ -67,8 +67,11 @@ function ultimeSessioni(nome, n, opz) { return sedutePerEsercizio(nome, n, opz).
    se e di meno di GIORNI_CARICO_RIFERIMENTO giorni (0 se non c e). Lo scarico si calcola su questo e mai sul carico di un altro
    scarico (60 → 54 → 48,5 → 43,5 kg), e dopo lo scarico si riparte da qui. */
 const GIORNI_CARICO_RIFERIMENTO = 28;
-function caricoRiferimento(nome) {
-  const t = sedutePerEsercizio(nome, 6, { senzaScarico: true }).find(x => (x.ex.sets || []).some(s => s.done));
+function caricoRiferimento(nome, base) {
+  /* base (ALG-05, stesso esercizio con ripetizioni diverse nella settimana: revisione di 3a, M1): il bersaglio di oggi; il riferimento e l ultima seduta di lavoro CON LO STESSO
+     bersaglio (a 10 ripetizioni con 8 kg non dice cosa fare con 10 kg a 6), altrimenti l ultima seduta di lavoro */
+  const fatte = sedutePerEsercizio(nome, 12, { senzaScarico: true }).filter(x => (x.ex.sets || []).some(s => s.done));
+  const t = (Number(base) > 0 && fatte.find(x => Math.abs(Number((x.ex.obiettivo || {}).base) - Number(base)) < 1e-9)) || fatte[0];
   if (!t) return 0;
   const d = dataSessione(t.h);
   if (d && giorniTra(d, new Date()) > GIORNI_CARICO_RIFERIMENTO) return 0;

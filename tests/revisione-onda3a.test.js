@@ -155,3 +155,37 @@ test('M3: la nota «il bilanciere vuoto pesa 20 kg» compare solo per il bilanci
   const barra = carico(app, PANCA, 13, 8, 3);
   assert.match(barra.motivo, /Il bilanciere vuoto pesa 20 kg/, 'per il bilanciere la nota resta: ' + barra.motivo);
 });
+
+/* ============================================================================================================
+   M1 · lo stesso esercizio con ripetizioni diverse nella settimana: il carico non scende a ogni seduta
+   ============================================================================================================ */
+const SEMI_M1 = [
+  ['intermedia, 4 giorni, 60 minuti, forza (xintermedio460forzaF)', { level: 'intermedio', days: 4, minutes: 60, goals: ['forza'], sex: 'F', age: 30, seme: 'xintermedio460forzaF' }],
+  ['intermedio, 3 giorni, 90 minuti, massa (xintermedio390massaM)', { level: 'intermedio', days: 3, minutes: 90, goals: ['massa'], sex: 'M', age: 30, seme: 'xintermedio390massaM' }]
+];
+SEMI_M1.forEach(([nome, d]) => [null, 'bersaglio'].forEach(rpe => {
+  test('M1: ' + nome + ', 11 settimane con tutte le serie complete' + (rpe ? ' e RPE sul bersaglio' : ' senza RPE') + ': per ogni bersaglio di ripetizioni il carico non scende senza uno scarico di mezzo', { timeout: 120000 }, () => {
+    const { tab } = storia({ d: d }, 11, rpe);
+    const alterni = Object.keys(tab).filter(n => new Set(tab[n].map(s => s.base)).size > 1);
+    assert.ok(alterni.length >= 1, 'il programma ha un esercizio con ripetizioni diverse nella settimana: ' + alterni.join(', '));
+    assert.deepStrictEqual(cali(tab), []);
+  });
+}));
+
+test('M1: martedi 6 ripetizioni a 10 kg e venerdi 10 ripetizioni a 8 kg, tutto completo: il martedi dopo non scende sotto i 10 kg (prima: 8 kg, il tetto del +10% sul carico del venerdi)', () => {
+  const app = nuovaApp({}, PROG_V2);
+  /* oggi lunedi 5 ottobre (settimana 2): il martedi e di 6 giorni fa, il venerdi di 3 */
+  registra(app, 13, BULGARI, serie(2, 10, 6), { reps: 6, base: 6, sets: 2, rir: [1, 3] });
+  registra(app, 10, BULGARI, serie(2, 8, 10), { reps: 10, base: 10, sets: 2, rir: [1, 3] });
+  registra(app, 6, BULGARI, serie(2, 10, 6), { reps: 6, base: 6, sets: 2, rir: [1, 3] });
+  registra(app, 3, BULGARI, serie(2, 8, 10), { reps: 10, base: 10, sets: 2, rir: [1, 3] });
+  const r = carico(app, BULGARI, 10, 6, 2);
+  assert.ok(r.weight >= 10, r.weight + ' kg · ' + r.motivo);
+  assert.doesNotMatch(r.motivo, /Passi da 10 a 6/, 'nessuna conversione: c e una seduta recente con lo stesso bersaglio');
+  const v = carico(app, BULGARI, 8, 10, 2);
+  assert.ok(v.weight >= 8 && v.weight < 10, 'il giorno da 10 ripetizioni resta sul suo carico (' + v.weight + ' kg): ' + v.motivo);
+  /* senza una seduta con lo stesso bersaglio (cambio di blocco) la conversione resta quella di prima */
+  const nuovo = nuovaApp({}, PROG_V2);
+  [10, 6, 3].forEach(g => registra(nuovo, g, BULGARI, serie(2, 10, 6), { reps: 6, base: 6, sets: 2, rir: [1, 3] }));
+  assert.match(carico(nuovo, BULGARI, 10, 10, 2).motivo, /Passi da 6 a 10 ripetizioni/);
+});

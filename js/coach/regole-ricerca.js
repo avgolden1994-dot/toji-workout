@@ -324,13 +324,18 @@ function salitaDaRpe(W, reps, rirOss, rirB) {
   return caricoPer(W * (1 + (reps + rirB + usati) / 30), reps, rirB);
 }
 
-function caricoProssimoBase(nome, base, repsTarget, setsBase) {
+function caricoProssimoBase(nome, base, repsTarget, setsBase, soloBase) {
   const sett = settimanaProgramma();
   const scarico = sett && sett.fase === 'scarico';
   const pc = profiloCoach();
   const over65 = pc.eta >= 65;   /* ETA-18: gli aumenti si dimezzano anche dopo i 65 anni, come dice il capitolo 14 della mappa */
   const prudente = pc.sonnoMale || pc.prudente || over65;
-  const sess = ultimeSessioni(nome, 2);
+  /* ALG-05, stesso esercizio con ripetizioni diverse nella settimana (soloBase = il bersaglio di oggi, vedi sedutaStessaBase): ogni bersaglio ha la sua storia, la progressione guarda
+     le sedute con lo stesso bersaglio e non quella di un altro giorno (a 10 ripetizioni con 8 kg non dice niente sul giorno da 6 con 10 kg). I giorni di pausa restano quelli dell
+     ultima seduta vera. Revisione di 3a, M1. */
+  const tutte = sessioniConData(nome, 40);   /* una sola lettura dello storico per le ultime sedute e le ultime di carico */
+  const lista = soloBase > 0 ? tutte.filter(x => Number((x.ex.obiettivo || {}).base) === Number(soloBase)) : tutte;
+  const sess = soloBase > 0 ? lista.slice(0, 2).map(x => x.ex) : ultimeSessioni(nome, 2);
   const dose = scarico ? DOSE_SCARICO[sett.doseFissa || livelloFatica()] : null;   /* PRN-03 (INT-2d): lo scarico del controllo dell 8ª ha la dose «bassa» del registro, non quella della fatica di oggi */
   const sets = scarico ? Math.max(2, Math.round((setsBase || 3) * dose.serie)) : (setsBase || 3);
 
@@ -350,7 +355,6 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase) {
   const pesoUltimo = fatteUltima.length ? (alg02 ? caricoDiLavoro(sess[0]) : Math.max.apply(null, fatteUltima.map(x => Number(x.weight) || 0))) : base;
   /* prime sedute con questo esercizio: il carico di partenza e una stima, quindi si corregge piu in fretta */
   const calibrazione = ultimeSessioni(nome, 3).length < 3;
-  const lista = sessioniConData(nome, 40);   /* una sola lettura dello storico per le ultime sedute e le ultime di carico */
   const sd = lista.slice(0, 3);              /* allineata a sess: stesse sedute, stesso ordine */
   const esitoDi = ex => alg02 ? esitoDiLavoro(ex, repsTarget, caricoDiLavoro(ex)) : esito(ex, repsTarget);
   const e1 = esitoDi(sess[0]);
@@ -363,7 +367,7 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase) {
      la dose non si applica due volte. */
   const mes06 = regolaAttiva('MES-06');
   const ultimaDiScarico = !!(sd[0] && sd[0].eraDiScarico);
-  const rif = mes06 && (scarico || ultimaDiScarico) ? caricoRiferimento(nome) : 0;   /* serve solo in scarico e subito dopo */
+  const rif = mes06 && (scarico || ultimaDiScarico) ? caricoRiferimento(nome, soloBase) : 0;   /* serve solo in scarico e subito dopo; soloBase: il riferimento e quello di questo bersaglio */
   if (scarico) {
     const gia = mes06 && rif <= 0 && ultimaDiScarico;
     const voluto = (rif > 0 ? rif : pesoUltimo) * dose.carico, w = gia ? pesoUltimo : caricoInGriglia(voluto, nome);
@@ -380,7 +384,7 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase) {
   const tettoRipresa = pesoUltimo > 0 ? caricoInGriglia(pesoUltimo * PARAM_ANALISI.saltoMaxRipresa, nome) : Infinity;
 
   /* rientro dopo una pausa su questo esercizio (dopo uno scarico riuscito il calo si applica al riferimento, non al carico di scarico) */
-  const giorni = sd[0] && sd[0].data ? giorniTra(sd[0].data, new Date()) : 0;
+  const giorni = tutte[0] && tutte[0].data ? giorniTra(tutte[0].data, new Date()) : 0;
   const rientro = rientroDopoPausa(giorni);
   const pesoRientro = scaricoRiuscito ? rif : pesoUltimo;
   if (rientro && pesoRientro > 0) {
@@ -527,11 +531,27 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase) {
 window.caricoProssimo = function(nome, base, repsTarget, setsBase, voce) {
   return eseguiFasi('carico', undefined, { nome: nome, base: base, repsTarget: repsTarget, setsBase: setsBase, voce: voce && typeof voce === 'object' ? voce : null });
 };
+/* ALG-05, stesso esercizio con ripetizioni diverse nella settimana (B7; revisione di 3a, M1): se l ultima seduta di lavoro aveva un bersaglio diverso da quello di oggi ma ce n e una
+   recente (giorniMassimaleRecente) con lo STESSO bersaglio, quella e la seduta di riferimento: ogni bersaglio ha la sua storia e non si converte da un giorno all altro (i tetti
+   +10% / -30% sul carico dell altro giorno, una ripetizione in riserva in piu a ogni conversione e il massimale stimato con sedute gia ridotte facevano scendere il carico a
+   ogni seduta: Affondi Bulgari 10 -> 4 kg in 11 settimane con tutte le serie complete). Ritorna la seduta di riferimento ({ ex, data, ... }) o null: solo con il consenso, i
+   programmi v2 e ALG-05 accesa, come la regola. Anche una seduta di scarico con lo stesso bersaglio e di riferimento (la ripresa dopo lo scarico riparte dal carico di quel giorno:
+   caricoRiferimento). Il cambio di bersaglio senza una seduta recente con lo stesso resta a ALG-05. */
+function sedutaStessaBase(nome, ora) {
+  if (!(Number(ora) > 0) || isTimeBased(nome) || !coachAttivo() || !progressioneV2() || !regolaAttiva('ALG-05')) return null;
+  const tutte = sessioniConData(nome, 12), ultima = tutte[0];
+  if (!ultima) return null;
+  const b = Number((ultima.ex.obiettivo || {}).base);
+  if (!(b > 0) || Math.abs(b - Number(ora)) < 1e-9) return null;
+  const giorni = sogliaProgressione('giorniMassimaleRecente'), oggi = new Date();
+  return tutte.find(x => x.data && giorniTra(x.data, oggi) <= giorni && Math.abs(Number((x.ex.obiettivo || {}).base) - Number(ora)) < 1e-9) || null;
+}
 /* fase 10: la progressione; ALG-02 (programmi v2) dice nel perche quando l ultima seduta aveva serie a carichi diversi e il carico di lavoro non e il massimo */
 function caricoProgressione(r, c) {
-  const out = caricoProssimoBase(c.nome, c.base, c.repsTarget, c.setsBase);
+  const stessa = sedutaStessaBase(c.nome, c.repsTarget);
+  const out = caricoProssimoBase(c.nome, c.base, c.repsTarget, c.setsBase, stessa ? Number(c.repsTarget) : 0);
   if (out && out.weight > 0 && out.tipo !== 'scarico' && out.tipo !== 'nuovo' && !isTimeBased(c.nome) && progressioneV2() && regolaAttiva('ALG-02')) {
-    const ex = ultimeSessioni(c.nome, 1)[0];
+    const ex = stessa ? stessa.ex : ultimeSessioni(c.nome, 1)[0];
     const fatte = ex ? (ex.sets || []).filter(s => s.done && Number(s.weight) > 0) : [];
     if (fatte.length && caricoDiLavoro(ex) < Math.max.apply(null, fatte.map(s => Number(s.weight))) - 1e-9) aggiungiPerche(out, 'ALG-02', FRASE_PESO_CAMBIATO, { forza: 'Convenzione' });
   }
@@ -576,6 +596,7 @@ function ricalcoloDalMassimale(r, c) {
   if (Array.isArray(r.perche) && r.perche.some(p => p && p.codice === 'CAR-18')) return r;
   const ultima = sessioniConData(nome, 1)[0];
   if (!ultima || ultima.eraDiScarico || (ultima.data && rientroDopoPausa(giorniTra(ultima.data, new Date())))) return r;
+  if (sedutaStessaBase(nome, c.repsTarget)) return r;   /* M1: c e una seduta recente con lo stesso bersaglio: la progressione ha gia guardato quella (caricoProgressione) */
   const o = ultima.ex.obiettivo || {}, prima = Number(o.base), ora = Number(c.repsTarget) || 0;
   if (!(prima > 0) || !(ora > 0)) return r;
   const rOggi = rirBersaglio(nome), mOggi = (rOggi[0] + rOggi[1]) / 2;
@@ -592,6 +613,10 @@ function ricalcoloDalMassimale(r, c) {
   }
   const tetti = sogliaProgressione('tettiRicalcolo');
   t = Math.max(W * (1 - tetti.giu), Math.min(W * (1 + tetti.su), t));
+  /* una seduta completa al suo bersaglio e un giorno piu duro (meno ripetizioni efficaci: il RIR scende o il bersaglio cala): il carico non va sotto quello fatto. Il massimale
+     stimato taglia a 12 ripetizioni efficaci e il peso scende per difetto sulla griglia (2,5 kg): da solo il ricalcolo toglieva un passo anche quando doveva alzare
+     (revisione di 3a, B1 e M1). Una seduta non completata decide il ricalcolo, come prima. */
+  if (ora + mOggi < prima + mPrima && esitoDiLavoro(ultima.ex, prima, W) === 'ok') t = Math.max(t, W);
   if (t > W) {
     const pc = profiloCoach();
     if (frenoBia()) t = W;
