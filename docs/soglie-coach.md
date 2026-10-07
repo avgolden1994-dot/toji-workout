@@ -4,7 +4,16 @@
 > Forze: **Solida** (meta-analisi o posizione ufficiale), **Moderata** (pochi studi, o risultati che cambiano con la popolazione), **Contrastata** (studi in disaccordo), **Convenzione** (pratica dei coach: il foglio «Perché?» mostra «Scelta prudente del coach (Convenzione): non è un risultato di studi»), **Decisione** (scelta di prodotto: «Decisione di prodotto»), **Provvisoria** (numero di partenza in attesa di verifica: «Numero di partenza, in verifica»). Etichette: `etichettaForza` in `js/coach/regia/perche.js` (registro C.4).
 > Le tabelle di prima (`COACH_PARAMETRI`, `PARAM_PARTENZA`, `PARAM_INTENSITA`, `STR_PESI`, `DOSE_SCARICO`, `RIR_TIPO`) non sono ancora qui: passano in un file soglie quando il task che possiede il loro file le tocca.
 
-Totale: 162 soglie in 12 tabelle (Solida 3, Moderata 12, Contrastata 1, Convenzione 136, Decisione 7, Provvisoria 3).
+Totale: 183 soglie in 16 tabelle (Solida 3, Moderata 13, Contrastata 1, Convenzione 154, Decisione 9, Provvisoria 3).
+
+## `SOGLIE_BIA` — `js/coach/bia/soglie-bia.js` (preparatore)
+
+| Voce | Valore | Forza | Fonte | Regole |
+|---|---|---|---|---|
+| `proteineMassaMagraMin` | 2.35 | Convenzione | COR-03 (storica, prodotto di prima): nessuna fonte verificata; ricerca-cardio-nutrizione.md la segna «da correggere» (la nota cita Helms 2014: 2,3-3,1 g/kg di massa magra solo per atleti magri in definizione); non validato | COR-03 |
+| `proteineMassaMagraMax` | 2.75 | Convenzione | COR-03 (storica, prodotto di prima): nessuna fonte verificata; stesso intervallo dell estremo basso; non validato | COR-03 |
+| `proteinePesoUomo` | 2 | Convenzione | COR-03 (storica, prodotto di prima): nessuna fonte verificata (la nota cita Morton 2018: 1,6 g/kg di peso come punto di massimo; è NUT-01, non ancora implementata); non validato | COR-03 |
+| `proteinePesoDonna` | 1.75 | Convenzione | COR-03 (storica, prodotto di prima): «senza fonte vista» (ricerca-cardio-nutrizione.md); NUT-01 usera lo stesso numero per i due sessi; non validato | COR-03 |
 
 ## `SOGLIE_PARTENZA` — `js/coach/carichi/soglie-partenza.js` (bilancia)
 
@@ -114,6 +123,26 @@ Totale: 162 soglie in 12 tabelle (Solida 3, Moderata 12, Contrastata 1, Convenzi
 | `precedenza` | sentinella 1, motivatore 2, specialista 3, architetto 4, dosatore 4, bilancia 4, preparatore 5, tecnico 5 | Decisione | piano coach v2 B.2 (REG-01, precedenze della squadra) | REG-01 |
 | `versioneProgramma` | 2 | Decisione | piano coach v2 B.6 (REG-04); registro coach v2 D-P5 | REG-04 |
 
+## `SOGLIE_FASTIDI` — `js/coach/sicurezza/soglie-fastidi.js` (sentinella)
+
+| Voce | Valore | Forza | Fonte | Regole |
+|---|---|---|---|---|
+| `stressNominato` | 1 | Convenzione | attributo `stress` di W1-T2 (matrice di ricerca-recupero-infortuni-popolazioni §3, elenchi del collaudo): 1 = cautela, 2 = controindicato; stesso criterio di esercizioCaricaIlFastidio e del collaudo SAF-02 | REC-04 |
+| `doloreMassimo` | 3 | Convenzione | DEC-01 (fastidio lieve, fino a 3/10: si continua e si osserva); modello del dolore di Silbernagel 2007 (fino a 5/10 se al mattino è normale: Moderata sul tendine, consenso per le altre zone), qui il limite basso; ricerca-recupero-infortuni-popolazioni §5.1 | REC-04, DEC-01 |
+
+## `SOGLIE_POPOLAZIONI` — `js/coach/sicurezza/soglie-popolazioni.js` (sentinella)
+
+| Voce | Valore | Forza | Fonte | Regole |
+|---|---|---|---|---|
+| `over65` | eta 65, settimaneBase 8, etaSempreBase 75 | Convenzione | registro coach v2 B10 (base di 8 settimane, «il bordo prudente di ETA-08»; dai 75 anni la base resta finché ETA-17 non è verificata); ricerca-fasce-di-eta §3.2 | ETA-08 |
+| `rirOver65` | base 3, liberi 3, macchine 2 | Convenzione | registro coach v2 B10 (RIR 3-4 nella base; dopo, RIR 2-3 solo sulle classi C e D; la parte b di ETA-08 è bloccata); ricerca-recupero-infortuni-popolazioni §5.2 (prudenti e over 65 RIR ≥ 3-4) | ETA-08 |
+| `ripetizioniMinOver65` | minimo 8, caloStallo 0.95 | Convenzione | registro coach v2 B10 («8-12 ripetizioni» nella base e dopo; la parte b di ETA-08 è bloccata; Borde [V] per i carichi moderati); CAR-07 / PCO-01, riga del principiante (-5% al secondo stallo) | ETA-08, CAR-07 |
+| `rirGravidanza` | 3 | Convenzione | registro coach v2 C.3 (REC-12 a: guardia che toglie, modalità prudente); ricerca-recupero-infortuni-popolazioni §4 e §5.2 («RIR ≥ 3-4, nessun cedimento», ricordo da verificare: per questo solo come pavimento della modalità prudente, mai come prescrizione) | REC-12 |
+| `pausa` | nulla 6, ferma 13, blocco 27 | Convenzione | registro coach v2 B20 (≤ 6 giorni nulla; 7-13 la rampa non avanza; 14-27 si riparte dalla settimana 1 del blocco e il calendario scorre; ≥ 28 nuovo blocco); ricerca-mesocicli-periodizzazione-scarichi §3.12.3 (MES-15) | CST-01 |
+| `giorniDoppiOver65` | fattore 2 | Convenzione | registro coach v2 B20 («giorni doppi oltre i 65», obiettivo di W4-T2; la deroga datata 2026-10-05 finisce con la catena completa e le soglie di MES-15); ricerca-recupero-infortuni-popolazioni §4 e §5.3 (lo stop pesa di più sopra i 65 anni, PMID 23347054 [V]) | CAR-04, CST-02 |
+| `rientroSerie` | giorni 14, prima 0.75, seconda 0.9, sedute 2, rirPiu 1 | Convenzione | registro coach v2 B20 (CST-02: serie -25%, -10%, poi piano, +1 RIR per 2 sedute); ricerca-psicologia-aderenza CST-02; RIC-05 (14 giorni, -25% nella prima seduta) | CST-02, RIC-05 |
+| `risalita` | passo 0.05, passoPrudente 0.025, sedute 3 | Convenzione | registro coach v2 B20 (ALG-14: 5% a seduta, 2,5% principianti e over 65, fino al carico di prima); ricerca-algoritmi-carichi-e-app ALG-14 (W' = min(Wpre, W·1,05) per 3 sedute; base da verificare [M]) | ALG-14 |
+
 ## `SOGLIE_SCARICO` — `js/coach/sicurezza/soglie-scarico.js` (sentinella)
 
 | Voce | Valore | Forza | Fonte | Regole |
@@ -150,6 +179,15 @@ Totale: 162 soglie in 12 tabelle (Solida 3, Moderata 12, Contrastata 1, Convenzi
 | `stessaTecnicaStessoEsercizioSettimana` | 1 | Convenzione | ricerca-metodi-avanzati-intensita.md 4.1 (una stessa tecnica sullo stesso esercizio al massimo una volta a settimana) | MAV-08 |
 | `discesaSecondi` | [2, 3] | Moderata | ricerca-metodi-avanzati-intensita.md 1.4 e 4.3 (Schoenfeld 2015: da 0,5 a 8 s per ripetizione la crescita e simile; discesa 2-3 s) | MAV-11 |
 
+## `SOGLIE_FORZA_CARICHI` — `js/coach/specialita/soglie-forza-carichi.js` (specialista)
+
+| Voce | Valore | Forza | Fonte | Regole |
+|---|---|---|---|---|
+| `rirMinimoGiorno` | 1 | Moderata | docs/ricerca-forza-progressione.md (scala RIR-RPE: RPE 10 = 0 ripetizioni in riserva, 9 = 1; Zourdos 2016) e 3.3 (carico = e1RM / (1 + (ripetizioni + RIR) / 30), entro 0,6 punti dalla tabella RPE) | FRZ-11 |
+| `rirInPiuLeggera` | 2 | Convenzione | docs/ricerca-metodi-coach-pratici.md 2.20 (Texas Method: il giorno di recupero ha carico e volume ridotti; «quanto leggero» non è verificato, conoscenza del modello); la scelta di due ripetizioni in più è del coach | FRZ-11 |
+| `passiSotto` | 1 | Decisione | P3-C: il giorno medio sta almeno un passo sotto il pesante e il leggero almeno un passo sotto il medio; il passo è quello dell'attrezzo (carichi/attrezzi.js) | FRZ-11 |
+| `profonditaMax` | 3 | Decisione | P3-C: le onde sono tre (pesante, media, leggera); il limite evita un giro infinito se i dati del piano sono incoerenti | FRZ-11 |
+
 ## `SOGLIE_FORZA` — `js/coach/specialita/soglie-forza.js` (specialista)
 
 | Voce | Valore | Forza | Fonte | Regole |
@@ -164,6 +202,9 @@ Totale: 162 soglie in 12 tabelle (Solida 3, Moderata 12, Contrastata 1, Convenzi
 | `serieMinimeAlzata` | 2 | Solida | Krieger 2010, Ralston 2017 (2-3 serie battono 1: la stessa soglia di RX-03 del collaudo) | FRZ-05 |
 | `pausaMinimaStima` | 120 | Moderata | ACSM 2009 (2-3 minuti sui fondamentali per la forza), docs/ricerca-forza-progressione.md 1.6 (riposo per la forza: 2-5 minuti); collaudo RX-02 (forza, pesanti: 120-300 s) | FRZ-02 |
 | `serieMinimeTirata` | 3 | Convenzione | ABB-04 (tirate non meno del 90% delle spinte, STR_PESI.tirateSuSpinte); docs/ricerca-struttura-e-intensita.md (equilibrio spalle: pratica dei coach) | FRZ-02 |
+| `serieTerzaEsposizione` | 2 | Convenzione | VOLUME_B6 del collaudo (petto, massimo 8 per chi comincia nella forza); serieMinimeAlzata (Krieger 2010, Ralston 2017: 2-3 serie battono 1); ABB-04 (tirate non meno del 90% delle spinte) | FRZ-02 |
+| `serieTirataAlta` | 2 | Convenzione | ABB-03 (strCopri: deltoidi posteriori, 2 serie da 15) e ABB-04 (tirate non meno del 90% delle spinte, STR_PESI.tirateSuSpinte); docs/ricerca-struttura-e-intensita.md (equilibrio spalle: pratica dei coach) | FRZ-02 |
+| `serieTirataAltaMax` | 3 | Convenzione | ABB-03 (strCopri: 2 serie) e serieAccessorio (3); volume per unità di B6 (VOLUME_B6 del collaudo: schiena, massimo 8 per chi comincia nella forza) | FRZ-02 |
 | `serieAccessorio` | 3 | Convenzione | docs/ricerca-obiettivi-e-programmi.md 3.1 (forza: 3-6 serie dirette per fondamentale a settimana + accessori 6-12, Mod †); docs/ricerca-forza-progressione.md 1.6 (punti deboli e accessori: nessuna prova diretta) | FRZ-04 |
 | `puntiDeboliMax` | 2 | Convenzione | W2-T7: ogni accessorio toglie tempo e recupero; stessa idea di EST-02 (al massimo 2 unità prioritarie) | FRZ-03, FRZ-04 |
 

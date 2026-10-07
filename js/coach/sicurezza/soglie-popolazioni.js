@@ -40,6 +40,13 @@ const SOGLIE_POPOLAZIONI = {
     v: { nulla: 6, ferma: 13, blocco: 27 },
     forza: 'Convenzione', fonte: 'registro coach v2 B20 (≤ 6 giorni nulla; 7-13 la rampa non avanza; 14-27 si riparte dalla settimana 1 del blocco e il calendario scorre; ≥ 28 nuovo blocco); ricerca-mesocicli-periodizzazione-scarichi §3.12.3 (MES-15)', regole: ['CST-01']
   },
+  /* CST-01, CST-02 (INT-4): una «pausa» è relativa alla frequenza del programma. Il giorno di una seduta saltata si tollera: i giorni senza sedute oltre i quali c'è una pausa sono
+     (1 + sedute saltate tollerate) volte l'intervallo normale tra due sedute (7 diviso le sedute a settimana, per eccesso) meno 1, e mai meno di `pausa.nulla`. Con 1 seduta a settimana
+     sono 13 (7 giorni tra due sedute sono normali, 14 sono una pausa vera), con 2 sono 7, con 3 o più restano 6. Dalla soglia `pausa.ferma` in su (14 giorni) non cambia niente */
+  pausaPerFrequenza: {
+    v: { seduteSaltate: 1, giorniSettimana: 7 },
+    forza: 'Convenzione', fonte: 'decisione di INT-4 (collegamento tra B20/MES-15, soglie in giorni veri, e i programmi da 1-2 sedute a settimana: con le soglie di B20 un programma da 1 seduta a settimana non avanzava mai); registro B20', regole: ['CST-01', 'CST-02', 'CAR-04']
+  },
   /* B20: oltre i 65 anni i giorni di una pausa vera (più di `pausa.nulla` giorni senza nessuna seduta) contano `fattore` volte, per i carichi (CAR-04) e per le serie (CST-02).
      Con il ritmo normale (2 sedute a settimana: 3-5 giorni tra una seduta e l’altra) restano i giorni veri, come per tutti: era il motivo della deroga del 2026-10-05 */
   giorniDoppiOver65: {

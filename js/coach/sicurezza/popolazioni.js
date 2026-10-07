@@ -87,12 +87,26 @@ function ricordaRientro(spazio, extra, fn) {
   MEMORIA_RIENTRO[spazio] = { grezzo: grezzo, chiave: chiave, v: v };
   return v;
 }
-/* B20: oltre i 65 anni i giorni di una pausa VERA (più di `pausa.nulla` giorni senza nessuna seduta) contano doppi; con il ritmo normale restano quelli veri.
+/* quante sedute a settimana ha il programma di adesso (i giorni del piano con esercizi e non di riposo); 0 se non si sa */
+function seduteAllaSettimana() {
+  if (typeof DAYS === 'undefined' || typeof loadData !== 'function') return 0;
+  const d = loadData() || {};
+  return DAYS.filter(g => (d[g] || []).length && !(typeof isRestDay === 'function' && isRestDay(g))).length;
+}
+/* B20 e MES-15, relativi alla frequenza (INT-4): i giorni senza sedute fino a cui non c è nessuna pausa. `pausa.nulla` (6) per chi si allena 3 volte a settimana o più; con 2 sedute a
+   settimana una seduta saltata (7 giorni) non è una pausa; con 1 seduta a settimana 7 giorni tra due sedute sono normali e una seduta saltata (14) è una pausa vera (`pausaPerFrequenza`) */
+function giorniNulla() {
+  const P = sogliaPopolazione('pausa'), F = sogliaPopolazione('pausaPerFrequenza'), n = seduteAllaSettimana();
+  if (!P) return 6;
+  if (!F || !(n > 0)) return P.nulla;
+  return Math.max(P.nulla, (1 + F.seduteSaltate) * Math.ceil(F.giorniSettimana / n) - 1);
+}
+/* B20: oltre i 65 anni i giorni di una pausa VERA (più di `giorniNulla()` giorni senza nessuna seduta: 6, e 13 o 7 per chi fa 1 o 2 sedute a settimana) contano doppi; con il ritmo normale restano quelli veri.
    gEsercizio = giorni dall'ultima volta con l'esercizio (o della pausa), gPausa = giorni senza nessuna seduta, over65 = vale il conteggio doppio */
 function giorniContatiPausa(gEsercizio, gPausa, over65) {
   const P = sogliaPopolazione('pausa'), D = sogliaPopolazione('giorniDoppiOver65');
   const g = Number(gEsercizio) || 0;
-  if (!over65 || !P || !D || !(Number(gPausa) > P.nulla)) return g;
+  if (!over65 || !P || !D || !(Number(gPausa) > giorniNulla())) return g;
   return g * D.fattore;
 }
 /* il conteggio doppio vale per questa persona adesso? (over 65, programma v2, consenso) */
@@ -119,14 +133,14 @@ function statoRientro() {
   const S = sogliaPopolazione('rientroSerie'), P = sogliaPopolazione('pausa');
   if (!S || !P || typeof sedutePassate !== 'function') return { seduta: 0, giorni: 0, doppi: false };
   const doppi = giorniDoppiAttivi();
-  return ricordaRientro('stato', String(doppi), () => {
+  return ricordaRientro('stato', String(doppi) + '|' + giorniNulla(), () => {
     const s = sedutePassate(), oggi = new Date();
     if (!s.length) return { seduta: 0, giorni: 0, doppi: false };
     const conta = g => doppi ? giorniContatiPausa(g, g, true) : g;
     const g0 = giorniTra(s[0].d, oggi);
     if (conta(g0) >= S.giorni) return { seduta: 1, giorni: g0, doppi: doppi && conta(g0) !== g0 };
     const prima = s.find(x => giorniTra(x.d, s[0].d) > 0);
-    if (prima && g0 <= P.nulla) {
+    if (prima && g0 <= giorniNulla()) {
       const g1 = giorniTra(prima.d, s[0].d);
       if (conta(g1) >= S.giorni) return { seduta: 2, giorni: g1, doppi: doppi && conta(g1) !== g1 };
     }
@@ -159,7 +173,8 @@ function settimaneFermePerPausa(p) {
   const P = sogliaPopolazione('pausa');
   if (!P || !p || !p.inizio || !programmaV2Rientro(p) || !Array.isArray(p.fasi) || typeof sedutePassate !== 'function') return 0;
   if (typeof coachAttivo !== 'function' || !coachAttivo() || !regolaAttiva('CST-01')) return 0;
-  return ricordaRientro('ferme', p.inizio + '|' + p.fasi.join(','), () => {
+  const nulla = giorniNulla();
+  return ricordaRientro('ferme', p.inizio + '|' + p.fasi.join(',') + '|' + nulla, () => {
     const inizio = daYmd(p.inizio), oggi = new Date();
     const settCal = d => Math.floor(giorniTra(inizio, lunediDi(d)) / 7) + 1;
     const tutte = sedutePassate().map(x => x.d);   /* dalla piu recente */
@@ -171,7 +186,7 @@ function settimaneFermePerPausa(p) {
       const G = giorniTra(prec, d);
       let w = wCal;
       if (G > P.ferma) w = Math.min(wCal, primaSettimanaDelBlocco(p, wPrec));
-      else if (G > P.nulla) w = Math.min(wCal, wPrec);
+      else if (G > nulla) w = Math.min(wCal, wPrec);
       ferme += wCal - w;
       return w;
     };
