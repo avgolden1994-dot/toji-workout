@@ -1,0 +1,116 @@
+{
+ "task": "P4-S",
+ "script": [
+  {
+   "src": "js/coach/sicurezza/soglie-popolazioni.js",
+   "dopo": "js/coach/sicurezza/scarico.js"
+  },
+  {
+   "src": "js/coach/sicurezza/popolazioni.js",
+   "dopo": "js/coach/sicurezza/soglie-popolazioni.js"
+  }
+ ],
+ "frasi": {
+  "Per ora niente salite veloci: prima la tecnica, con salita e discesa controllate.": {
+   "en": "No fast lifting for now: technique first, with a controlled way up and down.",
+   "es": "Por ahora nada de subidas rápidas: primero la técnica, con subida y bajada controladas.",
+   "de": "Vorerst kein schnelles Heben: zuerst die Technik, mit kontrolliertem Heben und Senken."
+  },
+  "dai # anni i giorni di pausa contano doppi": {
+   "en": "from age # the days of a break count double",
+   "es": "desde los # años los días de pausa cuentan el doble",
+   "de": "ab # Jahren zählen die Pausentage doppelt"
+  },
+  "dai # anni restano almeno # ripetizioni: invece dello schema #×#, carico -#% e si ricostruisce": {
+   "en": "from age # you stay at # reps or more: instead of the #×# scheme, load -#% and you rebuild",
+   "es": "desde los # años se mantienen al menos # repeticiones: en lugar del esquema #×#, carga -#% y se reconstruye",
+   "de": "ab # Jahren bleiben es mindestens # Wiederholungen: statt des #×#-Schemas Gewicht -#% und neu aufbauen"
+  },
+  "seconda seduta dopo la pausa: serie -#%, poi il piano di sempre": {
+   "en": "second session after the break: sets -#%, then the usual plan",
+   "es": "segunda sesión después de la pausa: series -#%, luego el plan de siempre",
+   "de": "zweite Einheit nach der Pause: Sätze -#%, danach der gewohnte Plan"
+  },
+  "dopo la pausa, per due sedute, una ripetizione in riserva in più": {
+   "en": "after the break, for two sessions, one more rep in reserve",
+   "es": "después de la pausa, durante dos sesiones, una repetición más en reserva",
+   "de": "nach der Pause, für zwei Einheiten, eine Wiederholung mehr in Reserve"
+  },
+  "dopo la pausa si risale verso il carico di prima (# kg), di circa il #% a seduta": {
+   "en": "after the break you climb back towards your previous load (# kg), by about #% per session",
+   "es": "después de la pausa se vuelve a subir hacia la carga de antes (# kg), alrededor de un #% por sesión",
+   "de": "nach der Pause geht es zurück zum vorherigen Gewicht (# kg), um etwa #% pro Einheit"
+  },
+  "rientro dopo # giorni": {
+   "en": "back after # days",
+   "es": "vuelta tras # días",
+   "de": "Rückkehr nach # Tagen"
+  },
+  "meno serie su tutto il piano, poi si torna al solito": {
+   "en": "fewer sets across the whole plan, then back to normal",
+   "es": "menos series en todo el plan, luego se vuelve a lo de siempre",
+   "de": "weniger Sätze im ganzen Plan, danach wieder wie gewohnt"
+  },
+  "Gravidanza o parto recente": {
+   "en": "Pregnancy or recent childbirth",
+   "es": "Embarazo o parto reciente",
+   "de": "Schwangerschaft oder kürzliche Geburt"
+  },
+  "Il coach resta in modalità prudente": {
+   "en": "The coach stays in careful mode",
+   "es": "El coach se queda en modo prudente",
+   "de": "Der Coach bleibt im vorsichtigen Modus"
+  },
+  "Parlane con l’ostetrica o con il medico: sono loro a dirti come allenarti adesso. Il coach resta in modalità prudente: niente serie al limite, niente tecniche intense e carichi che salgono piano. Non è un parere medico.": {
+   "en": "Talk to your midwife or your doctor: they are the ones to tell you how to train right now. The coach stays in careful mode: no sets to the limit, no intense techniques and loads that go up slowly. This is not medical advice.",
+   "es": "Habla con tu matrona o con tu médico: son ellos quienes te dicen cómo entrenar ahora. El coach se queda en modo prudente: nada de series al límite, nada de técnicas intensas y cargas que suben despacio. No es una opinión médica.",
+   "de": "Sprich mit deiner Hebamme oder deiner Ärztin bzw. deinem Arzt: sie sagen dir, wie du jetzt trainieren kannst. Der Coach bleibt im vorsichtigen Modus: keine Sätze bis ans Limit, keine intensiven Techniken und Gewichte, die langsam steigen. Das ist keine ärztliche Beratung."
+  },
+  "Con la gravidanza o un parto recente la modalità prudente resta accesa: se è cambiato qualcosa, togli prima «Gravidanza o parto recente».": {
+   "en": "With a pregnancy or a recent childbirth careful mode stays on: if something has changed, first turn off «Pregnancy or recent childbirth».",
+   "es": "Con el embarazo o un parto reciente el modo prudente sigue activo: si algo ha cambiado, quita primero «Embarazo o parto reciente».",
+   "de": "Bei einer Schwangerschaft oder einer kürzlichen Geburt bleibt der vorsichtige Modus an: wenn sich etwas geändert hat, schalte zuerst «Schwangerschaft oder kürzliche Geburt» aus."
+  }
+ },
+ "regole": [
+  {
+   "capitolo": 24,
+   "sostituisce": true,
+   "riga": "- **ETA-08** (parte b bloccata) (sempre accesa: salvaguardia che toglie) over 65 (ex «REC-13» del piano; registro B10; W4-T2 = pacchetto P4-S, `js/coach/sicurezza/popolazioni.js`, numeri in `sicurezza/soglie-popolazioni.js`): la parte a implementata è **solo la base**. Nelle prime 8 settimane del programma, e sempre dai 75 anni, mai sotto 3 ripetizioni in riserva; dopo la base mai sotto 3 sui pesi liberi e sul core (classi A, B, E, F) e mai sotto 2 su macchine e cavi (C, D): `pavimentoRirPopolazioni`, l'ultimo passo di `rirBersaglio` (solo alza: oggi gli over 65 restano comunque a 3-4, `rirBersaglioPerLivello`). Niente «potenza» nella base, dai 75 anni e con il PAR-Q positivo (`potenzaAmmessaOver65`, letto da `tecnicaAdatta`: nella generazione la settimana è la base, quindi i programmi nuovi degli over 65 nascono senza potenza; chiude D-P21 n. 5, l'Hack Squat «[potenza]» dalla settimana 1 a una 68enne con il PAR-Q positivo); in seduta, con un programma salvato prima, la potenza resta solo dopo la base e solo su macchina (RIC-04). Mai sotto 8 ripetizioni con un carico (fase 'carico' 90: lo schema 5×3 del secondo stallo, CAR-07, diventa il -5% dei principianti con le ripetizioni del piano). Il «dopo la base» che alzerebbe lo stimolo (RIR 2-3 su macchine e cavi con il 70% delle sedute fatte e senza dolore) **non è implementato: escluso per scelta del proprietario** (piano snello delle onde 3-5, 2026-10-07); la parte b (più intensità con i pesi liberi pesanti) è bloccata: registro C.2 n. 9, non implementata. Convenzione (B10; Borde [V] per i carichi moderati)."
+  },
+  {
+   "capitolo": 24,
+   "sostituisce": true,
+   "riga": "- **REC-12** (parte b bloccata) (sempre accesa: guardia che rinvia senza affermazioni cliniche) gravidanza e post-parto (= DON-12): la parte a (W4-T2 = pacchetto P4-S) è la bandiera «Gravidanza o parto recente» in Opzioni › Il coach (`profilo.gravidanza`, `htmlGravidanzaCoach` in `js/ui/opzioni/il-coach.js`; la vedono le donne e chi l'ha già accesa): tiene accesa la modalità prudente (PAR-Q: niente cedimento né tecniche intense, aumenti dimezzati, 3-4 ripetizioni in riserva; finché è accesa la modalità prudente non si spegne, e spegnendola torna la risposta di prima al questionario), mostra il messaggio fisso «Parlane con l’ostetrica o con il medico: sono loro a dirti come allenarti adesso…» e tiene il pavimento di 3 ripetizioni in riserva anche se la modalità prudente mancasse (`pavimentoRirPopolazioni`). `inGravidanza(profilo)` (`js/coach/sicurezza/popolazioni.js`) è la funzione per le guardie degli altri sotto-coach (niente numeri di nutrizione e niente deficit: P4-C e DCA-01). La domanda del PAR-Q dell'onboarding («gravidanza o parto recente») accende ancora solo la modalità prudente, non la bandiera. La parte b (esercizi da evitare, posizione supina, ripresa dopo il parto, domande sul pavimento pelvico) è bloccata: registro C.2 n. 4, non implementata."
+  },
+  {
+   "capitolo": 8,
+   "sostituisce": true,
+   "riga": "- **CAR-04** rientro dopo una pausa su QUELL'esercizio (detraining, SBS; `rientroDopoPausa` in `regole-ricerca.js`): 10-20 giorni -10%; 21-28 giorni -20%; fino a 90 giorni -30%; oltre -50%. Programmi v1 (salvati prima della v2): i giorni sono quelli veri per tutti, come prima. Programmi v2 con il consenso (W4-T2 = pacchetto P4-S, registro B20): oltre i 65 anni i giorni di una pausa **vera** (più di 6 giorni senza nessuna seduta, la soglia di CST-01) contano doppi (`giorniPausaContati` in `sicurezza/popolazioni.js`: 7 giorni contano 14, -10%; 11 contano 22, -20%) e il motivo lo dice («dai 65 anni i giorni di pausa contano doppi»); con il ritmo normale (2 sedute a settimana: 3-5 giorni tra una seduta e l'altra) restano quelli veri, come per tutti: era il motivo della deroga del 2026-10-05, che si chiude qui. Con \"3 ripetizioni in riserva\". Dopo uno scarico riuscito il calo si applica al carico di riferimento (MES-06). Dopo il rientro la risalita è ALG-14. (storica, corretta nell'onda 0 e in W4-T2)"
+  },
+  {
+   "capitolo": 19,
+   "sostituisce": true,
+   "riga": "- **RIC-05** (spegnibile) rientro per tutto il piano (detraining, SBS): se dall'ultima seduta sono passati almeno 14 giorni, la prima seduta ha il 25% di serie in meno su ogni esercizio (minimo 2) in aggiunta al calo di carico per esercizio di CAR-04, con il motivo «rientro dopo N giorni: meno serie su tutto il piano, poi si torna al solito». Programmi v1: 14 giorni veri per tutti, come prima. Programmi v2 con il consenso (W4-T2 = pacchetto P4-S, CST-02): stessa soglia con i giorni contati come CAR-04 (oltre i 65 anni, in una pausa vera, doppi: bastano 7 giorni), poi la seconda seduta e il RIR di CST-02 (`rientroPiano` in `regole-nuove.js` chiama `giorniRientroPiano` di `sicurezza/popolazioni.js`). Nei programmi v2 la prima settimana dopo una pausa di 14 giorni o più è anche la settimana 1 del blocco (CST-01), con la sua rampa (MES-03): le due riduzioni si sommano (4 serie -> 3 -> 2)."
+  },
+  {
+   "capitolo": 26,
+   "sostituisce": false,
+   "riga": "- **CST-01** (spegnibile) il calendario si ferma durante una pausa (W4-T2 = pacchetto P4-S; registro B20, soglie di MES-15 in `sicurezza/soglie-popolazioni.js`; solo programmi v2, con il consenso): `settimanaProgramma` (`carichi/progressivo.js`) toglie le settimane della pausa, calcolate dallo storico seduta dopo seduta (`settimaneFermePerPausa` in `sicurezza/popolazioni.js`; la prima seduta del programma conta dall'ultima seduta prima dell'inizio, se c'è): con 6 giorni o meno senza sedute niente; con 7-13 la rampa non avanza (si rifà la settimana dell'ultima seduta); con 14 o più si riparte dalla prima settimana del blocco dell'ultima seduta (dopo una settimana di scarico, dalla prima del blocco dopo); con 28 o più è un nuovo blocco dalla stessa settimana, con i carichi di CAR-04 più bassi. Niente da salvare né da annullare (il calendario si rifà dai dati; spenta, il calendario torna quello di prima); chi non ha mai fatto una seduta segue il calendario, come prima. Con una seduta a settimana (7 giorni tra l'una e l'altra) la rampa non avanza mai e lo scarico non arriva. Lo scarico (MES-05), la rampa (MES-03) e le tecniche leggono la settimana così. Convenzione (registro C.4; base [V] solo per la direzione: 2 settimane di stop mantengono la forza, PMID 28328712). Restano sul calendario (aperto): il controllo dell'8ª settimana del principiante (`controlloOttavaPrincipiante`), `faseDelGiorno` (esigenza, protezione «programmato» dello scarico reattivo, repertorio) e le fasi delle sedute vecchie senza la settimana salvata."
+  },
+  {
+   "capitolo": 26,
+   "sostituisce": false,
+   "riga": "- **CST-02** (spegnibile) rampa di rientro (W4-T2 = pacchetto P4-S; registro B20; numeri in `sicurezza/soglie-popolazioni.js`; solo programmi v2, con il consenso): dopo una pausa di 14 giorni (contati come CAR-04: oltre i 65 anni, in una pausa vera, doppi) la prima seduta ha il -25% di serie (RIC-05), la seconda il -10% (fase 'carico' 90, «seconda seduta dopo la pausa: serie -10%, poi il piano di sempre»; con 3-4 serie il 10% arrotondato non toglie niente), poi il piano; nelle due sedute una ripetizione in riserva in più (`rirExtraRientro`, letto da `rirBersaglio` dopo l'esigenza), non a chi è già a 3-4 (modalità prudente, over 65, minorenni, gravidanza). Il bottone «Sto bene: come da piano» non c'è (aperto). Convenzione (registro C.4)."
+  },
+  {
+   "capitolo": 22,
+   "sostituisce": false,
+   "riga": "- **ALG-14** (spegnibile) risalita dopo il rientro (W4-T2 = pacchetto P4-S; registro B20; numeri in `sicurezza/soglie-popolazioni.js`; fase 'carico' 90, `rientroRecente` in `sicurezza/popolazioni.js`; solo programmi v2, con il consenso): nelle 3 sedute dopo la seduta di rientro di un esercizio (CAR-04), se la progressione propone di salire, il carico sale fino a quello di prima della pausa, di circa il 5% a seduta (2,5% per chi comincia, i prudenti, i minorenni, gli over 65 e in gravidanza; almeno un passo dell'attrezzo, poi la griglia), mai oltre il carico di prima: «dopo la pausa si risale verso il carico di prima (100 kg), di circa il 5% a seduta». Non scatta se la progressione tiene il carico o lo abbassa. Convenzione (registro C.4; base da verificare [M])."
+  }
+ ],
+ "mappaAgenti": [
+  "popolazioni e rientro dopo una pausa (P4-S = W4-T2 snello): js/coach/sicurezza/popolazioni.js (fase 'carico' 90 «SEN»: tetti degli over 65, seconda seduta e +1 RIR del rientro, risalita ALG-14), numeri in js/coach/sicurezza/soglie-popolazioni.js; inGravidanza(profilo) per le guardie degli altri sotto-coach (P4-C); pavimentoRirPopolazioni e rirExtraRientro chiamati da rirBersaglio (regole-ricerca.js); potenzaAmmessaOver65 letto da tecnicaAdatta; settimaneFermePerPausa letto da settimanaProgramma (CST-01: il calendario si ferma durante una pausa, programmi v2); giorniPausaContati letto da rientroDopoPausa (CAR-04: giorni doppi oltre i 65 in una pausa vera); giorniRientroPiano letto da rientroPiano (RIC-05 e CST-02); bandiera della gravidanza in js/ui/opzioni/il-coach.js (htmlGravidanzaCoach, setCoach('gravidanza'))"
+ ],
+ "nota": "P4-S (popolazioni e rientro, snello). DA FARE ALL'INTEGRAZIONE: (1) regia/fasi.js, testa del file: la riga «90 SEN tetti della Sentinella (dentro i carichi: non e una fase)» diventa «90 SEN ora: tetti delle popolazioni e rampa del rientro (ETA-08 a, CST-02, ALG-14; sicurezza/popolazioni.js)» (commento, file non di P4-S). (2) Mappa, cap. 17 n. 10 (giorni veri sopra i 65): chiuso da CAR-04, RIC-05, CST-01, CST-02 (giorni doppi solo in una pausa vera, programmi v2); registro B20: la deroga datata 2026-10-05 si chiude; D-P21 n. 5 chiuso (la potenza dalla settimana 1). (3) Golden di buildProgram da rigenerare una volta a codice fermo: misurato nella copia integrata (integra-onda --prova) cambiano SOLO programmi di over 65 e solo tecnica e note: programmi 11 su 300 (47 «potenza» tolte), impronte senza consenso 11 su 300 (gli stessi profili), con profilo 0 su 24, metodi forzati 10 su 75 (31 «potenza» tolte); esercizi, serie, ripetizioni e pause identici. Il golden dei carichi non cambia (programmi v1, nessuna potenza). Con il golden rigenerato npm run controlla nella copia integrata: 761 prove, 760 verdi, 1 saltata, 0 rosse; autotest del cancello 25 e di integra 10 ok. (4) Prove di altre onde aggiornate da P4-S (minimo, dichiarato): tests/scarichi.test.js (3 prove con una pausa di 7-13 giorni nei dati: CST-01 spenta lì), tests/revisione-onda3a.test.js (1 prova, CST-01 spenta), tests/generatore-onda0.test.js, tests/tecniche.test.js (2), tests/revisione-onda2d.test.js (la potenza degli over 65: «nessuna nella base» se sicurezza/popolazioni.js c'è, come prima se non c'è: dopo l'integrazione il ramo «come prima» si può togliere). (5) Aperti proposti (in onde.onda-4.aperti): «Over 65: esercizi da favorire (ETA-65)» (onda-2b.aperti, responsabile W4-T2): NON fatto, serve un punteggio nella scelta (programma/motore.js, di P4-F); misura di P4-S sulla fascia senior della matrice completa (21.600 profili, 70 anni): SAF-05:prudente 113 programmi prima e dopo (Stacco con Trap Bar 86 occorrenze, Military Press 35), quindi SAF-05 sulla completa NON è 0 già su origin/main e P4-S non lo cambia; proposta: responsabile «W5 o oltre la v2 (punteggio della scelta in motore.js)», scadenza onda-5. «Sto bene: come da piano» (CST-02, il bottone che salta la rampa del rientro): non fatto (serve una scheda in oggi.js o seduta.js e un campo nel profilo): onda-5 (W5-T2). Il PAR-Q dell'onboarding non accende la bandiera della gravidanza (onboarding.js): onda-5. Restano sul calendario (non sulla settimana ferma di CST-01): controlloOttavaPrincipiante (mesociclo.js), faseDelGiorno (regole-ricerca.js: esigenza, protezione «programmato» di scarico.js, repertorio.js) e le fasi delle sedute vecchie senza la settimana salvata: onda-5. (6) Conseguenza di CST-01 da far vedere al proprietario: con le soglie di MES-15 (B20) chi fa una sola seduta a settimana (7 giorni tra due sedute) ripete sempre la stessa settimana del blocco: la rampa non avanza e lo scarico non arriva; con 2 sedute a settimana una seduta saltata (7 giorni) sposta il programma di una settimana. (7) Trovati fuori dai file di P4-S, da decidere: js/coach/metodi-momenti.js, momento «bambino»: «Dopo il parto: 12 settimane di attività leggera ed esercizi per il pavimento pelvico, poi si riparte con il via libera del medico.» e le sue tre traduzioni sono il testo della ripresa dopo il parto (REC-12 parte b, bloccata, registro C.2 n. 4): c'erano prima del coach v2; tests/popolazioni.test.js li elenca come «già prima» e la lista può solo diminuire. NOTA_OVER65 di regia/genera.js («... e 5 minuti di equilibrio a fine seduta.») è una dose di equilibrio: verificare che non sia ETA-11 (bloccata: dose ≥ 3 volte e frase sulle cadute; qui nessuna frase sulle cadute). (8) inGravidanza(profilo) per P4-C: true solo con profilo.gravidanza === true; la bandiera tiene accesa anche la modalità prudente (profilo.parq), quindi chi legge solo parq la vede già prudente. (9) File fuori proprietà toccati al minimo: js/coach/regole-ricerca.js (oltre a rientroDopoPausa: in rirBersaglio due chiamate, rirExtraRientro dopo l'esigenza e pavimentoRirPopolazioni per ultima), js/coach/carichi/progressivo.js (solo settimanaProgramma), js/coach/regole-nuove.js (solo rientroPiano), le prove del punto 4."
+}

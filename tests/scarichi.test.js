@@ -141,6 +141,7 @@ test('N6 con la fatica alta: a 5 e 6 serie la dose «alta» da 2 serie, la «med
 
 test('lo scarico non si compone: due sedute della stessa settimana hanno lo stesso carico (riferimento x dose), la ripresa e al 100% del riferimento', () => {
   const { a } = H.telefono({ d: { level: 'intermedio' } });
+  a.spegni(['CST-01']);   /* P4-S: tra la seduta di sabato e il lunedi della settimana 6 passano 9 giorni, che con CST-01 fermano il calendario: qui si prova lo scarico, non la pausa */
   H.vaiA(a, 5, 0);
   a.storia([a.seduta(2, [{ nome: SQUAT, serie: [[100, 5, true, 8], [100, 5, true, 8], [100, 5, true, 8]] }], { feedback: FB(6), settimana: { numero: 5, fase: 'carico' } })]);
   H.vaiA(a, 6, 0);
@@ -348,6 +349,7 @@ function conScaricoDiGiorniFa(giorni) {
   const { a } = intermedioStanco(4);
   const lista = a.leggi(a.chiave('historyKey')).concat([conPrimaSedutaCoach(a, giorni)]);
   a.storia(lista.sort((x, y) => y.id - x.id));
+  a.spegni(['CST-01']);   /* P4-S: tra la seduta dello scarico di allora e le ultime tre passano piu di 6 giorni, che con CST-01 fermano il calendario: qui si provano le protezioni, non la pausa */
   return a;
 }
 test('MES-07 protezione 3: non a meno di 14 giorni dall ultimo scarico deciso dal coach (13 e 14 giorni fa); a 15 giorni non e piu questa protezione', () => {
@@ -436,6 +438,7 @@ test('la storia della prontezza dei programmi v1 non porta il campo voglia (la v
 
 test('STR-01: lo strain in salita da due settimane propone lo scarico solo se le protezioni lo permettono, ha «Non ora» che si annulla, e col tocco passa dalle protezioni', () => {
   const { a } = intermedioStanco(4);
+  a.spegni(['CST-01']);   /* P4-S: una seduta a settimana lascia 7 giorni tra l una e l altra, che con CST-01 non fanno avanzare la rampa: qui si prova lo strain, non la pausa */
   registraMessaggi(a);
   /* tre settimane con lo sforzo in salita (sRPE 8, 9, 10 x 50 minuti), una seduta al lunedi di ognuna (oggi e mercoledi) */
   const lunedi = k => a.seduta(2 + 7 * k, [{ nome: SQUAT, serie: [[100, 5, true, 8]] }], { feedback: FB([10, 9, 8][k]), minuti: 50 });

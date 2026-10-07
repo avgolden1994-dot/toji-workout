@@ -226,7 +226,9 @@ test('M1: su 1.543 profili della matrice del collaudo nessuna nota del volume, d
     tutti.forEach(e => { if (e.tecnica === 'drop' && ['D', 'E'].indexOf(classe(e.name)) === -1) falso(p, 'drop set su ' + e.name + ' (classe ' + classe(e.name) + ')'); });
   });
   /* il controllo non e vuoto: le note ci sono, e il campione le esercita tutte */
-  assert.ok(viste.pocoTempo >= 100 && viste.tempo >= 20 && viste.struttura >= 20 && viste.drop >= 20 && viste.potenza >= 20 && viste.quattroSedute >= 20 && viste.mesociclo >= 100, JSON.stringify(viste));
+  /* P4-S (ETA-08 parte a, D-P21 n. 5): con sicurezza/popolazioni.js la potenza (e la sua nota) non c'e nei programmi nuovi degli over 65; senza, come prima */
+  const p4s = a.g("typeof potenzaAmmessaOver65 === 'function'");
+  assert.ok(viste.pocoTempo >= 100 && viste.tempo >= 20 && viste.struttura >= 20 && viste.drop >= 20 && (p4s ? viste.potenza === 0 : viste.potenza >= 20) && viste.quattroSedute >= 20 && viste.mesociclo >= 100, JSON.stringify(viste));
   assert.deepStrictEqual(falsi, [], 'note false: ' + falsi.join('\n'));
 });
 

@@ -32,6 +32,7 @@ function paginaCoach(p) {
     'Vale dal prossimo programma. Conta soprattutto il totale delle serie.');
   h += setGroup('Salute',
     toggleCoach('parq', !!p.parq, 'Modalità prudente', 'Almeno un sì al questionario di salute: niente cedimento, aumenti più piccoli') +
+    (donna || p.gravidanza ? htmlGravidanzaCoach(p) : '') +
     (donna ? toggleCoach('cicloTraccia', !!p.cicloTraccia, 'Sintomi del ciclo', 'Una domanda in più nel check prima della seduta') : ''));
   const lista = (arr, vuoto) => arr && arr.length ? arr.map(n => '<div class="sr-row sr-static"><span class="sr-name">' + escapeHtml(senzaEmoji(n)) + '</span>' +
     '<button class="og-link" onclick="togliPreferenza(' + JSON.stringify(n).replace(/"/g, '&quot;') + ')">Togli</button></div>').join('') : '<div class="sr-row sr-static"><span class="sr-name"><small>' + vuoto + '</small></span></div>';
@@ -108,10 +109,28 @@ window.togglePuntoDeboleCoach = function(k) {
 function toggleCoach(k, on, nome, sub) {
   return '<button class="sr-row" onclick="setCoach(\'' + k + '\', ' + (!on) + ')" role="switch" aria-checked="' + on + '"><span class="sr-name">' + nome + '<small>' + sub + '</small></span><span class="switch ' + (on ? 'on' : '') + '"></span></button>';
 }
+/* REC-12 parte a (W4-T2, P4-S; registro C.3: guardia che rinvia senza affermazioni cliniche): gravidanza o parto recente. La bandiera (profilo.gravidanza, letta da inGravidanza in
+   sicurezza/popolazioni.js) tiene accesa la modalità prudente (PAR-Q: niente cedimento né tecniche intense, aumenti dimezzati, 3-4 ripetizioni in riserva) e mostra il rinvio fisso
+   all ostetrica o al medico. Nient altro: esercizi da evitare, posizioni, ripresa dopo il parto e pavimento pelvico sono REC-12 parte b, bloccata (registro C.2 n. 4) */
+const TESTO_GRAVIDANZA = 'Parlane con l’ostetrica o con il medico: sono loro a dirti come allenarti adesso. Il coach resta in modalità prudente: niente serie al limite, niente tecniche intense e carichi che salgono piano. Non è un parere medico.';
+const NOTA_PRUDENTE_GRAVIDANZA = 'Con la gravidanza o un parto recente la modalità prudente resta accesa: se è cambiato qualcosa, togli prima «Gravidanza o parto recente».';
+function htmlGravidanzaCoach(p) {
+  const on = typeof inGravidanza === 'function' ? inGravidanza(p) : p.gravidanza === true;
+  return toggleCoach('gravidanza', on, 'Gravidanza o parto recente', 'Il coach resta in modalità prudente') +
+    (on ? '<div class="sr-row sr-static"><span class="sr-name"><small>' + TESTO_GRAVIDANZA + '</small></span></div>' : '');
+}
+/* accesa: la modalità prudente si accende (se era spenta, lo si ricorda: parqDaGravidanza); spenta: torna la risposta di prima al questionario */
+function setGravidanzaCoach(p, v) {
+  if (v) { p.gravidanza = true; if (!p.parq) { p.parq = true; p.parqDaGravidanza = true; } }
+  else { delete p.gravidanza; if (p.parqDaGravidanza) p.parq = false; delete p.parqDaGravidanza; }
+}
 window.setCoach = function(k, v) {
   /* ETA-01: l eta resta obbligatoria e nei limiti anche dopo l avvio (sotto 13 anni nessun programma): un valore non valido non si salva */
   if (k === 'age') { const e = etaPerProgramma(v); if (!e.ok) { showUndo(e.messaggio); renderSetPage(); return; } }
   const p = getProfile() || {};
+  /* REC-12 a: la gravidanza ha il suo interruttore e, finché è accesa, la modalità prudente non si spegne */
+  if (k === 'gravidanza') { setGravidanzaCoach(p, !!v); localStorage.setItem(PROFILE_KEY(), JSON.stringify(p)); renderSetPage(); return; }
+  if (k === 'parq' && !v && p.gravidanza === true) { showUndo(NOTA_PRUDENTE_GRAVIDANZA); renderSetPage(); return; }
   p[k] = v;
   localStorage.setItem(PROFILE_KEY(), JSON.stringify(p));
   renderSetPage();

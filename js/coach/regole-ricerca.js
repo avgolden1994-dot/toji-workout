@@ -122,7 +122,12 @@ function rirBersaglio(nome, sett) {
     if (a >= pisoRirEsigenza(sett)) out = [a, Math.max(a, out[1] - 1)];
   }
   if (!stabile(nome) && out[0] < 1) out = [1, Math.max(2, out[1])];
-  return pavimentoRirMinorenni(out);
+  /* CST-02 (W4-T2, P4-S): +1 nelle due sedute dopo una pausa, su quello che varrebbe senza la pausa (sicurezza/popolazioni.js) */
+  const rientro = typeof rirExtraRientro === 'function' ? rirExtraRientro(nome) : 0;
+  if (rientro) out = [Math.min(4, out[0] + rientro), Math.min(5, out[1] + rientro)];
+  out = pavimentoRirMinorenni(out);
+  /* ETA-08 a e REC-12 a (W4-T2, P4-S): il pavimento degli over 65 e della gravidanza, per ultimo (sicurezza/popolazioni.js: solo alza) */
+  return typeof pavimentoRirPopolazioni === 'function' ? pavimentoRirPopolazioni(out, nome, sett) : out;
 }
 /* MES-02 (W2-T3, aggancio): la tabella del piano per settimana e classe, se c e (rirPianoSettimana, programma/mesociclo.js, W2-T4), decide il RIR della settimana; senza (oggi, o un
    programma salvato prima del piano) restano i valori di prima, rirBersaglioPerLivello. rirPianoSettimana(nome, sett) ritorna [min, max] (o { min, max }) per l esercizio in quella settimana,
@@ -230,12 +235,15 @@ function ripresaDopoScarico(nome) {
   const s = sessioniConData(nome, 1)[0];
   return !!(s && s.eraDiScarico && !((settimanaProgramma() || {}).fase === 'scarico') && caricoRiferimento(nome) > 0);
 }
-/* CAR-04: i giorni sono quelli veri, per tutti (prima oltre i 65 anni si contavano doppi: 5 giorni davano gia -10%) */
-function rientroDopoPausa(g) {
-  if (g < 10) return null;
-  if (g <= 20) return { f: 0.9, t: '-10%' };
-  if (g <= 28) return { f: 0.8, t: '-20%' };
-  if (g <= 90) return { f: 0.7, t: '-30%' };
+/* CAR-04: g = giorni dall ultima volta con l esercizio. B20 (W4-T2, P4-S): nei programmi v2, con il consenso, oltre i 65 anni i giorni di una pausa VERA (piu di 6 giorni
+   senza nessuna seduta) contano doppi (giorniPausaContati, sicurezza/popolazioni.js); con il ritmo normale restano quelli veri, come per tutti (era il motivo della deroga
+   del 2026-10-05: 5 giorni davano gia -10%). `contati` (facoltativo) = i giorni gia contati (ALG-14 rifa il conto di una pausa passata). Programmi v1: giorni veri */
+function rientroDopoPausa(g, contati) {
+  const c = contati !== undefined ? contati : (typeof giorniPausaContati === 'function' ? giorniPausaContati(g) : g);
+  if (c < 10) return null;
+  if (c <= 20) return { f: 0.9, t: '-10%' };
+  if (c <= 28) return { f: 0.8, t: '-20%' };
+  if (c <= 90) return { f: 0.7, t: '-30%' };
   return { f: 0.5, t: '-50%' };
 }
 const fmtKg = (x) => String(Math.round(x * 10) / 10);

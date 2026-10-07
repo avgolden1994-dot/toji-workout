@@ -144,7 +144,10 @@ test('B3 (MAV-03): over 65 e PAR-Q senza AMRAP, drop e parziali; la potenza solo
     if (e.tecnica === 'cluster' && p.age < 18) colpe.push(p.seme + ' cluster a un minorenne');
   })));
   assert.deepStrictEqual(colpe, []);
-  assert.ok(potenza > 0, 'la potenza degli over 65 compare (' + potenza + ')');
+  /* P4-S (ETA-08 parte a, D-P21 n. 5): con sicurezza/popolazioni.js la potenza degli over 65 non c'e nelle 8 settimane di base, cioe mai nella generazione (il programma si ripete
+     dalla settimana 1); senza quel file (prima dell integrazione di P4-S) compare come prima */
+  if (a.g("typeof potenzaAmmessaOver65 === 'function'")) assert.strictEqual(potenza, 0, 'nessuna potenza nella base degli over 65 (P4-S)');
+  else assert.ok(potenza > 0, 'la potenza degli over 65 compare (' + potenza + ')');
   /* una scheda a 45 minuti per un principiante: drop set no, e la nota non promette il drop. INT-2b (REG-02, riconciliaNote): la nota «in superserie» c e solo se la scheda ha davvero delle coppie
      (qui il taglio per il tempo non ne lascia: il fondamentale pesante resta solo), e il principiante legge comunque «per ora niente serie al cedimento» */
   const prog = costruisci(Object.assign({}, BASE, { level: 'principiante', minutes: 45, days: 3, seme: 'drop-1' }));
