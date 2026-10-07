@@ -126,3 +126,32 @@ test('M2, storia di 12 settimane a casa con manubri fino a 20 kg (seme casa1): n
   assert.deepStrictEqual(sopra, []);
   assert.ok(Object.keys(tab).some(n => a.chiama('attrezzoDi', n) === 'corpo' && tab[n].some(s => s.w > 0)), 'il programma ha un esercizio «corpo» con carico');
 });
+
+/* ============================================================================================================
+   M3 · sotto il minimo dell attrezzo ALG-05 non da carichi fuori griglia e la nota della barra e solo del bilanciere
+   ============================================================================================================ */
+test('M3: Panca 22,5 kg x 6 portata a 12 ripetizioni: la barra vuota (20 kg), non 19 kg di bilanciere, e niente consiglio sui manubri (prima: 19 kg con «il bilanciere vuoto pesa 20 kg: ... con i manubri»)', () => {
+  const app = nuovaApp({}, PROG_V2);
+  [10, 6, 3].forEach(g => registra(app, g, PANCA, serie(3, 22.5, 6), { reps: 6, base: 6, sets: 3, rir: [2, 3] }));
+  const r = carico(app, PANCA, 22.5, 12, 3);
+  assert.strictEqual(r.weight, 20, r.weight + ' kg · ' + r.motivo);
+  assert.ok(inGrigliaBase(app, PANCA, r.weight));
+  assert.doesNotMatch(r.motivo, /bilanciere vuoto/, 'a 20 kg il bilanciere e la barra: nessun consiglio');
+});
+
+test('M3: Alzate Laterali ai Cavi da 2,5 kg portate a 15 ripetizioni: la pila minima (2,5 kg), non 2 kg (prima: 2 · 1,5 · 1 · 0,5 kg)', () => {
+  const app = nuovaApp({}, PROG_V2);
+  [10, 6, 3].forEach(g => registra(app, g, ALZATE_CAVI, serie(3, 2.5, 8), { reps: 8, base: 8, sets: 3, rir: [1, 2] }));
+  const r = carico(app, ALZATE_CAVI, 2.5, 15, 3);
+  assert.strictEqual(r.weight, 2.5, r.weight + ' kg · ' + r.motivo);
+  assert.ok(inGrigliaBase(app, ALZATE_CAVI, r.weight));
+});
+
+test('M3: la nota «il bilanciere vuoto pesa 20 kg» compare solo per il bilanciere, non per i cavi o le macchine sotto il loro minimo (prima: anche sui cavi a 0,5 kg)', () => {
+  const app = nuovaApp({}, PROG_V2);
+  const cavi = carico(app, ALZATE_CAVI, 0.5, 15, 3);
+  assert.doesNotMatch(cavi.motivo, /bilanciere/, cavi.weight + ' kg · ' + cavi.motivo);
+  assert.ok(cavi.weight <= 0.5 + 1e-9, 'la fase 95 non alza il carico');
+  const barra = carico(app, PANCA, 13, 8, 3);
+  assert.match(barra.motivo, /Il bilanciere vuoto pesa 20 kg/, 'per il bilanciere la nota resta: ' + barra.motivo);
+});

@@ -598,7 +598,9 @@ function ricalcoloDalMassimale(r, c) {
     else if (pc.prudente || pc.sonnoMale || pc.eta >= 65 || pc.minorenne) t = W + (t - W) / 2;
   }
   const g = grigliaAttiva() ? pesoGriglia(t, nome, { modo: 'giu' }) : null;
-  const w = g !== null && g <= t + 1e-9 ? g : Math.floor(t * 2 + 1e-9) / 2;   /* per difetto: mai sopra il calcolo (sotto la barra vuota resta il calcolo, la fase 95 lo dice) */
+  /* per difetto: mai sopra il calcolo. Sotto il minimo dell attrezzo (la barra vuota, la pila a 2,5 kg) il peso della griglia supera il calcolo: se non supera anche il carico gia
+     fatto e il minimo che si carica davvero (revisione di 3a, M3: prima 19 kg di bilanciere e 2 · 1,5 · 1 · 0,5 kg sui cavi); se lo supera resta il calcolo e la fase 95 lo dice */
+  const w = g !== null && (g <= t + 1e-9 || g <= W + 1e-9) ? g : Math.floor(t * 2 + 1e-9) / 2;
   r.weight = w > 0 ? w : W;
   r.reps = ora;
   r.tipo = r.weight > W + 1e-9 ? 'su' : (r.weight < W - 1e-9 ? 'giu' : 'fermo');

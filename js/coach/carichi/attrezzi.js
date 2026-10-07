@@ -115,8 +115,9 @@ function faseGrigliaETetto(r, c) {
   if (!regolaAttiva('ALG-06')) return r;
   const w = arrotondaAttrezzo(r.weight, c.nome, { modo: 'giu', tetto: tetto });
   if (w > r.weight + 1e-9) {
-    /* sotto il minimo dell attrezzo (un bilanciere sotto la barra vuota: dati vecchi o un tetto della Sentinella) questa fase non alza il carico: lo dice (PAR-08) */
-    if (String(r.motivo || '').indexOf(NOTA_SENZA_BARRA) === -1) r.motivo = (r.motivo ? r.motivo + ' • ' : '') + NOTA_SENZA_BARRA;
+    /* sotto il minimo dell attrezzo (un bilanciere sotto la barra vuota: dati vecchi o un tetto della Sentinella) questa fase non alza il carico: per il bilanciere lo dice (PAR-08);
+       la nota parla della barra e dei manubri: non vale per i cavi o le macchine sotto il loro minimo (revisione di 3a, M3) */
+    if (attrezzoDi(c.nome) === 'bilanciere' && String(r.motivo || '').indexOf(NOTA_SENZA_BARRA) === -1) r.motivo = (r.motivo ? r.motivo + ' • ' : '') + NOTA_SENZA_BARRA;
     return r;
   }
   if (Math.abs(w - r.weight) > 1e-9) {
