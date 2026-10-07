@@ -12,6 +12,9 @@
    quindi scattava quasi ogni giorno, oltre il piano e oltre il tetto di 3 serie dei principianti (B18). Il solo "+1 serie" che resta e
    quello settimanale per unita di volume (PCO-03, W3-T4).
    W1-T3: applicaProntezza non e piu avvolta da regole-nuove.js ma una catena 'prontezza' di fasi registrate (regia/fasi.js): 10 PRZ qui, 20 RIC-04.
+   P3-B (programmi v2): PRZ-04 non basta da sola per uno scarico: la prontezza bassa e il segnale S1 di MES-07 e serve un secondo segnale, con le protezioni di distanza
+   (valutaScaricoReattivo, sicurezza/scarico.js); lo scarico ha la dose e la durata uniche, e si annulla dal messaggio. La storia delle check-in porta anche la voce «voglia»
+   (S6 di MES-07). CST-09: la stanchezza che non passa (prontezza bassa da due settimane, o due scarichi in sei settimane) ha il suo messaggio qui sotto, con il rinvio al medico.
    ============================================================ */
 const PRONTEZZA_KEY = () => 'coach_plus_prontezza_' + currentMode;
 const PRONTEZZA_VOCI = [
@@ -40,8 +43,9 @@ function renderProntezza() {
   const list = loadData()[currentDay] || [];
   const p = leggiProntezza();
   const fatta = p && p.data === ymd(new Date()) && p.day === currentDay;
-  if (!coachAttivo() || fatta || !list.length || list.some(e => e.completedSets.some(x => x.done))) { box.innerHTML = ''; return; }
-  box.innerHTML = '<div class="card pz-card"><div class="pz-head"><b>Come stai oggi?</b><button class="og-link" onclick="saltaProntezza()">Salta</button></div>' +
+  const persistente = typeof htmlStanchezzaPersistente === 'function' ? htmlStanchezzaPersistente() : '';   /* CST-09: solo programmi v2, con il consenso */
+  if (!coachAttivo() || fatta || !list.length || list.some(e => e.completedSets.some(x => x.done))) { box.innerHTML = persistente; return; }
+  box.innerHTML = persistente + '<div class="card pz-card"><div class="pz-head"><b>Come stai oggi?</b><button class="og-link" onclick="saltaProntezza()">Salta</button></div>' +
     '<div class="pz-sub">Quattro tocchi: il coach adatta i carichi di oggi.</div>' +
     vociProntezza().map(v => '<div class="pz-row"><span>' + v[1] + '</span><div class="pz-opts">' +
       v[3].map((l, i) => '<button class="pz-opt' + (prontezzaStato[v[0]] === i ? ' on' : '') + '" onclick="sceltaProntezza(\'' + v[0] + '\',' + i + ')">' + l + '</button>').join('') +
@@ -71,9 +75,12 @@ function prontezzaDiOggi(r) {
   if (f < 1) (data[currentDay] || []).forEach(e => {
     const m = findExercise(e.name);
     if (!m || m.type !== 'compound' || !(Number(e.weight) > 0) || e.completedSets.some(x => x.done)) return;
-    e.weight = arrotonda(e.weight * f);
+    /* ALG-06 (integrazione 3a): il carico sta sulla griglia dell attrezzo (caricoSceso: il peso vero piu vicino, almeno un passo sotto); se la griglia lo allontana dalla dose lo dice */
+    const voluto = e.weight * f;
+    e.weight = typeof caricoSceso === 'function' ? caricoSceso(e.weight, f, e.name) : arrotonda(voluto);
     e.completedSets = e.completedSets.map(x => Object.assign({}, x, { weight: e.weight }));
-    e.coachNote = (punteggio >= 50 ? 'Prontezza ' + punteggio + '%: un RIR in più sui multiarticolari (-4%)' : 'Prontezza ' + punteggio + '%: seduta leggera, multiarticolari -10%');
+    e.coachNote = (punteggio >= 50 ? 'Prontezza ' + punteggio + '%: un RIR in più sui multiarticolari (-4%)' : 'Prontezza ' + punteggio + '%: seduta leggera, multiarticolari -10%')
+      + (typeof notaPesoVicino === 'function' ? notaPesoVicino(e.weight, voluto) : '');
     e.coachTipo = 'giu';
     toccati++;
   });
@@ -81,18 +88,37 @@ function prontezzaDiOggi(r) {
   saveData(data);
   try { localStorage.setItem(PRONTEZZA_KEY(), JSON.stringify({ data: ymd(new Date()), day: currentDay, punteggio: punteggio, risposte: r })); } catch (e) {}
   /* storia: stanchezza che dura una settimana = scarico anticipato (Hooper) */
-  const storia = storicoProntezza().filter(x => x.data !== ymd(new Date())).concat([{ data: ymd(new Date()), punteggio: punteggio, sonno: r.sonno }]).slice(-14);
+  const voce = { data: ymd(new Date()), punteggio: punteggio, sonno: r.sonno };
+  if (typeof programmaConPiano === 'function' && programmaConPiano()) voce.voglia = r.voglia;   /* S6 di MES-07: solo nei programmi v2 (la v1 salva la voce di sempre) */
+  const storia = storicoProntezza().filter(x => x.data !== ymd(new Date())).concat([voce]).slice(-14);
   try { localStorage.setItem('coach_plus_prontezza_storia_' + currentMode, JSON.stringify(storia)); } catch (e) {}
   const settimana = storia.filter(x => giorniTra(daYmd(x.data), new Date()) <= 7);
+  let scaricoDecisoDa = null;   /* programmi v2: i segnali per cui il coach ha deciso lo scarico (per il messaggio e per annullarlo) */
+  const primaAgg = localStorage.getItem(AGG_KEY());
   if (settimana.length >= 3 && settimana.slice(-3).every(x => x.punteggio < 50)) {
     const ag = aggiustiCoach();
-    if (!ag.scarico) { ag.scarico = scaricoReattivo('stanchezza alta per piu giorni di fila', 2); salvaAggiusti(ag); }
+    if (!ag.scarico) {
+      /* MES-07: la prontezza bassa (S1) da sola non basta nei programmi v2: serve un secondo segnale e le protezioni di distanza (nelle prime settimane del blocco, vicino a un altro scarico: niente) */
+      const mes07 = typeof valutaScaricoReattivo === 'function' ? valutaScaricoReattivo('S1') : { ok: true };
+      if (mes07.ok) {
+        ag.scarico = voceScaricoReattivo('stanchezza alta per piu giorni di fila', 2);
+        salvaAggiusti(ag);
+        if (programmaConPiano()) scaricoDecisoDa = mes07.segnali || [];
+      }
+    }
   }
   prontezzaStato = {};
   renderProntezza(); renderAllenamento();
   const msg = punteggio >= 70 ? 'Prontezza ' + punteggio + '%: seduta come da piano' :
     (punteggio >= 50 ? 'Prontezza ' + punteggio + '%: multiarticolari un po’ più leggeri' : 'Prontezza ' + punteggio + '%: oggi seduta leggera. Anche solo muoversi conta.');
-  showUndo(msg, toccati ? () => { if (prima !== null) localStorage.setItem(dataKey(), prima); renderAllenamento(); } : null, 6000);
+  if (scaricoDecisoDa) {
+    /* lo scarico deciso dal coach lo dice e si annulla (insieme ai carichi di oggi): prima di P3-B la voce si scriveva in silenzio */
+    showUndo('Prontezza bassa da giorni e altri segnali di recupero scarso: le prossime ' + sogliaScarico('reattivoSedute') + ' sedute sono di scarico', () => {
+      if (primaAgg !== null) localStorage.setItem(AGG_KEY(), primaAgg); else localStorage.removeItem(AGG_KEY());
+      if (toccati && prima !== null) localStorage.setItem(dataKey(), prima);
+      renderAllenamento();
+    }, 8000);
+  } else showUndo(msg, toccati ? () => { if (prima !== null) localStorage.setItem(dataKey(), prima); renderAllenamento(); } : null, 6000);
   return punteggio;
 }
 registraFase('prontezza', 10, 'PRZ', (v, c) => prontezzaDiOggi(c.risposte));

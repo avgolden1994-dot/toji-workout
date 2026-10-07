@@ -143,7 +143,9 @@ function conAnnulla(testo, fn) {
   fn();
   renderPiano(); renderAllenamento();
   if (document.getElementById('agent-body')) renderAgent();
-  showUndo(testo, () => { if (prima !== null) localStorage.setItem(dataKey(), prima); if (primaAg !== null) localStorage.setItem(AGG_KEY(), primaAg); renderPiano(); renderAllenamento(); if (document.getElementById('agent-body')) renderAgent(); }, 6000);
+  /* una chiave che prima non c era si toglie (INT-3a): prima l annulla la lasciava con il valore di dopo, e P3-B la scriveva prima per aggirarlo */
+  const ripristina = (k, v) => { if (v !== null) localStorage.setItem(k, v); else localStorage.removeItem(k); };
+  showUndo(testo, () => { ripristina(dataKey(), prima); ripristina(AGG_KEY(), primaAg); renderPiano(); renderAllenamento(); if (document.getElementById('agent-body')) renderAgent(); }, 6000);
 }
 window.azioneCoach = function(tipo, nome) {
   const pul = senzaEmoji(nome);
@@ -177,7 +179,16 @@ window.azioneCoach = function(tipo, nome) {
       const ag = aggiustiCoach(); ag.ruotatoBlocco = bloccoCorrente(); salvaAggiusti(ag);
     });
   }
-  if (tipo === 'scarico') conAnnulla('Prossime due sedute di scarico', () => { const ag = aggiustiCoach(); ag.scarico = scaricoReattivo('carico della settimana troppo alto', 2); salvaAggiusti(ag); });   /* scarico deciso dal coach: la voce la fa sicurezza/scarico.js (W1-T3) */
+  if (tipo === 'scarico') {
+    /* MES-07 (P3-B, programmi v2): anche col tocco dell utente lo scarico passa dalle protezioni (non vicino a un altro scarico, non nelle prime settimane del blocco, non se quello del programma e vicino) */
+    const mes07 = typeof valutaScaricoReattivo === 'function' ? valutaScaricoReattivo('S7') : { ok: true };
+    if (!mes07.ok) { showUndo(mes07.perche, null, 6000); return; }
+    conAnnulla('Prossime due sedute di scarico', () => { const ag = aggiustiCoach(); ag.scarico = voceScaricoReattivo('carico della settimana troppo alto', 2); salvaAggiusti(ag); });   /* scarico deciso dal coach: la voce la fa sicurezza/scarico.js (W1-T3) */
+  }
+  /* MES-07: «Non ora» (programmi v2): la proposta di scarico non si ripete per qualche giorno; si annulla */
+  if (tipo === 'scaricoNonOra') {
+    conAnnulla('Va bene, non ora: te lo richiedo più avanti', () => { const ag = aggiustiCoach(); ag.scaricoNonOra = ymd(new Date()); salvaAggiusti(ag); });
+  }
   /* STD-01: il livello cambia solo col tocco dell utente e si annulla (prima: solo in salita e senza annulla) */
   if (tipo === 'livello' || tipo === 'rivediLivello') {
     if (!coachAttivo()) return;
@@ -277,9 +288,12 @@ function azioniCoach() {
     out.push({ testo: 'Nuovo blocco: cambio gli accessori per stimolare il muscolo da angoli diversi. I fondamentali restano uguali.', bottoni: [['Ruota gli accessori', "azioneCoach('ruota', '')"]] });
   /* strain in salita da due settimane con fatica alta */
   const sw = strainSettimane();
+  /* MES-07 (programmi v2): lo strain in salita e il segnale S7 (la fatica dichiarata), non basta da solo: la proposta c e solo se le protezioni e un secondo segnale la permettono, e si puo rimandare («Non ora») */
+  const nonOra = programmaConPiano() && ag.scaricoNonOra && giorniTra(daYmd(ag.scaricoNonOra), new Date()) < (sogliaScarico('reattivoProtezioni') || { nonOraGiorni: 0 }).nonOraGiorni;
   if (sw[0].strain && sw[1].strain && sw[2].strain && sw[0].strain > sw[1].strain && sw[1].strain > sw[2].strain && sw[0].fatica >= 8 && !ag.scarico
-      && !sw.some(x => x.scarico) && !scaricoRecente(PARAM_ANALISI.giorniDopoScarico))
-    out.push({ testo: 'Il carico della settimana sale da due settimane e la fatica e alta (monotonia ' + String(sw[0].monotonia).replace('.', ',') + '): meglio due sedute di scarico.', bottoni: [['Scarico ora', "azioneCoach('scarico', '')"]] });
+      && !sw.some(x => x.scarico) && !scaricoRecente(PARAM_ANALISI.giorniDopoScarico) && !nonOra && (typeof valutaScaricoReattivo !== 'function' || valutaScaricoReattivo('S7').ok))
+    out.push({ testo: 'Il carico della settimana sale da due settimane e la fatica e alta (monotonia ' + String(sw[0].monotonia).replace('.', ',') + '): meglio due sedute di scarico.',
+      bottoni: [['Scarico ora', "azioneCoach('scarico', '')"]].concat(programmaConPiano() ? [['Non ora', "azioneCoach('scaricoNonOra', '')"]] : []) });
   /* livello dai numeri (STD-01): salita solo se l anzianita e le alzate concordano; revisione se un avanzato dichiarato e sotto i numeri di un principiante */
   const l = livelloStimato();
   if (l && l.salita) {

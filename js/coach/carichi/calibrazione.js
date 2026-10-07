@@ -9,7 +9,7 @@
 
    A CHI: gli esercizi del piano con carico stimato (e.stimato, scritto da applicaPartenze e da pesoPartenza) di tutti i principianti, uomini compresi (D-P1),
    e delle donne intermedie con il fattore di partenza bassa attivo. Non ai minorenni (una regola che alza i carichi non li spinge). Solo col consenso.
-   PER QUANTO: le prime 4 esposizioni (sedute con l esercizio, dallo storico) e finche non «si chiude»: i salti si decidono dopo le esposizioni 1-4, alla quinta e chiusa comunque.
+   PER QUANTO: le prime 5 esposizioni (sedute con l esercizio, dallo storico) e finche non «si chiude»: i salti si decidono dopo le esposizioni 1-5, alla sesta e chiusa comunque (INT-3a: erano 4; vedi soglie-partenza.js).
    COME: lo scarto = RPE bersaglio (8: il carico e giusto, stop al primo RPE 8) meno l RPE segnato; l RPE e quello piu alto tra le serie segnate (la serie piu dura:
    con il tocco a 3 scelte di W3-T3, D-P16, e la sola prima serie), corretto da rirBias. La scala dell app parte da 6 (facile = quattro o piu ripetizioni di
    riserva): 6 vale come scarto 2. Con tutte le serie fatte alle ripetizioni previste:

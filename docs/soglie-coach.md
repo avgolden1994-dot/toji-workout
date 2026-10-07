@@ -4,7 +4,7 @@
 > Forze: **Solida** (meta-analisi o posizione ufficiale), **Moderata** (pochi studi, o risultati che cambiano con la popolazione), **Contrastata** (studi in disaccordo), **Convenzione** (pratica dei coach: il foglio «Perché?» mostra «Scelta prudente del coach (Convenzione): non è un risultato di studi»), **Decisione** (scelta di prodotto: «Decisione di prodotto»), **Provvisoria** (numero di partenza in attesa di verifica: «Numero di partenza, in verifica»). Etichette: `etichettaForza` in `js/coach/regia/perche.js` (registro C.4).
 > Le tabelle di prima (`COACH_PARAMETRI`, `PARAM_PARTENZA`, `PARAM_INTENSITA`, `STR_PESI`, `DOSE_SCARICO`, `RIR_TIPO`) non sono ancora qui: passano in un file soglie quando il task che possiede il loro file le tocca.
 
-Totale: 137 soglie in 9 tabelle (Solida 3, Moderata 10, Contrastata 1, Convenzione 115, Decisione 6, Provvisoria 2).
+Totale: 162 soglie in 12 tabelle (Solida 3, Moderata 12, Contrastata 1, Convenzione 136, Decisione 7, Provvisoria 3).
 
 ## `SOGLIE_PARTENZA` — `js/coach/carichi/soglie-partenza.js` (bilancia)
 
@@ -22,13 +22,30 @@ Totale: 137 soglie in 9 tabelle (Solida 3, Moderata 10, Contrastata 1, Convenzio
 | `barraVuota` | ripetizioni [6, 8], serieInMeno 1 | Convenzione | ricerca-donne-carichi-iniziali §3.7 punto 3 (DON-03); piano D.4 | PAR-08 |
 | `corpoLiberoPulite` | [10, 15] | Convenzione | ricerca-donne-carichi-iniziali §1.8 (progressioni dei piegamenti e delle trazioni: salto con 3 serie da 10-15 ripetizioni pulite) | PAR-09 |
 | `calibrazioneChi` | livelli [«principiante»], donneConFattore true | Decisione | registro coach v2 D-P1 e B22 (la calibrazione vale per tutti i principianti; il fattore basso solo per le donne fino all’intermedio); piano D.1 | CAR-18 |
-| `calibrazioneEsposizioni` | 4 | Convenzione | piano D.5; ricerca-donne-carichi-iniziali §3.6 (prime 3-4 esposizioni) | CAR-18 |
+| `calibrazioneEsposizioni` | 5 | Provvisoria | piano D.5; ricerca-donne-carichi-iniziali §3.6 (prime 3-4 esposizioni: la quinta e una misura dell INT-3a, atleta virtuale D.8.9, docs/coach-v2-decisioni.md D-P24); da rivedere con dati veri | CAR-18 |
 | `calibrazioneBersaglioRpe` | 8 | Convenzione | ricerca-donne-carichi-iniziali §3.6 (stop al primo RPE ≥ 8); registro B1 | CAR-18 |
 | `calibrazioneTolleranzaRpe` | 0.5 | Convenzione | piano D.5 (entro ±0,5 di RPE si chiude) | CAR-18 |
 | `calibrazioneSalti` | bassa 1 alto 0.1, basso 0.1, iso 0.1, 2 alto 0.15, basso 0.2, iso 0.15, 3 alto 0.2, basso 0.25, iso 0.2, normale 1 0.05, 2 0.075, 3 0.1 | Convenzione | ricerca-donne-carichi-iniziali §3.6 (tabella dei salti per RPE, scelta di prodotto); registro B1 (per scarto di RPE, non dal massimale); piano D.5 | CAR-18 |
 | `calibrazioneSenzaRpe` | bassa alto 0.1, basso 0.15, iso 0.1, normale 0.05, volteMax 2 | Convenzione | ricerca-donne-carichi-iniziali §3.6 (senza RPE +10/15/10%); piano D.5 (al massimo 2 volte) | CAR-18, CAR-19 |
 | `calibrazioneTettoSalto` | 0.25 | Convenzione | piano D.5 (mai oltre +25%); ricerca-donne-carichi-iniziali §3.6 | CAR-18 |
 | `calibrazioneCauto` | 0.5 | Convenzione | piano D.5 (salvaguardie); skill implementa-regola-coach §6 (gli aumenti si dimezzano per i prudenti) | CAR-18 |
+
+## `SOGLIE_PROGRESSIONE` — `js/coach/carichi/soglie-progressione.js` (bilancia)
+
+| Voce | Valore | Forza | Fonte | Regole |
+|---|---|---|---|---|
+| `grigliaBase` | manubri passoSotto 1, passoSopra 2, soglia 10, pila 2.5, bilanciere passo 2.5, perLato 1.25, barra 20 | Convenzione | PAR-04 (js/coach/carichi/partenza.js); ricerca-algoritmi-carichi-e-app §3.5 (passo minimo reale per attrezzo, tabella) e §6 U7 (B17: 0,5 kg per tutti) | ALG-06, PAR-04 |
+| `scostamentoNota` | 0.03 | Convenzione | P3-A: un passo di griglia vale il 2-3% del carico ai pesi tipici del bilanciere (ricerca-algoritmi §3.5); sotto questa soglia la differenza non si dice | ALG-06 |
+| `rirAffidabile` | [0, 4] | Moderata | registro coach v2 B3; ricerca-forza-progressione §3.3 punto 1 (Remmert 2023, Halperin 2022) | AUT-01 |
+| `ripetizioniMaxRpe` | 12 | Moderata | registro coach v2 B3; ricerca-forza-progressione §3.3 punto 1 e §3.5 (Halperin 2022: oltre 12 ripetizioni la stima non e affidabile) | AUT-01 |
+| `puntiRpeMax` | 2 | Decisione | registro coach v2 B3 («al massimo 2 punti, circa 6%, per volta»); ricerca-forza-progressione §3.3 punto 4; ricerca-algoritmi-carichi-e-app §2 D | AUT-01 |
+| `cambioRipetizioniEfficaci` | 2 | Convenzione | piano coach v2 W3-T1 (fase 20) e ricerca-algoritmi-carichi-e-app §3.6 punto 1 e §7 ALG-05 | ALG-05 |
+| `tettiRicalcolo` | su 0.1, giu 0.3 | Convenzione | ricerca-algoritmi-carichi-e-app §3.3 (tetto) e §3.14 (tettoCambioBersaglioPct +10 / -30) | ALG-05 |
+| `ripetizioniMaxConversione` | 12 | Convenzione | ricerca-algoritmi-carichi-e-app §3.4 (sopra 12 ripetizioni Epley e Brzycki divergono: «non si converte, meno 10-15%») | ALG-05 |
+| `riduzioneOltreConversione` | 0.1 | Convenzione | ricerca-algoritmi-carichi-e-app §3.4 e §3.8 («meno 10-15%»: il valore piu piccolo, perche il carico e gia il piu basso tra questo e la conversione) | ALG-05 |
+| `giorniMassimaleRecente` | 42 | Convenzione | ricerca-algoritmi-carichi-e-app §3.2 (e1rmRif: media dei due migliori delle ultime 3 sedute di lavoro, entro 42 giorni) | ALG-05 |
+| `rirInPiuSenzaRpe` | 1 | Convenzione | ricerca-algoritmi-carichi-e-app §7 ALG-05 («con RIR assunto: prima volta con RIR +1») | ALG-05 |
+| `cimaRipetizioniTetto` | 4 | Convenzione | ricerca-forza-progressione §3.1 (passo troppo grosso: cima del range = bersaglio + 4 con passi oltre l 8%) e §3.4 | CAS-01 |
 
 ## `SOGLIE_SELEZIONE` — `js/coach/programma/soglie-selezione.js` (architetto)
 
@@ -97,6 +114,21 @@ Totale: 137 soglie in 9 tabelle (Solida 3, Moderata 10, Contrastata 1, Convenzio
 | `precedenza` | sentinella 1, motivatore 2, specialista 3, architetto 4, dosatore 4, bilancia 4, preparatore 5, tecnico 5 | Decisione | piano coach v2 B.2 (REG-01, precedenze della squadra) | REG-01 |
 | `versioneProgramma` | 2 | Decisione | piano coach v2 B.6 (REG-04); registro coach v2 D-P5 | REG-04 |
 
+## `SOGLIE_SCARICO` — `js/coach/sicurezza/soglie-scarico.js` (sentinella)
+
+| Voce | Valore | Forza | Fonte | Regole |
+|---|---|---|---|---|
+| `doseV1` | bassa serie 0.65, carico 0.95, t «volume -35%», media serie 0.5, carico 0.9, t «volume -50% e carico -10%», alta serie 0.3, carico 0.9, t «volume -70% e carico -10%» | Convenzione | registro coach v2 D-P5 (i programmi salvati prima della v2 continuano con le regole di prima); dose CAR-03 di prima della v2, sostituita da scaricoSerie e scaricoCarico (soglie-struttura.js) nei programmi v2 | MES-05, CAR-03 |
+| `scaricoSerieMinime` | daTreInSu 2, daDue 1 | Convenzione | registro coach v2 B4 e C.4 (MES-05: «minimo 2 serie per gli esercizi da ≥ 3»); ricerca-mesocicli-periodizzazione-scarichi §3.6 e bug N6 (un esercizio da 2 serie non veniva tagliato) | MES-05 |
+| `reattivoSedute` | 2 | Convenzione | registro coach v2 B17 («una dose e una durata»); ricerca-mesocicli-periodizzazione-scarichi §3.7 («per le prossime 3 sedute o 7 giorni, minimo 2 sedute»); PRZ-04 e STR-01 erano già a 2 sedute | MES-07 |
+| `reattivoProtezioni` | primeSettimaneDelBlocco 2, principiantiPrimeSettimane 3, giorniDalloScarico 14, unoOgniGiorni 21, programmatoEntroGiorni 7, nonOraGiorni 7 | Convenzione | registro coach v2 B17 (protezioni di distanza); ricerca-mesocicli-periodizzazione-scarichi §3.7 («non nelle prime 2 settimane del blocco; non a meno di 14 giorni dall’ultimo scarico; al massimo uno ogni 3 settimane; se lo scarico programmato è entro 7 giorni si anticipa quello; bottone Non ora»; principianti: «non nelle prime 3 settimane salvo S1 forte») | MES-07 |
+| `reattivoSegnali` | distinti 2, unoTra [«S1», «S2», «S3»] | Convenzione | registro coach v2 B17 (≥ 2 segnali distinti, almeno uno tra prontezza, forza, deriva dell’RPE); ricerca-mesocicli-periodizzazione-scarichi §3.7 (regola di scatto); Saw 2016 (più misure soggettive insieme, nessuna validata da sola) | MES-07 |
+| `segnaleProntezza` | sotto 50, mediaUltime 3, giorniSu 3, giorni 7, forteSotto 40 | Convenzione | ricerca-mesocicli-periodizzazione-scarichi §3.7 (S1: media delle ultime 3 check-in < 50, oppure 3 giorni su 7 < 50, già PRZ-04; forte: media < 40); registro B18 | MES-07, PRZ-04 |
+| `segnaleSonnoVoglia` | checkIn 7, minimo 4 | Convenzione | ricerca-mesocicli-periodizzazione-scarichi §3.7 (S5 e S6: voce «male» o «poca» in ≥ 4 delle ultime 7 check-in) | MES-07 |
+| `segnaleSedute` | ultime 3, alLimiteMin 2 | Convenzione | ricerca-mesocicli-periodizzazione-scarichi §3.7 (S7: «Al limite» in ≥ 2 delle ultime 3 sedute, oppure «Dura» con «Stanco» all’arrivo); MES-08 | MES-07, DEC-06 |
+| `segnaleForza` | calo 0.05, multiarticolari 2, forti 3, giorni 21, ultimaEntro 10 | Convenzione | ricerca-mesocicli-periodizzazione-scarichi §3.7 (S2: massimale ≤ -5% sul migliore delle ultime 3 settimane non di scarico su ≥ 2 multiarticolari; forte su ≥ 3); il rumore del RIR è circa 3% (MES-10) | MES-07 |
+| `stanchezzaPersistente` | giorni 14, misureMin 5, prontezzaMediaMax 37, scarichiReattivi 2, settimane 6, ripropostaGiorni 7 | Convenzione | ricerca-psicologia-aderenza CST-09 (prontezza bassa nella media di 14 giorni, ≥ 5 misure, oppure 2 scarichi reattivi in 6 settimane); registro B17 e C.4; Meeusen 2013 (Solida per lo spettro, soglie Convenzione) | CST-09 |
+
 ## `SOGLIE_TECNICHE` — `js/coach/sicurezza/soglie-tecniche.js` (sentinella)
 
 | Voce | Valore | Forza | Fonte | Regole |
@@ -134,6 +166,13 @@ Totale: 137 soglie in 9 tabelle (Solida 3, Moderata 10, Contrastata 1, Convenzio
 | `serieMinimeTirata` | 3 | Convenzione | ABB-04 (tirate non meno del 90% delle spinte, STR_PESI.tirateSuSpinte); docs/ricerca-struttura-e-intensita.md (equilibrio spalle: pratica dei coach) | FRZ-02 |
 | `serieAccessorio` | 3 | Convenzione | docs/ricerca-obiettivi-e-programmi.md 3.1 (forza: 3-6 serie dirette per fondamentale a settimana + accessori 6-12, Mod †); docs/ricerca-forza-progressione.md 1.6 (punti deboli e accessori: nessuna prova diretta) | FRZ-04 |
 | `puntiDeboliMax` | 2 | Convenzione | W2-T7: ogni accessorio toglie tempo e recupero; stessa idea di EST-02 (al massimo 2 unità prioritarie) | FRZ-03, FRZ-04 |
+
+## `SOGLIE_RAMPA` — `js/coach/volume/soglie-rampa.js` (dosatore)
+
+| Voce | Valore | Forza | Fonte | Regole |
+|---|---|---|---|---|
+| `serieMinime` | 2 | Convenzione | ricerca-mesocicli-periodizzazione-scarichi §3.3 («serie(w) = max(2, round(setsBase × f[w])), con serie(w) ≤ setsBase e nessuna rampa se setsBase ≤ 2»); registro coach v2 B6 (pavimenti) | MES-03 |
+| `principianteMulti` | 3 | Convenzione | ricerca-principianti-12-settimane §3.2 («Multi = i primi tre esercizi della seduta»); piano coach v2 W2-T4 (seriePrincipiante) | MES-03, PRN-03 |
 
 ## `SOGLIE_TEMPO` — `js/coach/volume/soglie-tempo.js` (dosatore)
 
@@ -181,6 +220,7 @@ Totale: 137 soglie in 9 tabelle (Solida 3, Moderata 10, Contrastata 1, Convenzio
 | `serieMaxIsolamentoConFastidio` | 4 | Convenzione | revisione indipendente INT-2d, M7 (misurato: isolamenti a 6 serie in centinaia di programmi, Alzate Laterali 6 x 15 con la spalla dolente); regola di sicurezza (tolleranza zero, SAF-02: nessun esercizio aggiunto carica una zona dolente senza prudenza) | IPE-01, SAF-02 |
 | `serieMaxCore` | 3 | Convenzione | ABB-03 (un esercizio di core a fine seduta, 2-3 serie: strCopri, strCoreNuovo); ricerca-biomeccanica-esercizi §4 SEL-07 e D10 (core 2-6 serie a settimana, poco volume); registro B6 (addome 2-4 / 4-8 / 6-10 a settimana) | IPE-01, IPE-06 |
 | `ripiegoCerniera` | serieMax 2, ripetizioni 12 | Convenzione | revisione indipendente dell onda 2e (INT-2f, maggiore 2); ricerca-principianti §3.1 (il gesto della cerniera dell anca si impara con movimenti guidati e poche serie); registro B6 (credito 0,5 ai femorali negli attributi) | SES-03 |
+| `pianiTirata` | quota 0.25, serieMin 6 | Convenzione | collaudo del generatore, EQ-02 (QUOTA_TIRATA_MIN, SERIE_TIRATA_MIN: pratica dei coach, dorsali per la larghezza e spessore); ricerca-specializzazione-punti-deboli §3.1 (dorsali: sia tirate verticali sia orizzontali, Convenzione) | IPE-01 |
 | `eserciziMaxSeduta` | adulto 8, principiante 6 | Convenzione | collaudo del generatore (ES_MAX_SEDUTA, ES_MAX_PRINCIPIANTE); piano E.3 W2-T1 | IPE-01 |
 | `seduteMinimeUnita` | 2 | Solida | ACSM 2026 (137 revisioni): ogni grande gruppo almeno 2 sedute a settimana; collaudo FRQ-01 | IPE-01 |
 | `serieMinSeduta` | 1.5 | Convenzione | collaudo FRQ-01 (una seduta conta da 1,5 serie frazionarie, cioè 3 serie sinergiche) | IPE-01 |

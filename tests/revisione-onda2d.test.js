@@ -57,13 +57,13 @@ test('B1: la dose dello scarico del controllo e la «bassa» del registro e si c
   storiaTre(a, [FB(10), FB(10), FB(8)]);
   const r = a.dati(a.chiama('caricoProssimo', 'Leg Press', 60, 10, 3));
   assert.strictEqual(r.tipo, 'scarico');
-  assert.strictEqual(r.weight, 57, '60 kg x 0,95 (e non x 0,9 della fatica alta)');
+  assert.strictEqual(r.weight, 57.5, '60 kg x 0,95 = 57 (e non x 0,9 della fatica alta): griglia della macchina a passi di 2,5 kg = 57,5 (ALG-06, P3-A)');
   assert.strictEqual(r.sets, 2, '3 serie x 0,65 = 1,95 -> 2');
   assert.ok(/volume -35%/.test(r.motivo), r.motivo);
   /* la seduta di scarico e fatta: la prossima della stessa settimana parte ancora da 60 kg, non da 57 */
   a.storia([a.seduta(0, [{ nome: 'Leg Press', serie: [[57, 10, true], [57, 10, true]] }], { feedback: FB(6), settimana: { numero: 8, fase: 'scarico' } })].concat(a.leggi(a.chiave('historyKey'))));
   const r2 = a.dati(a.chiama('caricoProssimo', 'Leg Press', 60, 10, 3));
-  assert.strictEqual(r2.weight, 57, 'stesso carico di riferimento (60 kg), non 54');
+  assert.strictEqual(r2.weight, 57.5, 'stesso carico di riferimento (60 kg), non 54');
 });
 
 test('B1: con fatica bassa e nessun segnale la settimana 8 continua come carico, e lo dice', () => {

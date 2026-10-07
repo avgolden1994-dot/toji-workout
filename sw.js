@@ -2,7 +2,7 @@
    il segnale spesso manca). Strategia: network-first con fallback alla cache,
    così vedi sempre l'ultima versione se sei online, ma l'app parte comunque offline. */
 
-const CACHE_NAME = '3in-v19';   /* cambiando il nome, le copie vecchie vengono buttate */
+const CACHE_NAME = '3in-v20';   /* cambiando il nome, le copie vecchie vengono buttate */
 const ASSETS = [
   './',
   /* Elenco generato da tools/genera-sw.js (npm run sw): non si modifica a mano.
@@ -95,6 +95,8 @@ const ASSETS = [
   './js/coach/volume/tempo.js',
   './js/coach/volume/soglie-tempo.js',
   './js/coach/volume/tecniche.js',
+  './js/coach/volume/soglie-rampa.js',
+  './js/coach/volume/rampa-settimana.js',
   './js/coach/sicurezza/vincoli.js',
   './js/coach/sicurezza/soglie-tecniche.js',
   './js/coach/sicurezza/tecnica-adatta.js',
@@ -110,9 +112,12 @@ const ASSETS = [
   './js/coach/carichi/progressivo.js',
   './js/coach/carichi/e1rm.js',
   './js/coach/carichi/soglie-partenza.js',
+  './js/coach/carichi/soglie-progressione.js',
   './js/coach/carichi/partenza.js',
+  './js/coach/carichi/attrezzi.js',
   './js/coach/carichi/calibrazione.js',
   './js/coach/carichi/taratura.js',
+  './js/coach/sicurezza/soglie-scarico.js',
   './js/coach/sicurezza/scarico.js',
   './js/coach/questionario-decisioni.js',
   './js/coach/prontezza.js',
