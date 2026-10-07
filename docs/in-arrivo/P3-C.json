@@ -1,0 +1,32 @@
+{
+ "task": "P3-C",
+ "script": [
+  { "src": "js/coach/specialita/soglie-forza-carichi.js", "dopo": "js/coach/specialita/soglie-forza.js" },
+  { "src": "js/coach/specialita/forza-carichi.js", "dopo": "js/coach/specialita/forza.js" }
+ ],
+ "frasi": {
+  "Il giorno medio resta sotto il pesante a circa #% del massimale stimato dell’alzata": {
+   "en": "The medium day stays below the heavy day at about #% of the estimated max for the lift",
+   "es": "El día medio queda por debajo del pesado, a cerca del #% del máximo estimado del levantamiento",
+   "de": "Der mittlere Tag bleibt unter dem schweren Tag bei etwa #% des geschätzten Maximums der Übung"
+  },
+  "Il giorno leggero resta sotto gli altri giorni a circa #% del massimale stimato dell’alzata": {
+   "en": "The light day stays below the other days at about #% of the estimated max for the lift",
+   "es": "El día ligero queda por debajo de los demás días, a cerca del #% del máximo estimado del levantamiento",
+   "de": "Der leichte Tag bleibt unter den anderen Tagen bei etwa #% des geschätzten Maximums der Übung"
+  }
+ },
+ "regole": [
+  {
+   "capitolo": 31,
+   "riga": "- **FRZ-11** (spegnibile) il giorno leggero è leggero (P3-C, la parte snella di W3-T6; fase `'carico'` 25 in `js/coach/specialita/forza-carichi.js`, numeri in `soglie-forza-carichi.js`; solo con il consenso, i programmi v2 e la modalità Forza): per una voce del piano con `alzata` e `onda` (`c.voce`, il contratto di P3-A) il giorno medio sta sotto il pesante e il leggero sotto il medio nella stessa settimana, in percentuale del massimale stimato dell'alzata: `e1rm` sul carico che il giorno immediatamente più pesante ha in quella settimana (se l'ha già fatto, quello della seduta; se no la proposta della catena fino a questa fase) e `caricoPer` con le ripetizioni e la riserva del giorno (la riserva del piano della settimana, due ripetizioni in più per il leggero, mai meno di una: RPE 9 è la capacità), sulla griglia dell'attrezzo per difetto e almeno un passo sotto il giorno più pesante. È solo un tetto sulla proposta della progressione: non alza mai un carico, e una variante più debole (panca inclinata) resta dove la porta la sua storia. Unica eccezione: lo stesso nome con lo stesso bersaglio di ripetizioni in due giorni non pesanti (FRZ-03 spenta, o varianti non ammesse): lo storico è uno solo e il giorno leggero ripartiva dal carico del medio più un incremento (in 12 settimane la panca leggera arrivava a 65 kg contro i 47,5 del pesante); lì il carico del giorno si deriva dal pesante, salvo un carico di ritorno («giù») che resta quello della progressione. Vale anche nello scarico. Motivo: «Il giorno leggero resta sotto gli altri giorni a circa N% del massimale stimato dell'alzata». Moderata per il tetto di capacità (RPE 9 = una ripetizione in riserva, Zourdos 2016), Convenzione per le due ripetizioni in più del leggero (nessuna fonte verificata su quanto è leggero il giorno leggero: ricerca-metodi-coach-pratici 2.20). Non fa (oltre la v2): percentuali di un massimale di lavoro, tetti di RPE, serie di appoggio, test del massimale (FRZ-06..10)."
+  }
+ ],
+ "squadra": [
+  { "sottoCoach": "specialista", "codici": "FRZ-11" }
+ ],
+ "mappaAgenti": [
+  "il giorno leggero è leggero (FRZ-11, P3-C): js/coach/specialita/forza-carichi.js, fase 'carico' 25 sulla voce del piano con `alzata` e `onda` (c.voce di caricoProssimo); numeri in js/coach/specialita/soglie-forza-carichi.js; prova tests/forza-carichi.test.js (atleta di 12 settimane)"
+ ],
+ "nota": "P3-C. Seconda parte (EQ-01 del powerlifting a 3 giorni, GOA-01, varianti leggere) in forza.js: vedi il registro delle correzioni nello stesso lavoro."
+}
