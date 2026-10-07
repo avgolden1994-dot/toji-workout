@@ -120,7 +120,7 @@ const MOMENTI = [
   { id: 'sonno', nome: 'Dormo poco', vol: 0.8, rir: 1, settimane: 2, tecniche: false,
     testo: 'Col sonno scarso cala la forza nei multiarticolari, non negli isolamenti (Knowles 2018): fondamentali più leggeri, accessori normali.' },
   { id: 'bambino', nome: 'Nuovo bambino in casa', vol: 0.6, rir: 1, settimane: 12, tecniche: false,
-    testo: 'Sedute da 30 minuti, anche a casa. Dopo il parto: 12 settimane di attività leggera ed esercizi per il pavimento pelvico, poi si riparte con il via libera del medico.' },
+    testo: 'Sedute da 30 minuti, anche a casa. Dopo il parto parlane con l’ostetrica o con il medico prima di riprendere: il coach non dà un programma specifico per questo periodo.' },
   { id: 'pieno', nome: 'Periodo pienissimo (trasloco, viaggi)', vol: 0.4, rir: 1, settimane: 3, tecniche: false,
     testo: 'Mantenimento: con un terzo del volume e gli stessi carichi i muscoli restano (Bickel 2011).' },
   { id: 'rientro', nome: 'Rientro da malattia o infortunio', vol: 0.6, rir: 2, settimane: 2, tecniche: false,

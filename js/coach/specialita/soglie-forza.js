@@ -82,6 +82,26 @@ const SOGLIE_FORZA = {
     forza: 'Convenzione', fonte: 'ABB-04 (tirate non meno del 90% delle spinte, STR_PESI.tirateSuSpinte); docs/ricerca-struttura-e-intensita.md (equilibrio spalle: pratica dei coach)',
     regole: ['FRZ-02']
   },
+  /* FRZ-02 (P3-C): chi comincia, la terza volta della stessa alzata nella settimana (la panca nelle schede da 3 giorni: le prime due volte sono 3x5) ha tante serie: 3+3+2 = 8 serie di panca, il massimo di
+     petto di B6 per chi comincia nella forza (VOLUME_B6 del collaudo, +10% di tolleranza: VOL-02:petto) e meno spinte da bilanciare (EQ-01). Il minimo per alzata è serieMinimeAlzata (2) */
+  serieTerzaEsposizione: {
+    v: 2,
+    forza: 'Convenzione', fonte: 'VOLUME_B6 del collaudo (petto, massimo 8 per chi comincia nella forza); serieMinimeAlzata (Krieger 2010, Ralston 2017: 2-3 serie battono 1); ABB-04 (tirate non meno del 90% delle spinte)',
+    regole: ['FRZ-02']
+  },
+  /* FRZ-02 (EQ-01, P3-C): serie di una tirata alta (face pull, reverse pec deck) aggiunta quando le tirate della settimana restano sotto il 90% delle spinte: come strCopri per i deltoidi posteriori */
+  serieTirataAlta: {
+    v: 2,
+    forza: 'Convenzione', fonte: 'ABB-03 (strCopri: deltoidi posteriori, 2 serie da 15) e ABB-04 (tirate non meno del 90% delle spinte, STR_PESI.tirateSuSpinte); docs/ricerca-struttura-e-intensita.md (equilibrio spalle: pratica dei coach)',
+    regole: ['FRZ-02']
+  },
+  /* FRZ-02 (EQ-01, P3-C): al massimo tante serie per una tirata alta quando ne mancano di più (una sola tirata alta da 3 serie vale mezza serie di schiena in meno di due da 2: il massimo di schiena di B6 è 8
+     per chi comincia). Stessa convenzione di serieAccessorio */
+  serieTirataAltaMax: {
+    v: 3,
+    forza: 'Convenzione', fonte: 'ABB-03 (strCopri: 2 serie) e serieAccessorio (3); volume per unità di B6 (VOLUME_B6 del collaudo: schiena, massimo 8 per chi comincia nella forza)',
+    regole: ['FRZ-02']
+  },
   /* FRZ-04: serie di un accessorio per il punto debole (tricipiti, dorsali, glutei...). Le ripetizioni e la pausa le dà la prescrizione di sempre per quel tipo di esercizio */
   serieAccessorio: {
     v: 3,

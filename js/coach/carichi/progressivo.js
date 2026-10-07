@@ -100,13 +100,17 @@ function esito(ex, repsTarget) {
 
 /* Settimana corrente del programma (1..N) e la sua fase. PRN-03 (INT-2d, B1): alla settimana del controllo di un programma da principiante a 12 settimane la
    prima lettura decide il controllo (controlloOttavaPrincipiante, programma/mesociclo.js: con il consenso, una volta sola, annullabile) e scrive la fase nel
-   programma salvato; la settimana di scarico che ne esce porta la dose fissata dal controllo (`doseFissa`, la legge caricoProssimoBase) e il suo motivo */
+   programma salvato; la settimana di scarico che ne esce porta la dose fissata dal controllo (`doseFissa`, la legge caricoProssimoBase) e il suo motivo.
+   CST-01 (W4-T2, P4-S; soglie di MES-15, registro B20): nei programmi v2, con il consenso, il calendario si ferma durante una pausa: le settimane della pausa non contano
+   (settimaneFermePerPausa, sicurezza/popolazioni.js: 7-13 giorni senza sedute = si rifà la settimana dell ultima seduta, 14 o piu = la prima del blocco). Senza quel file,
+   con un programma v1 o con la regola spenta, la settimana e quella del calendario, come prima */
 window.settimanaProgramma = function() {
   let p = getProgramma();
   if (!p) return null;
   if (typeof controlloOttavaPrincipiante === 'function' && controlloOttavaPrincipiante(p)) p = getProgramma();
   const giorni = giorniTra(daYmd(p.inizio), lunediDi(new Date()));
-  const w = Math.floor(giorni / 7) + 1;
+  const ferme = typeof settimaneFermePerPausa === 'function' ? settimaneFermePerPausa(p) : 0;
+  const w = Math.floor(giorni / 7) + 1 - ferme;
   if (w < 1 || w > p.settimane) return { numero: w, fase: null, finito: w > p.settimane, totale: p.settimane };
   const out = { numero: w, fase: p.fasi[w - 1], finito: false, totale: p.settimane };
   const c = p.piano && p.piano.controllo;

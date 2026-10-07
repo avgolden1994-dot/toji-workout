@@ -7,6 +7,35 @@
    spunto. Per ogni persona sceglie la struttura piu adatta (se batte il
    metodo di base) e un dettaglio da un secondo metodo, sempre col perche.
    ============================================================ */
+/* ---- GUARDIE DEL CORPO (NUT-01, solo la guardia: P4-C; sempre accesa, toglie numeri e non ne aggiunge) ----
+   Minorenni, over 65 e gravidanza/post-parto NON ricevono ne grammi di proteine ne calorie dal coach: al loro posto un testo prudente che rinvia al medico
+   o al dietista (registro B21; ETA-04 per i minorenni, ETA-15 per gli over 65). Vale per ogni punto dove il coach scrive un numero di cibo: la nota del
+   programma (fattoreFisico), il pannello del corpo (corpoCoach, repertorio.js) e il consiglio sul peso (consiglioPeso, ui/progressi/peso.js).
+   Un adulto (18-64 anni, non in gravidanza) riceve quello che riceveva: i g/kg di COR-03 sono «Convenzione», senza fonte verificata (js/coach/bia/soglie-bia.js).
+   Gravidanza: la bandiera e di P4-S. Si legge `inGravidanza(profilo)` se la funzione esiste (e non lancia), altrimenti il campo `gravidanza` del profilo o delle
+   risposte (vero, una parola diversa da no/false/0, o un oggetto con la data). Un età non detta (0) resta «adulto», come in chiDa (brief.js) e in ETA-04. */
+const TESTO_NUTRIZIONE_MINORENNE = 'Alla tua età non do numeri su peso o cibo: sono cose da parlare con un medico o un dietista. Se pensi spesso al peso o salti i pasti, parlane con qualcuno di cui ti fidi.';
+const TESTO_NUTRIZIONE_OVER65 = 'Alla tua età non do grammi di proteine né calorie: dipendono da come stai e da eventuali cure, quindi parlane con il medico o con un dietista.';
+const TESTO_NUTRIZIONE_GRAVIDANZA = 'In gravidanza o dopo il parto non do grammi di proteine né calorie: parlane con il medico, con l’ostetrica o con un dietista.';
+/* i g/kg di COR-03 stanno in SOGLIE_BIA (js/coach/bia/soglie-bia.js, «Convenzione»: non validati) */
+function proteineGKg(nome) { return SOGLIE_BIA[nome].v; }
+function gravidanzaDichiarata(x) {
+  const v = x ? x.gravidanza : null;
+  if (v === true) return true;
+  if (typeof v === 'string') return !/^(no|false|0)?$/i.test(v.trim());
+  return !!v && typeof v === 'object';
+}
+/* guardiaNutrizione(d, prof0): null per un adulto, altrimenti { gruppo, testo }. d sono le risposte (onbData o un profilo), prof0 il profilo salvato */
+function guardiaNutrizione(d, prof0) {
+  d = d || {}; prof0 = prof0 || {};
+  const eta = Number(d.age) || Number(prof0.age) || 0;
+  let incinta = gravidanzaDichiarata(d) || gravidanzaDichiarata(prof0);
+  if (!incinta && typeof inGravidanza === 'function') { try { incinta = !!inGravidanza(Object.assign({}, prof0, d)); } catch (e) {} }
+  if (incinta) return { gruppo: 'gravidanza', testo: TESTO_NUTRIZIONE_GRAVIDANZA };
+  if (eta > 0 && eta < PARAM_ETA.maggiorenne) return { gruppo: 'minorenne', testo: TESTO_NUTRIZIONE_MINORENNE };
+  if (chiDa({ age: eta }).over65) return { gruppo: 'over65', testo: TESTO_NUTRIZIONE_OVER65 };
+  return null;
+}
 function fattoreFisico(d, prof0) {
   const bia = d.bia || prof0.bia || null;
   const sex = d.sex || prof0.sex;
@@ -24,10 +53,14 @@ function fattoreFisico(d, prof0) {
   }
   const ffm = bia && bia.ffm ? Number(bia.ffm) : null;
   const t = [];
+  const guardia = guardiaNutrizione(d, prof0);   /* NUT-01: minorenni, over 65, gravidanza: niente grammi, niente passi per il deficit */
   if (ffmiBasso) t.push('Massa magra bassa per la tua altezza: più serie per la crescita, il muscolo viene prima.');
-  if (grassoAlto) t.push('Grasso sopra la media: si tengono i carichi per salvare il muscolo, il dispendio arriva da passi (8-10 mila) e cardio leggero.');
+  if (grassoAlto && !guardia) t.push('Grasso sopra la media: si tengono i carichi per salvare il muscolo, il dispendio arriva da passi (8-10 mila) e cardio leggero.');   /* INT-4: i tre gruppi non ricevono un numero di passi per dimagrire */
   if (magraInCalo) t.push('Massa magra in calo nell’ultima BIA: volume giù del 15% e carichi fermi finché risale.');
-  if (ffm) t.push('Proteine: circa ' + Math.round(ffm * 2.35) + ' g al giorno (2,35 g per kg di massa magra).');
+  if (ffm) {
+    const gKg = proteineGKg('proteineMassaMagraMin');   /* COR-03, «Convenzione» (non validato) */
+    t.push(guardia ? guardia.testo : 'Proteine: circa ' + Math.round(ffm * gKg) + ' g al giorno (' + String(gKg).replace('.', ',') + ' g per kg di massa magra).');
+  }
   return { grassoAlto: grassoAlto, ffmiBasso: ffmiBasso, magraInCalo: magraInCalo, fm: fm, ffmi: ffmi, ffm: ffm, testi: t, dati: !!(fm || ffmi) };
 }
 /* i metodi che possono dare la struttura, e quando */

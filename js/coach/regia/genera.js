@@ -235,7 +235,11 @@ function noteDelProgramma(brief) {
   }
   /* PRG-20 (W2-T2, INT-2b): la nota c e solo se almeno una pausa e davvero scesa sotto quella degli uomini (pausePerClasse la scrive in brief.lavoro.pauseDonneAccorciate: mai con il PAR-Q positivo, con la regola spenta o con un metodo che ha le sue pause) */
   if (chi.donna && brief.lavoro.pauseDonneAccorciate) note.push('Pause un po piu corte: le donne recuperano piu in fretta tra una serie e l altra.');
-  if (faseDaObiettivi(brief.obiettivi.lista) === 'deficit') note.push('Passi: 10-12 mila al giorno, aumentandoli di 500-1000 a settimana. Il cardio non toglie muscolo.');
+  if (faseDaObiettivi(brief.obiettivi.lista) === 'deficit') {
+    const guardia = guardiaNutrizione(d, prof0);   /* NUT-01 (INT-4): minorenni, over 65 e gravidanza non ricevono un numero di passi per dimagrire: il testo prudente (una volta sola) */
+    if (!guardia) note.push('Passi: 10-12 mila al giorno, aumentandoli di 500-1000 a settimana. Il cardio non toglie muscolo.');
+    else if (note.indexOf(guardia.testo) === -1) note.push(guardia.testo);
+  }
 }
 
 /* ---- 14. gli esercizi alternativi scelti dall utente (PRG-39): stessi muscoli, stesso posto ---- */
@@ -316,6 +320,8 @@ function riconciliaNote(prog) {
   /* INT-2d (M2): la seconda nota dei sei giorni di fila (le 48 ore) solo se la scheda finale le rispetta, anche attraverso il lunedi */
   const k = prog.note.indexOf(NOTA_SEI_GIORNI_DI_FILA);
   if (k !== -1 && recuperoRispettato(prog.sedute) && prog.note.indexOf(NOTA_SEI_GIORNI_48_ORE) === -1) prog.note.splice(k + 1, 0, NOTA_SEI_GIORNI_48_ORE);
+  /* REC-04 (P4-F): con un fastidio dichiarato la nota di ogni zona dice cosa non c e e cosa resta con cautela NELLA scheda finale (js/coach/sicurezza/fastidi.js); sostituisce le note generiche di SCALE_DOLORE */
+  if (typeof applicaNoteFastidi === 'function') applicaNoteFastidi(prog);
   return prog;
 }
 function verificaProgramma(brief, prog) {

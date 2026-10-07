@@ -2,7 +2,7 @@
    il segnale spesso manca). Strategia: network-first con fallback alla cache,
    così vedi sempre l'ultima versione se sei online, ma l'app parte comunque offline. */
 
-const CACHE_NAME = '3in-v20';   /* cambiando il nome, le copie vecchie vengono buttate */
+const CACHE_NAME = '3in-v21';   /* cambiando il nome, le copie vecchie vengono buttate */
 const ASSETS = [
   './',
   /* Elenco generato da tools/genera-sw.js (npm run sw): non si modifica a mano.
@@ -79,6 +79,7 @@ const ASSETS = [
   './js/ui/allenamento/termina-e-cardio.js',
   './js/ui/storico.js',
   './js/ui/onboarding.js',
+  './js/coach/bia/soglie-bia.js',
   './js/coach/bia/lettore.js',
   './js/coach/programma/motore.js',
   './js/coach/programma/schemi.js',
@@ -100,10 +101,14 @@ const ASSETS = [
   './js/coach/sicurezza/vincoli.js',
   './js/coach/sicurezza/soglie-tecniche.js',
   './js/coach/sicurezza/tecnica-adatta.js',
+  './js/coach/sicurezza/soglie-fastidi.js',
+  './js/coach/sicurezza/fastidi.js',
   './js/coach/regia/brief.js',
   './js/coach/regia/genera.js',
   './js/coach/specialita/soglie-forza.js',
+  './js/coach/specialita/soglie-forza-carichi.js',
   './js/coach/specialita/forza.js',
+  './js/coach/specialita/forza-carichi.js',
   './js/ui/onboarding-risultato.js',
   './js/coach/programma/archivio.js',
   './js/coach/programma/alternative.js',
@@ -119,6 +124,8 @@ const ASSETS = [
   './js/coach/carichi/taratura.js',
   './js/coach/sicurezza/soglie-scarico.js',
   './js/coach/sicurezza/scarico.js',
+  './js/coach/sicurezza/soglie-popolazioni.js',
+  './js/coach/sicurezza/popolazioni.js',
   './js/coach/questionario-decisioni.js',
   './js/coach/prontezza.js',
   './js/coach/mi-sento-male.js',

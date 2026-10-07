@@ -46,6 +46,7 @@ const MOTIVI_TECNICHE = {
   prudente: 'Con la modalità prudente niente serie al cedimento: meglio qualche ripetizione in riserva.',
   minorenne: 'Alla tua età conta imparare bene i movimenti: niente massimali né serie al limite, lascia sempre 2-3 ripetizioni in riserva.',
   over65: 'Dai 65 anni niente serie al limite: la stessa crescita arriva con più ripetizioni in riserva.',
+  over65Base: 'Per ora niente salite veloci: prima la tecnica, con salita e discesa controllate.',
   mezzaEta: 'Dai 50 anni le serie al limite solo su macchine e isolamenti, non sui multiarticolari liberi.',
   classe: 'Questa tecnica va bene su macchine e cavi con tecnica stabile: qui meglio una discesa controllata.',
   core: 'Sul core non serve il cedimento: conta il controllo.',
@@ -211,6 +212,13 @@ function tecnicaAdatta(tecnica, nome, brief, ctx) {
   const bud = ctx.budget || budgetTecniche(brief, ctx.settimana, ctx);
   if (bud.gruppi.indexOf(gruppo) === -1) { const n = bud.negati[gruppo] || { codice: 'MAV-01', motivo: MOTIVI_TECNICHE.classe }; return no(n.codice, n.motivo); }
   if (tecnica === 'potenza' && !P.over65) return no('MAV-03', MOTIVI_TECNICHE.classe);   /* la potenza e la tecnica degli over 65 (macchina o alzata dalla sedia, PRI-16) */
+  /* ETA-08 parte a, solo la base (registro B10; W4-T2, P4-S; chiude D-P21 n. 5: la potenza sull'Hack Squat dalla settimana 1 a un over 65 con il PAR-Q positivo): niente
+     potenza nelle 8 settimane di base, dai 75 anni e con il PAR-Q positivo (potenzaAmmessaOver65, sicurezza/popolazioni.js). Nella generazione la settimana non c'e (il programma
+     si ripete dalla settimana 1): e la base, e il programma nasce senza potenza. Senza popolazioni.js resta com'era */
+  if (tecnica === 'potenza' && typeof potenzaAmmessaOver65 === 'function') {
+    const sett = ctx.settimana !== undefined ? ctx.settimana : ((brief && brief.settimana) || null);
+    if (!potenzaAmmessaOver65(P, sett)) return no('ETA-08', MOTIVI_TECNICHE.over65Base);
+  }
   const a = attributi(nome);
   if (!a) return tecnica === 'tempo' ? { ok: true, codice: null, motivo: '', gruppo: gruppo, tecnica: tecnica } : no('MAV-01', MOTIVI_TECNICHE.classe);
   const cella = (CLASSI_PER_TECNICA[tecnica] || '------').charAt(ORDINE_CLASSI.indexOf(a.classe));

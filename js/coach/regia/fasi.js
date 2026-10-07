@@ -19,12 +19,13 @@
         10 BIL  ora: modello di progressione (caricoProssimoBase, regole-ricerca.js: CAR-01..17, ALG-02, AUT-01)
         15 BIL  ora: calibrazione rapida (CAR-18/19, carichi/calibrazione.js)
         20 BIL  ora: ricalcolo dal massimale (ALG-05, regole-ricerca.js: solo programmi v2)
+        25 FRZ  ora: carichi per giorno della Forza, il giorno leggero e leggero (FRZ-11, specialita/forza-carichi.js: solo programmi con la specialita Forza)
         30 SEN  ora: scarico del programma v2 e verifica del principiante, dose unica (MES-05, PRN-03, sicurezza/scarico.js)
         40 DOS  ora: rampa del volume in seduta (MES-03, volume/rampa-settimana.js: solo programmi v2); il volume autoregolato (PCO-03) non c e
         50 AGG  ora: aggiusti del questionario (DEC/DOL, CAR-10 con la dose unica nei v2, ALG-02) e frase del RIR (dolore-mattina.js)
         60 RIC  ora: RIC-05 rientro, RIC-01 serie in piu, RIC-02 pausa (regole-nuove.js)
         70 INT  ora: INT-04 prima volta, non si somma alla rampa (intensita.js)
-        90 SEN  tetti della Sentinella (dentro i carichi: non e una fase)
+        90 SEN  ora: tetti delle popolazioni e rampa del rientro (ETA-08 a, CST-02, ALG-14; sicurezza/popolazioni.js)
         95 BIL  ora: griglia dei pesi dell attrezzo e tetto dei manubri dichiarati (ALG-06, CAS-01b, carichi/attrezzi.js): puo solo abbassare
         99 REG  ora: perche -> motivo (regia/perche.js)
      'apertura'   applicaCaricoProgressivo(day), contesto { giorno }; il valore e il numero di esercizi cambiati

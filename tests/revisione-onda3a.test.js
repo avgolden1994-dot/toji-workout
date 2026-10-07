@@ -330,6 +330,7 @@ test('RPE: una seduta davvero piu facile del SUO bersaglio (RPE 4 contro 5,5) va
 });
 test('RPE: senza obiettivo.rir salvato (sedute di prima) e nei programmi v1 il confronto e quello di prima, con il bersaglio di oggi', () => {
   const vecchia = nuovaApp({}, PROG_V2);
+  vecchia.spegni(['CST-01']);   /* P4-S: l unica seduta e di 7 giorni fa, che con CST-01 non fa avanzare la rampa (si rifa la settimana 1): qui si prova il confronto dell RPE, non la pausa */
   registra(vecchia, 7, REMATORE, serie(3, 20, 8, 5.5), { reps: 8, base: 8, sets: 3 });
   assert.match(carico(vecchia, REMATORE, 20, 8, 3).motivo, /Serie facili \(RPE 5,5, bersaglio 8,5\)/);
   const v1 = nuovaApp({}, Object.assign({}, PROG_V2, { versione: undefined }));

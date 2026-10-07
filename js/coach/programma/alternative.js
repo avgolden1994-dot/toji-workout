@@ -84,6 +84,8 @@ function fissaFasiDelloStorico() {
   if (scritte) localStorage.setItem(historyKey(), JSON.stringify(lista));
 }
 window.applyGeneratedProgram = function() {
+  /* INT-4b (B1): con la bandiera della gravidanza accesa la modalita prudente non si spegne nemmeno rispondendo «no» al PAR-Q del questionario rifatto: il programma nuovo e quello di chi e prudente */
+  if (typeof inGravidanza === 'function' && inGravidanza(getProfile() || {})) onbData.parq = true;
   const prog = buildProgram(onbData);
   fissaFasiDelloStorico();   /* P3-M: prima di sostituire il programma */
   const profPrima = getProfile() || {};   /* il profilo di prima di questa creazione (P3-M: quello che il questionario non chiede si conserva) */
@@ -140,7 +142,8 @@ window.applyGeneratedProgram = function() {
     orario: onbData.orario || (getProfile() || {}).orario || '', fase: onbData.fase || (getProfile() || {}).fase || '', cicli: onbData.cicli || 0, bloccoTipo: onbData.bloccoTipo || 'ipertrofia',
     settimane: prog.settimane, split: prog.split.nome, creato: formatNow()
   }, typeof attrezziSalvati === 'function' ? attrezziSalvati(onbData, getProfile() || {}) : {},   /* CAS-01 (W2-T5): attrezzi di casa, kg dei manubri, attrezzi in piu della palestra: solo se dichiarati */
-    typeof forzaSalvata === 'function' ? forzaSalvata(onbData, getProfile() || {}, prog.goals) : {})));   /* FRZ-01 (INT-2e): «Che forza?» e i punti deboli, solo con la forza come primo obiettivo e solo se detti */
+    typeof forzaSalvata === 'function' ? forzaSalvata(onbData, getProfile() || {}, prog.goals) : {},   /* FRZ-01 (INT-2e): «Che forza?» e i punti deboli, solo con la forza come primo obiettivo e solo se detti */
+    typeof gravidanzaDaRiportare === 'function' ? gravidanzaDaRiportare(profPrima) : {})));   /* INT-4b (B1): il profilo si riscrive da zero a ogni nuovo ciclo e a ogni questionario: la bandiera della gravidanza non si perde */
   /* P3-M: un referto uguale a quello gia nel profilo (nuovoCiclo lo ripassa) e gia nello storico dei referti: non si aggiunge una misura con la data di oggi */
   if (onbData.bia && Object.keys(onbData.bia).some(k => onbData.bia[k]) && JSON.stringify(onbData.bia) !== JSON.stringify(profPrima.bia)) {
     (onbData.bia.storico || []).forEach(x => { if (x.data !== onbData.bia.data) aggiungiBia(x.valori, x.data); });

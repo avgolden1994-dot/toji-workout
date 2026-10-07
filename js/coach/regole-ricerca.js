@@ -122,7 +122,14 @@ function rirBersaglio(nome, sett) {
     if (a >= pisoRirEsigenza(sett)) out = [a, Math.max(a, out[1] - 1)];
   }
   if (!stabile(nome) && out[0] < 1) out = [1, Math.max(2, out[1])];
-  return pavimentoRirMinorenni(out);
+  /* CST-02 (W4-T2, P4-S): +1 nelle due sedute dopo una pausa, su quello che varrebbe senza la pausa (sicurezza/popolazioni.js) */
+  const rientro = typeof rirExtraRientro === 'function' ? rirExtraRientro(nome) : 0;
+  if (rientro) out = [Math.min(4, out[0] + rientro), Math.min(5, out[1] + rientro)];
+  out = pavimentoRirMinorenni(out);
+  /* REC-04 (INT-4b, m9): con un fastidio dichiarato, mai sotto 2 sugli esercizi che restano con cautela (sicurezza/fastidi.js: solo alza) */
+  if (typeof pavimentoRirFastidi === 'function') out = pavimentoRirFastidi(out, nome);
+  /* ETA-08 a e REC-12 a (W4-T2, P4-S): il pavimento degli over 65 e della gravidanza, per ultimo (sicurezza/popolazioni.js: solo alza) */
+  return typeof pavimentoRirPopolazioni === 'function' ? pavimentoRirPopolazioni(out, nome, sett) : out;
 }
 /* MES-02 (W2-T3, aggancio): la tabella del piano per settimana e classe, se c e (rirPianoSettimana, programma/mesociclo.js, W2-T4), decide il RIR della settimana; senza (oggi, o un
    programma salvato prima del piano) restano i valori di prima, rirBersaglioPerLivello. rirPianoSettimana(nome, sett) ritorna [min, max] (o { min, max }) per l esercizio in quella settimana,
@@ -230,12 +237,15 @@ function ripresaDopoScarico(nome) {
   const s = sessioniConData(nome, 1)[0];
   return !!(s && s.eraDiScarico && !((settimanaProgramma() || {}).fase === 'scarico') && caricoRiferimento(nome) > 0);
 }
-/* CAR-04: i giorni sono quelli veri, per tutti (prima oltre i 65 anni si contavano doppi: 5 giorni davano gia -10%) */
-function rientroDopoPausa(g) {
-  if (g < 10) return null;
-  if (g <= 20) return { f: 0.9, t: '-10%' };
-  if (g <= 28) return { f: 0.8, t: '-20%' };
-  if (g <= 90) return { f: 0.7, t: '-30%' };
+/* CAR-04: g = giorni dall ultima volta con l esercizio. B20 (W4-T2, P4-S): nei programmi v2, con il consenso, oltre i 65 anni i giorni di una pausa VERA (piu di 6 giorni
+   senza nessuna seduta) contano doppi (giorniPausaContati, sicurezza/popolazioni.js); con il ritmo normale restano quelli veri, come per tutti (era il motivo della deroga
+   del 2026-10-05: 5 giorni davano gia -10%). `contati` (facoltativo) = i giorni gia contati (ALG-14 rifa il conto di una pausa passata). Programmi v1: giorni veri */
+function rientroDopoPausa(g, contati) {
+  const c = contati !== undefined ? contati : (typeof giorniPausaContati === 'function' ? giorniPausaContati(g) : g);
+  if (c < 10) return null;
+  if (c <= 20) return { f: 0.9, t: '-10%' };
+  if (c <= 28) return { f: 0.8, t: '-20%' };
+  if (c <= 90) return { f: 0.7, t: '-30%' };
   return { f: 0.5, t: '-50%' };
 }
 const fmtKg = (x) => String(Math.round(x * 10) / 10);
@@ -292,6 +302,18 @@ function caricoSalito(da, inc, nome) {
   if (w > da + 1e-9) return w;
   const s = pesoGriglia(da + 1e-6, nome, { modo: 'su' });
   return s === null ? arrotonda(da + inc) : s;
+}
+/* ALG-06 e CAR-18 (INT-4): un aumento della progressione di base non supera +25% in una volta, come la calibrazione e la ripresa dopo lo scarico. La griglia puo rendere il passo molto piu
+   grande di quanto voluto (un cavo da 6,5 kg + 2,5 = 9, che la griglia porta a 10: +54%; fuori dal piano non c e il +10% di ALG-05). Si sale al peso della griglia piu alto che sta nel tetto; se
+   tra il carico e il tetto non c e nessun peso (manubri da 3 kg: +1 kg e +33%) resta il passo piu piccolo che c e: il peso sale sempre, mai di piu del necessario. `w` = l aumento deciso */
+function limitaSalitaBase(w, pesoUltimo, nome) {
+  if (!(pesoUltimo > 0) || !(w > pesoUltimo) || typeof sogliaPartenza !== 'function') return w;
+  const tetto = pesoUltimo * (1 + sogliaPartenza('calibrazioneTettoSalto'));
+  if (w <= tetto + 1e-9) return w;
+  const giu = grigliaAttiva() ? arrotondaAttrezzo(tetto, nome, { modo: 'giu' }) : Math.floor(tetto / 0.5 + 1e-9) * 0.5;
+  if (giu > pesoUltimo + 1e-9) return giu;
+  const primo = grigliaAttiva() ? arrotondaAttrezzo(pesoUltimo + 1e-6, nome, { modo: 'su' }) : pesoUltimo + 0.5;
+  return Math.min(w, primo);
 }
 /* ALG-06: una riduzione di `da` del fattore `f`: il peso della griglia piu vicino, almeno il primo sotto `da` se c e (mai sotto la barra o 1 kg), mai sopra `da` */
 function caricoSceso(da, f, nome) {
@@ -447,14 +469,14 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase, soloBase) {
       const regolaDiPrima = !aut01 || (calibrazione && pc.livello !== 'principiante' && !pc.minorenne);
       if (delta <= -1 && regolaDiPrima) {
         const pct = (calibrazione ? Math.min(0.15, -delta * 0.05) : Math.min(0.1, -delta * 0.04)) * (prudente ? 0.5 : 1);   /* aumenti dimezzati: anche quello a percentuale */
-        const w = Math.max(caricoSalito(pesoUltimo, inc, nome), caricoInGriglia(pesoUltimo * (1 + pct), nome));
+        const w = limitaSalitaBase(Math.max(caricoSalito(pesoUltimo, inc, nome), caricoInGriglia(pesoUltimo * (1 + pct), nome)), pesoUltimo, nome);
         return { weight: w, reps: repsTarget, sets: sets, tipo: 'su',
           motivo: 'Serie facili (RPE ' + String(media).replace('.', ',') + ', bersaglio ' + String(bers).replace('.', ',') + '): +' + fmtKg(w - pesoUltimo) + ' kg' + nota + (calibrazione ? ' \u2022 prime sedute: mi avvicino piu in fretta' : '') };
       }
       if (delta <= -1 && pc.livello !== 'principiante' && !pc.minorenne && (Number(repsTarget) || 0) <= sogliaProgressione('ripetizioniMaxRpe')) {
         let t = salitaDaRpe(pesoUltimo, Number(repsTarget) || 0, 10 - media, 10 - bers);
         if (prudente) t = pesoUltimo + (t - pesoUltimo) / 2;
-        const w = Math.max(caricoSalito(pesoUltimo, inc, nome), caricoInGriglia(t, nome));
+        const w = limitaSalitaBase(Math.max(caricoSalito(pesoUltimo, inc, nome), caricoInGriglia(t, nome)), pesoUltimo, nome);
         return { weight: w, reps: repsTarget, sets: sets, tipo: 'su',
           motivo: 'Serie facili (RPE ' + String(media).replace('.', ',') + ', bersaglio ' + String(bers).replace('.', ',') + '): +' + fmtKg(w - pesoUltimo) + ' kg' + nota };
       }
@@ -466,7 +488,7 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase, soloBase) {
       const gambe = /gambe|glutei/.test((findExercise(nome) || {}).group || '');
       const salto = extra >= 6 ? (gambe ? 7.5 : 5) : (extra >= 4 ? (gambe ? 5 : 2.5) : 2.5);
       const tot = prudente ? Math.max(inc, salto / 2) : Math.max(inc, salto);
-      const w = caricoSalito(pesoUltimo, tot, nome);
+      const w = limitaSalitaBase(caricoSalito(pesoUltimo, tot, nome), pesoUltimo, nome);
       return { weight: w, reps: repsTarget, sets: sets, tipo: 'su',
         motivo: 'Ultima serie con ' + extra + ' ripetizioni in piu: +' + fmtKg(griglia ? w - pesoUltimo : tot) + ' kg' + nota };
     }
@@ -476,13 +498,13 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase, soloBase) {
       const cima = (Number(repsTarget) || 0) + 3;
       if (repsFatte < cima) return { weight: pesoUltimo, reps: Math.max(Number(repsTarget) || 0, repsFatte) + 1, sets: sets, tipo: 'su',
         motivo: 'Doppia progressione: una ripetizione in piu (' + (Math.max(Number(repsTarget) || 0, repsFatte) + 1) + ' su ' + cima + '), poi il peso' };
-      const w = caricoSalito(pesoUltimo, inc, nome);
+      const w = limitaSalitaBase(caricoSalito(pesoUltimo, inc, nome), pesoUltimo, nome);
       return { weight: w, reps: repsTarget, sets: sets, tipo: 'su',
         motivo: 'Cima del range raggiunta (' + repsFatte + '): +' + kgPiu(w) + ' kg e si riparte da ' + repsTarget + nota };
     }
     /* micro-incrementi: un salto oltre il 5% si fa prima con le ripetizioni. ALG-06: il salto e quello vero della griglia (caricoSalito); se la griglia lo rende piu
        grande dell incremento voluto (il mezzo incremento dei prudenti: +1,25 kg non si caricano sul bilanciere) si passa anche qui prima dalle ripetizioni */
-    const salitoA = caricoSalito(pesoUltimo, inc, nome), quanto = griglia ? salitoA - pesoUltimo : inc;
+    const salitoA = limitaSalitaBase(caricoSalito(pesoUltimo, inc, nome), pesoUltimo, nome), quanto = griglia ? salitoA - pesoUltimo : inc;
     if (quanto / pesoUltimo > 0.05 || (griglia && quanto > inc + 1e-9)) {
       const repsFatte = Math.min.apply(null, fatteUltima.map(x => Number(x.reps) || 0));
       const tetto = (Number(repsTarget) || 0) + 2;
