@@ -102,13 +102,13 @@ function forzaTetto(r, c, prof) {
   const w = stessaStoria && r.tipo !== 'giu' ? tetto : Math.min(Number(r.weight), tetto);
   if (Math.abs(w - Number(r.weight)) < 1e-9) return r;                               /* il carico della progressione era già sotto il tetto: non si tocca niente */
   r.weight = w;
+  const pct = Math.round(100 * w / E), frase = FORZA_FRASI_GIORNO[rango === 2 ? 'leggera' : 'media'](pct);
   if (r.tipo !== 'scarico') {
     const ult = typeof pesoUltimoDi === 'function' ? pesoUltimoDi(c.nome) : null;
     if (ult) r.tipo = w > ult.weight + 1e-9 ? 'su' : (w < ult.weight - 1e-9 ? 'giu' : 'fermo');
-    const frase = FORZA_FRASI_GIORNO[rango === 2 ? 'leggera' : 'media'](Math.round(100 * w / E));
-    r.motivo = [frase].concat(String(r.motivo || '').split(' • ').slice(1)).join(' • ');   /* il primo pezzo diceva «+2,5 kg» di un carico che non è più questo */
-    aggiungiPerche(r, 'FRZ-11', frase, { forza: 'Convenzione', valore: Math.round(100 * w / E) });
-  } else aggiungiPerche(r, 'FRZ-11', FORZA_FRASI_GIORNO[rango === 2 ? 'leggera' : 'media'](Math.round(100 * w / E)), { forza: 'Convenzione', valore: Math.round(100 * w / E) });
+    r.motivo = [frase].concat(String(r.motivo || '').split(' • ').slice(1)).join(' • ');   /* il primo pezzo diceva «+2,5 kg» di un carico che non è più questo; nello scarico il motivo lo riscrive MES-05 */
+  }
+  aggiungiPerche(r, 'FRZ-11', frase, { forza: 'Convenzione', valore: pct });
   return r;
 }
 
