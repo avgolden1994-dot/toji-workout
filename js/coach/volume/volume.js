@@ -542,6 +542,9 @@ function volumeMotore(brief, sedute, b, opz) {
     if (r.e.fisso || r.e.cuffia || r.fond || sd.esercizi.length <= 3 || !consente(r, -r.e.sets, true, senzaEquilibrio)) return false;   /* PCO-08 (W2-T6): il lavoro per la cuffia che la spalla dolente chiede (copriCuffia) non si toglie per il volume */
     const att = typeof attributi === 'function' ? attributi(r.e.name) : null;
     if (att && att.soloAvvio) return false;   /* lo squat di avvio (Squat su Scatola, Sit-to-Stand) lo toglie la progressione, non il volume (M5) */
+    /* INT-3a (ABB-03, trovato da tests/browser/coerenza-schede.js): l unico esercizio di core della settimana resta. La sostituzione (senzaVolume) lo toglieva per far posto a un isolamento
+       (Pallof Press fuori dal giorno upper di un avanzato con l obiettivo glutei) e il core restava coperto solo dai crediti dei multiarticolari: la settimana non aveva piu un esercizio per il tronco */
+    if ((findExercise(r.e.name) || {}).group === 'core' && !sedute.some(o => o.esercizi.some(x => x !== r.e && (findExercise(x.name) || {}).group === 'core'))) return false;
     const cat = categoria(r.e);
     if (cat) {   /* la seduta tiene gli schemi del suo tipo (SES-03) e la settimana tiene ogni schema (PAT-01) */
       const k = classeSeduta(cat, sd.tipo);

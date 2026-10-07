@@ -201,3 +201,16 @@ test('(e) conAnnulla («Non ora» e gli altri tocchi): se gli aggiusti non c era
   assert.ok(annulla());
   assert.strictEqual(a.store[chiave], prima);
 });
+
+/* ============================================================================================================
+   (i) ABB-03 con il solutore di P3-G: l unico esercizio di core della settimana non si toglie per far posto a un isolamento (trovato da tests/browser/coerenza-schede.js:
+   avanzato, 3 giorni, obiettivo glutei, palestra, 60 minuti: «ABB-03 core assente»; il collaudo non lo misura)
+   ============================================================================================================ */
+['intermedio', 'avanzato'].forEach(level => {
+  test('(i) ' + level + ', 3 giorni, glutei, palestra, 60 minuti: la settimana ha un esercizio di core (ABB-03)', () => {
+    const a = caricaApp({ ora: '2026-10-05T12:00:00', consenso: false });
+    const p = a.dati(a.chiama('buildProgram', { sex: 'M', age: 30, seme: 'audit', fastidi: [], sonno: 'bene', attrezzi: 'indifferente', usaProfilo: false, level: level, days: 3, goals: ['glutei'], luogo: 'palestra', minutes: 60 }));
+    const nomi = []; p.sedute.forEach(s => s.esercizi.forEach(e => nomi.push(e.name)));
+    assert.ok(nomi.some(n => (a.json('findExercise(' + JSON.stringify(n) + ')') || {}).group === 'core'), 'nessun esercizio di core: ' + nomi.join(' | '));
+  });
+});
