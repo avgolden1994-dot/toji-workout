@@ -17,10 +17,8 @@
 const TESTO_NUTRIZIONE_MINORENNE = 'Alla tua età non do numeri su peso o cibo: sono cose da parlare con un medico o un dietista. Se pensi spesso al peso o salti i pasti, parlane con qualcuno di cui ti fidi.';
 const TESTO_NUTRIZIONE_OVER65 = 'Alla tua età non do grammi di proteine né calorie: dipendono da come stai e da eventuali cure, quindi parlane con il medico o con un dietista.';
 const TESTO_NUTRIZIONE_GRAVIDANZA = 'In gravidanza o dopo il parto non do grammi di proteine né calorie: parlane con il medico, con l’ostetrica o con un dietista.';
-/* i g/kg di COR-03 stanno in SOGLIE_BIA (js/coach/bia/soglie-bia.js, «Convenzione»). Il ripiego vale finche index.html non cita quel file (manifest docs/in-arrivo/P4-C.json) e
-   tests/guardie-corpo.test.js controlla che sia uguale alle soglie: dopo l integrazione si puo togliere. */
-const PROTEINE_RIPIEGO = { proteineMassaMagraMin: 2.35, proteineMassaMagraMax: 2.75, proteinePesoUomo: 2, proteinePesoDonna: 1.75 };
-function proteineGKg(nome) { return typeof SOGLIE_BIA !== 'undefined' && SOGLIE_BIA[nome] ? SOGLIE_BIA[nome].v : PROTEINE_RIPIEGO[nome]; }
+/* i g/kg di COR-03 stanno in SOGLIE_BIA (js/coach/bia/soglie-bia.js, «Convenzione»: non validati) */
+function proteineGKg(nome) { return SOGLIE_BIA[nome].v; }
 function gravidanzaDichiarata(x) {
   const v = x ? x.gravidanza : null;
   if (v === true) return true;

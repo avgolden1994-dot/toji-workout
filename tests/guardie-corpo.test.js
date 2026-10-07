@@ -20,12 +20,7 @@ const ORA = '2026-10-05T12:00:00';
 const FILE_SOGLIE = path.join(R, 'js', 'coach', 'bia', 'soglie-bia.js');
 const MANIFEST = path.join(R, 'docs', 'in-arrivo', 'P4-C.json');
 
-/* il file delle soglie entra in index.html con l integrazione (manifest P4-C): prima, la prova lo carica da sola come fanno tests/aiuto-selezione.js e gli altri */
-function nuovaApp() {
-  const app = caricaApp({ ora: ORA });
-  if (fs.existsSync(FILE_SOGLIE) && app.g('typeof SOGLIE_BIA') === 'undefined') app.g(fs.readFileSync(FILE_SOGLIE, 'utf8'));
-  return app;
-}
+const nuovaApp = () => caricaApp({ ora: ORA });
 
 /* ---- che cosa e «un numero di proteine o di calorie» ---- */
 const parlaDiCibo = s => /protein|calori|kcal/i.test(s);
@@ -179,7 +174,7 @@ test('consiglioPeso: nessuna caloria (ne numeri) per i tre gruppi nei consigli d
 });
 
 /* ============================================================ soglie «Convenzione» */
-test('soglie-bia.js: i g/kg di proteine di COR-03 sono «Convenzione» (non validati), non sono stati alzati e il ripiego in compone.js e uguale', () => {
+test('soglie-bia.js: i g/kg di proteine di COR-03 sono «Convenzione» (non validati), non sono stati alzati', () => {
   assert.ok(fs.existsSync(FILE_SOGLIE), 'manca js/coach/bia/soglie-bia.js');
   const app = nuovaApp();
   const S = app.dati(app.g('SOGLIE_BIA'));
@@ -192,9 +187,6 @@ test('soglie-bia.js: i g/kg di proteine di COR-03 sono «Convenzione» (non vali
     assert.deepStrictEqual(S[k].regole, ['COR-03'], k);
     assert.strictEqual(app.g('proteineGKg(' + JSON.stringify(k) + ')'), ATTESI[k], k + ': il lettore dà il valore delle soglie');
   });
-  /* il ripiego (finche index.html non cita il file) vale quanto le soglie: nessuna deriva */
-  const senza = caricaApp({ ora: ORA });
-  Object.keys(ATTESI).forEach(k => assert.strictEqual(senza.g('proteineGKg(' + JSON.stringify(k) + ')'), ATTESI[k], k + ': ripiego'));
 });
 
 /* ============================================================ le frasi nuove hanno la voce in en, es e de */

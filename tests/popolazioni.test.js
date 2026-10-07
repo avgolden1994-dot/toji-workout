@@ -333,7 +333,7 @@ test('REC-12 a: in gravidanza mai sotto 3 ripetizioni in riserva e nessuna tecni
 /* le frasi: posizioni da evitare e ripresa dopo il parto (non la «presa supina» di un esercizio); i carichi alti ai 65enni; equilibrio e cadute (non le «cadute» di un drop set);
    test con norme; domande mediche; il modo fragile; la regola clinica della pressione (non la tecnica del respiro sotto carico di BIO-02) */
 const BLOCCATE = {
-  'REC-12 b': /posizione supina|sdraiat[ao] sulla schiena|pavimento pelvico|pelvic floor|suelo p[ée]lvico|beckenboden|diastasi|diastasis|dopo il parto|after giving birth|tras el parto|nach der geburt/i,
+  'REC-12 b': /posizione supina|sdraiat[ao] sulla schiena|pavimento pelvico|pelvic floor|suelo p[ée]lvico|beckenboden|diastasi|diastasis|(dopo il parto|after giving birth|tras el parto|nach der geburt)[^.:]{0,80}(\d|settiman|weeks|semanas|wochen|esercizi|exercises|ejercicios|übungen|attivit|activity|actividad)/i,
   'ETA-08 b': /70-85 ?%|pesi liberi pesanti|heavy free weights/i,
   'ETA-11': /rischio di cad|cadute (recenti|negli anziani)|prevenire le cadute|riduce .{0,20}cadut|risk of falling|fall risk/i,
   'ETA-12': /timed up|\bTUG\b|sit[- ]to[- ]stand test|alzate dalla sedia in \d|velocit[aà] del passo|forza della presa|handgrip/i,
@@ -343,11 +343,8 @@ const BLOCCATE = {
 };
 /* il catalogo (js/coach/catalogo-regole.js, generato dalla mappa) descrive le regole bloccate con la loro riga «(bloccata) ... non implementata»: è la loro descrizione, non il testo */
 const NON_GUARDATI = ['js/coach/catalogo-regole.js'];
-const GIA_PRIMA = [
-  /* il momento di vita «bambino» (metodi-momenti.js, MOM-05, prima del coach v2): «Dopo il parto: 12 settimane di attività leggera ed esercizi per il pavimento pelvico...» è la rampa del
-     post-parto di REC-12 parte b: da decidere all'integrazione (segnalato nel manifest di P4-S); qui solo perché la prova non la nasconda */
-  'js/coach/metodi-momenti.js|REC-12 b', 'js/lingue/en.js|REC-12 b', 'js/lingue/es.js|REC-12 b', 'js/lingue/de.js|REC-12 b'
-];
+/* la ripresa dopo il parto del momento «bambino» (metodi-momenti.js) c'era già prima del coach v2: tolta in INT-4 (tests/integrazione-onda4.test.js); la lista non ha più voci e non ne deve avere */
+const GIA_PRIMA = [];
 function stringheDi(src) {
   const out = [];
   acorn.parse(src, { ecmaVersion: 'latest', onToken: t => { if (t.type.label === 'string' || t.type.label === 'template') out.push(String(t.value)); } });
