@@ -195,7 +195,7 @@ test('nessuna unita scoperta per il fastidio: cio che la stessa persona allena s
 test('regole bloccate (registro C.2): nessun loro testo nei file e nelle frasi di P4-F', () => {
   const BLOCCATE = /DON-13|ETA-0[78]|ETA-1[1237]|MAV-14|TAP-01|OBI-17|menopaus|osteopor|pressione alta|ipertension|pronto soccorso|rabdomiol|urine|dolori da crescita|crescita ossea|cadut[ae]\b|capogiri|farmac/i;
   const file = ['js/coach/sicurezza/fastidi.js', 'js/coach/sicurezza/soglie-fastidi.js', 'docs/in-arrivo/P4-F.json'].filter(f => fs.existsSync(path.join(R, f)));
-  assert.ok(file.length >= 3, 'i file di P4-F ci sono: ' + file);
+  assert.ok(file.indexOf('js/coach/sicurezza/fastidi.js') !== -1 && file.indexOf('js/coach/sicurezza/soglie-fastidi.js') !== -1, 'i file di P4-F ci sono: ' + file);   /* il JSON di integrazione c e fino a INT-4 (poi lo cancella tools/integra-onda.js) */
   file.forEach(f => {
     const t = fs.readFileSync(path.join(R, f), 'utf8');
     const m = BLOCCATE.exec(t);
