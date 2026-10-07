@@ -4,7 +4,7 @@
 > Forze: **Solida** (meta-analisi o posizione ufficiale), **Moderata** (pochi studi, o risultati che cambiano con la popolazione), **Contrastata** (studi in disaccordo), **Convenzione** (pratica dei coach: il foglio «Perché?» mostra «Scelta prudente del coach (Convenzione): non è un risultato di studi»), **Decisione** (scelta di prodotto: «Decisione di prodotto»), **Provvisoria** (numero di partenza in attesa di verifica: «Numero di partenza, in verifica»). Etichette: `etichettaForza` in `js/coach/regia/perche.js` (registro C.4).
 > Le tabelle di prima (`COACH_PARAMETRI`, `PARAM_PARTENZA`, `PARAM_INTENSITA`, `STR_PESI`, `DOSE_SCARICO`, `RIR_TIPO`) non sono ancora qui: passano in un file soglie quando il task che possiede il loro file le tocca.
 
-Totale: 183 soglie in 16 tabelle (Solida 3, Moderata 13, Contrastata 1, Convenzione 154, Decisione 9, Provvisoria 3).
+Totale: 184 soglie in 16 tabelle (Solida 3, Moderata 13, Contrastata 1, Convenzione 155, Decisione 9, Provvisoria 3).
 
 ## `SOGLIE_BIA` — `js/coach/bia/soglie-bia.js` (preparatore)
 
@@ -139,6 +139,7 @@ Totale: 183 soglie in 16 tabelle (Solida 3, Moderata 13, Contrastata 1, Convenzi
 | `ripetizioniMinOver65` | minimo 8, caloStallo 0.95 | Convenzione | registro coach v2 B10 («8-12 ripetizioni» nella base e dopo; la parte b di ETA-08 è bloccata; Borde [V] per i carichi moderati); CAR-07 / PCO-01, riga del principiante (-5% al secondo stallo) | ETA-08, CAR-07 |
 | `rirGravidanza` | 3 | Convenzione | registro coach v2 C.3 (REC-12 a: guardia che toglie, modalità prudente); ricerca-recupero-infortuni-popolazioni §4 e §5.2 («RIR ≥ 3-4, nessun cedimento», ricordo da verificare: per questo solo come pavimento della modalità prudente, mai come prescrizione) | REC-12 |
 | `pausa` | nulla 6, ferma 13, blocco 27 | Convenzione | registro coach v2 B20 (≤ 6 giorni nulla; 7-13 la rampa non avanza; 14-27 si riparte dalla settimana 1 del blocco e il calendario scorre; ≥ 28 nuovo blocco); ricerca-mesocicli-periodizzazione-scarichi §3.12.3 (MES-15) | CST-01 |
+| `pausaPerFrequenza` | seduteSaltate 1, giorniSettimana 7 | Convenzione | decisione di INT-4 (collegamento tra B20/MES-15, soglie in giorni veri, e i programmi da 1-2 sedute a settimana: con le soglie di B20 un programma da 1 seduta a settimana non avanzava mai); registro B20 | CST-01, CST-02, CAR-04 |
 | `giorniDoppiOver65` | fattore 2 | Convenzione | registro coach v2 B20 («giorni doppi oltre i 65», obiettivo di W4-T2; la deroga datata 2026-10-05 finisce con la catena completa e le soglie di MES-15); ricerca-recupero-infortuni-popolazioni §4 e §5.3 (lo stop pesa di più sopra i 65 anni, PMID 23347054 [V]) | CAR-04, CST-02 |
 | `rientroSerie` | giorni 14, prima 0.75, seconda 0.9, sedute 2, rirPiu 1 | Convenzione | registro coach v2 B20 (CST-02: serie -25%, -10%, poi piano, +1 RIR per 2 sedute); ricerca-psicologia-aderenza CST-02; RIC-05 (14 giorni, -25% nella prima seduta) | CST-02, RIC-05 |
 | `risalita` | passo 0.05, passoPrudente 0.025, sedute 3 | Convenzione | registro coach v2 B20 (ALG-14: 5% a seduta, 2,5% principianti e over 65, fino al carico di prima); ricerca-algoritmi-carichi-e-app ALG-14 (W' = min(Wpre, W·1,05) per 3 sedute; base da verificare [M]) | ALG-14 |
