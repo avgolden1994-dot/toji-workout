@@ -4241,5 +4241,6 @@ window.I18N["en"] = {
 "Il coach resta in modalità prudente": "The coach stays in careful mode",
 "Parlane con l’ostetrica o con il medico: sono loro a dirti come allenarti adesso. Il coach resta in modalità prudente: niente serie al limite, niente tecniche intense e carichi che salgono piano. Non è un parere medico.": "Talk to your midwife or your doctor: they are the ones to tell you how to train right now. The coach stays in careful mode: no sets to the limit, no intense techniques and loads that go up slowly. This is not medical advice.",
 "Con la gravidanza o un parto recente la modalità prudente resta accesa: se è cambiato qualcosa, togli prima «Gravidanza o parto recente».": "With a pregnancy or a recent childbirth careful mode stays on: if something has changed, first turn off «Pregnancy or recent childbirth».",
-"In dimagrimento il coach tiene i carichi.": "During fat loss the coach keeps your loads."
+"In dimagrimento il coach tiene i carichi.": "During fat loss the coach keeps your loads.",
+"e dalle ripetizioni raggiunte prima dello scarico (#): la doppia progressione continua da lì": "and from the reps reached before the deload (#): the double progression carries on from there"
 };

@@ -4241,5 +4241,6 @@ window.I18N["es"] = {
 "Il coach resta in modalità prudente": "El coach se queda en modo prudente",
 "Parlane con l’ostetrica o con il medico: sono loro a dirti come allenarti adesso. Il coach resta in modalità prudente: niente serie al limite, niente tecniche intense e carichi che salgono piano. Non è un parere medico.": "Habla con tu matrona o con tu médico: son ellos quienes te dicen cómo entrenar ahora. El coach se queda en modo prudente: nada de series al límite, nada de técnicas intensas y cargas que suben despacio. No es una opinión médica.",
 "Con la gravidanza o un parto recente la modalità prudente resta accesa: se è cambiato qualcosa, togli prima «Gravidanza o parto recente».": "Con el embarazo o un parto reciente el modo prudente sigue activo: si algo ha cambiado, quita primero «Embarazo o parto reciente».",
-"In dimagrimento il coach tiene i carichi.": "En pérdida de grasa el coach mantiene las cargas."
+"In dimagrimento il coach tiene i carichi.": "En pérdida de grasa el coach mantiene las cargas.",
+"e dalle ripetizioni raggiunte prima dello scarico (#): la doppia progressione continua da lì": "y desde las repeticiones alcanzadas antes de la descarga (#): la doble progresión continúa desde ahí"
 };
