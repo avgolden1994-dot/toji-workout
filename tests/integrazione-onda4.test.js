@@ -325,3 +325,39 @@ test('B1. un backup fatto con la bandiera accesa la riporta (il ripristino non r
   altro.g('applicaFotografia(__foto, true)');
   assert.strictEqual(altro.leggi(altro.chiave('PROFILE_KEY')).gravidanza, true);
 });
+
+/* ============================================================ INT-4b, M2: ALG-14 riporta al carico di LAVORO di prima della pausa, non a quello dello scarico */
+function rientroDopoScarico(eta, pausa) {
+  const { a } = telefono({ d: { level: 'intermedio', days: 3, minutes: 60, goals: ['massa'], sex: 'M', age: eta, parq: 'no', seme: 'rie3' + eta + 'intermedio' } });
+  const giorni = a.giorniAllenamento(), nomi = a.json('DAYS'), off = giorni.map(g => nomi.indexOf(g)), righe = [];
+  const nome = a.json('loadData()')[giorni[0]].find(e => Number(e.weight) > 0 && !a.g('isTimeBased(' + J(e.name) + ')')).name;
+  const wS = a.json('getProgramma().fasi').indexOf('scarico') + 1, inizioPausa = 7 * wS;   /* la pausa comincia subito dopo la prima settimana di scarico */
+  for (let day = 0; day < inizioPausa + pausa + 21; day++) {
+    if (off.indexOf(day % 7) === -1 || (day >= inizioPausa && day < inizioPausa + pausa)) continue;
+    a.ora(new Date(2026, 9, 5 + day, 12));
+    const sett = a.json('settimanaProgramma()');
+    const r = vivi(a, nomi[day % 7], { rpe: 'bersaglio' });
+    const e = r.voci.find(z => z.name === nome);
+    if (e) righe.push({ day: day, sett: sett.numero, scarico: sett.fase === 'scarico', w: e.weight, reps: e.reps, nota: e.coachNote || '' });
+  }
+  return righe;
+}
+[70, 30].forEach(eta => test('M2. dopo uno scarico e una pausa di 14 giorni (' + eta + ' anni) il carico di prima dell\'ALG-14 è quello di lavoro, non quello dello scarico; mai oltre; il motivo non si contraddice', () => {
+  const righe = rientroDopoScarico(eta, 14);
+  const lavoro = Math.max(...righe.filter(r => !r.scarico && r.day < righe.find(x => x.scarico).day).map(r => r.w)), scarico = righe.find(r => r.scarico);
+  assert.ok(scarico && scarico.w < lavoro, 'lo scarico c e: ' + JSON.stringify(scarico) + ' contro ' + lavoro);
+  const dopo = righe.filter(r => r.day > righe.filter(x => x.scarico).pop().day + 13);
+  const conRisalita = dopo.filter(r => /si risale verso il carico di prima/.test(r.nota));
+  conRisalita.forEach(r => {
+    assert.ok(r.nota.indexOf('(' + String(lavoro).replace('.', ',') + ' kg)') !== -1 || r.nota.indexOf('(' + lavoro + ' kg)') !== -1, 'il carico di prima e quello di lavoro ' + lavoro + ': ' + r.nota);
+    assert.ok(r.nota.indexOf('(' + scarico.w + ' kg)') === -1 && r.nota.indexOf('(' + String(scarico.w).replace('.', ',') + ' kg)') === -1, 'non quello dello scarico: ' + r.nota);
+    assert.ok(!/sarebbe un salto|prima una ripetizione in piu/.test(r.nota), 'il motivo non dice due cose: ' + r.nota);
+    assert.ok(!/circa il 2,5% a seduta|circa il 5% a seduta/.test(r.nota), 'niente percentuale a seduta che non e quella vera: ' + r.nota);
+  });
+  assert.ok(dopo.every(r => r.w <= lavoro + 1e-9), 'mai oltre il carico di prima: ' + dopo.map(r => r.w).join(' '));
+  /* e si torna: dopo tre sedute a 0,9 del carico di lavoro o piu per chi ha 30 anni, e almeno risale ogni volta per gli over 65 */
+  const pesi = dopo.map(r => r.w);
+  for (let i = 1; i < pesi.length; i++) assert.ok(pesi[i] >= pesi[i - 1] - 1e-9, 'il carico non scende nelle sedute dopo il rientro: ' + pesi.join(' '));
+  if (eta === 30) assert.ok(pesi[pesi.length - 1] >= lavoro * 0.9 - 1e-9, 'a 30 anni in tre sedute si e a 0,9 del carico di prima o piu: ' + pesi.join(' ') + ' contro ' + lavoro);
+  assert.ok(conRisalita.length >= 1, 'la risalita c e: ' + JSON.stringify(dopo));
+}));

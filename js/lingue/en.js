@@ -4234,7 +4234,7 @@ window.I18N["en"] = {
 "dai # anni restano almeno # ripetizioni: invece dello schema #×#, carico -#% e si ricostruisce": "from age # you stay at # reps or more: instead of the #×# scheme, load -#% and you rebuild",
 "seconda seduta dopo la pausa: serie -#%, poi il piano di sempre": "second session after the break: sets -#%, then the usual plan",
 "dopo la pausa, per due sedute, una ripetizione in riserva in più": "after the break, for two sessions, one more rep in reserve",
-"dopo la pausa si risale verso il carico di prima (# kg), di circa il #% a seduta": "after the break you climb back towards your previous load (# kg), by about #% per session",
+"dopo la pausa si risale verso il carico di prima (# kg): +# kg, circa il #% in più": "after the break you climb back towards your previous load (# kg): +# kg, about #% more",
 "rientro dopo # giorni": "back after # days",
 "meno serie su tutto il piano, poi si torna al solito": "fewer sets across the whole plan, then back to normal",
 "Gravidanza o parto recente": "Pregnancy or recent childbirth",

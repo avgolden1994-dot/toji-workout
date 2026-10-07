@@ -206,7 +206,7 @@ function settimaneFermePerPausa(p) {
 /* ALG-14: la seduta di rientro di questo esercizio (CAR-04) è una delle ultime `sedute`? Allora { prima: carico di lavoro di prima della pausa, ora: carico dell'ultima seduta }.
    La pausa di allora si conta come la contava il rientro (giorni dell'esercizio, doppi oltre i 65 anni in una pausa vera) */
 function rientroRecente(nome, R) {
-  const s = sessioniConData(nome, R.sedute + 1), tutte = sedutePassate(), doppi = giorniDoppiAttivi();
+  const s = sessioniConData(nome, R.sedute + 3), tutte = sedutePassate(), doppi = giorniDoppiAttivi();   /* qualche seduta in piu: se l ultima di prima era di scarico si cerca quella di lavoro */
   for (let k = 0; k < Math.min(R.sedute, s.length - 1); k++) {
     const dopo = s[k], prima = s[k + 1];
     if (!dopo.data || !prima.data || s.slice(0, k + 1).some(x => x.eraDiScarico)) return null;
@@ -214,10 +214,21 @@ function rientroRecente(nome, R) {
     const prec = tutte.find(x => giorniTra(x.d, dopo.data) > 0);
     const gPausa = prec ? giorniTra(prec.d, dopo.data) : gEs;
     if (!rientroDopoPausa(gEs, giorniContatiPausa(gEs, gPausa, doppi))) continue;
-    const W0 = caricoDiLavoro(prima.ex), W = caricoDiLavoro(s[0].ex);
+    /* INT-4b (M2): il carico di prima e quello di LAVORO: se l ultima seduta prima della pausa era di scarico (la pausa segue la settimana di scarico) si risale a quello della seduta di lavoro
+       prima, come fa CAR-04 con il carico di riferimento; prima si puntava al carico dello scarico e gli over 65 restavano a 0,75-0,90 del carico di prima */
+    const lavoro = s.slice(k + 1).find(x => !x.eraDiScarico) || prima;
+    const W0 = caricoDiLavoro(lavoro.ex), W = caricoDiLavoro(s[0].ex);
     return W0 > 0 && W > 0 ? { prima: W0, ora: W } : null;
   }
   return null;
+}
+
+/* il primo pezzo del motivo di caricoProssimoBase dice come sale la progressione di base («prima una ripetizione in più», «+2,5 kg sarebbe un salto del 9%», «Arrivato a 10 ripetizioni»):
+   quando ALG-14 decide il peso quel pezzo non e piu vero e si toglie, il resto (RIR, rientro, serie) resta */
+function senzaMotivoDellaProgressione(motivo) {
+  const pezzi = String(motivo || '').split(' \u2022 ');
+  if (pezzi.length && /sarebbe un salto|prima una ripetizione|Arrivato a|Tutte le serie complete|Ultima serie con|Serie facili|Doppia progressione|Cima del range|Aumento dimezzato|passo più piccolo/i.test(pezzi[0])) pezzi.shift();
+  return pezzi.join(' \u2022 ');
 }
 
 /* frasi del motivo (tradotte: docs/in-arrivo/P4-S.json; i numeri vengono dalle soglie e nel dizionario sono #) */
@@ -227,7 +238,7 @@ const FRASI_POPOLAZIONI = {
     Math.round((1 - sogliaPopolazione('ripetizioniMinOver65').caloStallo) * 100) + '% e si ricostruisce',
   secondaSeduta: () => 'seconda seduta dopo la pausa: serie -' + Math.round((1 - sogliaPopolazione('rientroSerie').seconda) * 100) + '%, poi il piano di sempre',
   rirRientro: () => 'dopo la pausa, per due sedute, una ripetizione in riserva in più',
-  risalita: (kg, passo) => 'dopo la pausa si risale verso il carico di prima (' + fmtKg(kg) + ' kg), di circa il ' + String(Math.round(passo * 1000) / 10).replace('.', ',') + '% a seduta'
+  risalita: (kg, piu, perc) => 'dopo la pausa si risale verso il carico di prima (' + fmtKg(kg) + ' kg): +' + fmtKg(piu) + ' kg, circa il ' + perc + '% in più'
 };
 
 /* Fase 90 della catena 'carico' (SEN, regia/fasi.js): i tetti delle popolazioni e la rampa del rientro. Dopo RIC (60) e INT (70), prima della griglia (95), che riporta il
@@ -266,7 +277,8 @@ function fasePopolazioni(r, c) {
       const w = Math.min(rr.prima, caricoSalito(rr.ora, rr.ora * passo, c.nome));
       if (w > Number(r.weight) + 1e-9) {
         r.weight = w; r.reps = Number(c.repsTarget) || r.reps;
-        aggiungiPerche(r, 'ALG-14', FRASI_POPOLAZIONI.risalita(rr.prima, passo));
+        r.motivo = senzaMotivoDellaProgressione(r.motivo);   /* INT-4b (m3): il peso lo decide ALG-14, non «prima una ripetizione in più» della progressione di base */
+        aggiungiPerche(r, 'ALG-14', FRASI_POPOLAZIONI.risalita(rr.prima, w - rr.ora, Math.round((w / rr.ora - 1) * 100)));
       }
     }
   }

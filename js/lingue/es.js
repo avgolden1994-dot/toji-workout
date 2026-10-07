@@ -4234,7 +4234,7 @@ window.I18N["es"] = {
 "dai # anni restano almeno # ripetizioni: invece dello schema #×#, carico -#% e si ricostruisce": "desde los # años se mantienen al menos # repeticiones: en lugar del esquema #×#, carga -#% y se reconstruye",
 "seconda seduta dopo la pausa: serie -#%, poi il piano di sempre": "segunda sesión después de la pausa: series -#%, luego el plan de siempre",
 "dopo la pausa, per due sedute, una ripetizione in riserva in più": "después de la pausa, durante dos sesiones, una repetición más en reserva",
-"dopo la pausa si risale verso il carico di prima (# kg), di circa il #% a seduta": "después de la pausa se vuelve a subir hacia la carga de antes (# kg), alrededor de un #% por sesión",
+"dopo la pausa si risale verso il carico di prima (# kg): +# kg, circa il #% in più": "después de la pausa se vuelve a subir hacia la carga de antes (# kg): +# kg, alrededor de un #% más",
 "rientro dopo # giorni": "vuelta tras # días",
 "meno serie su tutto il piano, poi si torna al solito": "menos series en todo el plan, luego se vuelve a lo de siempre",
 "Gravidanza o parto recente": "Embarazo o parto reciente",

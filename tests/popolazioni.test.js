@@ -278,7 +278,7 @@ test('ALG-14: dopo il rientro il carico risale verso quello di prima, circa +5% 
   assert.ok(on.giu <= 80 && on.giu >= 75, 'il rientro: -20% ' + on.giu);
   assert.ok(on.r.weight > off.r.weight, 'ALG-14 accesa sale più della progressione normale: ' + on.r.weight + ' contro ' + off.r.weight);
   assert.ok(on.r.weight <= on.giu * 1.05 + on.passo / 2 + 1e-9 && on.r.weight <= 100, 'circa +5% e mai oltre il carico di prima: ' + on.r.weight + ' da ' + on.giu);
-  assert.ok(/dopo la pausa si risale verso il carico di prima \(100 kg\), di circa il 5% a seduta/.test(on.r.motivo), on.r.motivo);
+  assert.ok(/dopo la pausa si risale verso il carico di prima \(100 kg\): \+[\d.]+ kg, circa il \d+% in più/.test(on.r.motivo), on.r.motivo);   /* INT-4b (m3): il salto vero, non «5% a seduta» */
   /* altre due sedute: si sale ancora, mai oltre 100 */
   let w = on.r.weight;
   for (let i = 0; i < 2; i++) { fatta(on.t, 3, w, 3); const r = carico(on.t); assert.ok(r.weight >= w && r.weight <= 100, 'seduta ' + (i + 3) + ': ' + r.weight); w = r.weight; }
