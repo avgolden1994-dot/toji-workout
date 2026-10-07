@@ -27,7 +27,14 @@ const R = path.join(__dirname, '..');
    docs/ricerca-struttura-e-intensita.md). "Convenzione" = pratica comune dei coach, senza prova diretta.
    Cambiare una soglia = alzare VERSIONE_CRITERI: i confronti prima/dopo valgono solo a pari versione.
    ===================================================================================================== */
-const VERSIONE_CRITERI = '1.6';
+const VERSIONE_CRITERI = '1.7';
+/* 1.7 (P4-F, W4-T1 versione snella; docs/piano-coach-v2.md W4-T1: «SAF-02 al 100% con nota di modifica»; REC-04). Una ridefinizione, di classe L (piu larga), con il motivo, e una telemetria:
+   - SAF-02 (L): un esercizio che carica una zona dolente dichiarata (attributo `stress` = 1, cautela) non e un fallimento se la scheda lo DICE: una nota che comincia con la zona (`Spalle`, `Ginocchia`,
+     `Schiena bassa`, nei tre modi in cui la scrive js/coach/sicurezza/fastidi.js) e nomina quell'esercizio per nome (NOTA_MODIFICA_FASTIDIO). Senza la nota (o con una nota che non nomina l'esercizio) scatta come prima;
+     la nota generica di SCALE_DOLORE («Spalle: spinte con presa stretta…») non nomina nessun esercizio e non basta. Il criterio misura che la scheda lo dice, non che la modifica sia clinicamente giusta: la verita della nota
+     (nomina esattamente cio che c e, non dichiara escluso cio che c e) la prova tests/fastidi.test.js. La presenza dell'esercizio con cautela resta visibile nel report: `riepilogo.saf02` (programmi con almeno un
+     esercizio con cautela, con e senza nota). SAF-01 (controindicati) non cambia: nessuna nota lo scusa. Il «prima» a pari criteri si rigenera in un worktree di origin/main copiandovi questo file: il codice di prima non
+     scrive la nota, quindi il suo SAF-02 coincide con quello dei criteri 1.6 (15,18% ginocchia, 9,48% schiena, 8,86% spalle sulla matrice standard). */
 /* 1.1 (INT-0, onda 0 del coach v2): criteri aggiornati dalle decisioni del registro docs/coach-v2-decisioni.md, non per far passare l'onda:
    - SAF-01/SAF-02/MOD-03: la leg extension e lo squat a corpo libero con le ginocchia dolenti stanno in CAUTELA, non tra i controindicati
      (B13, B33, REC-04: si modifica prima di escludere; il generatore li lascia con la nota di SCALE_DOLORE e un esercizio per i quadricipiti resta sempre);
@@ -335,6 +342,9 @@ function flessioneSicuraDisponibile(c) {
 }
 /* La nota che il generatore scrive nel programma quando c'e il rematore inverso a corpo libero (W0-T7, vedi 1.2): dove farlo con quello che c'e in casa (Convenzione, decisione del committente) */
 const NOTA_REMATORE_INVERSO = /sotto un tavolo robusto o con una sbarra bassa/i;
+/* 1.7: la nota di modifica di una zona dolente (REC-04): comincia con la zona e, per ogni esercizio con cautela, lo nomina (js/coach/sicurezza/fastidi.js: «Spalle, esclusi per il fastidio: …», «Spalle: restano, …: A, B», «Spalle: se il fastidio supera …») */
+const NOTA_MODIFICA_FASTIDIO = { spalle: /^Spalle(, esclusi per il fastidio|: restano|: se il fastidio supera)/, ginocchia: /^Ginocchia(, esclusi per il fastidio|: restano|: se il fastidio supera)/, schiena: /^Schiena bassa(, esclusi per il fastidio|: restano|: se il fastidio supera)/ };
+const notaDiModificaNomina = (c, f, e) => !!NOTA_MODIFICA_FASTIDIO[f] && ((c.prog && c.prog.note) || []).some(n => NOTA_MODIFICA_FASTIDIO[f].test(String(n)) && String(n).indexOf(e.pulito) !== -1);
 /* attrezzo di DETTAGLI -> categoria di "Attrezzi della tua palestra" (Opzioni > Il coach) */
 const CATEGORIA_ATTREZZO = { 'Bilanciere': 'bilanciere', 'Trap bar': 'bilanciere', 'Manubri': 'manubri', 'Macchina': 'macchine', 'Cavo': 'macchine', 'Multipower': 'macchine', 'Sbarra': 'sbarra', 'Sbarra bassa o anelli': 'sbarra' };
 
@@ -745,10 +755,16 @@ const CRITERI = [
       c.fastidi.forEach(f => m.sedute.forEach(s => s.es.forEach(e => { if (CONTROINDICAZIONI[f] && controindicato(f, e.nome)) out.push({ sub: f, msg: s.titolo + ': ' + e.pulito + ' con fastidio a ' + f + (c.rischio[f] && c.rischio[f].test(e.nome) ? ' (RISCHIO lo vieta ma e entrato lo stesso)' : ' (RISCHIO non lo copre)'), tag: e.pulito, gravita: 3 }); })));
       return out; } },
   { id: 'SAF-02', nome: 'Esercizio da usare con cautela per un fastidio dichiarato', sev: CAUTELA_SEV, forza: 'Convenzione', fonte: 'pratica clinica e dei coach; dato `stress` = 1 di js/dati/attributi-esercizi.js (W1-T2), con il parere del collaudo in CONTROINDICAZIONI',
-    dove: [MOTORE_JS + ': RISCHIO / consentito', 'js/coach/biomeccanica.js: SCALE_DOLORE'],
+    dove: [MOTORE_JS + ': RISCHIO / consentito', 'js/coach/sicurezza/fastidi.js: applicaNoteFastidi (la nota di modifica per zona, REC-04)', 'js/coach/biomeccanica.js: SCALE_DOLORE'],
     check: (m, c) => {
       const out = [];
-      c.fastidi.forEach(f => m.sedute.forEach(s => s.es.forEach(e => { if (CONTROINDICAZIONI[f] && dacautela(f, e.nome)) out.push({ sub: f, msg: s.titolo + ': ' + e.pulito + ' con fastidio a ' + f, tag: e.pulito, gravita: 1 }); })));
+      m.saf02Annotati = 0;   /* 1.7: gli esercizi con cautela che la scheda dice (telemetria) */
+      c.fastidi.forEach(f => m.sedute.forEach(s => s.es.forEach(e => {
+        if (!(CONTROINDICAZIONI[f] && dacautela(f, e.nome))) return;
+        if (notaDiModificaNomina(c, f, e)) { m.saf02Annotati++; return; }   /* 1.7: con la nota che lo nomina non e un fallimento */
+        out.push({ sub: f, msg: s.titolo + ': ' + e.pulito + ' con fastidio a ' + f + ' (la scheda non lo dice)', tag: e.pulito, gravita: 1 });
+      })));
+      m.saf02Con = m.saf02Annotati + out.length;
       return out; } },
   { id: 'SAF-03', nome: 'Attrezzatura non disponibile per il luogo dichiarato', sev: 4, forza: 'Convenzione', fonte: 'coerenza con la risposta ("A casa con manubri: manubri e una panca"; "Corpo libero: senza attrezzi"; attrezzi della palestra)',
     dove: [MOTORE_JS + ': attrezzoDi (regex sul nome, non legge DETTAGLI) / consentito'],
@@ -1323,6 +1339,7 @@ function eseguiMatrice(profili, opz) {
     if (conVol || esenti.length) { tot.vol01Senza++; tot.vol01SenzaPeso += wp; }
     if (a.m && a.m.frz01PrincipianteSenzaStaccoDaTerra) { tot.frz01SenzaStaccoTerra = (tot.frz01SenzaStaccoTerra || 0) + 1; tot.frz01SenzaStaccoTerraPeso = (tot.frz01SenzaStaccoTerraPeso || 0) + wp; }   /* 1.6, INT-2f: i principianti con il powerlifting che non hanno lo stacco da terra (abilita 3: hanno il rumeno) */
     if (a.m && a.m.esentatoSpl01) { tot.spl01Esentati = (tot.spl01Esentati || 0) + 1; tot.spl01EsentatiPeso = (tot.spl01EsentatiPeso || 0) + wp; }   /* 1.6: SPL-01 non segnala i 4 sedute dei principianti con la nota */
+    if (a.m && a.m.saf02Con > 0) { tot.saf02Con = (tot.saf02Con || 0) + 1; tot.saf02ConPeso = (tot.saf02ConPeso || 0) + wp; tot.saf02Annotati = (tot.saf02Annotati || 0) + a.m.saf02Annotati; if (a.m.saf02Annotati === a.m.saf02Con) { tot.saf02TuttiAnnotati = (tot.saf02TuttiAnnotati || 0) + 1; tot.saf02TuttiAnnotatiPeso = (tot.saf02TuttiAnnotatiPeso || 0) + wp; } }   /* 1.7: i programmi con almeno un esercizio con cautela per un fastidio, e quanti hanno la nota per ognuno */
     if (a.m && a.m.esentatoRec03) { tot.rec03Esentati++; tot.rec03EsentatiPeso += wp; }   /* 1.5: REC-03 non segnala i 6 giorni dichiarati con la nota onesta */
     const viste = new Map(), conteggi = new Map();
     const tagViste = new Map();
@@ -1492,6 +1509,7 @@ function mdReport(profili, ris, opz, meta, verifiche) {
   const vd = vol01Doppio({ tot: tot, elenco: elenco });
   L.push('| VOL-01 con l esenzione della nota (criteri 1.5, definizione stretta) | ' + vd.programmi.con + ' programmi (' + vd.pesata.con.toFixed(1) + '% pesata) |');
   L.push('| VOL-01 SENZA l esenzione (come con --senza-note) | ' + vd.programmi.senza + ' programmi (' + vd.pesata.senza.toFixed(1) + '% pesata) |');
+  L.push('| SAF-02 (1.7): programmi con almeno un esercizio con cautela per il fastidio, e con la nota che li nomina tutti | ' + (tot.saf02Con || 0) + ' programmi (' + ((tot.saf02ConPeso || 0) / Math.max(1e-9, tot.pesoTotale) * 100).toFixed(1) + '% pesata); con la nota per ognuno: ' + (tot.saf02TuttiAnnotati || 0) + ' (' + ((tot.saf02TuttiAnnotatiPeso || 0) / Math.max(1e-9, tot.pesoTotale) * 100).toFixed(1) + '% pesata); esercizi annotati: ' + (tot.saf02Annotati || 0) + ' |');
   L.push('| FRZ-01: principianti con il powerlifting senza lo stacco da terra (hanno il rumeno: abilita 3, SEL-06; non e un fallimento) (1.6) | ' + (tot.frz01SenzaStaccoTerra || 0) + ' programmi (' + ((tot.frz01SenzaStaccoTerraPeso || 0) / Math.max(1e-9, tot.pesoTotale) * 100).toFixed(1) + '% pesata) |');
   L.push('| SPL-01 non segnalato per i principianti con 5-6 giorni e 4 sedute con la nota onesta (1.6) | ' + (tot.spl01Esentati || 0) + ' programmi (' + ((tot.spl01EsentatiPeso || 0) / Math.max(1e-9, tot.pesoTotale) * 100).toFixed(1) + '% pesata)' + (SENZA_NOTE ? ' - esenzione spenta (--senza-note)' : ' - senza l esenzione sono segnalati') + ' |');
   L.push('| REC-03 non segnalato per i 6 giorni dichiarati con la nota onesta (1.5) | ' + (tot.rec03Esentati || 0) + ' programmi (' + ((tot.rec03EsentatiPeso || 0) / Math.max(1e-9, tot.pesoTotale) * 100).toFixed(1) + '% pesata)' + (SENZA_NOTE ? ' - esenzione spenta (--senza-note)' : ' - senza l esenzione sono segnalati') + ' |');
@@ -1556,7 +1574,7 @@ function mdReport(profili, ris, opz, meta, verifiche) {
 function riepilogoCompatto(ris, meta) {
   const per = {}, pesata = {};
   ris.elenco.forEach(cl => { per[cl.chiave] = cl.n; pesata[cl.chiave] = Number(cl.pctPesata.toFixed(2)); });
-  return { criteri: VERSIONE_CRITERI, commit: meta.commit, data: meta.data, matrice: meta.matrice, pesi: PESI_UNIFORMI ? 'uniformi' : 'popolazione', profili: ris.tot.profili, errori: ris.tot.errori, conFallimenti: ris.tot.conFallimenti, conGravi: ris.tot.conGravi, gravi_pesata: Number(((ris.tot.pesoGravi || 0) / ris.tot.pesoTotale * 100).toFixed(2)), conMetodo: ris.tot.conMetodo, classi: per, classi_pesata: pesata, vol01: vol01Doppio(ris), frz01: { principianti_senza_stacco_da_terra: ris.tot.frz01SenzaStaccoTerra || 0, principianti_senza_stacco_da_terra_pesata: Number(((ris.tot.frz01SenzaStaccoTerraPeso || 0) / ris.tot.pesoTotale * 100).toFixed(2)) },
+  return { criteri: VERSIONE_CRITERI, commit: meta.commit, data: meta.data, matrice: meta.matrice, pesi: PESI_UNIFORMI ? 'uniformi' : 'popolazione', profili: ris.tot.profili, errori: ris.tot.errori, conFallimenti: ris.tot.conFallimenti, conGravi: ris.tot.conGravi, gravi_pesata: Number(((ris.tot.pesoGravi || 0) / ris.tot.pesoTotale * 100).toFixed(2)), conMetodo: ris.tot.conMetodo, classi: per, classi_pesata: pesata, vol01: vol01Doppio(ris), saf02: { con_cautela: ris.tot.saf02Con || 0, con_cautela_pesata: Number(((ris.tot.saf02ConPeso || 0) / ris.tot.pesoTotale * 100).toFixed(2)), tutti_annotati: ris.tot.saf02TuttiAnnotati || 0, tutti_annotati_pesata: Number(((ris.tot.saf02TuttiAnnotatiPeso || 0) / ris.tot.pesoTotale * 100).toFixed(2)), esercizi_annotati: ris.tot.saf02Annotati || 0 }, frz01: { principianti_senza_stacco_da_terra: ris.tot.frz01SenzaStaccoTerra || 0, principianti_senza_stacco_da_terra_pesata: Number(((ris.tot.frz01SenzaStaccoTerraPeso || 0) / ris.tot.pesoTotale * 100).toFixed(2)) },
     spl01: { esentati: ris.tot.spl01Esentati || 0, esentati_pesata: Number(((ris.tot.spl01EsentatiPeso || 0) / ris.tot.pesoTotale * 100).toFixed(2)) }, rec03: { esentati: ris.tot.rec03Esentati || 0, esentati_pesata: Number(((ris.tot.rec03EsentatiPeso || 0) / ris.tot.pesoTotale * 100).toFixed(2)) } };
 }
 /* 1.5: VOL-01 con l esenzione della nota della causa e SENZA, sempre: { con, senza } = programmi con almeno una classe VOL-01 (n e % pesata), e per classe { con, senza } in % pesata */
@@ -1674,6 +1692,10 @@ const FIXTURES = [
   fixture('nessun hinge in tre giorni', { days: 3 }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 150), E('Panca Piana Bilanciere', 3, 8, 120)]], ['Mercoledì', 'fullbody', [E('Leg Press', 3, 10, 120), E('Lat Machine', 3, 10, 90)]], ['Venerdì', 'fullbody', [E('Hack Squat', 3, 10, 120), E('Military Press', 3, 8, 120)]]], {}, ['PAT-01']),
   fixture('intermedio con isolamenti a RIR 0 dalla settimana 1', { level: 'intermedio' }, [['Lunedì', 'fullbody', [E('Squat con Bilanciere', 3, 8, 120)]]], { rirProva: { pesante: [2, 2, 1, 3, 2, 2, 1, 3, 2, 2, 1, 3], nov: { pesante: 2, macchina: 1, isolamento: 0 } } }, ['RIR-03']),
   fixture('panca col bilanciere con la spalla dolente (cautela)', { fastidi: ['spalle'] }, [['Lunedì', 'upper', [E('Panca Piana Bilanciere', 3, 8, 120)]]], {}, ['SAF-02']),
+  fixture('SAF-02 (1.7): la panca col bilanciere con la spalla dolente, con la nota che la nomina: non e un fallimento', { fastidi: ['spalle'] }, [['Lunedì', 'upper', [E('Panca Piana Bilanciere', 3, 8, 120)]]], { note: ['Spalle, esclusi per il fastidio: military press, dip — restano, da fare nell’ampiezza che non fa male: Panca Piana Bilanciere — se il fastidio supera 3/10 o peggiora, fermati; se non passa, fatti vedere da un medico o da un fisioterapista.'] }, [], ['SAF-02', 'SAF-01']),
+  fixture('SAF-02 (1.7): la nota nomina un solo esercizio dei due con cautela: l altro scatta ancora', { fastidi: ['spalle'] }, [['Lunedì', 'upper', [E('Panca Piana Bilanciere', 3, 8, 120), E('Trazioni alla Sbarra (Pull-ups)', 3, 8, 90)]]], { note: ['Spalle: restano, da fare nell’ampiezza che non fa male: Panca Piana Bilanciere — se il fastidio supera 3/10 o peggiora, fermati; se non passa, fatti vedere da un medico o da un fisioterapista.'] }, ['SAF-02'], ['SAF-01']),
+  fixture('SAF-02 (1.7): la nota generica di SCALE_DOLORE non nomina nessun esercizio e non basta', { fastidi: ['spalle'] }, [['Lunedì', 'upper', [E('Panca Piana Bilanciere', 3, 8, 120)]]], { note: ['Spalle: spinte con presa stretta o manubri a presa neutra, ampiezza senza dolore. Si torna al pieno quando il fastidio cala.'] }, ['SAF-02']),
+  fixture('SAF-02 (1.7): la nota di un altra zona non scusa le ginocchia', { fastidi: ['ginocchia'] }, [['Lunedì', 'lower', [E('Leg Extension', 3, 12, 60)]]], { note: ['Spalle: restano, da fare nell’ampiezza che non fa male: Leg Extension — se il fastidio supera 3/10 o peggiora, fermati; se non passa, fatti vedere da un medico o da un fisioterapista.'] }, ['SAF-02']),
   /* ---- 1.4 ---- */
   fixture('DEL-01 1.4: principiante non prudente con il piano a 12 settimane, controllo all 8a e verifica alla 12a: va bene (B4, D-P15)', { level: 'principiante' }, [['Lunedì', 'fullbody', [E('Goblet Squat', 3, 10, 90)]]], { fasi: FASI_PRINCIPIANTE_12, piano: PIANO_PRINCIPIANTE_12 }, [], ['DEL-01']),
   fixture('DEL-01 1.5: principiante a 12 settimane con il controllo scritto nel piano ma NON eseguito dal codice (B1 della revisione): conta come nessun controllo', { level: 'principiante' }, [['Lunedì', 'fullbody', [E('Goblet Squat', 3, 10, 90)]]], { fasi: FASI_PRINCIPIANTE_12, piano: PIANO_PRINCIPIANTE_12, controlloEseguito: false }, ['DEL-01']),

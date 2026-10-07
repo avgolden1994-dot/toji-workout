@@ -316,6 +316,8 @@ function riconciliaNote(prog) {
   /* INT-2d (M2): la seconda nota dei sei giorni di fila (le 48 ore) solo se la scheda finale le rispetta, anche attraverso il lunedi */
   const k = prog.note.indexOf(NOTA_SEI_GIORNI_DI_FILA);
   if (k !== -1 && recuperoRispettato(prog.sedute) && prog.note.indexOf(NOTA_SEI_GIORNI_48_ORE) === -1) prog.note.splice(k + 1, 0, NOTA_SEI_GIORNI_48_ORE);
+  /* REC-04 (P4-F): con un fastidio dichiarato la nota di ogni zona dice cosa non c e e cosa resta con cautela NELLA scheda finale (js/coach/sicurezza/fastidi.js); sostituisce le note generiche di SCALE_DOLORE */
+  if (typeof applicaNoteFastidi === 'function') applicaNoteFastidi(prog);
   return prog;
 }
 function verificaProgramma(brief, prog) {

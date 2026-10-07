@@ -97,6 +97,9 @@ function eserciziDeiGiorniCon(nome) {
 /* MES-08 (B9, Convenzione): le risposte della fatica di seduta sono 3 / 6 / 8 / 10 (Facile, Giusta, Dura, Al limite). Una seduta e
    "pesante" se e Al limite, o se e Dura e si arrivava stanchi. Le vecchie risposte 9 (Dura) contano come 8. */
 const PARAM_FATICA_SEDUTA = { srpeFacile: 3, srpeGiusta: 6, srpeDura: 8, srpeAlLimite: 10, srpeFacileMax: 5 };
+/* DEC-03/04 (P4-F): il rinvio quando il dolore e forte o persiste. Dice a chi rivolgersi e che il coach non e un medico: nessuna diagnosi, nessuna promessa di guarigione, nessun «e sicuro» (la parte dopo
+   i due punti e uguale per ogni zona: le frasi nei tre dizionari sono una per zona) */
+const FRASE_RINVIO_MEDICO = 'fatti vedere da un medico o da un fisioterapista. Non sono un medico e non faccio diagnosi.';
 /* la nota che accompagna lo stesso esercizio a -20% quando non c e una variante dello stesso muscolo (frase nei tre dizionari) */
 const NOTA_AMPIEZZA_SENZA_DOLORE = 'ampiezza senza dolore, discesa in 3 s';
 function sedutaPesante(x) { return x.srpe >= PARAM_FATICA_SEDUTA.srpeAlLimite || (x.arrivo === 'stanco' && x.srpe >= PARAM_FATICA_SEDUTA.srpeDura); }
@@ -188,7 +191,7 @@ window.decisioniCoach = function(fb, storicoFeedback, prefs) {
       /* dolore che cresce di seduta in seduta nella stessa zona (Silbernagel) */
       const storiaZona = prec.filter(p => p.dolore && (p.zone || []).indexOf(z) !== -1).slice(0, 2).map(p => p.livello || 0);
       const cresce = storiaZona.length >= 2 && fb.livello > storiaZona[0] && storiaZona[0] > storiaZona[1];
-      if (cresce) out.push({ tipo: 'medico', testo: 'Il dolore ' + zonaA(z, (ZONE_DOLORE.find(x => x[0] === z) || [z, z])[1].toLowerCase()) + ' cresce di seduta in seduta: fatti vedere da un fisioterapista.' });
+      if (cresce) out.push({ tipo: 'medico', testo: 'Il dolore ' + zonaA(z, (ZONE_DOLORE.find(x => x[0] === z) || [z, z])[1].toLowerCase()) + ' cresce di seduta in seduta: ' + FRASE_RINVIO_MEDICO });
       const coinvolti = (fb.coinvolti.length ? fb.coinvolti : fb.esercizi)
         .filter(n => (STRESS_ZONA[z] || []).indexOf(senzaEmoji(n)) !== -1 || fb.coinvolti.indexOf(n) !== -1);
       const zNome = (ZONE_DOLORE.find(x => x[0] === z) || [z, z])[1].toLowerCase();
@@ -209,7 +212,7 @@ window.decisioniCoach = function(fb, storicoFeedback, prefs) {
             testo: senzaEmoji(n) + ': carico ' + (forte ? '-20%' : '-10%') + ' per due sedute, per il dolore ' + zonaA(z, zNome) + '.' + (nota ? ' • ' + nota : '') });
         }
       });
-      if (fb.livello >= 6) out.push({ tipo: 'medico', testo: 'Dolore forte: se non passa in pochi giorni o peggiora, fatti vedere da un medico o da un fisioterapista.' });
+      if (fb.livello >= 6) out.push({ tipo: 'medico', testo: 'Dolore forte: se non passa o peggiora, ' + FRASE_RINVIO_MEDICO });
     });
   }
 
