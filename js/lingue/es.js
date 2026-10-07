@@ -1415,7 +1415,6 @@ window.I18N["es"] = {
 "Sostituire i # esercizi di # con la scheda \"#\"": "¿Sustituir los # ejercicios de # por la rutina \"#\"",
 "Sostituisci": "Sustituir",
 "Sostituisci da subito": "Sustituir ahora",
-"Sotto il #% di massa grassa la funzione mestruale puo risentirne: e un valore da monitorare con un medico.": "Por debajo del #% de grasa corporal la función menstrual puede verse afectada: es un valor a vigilar con un médico.",
 "Sotto la mezz ora lo stimolo rischia di essere scarso, oltre i novanta minuti il recupero peggiora. Decido quanti esercizi metterti in base a questo.": "Con menos de media hora el estímulo puede ser escaso; más allá de noventa minutos la recuperación empeora. Decido cuántos ejercicios ponerte según esto.",
 "Sotto le": "Por debajo de",
 "Spalla": "Hombro",
