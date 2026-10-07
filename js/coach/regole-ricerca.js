@@ -633,6 +633,9 @@ function ricalcoloDalMassimale(r, c) {
   /* per difetto: mai sopra il calcolo. Sotto il minimo dell attrezzo (la barra vuota, la pila a 2,5 kg) il peso della griglia supera il calcolo: se non supera anche il carico gia
      fatto e il minimo che si carica davvero (revisione di 3a, M3: prima 19 kg di bilanciere e 2 · 1,5 · 1 · 0,5 kg sui cavi); se lo supera resta il calcolo e la fase 95 lo dice */
   const w = g !== null && (g <= t + 1e-9 || g <= W + 1e-9) ? g : Math.floor(t * 2 + 1e-9) / 2;
+  /* stesso bersaglio (cambia solo il RIR: alla settimana 2 di ogni blocco) e il ricalcolo da lo stesso peso dell ultima seduta: non c e niente da convertire, e `r.reps = ora` azzererebbe
+     la ripetizione guadagnata dalla doppia progressione (12 · 12 · 13 · 14 · 15, scarico, di nuovo 12 · 12...: il peso non saliva mai). Resta la proposta della progressione (ricontrollo di INT-3b, N1) */
+  if (prima === ora && Math.abs(w - W) < 1e-9) return r;
   r.weight = w > 0 ? w : W;
   r.reps = ora;
   r.tipo = r.weight > W + 1e-9 ? 'su' : (r.weight < W - 1e-9 ? 'giu' : 'fermo');

@@ -262,3 +262,50 @@ test('m2: caricoSalito a meta tra due pesi della griglia sceglie quello sotto, m
   assert.strictEqual(su(60, 1.25, PANCA), 62.5, 'bilanciere, mezzo incremento: sale di un passo come prima');
   assert.strictEqual(su(100, 5, '🦵 Leg Press'), 105, 'macchina: come prima');
 });
+
+/* ============================================================================================================
+   N1 (ricontrollo di INT-3b) · la doppia progressione arriva all aumento di peso: ALG-05 che scatta solo per il RIR e lascia il peso com e non azzera la ripetizione guadagnata
+   ============================================================================================================ */
+/* le coppie esercizio-bersaglio seguite per 9+ settimane (almeno 6 sedute di carico) che non salgono mai di peso, tolto il tetto del manubrio dichiarato */
+function nonSalgono(tab, a, tetto) {
+  const out = [];
+  Object.keys(tab).forEach(nome => {
+    const perBase = {};
+    tab[nome].filter(s => s.fase === 'carico' && s.tipo !== 'scarico' && s.w > 0).forEach(s => (perBase[s.base] = perBase[s.base] || []).push(s));
+    Object.keys(perBase).forEach(b => {
+      const L = perBase[b];
+      if (L.length < 6 || L[L.length - 1].n - L[0].n < 8) return;
+      if (Math.max.apply(null, L.map(s => s.w)) > L[0].w + 1e-9) return;
+      const att = a.chiama('attrezzoDi', nome);
+      if (tetto > 0 && (att === 'manubri' || att === 'corpo') && L.some(s => Math.abs(s.w - tetto) < 1e-9 || /manubrio più pesante/.test(s.nota || ''))) return;
+      out.push(nome + ' (bersaglio ' + b + '): ' + L.map(s => 's' + s.n + ':' + s.w + 'x' + s.reps).join(' '));
+    });
+  });
+  return out;
+}
+test('N1: Leg Curl 27,5 kg x 12 in tre sedute senza RPE, alla settimana 2 il RIR passa da [4,5] a [1,2]: il peso resta e la ripetizione guadagnata resta (prima: 12 ripetizioni, azzerata)', () => {
+  const app = nuovaApp({}, PROG_V2);
+  [10, 6, 3].forEach(g => registra(app, g, LEGCURL, serie(3, 27.5, 12), { reps: 12, base: 12, sets: 3, rir: [4, 5] }));
+  const r = carico(app, LEGCURL, 27.5, 12, 3);
+  assert.strictEqual(r.weight, 27.5, r.weight + ' kg · ' + r.motivo);
+  assert.strictEqual(r.reps, 13, 'una ripetizione in piu (doppia progressione): ' + r.reps + ' · ' + r.motivo);
+  assert.doesNotMatch(r.motivo, /ricalcolato dal massimale/);
+});
+test('N1: se il ricalcolo da lo stesso peso la proposta resta quella della progressione (Panca 60 kg x 8 senza RPE: +2,5 kg, non un «ricalcolato» fermo a 60); se da un peso diverso decide ALG-05', () => {
+  const senza = nuovaApp({}, PROG_V2);
+  [10, 6, 3].forEach(g => registra(senza, g, PANCA, serie(3, 60, 8), { reps: 8, base: 8, sets: 3, rir: [4, 5] }));
+  const r = carico(senza, PANCA, 60, 8, 3);
+  assert.doesNotMatch(r.motivo, /ricalcolato dal massimale/, r.weight + ' kg · ' + r.motivo);
+  assert.strictEqual(r.weight, 62.5, r.motivo);
+  const conRpe = nuovaApp({}, PROG_V2);
+  [10, 6, 3].forEach(g => registra(conRpe, g, PANCA, serie(3, 60, 8, 5.5), { reps: 8, base: 8, sets: 3, rir: [4, 5] }));
+  const rr = carico(conRpe, PANCA, 60, 8, 3);
+  assert.ok(rr.weight > 60 && /ricalcolato dal massimale/.test(rr.motivo), rr.weight + ' kg · ' + rr.motivo);
+});
+[['intermedio, 2 giorni, 45 minuti, tonificare (scintermedio245tonificareM)', { level: 'intermedio', days: 2, minutes: 45, goals: ['tonificare'], sex: 'M', age: 30, seme: 'scintermedio245tonificareM' }],
+ ['intermedio, 4 giorni, 60 minuti, massa (uomo1)', { level: 'intermedio', days: 4, minutes: 60, goals: ['massa'], sex: 'M', age: 30, seme: 'uomo1' }]].forEach(([nome, d]) => [null, 'bersaglio'].forEach(rpe => {
+  test('N1, storia di 12 settimane (' + nome + (rpe ? ', RPE sul bersaglio' : ', senza RPE') + '): ogni esercizio seguito per 9 settimane o piu sale di peso almeno una volta (prima: Leg Curl 27,5 kg x 12 · 12 · 13 · 14 · 15, scarico, di nuovo 12 · 12 · 13...)', { timeout: 120000 }, () => {
+    const { a, tab } = storia({ d: d }, 12, rpe);
+    assert.deepStrictEqual(nonSalgono(tab, a, 0), []);
+  });
+}));
