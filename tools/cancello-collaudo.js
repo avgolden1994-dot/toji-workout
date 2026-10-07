@@ -222,7 +222,7 @@ function valuta(cfg, snap, ondaId, opz) {
   const provaChiusura = (tipo, k, e, dove) => {
     const tetto = typeof e.tettoIniziale === 'number' ? e.tettoIniziale : (typeof e.max === 'number' ? e.max : null);
     if (tetto === null || snap.pesata[k] === undefined) return;
-    if (val(k) > tetto + EPS) ko(tipo + ' ' + k + ' (' + dove + ') chiuso a parole: la classe misura ancora ' + f2(val(k)) + '%, oltre il tetto ' + f2(tetto) + '%: una voce `chiuso` si dimostra con la misura sotto il tetto');
+    if (val(k) > tetto + EPS) kn(k, tipo + ' ' + k + ' (' + dove + ') chiuso a parole: la classe misura ancora ' + f2(val(k)) + '%, oltre il tetto ' + f2(tetto) + '%: una voce `chiuso` si dimostra con la misura sotto il tetto');
   };
   const iOnda = ordine.indexOf(ondaId);
   const scaduta = (am) => !(am && am.scade && ordine.indexOf(am.scade) > iOnda);
@@ -306,7 +306,7 @@ function valuta(cfg, snap, ondaId, opz) {
             if (c.max > tetto + EPS) { const r = c.rialzo || {}; if (!r.motivo || !r.data || !r.responsabile) ko('ammessa ' + k + ' riscritta in ' + ordine[m] + ': il tetto e stato rialzato da ' + tetto + ' a ' + c.max + ' senza `rialzo` con motivo, data e responsabile (il tetto dura quanto il debito)'); }
             tetto = c.max; da = ordine[m];
           }
-          if (snap.pesata[k] && val(k) > tetto + EPS) ko('ammessa ' + k + ' riscritta: ' + f2(val(k)) + '% oltre il tetto ' + tetto + '% (' + da + '): una riscrittura non scioglie il tetto della regressione ammessa');
+          if (snap.pesata[k] && val(k) > tetto + EPS) kn(k, 'ammessa ' + k + ' riscritta: ' + f2(val(k)) + '% oltre il tetto ' + tetto + '% (' + da + '): una riscrittura non scioglie il tetto della regressione ammessa');
         }
         if (riscrittoDopo(k, j) || Object.prototype.hasOwnProperty.call(aperti, k) || (onda && onda.ammesse && onda.ammesse[k])) { /* riscritto dall onda che si valuta o da una in mezzo: lo giudicano i suoi controlli (SCADUTO) */ return; }
         if (sc > iOnda) { if (tipo === 'aperto') righe.push({ esito: 'aperto', testo: k + ' [scade ' + e.scade + '; scritto in ' + ordine[j] + '] ' + (e.motivo || ''), codice: codiceDi(k), responsabile: e.responsabile || 'senza responsabile' }); return; }
@@ -824,6 +824,14 @@ function autotest() {
     eq(fallito(esito(c => { c.onde['onda-2a'].ammesse = { [K]: am() }; c.onde['onda-3'].aperti = { [K]: ap({ max: 4 }) }; }, 9), /aperto .* chiuso a parole/), true, 'un aperto che porta il tetto di un ammessa riscritta e chiuso a parole: fallisce');
     eq(esito(c => { c.onde['onda-2b'].aperti = { 'Cosa aperta': ap({ scade: 'onda-2' }) }; }).falliti, 0, 'un aperto senza classe (testo libero) chiuso con motivo e data passa come prima');
     eq(fallito(esito(c => { c.onde['onda-3'].aperti = { [K]: ap({ max: 4 }) }; }, 9), /aperto .* chiuso a parole/), true, 'e lo stesso per un aperto di onda-3 (l onda che si valuta)');
+    /* INT-3a: sulla rapida (--qualsiasi-matrice: un profilo su sei) la prova della chiusura e il tetto di un ammessa riscritta sono indicativi come ogni soglia numerica (la regola scritta in testa:
+       «le soglie numeriche, i tetti e le regressioni sono indicativi»): PRI-01:braccia 2,49% sulla standard e 3,85% sulla rapida senza che il generatore cambi. Sulla standard restano fallimenti (sopra) */
+    const rap = (modifica, v) => { const c = nuda(); modifica(c); const m = Object.assign({ matrice: 'rapida', profili: 1774 }, presente(v)); return valuta(c, daCollaudo(istantaneaBuona(c, 'onda-3', m)), 'onda-3', { contro: daCollaudo(istantaneaBuona(c, 'onda-2', m)), registro: REG_PROVA, qualsiasiMatrice: true }); };
+    const r9 = rap(c => { c.onde['onda-2a'].ammesse = { [K]: am() }; }, 9);
+    eq(r9.righe.some(x => x.esito === 'avviso' && /^indicativo \(matrice rapida\): .*chiuso a parole/.test(x.testo)), true, 'sulla rapida la chiusura oltre il tetto e un avviso indicativo');
+    eq(fallito(r9, /chiuso a parole/), false, 'e non un fallimento');
+    const rr = rap(c => { c.onde['onda-2a'].ammesse = { [K]: { max: 4, tettoIniziale: 4, risolve: 'W2-T5', scade: 'onda-2', motivo: 'prova' } }; c.onde['onda-3'].aperti = { [K]: { responsabile: 'W2-T1', scade: 'onda-4', motivo: 'prova 2026-10-06' } }; }, 4.3);
+    eq(fallito(rr, /riscritta.*oltre il tetto/), false, 'la riscrittura oltre il tetto sulla rapida non e un fallimento');
   });
   prova('INT-2g (revisione 2f, scappatoia 2): una classe senza ammessa ne soglia non sale di 0,49 a ogni onda per sempre: il tetto cumulativo parte dalla prima misura', () => {
     const K = 'RID-01:grande_gluteo', J = 'ZZZ-99:nuova', matrice = cfg.onde['onda-3'].matrice;   /* K: una classe vera senza ammessa; J: una classe nuova (nessun criterio, nessuna soglia, non nella tabella) */
