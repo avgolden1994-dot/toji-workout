@@ -173,7 +173,7 @@ test('M3: la frase che legge il minorenne dice 2-3 ripetizioni in riserva, mai 0
   assert.ok(/lascia 2–3 ripetizioni in riserva/.test(r.motivo), r.motivo);
   assert.ok(!/lascia 0/.test(r.motivo), r.motivo);
   const adulto = telefono(30, 1.25, null), ra = adulto.dati(adulto.chiama('caricoProssimo', ISOLAMENTO, 8, 12, 3));
-  assert.ok(/lascia 0–0 ripetizioni in riserva/.test(ra.motivo), 'l adulto resta come prima: ' + ra.motivo);
+  assert.ok(/lascia 0 ripetizioni in riserva/.test(ra.motivo) && !/0–0/.test(ra.motivo), "l adulto: un numero solo (m4 della revisione di 3a, prima «lascia 0–0»): " + ra.motivo);
 });
 
 /* ============================================================================================================ minori */

@@ -4194,5 +4194,7 @@ window.I18N["es"] = {
 "Non ora": "Ahora no",
 "Va bene, non ora: te lo richiedo più avanti": "Vale, ahora no: te lo vuelvo a proponer más adelante",
 "prime settimane: # serie invece di #, il volume sale piano fino a quello pieno": "primeras semanas: # series en lugar de #, el volumen sube poco a poco hasta el completo",
-"settimana # di # del blocco: # serie invece di #, il volume sale piano fino a quello pieno": "semana # de # del bloque: # series en lugar de #, el volumen sube poco a poco hasta el completo"
+"settimana # di # del blocco: # serie invece di #, il volume sale piano fino a quello pieno": "semana # de # del bloque: # series en lugar de #, el volumen sube poco a poco hasta el completo",
+"lascia # ripetizioni in riserva": "deja # repeticiones en reserva",
+"lascia # ripetizione in riserva": "deja # repetición en reserva"
 };

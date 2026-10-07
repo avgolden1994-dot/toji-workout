@@ -166,7 +166,9 @@ function rpeBersaglio(nome, sett) { const r = rirBersaglio(nome, sett); return 1
 function testoRir(nome) {
   const r = rirBersaglio(nome);
   if (r[1] === 1 && r[0] === 0) return 'fino a 0–1 ripetizioni in riserva';
-  return 'lascia ' + r[0] + '–' + r[1] + ' ripetizioni in riserva' + (ripresaDopoScarico(nome) ? ', una in più dopo lo scarico' : '');
+  /* un intervallo con gli estremi uguali (lo scarico lascia 3, il cedimento 0) e un numero solo: «lascia 3 ripetizioni», non «3–3» (revisione di 3a, m4) */
+  const quante = r[0] === r[1] ? r[0] + (r[0] === 1 ? ' ripetizione' : ' ripetizioni') : r[0] + '–' + r[1] + ' ripetizioni';
+  return 'lascia ' + quante + ' in riserva' + (ripresaDopoScarico(nome) ? ', una in più dopo lo scarico' : '');
 }
 /* il massimale stimato (e1rmSerie, e1rmSeduta) sta in carichi/e1rm.js (W1-T3) */
 /* B11 / MES-10: una seduta fatta in una settimana di scarico (o un esercizio scaricato dal coach) non e un dato di forma e non conta nelle
@@ -269,11 +271,16 @@ function caricoInGriglia(kg, nome) {
   const w = grigliaAttiva() ? pesoGriglia(kg, nome) : null;
   return w === null ? arrotonda(kg) : w;
 }
-/* ALG-06: un aumento di `inc` da `da`: il peso della griglia piu vicino, almeno il primo sopra `da` */
+/* ALG-06: un aumento di `inc` da `da`: il peso della griglia piu vicino, almeno il primo sopra `da`; a meta tra due pesi quello sotto (manubri 12 + 5 = 17: 16, non 18, +33% e non
+   +50%: revisione di 3a, m2) */
 function caricoSalito(da, inc, nome) {
   if (!grigliaAttiva()) return arrotonda(da + inc);
-  const w = pesoGriglia(da + inc, nome);
+  let w = pesoGriglia(da + inc, nome);
   if (w === null) return arrotonda(da + inc);
+  if (w > da + inc + 1e-9) {
+    const giu = pesoGriglia(da + inc, nome, { modo: 'giu' });
+    if (giu !== null && giu > da + 1e-9 && Math.abs((w - (da + inc)) - ((da + inc) - giu)) < 1e-9) w = giu;
+  }
   if (w > da + 1e-9) return w;
   const s = pesoGriglia(da + 1e-6, nome, { modo: 'su' });
   return s === null ? arrotonda(da + inc) : s;

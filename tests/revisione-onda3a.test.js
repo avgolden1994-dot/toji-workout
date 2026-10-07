@@ -189,3 +189,76 @@ test('M1: martedi 6 ripetizioni a 10 kg e venerdi 10 ripetizioni a 8 kg, tutto c
   [10, 6, 3].forEach(g => registra(nuovo, g, BULGARI, serie(2, 10, 6), { reps: 6, base: 6, sets: 2, rir: [1, 3] }));
   assert.match(carico(nuovo, BULGARI, 10, 10, 2).motivo, /Passi da 6 a 10 ripetizioni/);
 });
+
+/* ============================================================================================================
+   m1 · copertura: TUTTI gli esercizi con carico del programma, non solo i 6 di CONTROLLO dell atleta virtuale (tests/aiuto-atleta.js): 0 carichi fuori griglia e 0 sopra il
+   manubrio piu pesante dichiarato, in 12 settimane di programmi v2 veri (livelli, giorni, luoghi, obiettivi e sessi diversi) vissuti con tutte le serie complete
+   ============================================================================================================ */
+const PROGRAMMI_COPERTURA = [
+  ['uomo intermedio 4 giorni palestra', { d: { level: 'intermedio', days: 4, minutes: 60, goals: ['massa'], sex: 'M', age: 30, seme: 'uomo1' } }],
+  ['donna intermedia 4 giorni forza', { d: { level: 'intermedio', days: 4, minutes: 60, goals: ['forza'], sex: 'F', age: 30, seme: 'xintermedio460forzaF' } }],
+  ['uomo intermedio 3 giorni 90 minuti', { d: { level: 'intermedio', days: 3, minutes: 90, goals: ['massa'], sex: 'M', age: 30, seme: 'xintermedio390massaM' } }],
+  ['uomo intermedio a casa, manubri fino a 20 kg', { d: { level: 'intermedio', days: 3, minutes: 45, goals: ['massa'], sex: 'M', luogo: 'manubri', manubriKg: 20, seme: 'casa1' }, profilo: CASA20, tetto: 20 }],
+  ['donna principiante a casa, manubri fino a 8 kg', { d: { level: 'principiante', days: 3, minutes: 45, goals: ['massa'], sex: 'F', luogo: 'manubri', manubriKg: 8, seme: 'casa2' }, profilo: { luogo: 'manubri', manubriKg: 8 }, tetto: 8 }],
+  ['donna principiante 3 giorni palestra', { d: { level: 'principiante', days: 3, minutes: 60, goals: ['tonificare'], sex: 'F', age: 35, seme: 'pr1' } }],
+  ['uomo avanzato 5 giorni', { d: { level: 'avanzato', days: 5, minutes: 75, goals: ['massa'], sex: 'M', age: 28, seme: 'av1' } }],
+  ['donna avanzata 4 giorni forza', { d: { level: 'avanzato', days: 4, minutes: 60, goals: ['forza'], sex: 'F', age: 32, seme: 'av2' } }]
+];
+test('m1: 8 programmi x 12 settimane x tutti gli esercizi con carico: 0 carichi fuori griglia, 0 sopra il manubrio piu pesante dichiarato', { timeout: 600000 }, () => {
+  const fuori = [], sopra = [];
+  let esposizioni = 0;
+  PROGRAMMI_COPERTURA.forEach(([nome, opz]) => [null, 'bersaglio'].forEach(rpe => {
+    const { a, tab } = storia(opz, 12, rpe);
+    Object.keys(tab).forEach(n => tab[n].forEach(s => {
+      if (!(s.w > 0)) return;
+      esposizioni++;
+      if (!inGrigliaBase(a, n, s.w, opz.tetto)) fuori.push(nome + ' / ' + (rpe ? 'RPE bersaglio' : 'senza RPE') + ' / ' + n + ' s' + s.n + ': ' + s.w + ' kg [' + (s.nota || '').slice(0, 80) + ']');
+      const att = a.chiama('attrezzoDi', n);
+      if (opz.tetto && (att === 'manubri' || att === 'corpo') && s.w > opz.tetto + 1e-9) sopra.push(nome + ' / ' + n + ' s' + s.n + ': ' + s.w + ' kg contro ' + opz.tetto);
+    }));
+  }));
+  console.log('# copertura m1: ' + esposizioni + ' esposizioni con carico, fuori griglia ' + fuori.length + ', sopra il manubrio dichiarato ' + sopra.length);
+  assert.ok(esposizioni > 3000, 'il campione c e: ' + esposizioni);
+  assert.deepStrictEqual(sopra, []);
+  assert.deepStrictEqual(fuori.slice(0, 12), []);
+});
+
+/* ============================================================================================================
+   m4 · il RIR a intervallo nullo e un solo numero: «lascia 0 ripetizioni in riserva», «lascia 3 ripetizioni in riserva» (prima: «lascia 0–0», «3–3»)
+   ============================================================================================================ */
+test('m4: testoRir con riserva uguale agli estremi dice un numero solo; l intervallo vero resta come prima', () => {
+  const app = nuovaApp({}, PROG_V2);
+  const dice = (rir) => { app.g('rirBersaglio = (nome) => ' + JSON.stringify(rir)); return app.g('testoRir("x")'); };
+  assert.strictEqual(dice([0, 0]), 'lascia 0 ripetizioni in riserva');
+  assert.strictEqual(dice([3, 3]), 'lascia 3 ripetizioni in riserva');
+  assert.strictEqual(dice([1, 1]), 'lascia 1 ripetizione in riserva');
+  assert.strictEqual(dice([1, 2]), 'lascia 1–2 ripetizioni in riserva');
+  assert.strictEqual(dice([0, 1]), 'fino a 0–1 ripetizioni in riserva');
+});
+test('m4 in scarico: nelle sedute di scarico di una storia vera nessuna frase dice «3–3» o «0–0» e le tre lingue traducono le due frasi nuove', { timeout: 60000 }, () => {
+  const { tab } = storia({ d: { level: 'intermedio', days: 4, minutes: 60, goals: ['massa'], sex: 'M', age: 30, seme: 'uomo1' } }, 6, 'bersaglio');
+  const note = [];
+  Object.keys(tab).forEach(n => tab[n].forEach(s => { if (s.fase === 'scarico') note.push(s.nota || ''); }));
+  assert.ok(note.length >= 20 && note.some(t => /lascia 3 ripetizioni in riserva/.test(t)), 'lo scarico lascia 3 ripetizioni: ' + note.slice(0, 2).join(' | '));
+  assert.deepStrictEqual(note.filter(t => /(\d)–\1 ripetizioni/.test(t)), []);
+  ['en', 'es', 'de'].forEach(l => ['lascia # ripetizioni in riserva', 'lascia # ripetizione in riserva'].forEach(k => {
+    assert.ok(new RegExp('^"' + k + '":', 'm').test(require('fs').readFileSync(require('path').join(__dirname, '..', 'js', 'lingue', l + '.js'), 'utf8')), l + ': manca «' + k + '»');
+  }));
+});
+
+/* ============================================================================================================
+   m2 · a parita di distanza la griglia arrotonda per difetto in un aumento (manubri 12 + 5 = 17: 16, non 18: +33% e non +50%)
+   ============================================================================================================ */
+test('m2: caricoSalito a meta tra due pesi della griglia sceglie quello sotto, ma sale sempre di almeno un passo', () => {
+  const app = nuovaApp({}, PROG_V2);
+  const su = (da, inc, nome) => app.chiama('caricoSalito', da, inc, nome);
+  const STACCO = '🍑 Stacco Rumeno con Manubri';
+  assert.strictEqual(su(12, 5, STACCO), 16, 'manubri 12 + 5 = 17: a meta tra 16 e 18 (prima: 18, +50%)');
+  assert.strictEqual(su(14, 5, STACCO), 18, '19: a meta tra 18 e 20 (prima: 20)');
+  assert.strictEqual(su(5, 2.5, STACCO), 7, 'sotto i 10 kg: 7,5 a meta tra 7 e 8 (prima: 8)');
+  assert.strictEqual(su(10, 1, STACCO), 12, '11 sarebbe a meta tra 10 e 12, ma 10 non e un aumento: il primo peso sopra');
+  assert.strictEqual(su(12, 4, STACCO), 16, 'non a meta: come prima');
+  assert.strictEqual(su(60, 2.5, PANCA), 62.5, 'bilanciere: come prima');
+  assert.strictEqual(su(60, 1.25, PANCA), 62.5, 'bilanciere, mezzo incremento: sale di un passo come prima');
+  assert.strictEqual(su(100, 5, '🦵 Leg Press'), 105, 'macchina: come prima');
+});
