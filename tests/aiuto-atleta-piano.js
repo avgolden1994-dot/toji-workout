@@ -64,20 +64,27 @@ function vaiA(a, n, g) { a.ora(new Date(2026, 9, 5 + 7 * (n - 1) + (g || 0), 12,
 function apriGiorno(a, giorno) {
   a.chiama('applicaCaricoProgressivo', giorno);
   const lista = a.json('loadData()')[giorno] || [];
-  return lista.map(e => ({ name: e.name, sets: e.sets, setsBase: e.setsBase, weight: e.weight, reps: e.reps, coachNote: e.coachNote, coachTipo: e.coachTipo, rest: e.rest }));
+  return lista.map(e => ({ name: e.name, sets: e.sets, setsBase: e.setsBase, weight: e.weight, reps: e.reps, repsBase: e.repsBase, coachNote: e.coachNote, coachTipo: e.coachTipo, rest: e.rest }));
 }
 /* le sedute (giorni con esercizi) del programma, nell ordine della settimana */
 function giorniDiAllenamento(a) { return a.giorniAllenamento(); }
 
 /* una seduta vissuta: apre il giorno, l atleta fa tutte le serie come scritte (peso e ripetizioni del piano), la voce di storico e quella di endWorkout (settimana, obiettivo
-   di ogni esercizio) e si consumano gli aggiusti; il questionario non c e (nessun feedback) salvo `feedback`. Ritorna le voci con le serie fatte */
+   di ogni esercizio) e si consumano gli aggiusti; il questionario non c e (nessun feedback) salvo `feedback`. Ritorna le voci con le serie fatte.
+   L obiettivo di ogni esercizio salva anche `base` (il bersaglio del piano, come endWorkout): senza, ALG-05 (ricalcolo dal massimale, ripetizioni cambiate) non scatta mai
+   e le simulazioni da 12 settimane non lo provano (revisione indipendente di 3a, INT-3b). opz.rpe: un numero (default 8), null (nessun RPE segnato) o 'bersaglio'
+   (l RPE uguale al bersaglio di ogni esercizio: 10 meno le ripetizioni in riserva previste, cioe l atleta che fa tutto come prescritto) */
 function vivi(a, giorno, opz) {
   const o = Object.assign({ feedback: null, rpe: 8 }, opz || {});
   const voci = apriGiorno(a, giorno);
   const sett = a.json('settimanaProgramma()');
   const data = a.json('loadData()');
-  const sessione = voci.map(e => ({ name: e.name, rest: e.rest || 90, sets: Array.from({ length: e.sets }, () => ({ weight: e.weight, reps: e.reps, done: true, wasBerserk: false, rpe: o.rpe })),
-    obiettivo: { reps: e.reps, sets: e.sets, rir: a.json('rirBersaglio(' + JSON.stringify(e.name) + ')'), tecnica: '', coachTipo: e.coachTipo } }));
+  const sessione = voci.map(e => {
+    const rir = a.json('rirBersaglio(' + JSON.stringify(e.name) + ')');
+    const rpe = o.rpe === 'bersaglio' ? 10 - (rir[0] + rir[1]) / 2 : o.rpe;
+    return { name: e.name, rest: e.rest || 90, sets: Array.from({ length: e.sets }, () => ({ weight: e.weight, reps: e.reps, done: true, wasBerserk: false, rpe: rpe })),
+      obiettivo: { reps: e.reps, base: e.repsBase, sets: e.sets, rir: rir, tecnica: '', coachTipo: e.coachTipo } };
+  });
   const voce = { id: a.ora(), day: giorno, date: a.g('formatNow()'), minuti: 50, prontezza: 80, sessione: sessione, exercises: [] };
   if (sett && sett.fase) voce.settimana = { numero: sett.numero, fase: sett.fase };
   if (o.feedback) voce.feedback = o.feedback;

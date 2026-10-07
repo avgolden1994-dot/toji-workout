@@ -584,7 +584,12 @@ function ricalcoloDalMassimale(r, c) {
   const M = massimaleRecente(nome, mOggi), W = caricoDiLavoro(ultima.ex);
   if (!M || !(W > 0)) return r;
   let t = caricoPer(M.e1, ora, mOggi + (M.conRpe ? 0 : sogliaProgressione('rirInPiuSenzaRpe')));
-  if (ora > sogliaProgressione('ripetizioniMaxConversione')) t = Math.min(t, W * (1 - sogliaProgressione('riduzioneOltreConversione')));
+  if (ora > sogliaProgressione('ripetizioniMaxConversione')) {
+    /* oltre le 12 ripetizioni non si converte e si toglie almeno il 10%: ma solo se le ripetizioni efficaci SALGONO (piu ripetizioni = meno carico). Se non salgono (cambiano solo le
+       ripetizioni in riserva: alla settimana 2 di ogni blocco il RIR passa da [4,5] a [1,2]) il carico non va verso il basso: decide la progressione (revisione di 3a, B1) */
+    if (ora + mOggi <= prima + mPrima + 1e-9) return r;
+    t = Math.min(t, W * (1 - sogliaProgressione('riduzioneOltreConversione')));
+  }
   const tetti = sogliaProgressione('tettiRicalcolo');
   t = Math.max(W * (1 - tetti.giu), Math.min(W * (1 + tetti.su), t));
   if (t > W) {
