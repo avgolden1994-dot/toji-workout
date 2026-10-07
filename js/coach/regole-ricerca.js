@@ -162,6 +162,14 @@ function rirBersaglioPerLivello(nome, sett) {
 /* La dose dello scarico (DOSE_SCARICO) e la fatica che la sceglie (livelloFatica) stanno in sicurezza/scarico.js (W1-T3) */
 function storicoProntezza() { try { return JSON.parse(localStorage.getItem('coach_plus_prontezza_storia_' + currentMode) || '[]'); } catch (e) { return []; } }
 function rpeBersaglio(nome, sett) { const r = rirBersaglio(nome, sett); return 10 - (r[0] + r[1]) / 2; }
+/* l RPE bersaglio della SEDUTA che si legge (CAR-16 e AUT-01, programmi v2): 10 meno la media delle ripetizioni in riserva previste ALLORA (obiettivo.rir, salvato da endWorkout).
+   Confrontare l RPE di una seduta con il bersaglio di OGGI faceva leggere «facile» chi aveva rispettato il RIR [4,5] della settimana 1 contro il [1,2] della settimana 2
+   («Serie facili (RPE 5,5, bersaglio 8,5)»: +14-20%, Rematore 20 -> 24 kg; ricontrollo di INT-3b). Senza obiettivo.rir (sedute di prima) e per i programmi v1 vale il bersaglio di oggi, come prima. */
+function rpeBersaglioDiQuellaSeduta(ex, nome) {
+  const r = ex && ex.obiettivo && ex.obiettivo.rir;
+  if (progressioneV2() && Array.isArray(r) && r.length === 2 && isFinite(r[0]) && isFinite(r[1])) return 10 - (Number(r[0]) + Number(r[1])) / 2;
+  return rpeBersaglio(nome);
+}
 /* il RIR di oggi in una frase; dopo uno scarico (MES-06) dice che e una ripetizione in piu: lo stesso rirBersaglio (ripresaDopoScarico) lo alza di uno */
 function testoRir(nome) {
   const r = rirBersaglio(nome);
@@ -429,7 +437,7 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase, soloBase) {
     const rpes = fatteUltima.map(x => Number(x.rpe)).filter(x => x > 0).map(x => Math.max(1, x - bias));
     if (rpes.length) {
       const media = Math.round(rpes.reduce((t, x) => t + x, 0) / rpes.length * 10) / 10;
-      const bers = rpeBersaglio(nome);
+      const bers = rpeBersaglioDiQuellaSeduta(sess[0], nome);
       const delta = media - bers;
       if (delta >= 1) return { weight: pesoUltimo, reps: repsTarget, sets: sets, tipo: 'fermo',
         motivo: 'Serie complete ma RPE ' + String(media).replace('.', ',') + ', sopra il bersaglio ' + String(bers).replace('.', ',') + ': stesso carico, consolida' };

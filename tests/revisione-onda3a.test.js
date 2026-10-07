@@ -309,3 +309,30 @@ test('N1: se il ricalcolo da lo stesso peso la proposta resta quella della progr
     assert.deepStrictEqual(nonSalgono(tab, a, 0), []);
   });
 }));
+
+/* ============================================================================================================
+   Collegato a N1 · CAR-16 e AUT-01 confrontano l RPE di una seduta con il bersaglio di quella seduta, non con quello di oggi
+   ============================================================================================================ */
+const REMATORE = '🏹 Rematore con Petto Appoggiato';
+test('RPE: chi ha rispettato il RIR [4,5] della settimana 1 (RPE 5,5) non e «facile» contro il RIR [1,2] della settimana 2: niente +20% (prima: Rematore 20 -> 24 kg, «Serie facili (RPE 5,5, bersaglio 8,5)»)', () => {
+  const app = nuovaApp({}, PROG_V2);
+  registra(app, 7, REMATORE, serie(3, 20, 8, 5.5), { reps: 8, base: 8, sets: 3, rir: [4, 5] });
+  const r = carico(app, REMATORE, 20, 8, 3);
+  assert.ok(r.weight <= 22.5, r.weight + ' kg · ' + r.motivo);
+  assert.doesNotMatch(r.motivo, /Serie facili/);
+});
+test('RPE: una seduta davvero piu facile del SUO bersaglio (RPE 4 contro 5,5) vale ancora «serie facili», e il motivo dice il bersaglio di quella seduta', () => {
+  const app = nuovaApp({}, PROG_V2);
+  registra(app, 7, REMATORE, serie(3, 20, 8, 4), { reps: 8, base: 8, sets: 3, rir: [4, 5] });
+  const r = carico(app, REMATORE, 20, 8, 3);
+  assert.match(r.motivo, /Serie facili \(RPE 4, bersaglio 5,5\)/, r.motivo);
+  assert.ok(r.weight > 20);
+});
+test('RPE: senza obiettivo.rir salvato (sedute di prima) e nei programmi v1 il confronto e quello di prima, con il bersaglio di oggi', () => {
+  const vecchia = nuovaApp({}, PROG_V2);
+  registra(vecchia, 7, REMATORE, serie(3, 20, 8, 5.5), { reps: 8, base: 8, sets: 3 });
+  assert.match(carico(vecchia, REMATORE, 20, 8, 3).motivo, /Serie facili \(RPE 5,5, bersaglio 8,5\)/);
+  const v1 = nuovaApp({}, Object.assign({}, PROG_V2, { versione: undefined }));
+  registra(v1, 7, REMATORE, serie(3, 20, 8, 5.5), { reps: 8, base: 8, sets: 3, rir: [4, 5] });
+  assert.match(carico(v1, REMATORE, 20, 8, 3).motivo, /Serie facili \(RPE 5,5, bersaglio 8,5\)/);
+});
