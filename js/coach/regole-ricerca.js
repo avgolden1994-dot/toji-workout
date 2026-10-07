@@ -126,6 +126,8 @@ function rirBersaglio(nome, sett) {
   const rientro = typeof rirExtraRientro === 'function' ? rirExtraRientro(nome) : 0;
   if (rientro) out = [Math.min(4, out[0] + rientro), Math.min(5, out[1] + rientro)];
   out = pavimentoRirMinorenni(out);
+  /* REC-04 (INT-4b, m9): con un fastidio dichiarato, mai sotto 2 sugli esercizi che restano con cautela (sicurezza/fastidi.js: solo alza) */
+  if (typeof pavimentoRirFastidi === 'function') out = pavimentoRirFastidi(out, nome);
   /* ETA-08 a e REC-12 a (W4-T2, P4-S): il pavimento degli over 65 e della gravidanza, per ultimo (sicurezza/popolazioni.js: solo alza) */
   return typeof pavimentoRirPopolazioni === 'function' ? pavimentoRirPopolazioni(out, nome, sett) : out;
 }

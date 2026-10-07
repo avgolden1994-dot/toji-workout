@@ -13,6 +13,12 @@ const SOGLIE_FASTIDI = {
     v: 1,
     forza: 'Convenzione', fonte: 'attributo `stress` di W1-T2 (matrice di ricerca-recupero-infortuni-popolazioni §3, elenchi del collaudo): 1 = cautela, 2 = controindicato; stesso criterio di esercizioCaricaIlFastidio e del collaudo SAF-02', regole: ['REC-04']
   },
+  /* INT-4b (m9): con un fastidio dichiarato gli esercizi che restano con cautela (stress sulla zona >= stressNominato) non vanno sotto questo numero di ripetizioni in riserva: lontano dal cedimento
+     sulla zona che da fastidio. Un pavimento in rirBersaglio: solo alza, non cambia serie, esercizi, volume né frequenza */
+  rirConFastidio: {
+    v: 2,
+    forza: 'Convenzione', fonte: 'revisione indipendente dell onda 4 (m9); ricerca-recupero-infortuni-popolazioni §3 e §5.1 (lavoro lontano dal cedimento sulla zona dolente: prudenza, non una prova); stessa soglia del pavimento dei minorenni (MES_RIR.pisoMinorenni)', regole: ['REC-04']
+  },
   /* il fastidio che si tollera: fino a 3/10 si continua e si osserva (DEC-01), oltre ci si ferma. È il limite basso del modello del dolore (che tollera fino a 5/10 se la mattina
      dopo è normale: validato sul tendine d’Achille, esteso alle altre zone per consenso, non per uno studio) e lo stesso di DEC-01 e della scheda del questionario */
   doloreMassimo: {

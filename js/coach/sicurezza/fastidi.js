@@ -54,6 +54,16 @@ function fastidiAttivi() {
   return typeof sogliaFastidi === 'function' && sogliaFastidi('stressNominato') !== null && (typeof regolaAttiva !== 'function' || regolaAttiva('REC-04'));
 }
 
+/* REC-04 (INT-4b, m9): il pavimento dei RIR sugli esercizi che restano con cautela: con un fastidio dichiarato (profilo.fastidi) un esercizio con stress >= `stressNominato` su quella zona non va
+   sotto `rirConFastidio` ripetizioni in riserva. Solo alza: l ultimo passo prima dei pavimenti delle popolazioni in rirBersaglio. Senza fastidio, con REC-04 spenta o per gli altri esercizi: invariato */
+function pavimentoRirFastidi(r, nome) {
+  if (!Array.isArray(r) || r.length < 2 || !fastidiAttivi() || typeof stressArticolare !== 'function') return r;
+  const piso = sogliaFastidi('rirConFastidio'), soglia = sogliaFastidi('stressNominato'), zone = ((typeof getProfile === 'function' ? getProfile() : null) || {}).fastidi || [];
+  if (piso === null || soglia === null || !Array.isArray(zone) || !zone.length) return r;
+  const carica = zone.some(z => (stressArticolare(nome, z) || 0) >= soglia);
+  return carica && r[0] < piso ? [piso, Math.max(r[1], piso + 1)] : r;
+}
+
 /* REC-04: con la spalla dolente la panca col bilanciere (presa fissa, abilità 2-3) non si propone: inclinata e declinata come la piana e quella con pausa, che RISCHIO.spalle toglieva già. Restano la
    panca coi manubri, le macchine, la landmine (presa neutra, abilità 1), i piegamenti a terra: il petto resta coperto. Si legge il DATO (attrezzo e schema di attributi-esercizi.js, stress della spalla),
    non il nome: un esercizio nuovo che lo rispetta è tolto da solo. Ritorna true se `nome` NON va proposto per questi fastidi. */

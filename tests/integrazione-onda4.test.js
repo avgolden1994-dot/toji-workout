@@ -392,3 +392,27 @@ test('m2. una pausa di 7-13 giorni FUORI dallo scarico ferma ancora la settimana
   vaiA(a, 3, nomi.indexOf(giorni[giorni.length - 1]) + 1);   /* 9 giorni dopo l ultima seduta della settimana 2 */
   assert.strictEqual(a.json('settimanaProgramma()').numero, 2, 'la settimana 2 si rifa');
 });
+
+/* ============================================================ INT-4b, m9: con un fastidio dichiarato, mai sotto 2 ripetizioni in riserva sugli esercizi che restano con cautela */
+test('m9. con un fastidio dichiarato RIR >= 2 sugli esercizi con stress >= 1 sulla zona (ogni settimana del programma), invariato per gli altri esercizi, senza fastidio e con REC-04 spenta', () => {
+  const ZONE = [['spalle', 'spalle'], ['ginocchia', 'ginocchia'], ['schiena', 'schiena']];
+  ZONE.forEach(([fastidio]) => {
+    const prova = (fastidi, spenta) => {
+      const { a } = telefono({ d: { level: 'avanzato', days: 4, minutes: 60, fastidi: fastidi, goals: ['massa'] }, profilo: { fastidi: fastidi } });
+      if (spenta) a.spegni(['REC-04']);
+      const nomi = a.json('Object.values(loadData()).flat().map(e => e.name)').filter((n, i, l) => l.indexOf(n) === i && !a.g('isTimeBased(' + J(n) + ')'));
+      const cautela = nomi.filter(n => (a.g('stressArticolare(' + J(n) + ', ' + J(fastidio) + ')') || 0) >= 1), altri = nomi.filter(n => (a.g('stressArticolare(' + J(n) + ', ' + J(fastidio) + ')') || 0) === 0);
+      const rir = {};
+      for (let n = 1; n <= 12; n++) { vaiA(a, n, 0); nomi.forEach(x => { (rir[x] = rir[x] || []).push(a.json('rirBersaglio(' + J(x) + ')')); }); }
+      return { cautela, altri, rir };
+    };
+    const con = prova([fastidio], false), senza = prova([], false), spenta = prova([fastidio], true);
+    assert.ok(con.cautela.length >= 1, fastidio + ': ci sono esercizi con cautela nel programma (' + con.cautela.length + ')');
+    con.cautela.forEach(n => con.rir[n].forEach((r, i) => assert.ok(r[0] >= 2 && r[1] >= 3, fastidio + ' ' + n + ' settimana ' + (i + 1) + ': ' + J(r))));
+    /* la prova e significativa: senza il fastidio quegli esercizi scendono sotto 2 in qualche settimana (programma avanzato) */
+    assert.ok(Object.keys(senza.rir).some(n => senza.rir[n].some(r => r[0] < 2)), fastidio + ': senza il fastidio il RIR scende sotto 2 da qualche parte');
+    /* gli esercizi senza stress sulla zona: stesso RIR che senza il fastidio, e con la regola spenta anche gli esercizi con cautela */
+    con.altri.filter(n => senza.rir[n]).forEach(n => assert.deepStrictEqual(con.rir[n], senza.rir[n], fastidio + ' ' + n + ': non cambia'));
+    Object.keys(spenta.rir).filter(n => senza.rir[n]).forEach(n => assert.deepStrictEqual(spenta.rir[n], senza.rir[n], fastidio + ' ' + n + ': con REC-04 spenta il RIR e quello di sempre'));
+  });
+});
