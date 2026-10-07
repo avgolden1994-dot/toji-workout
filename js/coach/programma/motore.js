@@ -51,7 +51,9 @@ const RISCHIO = {
    anche se il regex dello squat lo toglierebbe: senza di lui i quadricipiti restano a zero (collaudo MIS-01). Wall Sit e leg extension
    passano gia: non sono nel regex. quando(prefs): dove vale l eccezione (solo senza macchine: con le macchine non serve).
    REC-04 (P4-F, cap. 17 n. 16 c): lo Squat su Scatola, lo Step-up Basso e il Sit-to-Stand dalla Panca hanno stress 1 (cautela) sulle ginocchia, non 2: sono la progressione verso lo squat pensata per
-   chi le ha delicate (attributo soloAvvio, riservati a chi inizia e ai prudenti da vincoliSicurezza). Il regex /squat|step-up/ li toglieva per il nome: ora passano, con la nota di modifica della zona. Spenta REC-04 tornano tolti. */
+   chi le ha delicate. Il regex /squat|step-up/ li toglieva per il nome: ora passano, con la nota di modifica della zona. Lo Squat su Scatola e il Sit-to-Stand sono esercizi di avvio (attributo soloAvvio):
+   vincoliSicurezza li riserva a chi inizia e ai prudenti, quindi un intermedio o un avanzato con le ginocchia dolenti non li riceve; lo Step-up Basso (il gradino basso, abilita 1) non e soloAvvio e puo
+   arrivare a chiunque, come senza il fastidio. Spenta REC-04 tornano tolti tutti e tre. */
 const ECCEZIONI_RISCHIO = { ginocchia: [
   { nome: /^squat a corpo libero$/i, quando: p => senzaMacchine(p) },
   { nome: /^(squat su scatola|step-up basso|sit-to-stand dalla panca)$/i, quando: () => typeof fastidiAttivi === 'function' && fastidiAttivi() }
