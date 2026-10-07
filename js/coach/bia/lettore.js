@@ -264,6 +264,7 @@ window.applyBiaValues = function(vals, fromPdf) {
 };
 
 /* ---------- Analisi ---------- */
+const TESTO_BIA_GRASSO_BASSO = 'Una massa grassa bassa non è un traguardo da inseguire a tutti i costi, e la BIA è solo una stima con un margine di errore. Se hai dubbi su peso, alimentazione o energie, parlane con un medico o con un dietista.';
 window.analyzeBia = function(bia, sex) {
   if (!bia) return null;
   const out = { note: [] };
@@ -286,9 +287,10 @@ window.analyzeBia = function(bia, sex) {
     else if (fmPerc <= soglie.alto) { out.fmLivello = 'mid'; out.fmTesto = 'Sopra la media'; }
     else { out.fmLivello = 'att'; out.fmTesto = 'Elevata: meglio parlarne con un professionista'; }
 
-    if (sex === 'donna' && fmPerc < 17) {
-      out.note.push('Sotto il 17% di massa grassa la funzione mestruale puo risentirne: e un valore da monitorare con un medico.');
-    }
+    /* DCA-03 (parte a, P4-C): tolta la vecchia nota sul ciclo delle donne con una soglia fissa di grasso (un numero senza base, docs/ricerca-cardio-nutrizione.md riga BIA-02).
+       Nella fascia piu bassa di BIA-02 («Livello da atleta», le soglie di sopra: nessun numero nuovo) una frase sola, uguale per donne e uomini: il grasso basso non e un
+       traguardo, la BIA e una stima, e per ogni dubbio si parla con un medico o un dietista. Nessun segnale clinico (DCA-03 parte b e bloccata, registro C.2). */
+    if (fmPerc <= soglie.atleta) out.note.push(TESTO_BIA_GRASSO_BASSO);
   }
   if (bia.tbw && peso) {
     out.tbwPerc = Math.round((bia.tbw / peso) * 1000) / 10;

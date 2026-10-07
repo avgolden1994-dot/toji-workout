@@ -15,6 +15,8 @@
    - MES-12 il verdetto di ciclo confronta le migliori sedute di carico, con il 3% di soglia: l ultima seduta e sempre di scarico e
      un intermedio che sale dell 1,5% a settimana risultava "in stallo".
    - ETA-04 sotto i 18 anni niente numeri su peso, cibo e integratori (proteine, passi, creatina).
+   Onda 4 (P4-C, guardie del corpo): NUT-01 (solo la guardia) anche per gli over 65 e la gravidanza: niente grammi di proteine, il testo prudente
+   (guardiaNutrizione in compone.js); i g/kg di COR-03 restano «Convenzione» (bia/soglie-bia.js).
    ============================================================ */
 
 /* ---- livello dai numeri (moltiplicatori del peso corporeo) ---- */
@@ -310,7 +312,7 @@ function corpoCoach() {
   const out = [];
   const p = getProfile() || {};
   /* ETA-04: sotto i 18 anni niente numeri su peso, cibo e integratori (proteine, passi, creatina, ritmo di calo): si rimanda a un adulto e a un medico o dietista */
-  if (regolaAttiva('ETA-04') && Number(p.age) > 0 && Number(p.age) < 18) return ['Alla tua età non do numeri su peso o cibo: sono cose da parlare con un medico o un dietista. Se pensi spesso al peso o salti i pasti, parlane con qualcuno di cui ti fidi.'];
+  if (regolaAttiva('ETA-04') && Number(p.age) > 0 && Number(p.age) < 18) return [TESTO_NUTRIZIONE_MINORENNE];
   const goals = p.goals || (p.goal ? [p.goal] : []);
   const fase = faseCorpo(p);   /* OBI-02: una sola fase del corpo per tutta l app (regia/brief.js) */
   const st = getBiaStorico().filter(x => x.valori && x.valori.peso && x.data);
@@ -331,8 +333,12 @@ function corpoCoach() {
   }
   const ffm = st.length ? st[st.length - 1].valori.ffm : null;
   const bw = pesoCorporeo();
-  if (ffm) out.push('Proteine: circa ' + Math.round(ffm * 2.35) + '-' + Math.round(ffm * 2.75) + ' g al giorno (2,35-2,75 g per kg di massa magra). Informazione, non prescrizione.');
-  else if (bw) out.push('Proteine: circa ' + Math.round(bw * (donna ? 1.75 : 2)) + ' g al giorno (' + (donna ? '1,75' : '2') + ' g per kg). Informazione, non prescrizione.');
+  /* NUT-01 (guardia, P4-C, compone.js): over 65 e gravidanza (e un minorenne con ETA-04 spenta) non ricevono grammi di proteine: il testo prudente. Per gli altri adulti i g/kg di COR-03 (soglie-bia.js: «Convenzione», non validati) */
+  const guardia = guardiaNutrizione({}, p), virg = v => String(v).replace('.', ',');
+  const gMin = proteineGKg('proteineMassaMagraMin'), gMax = proteineGKg('proteineMassaMagraMax'), gPeso = proteineGKg(donna ? 'proteinePesoDonna' : 'proteinePesoUomo');
+  if (guardia) out.push(guardia.testo);
+  else if (ffm) out.push('Proteine: circa ' + Math.round(ffm * gMin) + '-' + Math.round(ffm * gMax) + ' g al giorno (' + virg(gMin) + '-' + virg(gMax) + ' g per kg di massa magra). Informazione, non prescrizione.');
+  else if (bw) out.push('Proteine: circa ' + Math.round(bw * gPeso) + ' g al giorno (' + virg(gPeso) + ' g per kg). Informazione, non prescrizione.');
   if (fase === 'deficit') out.push('Passi: 10-12 mila al giorno, aumentandoli di 500-1000 a settimana. Il cardio non toglie muscolo ne forza.');
   else out.push('Passi: almeno 6-8 mila al giorno. Il cardio non toglie muscolo ne forza, solo un po di esplosivita.');
   if (goals.indexOf('salute') !== -1) {

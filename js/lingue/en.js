@@ -1415,7 +1415,6 @@ window.I18N["en"] = {
 "Sostituire i # esercizi di # con la scheda \"#\"": "Replace the # exercises of # with the \"#\" plan",
 "Sostituisci": "Replace",
 "Sostituisci da subito": "Replace now",
-"Sotto il #% di massa grassa la funzione mestruale puo risentirne: e un valore da monitorare con un medico.": "Below #% body fat the menstrual cycle may be affected: a value to monitor with a doctor.",
 "Sotto la mezz ora lo stimolo rischia di essere scarso, oltre i novanta minuti il recupero peggiora. Decido quanti esercizi metterti in base a questo.": "Under half an hour the stimulus may be too low; beyond ninety minutes recovery gets worse. I decide how many exercises to give you based on this.",
 "Sotto le": "Under",
 "Spalla": "Shoulder",
