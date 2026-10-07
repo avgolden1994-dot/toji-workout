@@ -1,8 +1,14 @@
 {
  "task": "P3-C",
  "script": [
-  { "src": "js/coach/specialita/soglie-forza-carichi.js", "dopo": "js/coach/specialita/soglie-forza.js" },
-  { "src": "js/coach/specialita/forza-carichi.js", "dopo": "js/coach/specialita/forza.js" }
+  {
+   "src": "js/coach/specialita/soglie-forza-carichi.js",
+   "dopo": "js/coach/specialita/soglie-forza.js"
+  },
+  {
+   "src": "js/coach/specialita/forza-carichi.js",
+   "dopo": "js/coach/specialita/forza.js"
+  }
  ],
  "frasi": {
   "Il giorno medio resta sotto il pesante a circa #% del massimale stimato dell’alzata": {
@@ -14,6 +20,11 @@
    "en": "The light day stays below the other days at about #% of the estimated max for the lift",
    "es": "El día ligero queda por debajo de los demás días, a cerca del #% del máximo estimado del levantamiento",
    "de": "Der leichte Tag bleibt unter den anderen Tagen bei etwa #% des geschätzten Maximums der Übung"
+  },
+  "Facoltativo, al massimo due, uno per alzata. Chi ha esperienza trova la variante che allena quel punto nei giorni medi e leggeri e, nel giorno pesante, se i minuti e gli attrezzi bastano (per la panca servono i cavi o i manubri), un esercizio in più per il muscolo che di solito cede. Chi comincia ha la stessa prescrizione in ogni seduta: il punto debole aggiunge al massimo un esercizio per punto (alle stesse condizioni) e, se l’alzata torna tre volte a settimana, mette la sua variante alla terza.": {
+   "en": "Optional, at most two, one per lift. If you have experience you get the variant that trains that point on medium and light days and, on the heavy day, if the minutes and the equipment allow (for bench you need cables or dumbbells), an extra exercise for the muscle that usually gives out. Beginners have the same prescription in every session: the weak point adds at most one exercise per point (under the same conditions) and, if the lift comes back three times a week, puts its variant in the third.",
+   "es": "Opcional, como máximo dos, uno por ejercicio. Quien tiene experiencia recibe la variante que trabaja ese punto en los días medios y ligeros y, en el día pesado, si los minutos y el material alcanzan (para el press de banca hacen falta poleas o mancuernas), un ejercicio extra para el músculo que suele fallar. Quien empieza tiene la misma pauta en cada sesión: el punto débil añade como máximo un ejercicio por punto (en las mismas condiciones) y, si el levantamiento vuelve tres veces por semana, pone su variante en la tercera.",
+   "de": "Optional, höchstens zwei, einer pro Übung. Wer Erfahrung hat, bekommt an mittleren und leichten Tagen die Variante, die diesen Punkt trainiert, und am schweren Tag, wenn Minuten und Geräte reichen (fürs Bankdrücken braucht es Kabelzüge oder Kurzhanteln), eine zusätzliche Übung für den Muskel, der meistens nachgibt. Wer anfängt, hat in jeder Einheit dieselbe Vorgabe: der Schwachpunkt fügt höchstens eine Übung pro Punkt hinzu (unter denselben Bedingungen) und, wenn die Übung dreimal pro Woche wiederkehrt, setzt er seine Variante in die dritte."
   }
  },
  "regole": [
@@ -23,7 +34,10 @@
   }
  ],
  "squadra": [
-  { "sottoCoach": "specialista", "codici": "FRZ-11" }
+  {
+   "sottoCoach": "specialista",
+   "codici": "FRZ-11"
+  }
  ],
  "mappaAgenti": [
   "il giorno leggero è leggero (FRZ-11, P3-C): js/coach/specialita/forza-carichi.js, fase 'carico' 25 sulla voce del piano con `alzata` e `onda` (c.voce di caricoProssimo); numeri in js/coach/specialita/soglie-forza-carichi.js; prova tests/forza-carichi.test.js (atleta di 12 settimane)"

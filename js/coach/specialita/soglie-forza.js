@@ -82,6 +82,12 @@ const SOGLIE_FORZA = {
     forza: 'Convenzione', fonte: 'ABB-04 (tirate non meno del 90% delle spinte, STR_PESI.tirateSuSpinte); docs/ricerca-struttura-e-intensita.md (equilibrio spalle: pratica dei coach)',
     regole: ['FRZ-02']
   },
+  /* FRZ-02 (EQ-01, P3-C): serie di una tirata alta (face pull, reverse pec deck) aggiunta quando le tirate della settimana restano sotto il 90% delle spinte: come strCopri per i deltoidi posteriori */
+  serieTirataAlta: {
+    v: 2,
+    forza: 'Convenzione', fonte: 'ABB-03 (strCopri: deltoidi posteriori, 2 serie da 15) e ABB-04 (tirate non meno del 90% delle spinte, STR_PESI.tirateSuSpinte); docs/ricerca-struttura-e-intensita.md (equilibrio spalle: pratica dei coach)',
+    regole: ['FRZ-02']
+  },
   /* FRZ-04: serie di un accessorio per il punto debole (tricipiti, dorsali, glutei...). Le ripetizioni e la pausa le dà la prescrizione di sempre per quel tipo di esercizio */
   serieAccessorio: {
     v: 3,

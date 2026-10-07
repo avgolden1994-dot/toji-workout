@@ -59,7 +59,7 @@ const FORZA_TIPI_TESTI = [
   ['powerlifting', 'Powerlifting', 'squat, panca e stacco più volte a settimana, con giorni pesanti, medi e leggeri']
 ];
 const FORZA_NOTA_REQUISITI = 'Il powerlifting è per chi ha tra 18 e 64 anni e ha risposto no al questionario sulla salute; servono almeno 3 giorni a settimana, un bilanciere, un rack e una panca. Se qualcosa non va, il programma di forza resta quello generale e te lo dico.';
-const FORZA_NOTA_PUNTI = 'Facoltativo, al massimo due, uno per alzata. Chi ha esperienza trova la variante che allena quel punto nei giorni medi e leggeri e, nel giorno pesante, se i minuti e gli attrezzi bastano (per la panca servono i cavi), un esercizio in più per il muscolo che di solito cede. Chi comincia ha la stessa prescrizione in ogni seduta: il punto debole aggiunge al massimo un esercizio per punto (alle stesse condizioni) e, se l’alzata torna tre volte a settimana, mette la sua variante alla terza.';
+const FORZA_NOTA_PUNTI = 'Facoltativo, al massimo due, uno per alzata. Chi ha esperienza trova la variante che allena quel punto nei giorni medi e leggeri e, nel giorno pesante, se i minuti e gli attrezzi bastano (per la panca servono i cavi o i manubri), un esercizio in più per il muscolo che di solito cede. Chi comincia ha la stessa prescrizione in ogni seduta: il punto debole aggiunge al massimo un esercizio per punto (alle stesse condizioni) e, se l’alzata torna tre volte a settimana, mette la sua variante alla terza.';
 const FORZA_PUNTI_TESTI = {
   'squat-buca': 'Squat in buca', 'squat-uscita': 'Squat a metà risalita',
   'panca-petto': 'Panca al petto', 'panca-meta': 'Panca a metà', 'panca-chiusura': 'Panca in chiusura',
@@ -187,13 +187,15 @@ const SPEC_FORZA = {
     'squat-buca':      ['Affondi Bulgari', 'Hip Thrust'],
     'squat-uscita':    ['Hip Thrust', 'Affondi Bulgari'],
     'panca-petto':     ['Rematore con Petto Appoggiato', 'Lat Machine'],
-    'panca-meta':      ['Pushdown Tricipiti ai Cavi', 'Estensione Tricipiti sopra la Testa ai Cavi'],
-    'panca-chiusura':  ['Pushdown Tricipiti ai Cavi', 'Estensione Tricipiti sopra la Testa ai Cavi'],
+    'panca-meta':      ['Pushdown Tricipiti ai Cavi', 'Estensione Tricipiti sopra la Testa ai Cavi', 'Estensione Tricipiti sopra la Testa con Manubrio'],   /* P3-C: con i manubri se non ci sono i cavi (con la palestra bilanciere + manubri + sbarra l'accessorio non entrava mai) */
+    'panca-chiusura':  ['Pushdown Tricipiti ai Cavi', 'Estensione Tricipiti sopra la Testa ai Cavi', 'Estensione Tricipiti sopra la Testa con Manubrio'],
     'stacco-terra':    ['Rematore con Petto Appoggiato', 'Lat Machine'],   /* niente rematore col bilanciere nel giorno dello stacco pesante: ABB-07, REC-02 (lombari) */
     'stacco-chiusura': ['Hip Thrust', 'Affondi Bulgari']
   },
   /* SES-03: cosa prende una seduta lower che con le sue alzate non ha uno squat o una cerniera (una macchina o una spinta d'anca: mai un secondo squat o stacco pesante) */
-  completamenti: { squat: ['Leg Press', 'Hack Squat'], hinge: ['Hip Thrust', 'Pull-Through ai Cavi'] }
+  completamenti: { squat: ['Leg Press', 'Hack Squat'], hinge: ['Hip Thrust', 'Pull-Through ai Cavi'] },
+  /* EQ-01 (P3-C): una tirata alta per le spalle (deltoidi posteriori: il collaudo la conta tra le tirate) quando le tirate della settimana non bastano; le stesse di ABB-03 (strCopri) */
+  tirateAlte: ['Face Pull', 'Reverse Pec Deck', 'Alzate Posteriori (Reverse Fly)']
 };
 
 /* ---- i nomi ---- */
@@ -300,7 +302,7 @@ function forzaSedute(brief, sedute) {
   });
   const varStacco = !chi.principiante && conVarianti ? forzaElencoVarianti(brief, 'stacco', F.puntiDeboli, gara.stacco) : [];
   let kVar = 0;
-  const accessoriMessi = [];
+  const accessoriMessi = [], registro = [];   /* registro: per ogni seduta la sua tirata, per il conto settimanale di forzaEquilibra (EQ-01) */
   sedute.forEach((sd, i) => {
     const riga = piano[i], originali = sd.esercizi.slice(), lifts = [];
     riga.forEach((x, j) => {
@@ -366,9 +368,73 @@ function forzaSedute(brief, sedute) {
     sd.esercizi = forzaPotaAlTempo(brief, tutti, tirata);
     sd.titolo = forzaTitolo(sd.esercizi.filter(e => e.alzata), conOnda) || sd.titolo;
     L.tipiGiorno[i] = 'forza';
+    registro.push({ sd: sd, tirata: sd.esercizi.indexOf(tirata) !== -1 ? tirata : null });
   });
+  forzaEquilibra(brief, sedute, registro);
   forzaNote(brief, conOnda, F, sedute);
   return sedute;
+}
+
+/* ============================================================
+   SPINTE E TIRATE (P3-C, EQ-01 del collaudo, ABB-04): le spinte della modalità sono fisse (la panca due o tre volte a settimana: FRZ-01) e le tirate devono restare almeno il 90% delle
+   spinte (STR_PESI.tirateSuSpinte). Con la panca tre volte (tre giorni) le spinte sono 8-11 serie e le tirate, dopo il volume per muscolo e il taglio per il tempo (che non conoscono la
+   modalità), restavano a 6-9: lo strBilancia del generatore non poteva rialzarle (stesso massimo di serie, B6, tempo gia contato) e le spinte fisse non scendono.
+   Qui, a sedute composte e prima dei completamenti, si contano le tirate che resteranno di sicuro (ogni tirata multiarticolare a 2 serie: il taglio per il tempo la porta li e non sotto; gli
+   isolamenti non si contano, possono uscire) contro il 90% delle spinte che resteranno (le fisse intere e una spinta verticale di 2 serie, che c'è o la aggiunge completaSettimana: le altre
+   spinte della ricetta le toglie strBilancia se serve). Se mancano serie si aggiunge una tirata alta (face pull, reverse pec deck: 2 serie, `fisso` e protetta come le alzate), una per
+   seduta, nella seduta con più tempo libero: conta tra le tirate del collaudo (deltoidi posteriori) e non aggiunge serie alla schiena, che per B6 ha già il suo massimo (alzare le serie delle
+   tirate portava VOL-02:schiena da 20% a 44% pesata sulla matrice «forza»). Dentro i minuti (durataSeduta, come forzaAdattaAlTempo; con i completamenti di dopo contati come esercizi
+   fantasma): DUR-01 non peggiora. Non tocca le spinte (FRZ-01) né le serie delle altre tirate.
+   ============================================================ */
+function forzaEquilibra(brief, sedute, registro) {
+  const chi = brief.chi, opz = opzioniTempo(brief), M = minutiEffettivi(brief.agenda.minuti, chi.livello), pausaMin = sogliaForza('pausaMinimaStima');
+  const stima = sd => durataSeduta(sd.esercizi.map(e => e.alzata ? Object.assign({}, e, { rest: Math.min(e.rest, pausaMin) }) : e), opz);
+  const massimoEsercizi = chi.principiante ? PARAM_NUMERO_ESERCIZI.maxSedutaPrincipiante : PARAM_NUMERO_ESERCIZI.maxSeduta;
+  const minimo = sogliaForza('serieMinimeAlzata');
+  const tutti = () => [].concat.apply([], sedute.map(sd => sd.esercizi.filter(e => !e.fantasma)));
+  const spinte = () => tutti().reduce((t, e) => t + (e.fisso && !isTimeBased(e.name) && strEspinta(e) ? e.sets : 0), 0) + 2;
+  const serve = () => Math.ceil(spinte() * STR_PESI.tirateSuSpinte - 1e-9);
+  /* le tirate che resteranno di sicuro: le tirate alte di qui, per intero; ogni tirata multiarticolare della ricetta a 2 serie (il taglio per il tempo non la porta sotto); gli isolamenti no (possono uscire) */
+  const sicure = () => tutti().reduce((t, e) => t + (isTimeBased(e.name) || !strEtirata(e) ? 0 : (e.tirataAlta ? e.sets : ((findExercise(e.name) || {}).type === 'compound' ? Math.min(e.sets, minimo) : 0))), 0);
+  const libero = r => M - stima(r.sd);
+  if (!registro.length) return;
+  const nomi = (SPEC_FORZA.tirateAlte || []).map(n => nomeInLibreria(n)).filter(n => n && forzaAmmesso(brief, n));
+  if (!nomi.length) return;
+  /* i completamenti che il generatore aggiungerà dopo (completaSettimana, ABB-03 e PAT-01: un esercizio di core e una spinta verticale se la settimana non li ha) tolgono tempo alle sedute: si
+     contano come esercizi fantasma (2 serie) nella seduta con meno esercizi, e si tolgono a fine passo. Senza, le tirate alte a 30 minuti facevano sforare la seduta (DUR-01) */
+  const fantasmi = [];
+  const fantasma = nome => {
+    const sd = registro.slice().sort((x, y) => x.sd.esercizi.length - y.sd.esercizi.length)[0].sd, m = findExercise(nome) || {};
+    const f = { name: nome, sets: 2, reps: 8, rest: 90, weight: m.weight || 0, fantasma: true };
+    sd.esercizi.push(f); fantasmi.push({ sd: sd, f: f });
+  };
+  if (!tutti().some(e => (findExercise(e.name) || {}).group === 'core')) fantasma(nomeInLibreria('Plank') || nomeInLibreria('Dead Bug'));
+  if (!tutti().some(e => schemaDi(e.name) === 'spintaV')) fantasma(nomeInLibreria('Military Press'));
+  /* la tirata alta in una seduta: se la seduta non sta nei minuti lascia il posto, come fa forzaPotaAlTempo, agli ultimi esercizi della ricetta che non sono alzate, accessori del punto debole,
+     completamenti o tirata (mai sotto il numero minimo di esercizi); se nemmeno cosi sta nei minuti, la seduta resta com'è */
+  const provaTirataAlta = (r, nome) => {
+    if (r.sd.esercizi.some(e => e.tirataAlta)) return false;
+    const m = findExercise(nome) || {}, pres = prescriviSeduta(brief, [{ name: nome, weight: m.weight || 0 }], 'forza')[0];
+    const lista = r.sd.esercizi.concat([Object.assign({ name: nome, weight: m.weight || 0 }, pres, { sets: sogliaForza('serieTirataAlta'), protetto: true, fisso: true, tirataAlta: true })]);
+    const prima = r.sd.esercizi;
+    r.sd.esercizi = lista;
+    for (let g = 0; (stima(r.sd) > M || lista.length > massimoEsercizi) && g < 10; g++) {
+      let k = -1;
+      for (let i = lista.length - 1; i >= 0 && k === -1; i--) { const e = lista[i]; if (!e.alzata && !e.puntoDebole && !e.completamento && !e.tirataAlta && !e.fantasma && e !== r.tirata) k = i; }
+      if (k === -1 || lista.length <= PARAM_NUMERO_ESERCIZI.min) break;
+      lista.splice(k, 1);
+    }
+    if (stima(r.sd) <= M && lista.length <= massimoEsercizi) return true;
+    r.sd.esercizi = prima;
+    return false;
+  };
+  /* una tirata alta al massimo in due sedute (RID-02: lo stesso esercizio non tre volte a settimana): la prima della lista che ha meno di due sedute */
+  const usi = nome => tutti().filter(e => e.name === nome).length;
+  for (let giri = 0; sicure() < serve() && giri < 12; giri++) {
+    const nome = nomi.find(n => usi(n) < 2);
+    if (!nome || !registro.slice().sort((x, y) => libero(y) - libero(x)).some(r => provaTirataAlta(r, nome))) break;
+  }
+  fantasmi.forEach(x => { x.sd.esercizi.splice(x.sd.esercizi.indexOf(x.f), 1); });
 }
 
 /* un esercizio fa lo schema `k` (squat o cerniera) come lo intende il generatore: i posti della ricetta di quello schema (SLOT_PER_SCHEMA: squat; cerniera = stacco, good morning, pull-through o una

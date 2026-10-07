@@ -176,3 +176,60 @@ test('TAP-01 resta spenta e bloccata: nessuna regola del taper, nei carichi di f
   /* e FRZ-06..10 restano fuori: nessuna percentuale del massimale di lavoro, nessun AMRAP, nessun test del massimale */
   non.forEach(f => assert.ok(!/FRZ-(0[6-9]|10)\b.*(implementa|fa)|massimale di lavoro =|settimana di test|\bamrap\b/i.test(fs.readFileSync(path.join(R, f), 'utf8').replace(/.*non fa:.*\n/gi, '')), f + ': FRZ-06..10 non implementate'));
 });
+
+/* ============================================================ EQ-01 del powerlifting (spinte e tirate) e l'accessorio della panca con i manubri ============================================================ */
+/* spinte e tirate come le conta il collaudo (dai dati: l'attributo schema) in un programma di powerlifting; l'alzata e il nome come in forza-struttura.test.js */
+function conto(a, d) {
+  const p = a.dati(a.chiama('buildProgram', Object.assign({}, PL, { sonno: 'bene', attrezzi: 'indifferente', freq: 'auto' }, d)));
+  let sp = 0, ti = 0;
+  p.sedute.forEach(sd => sd.esercizi.forEach(e => {
+    if (a.g('isTimeBased')(e.name)) return;
+    const s = (a.g('attributi')(e.name) || {}).schema;
+    if (s === 'spintaO' || s === 'spintaV') sp += e.sets;
+    if (s === 'tirataO' || s === 'tirataV' || /^(face pull|reverse|alzate posteriori|y-raise)/i.test(a.g('senzaEmoji')(e.name))) ti += e.sets;
+  }));
+  return { p, sp, ti, sbilanciato: sp + ti >= 8 && ti < sp * 0.9 };
+}
+const RX_ALZATA = { squat: /^(squat con bilanciere|squat con pausa|front squat)/i, panca: /^(panca piana bilanciere|panca con pausa|panca presa stretta|panca inclinata bilanciere)/i, stacco: /^(stacco da terra|stacco in deficit|stacco rumeno$|stacco con trap bar)/i };
+
+test('EQ-01, powerlifting a 3 giorni: con 45 minuti o più le tirate non restano sotto il 90% delle spinte (su origin/main 36 programmi su 90 erano sbilanciati: principianti a tutti i minuti, intermedi e avanzati a 30 e 45), a 30 minuti al massimo 14 su 18; FRZ-01 e DUR-01 invariati', () => {
+  const { a } = atleta();
+  const sbilanciati = [], tempo = [], frz = [];
+  ['principiante', 'intermedio', 'avanzato'].forEach(level => [30, 45, 60, 75, 90].forEach(minutes => ['M', 'F'].forEach(sex => [0, 1, 2].forEach(k => {
+    const id = level + ' ' + minutes + ' ' + sex + ' ' + k;
+    const c = conto(a, { level, days: 3, minutes, sex, age: 25, goals: k === 2 ? ['forza', 'massa'] : ['forza'], seme: 'm' + level + minutes + sex + k });
+    if (c.sbilanciato) sbilanciati.push({ id, minutes });
+    ['squat', 'panca', 'stacco'].forEach(al => { const n = c.p.sedute.filter(sd => sd.esercizi.some(e => RX_ALZATA[al].test(pulito(e.name)))).length; if (n < (al === 'stacco' ? 1 : 2)) frz.push(id + ' ' + al + ' ' + n); });
+    if (k < 2) c.p.sedute.forEach(sd => { const m = a.chiama('durataSeduta', JSON.parse(JSON.stringify(sd.esercizi)), { minuti: minutes, eta: 25, prudente: false, livello: level, fastidi: false, fattore: 1 }); if (m > minutes * 1.1 + 1e-9) tempo.push(id + ' ' + sd.titolo + ': ' + Math.round(m) + ' min su ' + minutes); });
+  }))));
+  assert.deepStrictEqual(frz, [], 'FRZ-01: squat 2, panca 2, stacco 1');
+  /* forza + massa a 30 minuti sfora anche su origin/main (14 sedute su 54: uguale prima e dopo, fuori da P3-C): il tempo si controlla con la forza sola */
+  assert.deepStrictEqual(tempo, [], 'DUR-01: nessuna seduta oltre i minuti dichiarati (+10%)');
+  assert.deepStrictEqual(sbilanciati.filter(x => x.minutes >= 45).map(x => x.id), [], 'con 45 minuti o più nessun programma sbilanciato');
+  assert.ok(sbilanciati.length <= 14, 'a 30 minuti il tempo non lascia posto: ' + sbilanciati.length + ' su 18');
+});
+
+test('EQ-01: 4, 5 e 6 giorni restano in equilibrio (le tirate bastano già: nessuna tirata alta aggiunta dove non serve) e la tirata alta, quando c\'è, è fissa e protetta e non è un\'alzata', () => {
+  const { a } = atleta();
+  [4, 5, 6].forEach(days => ['principiante', 'intermedio', 'avanzato'].forEach(level => [45, 60, 90].forEach(minutes => {
+    const c = conto(a, { level, days, minutes, seme: 'e' + level + days + minutes });
+    assert.ok(!c.sbilanciato, level + ' ' + days + ' giorni ' + minutes + ' min: spinte ' + c.sp + ' tirate ' + c.ti);
+    c.p.sedute.forEach(sd => sd.esercizi.filter(e => e.tirataAlta).forEach(e => assert.ok(e.fisso && !e.alzata && e.sets === 2, 'la tirata alta è fissa e di 2 serie: ' + JSON.stringify(e))));
+  })));
+});
+
+test('FRZ-04: l\'accessorio della panca a metà o in chiusura entra anche con i manubri (palestra bilanciere + manubri + sbarra, senza cavi): prima non entrava mai', () => {
+  const { a } = atleta();
+  ['panca-meta', 'panca-chiusura'].forEach(k => {
+    const p = a.dati(a.chiama('buildProgram', Object.assign({}, PL, { days: 5, minutes: 90, puntiDeboli: [k], attrezziPalestra: ['bilanciere', 'manubri', 'sbarra'], seme: 'acc' + k })));
+    assert.strictEqual(p.modalita, 'forza');
+    const acc = [].concat.apply([], p.sedute.map(sd => sd.esercizi)).find(e => e.puntoDebole === k);
+    assert.ok(acc, k + ': un esercizio per il punto debole della panca');
+    assert.strictEqual(pulito(acc.name), 'Estensione Tricipiti sopra la Testa con Manubrio');
+    assert.strictEqual(a.g('attrezzoDi')(acc.name), 'manubri');
+  });
+  /* con i cavi resta il primo della lista: nessun cambiamento per chi li ha */
+  const conCavi = a.dati(a.chiama('buildProgram', Object.assign({}, PL, { days: 5, minutes: 90, puntiDeboli: ['panca-meta'], seme: 'accCavi' })));
+  const acc = [].concat.apply([], conCavi.sedute.map(sd => sd.esercizi)).find(e => e.puntoDebole === 'panca-meta');
+  assert.ok(acc && /Cavi|Cavo/i.test(pulito(acc.name)) || a.g('attrezzoDi')(acc.name) === 'cavo', 'con i cavi l\'accessorio resta quello ai cavi: ' + (acc && acc.name));
+});

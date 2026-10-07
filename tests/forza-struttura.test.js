@@ -358,8 +358,11 @@ test('le frasi nuove sono tradotte in en, es e de (nel manifesto di integrazione
   const frasi = [...sorgente.matchAll(/^const (FORZA_(?:NOTA|PERCHE)_[A-Z_]+) = /gm)].map(m => a.g(m[1]));
   const titoli = a.json('(function () { const o = []; ["squat", "panca", "stacco"].forEach(k => { const t = FORZA_TITOLO[k]; o.push(t.nome); ["pesante", "media", "leggera"].forEach(w => o.push(t.nome + " " + FORZA_AGGETTIVO[t.f ? "f" : "m"][w])); }); return o; })()');
   const nomi = a.json('Object.keys(SPEC_FORZA.split).map(k => SPEC_FORZA.split[k].nome)');
-  const manifesto = path.join(R, 'docs/in-arrivo/W2-T7.json');
-  const frasiManifesto = fs.existsSync(manifesto) ? JSON.parse(fs.readFileSync(manifesto, 'utf8')).frasi || {} : {};
+  /* P3-C: tutti i manifesti in attesa (docs/in-arrivo/*.json), non solo il vecchio W2-T7 che l'integrazione ha già applicato e tolto: una frase di questo file cambiata da un pacchetto nuovo
+     (FORZA_NOTA_PUNTI: «i cavi o i manubri») ha la traduzione nel manifesto del pacchetto finché l'integrazione non la porta nei dizionari */
+  const cartellaManifesti = path.join(R, 'docs/in-arrivo');
+  const frasiManifesto = {};
+  (fs.existsSync(cartellaManifesti) ? fs.readdirSync(cartellaManifesti).filter(f => /\.json$/.test(f)) : []).forEach(f => Object.assign(frasiManifesto, JSON.parse(fs.readFileSync(path.join(cartellaManifesti, f), 'utf8')).frasi || {}));
   const chiave = t => t.replace(/\d+(?:[.,]\d+)*/g, '#');
   frasi.concat(titoli, nomi).forEach(t => {
     const k = chiave(t), m = frasiManifesto[k];
