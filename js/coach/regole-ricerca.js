@@ -452,11 +452,14 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase, soloBase) {
     const pr = storicoProntezza().slice(-3).map(x => x.punteggio).filter(x => typeof x === 'number');
     const stanco = (alg19 ? pc.sonnoMale : prudente) || (pr.length > 0 && pr.reduce((t, x) => t + x, 0) / pr.length < PARAM_ANALISI.prontezzaRipresa);   /* ALG-19: eta e PAR-Q non sono fatica */
     const f = stanco ? PARAM_ANALISI.ripresaPrudente : 1, pieno = caricoInGriglia(rif * f, nome), da = Math.min(pieno, tettoRipresa);
-    if (da > pesoUltimo) {   /* se in scarico si e gia lavorato a quel carico o oltre, la ripresa non c e: vale la progressione normale */
+    /* se in scarico si e gia lavorato a quel carico o oltre, la ripresa non c e: vale la progressione normale. ALG-19 (A1, revisione finale): quando lo scarico
+       arrotondato alla griglia COINCIDE col riferimento (dose «bassa» x0,95 su pile da 2,5 kg, manubri da 2 kg: i principianti) la ripresa c e comunque: si riparte
+       dal riferimento e dalle ripetizioni di lavoro, senza il passo di peso, che arriva la seduta dopo (prima saliva sopra il riferimento con il RIR in piu) */
+    if (da > pesoUltimo || (alg19 && da >= pesoUltimo && da >= pieno)) {
       const perGradi = da < pieno;
       const r = { weight: da, reps: alg19 ? repsLavoro : repsTarget, sets: sets, tipo: perGradi ? 'su' : 'fermo',
                motivo: perGradi ? 'Dopo lo scarico si risale per gradi verso il carico di prima: oggi +' + Math.round((da / pesoUltimo - 1) * 100) + '%'
-                 : f < 1 ? 'Dopo lo scarico riparti poco sotto il carico che avevi prima (-' + Math.round((1 - f) * 100) + '%), per prudenza'
+                 : f < 1 && !(alg19 && da >= rif) ? 'Dopo lo scarico riparti poco sotto il carico che avevi prima (-' + Math.round((1 - f) * 100) + '%), per prudenza'
                          : 'Dopo lo scarico riparti dal carico che avevi prima' };
       if (alg19 && repsLavoro > (Number(repsTarget) || 0)) aggiungiPerche(r, 'ALG-19', FRASE_RIPETIZIONI_RIPRESA(repsLavoro), { forza: 'Convenzione' });
       return r;

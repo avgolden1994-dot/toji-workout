@@ -5,7 +5,8 @@
    Ogni prova e stata scritta PRIMA della correzione e fallisce sul codice del tag coach-v2-onda-4-bis (i numeri di «prima:» sono letti li con la regola spenta, che da lo stesso codice).
    Come lavora: l app VERA in vm (tests/aiuto-app.js) e telefoni con un programma v2 vero (tests/aiuto-atleta-piano.js): l atleta fa tutte le serie come scritte, con l RPE uguale al
    bersaglio, per 12 settimane (8 per il principiante prudente). Si guarda in DUE direzioni: nessun carico scende tra due sedute di lavoro, e ogni coppia esercizio-bersaglio seguita
-   per 9 settimane o piu sale almeno una volta (escluso il tetto legittimo del manubrio); in piu nessun salto oltre il tetto di +25% e il peso finale sopra quello iniziale. */
+   per 9 settimane o piu sale almeno una volta (escluso il tetto legittimo del manubrio e, dalla correzione A1, i carichi piccoli tenuti dalla guardia del +25% di CAR-18: costo
+   dichiarato in D-P26, contati a parte in FERME_PER_LA_GUARDIA); in piu nessun salto oltre il tetto di +25% e il peso finale sopra quello iniziale. */
 'use strict';
 const test = require('node:test'), assert = require('node:assert');
 const H = require('./aiuto-atleta-piano');
@@ -18,7 +19,11 @@ const STORIE = {
   parq: { d: Object.assign({}, PALESTRA, { level: 'intermedio', days: 4, goals: ['forza'], sex: 'F', age: 31, parq: 'si', seme: 'ctrl-si-forza-intermedio-4-palestra' }), prof: { parq: true } },
   gravidanza: { d: Object.assign({}, PALESTRA, { level: 'intermedio', days: 3, goals: ['salute'], sex: 'F', age: 31, parq: 'si', seme: 'grav-si-salute-intermedio-3-palestra' }), prof: { parq: true, gravidanza: true } },
   over66manubri: { d: { level: 'intermedio', days: 3, minutes: 60, goals: ['massa'], sex: 'M', age: 66, parq: 'no', luogo: 'manubri', fastidi: [], priorita: [], seme: 'o66-no-massa-intermedio-3-manubri' }, prof: { parq: false, luogo: 'manubri', manubriKg: 16 } },
-  adulto: { d: Object.assign({}, PALESTRA, { level: 'intermedio', days: 3, goals: ['massa'], sex: 'M', age: 31, parq: 'no', seme: 'ctrl-no-massa-intermedio-3-palestra' }), prof: { parq: false } }
+  adulto: { d: Object.assign({}, PALESTRA, { level: 'intermedio', days: 3, goals: ['massa'], sex: 'M', age: 31, parq: 'no', seme: 'ctrl-no-massa-intermedio-3-palestra' }), prof: { parq: false } },
+  /* i principianti con pesi piccoli (pile da 2,5 kg): lo scarico «basso» (x0,95) arrotondato alla griglia coincide con il riferimento (revisione finale, A1) */
+  parqPrincipiante: { d: Object.assign({}, PALESTRA, { level: 'principiante', days: 2, goals: ['salute'], sex: 'F', age: 31, parq: 'si', seme: 'ctrl-si-salute-principiante-2-palestra' }), prof: { parq: true } },
+  gravidanzaPrincipiante: { d: Object.assign({}, PALESTRA, { level: 'principiante', days: 3, goals: ['salute'], sex: 'F', age: 31, parq: 'si', seme: 'grav-si-salute-principiante-3-palestra' }), prof: { parq: true, gravidanza: true } },
+  minorennePrincipiante: { d: Object.assign({}, PALESTRA, { level: 'principiante', days: 3, goals: ['massa'], sex: 'M', age: 15, parq: 'no', seme: 'm15-no-massa-principiante-3-palestra' }), prof: { parq: false } }
 };
 
 /* le settimane vissute: { rec: [{ n, g, name, w, reps, base, fase, tipo, nota, rir }], settimane } nell ordine delle sedute */
@@ -45,10 +50,13 @@ function coppie(rec) {
   return per;
 }
 const alTetto = (L, tetto) => tetto > 0 && Math.abs(L[0].w - tetto) < 1e-9 || L.some(x => /manubrio più pesante/.test(x.nota));
+/* COSTO DICHIARATO DI A1 (revisione finale): con carichi piccoli (pile da 2,5 kg: 5 -> 7,5 e' +50%) la guardia del +25% di CAR-18 tiene il peso: prima la coppia saliva solo perche la ripresa
+   saltava SOPRA il riferimento (il difetto A1). Queste coppie ferme si contano a parte: devono avere un carico piccolo (un passo di griglia oltre +25%) e restare sotto il tetto indicato. */
+const CARICO_PICCOLO = 7.5;
 /* la misura in due direzioni (e le altre promesse): { seguite, maiSalite, cali, saltiOltreTetto, saltiOltre10, finaleSottoIniziale } */
 function misura(rec, tetto, W) {
   const span = Math.min(8, (W || 12) - 2);   /* 12 settimane: seguita per 9 o piu; il principiante prudente ha 8 settimane: per 7 o piu */
-  const m = { seguite: 0, maiSalite: [], cali: [], saltiOltreTetto: [], saltiOltre10: 0, finaleSottoIniziale: [], finaleSopraIniziale: 0 };
+  const m = { seguite: 0, maiSalite: [], maiSaliteGuardia: [], cali: [], saltiOltreTetto: [], saltiOltre10: 0, finaleSottoIniziale: [], finaleSopraIniziale: 0 };
   Object.entries(coppie(rec)).forEach(([k, L]) => {
     for (let i = 1; i < L.length; i++) {
       const p = L[i - 1], s = L[i];
@@ -60,30 +68,33 @@ function misura(rec, tetto, W) {
     if (L.length < 5 || L[L.length - 1].n - L[0].n < span) return;
     m.seguite++;
     const max = Math.max.apply(null, L.map(x => x.w));
-    if (max <= L[0].w + 1e-9 && !alTetto(L, tetto)) m.maiSalite.push(k + ' ' + L.map(x => 's' + x.n + ':' + x.w + 'x' + x.reps).join(' '));
+    if (max <= L[0].w + 1e-9 && !alTetto(L, tetto)) (L[0].w <= CARICO_PICCOLO ? m.maiSaliteGuardia : m.maiSalite).push(k + ' ' + L.map(x => 's' + x.n + ':' + x.w + 'x' + x.reps).join(' '));
     if (L[L.length - 1].w < L[0].w - 1e-9) m.finaleSottoIniziale.push(k);
     if (L[L.length - 1].w > L[0].w + 1e-9 || alTetto(L, tetto)) m.finaleSopraIniziale++;
   });
   return m;
 }
 
-['over66', 'over72principiante', 'minorenne', 'parq', 'gravidanza', 'over66manubri'].forEach(chi => {
-  test('ALG-19: ' + chi + ' con tutte le serie complete e l RPE sul bersaglio: il peso SALE, non scende mai tra due sedute di lavoro, nessun salto oltre +25% (salvo il primo passo della griglia)', () => {
+/* le coppie ferme per la guardia del +25% di CAR-18 (costo dichiarato di A1, D-P26): solo con un carico piccolo; il tetto e il numero misurato in questa storia, possono solo diminuire */
+const FERME_PER_LA_GUARDIA = { over66: 0, over72principiante: 1, minorenne: 0, parq: 4, gravidanza: 3, over66manubri: 0 };
+Object.keys(FERME_PER_LA_GUARDIA).forEach(chi => {
+  test('ALG-19: ' + chi + ' con tutte le serie complete e l RPE sul bersaglio: il peso SALE (salvo i carichi piccoli tenuti dalla guardia del +25%), non scende mai tra due sedute di lavoro, nessun salto oltre +25% (salvo il primo passo della griglia)', () => {
     const S = STORIE[chi], tetto = S.prof.manubriKg || 0;
     const r = storia(S), m = misura(r.rec, tetto, r.settimane);
     assert.ok(m.seguite >= 4, chi + ': coppie seguite ' + m.seguite);
-    assert.deepStrictEqual(m.maiSalite, [], chi + ': coppie mai salite (escluso il tetto del manubrio):\n' + m.maiSalite.join('\n'));
+    assert.deepStrictEqual(m.maiSalite, [], chi + ': coppie mai salite (escluso il tetto del manubrio e i carichi piccoli):\n' + m.maiSalite.join('\n'));
+    assert.ok(m.maiSaliteGuardia.length <= FERME_PER_LA_GUARDIA[chi], chi + ': coppie ferme per la guardia del +25% (carico <= ' + CARICO_PICCOLO + ' kg): ' + m.maiSaliteGuardia.length + ' (misurate ' + FERME_PER_LA_GUARDIA[chi] + '):\n' + m.maiSaliteGuardia.join('\n'));
     assert.deepStrictEqual(m.cali, [], chi + ': carichi scesi tra due sedute di lavoro:\n' + m.cali.join('\n'));
     assert.deepStrictEqual(m.saltiOltreTetto, [], chi + ': salti oltre +25%:\n' + m.saltiOltreTetto.join('\n'));
     assert.deepStrictEqual(m.finaleSottoIniziale, [], chi + ': coppie finite sotto il carico di partenza: ' + m.finaleSottoIniziale.join(', '));
-    assert.strictEqual(m.finaleSopraIniziale, m.seguite, chi + ': coppie finite sopra il carico di partenza ' + m.finaleSopraIniziale + ' su ' + m.seguite);
+    assert.strictEqual(m.finaleSopraIniziale, m.seguite - m.maiSaliteGuardia.length, chi + ': coppie finite sopra il carico di partenza ' + m.finaleSopraIniziale + ' su ' + m.seguite + ' (ferme per la guardia ' + m.maiSaliteGuardia.length + ')');
   });
 });
 
 test('ALG-19 spenta: torna il comportamento di prima (over 66: Lat Machine 40 -> 37,5 -> 35 kg, coppie mai salite e carichi che scendono senza scarico di mezzo)', () => {
   const r = storia(STORIE.over66, { spente: ['ALG-19'] });
   const m = misura(r.rec, 0);
-  assert.ok(m.maiSalite.length >= 3, 'prima: 14 coppie mai salite su 22 (ora ' + m.maiSalite.length + ')');
+  assert.ok(m.maiSalite.length + m.maiSaliteGuardia.length >= 3, 'prima: 14 coppie mai salite su 22 (ora ' + (m.maiSalite.length + m.maiSaliteGuardia.length) + ')');
   assert.ok(m.cali.length >= 3, 'prima: carichi che scendono alla ripresa (ora ' + m.cali.length + ')');
   const lat = r.rec.filter(x => x.name === '🏹 Lat Machine' && x.fase === 'carico').map(x => x.w);
   assert.ok(lat[0] === 40 && lat.indexOf(37.5) !== -1 && lat.indexOf(35) !== -1, 'prima: 40, 37,5, 35 kg; ora ' + lat.join(' '));
@@ -118,7 +129,7 @@ test('ALG-19 non tocca gli adulti senza RIR fisso: 12 settimane identiche con la
   const con = storia(STORIE.adulto).rec, senza = storia(STORIE.adulto, { spente: ['ALG-19'] }).rec;
   assert.deepStrictEqual(con, senza);
   const m = misura(con, 0);
-  assert.deepStrictEqual(m.maiSalite, []);
+  assert.deepStrictEqual(m.maiSalite.concat(m.maiSaliteGuardia), []);
 });
 
 test('ALG-19 vale solo per i programmi v2: un programma v1 di un over 72 e identico con la regola accesa e spenta', () => {
@@ -131,4 +142,56 @@ test('ALG-19 vale solo per i programmi v2: un programma v1 di un over 72 e ident
     return rec;
   };
   assert.deepStrictEqual(vivi(null), vivi(['ALG-19']));
+});
+
+/* A1 (revisione finale dell onda 5): la ripresa dopo lo scarico riparte dal riferimento anche quando lo scarico arrotondato alla griglia COINCIDE col riferimento
+   (dose «bassa» x0,95 su pile da 2,5 kg sotto ~25 kg, manubri da 2 kg: i principianti). Prima la ripresa non scattava (da > pesoUltimo falso) e la doppia progressione,
+   con le ripetizioni della seduta di lavoro gia al tetto, saliva di un passo SOPRA il riferimento nella prima seduta dopo lo scarico (+50% su 5 kg), col RIR in piu di MES-06.
+   Misurato prima della correzione: riprese sopra il riferimento PAR-Q 2,3% (principianti 11,5%), gravidanza 4,0% (20,6%), 15 anni 8,1% (32,1%), over 66/72/78 circa 3% (12-13%). */
+function riprese(rec) {
+  const out = { n: 0, sopra: [] };
+  const per = {};
+  rec.filter(r => r.w > 0).forEach(r => { const k = r.name + '|' + r.base; (per[k] = per[k] || []).push(r); });
+  Object.entries(per).forEach(([k, L]) => {
+    const sc = r => r.fase === 'scarico' || r.tipo === 'scarico';
+    for (let i = 1; i < L.length; i++) {
+      if (!sc(L[i - 1]) || sc(L[i])) continue;
+      let j = i - 1; while (j >= 0 && sc(L[j])) j--;
+      if (j < 0) continue;
+      out.n++;
+      if (L[i].w > L[j].w + 1e-9) out.sopra.push(k + ' riferimento s' + L[j].n + ':' + L[j].w + ' -> ripresa s' + L[i].n + ':' + L[i].w + ' [' + L[i].nota.slice(0, 110) + ']');
+    }
+  });
+  return out;
+}
+
+test('ALG-19 (A1): Pull-Through ai Cavi di una principiante PAR-Q con pile da 2,5 kg: s5 riparte da 5x12 «dal carico che avevi prima», nessun salto sopra il riferimento (il passo di +50% lo tiene la guardia di CAR-18)', () => {
+  const r = storia(STORIE.parqPrincipiante);
+  const pt = r.rec.filter(x => /Pull-Through/.test(x.name));
+  const s = n => pt.find(x => x.n === n);
+  assert.strictEqual(s(4).fase, 'scarico');
+  assert.strictEqual(s(3).w, 5, 'riferimento 5 kg: ' + s(3).w);
+  assert.strictEqual(s(4).w, 5, 'lo scarico arrotondato alla griglia coincide col riferimento: ' + s(4).w);
+  assert.strictEqual(s(5).w, 5, 'prima della correzione: 7,5 kg (' + s(5).nota + ')');
+  assert.strictEqual(s(5).reps, 12, 'ripetizioni della seduta di lavoro (prima: 10)');
+  assert.ok(/riparti dal carico che avevi prima/.test(s(5).nota), s(5).nota);
+  assert.ok(!/Arrivato a|\+2,5 kg/.test(s(5).nota), 'nessun aumento nella ripresa: ' + s(5).nota);
+  /* COSTO DICHIARATO (D-P26, A1): 5 -> 7,5 kg e' +50%, la guardia del +25% di CAR-18 tiene il peso e rimette le ripetizioni a bersaglio+1: prima della correzione la coppia
+     saliva solo perche la ripresa saltava a 7,5 kg SOPRA il riferimento. Il peso non scende e non salta oltre il riferimento; con un carico piu alto il passo arriva (over66: Lat Machine) */
+  assert.strictEqual(s(6).w, 5, 'la guardia del +25% di CAR-18 tiene il peso: ' + s(6).nota);
+  assert.ok(/salto del 50%/.test(s(6).nota), s(6).nota);
+  assert.ok(pt.every(x => x.w <= 5 + 1e-9), 'mai sopra il riferimento di 5 kg: ' + pt.map(x => x.w).join(' '));
+});
+
+['parqPrincipiante', 'gravidanzaPrincipiante', 'minorennePrincipiante', 'over72principiante', 'over66', 'minorenne', 'parq', 'gravidanza'].forEach(chi => {
+  test('ALG-19 (A1): ' + chi + ' mai una ripresa SOPRA il carico di riferimento (anche quando lo scarico coincide col riferimento)', () => {
+    const r = riprese(storia(STORIE[chi]).rec);
+    assert.ok(r.n >= 4, chi + ': riprese osservate ' + r.n);
+    assert.deepStrictEqual(r.sopra, [], chi + ': riprese sopra il riferimento:\n' + r.sopra.join('\n'));
+  });
+});
+
+test('ALG-19 (A1): gli adulti senza RIR fisso restano come prima, anche i principianti (nessuna fase di ALG-19)', () => {
+  const S = { d: Object.assign({}, PALESTRA, { level: 'principiante', days: 2, goals: ['salute'], sex: 'F', age: 31, parq: 'no', seme: 'ctrl-no-salute-principiante-2-palestra' }), prof: { parq: false } };
+  assert.deepStrictEqual(storia(S).rec, storia(S, { spente: ['ALG-19'] }).rec);
 });
