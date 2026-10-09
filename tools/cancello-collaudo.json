@@ -1947,6 +1947,11 @@
      "responsabile": "W5-T1 (seduta.js, perche.js; carichiDelGiorno deve salvare `perche` nella voce del giorno)",
      "scade": "oltre-v2",
      "motivo": "dopo la revisione finale (2026-10-09): decisione del proprietario, fuori dalla v2 (D-P26). onda 5 (2026-10-09): non fatto: `carichiDelGiorno` salva solo `coachNote` (testo), non l elenco dei perche con codice e forza; il foglio e interfaccia con prova in browser (D-P26)"
+    },
+    "A1 (revisione finale): ALG-19 con pesi piccoli: la ripresa sale di un passo sopra il riferimento": {
+     "responsabile": "proprietario (decisione)",
+     "scade": "oltre-v2",
+     "motivo": "dopo la revisione finale (2026-10-09): decisione del proprietario, fuori dalla v2 (D-P26). Quando lo scarico arrotondato alla griglia coincide con il riferimento (pile da 2,5 kg, manubri da 2 kg: i principianti) la ripresa non scatta e la prima seduta dopo lo scarico sale di un passo sopra il riferimento con il RIR in piu (riprese sopra il riferimento: PAR-Q 2,3%, gravidanza 4,0%, 15 anni 8,1%, over 66/72/78 2,8-3,1%). La correzione minima le porta a 0 ma lascia ferme in 12 settimane il 3,6-5,3% delle coppie intermedie dei prudenti (CAR-18 tiene il peso con carichi piccoli, stessa causa di m3): non adottata, numeri in D-P26."
     }
    },
    "responsabili": {
