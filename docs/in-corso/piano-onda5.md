@@ -24,5 +24,5 @@ Costo stimato: 3-4 milioni di token (me ≈ 1,2; agenti ≈ 2,2). Se sfora: comm
 - [x] piano committato (683cebd)
 - [x] M1: ALG-19 (1514ef1) + prova (d5c2ca1) + scansioni (1.008 e 352: numeri in D-P26)
 - [x] 2 m5 (4a9cd77) · [x] 3 SAF-05 → ETA-19 (e9dbf43; fascia senior 113 → 0) · [x] 4 fastidi (ab771e0) · [x] 5 calendario (531a31b) · [ ] 6 perché: NON fatto (aperto: revisione finale)
-- [ ] chiusura: collaudo rapida/forza/attrezzi fatti (invariati salvo SAF-05), standard in corso; poi cancello onda-5, test:browser da solo, golden una volta, simboli/indice, merge origin/main, controlla, tag `coach-v2-onda-5`
+- [x] chiusura: collaudo rapida/forza/attrezzi/standard (invariati salvo SAF-05:prudente 0,10 → 0,06; senior 113 → 0), cancello onda-5 passato (78 controlli), test:browser 27/27 da solo, golden di buildProgram rigenerato una volta (78/300 solo note, 1 metodo over 70 per ETA-19), simboli/indice, merge origin/main (998b430, alberi identici), controlla verde (853/854, 1 saltata), tag `coach-v2-onda-5`. Descrizione della PR: scratchpad/descrizione-pr-onda5.md
 - Nota: nessun sotto-agente disponibile nella sessione (niente strumento Task): tutto da un agente; dichiarato in D-P26 e nella PR
