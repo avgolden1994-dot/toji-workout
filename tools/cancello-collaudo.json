@@ -1461,7 +1461,7 @@
    "riscritti": [],
    "manuale": [
     "collaudo non peggiore di INT-4: npm run cancello -- <json-onda-5> onda-5 --contro <json di coach-v2-onda-4-bis rigenerato con lo stesso collaudo 1.7>",
-    "matrici forza e attrezzi misurate a mano contro il tag (nessun tetto per matrice nel cancello: INT-6)",
+    "matrici forza e attrezzi misurate a mano contro il tag (nessun tetto per matrice nel cancello: revisione finale F-1)",
     "la fascia senior della matrice completa (21.600 profili di 70 anni) misurata con un driver sul collaudo: SAF-05 113 -> 0",
     "tests/browser/ tutti verdi (npm run test:browser da solo); regole bloccate ancora spente (E.0 punto 0); scansione di 1.008 simulazioni da 12 settimane delle popolazioni e di 352 degli adulti"
    ],
@@ -1809,7 +1809,7 @@
     },
     "Il bottone «Sto bene: come da piano» (CST-02)": {
      "responsabile": "W5-T2 (scheda in oggi.js o seduta.js e un campo nel profilo)",
-     "scade": "onda-6",
+     "scade": "finale",
      "motivo": "onda 5 (2026-10-09): non fatto: salta la rampa del rientro (serie -25%, carico ridotto, RIR +1): la semantica di sicurezza la decide il proprietario (D-P26); con la decisione e una scheda in oggi.js con prova in browser. P4-S (2026-10-07): il bottone che salta la rampa del rientro non c e."
     },
     "Il PAR-Q dell onboarding non accende la bandiera gravidanza": {
@@ -1841,12 +1841,12 @@
     },
     "Il metabolismo basale in kcal ai minorenni (onboarding-risultato.js)": {
      "responsabile": "proprietario (decisione)",
-     "scade": "onda-6",
+     "scade": "finale",
      "motivo": "onda 5 (2026-10-09): decisione del proprietario ancora da confermare (misura della BIA inserita dall utente, non un fabbisogno scritto dal coach): non toccato. P4-C e INT-4 (2026-10-07): il `bmr` in kcal che analyzeBia riporta e la misura della BIA inserita dall utente, non un fabbisogno scritto dal coach: non toccato, decisione del proprietario (da confermare)."
     },
     "VOL-01:deltoidi_posteriori": {
      "responsabile": "INT-5 (il tetto di 1,2 non si rialza piu)",
-     "scade": "onda-6",
+     "scade": "finale",
      "motivo": "onda 5 (2026-10-09): stesso tetto 1,2, senza rialzi; misura di onda 5 nel report del cancello. INT-4 (2026-10-07): 1,20% (193 programmi) contro il tetto 1,2 e 1,16% (191) a onda-3a: dentro il tetto ma non sotto (i pesi della popolazione); resta aperto con lo stesso tetto, senza altri rialzi. INT-3a (2026-10-07, istantanea onda-3a: commit 5c50e95, standard 10.800 profili, criteri 1.6, contro onda-2g rigenerata con lo stesso collaudo): VOL-01:deltoidi_posteriori 1,16% contro il tetto ammesso di 1,1 (origine: onde.onda-2b.ammesse) e l'1,09% di 2g: 191 programmi contro 192, quindi non e un peggioramento dei programmi ma del peso della popolazione (un profilo piu pesato esce dalla classe e uno entra); la soglia assoluta 2 e rispettata. Il tetto sale a 1,2 con `rialzo` (motivo, data, responsabile); a onda-4 si chiude se la classe e sotto 1,2.",
      "max": 1.2,
      "rialzo": {
@@ -1867,8 +1867,8 @@
     },
     "Cancello di regressione delle matrici «forza» e «attrezzi»": {
      "responsabile": "INT-5 (un tetto per matrice)",
-     "scade": "onda-6",
-     "motivo": "onda 5 (2026-10-09): misurate a mano contro il tag coach-v2-onda-4-bis con lo stesso collaudo 1.7 (numeri in D-P26 e nella descrizione della PR); il tetto per matrice nel cancello resta da fare (INT-6). INT-4 (2026-10-07): misurato a mano contro origin/main con lo stesso collaudo 1.7: forza gravi_pesata 2,40 -> 2,25 (1.440 profili), attrezzi 0 -> 0 (612 profili), nessun errore; peggiorano solo FRQ-01:bicipiti +3,44, DIR-01:polpacci +0,96, VOL-02:schiena +0,61 (aperto «FRQ-01:bicipiti nel powerlifting»). Il cancello non le giudica ancora."
+     "scade": "finale",
+     "motivo": "onda 5 (2026-10-09): misurate a mano contro il tag coach-v2-onda-4-bis con lo stesso collaudo 1.7 (numeri in D-P26 e nella descrizione della PR); il tetto per matrice nel cancello resta da fare (revisione finale (F-1)). INT-4 (2026-10-07): misurato a mano contro origin/main con lo stesso collaudo 1.7: forza gravi_pesata 2,40 -> 2,25 (1.440 profili), attrezzi 0 -> 0 (612 profili), nessun errore; peggiorano solo FRQ-01:bicipiti +3,44, DIR-01:polpacci +0,96, VOL-02:schiena +0,61 (aperto «FRQ-01:bicipiti nel powerlifting»). Il cancello non le giudica ancora."
     },
     "Tirata verticale con gli attrezzi dichiarati a corpo libero (matrice «attrezzi»)": {
      "responsabile": "W5 (libreria e scelta con elastico, anelli o sbarra dichiarati)",
@@ -1892,7 +1892,7 @@
     },
     "m3 (revisione di 3a): dopo lo scarico la doppia progressione riparte dalle ripetizioni dello scarico": {
      "responsabile": "P3-A seguito (bilancia: la ripresa dopo lo scarico)",
-     "scade": "onda-6",
+     "scade": "finale",
      "motivo": "onda 5 (2026-10-09): chiuso per chi ha il RIR fisso (ALG-19: le ripetizioni della seduta di lavoro continuano dopo lo scarico); per gli adulti senza RIR fisso resta (16 coppie di principianti adulti a 2,5-3 kg ferme su 1.070, scansione di 1.008 simulazioni): estenderlo cambia i carichi di tutti e viola «byte-identici», decide il proprietario (D-P26). INT-4 (2026-10-07): non fatto. INT-3b (2026-10-07): verificato con una storia di 12 settimane (principiante F, 3 giorni, seme pr1, RPE sul bersaglio): il Leg Curl arriva a 15 ripetizioni a 17,5 kg alla settimana 7, la settimana di scarico (8) lo porta a 12 ripetizioni con lo stesso peso e alla settimana 9 riparte da 13 («Doppia p"
     },
     "N2 (ricontrollo di 3b): con bersagli alterni il giorno pesante resta piu leggero di quello leggero": {
@@ -1902,7 +1902,7 @@
     },
     "m5 (revisione di 3a): CST-09 non si collega al piano, Oggi e la seduta propongono la seduta piena": {
      "responsabile": "W5-T2 (la scheda Oggi: un azione per applicare il consiglio)",
-     "scade": "onda-6",
+     "scade": "finale",
      "motivo": "onda 5 (2026-10-09): non fatto (interfaccia con prova in browser), con «Sto bene: come da piano» in W5-T2. INT-4 (2026-10-07): non fatto (interfaccia con la sua prova in browser). INT-3b (2026-10-07): CST-09 dice «questa settimana riposa o fai solo camminate» ma la scheda Oggi (`renderOggi`) e la seduta propongono comunque la seduta piena e non c'e un'azione per applicare il co"
     },
     "M1 (revisione dell onda 4): con un RIR fisso il peso spesso non sale in 12 settimane (minorenni, over 65, PAR-Q positivo, gravidanza)": {
@@ -1916,7 +1916,7 @@
     },
     "m1 (revisione dell onda 4): con 1 seduta a settimana una seduta saltata e una pausa vera (CST-01, CST-02, CAR-04)": {
      "responsabile": "W5 (soglia di pausa per chi fa una seduta a settimana: da confermare dal proprietario)",
-     "scade": "onda-6",
+     "scade": "finale",
      "motivo": "onda 5 (2026-10-09): soglia `pausaPerFrequenza` ancora «Convenzione», da confermare dal proprietario; non cambiata. INT-4b (2026-10-07): `giorniNulla()` vale 13 con 1 seduta a settimana: 7 giorni tra due sedute sono normali ma una seduta saltata (14 giorni) e una pausa vera: il blocco riparte dalla prima settimana, il carico scende del 10% (sopra i 65 anni, con i giorni doppi, 14 giorni valgono 28 e danno -20%, da 15 giorni -30%) e le serie del 25% (CST-02). Documentato in mappa (CST-01) e in D-P25; la soglia `pausaPerFrequenza` e «Convenzione»."
     },
     "m5 (revisione dell onda 4): la gravidanza dichiarata solo nel PAR-Q lascia creatina, proteine e kcal": {
@@ -1935,17 +1935,17 @@
     },
     "m7 (revisione dell onda 4): il tetto cumulativo del cancello non e controllato (criteri 1.7 contro un riferimento a 1.6)": {
      "responsabile": "INT-5 (rigenerare il riferimento cumulativo con il collaudo 1.7)",
-     "scade": "onda-6",
-     "motivo": "onda 5 (2026-10-09): il riferimento cumulativo resta a 1.6 (rigenerarlo a 1.7 sposta la base di ogni classe: decisione da prendere con il proprietario, INT-6); la regressione contro l onda prima e il tetto delle classi ammesse sono controllati. INT-4b (2026-10-07): il cancello avvisa «tetto cumulativo non controllato» perche il riferimento (coach-v2-onda-2d, origin/main 231a8f9) e a criteri 1.6 e il collaudo e a 1.7; la regressione contro l onda prima (tolleranza 0,5, zero per SAF-*) invece e controllata. SAF-05 sugli over 65 (113 programmi su 21.600) si vede solo sulla matrice completa."
+     "scade": "finale",
+     "motivo": "onda 5 (2026-10-09): il riferimento cumulativo resta a 1.6 (rigenerarlo a 1.7 sposta la base di ogni classe: decisione da prendere con il proprietario, revisione finale (F-1)); la regressione contro l onda prima e il tetto delle classi ammesse sono controllati. INT-4b (2026-10-07): il cancello avvisa «tetto cumulativo non controllato» perche il riferimento (coach-v2-onda-2d, origin/main 231a8f9) e a criteri 1.6 e il collaudo e a 1.7; la regressione contro l onda prima (tolleranza 0,5, zero per SAF-*) invece e controllata. SAF-05 sugli over 65 (113 programmi su 21.600) si vede solo sulla matrice completa."
     },
     "Il momento «bambino» non propone la bandiera della gravidanza": {
      "responsabile": "W5-T2 (metodi-momenti.js: una riga che propone la bandiera)",
-     "scade": "onda-6",
+     "scade": "finale",
      "motivo": "onda 5 (2026-10-09): il momento «Nuovo bambino in casa» applica volume x0,6 e +1 RIR ma non propone «Gravidanza o parto recente»; la bandiera ora si accende dal questionario (m5) e da Opzioni"
     },
     "Foglio «Perché?» (W5-T1)": {
      "responsabile": "W5-T1 (seduta.js, perche.js; carichiDelGiorno deve salvare `perche` nella voce del giorno)",
-     "scade": "onda-6",
+     "scade": "finale",
      "motivo": "onda 5 (2026-10-09): non fatto: `carichiDelGiorno` salva solo `coachNote` (testo), non l elenco dei perche con codice e forza; il foglio e interfaccia con prova in browser (D-P26)"
     }
    },
