@@ -78,7 +78,7 @@ function fissaFasiDelloStorico() {
     if (!h || typeof h !== 'object' || (h.settimana && h.settimana.fase)) return;
     const d = dataSessione(h);
     if (!d) return;
-    const w = Math.floor(giorniTra(daYmd(p.inizio), lunediDi(d)) / 7) + 1, fase = w >= 1 && w <= p.fasi.length ? p.fasi[w - 1] : null;
+    const w = typeof settimanaDelGiorno === 'function' ? settimanaDelGiorno(d, p) : Math.floor(giorniTra(daYmd(p.inizio), lunediDi(d)) / 7) + 1, fase = w >= 1 && w <= p.fasi.length ? p.fasi[w - 1] : null;   /* onda 5: con le pause tolte (CST-01) */
     if (typeof fase === 'string' && fase) { h.settimana = { numero: w, fase: fase.slice(0, 20) }; scritte++; }
   });
   if (scritte) localStorage.setItem(historyKey(), JSON.stringify(lista));

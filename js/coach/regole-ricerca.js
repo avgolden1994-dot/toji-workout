@@ -199,17 +199,22 @@ const PARAM_ANALISI = {
                                  per i dati vecchi con lo scarico gia composto, 24,5 -> 22 -> 20 -> 18 kg, e si risale per gradi) */
 };
 /* p0 = il programma gia letto (chi scorre tutto lo storico lo legge una volta sola) */
+/* la settimana del programma di un giorno: con le pause tolte (CST-01, settimanaDelGiorno in sicurezza/popolazioni.js: onda 5, come settimanaProgramma per oggi); senza quel file il calendario, come prima */
+function settimanaCalendarioOProgramma(d, p) {
+  if (typeof settimanaDelGiorno === 'function') return settimanaDelGiorno(d, p);
+  return Math.floor(giorniTra(daYmd(p.inizio), lunediDi(d)) / 7) + 1;
+}
 function faseDelGiorno(d, p0) {
   const p = p0 || getProgramma();
   if (!regolaAttiva('MES-10') || !p || !p.inizio || !p.fasi || !d) return null;
-  const w = Math.floor(giorniTra(daYmd(p.inizio), lunediDi(d)) / 7);
+  const w = settimanaCalendarioOProgramma(d, p) - 1;
   return w >= 0 && w < p.fasi.length ? p.fasi[w] : null;
 }
 function settimanaDellaSeduta(h) {
   if (h && h.settimana && h.settimana.numero >= 1) return Number(h.settimana.numero);
   const p = getProgramma(), d = h ? dataSessione(h) : null;
   if (!p || !p.inizio || !d) return 0;
-  const w = Math.floor(giorniTra(daYmd(p.inizio), lunediDi(d)) / 7) + 1;
+  const w = settimanaCalendarioOProgramma(d, p);
   return w >= 1 && w <= (p.settimane || 0) ? w : 0;
 }
 /* MES-10: la seduta conta come di scarico nelle analisi. La definizione e una sola, esercizioInScarico (progressivo.js); qui c e solo l interruttore */

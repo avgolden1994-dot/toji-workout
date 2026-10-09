@@ -184,15 +184,17 @@ function primaSettimanaDelBlocco(p, w) {
    (la prima conta dall'ultima seduta prima dell'inizio del programma, se c'è) fino a oggi: per ogni intervallo di G giorni veri senza sedute, con G <= `nulla` niente, fino a
    `ferma` la settimana resta quella dell'ultima seduta (la rampa non avanza), oltre si riparte dalla prima settimana del blocco. Chi non ha mai fatto una seduta segue il
    calendario, come prima (non c'è una pausa da misurare). Solo programmi v2, con il consenso e la regola accesa; la settimana non va mai sotto 1 e mai oltre quella del calendario */
-function settimaneFermePerPausa(p) {
+function settimaneFermePerPausa(p, fino) {
   const P = sogliaPopolazione('pausa');
   if (!P || !p || !p.inizio || !programmaV2Rientro(p) || !Array.isArray(p.fasi) || typeof sedutePassate !== 'function') return 0;
   if (typeof coachAttivo !== 'function' || !coachAttivo() || !regolaAttiva('CST-01')) return 0;
   const nulla = giorniNulla();
-  return ricordaRientro('ferme', p.inizio + '|' + p.fasi.join(',') + '|' + nulla, () => {
-    const inizio = daYmd(p.inizio), oggi = new Date();
+  /* onda 5 (CST-01 seguito): `fino` = il giorno a cui si guarda (le pause fino a quel giorno; mai oltre oggi: una pausa non e ancora avvenuta). Senza: oggi, come prima */
+  const adesso = new Date(), oggi = fino && giorniTra(fino, adesso) > 0 ? new Date(fino) : adesso;
+  return ricordaRientro('ferme', p.inizio + '|' + p.fasi.join(',') + '|' + nulla + '|' + ymd(oggi), () => {
+    const inizio = daYmd(p.inizio);
     const settCal = d => Math.floor(giorniTra(inizio, lunediDi(d)) / 7) + 1;
-    const tutte = sedutePassate().map(x => x.d);   /* dalla piu recente */
+    const tutte = sedutePassate().map(x => x.d).filter(d => giorniTra(d, oggi) >= 0);   /* dalla piu recente, fino al giorno a cui si guarda */
     const date = tutte.filter(d => giorniTra(inizio, d) >= 0).reverse();   /* le sedute del programma, dalla piu vecchia */
     let ferme = 0, prec = tutte.find(d => giorniTra(inizio, d) < 0) || null, wPrec = 1;
     const intervallo = d => {
@@ -209,6 +211,17 @@ function settimaneFermePerPausa(p) {
     if (giorniTra(inizio, oggi) >= 0) intervallo(oggi);
     return ferme;
   });
+}
+/* CST-01 (onda 5, aperto di onda-4 «controlloOttavaPrincipiante, faseDelGiorno e le sedute vecchie senza settimana leggono ancora il calendario»): la settimana del programma di un GIORNO
+   qualunque, con le pause tolte come fa settimanaProgramma per oggi: settimana del calendario di `d` meno le settimane ferme fino a `d` (per un giorno futuro le pause sono quelle di oggi:
+   il programma continua da qui). La usano faseDelGiorno, settimanaDellaSeduta (regole-ricerca.js), il controllo dell'8ª del principiante (mesociclo.js) e fissaFasiDelloStorico.
+   Puo essere < 1 (prima dell'inizio) o oltre p.settimane (finito): chi la legge controlla. Senza il programma o la data: 0 */
+function settimanaDelGiorno(d, p) {
+  const pr = p || (typeof getProgramma === 'function' ? getProgramma() : null);
+  if (!pr || !pr.inizio || !d) return 0;
+  const giorno = d instanceof Date ? d : new Date(d);
+  if (isNaN(giorno.getTime())) return 0;
+  return Math.floor(giorniTra(daYmd(pr.inizio), lunediDi(giorno)) / 7) + 1 - settimaneFermePerPausa(pr, giorno);
 }
 
 /* ALG-14: la seduta di rientro di questo esercizio (CAR-04) è una delle ultime `sedute`? Allora { prima: carico di lavoro di prima della pausa, ora: carico dell'ultima seduta }.
