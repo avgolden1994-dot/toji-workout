@@ -40,6 +40,14 @@ function gravidanzaDaRiportare(profPrima) {
   if (!inGravidanza(profPrima)) return {};
   return Object.assign({ gravidanza: true, parq: true }, profPrima.parqDaGravidanza ? { parqDaGravidanza: true } : {});
 }
+/* REC-12 parte a (onda 5, m5 della revisione dell'onda 4): la gravidanza detta nel QUESTIONARIO (PAR-Q «sì» e «È per una gravidanza o un parto recente?» = sì, onbData.gravidanza)
+   accende la stessa bandiera di Opzioni › Il coach, così creatina, grammi e kcal spariscono subito (guardiaNutrizione) e non solo dopo l'interruttore. La modalità prudente resta
+   accesa: non si segna `parqDaGravidanza`, perché nel questionario non si sa se il PAR-Q positivo ha anche altre ragioni (spenta la bandiera, il PAR-Q resta «sì» finché non si rifà
+   il questionario). Senza la risposta «sì»: niente, il profilo è quello di sempre */
+function gravidanzaDalQuestionario(onb) {
+  const parq = !!onb && (onb.parq === 'si' || onb.parq === true);   /* la domanda si mostra solo con il PAR-Q «sì»: una risposta rimasta da prima, con il PAR-Q poi messo a «no», non vale */
+  return parq && (onb.gravidanza === 'si' || onb.gravidanza === true) ? { gravidanza: true, parq: true } : {};
+}
 
 /* B10 (ETA-08 parte a, solo la base): l'over 65 è nella base? Sì nelle prime `settimaneBase` settimane del programma (numero = settimana del programma, 0 o
    assente = non si sa: base), sempre dai `etaSempreBase` anni. Sotto i 65 anni: no */

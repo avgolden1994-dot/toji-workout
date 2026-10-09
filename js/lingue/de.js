@@ -4242,5 +4242,8 @@ window.I18N["de"] = {
 "Parlane con l’ostetrica o con il medico: sono loro a dirti come allenarti adesso. Il coach resta in modalità prudente: niente serie al limite, niente tecniche intense e carichi che salgono piano. Non è un parere medico.": "Sprich mit deiner Hebamme oder deiner Ärztin bzw. deinem Arzt: sie sagen dir, wie du jetzt trainieren kannst. Der Coach bleibt im vorsichtigen Modus: keine Sätze bis ans Limit, keine intensiven Techniken und Gewichte, die langsam steigen. Das ist keine ärztliche Beratung.",
 "Con la gravidanza o un parto recente la modalità prudente resta accesa: se è cambiato qualcosa, togli prima «Gravidanza o parto recente».": "Bei einer Schwangerschaft oder einer kürzlichen Geburt bleibt der vorsichtige Modus an: wenn sich etwas geändert hat, schalte zuerst «Schwangerschaft oder kürzliche Geburt» aus.",
 "In dimagrimento il coach tiene i carichi.": "Beim Fettabbau hält der Coach die Gewichte.",
-"e dalle ripetizioni raggiunte prima dello scarico (#): la doppia progressione continua da lì": "und mit den vor der Entlastung erreichten Wiederholungen (#): die doppelte Progression geht dort weiter"
+"e dalle ripetizioni raggiunte prima dello scarico (#): la doppia progressione continua da lì": "und mit den vor der Entlastung erreichten Wiederholungen (#): die doppelte Progression geht dort weiter",
+"È per una gravidanza o un parto recente?": "Liegt es an einer Schwangerschaft oder einer kürzlichen Geburt?",
+"altre ragioni": "andere Gründe",
+"il coach accende «Gravidanza o parto recente»: resta prudente finché non la togli in Opzioni › Il coach": "der Coach schaltet «Schwangerschaft oder kürzliche Geburt» ein: er bleibt vorsichtig, bis du es unter Optionen › Der Coach ausschaltest"
 };

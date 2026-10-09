@@ -16,7 +16,7 @@ const ONB_KEY = 'tz_onboarded';
 const PROFILE_KEY = () => 'coach_plus_profile_' + currentMode;
 
 let onbStep = 0;
-let onbData = { goals: [], goal: null, level: null, days: null, minutes: null, luogo: null, fastidi: [], sonno: null, attrezzi: null, parq: null, sex: null, age: null, height: null, weight: null, bia: null };
+let onbData = { goals: [], goal: null, level: null, days: null, minutes: null, luogo: null, fastidi: [], sonno: null, attrezzi: null, parq: null, gravidanza: null, sex: null, age: null, height: null, weight: null, bia: null };
 
 const ONB_GOALS = [
   { id: 'massa',   emoji: ico('manubrio'), name: 'Massa muscolare', desc: '8-12 ripetizioni, carichi progressivi' },
@@ -141,7 +141,7 @@ window.startOnboarding = function(force) {
 function nuovoOnbData() {
   const salvato = (typeof getProfile === 'function' && getProfile()) || {};   /* P3-M: sesso, peso, altezza, salute e fastidi non si perdono rifacendo il questionario (decidono prudenza ed esclusioni) */
   return { inizio: undefined, goals: [], goal: null, level: null, days: null, minutes: null,
-           luogo: null, fastidi: (salvato.fastidi || []).slice(), sonno: null, attrezzi: null, parq: salvato.parq ? 'si' : null, priorita: [],
+           luogo: null, fastidi: (salvato.fastidi || []).slice(), sonno: null, attrezzi: null, parq: salvato.parq ? 'si' : null, gravidanza: salvato.gravidanza === true ? 'si' : null, priorita: [],
            sex: salvato.sex || null, age: ((typeof getProfile === 'function' && getProfile()) || {}).age || null, height: salvato.height || null, weight: salvato.weight || null, bia: null,   /* ETA-01: chi rifa il programma ha gia detto l eta */
            psico: Object.assign({}, ((typeof getProfile === 'function' && getProfile()) || {}).psico || {}),
            test: Object.assign({}, ((typeof getProfile === 'function' && getProfile()) || {}).test || {}),
@@ -252,6 +252,16 @@ const ONB_PARQ = [
   { id: 'no', emoji: '\u2705', name: 'No, nessuno', desc: 'si procede normalmente' },
   { id: 'si', emoji: '\u26A0', name: 'Sì, almeno uno', desc: 'coach prudente, e senti il medico prima di sforzi intensi' }
 ];
+/* REC-12 parte a (onda 5, m5 della revisione dell'onda 4): con il PAR-Q «sì» si chiede se la ragione è una gravidanza o un parto recente: «sì» accende la bandiera di Opzioni › Il coach
+   (profilo.gravidanza, gravidanzaDalQuestionario in sicurezza/popolazioni.js), che tiene la modalità prudente e toglie creatina, grammi e kcal. Prima la bandiera si accendeva solo in Opzioni */
+const ONB_GRAVIDANZA = [
+  { id: 'no', emoji: '\u2705', name: 'No', desc: 'altre ragioni' },
+  { id: 'si', emoji: '\u{1F930}', name: 'Sì', desc: 'il coach accende «Gravidanza o parto recente»: resta prudente finché non la togli in Opzioni › Il coach' }
+];
+function htmlDomandaGravidanzaOnb() {
+  if (onbData.parq !== 'si') return '';
+  return '<div class="aw-sec">È per una gravidanza o un parto recente?</div>' + ONB_GRAVIDANZA.map(g => optHtml('gravidanza', g)).join('');
+}
 const PARQ_DOMANDE = ['problemi al cuore o pressione alta', 'dolore al petto a riposo o sotto sforzo', 'capogiri o svenimenti', 'problemi a ossa o articolazioni che peggiorano col movimento', 'farmaci per cuore o pressione', 'gravidanza o parto recente', 'un medico ti ha sconsigliato lo sforzo'];
 const ONB_SONNO = [
   { id: 'bene', emoji: '\u{1F60C}', name: 'Bene', desc: 'dormo 7 ore o piu, stress sotto controllo' },
@@ -449,7 +459,8 @@ function renderOnb() {
         '<div class="aw-groups">' + t.o.concat([['dopo', 'Lo faccio dopo']]).map(o => chip(((onbData.test || {})[t.k] || 'dopo') === o[0], 'onbSetTest(\'' + t.k + '\',\'' + o[0] + '\')', o[1])).join('') + '</div></div>').join('') +
       '<div class="aw-sec">Salute: hai uno di questi?</div>' +
       '<div class="pref-note">' + PARQ_DOMANDE.join(' · ') + '.</div>' +
-      ONB_PARQ.map(g => optHtml('parq', g)).join('');
+      ONB_PARQ.map(g => optHtml('parq', g)).join('') +
+      htmlDomandaGravidanzaOnb();
   } else if (onbStep === 5) {
     body.innerHTML = renderBiaStep();
     setTimeout(bindBiaInputs, 0);
