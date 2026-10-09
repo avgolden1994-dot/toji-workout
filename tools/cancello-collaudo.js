@@ -552,9 +552,10 @@ function autotest() {
   prova('le verifiche del modello (MOD) e la matrice sbagliata fermano il cancello', () => {
     eq(esegui(istantaneaBuona(cfg, 'onda-0', { modello: { 'MOD-03': 'buchi' } }), 'onda-0').falliti >= 1, true, 'MOD-03 con buchi');
     eq(esegui(istantaneaBuona(cfg, 'onda-4'), 'onda-4').falliti, 0, 'onda-4 buona');
-    /* INT-4: onda-4 passa alla matrice standard (la completa costa 45 minuti: D-P25); la prova della matrice sbagliata usa onda-5, che vuole ancora la completa */
-    eq(esegui(istantaneaBuona(cfg, 'onda-5', { matrice: 'standard', profili: 10800 }), 'onda-5').falliti >= 1, true, 'onda-5 vuole la matrice completa');
-    eq(esegui(istantaneaBuona(cfg, 'onda-5', { matrice: 'standard', profili: 10800 }), 'onda-5', { qualsiasiMatrice: true }).falliti, 0, '--qualsiasi-matrice la accetta');
+    /* INT-4: onda-4 passa alla matrice standard (la completa costa 45 minuti: D-P25); INT-5: anche onda-5 (D-P26: la fascia senior della completa misurata con un driver); la prova della
+       matrice sbagliata usa la revisione finale, che vuole ancora la completa */
+    eq(esegui(istantaneaBuona(cfg, 'finale', { matrice: 'standard', profili: 10800 }), 'finale').falliti >= 1, true, 'la revisione finale vuole la matrice completa');
+    eq(esegui(istantaneaBuona(cfg, 'finale', { matrice: 'standard', profili: 10800 }), 'finale', { qualsiasiMatrice: true }).falliti, 0, '--qualsiasi-matrice la accetta');
     eq(esegui(istantaneaBuona(cfg, 'onda-4', { matrice: 'completa', profili: 64800 }), 'onda-4').falliti >= 1, true, 'onda-4 vuole la matrice standard');
   });
   prova('--contro: nessuna classe peggiore dell\'onda precedente; --identico: nessuna differenza', () => {
