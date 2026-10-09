@@ -4245,5 +4245,10 @@ window.I18N["de"] = {
 "e dalle ripetizioni raggiunte prima dello scarico (#): la doppia progressione continua da lì": "und mit den vor der Entlastung erreichten Wiederholungen (#): die doppelte Progression geht dort weiter",
 "È per una gravidanza o un parto recente?": "Liegt es an einer Schwangerschaft oder einer kürzlichen Geburt?",
 "altre ragioni": "andere Gründe",
-"il coach accende «Gravidanza o parto recente»: resta prudente finché non la togli in Opzioni › Il coach": "der Coach schaltet «Schwangerschaft oder kürzliche Geburt» ein: er bleibt vorsichtig, bis du es unter Optionen › Der Coach ausschaltest"
+"il coach accende «Gravidanza o parto recente»: resta prudente finché non la togli in Opzioni › Il coach": "der Coach schaltet «Schwangerschaft oder kürzliche Geburt» ein: er bleibt vorsichtig, bis du es unter Optionen › Der Coach ausschaltest",
+"Non sono un medico e non faccio diagnosi.": "Ich bin kein Arzt und stelle keine Diagnosen.",
+"Con la spalla delicata ho aggiunto un lavoro leggero per la cuffia dei rotatori e per i deltoidi posteriori. Non cura il dolore: se non passa fatti vedere da un medico o da un fisioterapista. Non sono un medico e non faccio diagnosi.": "Weil deine Schulter empfindlich ist, habe ich leichte Arbeit für die Rotatorenmanschette und die hinteren Schultermuskeln ergänzt. Sie heilt den Schmerz nicht: Wenn er nicht vergeht, lass dich von einem Arzt oder einer Physiotherapeutin untersuchen. Ich bin kein Arzt und stelle keine Diagnosen.",
+"da fare nell’ampiezza che non fa male": "nur im schmerzfreien Bewegungsumfang",
+"da fare con discesa lenta e profondità che non fa male": "mit langsamem Absenken und einer Tiefe, die nicht wehtut",
+"da fare con la schiena ferma e un carico che non fa male": "mit ruhigem Rücken und einem Gewicht, das nicht wehtut"
 };

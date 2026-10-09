@@ -4245,5 +4245,10 @@ window.I18N["en"] = {
 "e dalle ripetizioni raggiunte prima dello scarico (#): la doppia progressione continua da lì": "and from the reps reached before the deload (#): the double progression carries on from there",
 "È per una gravidanza o un parto recente?": "Is it because of a pregnancy or a recent childbirth?",
 "altre ragioni": "other reasons",
-"il coach accende «Gravidanza o parto recente»: resta prudente finché non la togli in Opzioni › Il coach": "the coach turns on «Pregnancy or recent childbirth»: it stays careful until you turn it off in Options › The coach"
+"il coach accende «Gravidanza o parto recente»: resta prudente finché non la togli in Opzioni › Il coach": "the coach turns on «Pregnancy or recent childbirth»: it stays careful until you turn it off in Options › The coach",
+"Non sono un medico e non faccio diagnosi.": "I am not a doctor and I do not diagnose.",
+"Con la spalla delicata ho aggiunto un lavoro leggero per la cuffia dei rotatori e per i deltoidi posteriori. Non cura il dolore: se non passa fatti vedere da un medico o da un fisioterapista. Non sono un medico e non faccio diagnosi.": "Because your shoulder is sensitive I added light work for the rotator cuff and the rear deltoids. It does not treat the pain: if it doesn't go away, see a doctor or a physiotherapist. I am not a doctor and I do not diagnose.",
+"da fare nell’ampiezza che non fa male": "done only in the range that does not hurt",
+"da fare con discesa lenta e profondità che non fa male": "with a slow lowering and a depth that does not hurt",
+"da fare con la schiena ferma e un carico che non fa male": "with a still back and a load that does not hurt"
 };

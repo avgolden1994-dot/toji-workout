@@ -4245,5 +4245,10 @@ window.I18N["es"] = {
 "e dalle ripetizioni raggiunte prima dello scarico (#): la doppia progressione continua da lì": "y desde las repeticiones alcanzadas antes de la descarga (#): la doble progresión continúa desde ahí",
 "È per una gravidanza o un parto recente?": "¿Es por un embarazo o un parto reciente?",
 "altre ragioni": "otras razones",
-"il coach accende «Gravidanza o parto recente»: resta prudente finché non la togli in Opzioni › Il coach": "el coach activa «Embarazo o parto reciente»: sigue prudente hasta que la quites en Opciones › El coach"
+"il coach accende «Gravidanza o parto recente»: resta prudente finché non la togli in Opzioni › Il coach": "el coach activa «Embarazo o parto reciente»: sigue prudente hasta que la quites en Opciones › El coach",
+"Non sono un medico e non faccio diagnosi.": "No soy médico y no hago diagnósticos.",
+"Con la spalla delicata ho aggiunto un lavoro leggero per la cuffia dei rotatori e per i deltoidi posteriori. Non cura il dolore: se non passa fatti vedere da un medico o da un fisioterapista. Non sono un medico e non faccio diagnosi.": "Como tienes el hombro delicado he añadido un trabajo ligero para el manguito de los rotadores y los deltoides posteriores. No cura el dolor: si no pasa, consulta a un médico o a un fisioterapeuta. No soy médico y no hago diagnósticos.",
+"da fare nell’ampiezza che non fa male": "hazlo en la amplitud que no duele",
+"da fare con discesa lenta e profondità che non fa male": "con bajada lenta y una profundidad que no duele",
+"da fare con la schiena ferma e un carico che non fa male": "con la espalda firme y una carga que no duele"
 };
