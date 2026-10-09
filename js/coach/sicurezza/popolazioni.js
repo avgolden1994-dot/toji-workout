@@ -49,6 +49,15 @@ function gravidanzaDalQuestionario(onb) {
   return parq && (onb.gravidanza === 'si' || onb.gravidanza === true) ? { gravidanza: true, parq: true } : {};
 }
 
+/* ETA-19 (onda 5): dai 65 anni gli esercizi «da evitare» (over65Evitare in soglie-popolazioni.js) sono l'ultima scelta di un posto della scheda (componiSedute, programma/ricette.js).
+   Ritorna la funzione nome => true se l'esercizio è nell'elenco, o null quando non si applica (sotto i 65 anni, regola spenta, soglia assente): chi la chiama non cambia niente */
+function eserciziDaEvitareOver65(chi) {
+  const E = sogliaPopolazione('over65Evitare');
+  if (!E || !Array.isArray(E.nomi) || !chi || !chi.over65 || !regolaAttiva('ETA-19')) return null;
+  const nomi = E.nomi;
+  return nome => nomi.indexOf(senzaEmoji(nome)) !== -1;
+}
+
 /* B10 (ETA-08 parte a, solo la base): l'over 65 è nella base? Sì nelle prime `settimaneBase` settimane del programma (numero = settimana del programma, 0 o
    assente = non si sa: base), sempre dai `etaSempreBase` anni. Sotto i 65 anni: no */
 function inBaseOver65(eta, numero) {

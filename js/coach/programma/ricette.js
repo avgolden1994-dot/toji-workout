@@ -225,6 +225,15 @@ function componiSedute(brief, split) {
         const fresco = (x) => (usatiSett[x.name] || 0) < maxSettimana(x.name), freschi = rosa.filter(fresco);
         if (freschi.length) rosa = freschi; else { const tuttiFreschi = ordinati.filter(fresco); if (tuttiFreschi.length) rosa = tuttiFreschi; }
       }
+      /* ETA-19 (onda 5, sicurezza/popolazioni.js): dopo i 65 anni gli esercizi «da evitare» (stacchi da terra, military press...) sono l'ultima scelta: prima un altro candidato consentito, anche se gia
+         usato due volte nella settimana (RID-02 cede alla sicurezza: con 5-6 sedute e i soli pesi liberi il terzo posto dell hinge prendeva il trap bar, il terzo della spinta verticale il military);
+         se non c e nessun altro restano, e il posto non si perde. Non per i posti fissi della Forza (gli over 65 non hanno il powerlifting: FRZ-02) */
+      const evitare = !fisso && typeof eserciziDaEvitareOver65 === 'function' ? eserciziDaEvitareOver65(chi) : null;
+      if (evitare && rosa.some(x => evitare(x.name))) {
+        const sicuri = rosa.filter(x => !evitare(x.name));
+        if (sicuri.length) rosa = sicuri;
+        else { const tuttiSicuri = ordinati.filter(x => !evitare(x.name)); if (tuttiSicuri.length) rosa = tuttiSicuri; }
+      }
       ordinati = rosa;
       const scelta = ordinati.find(x => !strRidondante(x, base)) || ordinati[0];
       /* RID-01 (W1-T6): il secondo posto dello stesso tipo (squat2, spintaO2, isoBic2) non diventa un TERZO esercizio che fa lo stesso lavoro di due gia scelti (nemmeno l eccezione dello

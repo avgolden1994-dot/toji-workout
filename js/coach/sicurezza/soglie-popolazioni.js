@@ -34,6 +34,15 @@ const SOGLIE_POPOLAZIONI = {
     v: 3,
     forza: 'Convenzione', fonte: 'registro coach v2 C.3 (REC-12 a: guardia che toglie, modalità prudente); ricerca-recupero-infortuni-popolazioni §4 e §5.2 («RIR ≥ 3-4, nessun cedimento», ricordo da verificare: per questo solo come pavimento della modalità prudente, mai come prescrizione)', regole: ['REC-12']
   },
+  /* ETA-19 (onda 5, aperto di onda-4 «Over 65: esercizi da favorire»; SAF-05 del collaudo sulla fascia senior: 113 programmi su 21.600, Stacco con Trap Bar 86, Military Press 35): dai 65 anni gli
+     esercizi dell'elenco sono l'ULTIMA scelta di un posto della scheda: il generatore preferisce un altro candidato consentito, anche se già usato due volte nella settimana (RID-02 cede alla sicurezza);
+     se non c'è nessun altro restano (la copertura del posto non si perde). Un elenco di nomi, non un divieto: niente ricerca li vieta; la tabella 65-74 e 75+ dice «evitare pesi sopra la testa pesanti»
+     e «liberi sopra la testa», «favorire macchine guidate e appoggio», e il collaudo (TECNICI_PRUDENTE) li chiama «tecnicamente impegnativi» per la modalità prudente */
+  over65Evitare: {
+    v: { nomi: ['Military Press', 'Stacco da Terra (Deadlift)', 'Stacco Sumo', 'Stacco con Trap Bar', 'Good Morning', 'Front Squat', 'Nordic Curl', 'Ab Wheel', 'Tirate al Mento (Upright Row)', 'Pike Push-up'] },
+    forza: 'Convenzione', fonte: 'ricerca-fasce-di-eta tabella 3.3 (65-74: «evitare pesi sopra la testa pesanti», 75+: «liberi sopra la testa», «favorire macchine guidate, appoggio»; Conv/[CM]); tools/collaudo-generatore.js SAF-05 (TECNICI_PRUDENTE, Convenzione); nessuno studio che misuri il rischio di questi esercizi dopo i 65 anni',
+    regole: ['ETA-19']
+  },
   /* B20 e MES-15 (CST-01): le soglie della pausa, in giorni veri dall’ultima seduta: fino a `nulla` niente; fino a `ferma` la rampa non avanza (si rifà la settimana
      dell’ultima seduta); fino a `blocco` si riparte dalla prima settimana del blocco; oltre, nuovo blocco (dalla prima settimana del blocco, con i carichi di CAR-04 più bassi) */
   pausa: {
