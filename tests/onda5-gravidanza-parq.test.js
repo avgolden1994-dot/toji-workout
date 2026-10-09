@@ -47,11 +47,20 @@ test('questionario: PAR-Q «no»: nessuna domanda sulla gravidanza (la risposta 
   assert.ok(a.json('corpoCoach()').some(t => /[Cc]reatina/.test(t)), 'un adulto senza PAR-Q ha la creatina come prima');
 });
 
-test('questionario rifatto: la bandiera già accesa resta (B1) e il questionario la ritrova precompilata a «sì»', () => {
+test('questionario rifatto: la bandiera già accesa resta (B1) e il questionario NON rifà la domanda: dice che si toglie solo in Opzioni (A2 della revisione finale)', () => {
   const a = caricaApp({ ora: LUNEDI });
   crea(a, { gravidanza: 'si' });
-  assert.strictEqual(a.json('nuovoOnbData().gravidanza'), 'si');
+  /* A2: prima la domanda tornava precompilata a «sì», ma rispondere «No» non spegneva niente (la bandiera resta per gravidanzaDaRiportare): ora non c e domanda */
+  assert.strictEqual(a.json('nuovoOnbData().gravidanza'), null, 'nessuna risposta precompilata');
+  ['si', 'no'].forEach(parq => {
+    const html = a.g("(onbData = Object.assign(nuovoOnbData(), { parq: '" + parq + "' }), htmlDomandaGravidanzaOnb())");
+    assert.ok(!/È per una gravidanza o un parto recente\?/.test(html), 'PAR-Q «' + parq + '»: niente domanda con la bandiera accesa: ' + html);
+    assert.ok(/Hai già segnato «Gravidanza o parto recente»/.test(html) && /solo in Opzioni › Il coach/.test(html), 'PAR-Q «' + parq + '»: la riga che dice dove si toglie: ' + html);
+  });
   const p = crea(a, { gravidanza: 'no', parq: 'no' });
   assert.strictEqual(p.gravidanza, true, 'la bandiera si toglie solo in Opzioni › Il coach');
   assert.strictEqual(p.parq, true);
+  /* spenta la bandiera (Opzioni) la domanda torna a comparire con il PAR-Q «sì» */
+  a.g('(() => { const p = getProfile(); setGravidanzaCoach(p, false); localStorage.setItem(PROFILE_KEY(), JSON.stringify(p)); })()');
+  assert.ok(/È per una gravidanza o un parto recente\?/.test(a.g("(onbData = Object.assign(nuovoOnbData(), { parq: 'si' }), htmlDomandaGravidanzaOnb())")), 'senza la bandiera la domanda c e');
 });

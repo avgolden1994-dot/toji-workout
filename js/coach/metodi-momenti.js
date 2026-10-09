@@ -110,7 +110,7 @@ const MOMENTI = [
   { id: 'stress', nome: 'Lavoro o esami sotto pressione', vol: 0.7, rir: 1, settimane: 3, tecniche: false,
     testo: 'Con molto stress il recupero passa da 48 a 96 ore (Stults-Kolehmainen 2014) e la forza cresce meno (Bartholomew 2008): meno serie, stessi carichi, niente tecniche intense.' },
   { id: 'rottura', nome: 'Fine di una relazione', vol: 0.85, rir: 1, settimane: 4, tecniche: false, guardia: true, aiuto: true,
-    testo: 'Dopo una rottura molti si allenano di più: va bene, ti dà routine e umore. Niente massimali per qualche settimana e occhio al sonno. Parlarne con qualcuno aiuta più di una serie in più.' },
+    testo: 'Dopo una rottura molti si allenano di più: va bene, purché resti una routine sostenibile. Niente massimali per qualche settimana e occhio al sonno. Parlarne con qualcuno aiuta più di una serie in più.' },
   { id: 'lutto', nome: 'Un lutto', vol: 0.5, rir: 2, settimane: 6, tecniche: false, aiuto: true,
     testo: 'Nessuna pressione: sedute brevi quando te la senti, camminare conta. Il programma ti aspetta.' },
   { id: 'giu', nome: 'Periodo giù di morale', vol: 0.7, rir: 1, settimane: 4, tecniche: false, aiuto: true, guardia: true,

@@ -2760,7 +2760,7 @@ window.I18N["en"] = {
 "Lavoro o esami sotto pressione": "Work or exams under pressure",
 "Con molto stress il recupero passa da 48 a 96 ore (Stults-Kolehmainen 2014) e la forza cresce meno (Bartholomew 2008): meno serie, stessi carichi, niente tecniche intense.": "Under heavy stress recovery goes from 48 to 96 hours (Stults-Kolehmainen 2014) and strength grows less (Bartholomew 2008): fewer sets, same loads, no intense techniques.",
 "Fine di una relazione": "End of a relationship",
-"Dopo una rottura molti si allenano di più: va bene, ti dà routine e umore. Niente massimali per qualche settimana e occhio al sonno. Parlarne con qualcuno aiuta più di una serie in più.": "After a breakup many people train more: that's fine, it gives you routine and mood. No max attempts for a few weeks and watch your sleep. Talking to someone helps more than an extra set.",
+"Dopo una rottura molti si allenano di più: va bene, purché resti una routine sostenibile. Niente massimali per qualche settimana e occhio al sonno. Parlarne con qualcuno aiuta più di una serie in più.": "After a breakup many people train more: that's fine, as long as it stays a sustainable routine. No max attempts for a few weeks and watch your sleep. Talking to someone helps more than an extra set.",
 "Un lutto": "A bereavement",
 "Nessuna pressione: sedute brevi quando te la senti, camminare conta. Il programma ti aspetta.": "No pressure: short sessions when you feel like it, walking counts. The program will wait for you.",
 "Periodo giù di morale": "Feeling down",
@@ -4250,5 +4250,9 @@ window.I18N["en"] = {
 "Con la spalla delicata ho aggiunto un lavoro leggero per la cuffia dei rotatori e per i deltoidi posteriori. Non cura il dolore: se non passa fatti vedere da un medico o da un fisioterapista. Non sono un medico e non faccio diagnosi.": "Because your shoulder is sensitive I added light work for the rotator cuff and the rear deltoids. It does not treat the pain: if it doesn't go away, see a doctor or a physiotherapist. I am not a doctor and I do not diagnose.",
 "da fare nell’ampiezza che non fa male": "done only in the range that does not hurt",
 "da fare con discesa lenta e profondità che non fa male": "with a slow lowering and a depth that does not hurt",
-"da fare con la schiena ferma e un carico che non fa male": "with a still back and a load that does not hurt"
+"da fare con la schiena ferma e un carico che non fa male": "with a still back and a load that does not hurt",
+"Partenza bassa voluta: impari il movimento": "Low start on purpose: you learn the movement",
+"Carichi di partenza bassi di proposito: le prime sedute servono a imparare il movimento.": "Starting loads are low on purpose: the first sessions are for learning the movement.",
+"Hai già segnato «Gravidanza o parto recente»: il coach resta prudente e la bandiera si toglie solo in Opzioni › Il coach, non da questo questionario.": "You have already marked «Pregnancy or recent childbirth»: the coach stays careful and the flag can only be turned off in Options › The coach, not from this questionnaire.",
+"(modalita prudente)": "(careful mode)"
 };

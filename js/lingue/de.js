@@ -2760,7 +2760,7 @@ window.I18N["de"] = {
 "Lavoro o esami sotto pressione": "Arbeit oder Prüfungen unter Druck",
 "Con molto stress il recupero passa da 48 a 96 ore (Stults-Kolehmainen 2014) e la forza cresce meno (Bartholomew 2008): meno serie, stessi carichi, niente tecniche intense.": "Bei viel Stress dauert die Erholung 96 statt 48 Stunden (Stults-Kolehmainen 2014) und die Kraft wächst weniger (Bartholomew 2008): weniger Sätze, gleiche Gewichte, keine Intensitätstechniken.",
 "Fine di una relazione": "Ende einer Beziehung",
-"Dopo una rottura molti si allenano di più: va bene, ti dà routine e umore. Niente massimali per qualche settimana e occhio al sonno. Parlarne con qualcuno aiuta più di una serie in più.": "Nach einer Trennung trainieren viele mehr: Das ist okay, es gibt Routine und Stimmung. Ein paar Wochen keine Maximalversuche und auf den Schlaf achten. Mit jemandem zu reden hilft mehr als ein Extrasatz.",
+"Dopo una rottura molti si allenano di più: va bene, purché resti una routine sostenibile. Niente massimali per qualche settimana e occhio al sonno. Parlarne con qualcuno aiuta più di una serie in più.": "Nach einer Trennung trainieren viele mehr: Das ist okay, solange es eine tragbare Routine bleibt. Ein paar Wochen keine Maximalversuche und auf den Schlaf achten. Mit jemandem zu reden hilft mehr als ein Extrasatz.",
 "Un lutto": "Ein Trauerfall",
 "Nessuna pressione: sedute brevi quando te la senti, camminare conta. Il programma ti aspetta.": "Kein Druck: kurze Einheiten, wenn dir danach ist, Gehen zählt. Das Programm wartet auf dich.",
 "Periodo giù di morale": "Stimmungstief",
@@ -4250,5 +4250,9 @@ window.I18N["de"] = {
 "Con la spalla delicata ho aggiunto un lavoro leggero per la cuffia dei rotatori e per i deltoidi posteriori. Non cura il dolore: se non passa fatti vedere da un medico o da un fisioterapista. Non sono un medico e non faccio diagnosi.": "Weil deine Schulter empfindlich ist, habe ich leichte Arbeit für die Rotatorenmanschette und die hinteren Schultermuskeln ergänzt. Sie heilt den Schmerz nicht: Wenn er nicht vergeht, lass dich von einem Arzt oder einer Physiotherapeutin untersuchen. Ich bin kein Arzt und stelle keine Diagnosen.",
 "da fare nell’ampiezza che non fa male": "nur im schmerzfreien Bewegungsumfang",
 "da fare con discesa lenta e profondità che non fa male": "mit langsamem Absenken und einer Tiefe, die nicht wehtut",
-"da fare con la schiena ferma e un carico che non fa male": "mit ruhigem Rücken und einem Gewicht, das nicht wehtut"
+"da fare con la schiena ferma e un carico che non fa male": "mit ruhigem Rücken und einem Gewicht, das nicht wehtut",
+"Partenza bassa voluta: impari il movimento": "Bewusst niedriger Start: Du lernst die Bewegung",
+"Carichi di partenza bassi di proposito: le prime sedute servono a imparare il movimento.": "Die Startgewichte sind bewusst niedrig: Die ersten Einheiten dienen dazu, die Bewegung zu lernen.",
+"Hai già segnato «Gravidanza o parto recente»: il coach resta prudente e la bandiera si toglie solo in Opzioni › Il coach, non da questo questionario.": "Du hast «Schwangerschaft oder kürzliche Geburt» bereits markiert: Der Coach bleibt vorsichtig, und die Markierung lässt sich nur unter Optionen › Der Coach ausschalten, nicht in diesem Fragebogen.",
+"(modalita prudente)": "(vorsichtiger Modus)"
 };

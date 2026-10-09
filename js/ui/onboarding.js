@@ -141,7 +141,7 @@ window.startOnboarding = function(force) {
 function nuovoOnbData() {
   const salvato = (typeof getProfile === 'function' && getProfile()) || {};   /* P3-M: sesso, peso, altezza, salute e fastidi non si perdono rifacendo il questionario (decidono prudenza ed esclusioni) */
   return { inizio: undefined, goals: [], goal: null, level: null, days: null, minutes: null,
-           luogo: null, fastidi: (salvato.fastidi || []).slice(), sonno: null, attrezzi: null, parq: salvato.parq ? 'si' : null, gravidanza: salvato.gravidanza === true ? 'si' : null, priorita: [],
+           luogo: null, fastidi: (salvato.fastidi || []).slice(), sonno: null, attrezzi: null, parq: salvato.parq ? 'si' : null, gravidanza: null, priorita: [],
            sex: salvato.sex || null, age: ((typeof getProfile === 'function' && getProfile()) || {}).age || null, height: salvato.height || null, weight: salvato.weight || null, bia: null,   /* ETA-01: chi rifa il programma ha gia detto l eta */
            psico: Object.assign({}, ((typeof getProfile === 'function' && getProfile()) || {}).psico || {}),
            test: Object.assign({}, ((typeof getProfile === 'function' && getProfile()) || {}).test || {}),
@@ -258,7 +258,10 @@ const ONB_GRAVIDANZA = [
   { id: 'no', emoji: '\u2705', name: 'No', desc: 'altre ragioni' },
   { id: 'si', emoji: '\u{1F930}', name: 'Sì', desc: 'il coach accende «Gravidanza o parto recente»: resta prudente finché non la togli in Opzioni › Il coach' }
 ];
+/* A2 (revisione finale dell'onda 5): con la bandiera già accesa il questionario rifatto non fa più la domanda (rispondere «No» non la spegneva: resta accesa per gravidanzaDaRiportare) e dice dove si toglie */
+const TESTO_GRAVIDANZA_GIA_ACCESA = 'Hai già segnato «Gravidanza o parto recente»: il coach resta prudente e la bandiera si toglie solo in Opzioni › Il coach, non da questo questionario.';
 function htmlDomandaGravidanzaOnb() {
+  if (typeof inGravidanza === 'function' && typeof getProfile === 'function' && inGravidanza(getProfile())) return '<div class="pref-note" id="onb-gravidanza-accesa">' + TESTO_GRAVIDANZA_GIA_ACCESA + '</div>';
   if (onbData.parq !== 'si') return '';
   return '<div class="aw-sec">È per una gravidanza o un parto recente?</div>' + ONB_GRAVIDANZA.map(g => optHtml('gravidanza', g)).join('');
 }

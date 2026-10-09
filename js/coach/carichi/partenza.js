@@ -40,6 +40,9 @@ const PARAM_PARTENZA = {
    La chiave e il valore di stimato dell esercizio (la fonte della stima): regole-ricerca.js la legge cosi alla prima seduta. */
 const FRASE_PRIMA_ESPOSIZIONE = 'Oggi si parte leggeri apposta: non è un test. L’obiettivo è finire con 3-4 ripetizioni in più';
 const FRASE_PARTENZA_BASSA = 'Partenza bassa voluta: impari il movimento, poi si sale in fretta';
+/* B2 (revisione finale): «si sale in fretta» e una promessa che non vale per chi ha gli aumenti dimezzati (over 65, PAR-Q e gravidanza, sonno scarso) ne per i minorenni: la frase
+   per loro dice solo perche si parte bassi */
+const FRASE_PARTENZA_BASSA_CAUTA = 'Partenza bassa voluta: impari il movimento';
 const FRASI_FONTE_STIMA = {
   smm: 'Carico di partenza stimato dalla tua massa muscolare e dal tuo livello: prudente, si regola nelle prime sedute',
   ffm: 'Carico di partenza stimato dalla tua massa magra e dal tuo livello: prudente, si regola nelle prime sedute',
@@ -47,11 +50,17 @@ const FRASI_FONTE_STIMA = {
   storico: 'Carico di partenza stimato da quello che sollevi negli altri esercizi: si regola nelle prime sedute',
   tipico: 'Carico di partenza prudente per chi inizia: non conosco il tuo peso, si regola nelle prime sedute'
 };
-const MOTIVI_STIMA = {};
+const MOTIVI_STIMA = {}, MOTIVI_STIMA_CAUTI = {};
 Object.keys(FRASI_FONTE_STIMA).forEach(f => {
-  MOTIVI_STIMA[f] = FRASE_PRIMA_ESPOSIZIONE + ' • ' + FRASI_FONTE_STIMA[f];
+  MOTIVI_STIMA[f] = MOTIVI_STIMA_CAUTI[f] = FRASE_PRIMA_ESPOSIZIONE + ' • ' + FRASI_FONTE_STIMA[f];
   MOTIVI_STIMA[f + 'Bassa'] = FRASE_PARTENZA_BASSA + ' • ' + FRASE_PRIMA_ESPOSIZIONE;
+  MOTIVI_STIMA_CAUTI[f + 'Bassa'] = FRASE_PARTENZA_BASSA_CAUTA + ' • ' + FRASE_PRIMA_ESPOSIZIONE;
 });
+/* la nota che si mostra con una stima in seduta (coachNote del tipo «nuovo»): quella di chi ha gli aumenti dimezzati non promette di salire in fretta (B2) */
+function motivoStimaDi(fonte) {
+  const pc = profiloCoach();
+  return ((pc.prudente || pc.sonnoMale || pc.eta >= 65 || pc.minorenne) ? MOTIVI_STIMA_CAUTI : MOTIVI_STIMA)[fonte];
+}
 const NOTE_PROGRAMMA_STIMA = {
   smm: 'Carichi di partenza stimati dalla tua massa muscolare, dal livello e dall’età: prudenti, si regolano nelle prime sedute.',
   ffm: 'Carichi di partenza stimati dalla tua massa magra, dal livello e dall’età: prudenti, si regolano nelle prime sedute.',
@@ -60,6 +69,7 @@ const NOTE_PROGRAMMA_STIMA = {
   tipico: 'Carichi di partenza prudenti per chi inizia: non conosco il tuo peso, si regolano nelle prime sedute.'
 };
 const NOTA_PARTENZA_BASSA = 'Carichi di partenza bassi di proposito: le prime sedute servono a imparare il movimento, poi il coach sale in fretta.';
+const NOTA_PARTENZA_BASSA_CAUTA = 'Carichi di partenza bassi di proposito: le prime sedute servono a imparare il movimento.';   /* B2: senza la promessa per chi ha gli aumenti dimezzati */
 const NOTA_BARRA_VUOTA = 'Per ora basta il bilanciere vuoto: poche ripetizioni, tecnica pulita';
 const NOTA_SENZA_BARRA = 'Il bilanciere vuoto pesa 20 kg: per iniziare lo stesso movimento con i manubri o con la macchina';
 /* PAR-09: la voce del dizionario e «... a #-# ripetizioni pulite» (i numeri vengono da soglie-partenza.js, corpoLiberoPulite) */
@@ -213,7 +223,7 @@ window.stimaCaricoIniziale = function(nome, ctx) {
   const grezzo = m.weight * k * fEff;
   const bassa = fEff < 1;
   const out = { peso: arrotondaPartenza(m, grezzo, bassa ? 'giu' : undefined), k: k, fonte: fonte + (bassa ? 'Bassa' : ''), fD: fD, fEff: fEff };
-  out.motivo = MOTIVI_STIMA[out.fonte];
+  out.motivo = ((ctx && (ctx.cauto || ctx.eta >= 65 || (ctx.eta > 0 && ctx.eta < PARAM_ETA.maggiorenne))) ? MOTIVI_STIMA_CAUTI : MOTIVI_STIMA)[out.fonte];   /* B2: chi ha gli aumenti dimezzati non ha la promessa di salire in fretta */
   /* PAR-08: sotto 0,9 × la barra il bilanciere non si propone (solo con lo sconto: gli uomini restano come prima) */
   if (bassa && attrezzoDi(m.name) === 'bilanciere' && regolaAttiva('PAR-08')) {
     const barra = Math.min(sogliaPartenza('barraKg'), Number(m.weight) || sogliaPartenza('barraKg'));
@@ -336,7 +346,7 @@ function applicaPartenze(brief, sedute) {
       if (t < (Number(e.weight) || 0)) { e.weight = t; limitatiAiManubri = true; }
     }));
     if (stimati) note.push(NOTE_PROGRAMMA_STIMA[fonteStima]);
-    if (basse) note.push(NOTA_PARTENZA_BASSA);
+    if (basse) note.push(brief.chi && brief.chi.cauto ? NOTA_PARTENZA_BASSA_CAUTA : NOTA_PARTENZA_BASSA);   /* B2: cauto = over 65, PAR-Q (gravidanza compresa) o minorenne */
     if (barraVuota) note.push(NOTA_BARRA_VUOTA);
     if (senzaBarra) note.push(NOTA_SENZA_BARRA);
     if (facilitati) note.push(notaCorpoLiberoFacile());

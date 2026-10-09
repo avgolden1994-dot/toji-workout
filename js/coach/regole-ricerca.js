@@ -718,7 +718,7 @@ function carichiDelGiorno(day) {
     e.reps = t.reps;
     e.sets = t.sets;
     e.completedSets = Array.from({ length: t.sets }, () => ({ done: false, reps: t.reps, weight: t.weight, wasBerserk: false }));
-    e.coachNote = (e.stimato && t.tipo === 'nuovo' && MOTIVI_STIMA[e.stimato]) ? MOTIVI_STIMA[e.stimato] : t.motivo;
+    e.coachNote = (e.stimato && t.tipo === 'nuovo' && motivoStimaDi(e.stimato)) ? motivoStimaDi(e.stimato) : t.motivo;   /* B2: la nota di chi ha gli aumenti dimezzati non promette di salire in fretta */
     e.coachTipo = t.tipo;
     if (e.restBase === undefined) e.restBase = e.rest;
     e.rest = e.restBase + (t.piuPausa || 0);
