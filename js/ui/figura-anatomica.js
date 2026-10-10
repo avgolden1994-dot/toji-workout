@@ -141,7 +141,8 @@ function usageBadge(st) {
   if (!st.level) return '';
   if (st.level === 'today') return '<span class="use-tag today">\u2713 in scheda oggi</span>';
   const altri = st.days.filter(d => d !== currentDay);
-  const txt = altri.length === 1 ? 'gia ' + altri[0] : 'gia in ' + altri.length + ' giorni';
+  /* un giorno solo: "gia" e il nome del giorno in due pezzi di testo, cosi il nome si traduce da solo */
+  const txt = altri.length === 1 ? '<span>gia</span> <span>' + escapeHtml(altri[0]) + '</span>' : 'gia in ' + altri.length + ' giorni';
   return '<span class="use-tag week">\u21BB ' + txt + '</span>';
 }
 
@@ -195,7 +196,7 @@ function volLabel(v) {
   const lvl = volLevel(v.sets);
   if (!lvl) return '';
   const gg = v.days === 1 ? '1 giorno' : v.days + ' giorni';
-  const ind = v.indirette ? ' \u2022 +' + String(Math.round(v.indirette * 2) / 2).replace('.', ',') + ' indirette' : '';
+  const ind = v.indirette ? ' \u2022 +' + numeroLingua(Math.round(v.indirette * 2) / 2) + ' indirette' : '';
   /* oltre ~11 serie per muscolo nella stessa seduta il guadagno cala (Remmert 2025) */
   const tetto = v.maxSeduta > 11 ? ' \u2014 troppe in un giorno: dividile' : '';
   if (lvl === 'high') return v.sets + ' serie \u2022 ' + gg + ind + ' \u2014 carico alto' + tetto;
@@ -270,7 +271,7 @@ function renderGruppi() {
       const totalSets = t.exercises.reduce((s2, e) => s2 + e.sets, 0);
       const estMin = Math.round(durataSeduta(t.exercises));   /* CAS-05, B36 (INT-2b): la stessa stima del generatore, di Oggi e di Aggiungi allenamento */
       const etichetta = x.stato === 'done'
-        ? '\u2713 gia caricata su ' + getDayTitle(currentDay)
+        ? '\u2713 <span>gia caricata su</span> <span>' + escapeHtml(getDayTitle(currentDay)) + '</span>'   /* il nome del giorno si traduce da solo */
         : (x.stato === 'partial'
             ? '\u21BB ' + x.inSett + ' di ' + t.exercises.length + ' gia in settimana'
             : '\u2726 nuova');

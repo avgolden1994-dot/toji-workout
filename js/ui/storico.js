@@ -96,7 +96,7 @@ function renderProgressiTop() {
       '<span class="pg-bn"><small>Sett.</small>' + (b.i * 4 + 1) + '–' + (b.i * 4 + 4) + '</span>' +
       '<span class="aw-main"><span class="entry-name">' + d(b.da) + ' – ' + d(b.a) + (b.inCorso ? ' <span class="hs-tag on">In corso</span>' : '') + '</span>' +
       '<span class="aw-meta">' + r.sessioni + (r.sessioni === 1 ? ' allenamento' : ' allenamenti') +
-        (inc !== null ? ' • carichi <b class="' + (inc > 0 ? 'su' : (inc < 0 ? 'giu' : '')) + '">' + (inc > 0 ? '+' : '') + String(inc).replace('.', ',') + '%</b>' : '') + '</span></span>' +
+        (inc !== null ? ' • carichi <b class="' + (inc > 0 ? 'su' : (inc < 0 ? 'giu' : '')) + '">' + (inc > 0 ? '+' : '') + numeroLingua(inc) + '%</b>' : '') + '</span></span>' +
       '<span class="aw-path-go">›</span></button>';
   }).join('');
 }

@@ -44,7 +44,7 @@ function faRiferimento(sesso, eta) {
   for (let i = 1; i < t.length; i++) if (eta <= t[i][0]) { const a = t[i - 1], b = t[i]; return a[1] + (b[1] - a[1]) * (eta - a[0]) / (b[0] - a[0]); }
   return t[t.length - 1][1];
 }
-const _virg = (x, d) => x.toFixed(d || 1).replace('.', ',');   /* sempre con i decimali: la voce del dizionario e una sola (#,#) */
+const _virg = (x, d) => x.toFixed(d || 1).replace('.', ',');   /* sempre con i decimali e la virgola (il testo finisce nelle note salvate del programma): per il traduttore ogni numero e # */
 
 /* INT-01: cosa dicono la BIA appena inserita o l ultima salvata. livello = quante bandiere di prudenza (0, 1, 2) */
 window.statoBia = function(d, prof) {

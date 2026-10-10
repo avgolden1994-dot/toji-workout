@@ -98,13 +98,12 @@ function graficoFrequenzaHtml(periodo, opz) {
   opz = opz || {};
   const r = frequenzaSettimanale(periodo);
   if (r.vuoto) return (opz.testa || '') + '<div class="dv-empty">Nessun allenamento in questo periodo.</div>';
-  const nf = (v) => v.toLocaleString(LOCALE(), { maximumFractionDigits: 1 });
   return '<div class="stg-vista"' + (opz.id ? ' id="' + opz.id + '"' : '') + '>' + (opz.testa || '') + poligonoFrequenzaSvg(r.settimane) +
     '<div class="st-nota"><span>Ogni punto è una settimana, da lunedì a domenica.</span>' +
       (r.settimane.some(s => s.inCorso) ? ' <span>Il punto vuoto è la settimana in corso.</span>' : '') + '</div></div>' +
     (opz.senzaNumeri ? '' : '<div class="pg-kpis stg-kpis">' +
       '<div class="pg-kpi"><b data-no-tr>' + r.totale + '</b><span>allenamenti</span></div>' +
-      '<div class="pg-kpi"><b data-no-tr>' + nf(r.media) + '</b><span>media a settimana</span></div>' +
+      '<div class="pg-kpi"><b data-no-tr>' + numeroLingua(r.media) + '</b><span>media a settimana</span></div>' +
       '<div class="pg-kpi"><b data-no-tr>' + r.migliore + '</b><span>settimana migliore</span></div>' +
     '</div>');
 }

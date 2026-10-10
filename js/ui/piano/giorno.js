@@ -6,7 +6,8 @@
    ============================================================ */
 function syncBuildingLine(n) {
   const el = document.getElementById('group-day-current');
-  if (el) el.innerText = 'Stai costruendo: ' + getDayTitle(currentDay) + ' (' + n + ' esercizi)';
+  /* tre pezzi di testo separati: il nome del giorno (anche scritto da te) si traduce da solo e segue il cambio lingua */
+  if (el) el.innerHTML = '<span>Stai costruendo</span>: <span>' + escapeHtml(getDayTitle(currentDay)) + '</span> (<span>' + n + (n === 1 ? ' esercizio' : ' esercizi') + '</span>)';
 }
 
 /* ============================================================
@@ -157,9 +158,15 @@ function renderPlanMap() {
   const lvl = volLevel(v.sets);
   const data = loadData();
   const giorni = DAYS.filter(d => !isRestDay(d) && (data[d] || []).some(e => { const m = findExercise(e.name); return m && m.group === planMapGruppo; }));
+  /* sigla del giorno nella lingua scelta (il 1 gennaio 2024 era un lunedi); fuori dal traduttore perche e gia una data */
+  const breve = d => {
+    if (lingua() === 'it') return d.slice(0, 3);
+    const s = new Date(2024, 0, 1 + DAYS.indexOf(d)).toLocaleDateString(LOCALE(), { weekday: 'short' }).replace('.', '').slice(0, 3);
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  };
   const giudizio = !lvl ? 'Non lo alleni questa settimana' : lvl === 'start' ? 'Sotto le ' + VOL_MIN_UTILE + ' serie utili' : lvl === 'ok' ? 'Nel range utile' : 'Oltre le ' + VOL_MAX_UTILE + ' serie: rischi di non recuperare';
   info.innerHTML = '<b>' + MUSCLE_GROUPS[planMapGruppo].label + '</b> · ' + v.sets + ' serie<br><span>' + giudizio + '</span>' +
-    (giorni.length ? '<div class="pl-days">' + giorni.map(d => '<button onclick="planDayClick(\'' + d + '\')">' + escapeHtml(d.slice(0, 3)) + '</button>').join('') + '</div>' : '');
+    (giorni.length ? '<div class="pl-days">' + giorni.map(d => '<button onclick="planDayClick(\'' + d + '\')"><span data-no-tr>' + escapeHtml(breve(d)) + '</span></button>').join('') + '</div>' : '');
 }
 window.planMapSelect = function(g) {
   planMapGruppo = planMapGruppo === g ? null : g;

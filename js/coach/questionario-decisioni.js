@@ -275,10 +275,10 @@ function applicaDecisioni(dec, fb) {
           e.weight = pp.peso; e.stimato = pp.stimato ? pp.fonte : undefined;
           e.completedSets = e.completedSets.map(sx => Object.assign({}, sx, { weight: pp.peso, done: false }, cambiaMisura ? { reps: lib.reps } : {}));
         }
-        e.coachNote = 'Variante scelta dal coach: ' + senzaEmoji(d.esercizio) + ' dava dolore';
+        e.coachNote = 'Variante scelta dal coach: ' + senzaEmoji(d.esercizio) + ' \u2014 dava dolore';   /* testo salvato: il nome sta da solo tra due separatori (": " e " — "), cosi il traduttore lo trova quando il testo si mostra */
         e.coachTipo = 'scarico';
       }));
-      ag.esercizi[d.variante] = { nota: 'Variante scelta dal coach al posto di ' + senzaEmoji(d.esercizio), sedute: 1 };
+      ag.esercizi[d.variante] = { nota: 'Variante scelta dal coach al posto di: ' + senzaEmoji(d.esercizio), sedute: 1 };
     }
   });
   saveData(data);

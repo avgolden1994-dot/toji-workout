@@ -100,7 +100,7 @@ window.mcClearMonth = function() {
   });
   saveCal(cal);
   renderMonthCal();
-  showUndo(tolti + ' giorni tolti dal mese', () => { localStorage.setItem(calKey(), backup); renderMonthCal(); }, 8000);
+  showUndo(tolti + (tolti === 1 ? ' giorno tolto dal mese' : ' giorni tolti dal mese'), () => { localStorage.setItem(calKey(), backup); renderMonthCal(); }, 8000);
 };
 
 /* ---- Dettaglio di un giorno ---- */

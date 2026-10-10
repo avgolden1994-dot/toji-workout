@@ -1,1711 +1,1711 @@
 {
   "js/avvio.js": {
-    "mtime": 1791160530.8441637,
-    "seen": 1791187849.9967213,
+    "mtime": 1791366859.040223,
+    "seen": 1791635608.5082366,
     "ast_hash": "f96e7a2cf6c7f4bcf60e0a277d2c7e54",
     "semantic_hash": "f96e7a2cf6c7f4bcf60e0a277d2c7e54"
   },
   "js/coach/agente-consigli.js": {
-    "mtime": 1791623241.3974652,
-    "seen": 1791623280.4433346,
-    "ast_hash": "3aa7862da5c494fdb854f97381f131df",
+    "mtime": 1791635852.180281,
+    "seen": 1791637447.0946665,
+    "ast_hash": "581ee2a59ddd00498c52803b12feaf2c",
     "semantic_hash": ""
   },
   "js/coach/bia/lettore.js": {
-    "mtime": 1791623241.3974652,
-    "seen": 1791623280.4433453,
-    "ast_hash": "e2eb7bab60f1a41b6eb8ae16be833e90",
+    "mtime": 1791631172.6088316,
+    "seen": 1791635608.5082512,
+    "ast_hash": "a23c440dcfb6f9fbbd5632b2223c4e3b",
     "semantic_hash": ""
   },
   "js/coach/bia/opzioni.js": {
-    "mtime": 1791623241.3974652,
-    "seen": 1791623280.4433498,
+    "mtime": 1791629479.9568706,
+    "seen": 1791635608.508253,
     "ast_hash": "7d1f04ccd550e9548c63c269b624db1e",
     "semantic_hash": ""
   },
   "js/coach/biomeccanica.js": {
-    "mtime": 1791297275.3288422,
-    "seen": 1791297448.3045053,
+    "mtime": 1791366859.0443408,
+    "seen": 1791635608.5082574,
     "ast_hash": "eca7a48caba97c3d7dd8f7c93a22916f",
     "semantic_hash": ""
   },
   "js/coach/carichi/partenza.js": {
-    "mtime": 1791623241.4014652,
-    "seen": 1791623280.443526,
+    "mtime": 1791629479.9568706,
+    "seen": 1791635608.5082662,
     "ast_hash": "ea773422c0a48e8ecad5da0203cb5552",
     "semantic_hash": ""
   },
   "js/coach/carichi/progressivo.js": {
-    "mtime": 1791623241.4014652,
-    "seen": 1791623280.4435298,
+    "mtime": 1791629479.9568706,
+    "seen": 1791635608.508268,
     "ast_hash": "b1c69ed77c429576ea3aae8affc01706",
     "semantic_hash": ""
   },
   "js/coach/catalogo-regole.js": {
-    "mtime": 1791623241.4054651,
-    "seen": 1791623280.4436088,
+    "mtime": 1791636039.1927204,
+    "seen": 1791637447.0958931,
     "ast_hash": "e0c83ecc1dc83a3538de9c478b147578",
     "semantic_hash": ""
   },
   "js/coach/compone.js": {
-    "mtime": 1791623241.4054651,
-    "seen": 1791623280.4436128,
+    "mtime": 1791629479.9608705,
+    "seen": 1791635608.5082772,
     "ast_hash": "0d37689f1ebb7260f3a7adbe960ab991",
     "semantic_hash": ""
   },
   "js/coach/dolore-mattina.js": {
-    "mtime": 1791623241.4054651,
-    "seen": 1791623280.4436162,
+    "mtime": 1791636595.3407078,
+    "seen": 1791637447.0959628,
     "ast_hash": "c7fd515e8ea253ab7aaa81c68f1e9e0f",
     "semantic_hash": ""
   },
   "js/coach/esigenza.js": {
-    "mtime": 1791297275.332842,
-    "seen": 1791297448.3045232,
+    "mtime": 1791366859.044622,
+    "seen": 1791635608.5082805,
     "ast_hash": "d70e02a2829d24b0f3ce68f52bf5d24c",
     "semantic_hash": ""
   },
   "js/coach/intensita.js": {
-    "mtime": 1791623241.4054651,
-    "seen": 1791623280.4436831,
-    "ast_hash": "071b8ee8dd375d703f9e8efc541d3c31",
+    "mtime": 1791635852.1783335,
+    "seen": 1791637447.0959957,
+    "ast_hash": "5f45ae3f3d896b07448620fca2802579",
     "semantic_hash": ""
   },
   "js/coach/metodi-epoca-oro.js": {
-    "mtime": 1791160530.8496146,
-    "seen": 1791187849.9967427,
+    "mtime": 1791366859.044622,
+    "seen": 1791635608.5082831,
     "ast_hash": "ed0b8148f0aaf0ee48af571d201240eb",
     "semantic_hash": "ed0b8148f0aaf0ee48af571d201240eb"
   },
   "js/coach/metodi-momenti.js": {
-    "mtime": 1791623241.4054651,
-    "seen": 1791623280.4437492,
+    "mtime": 1791629479.9608705,
+    "seen": 1791635608.5082846,
     "ast_hash": "bc9a13a4faeca7db624853fe780336fd",
     "semantic_hash": ""
   },
   "js/coach/mi-sento-male.js": {
-    "mtime": 1791160530.8496146,
-    "seen": 1791187849.9967444,
+    "mtime": 1791366859.044622,
+    "seen": 1791635608.508286,
     "ast_hash": "bdff78f493333f97263002d336969506",
     "semantic_hash": "bdff78f493333f97263002d336969506"
   },
   "js/coach/pannello.js": {
-    "mtime": 1791160530.8496146,
-    "seen": 1791187849.9967456,
+    "mtime": 1791366859.044622,
+    "seen": 1791635608.508287,
     "ast_hash": "cf7d9491ce0a608b30d341d0382c493d",
     "semantic_hash": "cf7d9491ce0a608b30d341d0382c493d"
   },
   "js/coach/parametri.js": {
-    "mtime": 1791297275.332842,
-    "seen": 1791297448.3046207,
+    "mtime": 1791366859.044622,
+    "seen": 1791635608.5082936,
     "ast_hash": "84bd1c963928fcfd2840e48d8a3cbc31",
     "semantic_hash": ""
   },
   "js/coach/programma/alternative.js": {
-    "mtime": 1791623241.409465,
-    "seen": 1791623280.4439347,
+    "mtime": 1791629479.9608705,
+    "seen": 1791635608.508295,
     "ast_hash": "fa1b797ef6d7d087d0529aaebb709ccf",
     "semantic_hash": ""
   },
   "js/coach/programma/archivio.js": {
-    "mtime": 1791623241.409465,
-    "seen": 1791623280.4439383,
+    "mtime": 1791629479.9608705,
+    "seen": 1791635608.5082967,
     "ast_hash": "9d4538c8cac0b3d3fcd1cc5f1bdb3fea",
     "semantic_hash": ""
   },
   "js/coach/programma/motore.js": {
-    "mtime": 1791623241.413465,
-    "seen": 1791623280.4439492,
+    "mtime": 1791629479.9608705,
+    "seen": 1791635608.5083008,
     "ast_hash": "54a5d959be506078997ebe00c1c79108",
     "semantic_hash": ""
   },
   "js/coach/programma/ricette.js": {
-    "mtime": 1791623241.413465,
-    "seen": 1791623280.4439523,
+    "mtime": 1791629479.9648705,
+    "seen": 1791635608.508302,
     "ast_hash": "de55b46d7d4f1a5e7878627bcb0de0f1",
     "semantic_hash": ""
   },
   "js/coach/programma/schemi.js": {
-    "mtime": 1791623241.413465,
-    "seen": 1791623280.4439557,
+    "mtime": 1791366859.0476036,
+    "seen": 1791635608.5083034,
     "ast_hash": "e0adecfdcf3ed6138b9ab9376b1535af",
     "semantic_hash": ""
   },
   "js/coach/programma/struttura-pro.js": {
-    "mtime": 1791623241.413465,
-    "seen": 1791623280.4440377,
+    "mtime": 1791366859.0476036,
+    "seen": 1791635608.5083106,
     "ast_hash": "56a8f4e828b110a421db6515a24e7017",
     "semantic_hash": ""
   },
   "js/coach/prontezza.js": {
-    "mtime": 1791623241.413465,
-    "seen": 1791623280.4440408,
+    "mtime": 1791366859.0476036,
+    "seen": 1791635608.5083117,
     "ast_hash": "4121667a1b4f338e8396965992165b08",
     "semantic_hash": ""
   },
   "js/coach/psicologia.js": {
-    "mtime": 1791297275.3368423,
-    "seen": 1791297448.3046746,
+    "mtime": 1791366859.0476036,
+    "seen": 1791635608.5083132,
     "ast_hash": "5c496e8a358fd90b7b0c0c4626a92b7e",
     "semantic_hash": ""
   },
   "js/coach/questionario-decisioni.js": {
-    "mtime": 1791623241.413465,
-    "seen": 1791623280.4441047,
-    "ast_hash": "2c45f808fab9dff3a20e2e539f248dc8",
+    "mtime": 1791631170.0573173,
+    "seen": 1791635608.5083144,
+    "ast_hash": "89d910d1febb1b332e9e48d876a04cbd",
     "semantic_hash": ""
   },
   "js/coach/regole-nuove.js": {
-    "mtime": 1791623241.4174652,
-    "seen": 1791623280.444315,
+    "mtime": 1791629479.9648705,
+    "seen": 1791635608.5083225,
     "ast_hash": "a8d7688638e6a7370bcb620dfe7f4921",
     "semantic_hash": ""
   },
   "js/coach/regole-ricerca.js": {
-    "mtime": 1791623241.4174652,
-    "seen": 1791623280.444319,
+    "mtime": 1791629479.9648705,
+    "seen": 1791635608.5083237,
     "ast_hash": "ad5a5ee6b42321469f56f6ef21002396",
     "semantic_hash": ""
   },
   "js/coach/repertorio.js": {
-    "mtime": 1791623241.4214652,
-    "seen": 1791623280.4443226,
-    "ast_hash": "cbc37ec159f20bb679761f3eceb27662",
+    "mtime": 1791635852.1795385,
+    "seen": 1791637447.0967457,
+    "ast_hash": "6422e96edf3f1372240e58cf4e7f22c9",
     "semantic_hash": ""
   },
   "js/coach/stato.js": {
-    "mtime": 1791160530.8518329,
-    "seen": 1791187849.9967594,
+    "mtime": 1791366859.05165,
+    "seen": 1791635608.5083432,
     "ast_hash": "2277ead7d663cbf43406db274d17fecb",
     "semantic_hash": "2277ead7d663cbf43406db274d17fecb"
   },
   "js/coach/suggeritore.js": {
-    "mtime": 1791160530.8518329,
-    "seen": 1791187849.9967601,
+    "mtime": 1791366859.05165,
+    "seen": 1791635608.5083444,
     "ast_hash": "cab6ceb6ed45f14a7e421e9a226b2348",
     "semantic_hash": "cab6ceb6ed45f14a7e421e9a226b2348"
   },
   "js/core/audio-silenzioso.js": {
-    "mtime": 1791160530.8518329,
-    "seen": 1791187849.9967613,
+    "mtime": 1791366859.0518332,
+    "seen": 1791635608.5083551,
     "ast_hash": "ec62f5135c03673181163b60cfde439c",
     "semantic_hash": "ec62f5135c03673181163b60cfde439c"
   },
   "js/core/backup.js": {
-    "mtime": 1791297275.3448422,
-    "seen": 1791297448.3047936,
+    "mtime": 1791366859.0531905,
+    "seen": 1791635608.508356,
     "ast_hash": "1b5121321a90d37b5ea66b3187314ba3",
     "semantic_hash": ""
   },
   "js/core/consenso.js": {
-    "mtime": 1791160530.8544357,
-    "seen": 1791187849.9967632,
+    "mtime": 1791366859.0531905,
+    "seen": 1791635608.508357,
     "ast_hash": "6b9599862c3c785cf92e49ad13ecf038",
     "semantic_hash": "6b9599862c3c785cf92e49ad13ecf038"
   },
   "js/core/costanti.js": {
-    "mtime": 1791160530.8544357,
-    "seen": 1791187849.9967642,
+    "mtime": 1791366859.0531905,
+    "seen": 1791635608.5083582,
     "ast_hash": "cb7c9347011e0101af7d1514207a0df3",
     "semantic_hash": "cb7c9347011e0101af7d1514207a0df3"
   },
   "js/core/modalita.js": {
-    "mtime": 1791160530.8544357,
-    "seen": 1791187849.9967651,
+    "mtime": 1791366859.0531905,
+    "seen": 1791635608.5083601,
     "ast_hash": "2eefa8d4589060ecea2674e5b9570410",
     "semantic_hash": "2eefa8d4589060ecea2674e5b9570410"
   },
   "js/core/musica-altre-app.js": {
-    "mtime": 1791226793.2988567,
-    "seen": 1791297448.304891,
+    "mtime": 1791366859.0531905,
+    "seen": 1791635608.508361,
     "ast_hash": "e00d04ff0c6762cd892f155e80f25ee2",
     "semantic_hash": ""
   },
   "js/core/nativo.js": {
-    "mtime": 1791160530.8544357,
-    "seen": 1791187849.9967673,
+    "mtime": 1791366859.0531905,
+    "seen": 1791635608.5083623,
     "ast_hash": "d899d1b0a11d5a0c967601881172d6fd",
     "semantic_hash": "d899d1b0a11d5a0c967601881172d6fd"
   },
   "js/core/navigazione.js": {
-    "mtime": 1791160530.8544357,
-    "seen": 1791187849.9967685,
+    "mtime": 1791366859.0531905,
+    "seen": 1791635608.5083632,
     "ast_hash": "e500d775ca0127b6dc37952c79a853ab",
     "semantic_hash": "e500d775ca0127b6dc37952c79a853ab"
   },
   "js/core/ripristino-guida.js": {
-    "mtime": 1791160530.8544357,
-    "seen": 1791187849.9967694,
+    "mtime": 1791366859.0531905,
+    "seen": 1791635608.5083642,
     "ast_hash": "6fff75bfb9adf688e3216aa1e2c8b2b3",
     "semantic_hash": "6fff75bfb9adf688e3216aa1e2c8b2b3"
   },
   "js/core/schermo-acceso.js": {
-    "mtime": 1791160530.8544357,
-    "seen": 1791187849.9967706,
+    "mtime": 1791366859.0531905,
+    "seen": 1791635608.5083652,
     "ast_hash": "ec50f553f98f95c3cd1c89ee260ba8c6",
     "semantic_hash": "ec50f553f98f95c3cd1c89ee260ba8c6"
   },
   "js/core/service-worker.js": {
-    "mtime": 1791160530.8544357,
-    "seen": 1791187849.9967716,
+    "mtime": 1791366859.0531905,
+    "seen": 1791635608.508366,
     "ast_hash": "1d4598345dfb68624cf083fcb0cf298b",
     "semantic_hash": "1d4598345dfb68624cf083fcb0cf298b"
   },
   "js/core/stato-condiviso.js": {
-    "mtime": 1791226793.2988567,
-    "seen": 1791297448.305042,
+    "mtime": 1791366859.0531905,
+    "seen": 1791635608.508367,
     "ast_hash": "c7a58d8501d90106e4a8a2e2d7428bd4",
     "semantic_hash": ""
   },
   "js/core/storage.js": {
-    "mtime": 1791297275.3448422,
-    "seen": 1791297448.3050435,
+    "mtime": 1791366859.0531905,
+    "seen": 1791635608.508368,
     "ast_hash": "ddb3e8a5709c3ef27a6e9cb19a3e28d0",
     "semantic_hash": ""
   },
   "js/core/utility.js": {
-    "mtime": 1791226793.2988567,
-    "seen": 1791297448.3050454,
-    "ast_hash": "57bdfa1df4c5df34e4b7c517680e17ea",
+    "mtime": 1791635814.9407256,
+    "seen": 1791637447.0982254,
+    "ast_hash": "1d02c8679961a86e2a04b322b7c7d94e",
     "semantic_hash": ""
   },
   "js/dati/dettagli-esercizi.js": {
-    "mtime": 1791623241.429465,
-    "seen": 1791623280.445801,
+    "mtime": 1791366859.054167,
+    "seen": 1791635608.5083718,
     "ast_hash": "9c7053953fa33d6435f0f5c9ceaed725",
     "semantic_hash": ""
   },
   "js/dati/disegni-esercizi.js": {
-    "mtime": 1791226793.2988567,
-    "seen": 1791297448.305049,
+    "mtime": 1791366859.054167,
+    "seen": 1791635608.5083728,
     "ast_hash": "acd2d3e8de9563f16cbabcc89aa2e528",
     "semantic_hash": ""
   },
   "js/dati/libreria-esercizi.js": {
-    "mtime": 1791623241.429465,
-    "seen": 1791623280.4458675,
+    "mtime": 1791366859.054167,
+    "seen": 1791635608.5083737,
     "ast_hash": "faf26cd449dab33f30c3c4d1863787f7",
     "semantic_hash": ""
   },
   "js/dati/scheda-unica.js": {
-    "mtime": 1791160530.8565109,
-    "seen": 1791187849.9967787,
+    "mtime": 1791366859.054167,
+    "seen": 1791635608.5083747,
     "ast_hash": "177d174bfa854229c9a26d8f645c9376",
     "semantic_hash": "177d174bfa854229c9a26d8f645c9376"
   },
   "js/dati/schede-epoca-oro.js": {
-    "mtime": 1791160530.8565109,
-    "seen": 1791187849.9967797,
+    "mtime": 1791366859.054167,
+    "seen": 1791635608.508376,
     "ast_hash": "51cedf3c1b4c01af89e0d7bac7896b08",
     "semantic_hash": "51cedf3c1b4c01af89e0d7bac7896b08"
   },
   "js/dati/schede-pronte.js": {
-    "mtime": 1791160530.8565109,
-    "seen": 1791187849.9967809,
+    "mtime": 1791366859.054167,
+    "seen": 1791635608.5083768,
     "ast_hash": "75d20cdc3fc03a9d5b489b3a77ad487e",
     "semantic_hash": "75d20cdc3fc03a9d5b489b3a77ad487e"
   },
   "js/dati/schede-tecniche.js": {
-    "mtime": 1791623241.429465,
-    "seen": 1791623280.446048,
+    "mtime": 1791366859.054167,
+    "seen": 1791635608.5083776,
     "ast_hash": "46b039d6ba3d9a99cbf9ded62448d459",
     "semantic_hash": ""
   },
   "js/dati/schede-varianti.js": {
-    "mtime": 1791226793.2988567,
-    "seen": 1791297448.3051398,
+    "mtime": 1791366859.056223,
+    "seen": 1791635608.5083785,
     "ast_hash": "51dde661143e4f1198d2cacde12cccdb",
     "semantic_hash": ""
   },
   "js/lingue/avvio-traduttore.js": {
-    "mtime": 1791160530.8565109,
-    "seen": 1791187849.9967842,
+    "mtime": 1791366859.056223,
+    "seen": 1791635608.5083797,
     "ast_hash": "472603cb0f41a1e3705f568e81731a10",
     "semantic_hash": "472603cb0f41a1e3705f568e81731a10"
   },
   "js/lingue/de.js": {
-    "mtime": 1791623241.433465,
-    "seen": 1791623280.446229,
-    "ast_hash": "021fb8eb6477266f04411f82d5b85d41",
+    "mtime": 1791636026.2807207,
+    "seen": 1791637447.098482,
+    "ast_hash": "02f18accda0e21c84308c4e962ef6c3e",
     "semantic_hash": ""
   },
   "js/lingue/en.js": {
-    "mtime": 1791623241.4374652,
-    "seen": 1791623280.4462328,
-    "ast_hash": "ecd43ec2367d450d05d4c0344e63068f",
+    "mtime": 1791636026.2727208,
+    "seen": 1791637447.0984843,
+    "ast_hash": "5178fe8dad91e2dbe60ad4feaf3dc48b",
     "semantic_hash": ""
   },
   "js/lingue/es.js": {
-    "mtime": 1791623241.4414651,
-    "seen": 1791623280.4462364,
-    "ast_hash": "9335abe7bcab6981f8197bf2528253f2",
+    "mtime": 1791634710.268751,
+    "seen": 1791635608.508383,
+    "ast_hash": "b27e12d86503a66650885d78d4f679f9",
     "semantic_hash": ""
   },
   "js/lingue/traduttore.js": {
-    "mtime": 1791623241.4414651,
-    "seen": 1791623280.4462402,
-    "ast_hash": "ff8a4eeedea05a811fb41a7603423225",
+    "mtime": 1791630973.0568364,
+    "seen": 1791635608.5083842,
+    "ast_hash": "5bdf8c0f2d2b06fe7c5cbe7367e91bd2",
     "semantic_hash": ""
   },
   "js/ui/allenamento/cedimento-canzone.js": {
-    "mtime": 1791226793.3148568,
-    "seen": 1791297448.3052013,
+    "mtime": 1791366859.1175914,
+    "seen": 1791635608.508386,
     "ast_hash": "bd016bb89c6bd73d8c4b126d93cd7141",
     "semantic_hash": ""
   },
   "js/ui/allenamento/cedimento.js": {
-    "mtime": 1791226793.3148568,
-    "seen": 1791297448.3052025,
+    "mtime": 1791366859.1177065,
+    "seen": 1791635608.508387,
     "ast_hash": "20000aa9d9ef1254fdcac0118e137847",
     "semantic_hash": ""
   },
   "js/ui/allenamento/macchinario-occupato.js": {
-    "mtime": 1791623241.445465,
-    "seen": 1791623280.446398,
+    "mtime": 1791629479.9848704,
+    "seen": 1791635608.508388,
     "ast_hash": "6b541af1b777ada63b5ee6853a9889ed",
     "semantic_hash": ""
   },
   "js/ui/allenamento/seduta.js": {
-    "mtime": 1791297275.3648422,
-    "seen": 1791297448.305205,
-    "ast_hash": "d02b71875786e8b3e9b88de6b907754c",
+    "mtime": 1791635878.2035038,
+    "seen": 1791637447.0986261,
+    "ast_hash": "a5de0719add2aafcc5ef5203e1549be2",
     "semantic_hash": ""
   },
   "js/ui/allenamento/sessione.js": {
-    "mtime": 1791226793.3148568,
-    "seen": 1791297448.3052065,
-    "ast_hash": "533a1195391a36a66f476e208fa0cc68",
+    "mtime": 1791631094.2756772,
+    "seen": 1791635608.5083904,
+    "ast_hash": "917b7c83621acdcac14fb83c45abae89",
     "semantic_hash": ""
   },
   "js/ui/allenamento/termina-e-cardio.js": {
-    "mtime": 1791623241.445465,
-    "seen": 1791623280.4465408,
+    "mtime": 1791366859.1177065,
+    "seen": 1791635608.5083916,
     "ast_hash": "acf0fcea6d360a08783bfd3647e2048e",
     "semantic_hash": ""
   },
   "js/ui/allenamento/timer-pannello.js": {
-    "mtime": 1791226793.3148568,
-    "seen": 1791297448.3052096,
+    "mtime": 1791366859.1177065,
+    "seen": 1791635608.508393,
     "ast_hash": "5dfb2118ab87877a6bfdbb968e9ba41b",
     "semantic_hash": ""
   },
   "js/ui/allenamento/timer-recupero.js": {
-    "mtime": 1791160530.8737702,
-    "seen": 1791187849.996803,
+    "mtime": 1791366859.1177065,
+    "seen": 1791635608.5083942,
     "ast_hash": "411dbf54a0bd39cc7acd43057695e22d",
     "semantic_hash": "411dbf54a0bd39cc7acd43057695e22d"
   },
   "js/ui/annulla.js": {
-    "mtime": 1791160530.8737702,
-    "seen": 1791187849.996804,
+    "mtime": 1791366859.1177065,
+    "seen": 1791635608.508395,
     "ast_hash": "e0caa306b0697156b6b18cc1a4600ddf",
     "semantic_hash": "e0caa306b0697156b6b18cc1a4600ddf"
   },
   "js/ui/calendario/copia-settimana.js": {
-    "mtime": 1791160530.8737702,
-    "seen": 1791187849.9968054,
-    "ast_hash": "dc8f401958080881058bfb9676d54f04",
-    "semantic_hash": "dc8f401958080881058bfb9676d54f04"
+    "mtime": 1791630898.8688326,
+    "seen": 1791635608.5083964,
+    "ast_hash": "c1c091bec0d9f0469e467b42d90a19da",
+    "semantic_hash": ""
   },
   "js/ui/calendario/gruppi.js": {
-    "mtime": 1791160530.875351,
-    "seen": 1791187849.9968064,
+    "mtime": 1791366859.1187758,
+    "seen": 1791635608.5083973,
     "ast_hash": "8c7b65fa13c93cbe8f8cc4b56ba9cf50",
     "semantic_hash": "8c7b65fa13c93cbe8f8cc4b56ba9cf50"
   },
   "js/ui/calendario/mese.js": {
-    "mtime": 1791160530.875351,
-    "seen": 1791187849.996808,
+    "mtime": 1791366859.1187758,
+    "seen": 1791635608.5083985,
     "ast_hash": "0233bdd56dd315158b89cea17ebce4b2",
     "semantic_hash": "0233bdd56dd315158b89cea17ebce4b2"
   },
   "js/ui/calendario/scambio.js": {
-    "mtime": 1791160530.875351,
-    "seen": 1791187849.996809,
+    "mtime": 1791366859.1187758,
+    "seen": 1791635608.5083997,
     "ast_hash": "99bb79cb4a450f0831e3a8e6a3bc419c",
     "semantic_hash": "99bb79cb4a450f0831e3a8e6a3bc419c"
   },
   "js/ui/elenco-esercizi.js": {
-    "mtime": 1791160530.875351,
-    "seen": 1791187849.9968102,
+    "mtime": 1791366859.1187758,
+    "seen": 1791635608.5084014,
     "ast_hash": "6b2146fbae5eea8c63f23cdd6debcb42",
     "semantic_hash": "6b2146fbae5eea8c63f23cdd6debcb42"
   },
   "js/ui/esporta-ics.js": {
-    "mtime": 1791160530.875351,
-    "seen": 1791187849.996811,
-    "ast_hash": "dd672badeb36662cdc93f10f4b8202ee",
-    "semantic_hash": "dd672badeb36662cdc93f10f4b8202ee"
+    "mtime": 1791630977.3145006,
+    "seen": 1791635608.5084023,
+    "ast_hash": "a430f3c27a9c8fc7648e70d2efb377e0",
+    "semantic_hash": ""
   },
   "js/ui/figura-anatomica.js": {
-    "mtime": 1791297275.3648422,
-    "seen": 1791297448.3055732,
-    "ast_hash": "45ae00a9e3e031effaca747a04cc48e2",
+    "mtime": 1791635914.8184144,
+    "seen": 1791637447.099007,
+    "ast_hash": "f7f8ce2c9fd0a7f70c189d235e79b14b",
     "semantic_hash": ""
   },
   "js/ui/fogli.js": {
-    "mtime": 1791160530.875351,
-    "seen": 1791187849.996813,
+    "mtime": 1791366859.1187758,
+    "seen": 1791635608.5084054,
     "ast_hash": "4b6d886e995645992a7660529d28a6b7",
     "semantic_hash": "4b6d886e995645992a7660529d28a6b7"
   },
   "js/ui/gesti.js": {
-    "mtime": 1791160530.875351,
-    "seen": 1791187849.9968138,
+    "mtime": 1791366859.1187758,
+    "seen": 1791635608.5084069,
     "ast_hash": "b401d8fdb21c29c5d552ee7c961fe9bd",
     "semantic_hash": "b401d8fdb21c29c5d552ee7c961fe9bd"
   },
   "js/ui/gruppi-muscolari.js": {
-    "mtime": 1791160530.875351,
-    "seen": 1791187849.996815,
-    "ast_hash": "fa658b8228ffe9be50a568eb7220814b",
-    "semantic_hash": "fa658b8228ffe9be50a568eb7220814b"
+    "mtime": 1791631093.1878226,
+    "seen": 1791635608.508408,
+    "ast_hash": "9a7f74227595b94c3e9deb9e15784d0c",
+    "semantic_hash": ""
   },
   "js/ui/guida-interattiva.js": {
-    "mtime": 1791297275.3648422,
-    "seen": 1791297448.305662,
+    "mtime": 1791366859.1187758,
+    "seen": 1791635608.5084095,
     "ast_hash": "d9d5ce70fb5057e768cf47c2eef9f29b",
     "semantic_hash": ""
   },
   "js/ui/importa-csv.js": {
-    "mtime": 1791226793.3148568,
-    "seen": 1791297448.3056633,
+    "mtime": 1791366859.1187758,
+    "seen": 1791635608.508411,
     "ast_hash": "af4cc995a48c657abd9620dae035b7a8",
     "semantic_hash": ""
   },
   "js/ui/importa-progressi.js": {
-    "mtime": 1791160530.875351,
-    "seen": 1791187849.9968185,
-    "ast_hash": "df291945e55dec6a5264ae2f2f8f3732",
-    "semantic_hash": "df291945e55dec6a5264ae2f2f8f3732"
+    "mtime": 1791635914.8188765,
+    "seen": 1791637447.0992248,
+    "ast_hash": "4e973d7a912cfca262673a91b0dfe682",
+    "semantic_hash": ""
   },
   "js/ui/lavoro-cronometro.js": {
-    "mtime": 1791226793.3148568,
-    "seen": 1791297448.3056934,
+    "mtime": 1791366859.1187758,
+    "seen": 1791635608.5084128,
     "ast_hash": "331aa4e3a3648b7a1724f812ee759022",
     "semantic_hash": ""
   },
   "js/ui/menu-settimana.js": {
-    "mtime": 1791160530.875351,
-    "seen": 1791187849.9968204,
-    "ast_hash": "152c2c72e650b61484d6448834a5ae47",
-    "semantic_hash": "152c2c72e650b61484d6448834a5ae47"
+    "mtime": 1791630907.8865385,
+    "seen": 1791635608.5084143,
+    "ast_hash": "3b80a4c1c1583c0f6d648a7f49ebdfb5",
+    "semantic_hash": ""
   },
   "js/ui/musica/lettore-fisso.js": {
-    "mtime": 1791226793.3188567,
-    "seen": 1791297448.305722,
+    "mtime": 1791366859.1187758,
+    "seen": 1791635608.5084152,
     "ast_hash": "4cc5640340da4a3f2a027e4fe2dd5558",
     "semantic_hash": ""
   },
   "js/ui/musica/mp3-locale.js": {
-    "mtime": 1791226793.3188567,
-    "seen": 1791297448.3057237,
+    "mtime": 1791630854.471405,
+    "seen": 1791635608.508416,
     "ast_hash": "ac43c11a1f426fe2a9624c0ee9d20595",
     "semantic_hash": ""
   },
   "js/ui/musica/player-web.js": {
-    "mtime": 1791226793.3188567,
-    "seen": 1791297448.3057246,
-    "ast_hash": "2775a674b06b1f4a9b82ecaa618899de",
+    "mtime": 1791635979.6752899,
+    "seen": 1791637447.099385,
+    "ast_hash": "ba540a06868b96f9b2c3fcc3ca01071c",
     "semantic_hash": ""
   },
   "js/ui/oggi.js": {
-    "mtime": 1791623241.445465,
-    "seen": 1791623280.4479504,
-    "ast_hash": "03da9867e16745628d04db16981a9083",
+    "mtime": 1791630876.341686,
+    "seen": 1791635608.508418,
+    "ast_hash": "012a718a0ce18618028b7f0f4adc86e5",
     "semantic_hash": ""
   },
   "js/ui/onboarding-risultato.js": {
-    "mtime": 1791623241.445465,
-    "seen": 1791623280.4479547,
-    "ast_hash": "3742497bdc7da8dc811f1c59d99a188d",
+    "mtime": 1791635865.2278845,
+    "seen": 1791637447.0994217,
+    "ast_hash": "71a0402804c932ea73b29e45b960bd07",
     "semantic_hash": ""
   },
   "js/ui/onboarding.js": {
-    "mtime": 1791623241.445465,
-    "seen": 1791623280.447958,
+    "mtime": 1791629479.9848704,
+    "seen": 1791635608.50842,
     "ast_hash": "405b809d57e2f6b13b4704b2e43d8c2d",
     "semantic_hash": ""
   },
   "js/ui/opzioni/il-coach.js": {
-    "mtime": 1791623241.445465,
-    "seen": 1791623280.4479613,
+    "mtime": 1791629479.9848704,
+    "seen": 1791635608.508421,
     "ast_hash": "c2d104ac7167440cd7db35988ccd62a0",
     "semantic_hash": ""
   },
   "js/ui/opzioni/impostazioni.js": {
-    "mtime": 1791226793.3188567,
-    "seen": 1791297448.305731,
+    "mtime": 1791366859.1227705,
+    "seen": 1791635608.508422,
     "ast_hash": "13299e9e21981129163a40b6262e4d2e",
     "semantic_hash": ""
   },
   "js/ui/opzioni/stile-iphone.js": {
-    "mtime": 1791160530.8786116,
-    "seen": 1791187849.9969535,
+    "mtime": 1791366859.1227705,
+    "seen": 1791635608.5084226,
     "ast_hash": "15dfc8f307657903841765ffe4a5838b",
     "semantic_hash": "15dfc8f307657903841765ffe4a5838b"
   },
   "js/ui/piano/aggiungi-allenamento.js": {
-    "mtime": 1791297275.3688421,
-    "seen": 1791297448.305765,
-    "ast_hash": "b183802a25808e0a30b8591a8461c9ba",
+    "mtime": 1791631045.0956655,
+    "seen": 1791635608.508424,
+    "ast_hash": "eb764d4be2d8652a193fcabad772773c",
     "semantic_hash": ""
   },
   "js/ui/piano/giorno.js": {
-    "mtime": 1791297275.3688421,
-    "seen": 1791297448.305766,
-    "ast_hash": "4289ed3b6ad71bed2e5869563455b4e1",
+    "mtime": 1791631415.965662,
+    "seen": 1791635608.508425,
+    "ast_hash": "6dd046ddadc207bb3afe554a4ff69c47",
     "semantic_hash": ""
   },
   "js/ui/piano/schede-pronte.js": {
-    "mtime": 1791297275.3688421,
-    "seen": 1791297448.3057675,
-    "ast_hash": "d873aaeae116363c3292b0a27ff89de1",
+    "mtime": 1791631079.1500049,
+    "seen": 1791635608.508426,
+    "ast_hash": "840a1c3ea5e586ba3c299709d53cadf4",
     "semantic_hash": ""
   },
   "js/ui/piano/selezione-multipla.js": {
-    "mtime": 1791160530.8792431,
-    "seen": 1791187849.9969625,
-    "ast_hash": "c5d12996d5a1fe20ff421a82c2ef49f3",
-    "semantic_hash": "c5d12996d5a1fe20ff421a82c2ef49f3"
+    "mtime": 1791635721.9527278,
+    "seen": 1791637447.0996118,
+    "ast_hash": "8a5f04e97d8edc021767c06d576bec26",
+    "semantic_hash": ""
   },
   "js/ui/progressi/foto.js": {
-    "mtime": 1791160530.8792431,
-    "seen": 1791187849.9969645,
-    "ast_hash": "d77770c4d324a27cb5463b99f3d8c986",
-    "semantic_hash": "d77770c4d324a27cb5463b99f3d8c986"
+    "mtime": 1791631823.7983105,
+    "seen": 1791635608.5084279,
+    "ast_hash": "1fac9e054bb29397ea080447743e39dc",
+    "semantic_hash": ""
   },
   "js/ui/progressi/pagine.js": {
-    "mtime": 1791160530.879713,
-    "seen": 1791187849.996966,
-    "ast_hash": "9965902c46e7317df48ad91cdbf75e66",
-    "semantic_hash": "9965902c46e7317df48ad91cdbf75e66"
+    "mtime": 1791635878.2016847,
+    "seen": 1791637447.0996408,
+    "ast_hash": "d48dab09bd91aa397e8cfc8b09bd7db6",
+    "semantic_hash": ""
   },
   "js/ui/progressi/peso.js": {
-    "mtime": 1791623241.445465,
-    "seen": 1791623280.4485562,
-    "ast_hash": "40d825220187ee9e43eebf4dcf55d2ce",
+    "mtime": 1791635878.2027664,
+    "seen": 1791637447.099643,
+    "ast_hash": "db6880346bf266e588c82126cccf7f30",
     "semantic_hash": ""
   },
   "js/ui/progressi/riepilogo.js": {
-    "mtime": 1791160530.879713,
-    "seen": 1791187849.996969,
-    "ast_hash": "d399c9729d0415d153102fa37bf45a7b",
-    "semantic_hash": "d399c9729d0415d153102fa37bf45a7b"
+    "mtime": 1791635878.2043238,
+    "seen": 1791637447.0996447,
+    "ast_hash": "07bfeece140614609e4b65b6c9a938d3",
+    "semantic_hash": ""
   },
   "js/ui/riposo-settimane.js": {
-    "mtime": 1791160530.879713,
-    "seen": 1791187849.9969702,
-    "ast_hash": "27e0935de45222ffafd9fa883459ad7b",
-    "semantic_hash": "27e0935de45222ffafd9fa883459ad7b"
+    "mtime": 1791631115.464516,
+    "seen": 1791635608.5084317,
+    "ast_hash": "94a0a78b30de9e904363a69398e84b5b",
+    "semantic_hash": ""
   },
   "js/ui/scheda-quattro-sezioni.js": {
-    "mtime": 1791297275.3688421,
-    "seen": 1791297448.3059187,
-    "ast_hash": "93884b46a76bc991ab7592b1ae386719",
+    "mtime": 1791635914.8175316,
+    "seen": 1791637447.0996718,
+    "ast_hash": "79c8f47237b695745f1fe4f5a11ed39d",
     "semantic_hash": ""
   },
   "js/ui/schede-esercizio.js": {
-    "mtime": 1791160530.879713,
-    "seen": 1791187849.9969738,
+    "mtime": 1791366859.1238136,
+    "seen": 1791635608.5084336,
     "ast_hash": "c27275f8f0c04ca9ab2ad249e5e78d1c",
     "semantic_hash": "c27275f8f0c04ca9ab2ad249e5e78d1c"
   },
   "js/ui/seduta-libera.js": {
-    "mtime": 1791160530.879713,
-    "seen": 1791187849.9969754,
+    "mtime": 1791366859.1238136,
+    "seen": 1791635608.5084348,
     "ast_hash": "bea1b5cc5cd59650e424b8433fd70e3f",
     "semantic_hash": "bea1b5cc5cd59650e424b8433fd70e3f"
   },
   "js/ui/sessione-completata.js": {
-    "mtime": 1791297275.3688421,
-    "seen": 1791297448.3059728,
+    "mtime": 1791366859.1238136,
+    "seen": 1791635608.5084357,
     "ast_hash": "901a871218895173d2a7620514370ea3",
     "semantic_hash": ""
   },
   "js/ui/stampa-scheda.js": {
-    "mtime": 1791160530.879713,
-    "seen": 1791187849.9969785,
-    "ast_hash": "af137da8fdaafc960b3b1e2b80cac0bc",
-    "semantic_hash": "af137da8fdaafc960b3b1e2b80cac0bc"
+    "mtime": 1791635914.817845,
+    "seen": 1791637447.0997465,
+    "ast_hash": "78b0f6bb85a5a3e052f31e745017accc",
+    "semantic_hash": ""
   },
   "js/ui/statistiche-grafico.js": {
-    "mtime": 1791160530.879713,
-    "seen": 1791187849.9969807,
-    "ast_hash": "68e159f53071213807510ce91386da99",
-    "semantic_hash": "68e159f53071213807510ce91386da99"
+    "mtime": 1791635878.2040153,
+    "seen": 1791637447.0997481,
+    "ast_hash": "460fc90034923eee9d479bf366be81f6",
+    "semantic_hash": ""
   },
   "js/ui/statistiche.js": {
-    "mtime": 1791160530.879713,
-    "seen": 1791187849.9969819,
-    "ast_hash": "77e4c351a1f2c3c3ec013675dc446316",
-    "semantic_hash": "77e4c351a1f2c3c3ec013675dc446316"
+    "mtime": 1791635859.1727245,
+    "seen": 1791637447.09975,
+    "ast_hash": "ae0470f6692795737bdf24ac32a46c57",
+    "semantic_hash": ""
   },
   "js/ui/storico.js": {
-    "mtime": 1791160530.879713,
-    "seen": 1791187849.9969833,
-    "ast_hash": "5558e458ff5680d2afc7b241455c77f9",
-    "semantic_hash": "5558e458ff5680d2afc7b241455c77f9"
+    "mtime": 1791635914.8171077,
+    "seen": 1791637447.0997515,
+    "ast_hash": "9a502e519752380a96760e9a623a9e44",
+    "semantic_hash": ""
   },
   "manifest.json": {
-    "mtime": 1791160530.879713,
-    "seen": 1791187849.9969845,
+    "mtime": 1791366859.1238136,
+    "seen": 1791635608.5084405,
     "ast_hash": "56a386b6a7afca1b6aac30ae68681197",
     "semantic_hash": "56a386b6a7afca1b6aac30ae68681197"
   },
   "package.json": {
-    "mtime": 1791297275.3688421,
-    "seen": 1791297448.306103,
+    "mtime": 1791366859.1238136,
+    "seen": 1791635608.5084417,
     "ast_hash": "a57cf8b25a84296c963adad9e8dada63",
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1791623241.445465,
-    "seen": 1791623280.4494085,
-    "ast_hash": "4e58b4fe39fe6b293853c74e9a99e2a6",
+    "mtime": 1791636038.9327204,
+    "seen": 1791637447.0997941,
+    "ast_hash": "2a9898f30e7c82b3e3b33d510e7c03ba",
     "semantic_hash": ""
   },
   "tests/avvio.test.js": {
-    "mtime": 1791160530.879713,
-    "seen": 1791187849.9969912,
+    "mtime": 1791366859.1267016,
+    "seen": 1791635608.5084555,
     "ast_hash": "1438aec992ef078bc6a8ac79deecf194",
     "semantic_hash": "1438aec992ef078bc6a8ac79deecf194"
   },
   "tests/struttura.test.js": {
-    "mtime": 1791297275.5168421,
-    "seen": 1791297448.3061879,
+    "mtime": 1791366859.232223,
+    "seen": 1791635608.5085273,
     "ast_hash": "585101f9d70ed1da4e9606735bbe9c0c",
     "semantic_hash": ""
   },
   "tools/genera-catalogo.js": {
-    "mtime": 1791297275.5248423,
-    "seen": 1791297448.3061965,
+    "mtime": 1791366859.240223,
+    "seen": 1791635608.5085366,
     "ast_hash": "90ca7e4a795a1085eb75d87d4ef97ddd",
     "semantic_hash": ""
   },
   "tools/genera-sw.js": {
-    "mtime": 1791160530.8842447,
-    "seen": 1791187849.997011,
+    "mtime": 1791366859.240223,
+    "seen": 1791635608.5085385,
     "ast_hash": "355cebc51ff91f56313195a6d39d63ea",
     "semantic_hash": "355cebc51ff91f56313195a6d39d63ea"
   },
   "tools/indice.js": {
-    "mtime": 1791226793.3188567,
-    "seen": 1791297448.3062465,
+    "mtime": 1791366859.240223,
+    "seen": 1791635608.508542,
     "ast_hash": "92c8d3a8086e6f791a329330aa12c722",
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1791226793.2268567,
-    "seen": 1791297448.306254,
+    "mtime": 1791366858.6229124,
+    "seen": 1791635608.5085464,
     "ast_hash": "51722d1f44cdd38667cf322563fa0004",
     "semantic_hash": ""
   },
   "docs/ARCHITETTURA.md": {
-    "mtime": 1791297275.2608423,
-    "seen": 1791297448.306256,
+    "mtime": 1791366858.710819,
+    "seen": 1791635608.5085473,
     "ast_hash": "dd69787b592b8b8d1446eaa8f9d03e2d",
     "semantic_hash": ""
   },
   "docs/PIANO.md": {
-    "mtime": 1791623241.3814652,
-    "seen": 1791623280.4517748,
+    "mtime": 1791629479.9088705,
+    "seen": 1791635608.5085483,
     "ast_hash": "f400308119a7a747416c81598136209f",
     "semantic_hash": ""
   },
   "docs/SICUREZZA.md": {
-    "mtime": 1791297275.2608423,
-    "seen": 1791297448.3062606,
+    "mtime": 1791366858.7127862,
+    "seen": 1791635608.5085495,
     "ast_hash": "ba8ea76347ac5151a22433b9cc8665cd",
     "semantic_hash": ""
   },
   "docs/coach-mappa-regole.md": {
-    "mtime": 1791623241.3854651,
-    "seen": 1791623280.452443,
+    "mtime": 1791629479.9088705,
+    "seen": 1791635608.5085597,
     "ast_hash": "9460e243fc3bc27ffe01b9da8d4191be",
     "semantic_hash": ""
   },
   "docs/ricerca-struttura-e-intensita.md": {
-    "mtime": 1791160530.8415916,
-    "seen": 1791187849.9970741,
+    "mtime": 1791366858.736223,
+    "seen": 1791635608.5085862,
     "ast_hash": "64f4a071e9f2b6291220cd3a0ff4fc14",
     "semantic_hash": "64f4a071e9f2b6291220cd3a0ff4fc14"
   },
   "index.html": {
-    "mtime": 1791623241.3974652,
-    "seen": 1791623280.4538088,
+    "mtime": 1791629479.9568706,
+    "seen": 1791635608.5085883,
     "ast_hash": "3b77aaeb5968e4100e057a9bab2134e6",
     "semantic_hash": ""
   },
   "tests/cedimento.test.js": {
-    "mtime": 1791226793.3188567,
-    "seen": 1791297448.3061516,
+    "mtime": 1791366859.132223,
+    "seen": 1791635608.508465,
     "ast_hash": "1e61b731dd5cec77e0b1e3f9dfb18902",
     "semantic_hash": ""
   },
   "tests/muscoli.test.js": {
-    "mtime": 1791623241.581465,
-    "seen": 1791623280.4507346,
+    "mtime": 1791366859.228223,
+    "seen": 1791635608.5085015,
     "ast_hash": "351b84699fb4e93045b824e36cee93d7",
     "semantic_hash": ""
   },
   "CLAUDE.md": {
-    "mtime": 1791623241.3814652,
-    "seen": 1791623280.4516625,
+    "mtime": 1791629479.9088705,
+    "seen": 1791635608.5085454,
     "ast_hash": "313ce174b4231fe4be8c7b49153c781d",
     "semantic_hash": ""
   },
   "toji.html": {
-    "mtime": 1791160530.8819995,
-    "seen": 1791187849.9970775,
+    "mtime": 1791366859.236223,
+    "seen": 1791635608.5085893,
     "ast_hash": "776952df166649184dbb1f85c73623cf",
     "semantic_hash": ""
   },
   "tools/simboli.js": {
-    "mtime": 1791226793.3188567,
-    "seen": 1791297448.3062503,
+    "mtime": 1791366859.240223,
+    "seen": 1791635608.5085442,
     "ast_hash": "44379f09d1e0464dd727ef782b4ecb74",
     "semantic_hash": ""
   },
   "tools/grafo-nomi.json": {
-    "mtime": 1791623456.565457,
-    "seen": 1791623474.0974734,
+    "mtime": 1791629480.0168705,
+    "seen": 1791635608.5085402,
     "ast_hash": "df261cd93f1654807b6324f8fc29e326",
     "semantic_hash": ""
   },
   "tools/grafo.js": {
-    "mtime": 1791226793.3188567,
-    "seen": 1791297448.3062446,
+    "mtime": 1791366859.240223,
+    "seen": 1791635608.508541,
     "ast_hash": "7b4bbd654ef3685c37e37c12516ca9ee",
     "semantic_hash": ""
   },
   "docs/mappa-per-agenti.md": {
-    "mtime": 1791623241.389465,
-    "seen": 1791623280.4524567,
+    "mtime": 1791629479.9128704,
+    "seen": 1791635608.5085635,
     "ast_hash": "d320773950d5beed895e1ceed4063a49",
     "semantic_hash": ""
   },
   "tests/aiuto-app.js": {
-    "mtime": 1791297275.3728423,
-    "seen": 1791297448.3061059,
+    "mtime": 1791366859.124223,
+    "seen": 1791635608.5084443,
     "ast_hash": "69ea8d12aa3657cd3d7232319d4d216b",
     "semantic_hash": ""
   },
   "tests/fixture/programmi-v1/aggiusti-scarico.json": {
-    "mtime": 1791297275.5089455,
-    "seen": 1791297448.306153,
+    "mtime": 1791366859.2251954,
+    "seen": 1791635608.5084715,
     "ast_hash": "36237ce38ba3d5672cf2e7867105ed32",
     "semantic_hash": ""
   },
   "tests/fixture/programmi-v1/avanzato-6-giorni.json": {
-    "mtime": 1791297275.5103335,
-    "seen": 1791297448.3061543,
+    "mtime": 1791366859.226172,
+    "seen": 1791635608.508473,
     "ast_hash": "4ad89a2fde384f60ff3ef1b2b188e383",
     "semantic_hash": ""
   },
   "tests/fixture/programmi-v1/con-bia.json": {
-    "mtime": 1791297275.5103335,
-    "seen": 1791297448.3061564,
+    "mtime": 1791366859.226172,
+    "seen": 1791635608.5084736,
     "ast_hash": "1f8a99f3ef73eb9be4637c2bfadeba0f",
     "semantic_hash": ""
   },
   "tests/fixture/programmi-v1/intermedio-phul.json": {
-    "mtime": 1791297275.5128422,
-    "seen": 1791297448.3061576,
+    "mtime": 1791366859.226172,
+    "seen": 1791635608.5084748,
     "ast_hash": "a1c991fcf4a68572754a53b79e77daf7",
     "semantic_hash": ""
   },
   "tests/fixture/programmi-v1/over65-parq.json": {
-    "mtime": 1791297275.5128422,
-    "seen": 1791297448.306159,
+    "mtime": 1791366859.226172,
+    "seen": 1791635608.508476,
     "ast_hash": "d8bdddf09dc1b99c8a7d320065d8abf5",
     "semantic_hash": ""
   },
   "tests/fixture/programmi-v1/principiante-donna-casa.json": {
-    "mtime": 1791297275.5128422,
-    "seen": 1791297448.3061607,
+    "mtime": 1791366859.226172,
+    "seen": 1791635608.5084767,
     "ast_hash": "91316231feec412ec4924e3a6341a077",
     "semantic_hash": ""
   },
   "tests/migrazione-v1.test.js": {
-    "mtime": 1791297275.5168421,
-    "seen": 1791297448.3061764,
+    "mtime": 1791366859.228223,
+    "seen": 1791635608.5085003,
     "ast_hash": "42d3a10ccee35f2798c706cdbd258a6f",
     "semantic_hash": ""
   },
   "tools/cancello-collaudo.js": {
-    "mtime": 1791623241.593465,
-    "seen": 1791623280.4510741,
+    "mtime": 1791629480.0128706,
+    "seen": 1791635608.5085325,
     "ast_hash": "023aeb756e9cbb26fbc3773fb8ce01f4",
     "semantic_hash": ""
   },
   "tools/cancello-collaudo.json": {
-    "mtime": 1791623241.597465,
-    "seen": 1791623280.4510775,
+    "mtime": 1791629480.0128706,
+    "seen": 1791635608.5085335,
     "ast_hash": "37c3bddfd54c2ca46a0cd7c84ec50159",
     "semantic_hash": ""
   },
   "tools/collaudo-generatore.js": {
-    "mtime": 1791623241.6014652,
-    "seen": 1791623280.4510808,
+    "mtime": 1791629480.0128706,
+    "seen": 1791635608.5085342,
     "ast_hash": "3bf483621351df06c8b91b737bb2606e",
     "semantic_hash": ""
   },
   "tools/integra-onda.js": {
-    "mtime": 1791297275.5248423,
-    "seen": 1791297448.3062484,
+    "mtime": 1791366859.240223,
+    "seen": 1791635608.508543,
     "ast_hash": "c62b36c9e3384ad7d4f7a6b84ca30452",
     "semantic_hash": ""
   },
   "docs/checklist-appstore/01-decisioni.md": {
-    "mtime": 1791297275.2608423,
-    "seen": 1791297448.3062625,
+    "mtime": 1791366858.7127862,
+    "seen": 1791635608.5085504,
     "ast_hash": "20842b6d33a1825da534dfc6b535a6f2",
     "semantic_hash": ""
   },
   "docs/checklist-appstore/02-tecnica-ios.md": {
-    "mtime": 1791297275.2608423,
-    "seen": 1791297448.3062642,
+    "mtime": 1791366858.713409,
+    "seen": 1791635608.5085514,
     "ast_hash": "41db798aae7bb63e039b459b9b2f2433",
     "semantic_hash": ""
   },
   "docs/checklist-appstore/03-audio.md": {
-    "mtime": 1791226793.2345016,
-    "seen": 1791297448.306266,
+    "mtime": 1791366858.713409,
+    "seen": 1791635608.5085526,
     "ast_hash": "be662b384c5472737b1ab6fdbf28a453",
     "semantic_hash": ""
   },
   "docs/checklist-appstore/04-sicurezza-privacy.md": {
-    "mtime": 1791297275.2608423,
-    "seen": 1791297448.306268,
+    "mtime": 1791366858.713409,
+    "seen": 1791635608.5085535,
     "ast_hash": "f609ffa372a4793a2875443c7c2d32d9",
     "semantic_hash": ""
   },
   "docs/checklist-appstore/05-conformita-review.md": {
-    "mtime": 1791297275.2608423,
-    "seen": 1791297448.30627,
+    "mtime": 1791366858.713409,
+    "seen": 1791635608.5085545,
     "ast_hash": "6ba080dbb3bc021dcf0e4c78670cdb88",
     "semantic_hash": ""
   },
   "docs/checklist-appstore/06-qualita-test.md": {
-    "mtime": 1791297275.2608423,
-    "seen": 1791297448.3062713,
+    "mtime": 1791366858.713409,
+    "seen": 1791635608.5085554,
     "ast_hash": "9c4725684ba2b78d5e01eb35a557aaeb",
     "semantic_hash": ""
   },
   "docs/checklist-appstore/07-rilascio.md": {
-    "mtime": 1791297275.2608423,
-    "seen": 1791297448.306273,
+    "mtime": 1791366858.713409,
+    "seen": 1791635608.5085566,
     "ast_hash": "f7dbceba310ccb70274d855da20a775f",
     "semantic_hash": ""
   },
   "docs/checklist-appstore/08-monetizzazione.md": {
-    "mtime": 1791226793.2345016,
-    "seen": 1791297448.3062751,
+    "mtime": 1791366858.713409,
+    "seen": 1791635608.5085576,
     "ast_hash": "6ead329202ef792752b450cca84a20ec",
     "semantic_hash": ""
   },
   "docs/checklist-appstore/README.md": {
-    "mtime": 1791297275.2608423,
-    "seen": 1791297448.3062773,
+    "mtime": 1791366858.713409,
+    "seen": 1791635608.5085583,
     "ast_hash": "54223baa991b934ec12da590f938f311",
     "semantic_hash": ""
   },
   "docs/coach-v2-decisioni.md": {
-    "mtime": 1791623241.389465,
-    "seen": 1791623280.4524462,
+    "mtime": 1791629479.9128704,
+    "seen": 1791635608.5085607,
     "ast_hash": "8caa6de8d4c4f8adf0cb113971ca0fe5",
     "semantic_hash": ""
   },
   "docs/inventario-esercizi-immagini.md": {
-    "mtime": 1791623241.389465,
-    "seen": 1791623280.452453,
+    "mtime": 1791366858.716223,
+    "seen": 1791635608.5085623,
     "ast_hash": "ca7ed3b9e6f3021245ba658df6c52894",
     "semantic_hash": ""
   },
   "docs/metodo-illustrazioni-esercizi.md": {
-    "mtime": 1791226793.2345016,
-    "seen": 1791297448.3062882,
+    "mtime": 1791366858.720223,
+    "seen": 1791635608.5085645,
     "ast_hash": "ca2a77fa998a07049cf21e54ca1fd629",
     "semantic_hash": ""
   },
   "docs/piano-coach-v2.md": {
-    "mtime": 1791297275.2688422,
-    "seen": 1791297448.3062906,
+    "mtime": 1791366858.720223,
+    "seen": 1791635608.5085654,
     "ast_hash": "2f0fb6625524a0e519a37c26b9c225a0",
     "semantic_hash": ""
   },
   "docs/piano-lancio-appstore.md": {
-    "mtime": 1791297275.2688422,
-    "seen": 1791297448.3062928,
+    "mtime": 1791366858.720223,
+    "seen": 1791635608.5085669,
     "ast_hash": "872227fd9f24ba3682c8d78a8460ad61",
     "semantic_hash": ""
   },
   "docs/privacy-policy-bozza.md": {
-    "mtime": 1791297275.2688422,
-    "seen": 1791297448.3062947,
+    "mtime": 1791366858.720223,
+    "seen": 1791635608.5085678,
     "ast_hash": "d7c6bc9cad7ec856dfbdcdbf7bbb784e",
     "semantic_hash": ""
   },
   "docs/ricerca-algoritmi-carichi-e-app.md": {
-    "mtime": 1791297275.2688422,
-    "seen": 1791297448.306297,
+    "mtime": 1791366858.720223,
+    "seen": 1791635608.5085685,
     "ast_hash": "18c63eba80debc53f98976ec89da73f5",
     "semantic_hash": ""
   },
   "docs/ricerca-biomeccanica-esercizi.md": {
-    "mtime": 1791297275.2688422,
-    "seen": 1791297448.3062992,
+    "mtime": 1791366858.724223,
+    "seen": 1791635608.5085697,
     "ast_hash": "d0a709334e14a48a1b363c56da4ce055",
     "semantic_hash": ""
   },
   "docs/ricerca-cardio-nutrizione.md": {
-    "mtime": 1791297275.2728422,
-    "seen": 1791297448.306301,
+    "mtime": 1791366858.724223,
+    "seen": 1791635608.5085707,
     "ast_hash": "44c40bb86b658f661dcc633b104102e1",
     "semantic_hash": ""
   },
   "docs/ricerca-casa-poco-tempo.md": {
-    "mtime": 1791297275.2728422,
-    "seen": 1791297448.306303,
+    "mtime": 1791366858.724223,
+    "seen": 1791635608.5085716,
     "ast_hash": "caf1e61004085631b80987da97e09e4e",
     "semantic_hash": ""
   },
   "docs/ricerca-donne-carichi-iniziali.md": {
-    "mtime": 1791297275.2728422,
-    "seen": 1791297448.3063052,
+    "mtime": 1791366858.724223,
+    "seen": 1791635608.5085726,
     "ast_hash": "c6ccdf1da2b62a95444f4de9fc4f061f",
     "semantic_hash": ""
   },
   "docs/ricerca-fasce-di-eta.md": {
-    "mtime": 1791297275.2728422,
-    "seen": 1791297448.306307,
+    "mtime": 1791366858.724223,
+    "seen": 1791635608.5085738,
     "ast_hash": "d947df85f108c84c9780d80a9e557ab9",
     "semantic_hash": ""
   },
   "docs/ricerca-forza-progressione.md": {
-    "mtime": 1791297275.2728422,
-    "seen": 1791297448.3063087,
+    "mtime": 1791366858.724223,
+    "seen": 1791635608.5085745,
     "ast_hash": "2d1cf47f2ac409194d772c29d65c954c",
     "semantic_hash": ""
   },
   "docs/ricerca-ipertrofia-programmazione.md": {
-    "mtime": 1791297275.2728422,
-    "seen": 1791297448.306311,
+    "mtime": 1791366858.7282228,
+    "seen": 1791635608.5085757,
     "ast_hash": "c71a8547928e451438a2b44ebe61d9bc",
     "semantic_hash": ""
   },
   "docs/ricerca-mesocicli-periodizzazione-scarichi.md": {
-    "mtime": 1791297275.2728422,
-    "seen": 1791297448.306313,
+    "mtime": 1791366858.7282228,
+    "seen": 1791635608.5085769,
     "ast_hash": "79c88c8bcac27eadabeca976b40464f0",
     "semantic_hash": ""
   },
   "docs/ricerca-metodi-avanzati-intensita.md": {
-    "mtime": 1791297275.2728422,
-    "seen": 1791297448.3063147,
+    "mtime": 1791366858.7282228,
+    "seen": 1791635608.5085778,
     "ast_hash": "ffd9606c54819c995161dcc0bfc3db26",
     "semantic_hash": ""
   },
   "docs/ricerca-metodi-coach-pratici.md": {
-    "mtime": 1791297275.276842,
-    "seen": 1791297448.3063169,
+    "mtime": 1791366858.7282228,
+    "seen": 1791635608.5085788,
     "ast_hash": "4ef6d772aa1c84e31b87029b56e4b960",
     "semantic_hash": ""
   },
   "docs/ricerca-obiettivi-e-programmi.md": {
-    "mtime": 1791297275.276842,
-    "seen": 1791297448.306319,
+    "mtime": 1791366858.7282228,
+    "seen": 1791635608.5085797,
     "ast_hash": "c2e01c0b4459559f1dd0ba1cda5674d4",
     "semantic_hash": ""
   },
   "docs/ricerca-principianti-12-settimane.md": {
-    "mtime": 1791297275.276842,
-    "seen": 1791297448.306321,
+    "mtime": 1791366858.732223,
+    "seen": 1791635608.508581,
     "ast_hash": "81a2c65f5b4a5a6cafaa311e62b2ed0a",
     "semantic_hash": ""
   },
   "docs/ricerca-psicologia-aderenza.md": {
-    "mtime": 1791297275.276842,
-    "seen": 1791297448.306323,
+    "mtime": 1791366858.732223,
+    "seen": 1791635608.5085819,
     "ast_hash": "c28c1f251cc07013420cecae470e9d47",
     "semantic_hash": ""
   },
   "docs/ricerca-recupero-infortuni-popolazioni.md": {
-    "mtime": 1791297275.276842,
-    "seen": 1791297448.3063252,
+    "mtime": 1791366858.732223,
+    "seen": 1791635608.5085828,
     "ast_hash": "4cd4e662247f2b0b877b6ad986219fd7",
     "semantic_hash": ""
   },
   "docs/ricerca-riscaldamento-mobilita-prevenzione.md": {
-    "mtime": 1791297275.276842,
-    "seen": 1791297448.3063269,
+    "mtime": 1791366858.732223,
+    "seen": 1791635608.5085843,
     "ast_hash": "53baf1de39724340dfd0b78133cae755",
     "semantic_hash": ""
   },
   "docs/ricerca-specializzazione-punti-deboli.md": {
-    "mtime": 1791297275.276842,
-    "seen": 1791297448.3063295,
+    "mtime": 1791366858.736223,
+    "seen": 1791635608.5085852,
     "ast_hash": "8a3c504c7ae8f6678485f22cd6b2b9d3",
     "semantic_hash": ""
   },
   "tests/carichi-onda0.test.js": {
-    "mtime": 1791623241.449465,
-    "seen": 1791623280.4497411,
+    "mtime": 1791366859.132223,
+    "seen": 1791635608.5084624,
     "ast_hash": "ee79c6f0b72cea287593b35c8af37d09",
     "semantic_hash": ""
   },
   "tests/generatore-onda0.test.js": {
-    "mtime": 1791623241.577465,
-    "seen": 1791623280.4504259,
+    "mtime": 1791629480.0088704,
+    "seen": 1791635608.5084865,
     "ast_hash": "e3f21769494d053ea26f2aef0556546b",
     "semantic_hash": ""
   },
   "tests/integrazione-onda0.test.js": {
-    "mtime": 1791297275.5128422,
-    "seen": 1791297448.3061693,
+    "mtime": 1791366859.228223,
+    "seen": 1791635608.5084925,
     "ast_hash": "61abbac0a62a93ac16dbf49dda80c8bd",
     "semantic_hash": ""
   },
   "tests/intensita-onda0.test.js": {
-    "mtime": 1791623241.581465,
-    "seen": 1791623280.450567,
+    "mtime": 1791629480.0088704,
+    "seen": 1791635608.5084972,
     "ast_hash": "44c631bf9f9c7aa9074d5e6014194d80",
     "semantic_hash": ""
   },
   "tests/sicurezza-onda0.test.js": {
-    "mtime": 1791623241.5894651,
-    "seen": 1791623280.4508448,
+    "mtime": 1791629480.0128706,
+    "seen": 1791635608.508524,
     "ast_hash": "12129d2f70e6173fb3d31cabf35419e9",
     "semantic_hash": ""
   },
   "tests/generatore-onda0b.test.js": {
-    "mtime": 1791623241.577465,
-    "seen": 1791623280.4504302,
+    "mtime": 1791366859.228223,
+    "seen": 1791635608.5084875,
     "ast_hash": "f43d72d22f5fafb2fb597c1e33418641",
     "semantic_hash": ""
   },
   "js/coach/carichi/e1rm.js": {
-    "mtime": 1791297275.3288422,
-    "seen": 1791297448.304511,
+    "mtime": 1791366859.044622,
+    "seen": 1791635608.5082643,
     "ast_hash": "48b01b2ef68fed8735fe0b7fa5053b7a",
     "semantic_hash": ""
   },
   "js/coach/carichi/taratura.js": {
-    "mtime": 1791297275.3288422,
-    "seen": 1791297448.304517,
+    "mtime": 1791366859.044622,
+    "seen": 1791635608.5082731,
     "ast_hash": "75b593e281fd7b63ff1e19dd33c7399f",
     "semantic_hash": ""
   },
   "js/coach/programma/completamenti.js": {
-    "mtime": 1791623241.409465,
-    "seen": 1791623280.4439418,
+    "mtime": 1791629479.9608705,
+    "seen": 1791635608.5082984,
     "ast_hash": "c13fcb5e612af4e41dbb9cb29756a6df",
     "semantic_hash": ""
   },
   "js/coach/programma/mesociclo.js": {
-    "mtime": 1791623241.409465,
-    "seen": 1791623280.4439452,
+    "mtime": 1791629479.9608705,
+    "seen": 1791635608.5082998,
     "ast_hash": "e2101ba3901d0ada3c606805fdc5468e",
     "semantic_hash": ""
   },
   "js/coach/regia/brief.js": {
-    "mtime": 1791623241.4174652,
-    "seen": 1791623280.4441085,
+    "mtime": 1791366859.0476036,
+    "seen": 1791635608.5083156,
     "ast_hash": "e029a3ab7d40fdd6436f62d1dbf41863",
     "semantic_hash": ""
   },
   "js/coach/regia/fasi.js": {
-    "mtime": 1791623241.4174652,
-    "seen": 1791623280.4441113,
+    "mtime": 1791629479.9648705,
+    "seen": 1791635608.508317,
     "ast_hash": "86521e400c9eccb0564a08c67da6b094",
     "semantic_hash": ""
   },
   "js/coach/regia/genera.js": {
-    "mtime": 1791623241.4174652,
-    "seen": 1791623280.4441445,
+    "mtime": 1791629479.9648705,
+    "seen": 1791635608.5083187,
     "ast_hash": "780498ee83dc0540d30b146cc6a98bd5",
     "semantic_hash": ""
   },
   "js/coach/regia/perche.js": {
-    "mtime": 1791297275.3408484,
-    "seen": 1791297448.3046827,
+    "mtime": 1791366859.0496888,
+    "seen": 1791635608.5083203,
     "ast_hash": "a778db5709368abf9212724c5a521927",
     "semantic_hash": ""
   },
   "js/coach/regia/soglie-regia.js": {
-    "mtime": 1791297275.3408484,
-    "seen": 1791297448.3046844,
+    "mtime": 1791366859.0496888,
+    "seen": 1791635608.5083215,
     "ast_hash": "063df46020114d829ea0fae3b2cda1b4",
     "semantic_hash": ""
   },
   "js/coach/sicurezza/scarico.js": {
-    "mtime": 1791623241.4214652,
-    "seen": 1791623280.444333,
+    "mtime": 1791366859.0496888,
+    "seen": 1791635608.5083294,
     "ast_hash": "46aa9d630846c725298db741aa6f7fd4",
     "semantic_hash": ""
   },
   "js/coach/sicurezza/vincoli.js": {
-    "mtime": 1791623241.4214652,
-    "seen": 1791623280.4444294,
+    "mtime": 1791629479.9648705,
+    "seen": 1791635608.5083377,
     "ast_hash": "f6abafbbe4f04d6c96bd9df0b6509a0f",
     "semantic_hash": ""
   },
   "js/coach/volume/serie-ripetizioni.js": {
-    "mtime": 1791623241.4277287,
-    "seen": 1791623280.4445875,
+    "mtime": 1791366859.0518332,
+    "seen": 1791635608.5083466,
     "ast_hash": "6a560ae70d4cdd231c140c5414247224",
     "semantic_hash": ""
   },
   "js/coach/volume/tecniche.js": {
-    "mtime": 1791297275.3440523,
-    "seen": 1791297448.304759,
+    "mtime": 1791366859.0518332,
+    "seen": 1791635608.5083516,
     "ast_hash": "3f74643b845cc239bdf224d98d3303c0",
     "semantic_hash": ""
   },
   "js/coach/volume/tempo.js": {
-    "mtime": 1791623241.4277287,
-    "seen": 1791623280.444732,
+    "mtime": 1791366859.0518332,
+    "seen": 1791635608.5083525,
     "ast_hash": "c2c7c598d71081df7f48ce0a30df8fae",
     "semantic_hash": ""
   },
   "js/coach/volume/volume.js": {
-    "mtime": 1791623241.4277287,
-    "seen": 1791623280.4447348,
+    "mtime": 1791366859.0518332,
+    "seen": 1791635608.5083537,
     "ast_hash": "fa47c743268d31f24691de4da87554c0",
     "semantic_hash": ""
   },
   "js/dati/attributi-esercizi.js": {
-    "mtime": 1791623241.4277287,
-    "seen": 1791623280.4457972,
+    "mtime": 1791366859.0531905,
+    "seen": 1791635608.5083704,
     "ast_hash": "e47aa72573d6a6a32204dab88fc6d5aa",
     "semantic_hash": ""
   },
   "tests/aiuto-genera.js": {
-    "mtime": 1791297275.3728423,
-    "seen": 1791297448.3061085,
+    "mtime": 1791366859.1267016,
+    "seen": 1791635608.5084486,
     "ast_hash": "e30092300ae1fe3f5c7e507b4958d4a5",
     "semantic_hash": ""
   },
   "tests/attributi.test.js": {
-    "mtime": 1791623241.449465,
-    "seen": 1791623280.4496107,
+    "mtime": 1791366859.1267016,
+    "seen": 1791635608.5084543,
     "ast_hash": "875249303695860885e94eeea855562b",
     "semantic_hash": ""
   },
   "tests/carichi-golden.test.js": {
-    "mtime": 1791297275.3768423,
-    "seen": 1791297448.3061466,
+    "mtime": 1791366859.129746,
+    "seen": 1791635608.5084605,
     "ast_hash": "5dfaf56bf4a56704a7c6547a8630ff48",
     "semantic_hash": ""
   },
   "tests/catalogo.test.js": {
-    "mtime": 1791297275.3768423,
-    "seen": 1791297448.30615,
+    "mtime": 1791366859.132223,
+    "seen": 1791635608.5084636,
     "ast_hash": "f213e4a772e71b8da32115a33698fca6",
     "semantic_hash": ""
   },
   "tests/genera-golden.test.js": {
-    "mtime": 1791297275.5128422,
-    "seen": 1791297448.306162,
+    "mtime": 1791366859.228223,
+    "seen": 1791635608.5084841,
     "ast_hash": "12c4d63bcbb403dfaaf6c73ded79457d",
     "semantic_hash": ""
   },
   "tests/genera-stadi.test.js": {
-    "mtime": 1791623241.577465,
-    "seen": 1791623280.4504218,
+    "mtime": 1791366859.228223,
+    "seen": 1791635608.5084853,
     "ast_hash": "17b79505e48a60861ccc4b6ffaa5a3fc",
     "semantic_hash": ""
   },
   "tests/soglie.test.js": {
-    "mtime": 1791297275.5168421,
-    "seen": 1791297448.3061867,
+    "mtime": 1791366859.232223,
+    "seen": 1791635608.5085254,
     "ast_hash": "927a7e803b46d88bbbac3ea571ee1fb2",
     "semantic_hash": ""
   },
   "tools/elenco-soglie.js": {
-    "mtime": 1791297275.5248423,
-    "seen": 1791297448.3061955,
+    "mtime": 1791366859.239314,
+    "seen": 1791635608.5085356,
     "ast_hash": "0d8c75c4f6d41d300b6aceebd9de7e8e",
     "semantic_hash": ""
   },
   "docs/soglie-coach.md": {
-    "mtime": 1791623241.393465,
-    "seen": 1791623280.453805,
+    "mtime": 1791636039.4207203,
+    "seen": 1791637447.1033673,
     "ast_hash": "3c91a24aa0ad032f471eb929ae8ce38f",
     "semantic_hash": ""
   },
   "tests/senza-coach-ia.test.js": {
-    "mtime": 1791297275.5168421,
-    "seen": 1791297448.3061845,
+    "mtime": 1791366859.232223,
+    "seen": 1791635608.5085232,
     "ast_hash": "5d70ab8004f9f19622147bb430f55a6b",
     "semantic_hash": ""
   },
   "js/coach/carichi/calibrazione.js": {
-    "mtime": 1791623241.3974652,
-    "seen": 1791623280.443447,
+    "mtime": 1791629479.9568706,
+    "seen": 1791635608.5082617,
     "ast_hash": "e0e8dd4d524f4df4012d2b735b8ebd90",
     "semantic_hash": ""
   },
   "js/coach/carichi/soglie-partenza.js": {
-    "mtime": 1791623241.4014652,
-    "seen": 1791623280.4435334,
+    "mtime": 1791366859.044622,
+    "seen": 1791635608.50827,
     "ast_hash": "13e06da07cd76d8f306c8551a2fae08e",
     "semantic_hash": ""
   },
   "tests/aiuto-atleta.js": {
-    "mtime": 1791623241.449465,
-    "seen": 1791623280.4494853,
+    "mtime": 1791366859.1267016,
+    "seen": 1791635608.5084472,
     "ast_hash": "2e979f36c969b83ee32bb4bc77207fa4",
     "semantic_hash": ""
   },
   "tests/generatore-onda1.test.js": {
-    "mtime": 1791297275.5128422,
-    "seen": 1791297448.306168,
+    "mtime": 1791366859.228223,
+    "seen": 1791635608.5084884,
     "ast_hash": "4f967627d8c1a45d6434ab9e3c2c98a2",
     "semantic_hash": ""
   },
   "tests/partenza-donne.test.js": {
-    "mtime": 1791623241.5854652,
-    "seen": 1791623280.4507565,
+    "mtime": 1791629480.0088704,
+    "seen": 1791635608.508512,
     "ast_hash": "bf58f39d7240fc5201c2545de5cb8d95",
     "semantic_hash": ""
   },
   "tests/revisione-onda1.test.js": {
-    "mtime": 1791623241.5854652,
-    "seen": 1791623280.4507654,
+    "mtime": 1791366859.232223,
+    "seen": 1791635608.5085154,
     "ast_hash": "c70d3edd040925aef2d666287718b125",
     "semantic_hash": ""
   },
   "js/coach/programma/soglie-struttura.js": {
-    "mtime": 1791297275.3368423,
-    "seen": 1791297448.3046694,
+    "mtime": 1791366859.0476036,
+    "seen": 1791635608.5083086,
     "ast_hash": "5e6f9148047005c284caae9fd41c6f41",
     "semantic_hash": ""
   },
   "js/coach/sicurezza/soglie-tecniche.js": {
-    "mtime": 1791297275.343339,
-    "seen": 1791297448.304692,
+    "mtime": 1791366859.0509942,
+    "seen": 1791635608.508335,
     "ast_hash": "fef7add810099cb540f65f3c6adce292",
     "semantic_hash": ""
   },
   "js/coach/sicurezza/tecnica-adatta.js": {
-    "mtime": 1791623241.4214652,
-    "seen": 1791623280.444426,
+    "mtime": 1791629479.9648705,
+    "seen": 1791635608.5083365,
     "ast_hash": "c1d59b89552cef9f1a624251f773894d",
     "semantic_hash": ""
   },
   "js/coach/volume/soglie-tempo.js": {
-    "mtime": 1791297275.3440523,
-    "seen": 1791297448.3047566,
+    "mtime": 1791366859.0518332,
+    "seen": 1791635608.508349,
     "ast_hash": "4168dcaa2b235e03b2f1fea92fdfcbad",
     "semantic_hash": ""
   },
   "js/coach/volume/soglie-volume.js": {
-    "mtime": 1791623241.4277287,
-    "seen": 1791623280.4446635,
+    "mtime": 1791366859.0518332,
+    "seen": 1791635608.5083504,
     "ast_hash": "ab99034caa946ba57f82ba7f88e0f406",
     "semantic_hash": ""
   },
   "js/core/memoria-chiamata.js": {
-    "mtime": 1791297275.3448422,
-    "seen": 1791297448.30486,
+    "mtime": 1791366859.0531905,
+    "seen": 1791635608.5083592,
     "ast_hash": "1a190ac953d39e6cf058465214fb8fa7",
     "semantic_hash": ""
   },
   "tests/aiuto-mesociclo.js": {
-    "mtime": 1791297275.3728423,
-    "seen": 1791297448.3061097,
+    "mtime": 1791366859.1267016,
+    "seen": 1791635608.5084498,
     "ast_hash": "2cae5e35a45fbb721aff2835018beeaf",
     "semantic_hash": ""
   },
   "tests/integrazione-onda2b.test.js": {
-    "mtime": 1791623241.581465,
-    "seen": 1791623280.4505565,
+    "mtime": 1791366859.228223,
+    "seen": 1791635608.5084937,
     "ast_hash": "e4fcf6fd451212540342277046a588f8",
     "semantic_hash": ""
   },
   "tests/integrazione-onda2c.test.js": {
-    "mtime": 1791623241.581465,
-    "seen": 1791623280.45056,
+    "mtime": 1791366859.228223,
+    "seen": 1791635608.5084946,
     "ast_hash": "a3748c2d2a5ee6d45e1f7812bb14e9f0",
     "semantic_hash": ""
   },
   "tests/memoria-chiamata.test.js": {
-    "mtime": 1791297275.5168421,
-    "seen": 1791297448.306174,
+    "mtime": 1791366859.228223,
+    "seen": 1791635608.5084982,
     "ast_hash": "58b855403deb8cd1d2f1b10df4666c9a",
     "semantic_hash": ""
   },
   "tests/mesociclo.test.js": {
-    "mtime": 1791297275.5168421,
-    "seen": 1791297448.306175,
+    "mtime": 1791366859.228223,
+    "seen": 1791635608.5084991,
     "ast_hash": "67a41286e6ad0dc295394b1f16a29552",
     "semantic_hash": ""
   },
   "tests/revisione-onda2d-giorni.test.js": {
-    "mtime": 1791623241.5854652,
-    "seen": 1791623280.4507685,
+    "mtime": 1791366859.232223,
+    "seen": 1791635608.5085163,
     "ast_hash": "d5a1ad82356f15fc1683db96e60b8393",
     "semantic_hash": ""
   },
   "tests/revisione-onda2d.test.js": {
-    "mtime": 1791623241.5894651,
-    "seen": 1791623280.450772,
+    "mtime": 1791629480.0088704,
+    "seen": 1791635608.5085173,
     "ast_hash": "3af48208b5443fd44a83f3c426148010",
     "semantic_hash": ""
   },
   "tests/tecniche.test.js": {
-    "mtime": 1791623241.5894651,
-    "seen": 1791623280.4509614,
+    "mtime": 1791629480.0128706,
+    "seen": 1791635608.5085285,
     "ast_hash": "ef160033f98b978530227e964abbd419",
     "semantic_hash": ""
   },
   "tests/tempo.test.js": {
-    "mtime": 1791297275.5208423,
-    "seen": 1791297448.3061895,
+    "mtime": 1791366859.232223,
+    "seen": 1791635608.5085304,
     "ast_hash": "dd3a3cf137080d493a82b20858c9e3f3",
     "semantic_hash": ""
   },
   "tests/volume.test.js": {
-    "mtime": 1791297275.5208423,
-    "seen": 1791297448.3061905,
+    "mtime": 1791366859.236223,
+    "seen": 1791635608.5085316,
     "ast_hash": "31c2042f86eda88d895f19278e6a04da",
     "semantic_hash": ""
   },
   "js/coach/bia/bmr-minorenni.js": {
-    "mtime": 1791623241.3974652,
-    "seen": 1791623280.4433405,
+    "mtime": 1791629479.9568706,
+    "seen": 1791635608.5082486,
     "ast_hash": "0e513dceaae88fcb57e55e69d563b164",
     "semantic_hash": ""
   },
   "js/coach/bia/soglie-bia.js": {
-    "mtime": 1791623241.3974652,
-    "seen": 1791623280.4433537,
+    "mtime": 1791629479.9568706,
+    "seen": 1791635608.5082555,
     "ast_hash": "aa4d5f7a63869f8ce1587a20f1a4c2ed",
     "semantic_hash": ""
   },
   "js/coach/carichi/attrezzi.js": {
-    "mtime": 1791623241.3974652,
-    "seen": 1791623280.4434416,
+    "mtime": 1791366859.0443408,
+    "seen": 1791635608.508259,
     "ast_hash": "de8c9c2e5b6b027aab6c2a90e994c9a1",
     "semantic_hash": ""
   },
   "js/coach/carichi/soglie-progressione.js": {
-    "mtime": 1791623241.4014652,
-    "seen": 1791623280.4435358,
+    "mtime": 1791366859.044622,
+    "seen": 1791635608.5082717,
     "ast_hash": "2c36ce1fa37bda7ad4378a309fc8dd20",
     "semantic_hash": ""
   },
   "js/coach/programma/soglie-selezione.js": {
-    "mtime": 1791623241.413465,
-    "seen": 1791623280.4439585,
+    "mtime": 1791366859.0476036,
+    "seen": 1791635608.5083048,
     "ast_hash": "64ac44ad8fde986df4bf210b5194835d",
     "semantic_hash": ""
   },
   "js/coach/programma/soglie-split.js": {
-    "mtime": 1791623241.413465,
-    "seen": 1791623280.4439619,
+    "mtime": 1791366859.0476036,
+    "seen": 1791635608.5083065,
     "ast_hash": "2cff43293f04ea496ee93823d9457811",
     "semantic_hash": ""
   },
   "js/coach/sicurezza/fastidi.js": {
-    "mtime": 1791623241.4214652,
-    "seen": 1791623280.444326,
+    "mtime": 1791629479.9648705,
+    "seen": 1791635608.5083263,
     "ast_hash": "dd0b929477b8186af32efede651e264b",
     "semantic_hash": ""
   },
   "js/coach/sicurezza/popolazioni.js": {
-    "mtime": 1791623241.4214652,
-    "seen": 1791623280.444329,
+    "mtime": 1791629479.9648705,
+    "seen": 1791635608.5083277,
     "ast_hash": "0b5a418b549802e6602e402ffa1f0e2a",
     "semantic_hash": ""
   },
   "js/coach/sicurezza/soglie-fastidi.js": {
-    "mtime": 1791623241.4214652,
-    "seen": 1791623280.4443364,
+    "mtime": 1791629479.9648705,
+    "seen": 1791635608.508331,
     "ast_hash": "08f8e6132d6f2219c5118b07efcdc360",
     "semantic_hash": ""
   },
   "js/coach/sicurezza/soglie-popolazioni.js": {
-    "mtime": 1791623241.4214652,
-    "seen": 1791623280.4443407,
+    "mtime": 1791629479.9648705,
+    "seen": 1791635608.5083325,
     "ast_hash": "8c583dd40645fae28ba29586b1408929",
     "semantic_hash": ""
   },
   "js/coach/sicurezza/soglie-scarico.js": {
-    "mtime": 1791623241.4214652,
-    "seen": 1791623280.444344,
+    "mtime": 1791366859.0509942,
+    "seen": 1791635608.508334,
     "ast_hash": "207ccf1c33a843d106c48685b195de9d",
     "semantic_hash": ""
   },
   "js/coach/specialita/forza-carichi.js": {
-    "mtime": 1791623241.4214652,
-    "seen": 1791623280.444432,
+    "mtime": 1791629479.9688704,
+    "seen": 1791635608.5083387,
     "ast_hash": "f41fd953e3e6d77d5df311aba698b736",
     "semantic_hash": ""
   },
   "js/coach/specialita/forza.js": {
-    "mtime": 1791623241.4277287,
-    "seen": 1791623280.444442,
+    "mtime": 1791629479.9688704,
+    "seen": 1791635608.5083396,
     "ast_hash": "ecaaa9ba05043e6dd954b2f7ba668ddd",
     "semantic_hash": ""
   },
   "js/coach/specialita/soglie-forza-carichi.js": {
-    "mtime": 1791623241.4277287,
-    "seen": 1791623280.4444475,
+    "mtime": 1791629479.9688704,
+    "seen": 1791635608.508341,
     "ast_hash": "1c5f7acf89293da403125e66495bd93d",
     "semantic_hash": ""
   },
   "js/coach/specialita/soglie-forza.js": {
-    "mtime": 1791623241.4277287,
-    "seen": 1791623280.4444501,
+    "mtime": 1791629479.9688704,
+    "seen": 1791635608.508342,
     "ast_hash": "69e4e16e3a128ab36d919fc2eb6b9298",
     "semantic_hash": ""
   },
   "js/coach/volume/rampa-settimana.js": {
-    "mtime": 1791623241.4277287,
-    "seen": 1791623280.444584,
+    "mtime": 1791366859.05165,
+    "seen": 1791635608.5083454,
     "ast_hash": "14bc36fc0ab23fefe5fca8293aad3385",
     "semantic_hash": ""
   },
   "js/coach/volume/soglie-rampa.js": {
-    "mtime": 1791623241.4277287,
-    "seen": 1791623280.4445903,
+    "mtime": 1791366859.0518332,
+    "seen": 1791635608.508348,
     "ast_hash": "ff9a5827a37792920045f4ae60a79fd2",
     "semantic_hash": ""
   },
   "tests/aiuto-atleta-piano.js": {
-    "mtime": 1791623241.445465,
-    "seen": 1791623280.4494803,
+    "mtime": 1791366859.1267016,
+    "seen": 1791635608.508446,
     "ast_hash": "4bb1f89e6a4861b1afd1a5d0b68cd0a9",
     "semantic_hash": ""
   },
   "tests/aiuto-selezione.js": {
-    "mtime": 1791623241.449465,
-    "seen": 1791623280.4495993,
+    "mtime": 1791366859.1267016,
+    "seen": 1791635608.508451,
     "ast_hash": "85aedb26a28e656740674cb176e65c76",
     "semantic_hash": ""
   },
   "tests/attrezzi-dichiarati.test.js": {
-    "mtime": 1791623241.449465,
-    "seen": 1791623280.449603,
+    "mtime": 1791366859.1267016,
+    "seen": 1791635608.5084522,
     "ast_hash": "2b65530584f218be088f594553ccf59c",
     "semantic_hash": ""
   },
   "tests/attrezzi-onboarding.test.js": {
-    "mtime": 1791623241.449465,
-    "seen": 1791623280.4496067,
+    "mtime": 1791366859.1267016,
+    "seen": 1791635608.5084531,
     "ast_hash": "2a33fa062888d70912a3a3d72c679b46",
     "semantic_hash": ""
   },
   "tests/bia-referto-unione.test.js": {
-    "mtime": 1791623241.449465,
-    "seen": 1791623280.4496706,
+    "mtime": 1791629479.9888704,
+    "seen": 1791635608.5084565,
     "ast_hash": "52f4442473906314332d9d7d4fb79c8f",
     "semantic_hash": ""
   },
   "tests/bilancia-v2.test.js": {
-    "mtime": 1791623241.449465,
-    "seen": 1791623280.4496734,
+    "mtime": 1791366859.1267016,
+    "seen": 1791635608.5084574,
     "ast_hash": "38758945bf6baf5878eb783b70014aa1",
     "semantic_hash": ""
   },
   "tests/bmr-minorenni-viste.test.js": {
-    "mtime": 1791623241.449465,
-    "seen": 1791623280.449676,
+    "mtime": 1791629479.9888704,
+    "seen": 1791635608.5084586,
     "ast_hash": "1cfaca18ec41a6522b762d9f16d9712c",
     "semantic_hash": ""
   },
   "tests/bmr-minorenni.test.js": {
-    "mtime": 1791623241.449465,
-    "seen": 1791623280.4496784,
+    "mtime": 1791629479.9888704,
+    "seen": 1791635608.5084596,
     "ast_hash": "b77dc2f3c5a4c16dab6078dc657bbb0f",
     "semantic_hash": ""
   },
   "tests/collaudo-attrezzi.test.js": {
-    "mtime": 1791623241.449465,
-    "seen": 1791623280.4498556,
+    "mtime": 1791366859.132223,
+    "seen": 1791635608.5084662,
     "ast_hash": "b1a15fed141ec124fad749765d87d43a",
     "semantic_hash": ""
   },
   "tests/collaudo-forza.test.js": {
-    "mtime": 1791623241.449465,
-    "seen": 1791623280.4498582,
+    "mtime": 1791366859.132223,
+    "seen": 1791635608.5084672,
     "ast_hash": "a6d83255309e37212312671210581968",
     "semantic_hash": ""
   },
   "tests/conserva-progressi.test.js": {
-    "mtime": 1791623241.449465,
-    "seen": 1791623280.4498613,
+    "mtime": 1791366859.132223,
+    "seen": 1791635608.5084682,
     "ast_hash": "1fe15be3716ad076a4a76aa2768407e6",
     "semantic_hash": ""
   },
   "tests/distribuzione.test.js": {
-    "mtime": 1791623241.573465,
-    "seen": 1791623280.4498646,
+    "mtime": 1791366859.220223,
+    "seen": 1791635608.5084693,
     "ast_hash": "20bc9c62fa9e8d7f99ee1df9cdd8d293",
     "semantic_hash": ""
   },
   "tests/fastidi.test.js": {
-    "mtime": 1791623241.573465,
-    "seen": 1791623280.4498675,
+    "mtime": 1791629480.0048704,
+    "seen": 1791635608.5084703,
     "ast_hash": "37cdea20c10ca4c9b63f77cdd4254143",
     "semantic_hash": ""
   },
   "tests/forza-attivazione.test.js": {
-    "mtime": 1791623241.573465,
-    "seen": 1791623280.4503388,
+    "mtime": 1791366859.226172,
+    "seen": 1791635608.508478,
     "ast_hash": "ea98cd088c344bbc6584d4fa6b5d550e",
     "semantic_hash": ""
   },
   "tests/forza-carichi.test.js": {
-    "mtime": 1791623241.573465,
-    "seen": 1791623280.4503424,
+    "mtime": 1791629480.0048704,
+    "seen": 1791635608.5084789,
     "ast_hash": "2a45d95cec4c5de4182254b13a047d3b",
     "semantic_hash": ""
   },
   "tests/forza-equilibrio.test.js": {
-    "mtime": 1791623241.573465,
-    "seen": 1791623280.4503455,
+    "mtime": 1791366859.226172,
+    "seen": 1791635608.50848,
     "ast_hash": "80a2b17733e0d7f02df94f8cc04c96fa",
     "semantic_hash": ""
   },
   "tests/forza-modalita.test.js": {
-    "mtime": 1791623241.573465,
-    "seen": 1791623280.4503481,
+    "mtime": 1791366859.226172,
+    "seen": 1791635608.508481,
     "ast_hash": "3084c943fe90d2deea78d22a819cad47",
     "semantic_hash": ""
   },
   "tests/forza-ordine-alzata.test.js": {
-    "mtime": 1791623241.573465,
-    "seen": 1791623280.4503522,
+    "mtime": 1791366859.226172,
+    "seen": 1791635608.508482,
     "ast_hash": "e3aa9fe25d6d21ecb759fddf568693e7",
     "semantic_hash": ""
   },
   "tests/forza-struttura.test.js": {
-    "mtime": 1791623241.577465,
-    "seen": 1791623280.4503546,
+    "mtime": 1791629480.0088704,
+    "seen": 1791635608.5084832,
     "ast_hash": "b931d8f3e8ee85648e6577c86fa64db6",
     "semantic_hash": ""
   },
   "tests/guardie-corpo.test.js": {
-    "mtime": 1791623241.577465,
-    "seen": 1791623280.450491,
+    "mtime": 1791629480.0088704,
+    "seen": 1791635608.5084894,
     "ast_hash": "c7e160b03b186d8017603c4cf48fc9d6",
     "semantic_hash": ""
   },
   "tests/hip-hinge-ripiego.test.js": {
-    "mtime": 1791623241.577465,
-    "seen": 1791623280.450494,
+    "mtime": 1791366859.228223,
+    "seen": 1791635608.5084906,
     "ast_hash": "8ab974a1e6c894487edc7ea84da81403",
     "semantic_hash": ""
   },
   "tests/integrazione-3a.test.js": {
-    "mtime": 1791623241.577465,
-    "seen": 1791623280.450497,
+    "mtime": 1791366859.228223,
+    "seen": 1791635608.5084915,
     "ast_hash": "876bf2910b10c35247bf5a02abda237d",
     "semantic_hash": ""
   },
   "tests/integrazione-onda4.test.js": {
-    "mtime": 1791623241.581465,
-    "seen": 1791623280.450563,
+    "mtime": 1791629480.0088704,
+    "seen": 1791635608.508496,
     "ast_hash": "b05b7570067f570aa1ffc3dabd2e703f",
     "semantic_hash": ""
   },
   "tests/onda5-calendario.test.js": {
-    "mtime": 1791623241.581465,
-    "seen": 1791623280.450737,
+    "mtime": 1791629480.0088704,
+    "seen": 1791635608.5085027,
     "ast_hash": "9f92f5b22ce0197052f1f1a6d51191c4",
     "semantic_hash": ""
   },
   "tests/onda5-fastidi-sostituzione.test.js": {
-    "mtime": 1791623241.581465,
-    "seen": 1791623280.4507396,
+    "mtime": 1791629480.0088704,
+    "seen": 1791635608.5085042,
     "ast_hash": "014b1ab2d4112556602ad4602c6849d5",
     "semantic_hash": ""
   },
   "tests/onda5-gravidanza-parq.test.js": {
-    "mtime": 1791623241.581465,
-    "seen": 1791623280.4507427,
+    "mtime": 1791629480.0088704,
+    "seen": 1791635608.5085058,
     "ast_hash": "09de451f463cf22529f7c181cb432ede",
     "semantic_hash": ""
   },
   "tests/onda5-over65-esercizi.test.js": {
-    "mtime": 1791623241.581465,
-    "seen": 1791623280.4507453,
+    "mtime": 1791629480.0088704,
+    "seen": 1791635608.5085075,
     "ast_hash": "d5bc34f87e96910d1f4fd4616c22826f",
     "semantic_hash": ""
   },
   "tests/onda5-passo-minimo.test.js": {
-    "mtime": 1791623241.5854652,
-    "seen": 1791623280.4507484,
+    "mtime": 1791629480.0088704,
+    "seen": 1791635608.5085087,
     "ast_hash": "55c5e988b99c1edc3bff31968d4bf8a4",
     "semantic_hash": ""
   },
   "tests/onda5-revisione-finale.test.js": {
-    "mtime": 1791623241.5854652,
-    "seen": 1791623280.4507508,
+    "mtime": 1791629480.0088704,
+    "seen": 1791635608.5085099,
     "ast_hash": "688bf7e05a324f6a1f2e12e7d8426a5f",
     "semantic_hash": ""
   },
   "tests/onda5-ripresa-prudenti.test.js": {
-    "mtime": 1791623241.5854652,
-    "seen": 1791623280.450753,
+    "mtime": 1791629480.0088704,
+    "seen": 1791635608.508511,
     "ast_hash": "947292fa1814dbc419d982e502a804c3",
     "semantic_hash": ""
   },
   "tests/piano-in-seduta.test.js": {
-    "mtime": 1791623241.5854652,
-    "seen": 1791623280.4507592,
+    "mtime": 1791366859.232223,
+    "seen": 1791635608.5085132,
     "ast_hash": "31d076e1819964bc0cd0526ecddb8bd3",
     "semantic_hash": ""
   },
   "tests/popolazioni.test.js": {
-    "mtime": 1791623241.5854652,
-    "seen": 1791623280.4507616,
+    "mtime": 1791629480.0088704,
+    "seen": 1791635608.5085144,
     "ast_hash": "1c01953e732b09ab327ff04323dc6437",
     "semantic_hash": ""
   },
   "tests/revisione-onda2g.test.js": {
-    "mtime": 1791623241.5894651,
-    "seen": 1791623280.4507747,
+    "mtime": 1791366859.232223,
+    "seen": 1791635608.5085187,
     "ast_hash": "11085b60168cfa41cfd6b6264711d53f",
     "semantic_hash": ""
   },
   "tests/revisione-onda3a.test.js": {
-    "mtime": 1791623241.5894651,
-    "seen": 1791623280.4507775,
+    "mtime": 1791629480.0088704,
+    "seen": 1791635608.50852,
     "ast_hash": "31622a9f5a31e3e46710345d3c5ca631",
     "semantic_hash": ""
   },
   "tests/scarichi.test.js": {
-    "mtime": 1791623241.5894651,
-    "seen": 1791623280.4507802,
+    "mtime": 1791629480.0088704,
+    "seen": 1791635608.5085206,
     "ast_hash": "cf0da73a02c76ec04ef6d07d81a830e5",
     "semantic_hash": ""
   },
   "tests/selezione.test.js": {
-    "mtime": 1791623241.5894651,
-    "seen": 1791623280.4507825,
+    "mtime": 1791366859.232223,
+    "seen": 1791635608.508522,
     "ast_hash": "8ecbc3ac3f8109fd3c31420fc0917d62",
     "semantic_hash": ""
   },
   "tests/split.test.js": {
-    "mtime": 1791623241.5894651,
-    "seen": 1791623280.4509027,
+    "mtime": 1791366859.232223,
+    "seen": 1791635608.5085263,
     "ast_hash": "282ce3b18852cf06c8576acaa86f523d",
     "semantic_hash": ""
   },
   "tests/tempo-copertura.test.js": {
-    "mtime": 1791623241.5894651,
-    "seen": 1791623280.450965,
+    "mtime": 1791366859.232223,
+    "seen": 1791635608.5085297,
     "ast_hash": "ea3a554ca94a9fb2f6cad617197c291d",
     "semantic_hash": ""
   },
   "docs/in-corso/piano-onda5.md": {
-    "mtime": 1791623241.389465,
-    "seen": 1791623280.4524493,
+    "mtime": 1791629479.9128704,
+    "seen": 1791635608.5085614,
     "ast_hash": "1a175a4d156ffa2cca16cba7e179d8a1",
     "semantic_hash": ""
   }

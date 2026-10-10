@@ -135,7 +135,7 @@ window.renderOggi = function() {
       '<span class="og-exsr">' + e.sets + ' \u00D7 ' + e.reps + (isTimeBased(e.name) ? ' s' : '') + (perLato(e.name) ? ' <span>per lato</span>' : '') + (e.weight ? ' \u2022 ' + e.weight + ' kg' : '') + '</span></div>').join('') +
       '';
     html += '<div class="og-wname">' + escapeHtml(getDayTitle(giorno)) + '</div>' +
-      '<div class="og-muted">' + lista.length + ' esercizi \u2022 ' + serie + ' serie \u2022 circa ' + minuti + ' min</div>' +
+      '<div class="og-muted">' + lista.length + (lista.length === 1 ? ' esercizio' : ' esercizi') + ' \u2022 ' + serie + ' serie \u2022 circa ' + minuti + ' min</div>' +
       '<details class="og-drop"><summary>Vedi gli esercizi <span class="og-muted">(' + lista.length + ')</span></summary>' +
         '<div class="og-exlist">' + anteprima + '</div></details>' +
       (alzati ? '<div class="og-up">\u2191 ' + alzati + (alzati === 1 ? ' carico in più' : ' carichi in più') + '</div>' : '') +

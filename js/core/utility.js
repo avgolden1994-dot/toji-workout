@@ -36,8 +36,20 @@ function formatNow() {
   const now = new Date();
   return `${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()} ore ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
 }
+/* Un numero da mostrare con il segno decimale della lingua scelta (virgola it/es/de, punto en), da `min` a `max` decimali, senza separatore delle migliaia.
+   Solo per testi che si mostrano subito: mai da rileggere, salvare o esportare. Il traduttore (tr) riduce ogni numero a # nella chiave del dizionario, quindi le frasi
+   con numeri formattati cosi trovano la loro voce in ogni lingua. Mai "-0". */
+function numeroLingua(v, max = 1, min = 0) {
+  const s = (Number(v) + 0).toLocaleString(LOCALE(), { minimumFractionDigits: min, maximumFractionDigits: max, useGrouping: false });
+  return /^-0(?:[.,]0+)?$/.test(s) ? s.slice(1) : s;
+}
+/* Il campo mostra il nome nella lingua scelta, senza emoji; la chiave italiana (il nome salvato in libreria, con l emoji) resta in data-chiave
+   e al salvataggio torna al suo posto (selezione-multipla.js). data-visto = cio che il campo mostrava, per capire se l utente lo ha modificato. */
 function handleSelectExercise(val) {
-  if (val) document.getElementById('exercise-name').value = val;
+  const inp = document.getElementById('exercise-name');
+  if (!inp) return;
+  if (val) { inp.value = inp.dataset.visto = trEs(val); inp.dataset.chiave = val; }
+  else { delete inp.dataset.chiave; delete inp.dataset.visto; }   /* menu riportato su "Seleziona": il testo scritto resta, ma e solo testo */
 }
 /* Un SOLO contesto audio per tutta l'app, creato solo quando serve.
    Prima se ne creava uno a ogni bip: i browser ne consentono pochi

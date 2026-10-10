@@ -39,7 +39,7 @@ function controllaRecord(ex, set) {
   const ora = e1rm(set.weight, set.reps);
   if (prima > 0 && ora > prima && ora > (ex.recordSeduta || 0)) {
     ex.recordSeduta = ora;
-    showUndo('\u{1F3C6} Nuovo record: ' + set.weight + ' kg \u00D7 ' + set.reps + ' (1RM stimato ' + ora + ' kg)');
+    showUndo('\u{1F3C6} Nuovo record: ' + numeroLingua(set.weight) + ' kg \u00D7 ' + set.reps + ' (1RM stimato ' + numeroLingua(ora) + ' kg)');
   }
 }
 
@@ -117,10 +117,10 @@ window.renderPlates = function() {
   const txt = document.getElementById('plate-txt');
   if (r.impossibile) { vis.innerHTML = ''; txt.innerText = 'Il carico e sotto il peso del bilanciere.'; return; }
   vis.innerHTML = '<div class="pl-bar"></div>' + r.dischi.map(d =>
-    '<div class="pl-disc" style="height:' + (24 + d * 2.2) + 'px;background:' + COLORE_DISCO[d] + '" title="' + d + ' kg"></div>').join('') + '<div class="pl-end"></div>';
+    '<div class="pl-disc" style="height:' + (24 + d * 2.2) + 'px;background:' + COLORE_DISCO[d] + '" title="' + numeroLingua(d, 2) + ' kg"></div>').join('') + '<div class="pl-end"></div>';
   txt.innerText = r.dischi.length
-    ? 'Per lato: ' + r.dischi.map(d => String(d).replace('.', ',')).join(' + ') + ' kg' + (r.resto ? ' (restano ' + String(r.resto).replace('.', ',') + ' kg per lato)' : '')
-    : 'Solo il bilanciere.';
+    ? trP('Per lato: %s kg', r.dischi.map(d => numeroLingua(d, 2)).join(' + ')) + (r.resto ? ' ' + trP('(restano %s kg per lato)', numeroLingua(r.resto, 2)) : '')
+    : tr('Solo il bilanciere.');
 };
 
 /* ---- tempo trascorso ---- */
@@ -152,6 +152,7 @@ function renderAllenamento() {
   const data = loadData();
   const list = data[currentDay] || [];
   const container = document.getElementById('allenamento-list');
+  const rpeTesto = RPE_VALORI.map(v => numeroLingua(v));   /* 6,5 o 6.5 secondo la lingua; il value resta col punto */
   if (list.length === 0) {
     container.innerHTML = '<span class="muted">Nessun esercizio pianificato. Aggiungine uno dal tab Piano.</span>';
   } else {
@@ -163,9 +164,9 @@ function renderAllenamento() {
             ${dettaglioEsercizio(e.name) ? `<div class="ex-focus">${escapeHtml(etichettaAttrezzo(e.name))} \u2022 <span>Focus</span>: ${escapeHtml(focusEsercizio(e.name))}</div>` : ''}
             <div class="ex-data">Recupero ${e.rest} s${infoEsercizio(e.name)}</div>
             ${htmlSostituito(e)}
-            ${e.coachNote && coachAttivo() ? `<span class="coach-badge-set ${e.coachTipo || ''}"><b>Coach ·</b> ${escapeHtml(e.coachNote)}</span>` : ''}
+            ${e.coachNote && coachAttivo() ? `<span class="coach-badge-set ${e.coachTipo || ''}"><b>Coach ·</b> ${escapeHtml(notaVarianteCoach(e.coachNote))}</span>` : ''}
             ${coachAttivo() && (e.tecnicaSeduta || e.tecnica) && TECNICHE[e.tecnicaSeduta || e.tecnica] ? `<span class="tecnica-badge">${escapeHtml(TECNICHE[e.tecnicaSeduta || e.tecnica])}</span>` : ''}
-            ${e.recordSeduta ? `<span class="pr-badge">\u{1F3C6} Record! 1RM stimato ${e.recordSeduta} kg</span>` : ''}
+            ${e.recordSeduta ? `<span class="pr-badge">\u{1F3C6} Record! 1RM stimato ${numeroLingua(e.recordSeduta)} kg</span>` : ''}
             ${ultimaVoltaTesto(e.name) ? `<span class="last-time">${escapeHtml(ultimaVoltaTesto(e.name))}</span>` : ''}
             ${e.note ? `<div class="plan-note">📝 ${escapeHtml(e.note)}</div>` : ''}
           </div>
@@ -191,7 +192,7 @@ function renderAllenamento() {
               <span class="set-x">×</span>
               <input type="number" class="set-input" value="${corpoLibero(e.name) && !s.weight ? '' : s.weight}" placeholder="${corpoLibero(e.name) ? '+0' : ''}" step="0.5" oninput="updateSetField(${idx},${si},'weight',this.value)" aria-label="Carico">
               <span class="set-kg-label">kg</span>
-              ${isTimeBased(e.name) && !s.done ? htmlLavoro(idx, si) : s.done && !s.wasBerserk ? `<select class="rpe-sel" onchange="updateSetRpe(${idx},${si},this.value)" aria-label="Quanto era dura (RPE)"><option value="">RPE</option>${RPE_VALORI.map(v => `<option value="${v}" ${Number(s.rpe) === Number(v) ? 'selected' : ''}>${v.replace('.', ',')}</option>`).join('')}</select>` : s.wasBerserk ? `<button class="set-flame-btn flame-on" onclick="annullaCedimento(${idx},${si})" aria-label="Togli il cedimento dalla serie ${si + 1}" title="Tocca per togliere il cedimento">🔥</button>` : `<button class="set-flame-btn ${armedSet && armedSet.exIdx === idx && armedSet.setIdx === si ? 'armed' : ''}" onclick="apriCedimento(${idx},${si})" aria-label="Porta la serie ${si + 1} a cedimento" title="Porta a cedimento">🔥</button>`}
+              ${isTimeBased(e.name) && !s.done ? htmlLavoro(idx, si) : s.done && !s.wasBerserk ? `<select class="rpe-sel" onchange="updateSetRpe(${idx},${si},this.value)" aria-label="Quanto era dura (RPE)"><option value="">RPE</option>${RPE_VALORI.map((v, k) => `<option value="${v}" ${Number(s.rpe) === Number(v) ? 'selected' : ''}>${rpeTesto[k]}</option>`).join('')}</select>` : s.wasBerserk ? `<button class="set-flame-btn flame-on" onclick="annullaCedimento(${idx},${si})" aria-label="Togli il cedimento dalla serie ${si + 1}" title="Tocca per togliere il cedimento">🔥</button>` : `<button class="set-flame-btn ${armedSet && armedSet.exIdx === idx && armedSet.setIdx === si ? 'armed' : ''}" onclick="apriCedimento(${idx},${si})" aria-label="Porta la serie ${si + 1} a cedimento" title="Porta a cedimento">🔥</button>`}
               <button class="set-check ${s.done ? 'checked' : ''}" onclick="toggleSetDone(${idx},${si})" aria-label="Segna serie ${si + 1} completata">✓</button>
             </div>
           `).join('')}
