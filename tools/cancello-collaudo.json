@@ -1842,7 +1842,11 @@
     "Il metabolismo basale in kcal ai minorenni (onboarding-risultato.js)": {
      "responsabile": "proprietario (decisione)",
      "scade": "oltre-v2",
-     "motivo": "dopo la revisione finale (2026-10-09): decisione del proprietario, fuori dalla v2 (D-P26). onda 5 (2026-10-09): decisione del proprietario ancora da confermare (misura della BIA inserita dall utente, non un fabbisogno scritto dal coach): non toccato. P4-C e INT-4 (2026-10-07): il `bmr` in kcal che analyzeBia riporta e la misura della BIA inserita dall utente, non un fabbisogno scritto dal coach: non toccato, decisione del proprietario (da confermare)."
+     "motivo": "dopo la revisione finale (2026-10-09): decisione del proprietario, fuori dalla v2 (D-P26). onda 5 (2026-10-09): decisione del proprietario ancora da confermare (misura della BIA inserita dall utente, non un fabbisogno scritto dal coach): non toccato. P4-C e INT-4 (2026-10-07): il `bmr` in kcal che analyzeBia riporta e la misura della BIA inserita dall utente, non un fabbisogno scritto dal coach: non toccato, decisione del proprietario (da confermare).",
+     "chiuso": {
+      "motivo": "onda 5 (2026-10-10, D-P26): applicata la decisione del proprietario. Il metabolismo basale in kcal non compare ai minorenni (eta da 1 a 17) nel risultato dell onboarding, con o senza coach (onboarding-risultato.js: bmrVisibile, ETA-04); il dato salvato e analyzeBia restano com erano, e gli adulti vedono tutto come prima. Prova: tests/bmr-minorenni.test.js (rossa prima della modifica su onda-4, verde dopo). Coperte anche le altre due viste, con lo stesso criterio (un solo helper, bmrNascostoPerEta in js/coach/bia/bmr-minorenni.js): il passo BIA dell onboarding (js/ui/onboarding.js, renderBiaStep: riepilogo e campo a mano) e Opzioni › BIA (js/coach/bia/opzioni.js: riepilogo e campo a mano; salvare senza il campo lascia il bmr gia salvato com era). Prova: tests/bmr-minorenni-viste.test.js (rossa sul codice di partenza, verde dopo).",
+      "data": "2026-10-10"
+     }
     },
     "VOL-01:deltoidi_posteriori": {
      "responsabile": "INT-5 (il tetto di 1,2 non si rialza piu)",

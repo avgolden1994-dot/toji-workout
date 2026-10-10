@@ -492,8 +492,11 @@ function optHtml(campo, o) {
    letti restano sempre modificabili a mano prima di essere usati. */
 function renderBiaStep() {
   const b = onbData.bia || {};
+  /* ETA-04: ai minorenni il metabolismo basale in kcal non si mostra (riepilogo e campo a mano); il dato resta in onbData.bia */
+  const bmrNascosto = bmrNascostoPerEta(onbData.age);
   const letti = ['peso', 'fmPerc', 'ffm', 'tbw', 'bmr', 'smm', 'phase', 'altezza']
-    .filter(k => b[k] !== undefined && b[k] !== null);
+    .filter(k => b[k] !== undefined && b[k] !== null)
+    .filter(k => !(k === 'bmr' && bmrNascosto));
   const etichette = { peso: 'Peso', altezza: 'Altezza', fmPerc: 'Massa grassa', ffm: 'Massa magra',
                       tbw: 'Acqua totale', bmr: 'Metabolismo basale', smm: 'Massa muscolare', phase: 'Angolo di fase' };
   const unita = { peso: ' kg', altezza: ' cm', fmPerc: '%', ffm: ' kg', tbw: ' L', bmr: ' kcal', smm: ' kg', phase: '\u00B0' };
@@ -537,7 +540,7 @@ function renderBiaStep() {
           biaField('fmPerc', 'Massa grassa (%)', b.fmPerc) +
           biaField('ffm', 'Massa magra (kg)', b.ffm) +
           biaField('tbw', 'Acqua totale (L)', b.tbw) +
-          biaField('bmr', 'Metabolismo basale (kcal)', b.bmr) +
+          (bmrNascosto ? '' : biaField('bmr', 'Metabolismo basale (kcal)', b.bmr)) +
         '</div>'
       : '') +
 

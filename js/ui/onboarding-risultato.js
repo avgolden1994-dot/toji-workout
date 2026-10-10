@@ -46,13 +46,15 @@ function renderOnbResult() {
   html += '<button class="set-row-btn" id="onb-alternative" onclick="apriAlternative()">Esercizi alternativi</button>' +
     '<div class="sr-note">Scegli tu, esercizio per esercizio, tra alternative che allenano lo stesso muscolo.</div>';
   const sb = statoBia(onbData, {});   /* INT-01: angolo di fase e acqua extracellulare, per la prudenza iniziale */
-  if ((an && (an.bmi || an.fmPerc || an.ffmi || an.bmr)) || sb.dati) {
+  /* ETA-04 (decisione del proprietario, D-P26): il metabolismo basale in kcal, misura della BIA inserita dall utente, non si mostra ai minorenni (bmrNascostoPerEta), con o senza coach; il dato resta salvato e analyzeBia non cambia */
+  const bmrVisibile = an && !bmrNascostoPerEta(onbData.age) ? an.bmr : null;
+  if ((an && (an.bmi || an.fmPerc || an.ffmi || bmrVisibile)) || sb.dati) {
     const v1 = (x) => x.toFixed(1).replace('.', ',');
     html += '<div class="res-card"><div class="res-title">La tua composizione</div>' +
       (an.bmi ? '<div class="res-line"><span>BMI</span><b>' + an.bmi + '</b></div>' : '') +
       (an.fmPerc ? '<div class="res-line"><span>Massa grassa</span><b>' + an.fmPerc + '%</b></div>' : '') +
       (an.ffmi ? '<div class="res-line"><span>Indice di massa magra</span><b>' + an.ffmi + '</b></div>' : '') +
-      (an.bmr ? '<div class="res-line"><span>Metabolismo basale</span><b>' + an.bmr + ' kcal</b></div>' : '') +
+      (bmrVisibile ? '<div class="res-line"><span>Metabolismo basale</span><b>' + bmrVisibile + ' kcal</b></div>' : '') +
       (an && an.fmTesto ? '<span class="res-tag ' + an.fmLivello + '">' + an.fmTesto + '</span>' : '') +
       (sb.fa !== null ? '<div class="res-line"><span>Angolo di fase</span><b>' + v1(sb.fa) + '\u00B0 <span class="res-tag ' + (sb.faBassa ? 'att' : 'good') + '" style="margin:0 0 0 6px">' + (sb.faBassa ? 'Sotto la media' : 'Nella norma') + '</span></b></div>' : '') +
       (sb.rapporto !== null ? '<div class="res-line"><span>Acqua extracellulare / totale</span><b>' + sb.rapporto.toFixed(2).replace('.', ',') + ' <span class="res-tag ' + (sb.ecwAlto ? 'att' : (sb.ecwLimite ? 'mid' : 'good')) + '" style="margin:0 0 0 6px">' + (sb.ecwAlto ? 'Alta' : (sb.ecwLimite ? 'Limite alto' : 'Nella norma')) + '</span></b></div>' : '') +

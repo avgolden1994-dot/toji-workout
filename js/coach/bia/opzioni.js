@@ -35,6 +35,8 @@ function renderBiaSheet() {
   const et = { peso: 'Peso', fmPerc: 'Massa grassa', fm: 'Grasso', ffm: 'Massa magra', smm: 'Muscolo scheletrico',
                tbw: 'Acqua totale', bmr: 'Metabolismo', bmi: 'BMI', viscerale: 'Grasso viscerale', altezza: 'Altezza', eta: 'Eta' };
   const un = { peso: ' kg', fmPerc: '%', fm: ' kg', ffm: ' kg', smm: ' kg', tbw: ' L', bmr: ' kcal', bmi: '', viscerale: '', altezza: ' cm', eta: ' anni' };
+  /* ETA-04: ai minorenni il metabolismo basale in kcal non si mostra (riepilogo e campo a mano); il dato salvato resta */
+  const bmrNascosto = bmrNascostoPerEta((getProfile() || {}).age);
 
   let html = '<label class="bia-drop" for="agent-bia-file">\u{1F4C4} Carica il PDF del referto' +
     '<span style="display:block;font-weight:400;font-size:0.7rem;margin-top:4px;">leggo io tutti i valori</span></label>' +
@@ -42,7 +44,7 @@ function renderBiaSheet() {
     '<div class="bia-status" id="agent-bia-status"></div>';
 
   if (biaLetta) {
-    const chiavi = Object.keys(et).filter(k => biaLetta[k] !== undefined && biaLetta[k] !== null);
+    const chiavi = Object.keys(et).filter(k => biaLetta[k] !== undefined && biaLetta[k] !== null && !(k === 'bmr' && bmrNascosto));
     html += '<div class="res-card"><div class="res-title" data-no-tr>' + (biaLetta.data ? trP('Letti dal referto del %s', daYmd(biaLetta.data).toLocaleDateString(LOCALE())) : tr('Letti dal referto')) + '</div>' +
       chiavi.map(k => '<div class="res-line"><span>' + et[k] + '</span><b>' + biaLetta[k] + un[k] + '</b></div>').join('') +
       (biaLetta.storico && biaLetta.storico.length ? '<div class="set-about">Trovate anche ' + biaLetta.storico.length + ' misure precedenti stampate sul referto: le salvo nello storico.</div>' : '') +
@@ -55,7 +57,7 @@ function renderBiaSheet() {
         '<label class="bia-val"><span>Peso (kg)</span><input type="number" step="0.1" id="ag-peso"></label>' +
         '<label class="bia-val"><span>Massa grassa (%)</span><input type="number" step="0.1" id="ag-fm"></label>' +
         '<label class="bia-val"><span>Massa magra (kg)</span><input type="number" step="0.1" id="ag-ffm"></label>' +
-        '<label class="bia-val"><span>Metabolismo (kcal)</span><input type="number" step="1" id="ag-bmr"></label>' +
+        (bmrNascosto ? '' : '<label class="bia-val"><span>Metabolismo (kcal)</span><input type="number" step="1" id="ag-bmr"></label>') +
       '</div>' +
       '<button class="btn-start-workout" style="margin-top:var(--sp-4);" onclick="salvaBiaAgente()">Salva</button>' +
     '</div>';
@@ -76,8 +78,8 @@ window.toggleBiaManuale = function() {
 
 window.salvaBiaLetta = function() {
   if (!biaLetta) return;
-  (biaLetta.storico || []).forEach(x => { if (x.data !== biaLetta.data) aggiungiBia(x.valori, x.data); });
-  aggiungiBia(biaLetta, biaLetta.data);
+  (biaLetta.storico || []).forEach(x => { if (x.data !== biaLetta.data) aggiungiBia(x.valori, x.data, { unisci: true }); });
+  aggiungiBia(biaLetta, biaLetta.data, { unisci: true });   /* referto letto: un campo che non riporta lascia quello gia salvato per la data */
   const n = 1 + (biaLetta.storico || []).filter(x => x.data !== biaLetta.data).length;
   biaLetta = null;
   renderBiaSheet();
@@ -89,7 +91,7 @@ window.eliminaBia = function(data) {
   const tolta = st.find(x => x.data === data);
   localStorage.setItem(biaKey(), JSON.stringify(st.filter(x => x.data !== data)));
   renderBiaSheet();
-  showUndo('BIA eliminata', () => { if (tolta) aggiungiBia(tolta.valori, tolta.data); renderBiaSheet(); });
+  showUndo('BIA eliminata', () => { if (tolta) aggiungiBia(tolta.valori, tolta.data); renderBiaSheet(); });   /* ripristino della voce tolta: nessuna fusione */
 };
 
 window.agentBiaPdf = async function(files) {
@@ -119,15 +121,19 @@ window.compilaBiaAgente = function(v) {
   if (v.peso) document.getElementById('ag-peso').value = v.peso;
   if (v.fmPerc) document.getElementById('ag-fm').value = v.fmPerc;
   if (v.ffm) document.getElementById('ag-ffm').value = v.ffm;
-  if (v.bmr) document.getElementById('ag-bmr').value = v.bmr;
+  const campoBmr = document.getElementById('ag-bmr');   /* ETA-04: senza il campo (minorenne) il metabolismo non si compila */
+  if (v.bmr && campoBmr) campoBmr.value = v.bmr;
 };
 
 window.salvaBiaAgente = function() {
   const n = (id) => { const x = parseFloat(document.getElementById(id).value); return isNaN(x) ? null : x; };
-  const v = { peso: n('ag-peso'), fmPerc: n('ag-fm'), ffm: n('ag-ffm'), bmr: n('ag-bmr') };
+  const v = { peso: n('ag-peso'), fmPerc: n('ag-fm'), ffm: n('ag-ffm') };
+  /* ETA-04: senza il campo del metabolismo (minorenne) non si scrive un bmr nuovo: quello gia salvato per la data di oggi resta com era */
+  if (document.getElementById('ag-bmr')) v.bmr = n('ag-bmr');
+  else { const gia = getBiaStorico().find(x => x.data === ymd(new Date())); if (gia && gia.valori.bmr !== undefined) v.bmr = gia.valori.bmr; }
   if (!v.peso && !v.fmPerc && !v.ffm) { alert('Inserisci almeno peso, massa grassa o massa magra.'); return; }
   if (!v.ffm && v.peso && v.fmPerc) v.ffm = Math.round(v.peso * (1 - v.fmPerc / 100) * 10) / 10;
-  aggiungiBia(v);
+  aggiungiBia(v);   /* form a mano autorevole: nessuna fusione, un campo vuoto si toglie (il bmr dei minorenni e gia ripreso sopra) */
   if (document.getElementById('bia-sheet') && !document.getElementById('bia-sheet').classList.contains('hidden')) renderBiaSheet();
   else renderAgent();
   showUndo('BIA salvata: il coach ne tiene conto');
