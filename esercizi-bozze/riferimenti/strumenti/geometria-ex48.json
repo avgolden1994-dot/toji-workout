@@ -1,0 +1,74 @@
+{
+ "H": 820,
+ "cm": 4.823529411764706,
+ "mento": 409.3333333333333,
+ "spallaY": 449.24,
+ "ancaY": 685.4,
+ "sedile": 730.5,
+ "ginocchio": 704.2411764705882,
+ "caviglia": 905.9611764705883,
+ "A": 152,
+ "B": 155,
+ "S": {
+  "x": 585,
+  "y": 450
+ },
+ "gx": 690,
+ "tab": {
+  "start": {
+   "gy": 405,
+   "E": {
+    "x": 689.9,
+    "y": 560
+   },
+   "gom": 43.7,
+   "braccio": -46.4,
+   "avambraccioDaVerticale": 0,
+   "d": 114.2
+  },
+  "q1": {
+   "gy": 345,
+   "E": {
+    "x": 730.3,
+    "y": 494.7
+   },
+   "gom": 57.8,
+   "braccio": -17.1,
+   "avambraccioDaVerticale": -15.1,
+   "d": 148.5
+  },
+  "mid": {
+   "gy": 285,
+   "E": {
+    "x": 736,
+    "y": 433
+   },
+   "gom": 79.1,
+   "braccio": 6.4,
+   "avambraccioDaVerticale": -17.3,
+   "d": 195.6
+  },
+  "q3": {
+   "gy": 224,
+   "E": {
+    "x": 718,
+    "y": 376.4
+   },
+   "gom": 108.5,
+   "braccio": 28.9,
+   "avambraccioDaVerticale": -10.4,
+   "d": 249.2
+  },
+  "end": {
+   "gy": 164,
+   "E": {
+    "x": 654.7,
+    "y": 314.9
+   },
+   "gom": 165.9,
+   "braccio": 62.7,
+   "avambraccioDaVerticale": 13.2,
+   "d": 304.7
+  }
+ }
+}
