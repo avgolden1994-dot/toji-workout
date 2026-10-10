@@ -38,7 +38,7 @@ function updateWebSegmentLabel() {
   const start = Number(document.getElementById('segment-start-web').value) || 0;
   const label = document.getElementById('segment-label-web');
   if (!webDuration) {
-    label.innerText = 'primi ' + FAILURE_SET_SECONDS + ' s';
+    label.innerText = 'primi ' + FAILURE_SET_SECONDS + 's';   /* stesso formato di mp3-locale.js */
     return;
   }
   const end = Math.min(start + FAILURE_SET_SECONDS, webDuration);
@@ -188,7 +188,7 @@ function loadYouTubePlayer(videoId) {
         onStateChange: (e) => ytStatoCambiato(e),
         onError: (e) => {
           const code = e && e.data;
-          setWebStatus('\u274C ' + (YT_ERRORS[code] || 'Errore nel caricare il video.') + ' Prova un altro video.', true);
+          setWebStatus('\u274C ' + tr(YT_ERRORS[code] || 'Errore nel caricare il video.') + ' ' + tr('Prova un altro video.'), true);   /* i due pezzi si traducono a parte: la frase intera non ha voce */
         }
       }
     });
@@ -204,7 +204,7 @@ function readYouTubeDuration(attempt) {
   if (dur > 0) {
     configureWebSegment(dur);
     if (dur > FAILURE_SET_SECONDS) {
-      setWebStatus('\u2714 Video pronto (' + formatMMSS(dur) + '). Scegli il punto di partenza: verranno riprodotti 90 secondi esatti.', false);
+      setWebStatus('\u2714 ' + tr('Video pronto') + ' (' + formatMMSS(dur) + '). ' + tr('Scegli il punto di partenza: verranno riprodotti ' + FAILURE_SET_SECONDS + ' secondi esatti.'), false);
     } else {
       setWebStatus('\u2714 Video pronto, ma dura meno di 90 secondi: verra riprodotto per intero.', false);
     }

@@ -5,7 +5,8 @@
    SCHEDE PRONTE (libreria) + titolo della giornata
    ============================================================ */
 window.openTemplatePicker = function() {
-  document.getElementById('template-target-day').innerText = `Verranno caricate su: ${getDayTitle(currentDay)}`;
+  /* il nome del giorno (anche scritto da te) in un pezzo di testo suo: si traduce da solo */
+  document.getElementById('template-target-day').innerHTML = '<span>Verranno caricate su</span>: <span>' + escapeHtml(getDayTitle(currentDay)) + '</span>';
   const container = document.getElementById('template-list');
   const usage = weekUsage();
   container.innerHTML = WORKOUT_TEMPLATES.map(t => {
@@ -45,7 +46,10 @@ window.applyTemplate = function(templateId, replace) {
   const existing = data[currentDay] || [];
 
   if (replace && existing.length > 0) {
-    if (!confirm(`Sostituire i ${existing.length} esercizi di ${getDayTitle(currentDay)} con la scheda "${tpl.title}"?`)) return;
+    const dove = tr(getDayTitle(currentDay)), scheda = tr(tpl.title);
+    if (!confirm(existing.length === 1
+      ? trP('Sostituire l\'esercizio di %s con la scheda "%s"?', dove, scheda)
+      : trP('Sostituire i ' + existing.length + ' esercizi di %s con la scheda "%s"?', dove, scheda))) return;
   }
 
   const fresh = tpl.exercises.map(e => normalizeExerciseRecord({ ...e, completedSets: [] }));
@@ -72,12 +76,14 @@ window.applyTemplate = function(templateId, replace) {
 };
 
 window.renameDayTitle = function() {
-  const current = getDayTitle(currentDay);
-  const next = prompt(`Nome della scheda per ${currentDay}:`, current);
+  /* nel campo c e il titolo nella lingua scelta: se lo lasci com e, o scrivi il nome del giorno tradotto, non si salva "Monday" come titolo tuo (il salvato e sempre l italiano) */
+  const mostrato = tr(getDayTitle(currentDay)), giornoTr = tr(currentDay);
+  const next = prompt(trP('Nome della scheda per %s:', giornoTr), mostrato);
   if (next === null) return;
   const titles = loadTitles();
   const trimmed = next.trim();
-  if (trimmed === '' || trimmed === currentDay) delete titles[currentDay];
+  if (trimmed === mostrato.trim()) return;
+  if (trimmed === '' || trimmed === currentDay || trimmed === giornoTr) delete titles[currentDay];
   else titles[currentDay] = trimmed;
   saveTitles(titles);
   renderDayBar();

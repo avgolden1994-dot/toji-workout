@@ -20,7 +20,7 @@ function aggiornaProssima() {
   if (!p) { el.innerHTML = sedutaAperta() ? '<b>Tutte le serie fatte</b>: puoi terminare' : ''; return; }
   const t = isTimeBased(p.e.name);
   el.innerHTML = '<span>Prossima</span> <b>' + escapeHtml(senzaEmoji(p.e.name)) + '</b> <span data-no-tr>• ' + (p.si + 1) + '/' + p.e.completedSets.length + ' • ' +
-    p.s.reps + (t ? ' s' : '') + (p.s.weight ? ' × ' + String(p.s.weight).replace('.', ',') + ' kg' : '') + '</span>';
+    p.s.reps + (t ? ' s' : '') + (p.s.weight ? ' × ' + Number(p.s.weight).toLocaleString(LOCALE(), { maximumFractionDigits: 2 }) + ' kg' : '') + '</span>';
 }
 function htmlProssimaSeduta() {
   const oggi = new Date();
@@ -32,7 +32,7 @@ function htmlProssimaSeduta() {
     if ((v && v.rest) || isRestDay(g) || !(data[g] || []).length) continue;
     const l = data[g];
     return '<div class="og-next">' + ico('calendario') + '<span><span>Prossima seduta</span>: <b data-no-tr>' +
-      d.toLocaleDateString(LOCALE(), { weekday: 'long' }) + '</b> • ' + escapeHtml(getDayTitle(g)) + ' • ' + l.length + ' esercizi</span></div>';
+      d.toLocaleDateString(LOCALE(), { weekday: 'long' }) + '</b> • ' + escapeHtml(getDayTitle(g)) + ' • ' + l.length + (l.length === 1 ? ' esercizio' : ' esercizi') + '</span></div>';
   }
   return '';
 }

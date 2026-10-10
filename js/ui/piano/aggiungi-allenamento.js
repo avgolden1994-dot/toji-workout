@@ -30,13 +30,13 @@ function awEsercizi(src) {
 function awNome(src) {
   if (!src) return '';
   if (src.tipo === 'custom') {
-    return awGroups.map(g => MUSCLE_GROUPS[g].label).join(' e ') || 'Allenamento personalizzato';
+    return awGroups.map(g => MUSCLE_GROUPS[g].label).join(', ') || 'Allenamento personalizzato';   /* ", " e un separatore del traduttore: "Petto, Schiena" si traduce a pezzi anche da titolo salvato */
   }
   if (src.tipo === 'scheda') {
     const t = WORKOUT_TEMPLATES.find(x => x.id === src.id);
     return t ? t.title : '';
   }
-  return 'Copia di ' + getDayTitle(src.id);
+  return getDayTitle(src.id);   /* "Copia di" lo aggiunge la schermata (renderAddWeek), il nome salvato e quello del giorno */
 }
 
 let awPath = null;          /* 'schede' | 'gruppi' */
@@ -190,7 +190,7 @@ function renderAddWeek() {
           return '<button class="aw-pick ' + (on ? 'on' : '') + '" onclick="awPickSource(\'giorno\', \'' + d + '\')">' +
             '<span class="aw-radio"></span>' +
             '<span class="aw-main"><span class="aw-name">' + escapeHtml(getDayTitle(d)) + '</span>' +
-            '<span class="aw-meta">' + d + ' \u2022 ' + n + ' esercizi</span></span>' +
+            '<span class="aw-meta">' + d + ' \u2022 ' + n + (n === 1 ? ' esercizio' : ' esercizi') + '</span></span>' +
           '</button>';
         }).join('');
     }
@@ -209,8 +209,10 @@ function renderAddWeek() {
   const occupati = awDays.filter(d => (data[d] || []).length > 0);
 
   body.innerHTML =
-    '<div class="aw-chosen"><span class="aw-name">' + escapeHtml(awNome(awSource)) + '</span>' +
-      '<span class="aw-meta">' + es.length + ' esercizi</span></div>' +
+    '<div class="aw-chosen"><span class="aw-name">' + (awSource.tipo === 'giorno'
+      ? '<span>Copia di</span> <span>' + escapeHtml(awNome(awSource)) + '</span>'   /* il nome del giorno in un pezzo suo: si traduce da solo */
+      : escapeHtml(awNome(awSource))) + '</span>' +
+      '<span class="aw-meta">' + es.length + (es.length === 1 ? ' esercizio' : ' esercizi') + '</span></div>' +
     '<div class="aw-sec">Tocca i giorni</div>' +
     '<div class="aw-days">' + DAYS.map((d, i) => {
       const on = awDays.indexOf(d) !== -1;
@@ -300,8 +302,8 @@ window.openWeekSheet = function() {
   const data = loadData();
   const tot = DAYS.reduce((s2, d) => s2 + (data[d] || []).length, 0);
   if (tot === 0) { alert('Non hai ancora esercizi in programma questa settimana.'); return; }
-  document.getElementById('week-sheet-sub').innerText =
-    DAYS.filter(d => (data[d] || []).length > 0).length + ' giorni con esercizi';
+  const nGiorni = DAYS.filter(d => (data[d] || []).length > 0).length;
+  document.getElementById('week-sheet-sub').innerText = nGiorni + (nGiorni === 1 ? ' giorno con esercizi' : ' giorni con esercizi');
   renderWeekOverview();
   document.getElementById('week-sheet').classList.remove('hidden');
 };
@@ -395,7 +397,8 @@ function renderPiano() {
   summaryEl.innerText = `${list.length} esercizi • ${totalSets} serie • ~${Math.round(estMinuti)} min`;
 
   if (!planDayOpen) {
-    container.innerHTML = '<div class="wk-empty">Tocca ' + escapeHtml(getDayTitle(currentDay)) + ' qui sopra per vederne gli esercizi.</div>';
+    /* frase con il nome del giorno in mezzo: si traduce intera con trP (data-no-tr: il traduttore non la riprende) */
+    container.innerHTML = '<div class="wk-empty" data-no-tr>' + escapeHtml(trP('Tocca %s qui sopra per vederne gli esercizi.', tr(getDayTitle(currentDay)))) + '</div>';
     syncBulkBar();
     return;
   }

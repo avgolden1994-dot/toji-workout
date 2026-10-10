@@ -111,7 +111,7 @@ async function mostraFoto(ids) {
   const urls = scelte.map(x => { const u = URL.createObjectURL(x.blob); fotoUrl.push(u); return u; });
   const giorni = scelte.length === 2 ? giorniTra(daYmd(scelte[0].data), daYmd(scelte[1].data)) : 0;
   v.innerHTML = '<div class="foto-box">' +
-    '<div class="foto-bar"><b>' + (scelte.length === 2 ? 'Confronto: ' + giorni + ' giorni' : '<span data-no-tr>' + dt(scelte[0].data) + '</span>') + '</b>' +
+    '<div class="foto-bar"><b>' + (scelte.length === 2 ? 'Confronto: ' + giorni + (giorni === 1 ? ' giorno' : ' giorni') : '<span data-no-tr>' + dt(scelte[0].data) + '</span>') + '</b>' +
       '<button class="sheet-back" onclick="chiudiFoto()" aria-label="Chiudi">✕</button></div>' +
     '<div class="foto-pair n' + scelte.length + '">' + scelte.map((x, i) => '<figure><img alt="" src="' + urls[i] + '"><figcaption data-no-tr>' + dt(x.data) + '</figcaption></figure>').join('') + '</div>' +
     (scelte.length === 1 ? '<div class="foto-act"><a class="set-row-btn" href="' + urls[0] + '" download="3in-foto-' + scelte[0].data + '.jpg">Salva sul telefono</a>' +

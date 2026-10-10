@@ -13,7 +13,10 @@ window.toggleRestDay = function() {
   const i = days.indexOf(currentDay);
   if (i === -1) {
     const n = (loadData()[currentDay] || []).length;
-    if (n > 0 && !confirm('Su ' + getDayTitle(currentDay) + ' hai ' + n + ' esercizi. Segnarlo come riposo li lascia salvati ma nascosti. Continuare?')) return;
+    const frase = n === 1
+      ? 'Su %s hai 1 esercizio. Segnarlo come riposo lo lascia salvato ma nascosto. Continuare?'
+      : 'Su %s hai ' + n + ' esercizi. Segnarlo come riposo li lascia salvati ma nascosti. Continuare?';
+    if (n > 0 && !confirm(trP(frase, tr(getDayTitle(currentDay))))) return;
     days.push(currentDay);
   } else {
     days.splice(i, 1);
@@ -65,7 +68,7 @@ window.saveWeekSnapshot = function() {
   };
   const existing = weeks.findIndex(w => w.week === label);
   if (existing !== -1) {
-    if (!confirm('Hai gia salvato la settimana ' + label + '. Sovrascriverla?')) return;
+    if (!confirm(trP('Hai gia salvato la settimana %s. Sovrascriverla?', label))) return;
     weeks[existing] = entry;
   } else {
     weeks.unshift(entry);
@@ -78,14 +81,14 @@ window.saveWeekSnapshot = function() {
 window.restoreWeek = function(id) {
   const w = loadWeeks().find(x => x.id === id);
   if (!w) return;
-  if (!confirm('Ripristinare il programma del ' + w.date + '? Il piano attuale verra sostituito.')) return;
+  if (!confirm(trP('Ripristinare il programma del %s? Il piano attuale verra sostituito.', tr(w.date)))) return;   /* w.date e salvata in italiano: si traduce solo da mostrare */
   saveData(w.days);
   if (w.titles) saveTitles(w.titles);
   if (w.rest) saveRestDays(w.rest);
   armedSet = null;
   renderDayBar(); renderPiano(); renderGruppi(); renderAllenamento();
   switchTab('piano');
-  showUndo(trP('Programma del %s ripristinato.', w.date));
+  showUndo(trP('Programma del %s ripristinato.', tr(w.date)));
 };
 
 window.deleteWeek = function(id) {
@@ -115,8 +118,8 @@ function renderWeeks() {
     const giorni = DAYS.filter(d => (w.days[d] || []).length > 0).length;
     return '<div class="week-card">' +
       '<div class="week-main">' +
-        '<div class="week-name">Settimana ' + escapeHtml(w.week) + '</div>' +
-        '<div class="week-meta">' + escapeHtml(w.date) + ' \u2022 ' + giorni + ' giorni \u2022 ' + w.totalExercises + ' esercizi</div>' +
+        '<div class="week-name">Settimana <span data-no-tr>' + escapeHtml(w.week) + '</span></div>' +
+        '<div class="week-meta">' + escapeHtml(w.date) + ' \u2022 ' + giorni + (giorni === 1 ? ' giorno' : ' giorni') + ' \u2022 ' + w.totalExercises + (w.totalExercises === 1 ? ' esercizio' : ' esercizi') + '</div>' +
       '</div>' +
       '<button class="track-select-btn" onclick="restoreWeek(\'' + w.id + '\')">Ripristina</button>' +
       '<button class="del-btn" onclick="deleteWeek(\'' + w.id + '\')">\u2715</button>' +

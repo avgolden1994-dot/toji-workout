@@ -259,7 +259,7 @@ window.applyBiaValues = function(vals, fromPdf) {
     st.innerText = 'Non ho riconosciuto valori in questo referto: ogni strumento scrive in modo diverso. Inseriscili a mano qui sotto.';
   } else if (fromPdf) {
     st.className = 'bia-status ok';
-    st.innerText = '\u2713 Letti ' + trovati + ' valori. Controllali prima di proseguire.';
+    st.innerText = '\u2713 ' + (trovati === 1 ? 'Letto 1 valore. Controllalo prima di proseguire.' : 'Letti ' + trovati + ' valori. Controllali prima di proseguire.');
   }
 };
 

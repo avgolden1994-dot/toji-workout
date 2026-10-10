@@ -28,6 +28,7 @@ function icsFold(riga) {
 function icsData(k) { return k.replace(/-/g, ''); }
 
 window.buildIcs = function() {
+  const T = window.tr;   /* il file non passa dal DOM: ogni testo si traduce qui, nella lingua dell app */
   const cal = loadCal();
   const ora = new Date();
   const stamp = ora.getUTCFullYear() + String(ora.getUTCMonth() + 1).padStart(2, '0') + String(ora.getUTCDate()).padStart(2, '0') +
@@ -36,16 +37,16 @@ window.buildIcs = function() {
   const righe = [
     'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Allenamento//IT',
     'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
-    'X-WR-CALNAME:' + icsEscape('Allenamenti')
+    'X-WR-CALNAME:' + icsEscape(T('Allenamenti'))
   ];
 
   Object.keys(cal).sort().forEach(k => {
     const v = cal[k];
     if (v.rest) return;                       /* il riposo non intasa il calendario */
     const fine = ymd(piuGiorni(daYmd(k), 1));
-    const titolo = (v.done ? '\u2705 ' : '\u{1F3CB}\uFE0F ') + (v.title || 'Allenamento') + (v.done ? ' \u2014 fatto' : '');
-    const dettagli = (v.done && v.summary ? v.summary + '\n\n' : '') +
-      (v.items || []).map(e => '\u2022 ' + e.name.replace(EMOJI_TESTA, '') + (e.sets ? ' ' + e.sets + (e.reps ? '\u00D7' + e.reps : ' serie') : '')).join('\n');
+    const titolo = (v.done ? '\u2713 ' : '') + T(v.title || 'Allenamento') + (v.done ? ' \u2014 ' + T('fatto') : '');
+    const dettagli = (v.done && v.summary ? T(v.summary) + '\n\n' : '') +
+      (v.items || []).map(e => '\u2022 ' + trEs(e.name) + (e.sets ? ' ' + e.sets + (e.reps ? '\u00D7' + e.reps : ' ' + T('serie')) : '')).join('\n');
     righe.push('BEGIN:VEVENT');
     righe.push('UID:tz-' + currentMode + '-' + icsData(k) + '@tojiworkout');
     righe.push('DTSTAMP:' + stamp);
@@ -73,7 +74,7 @@ window.exportIcs = async function() {
   try {
     const file = new File([testo], nome, { type: 'text/calendar' });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      await navigator.share({ files: [file], title: 'Allenamenti' });
+      await navigator.share({ files: [file], title: window.tr('Allenamenti') });
       return;
     }
   } catch (e) { if (e && e.name === 'AbortError') return; }
@@ -84,15 +85,16 @@ window.exportIcs = async function() {
   a.href = url; a.download = nome;
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 4000);
-  showUndo(n + ' allenamenti esportati');
+  showUndo(n + (n === 1 ? ' allenamento esportato' : ' allenamenti esportati'));
 };
 
 /* Un singolo evento verso Google: funziona anche dal telefono */
 function linkGoogle(k, v) {
   const fine = ymd(piuGiorni(daYmd(k), 1));
-  const titolo = (v.done ? '\u2705 ' : '') + (v.title || 'Allenamento');
-  const dettagli = (v.done && v.summary ? v.summary + '\n\n' : '') +
-    (v.items || []).map(e => '- ' + e.name.replace(EMOJI_TESTA, '')).join('\n');
+  const T = window.tr;
+  const titolo = (v.done ? '\u2713 ' : '') + T(v.title || 'Allenamento');
+  const dettagli = (v.done && v.summary ? T(v.summary) + '\n\n' : '') +
+    (v.items || []).map(e => '- ' + trEs(e.name)).join('\n');
   return 'https://calendar.google.com/calendar/render?action=TEMPLATE' +
     '&text=' + encodeURIComponent(titolo) +
     '&dates=' + icsData(k) + '/' + icsData(fine) +

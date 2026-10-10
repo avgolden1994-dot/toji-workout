@@ -78,9 +78,9 @@ function renderCopyBar() {
   const n = mcCopyTargets.length;
   const ultima = n ? mcCopyTargets[n - 1] : null;
   document.getElementById('mc-cb-text').innerHTML =
-    '<b>\u{1F4CB} Blocco selezionato:</b> ' + etichettaSettimana(mcCopySrc) + '<br>' +
-    (n ? n + (n === 1 ? ' settimana scelta' : ' settimane scelte') + ', fino al ' +
-         piuGiorni(daYmd(ultima), 6).toLocaleDateString(LOCALE(), { day: 'numeric', month: 'long' })
+    '<b>\u{1F4CB} Blocco selezionato:</b> <span data-no-tr>' + etichettaSettimana(mcCopySrc) + '</span><br>' +
+    (n ? n + (n === 1 ? ' settimana scelta' : ' settimane scelte') + ', fino al <span data-no-tr>' +
+         piuGiorni(daYmd(ultima), 6).toLocaleDateString(LOCALE(), { day: 'numeric', month: 'long' }) + '</span>'
        : 'Tocca le settimane dove incollarlo, anche in altri mesi.');
   const inc = document.getElementById('mc-cb-paste');
   inc.disabled = n === 0;

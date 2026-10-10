@@ -55,7 +55,7 @@ function graficoPeso(pts, obiettivo) {
   const t0 = daYmd(p[0].data).getTime(), t1 = daYmd(p[p.length - 1].data).getTime();
   const X = (d) => p.length === 1 ? W / 2 : padX + (daYmd(d).getTime() - t0) / Math.max(1, t1 - t0) * (W - 2 * padX);
   const Y = (v) => padT + (max - v) / (max - min) * (H - padT - padB);
-  const f1 = (v) => String(Math.round(v * 10) / 10).replace('.', ',');
+  const f1 = (v) => (Math.round(v * 10) / 10 + 0).toLocaleString(LOCALE(), { maximumFractionDigits: 1 });   /* decimali della lingua; + 0 evita -0 */
   const giorno = (d) => daYmd(d).toLocaleDateString(LOCALE(), { day: 'numeric', month: 'short' });
   return '<svg class="peso-svg" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Andamento del peso">' +
     '<line x1="0" x2="' + W + '" y1="' + (H - padB) + '" y2="' + (H - padB) + '" class="exg-axis"></line>' +
@@ -80,7 +80,7 @@ function renderPesoCard() {
     const sett = (ob - ult.kg) / t.settimana;
     if (sett < 104) eta = '<span>Di questo passo arrivi all obiettivo verso</span> <span data-no-tr>' + piuGiorni(new Date(), Math.round(sett * 7)).toLocaleDateString(LOCALE(), { day: 'numeric', month: 'long' }) + '</span>.';
   } else if (ob && ult && Math.abs(ob - ult.kg) < 0.3) eta = 'Obiettivo raggiunto.';
-  const f1 = (v) => String(Math.round(v * 10) / 10).replace('.', ',');
+  const f1 = (v) => (Math.round(v * 10) / 10 + 0).toLocaleString(LOCALE(), { maximumFractionDigits: 1 });   /* decimali della lingua; + 0 evita -0 */
   box.innerHTML = '<div class="section-title">Peso corporeo</div>' +
     '<div id="pg-peso-grafico"><div class="peso-top"><div><b class="peso-big">' + (ult ? f1(ult.kg) : '–') + '</b> kg' +
       (t ? '<small> • <span data-no-tr>' + (t.settimana > 0 ? '+' : '') + f1(t.settimana) + '</span> <span>kg/sett</span></small>' : '') + '</div>' +

@@ -23,13 +23,13 @@ function renderPgTiles() {
   const box = document.getElementById('pg-tiles');
   if (!box) return;
   const pts = pesiTutti(), ult = pts[pts.length - 1];
-  const f1 = (v) => String(Math.round(v * 10) / 10).replace('.', ',');
+  const f1 = (v) => (Math.round(v * 10) / 10 + 0).toLocaleString(LOCALE(), { maximumFractionDigits: 1 });   /* decimali della lingua; + 0 evita -0 */
   const fp = fotoPromemoria();
   const n = loadHistory().length;
   const sub = {
     peso: (ult ? '<span data-no-tr>' + f1(ult.kg) + ' kg</span>' : '<span>' + (fp.dovuta ? 'foto da fare' : 'Peso e foto ogni 2 settimane') + '</span>'),
     stats: '<span>Frequenza e report</span>',
-    storico: '<span>' + n + ' allenamenti</span>'
+    storico: '<span>' + n + (n === 1 ? ' allenamento' : ' allenamenti') + '</span>'
   };
   box.innerHTML = Object.keys(PG_PAGINE).map(k => '<button class="pg-tile' + (k === 'peso' && fp.dovuta ? ' dovuta' : '') + '" onclick="apriPagProgressi(\'' + k + '\')">' +
     '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + PG_ICO[PG_PAGINE[k].ico] + '</svg>' +
@@ -58,7 +58,7 @@ window.chiudiPagProgressi = function() {
 let pesateTutte = false;
 function htmlPesate(pts, ob) {
   if (!pts.length) return '';
-  const f1 = (v) => String(Math.round(v * 10) / 10).replace('.', ',');
+  const f1 = (v) => (Math.round(v * 10) / 10 + 0).toLocaleString(LOCALE(), { maximumFractionDigits: 1 });   /* decimali della lingua; + 0 evita -0 */
   const sg = (v) => (v > 0 ? '+' : '') + f1(v);
   const dt = (x) => daYmd(x.data).toLocaleDateString(LOCALE(), { day: 'numeric', month: 'short' });
   const primo = pts[0], ult = pts[pts.length - 1];
@@ -69,12 +69,12 @@ function htmlPesate(pts, ob) {
     const media = (ult.kg - primo.kg) / Math.max(1, sett);
     h += '<div class="pw-kp">' +
       '<div><span>Media</span><b><span data-no-tr>' + sg(media) + '</span> <span>kg a settimana</span></b></div>' +
-      '<div><span>Dall’inizio</span><b><span data-no-tr>' + sg(ult.kg - primo.kg) + ' kg</span> · <span>' + 'in ' + Math.max(1, Math.round(sett)) + ' settimane' + '</span></b></div>';
+      '<div><span>Dall’inizio</span><b><span data-no-tr>' + sg(ult.kg - primo.kg) + ' kg</span> · <span>' + 'in ' + Math.max(1, Math.round(sett)) + (Math.max(1, Math.round(sett)) === 1 ? ' settimana' : ' settimane') + '</span></b></div>';
     if (ob) {
       const manca = ob - ult.kg;
       const verso = Math.abs(manca) < 0.3 ? null : (media !== 0 && Math.sign(media) === Math.sign(manca) ? Math.ceil(Math.abs(manca / media)) : null);
       h += '<div><span>All’obiettivo</span><b>' + (Math.abs(manca) < 0.3 ? '<span>raggiunto</span>' :
-        '<span data-no-tr>' + sg(manca) + ' kg</span>' + (verso ? ' · <span>' + 'circa ' + verso + ' settimane' + '</span>' : ' · <span>serve invertire la tendenza</span>')) + '</b></div>';
+        '<span data-no-tr>' + sg(manca) + ' kg</span>' + (verso ? ' · <span>' + 'circa ' + verso + (verso === 1 ? ' settimana' : ' settimane') + '</span>' : ' · <span>serve invertire la tendenza</span>')) + '</b></div>';
     }
     h += '</div>';
   }

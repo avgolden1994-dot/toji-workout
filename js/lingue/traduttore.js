@@ -60,7 +60,9 @@ const ICO_PATHS = {
   cardio: '<path d="M3 12h4l2-5 4 10 2-5h6"/>',
   scintilla: '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>',
   ingranaggio: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1L7 17M17 7l2.1-2.1"/>',
-  avviso: '<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.01"/>'
+  avviso: '<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.01"/>',
+  errore: '<circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/>',
+  gravidanza: '<circle cx="11" cy="4.5" r="2"/><path d="M10 8.5c-1.6 1.3-1.8 4-.9 6.2L8.5 21M10 8.5c3.6-.2 6.5 1.6 6.5 4.8 0 2.4-1.6 3.8-4 4.2M12.5 17.5V21"/>'
 };
 function ico(n, cls) {
   return '<svg class="ico' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" aria-hidden="true">' + (ICO_PATHS[n] || '') + '</svg>';
@@ -76,7 +78,7 @@ const EMOJI_ICO = {
   '\u{1F6D1}': 'stop', '\u{1F3E0}': 'casa', '\u{1F3DF}': 'palestra', '\u{1F938}': 'corpo', '\u{1F331}': 'livello1', '\u{1F33F}': 'livello2',
   '\u{1F333}': 'livello3', '\u{1F60C}': 'viso1', '\u{1F610}': 'viso2', '\u{1F62B}': 'viso3', '\u{1F937}': 'mescola', '✅': 'ok',
   '☑': 'ok', '⛓': 'catena', '\u{1F4A1}': 'idea', '⏱': 'timer', '\u{1F310}': 'mondo', '\u{1F4C0}': 'disco', '⏭': 'salta',
-  '✨': 'scintilla', '⚖': 'bilancia', '❤': 'cuore', '⚙': 'ingranaggio', '⚠': 'avviso', '\u{1F4AA}': null,
+  '✨': 'scintilla', '⚖': 'bilancia', '❤': 'cuore', '⚙': 'ingranaggio', '⚠': 'avviso', '❌': 'errore', '\u{1F930}': 'gravidanza', '\u{1F4AA}': null,
   '\u{1F9B5}': null, '\u{1F3F9}': null, '\u{1F351}': null, '\u{1F6E1}': null, '\u{1F9BE}': null, '\u{1F3AF}': null, '\u{1F9CD}': null
 };
 const EMOJI_RX = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{26FF}✅✨❌❤✊-✍✏⭐⏩-⏳⏸-⏺☑][️‍]*/u;
@@ -152,7 +154,8 @@ window.trP = function(frase) {
 };
 window.trEs = function(n) { return window.tr(senzaEmoji(String(n || '')).replace(/^\s+/, '')); };
 
-const I18N_ATTR = ['placeholder', 'aria-label', 'title'];
+/* label: le etichette dei gruppi nel menu degli esercizi (<optgroup label>); l italiano resta in el.__i18n_label_it, quindi il cambio lingua ritraduce da li */
+const I18N_ATTR = ['placeholder', 'aria-label', 'title', 'label'];
 const I18N_ORIG = new WeakMap();
 /* un testo con emoji: le emoji diventano icone SVG (o spariscono),
    i pezzi di testo intorno si traducono e ricordano il loro italiano */
@@ -275,6 +278,10 @@ function ritraduciTutto() {
       });
     }
   }
+  /* i campi che mostrano un nome tradotto e ne tengono la chiave italiana (data-chiave, es. il nome esercizio del form a mano) seguono la lingua se l utente non li ha toccati */
+  document.querySelectorAll('input[data-chiave]').forEach(i => {
+    if (i.value === i.dataset.visto) i.value = i.dataset.visto = window.trEs(i.dataset.chiave);
+  });
 }
 
 /* cambio lingua sul posto, senza ricaricare: niente schermo nero */

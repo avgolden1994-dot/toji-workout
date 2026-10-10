@@ -87,9 +87,9 @@ function renderSuggested() {
   suggestedOrder.forEach((n, i) => { pos[n] = i; });
   items.sort((a, b) => (pos[a.name] === undefined ? 999 : pos[a.name]) - (pos[b.name] === undefined ? 999 : pos[b.name]));
 
-  const nomi = selectedGroups.map(g => MUSCLE_GROUPS[g].label).join(', ');
-  document.getElementById('suggested-hint').innerText =
-    'Proposte per ' + nomi + ': tocca l\'esercizio per metterlo in scheda. Parte sempre da ' + DEFAULT_SETS + ' serie da ' + DEFAULT_REPS + ', poi lo regoli il giorno dell\'allenamento.';
+  const nomi = selectedGroups.map(g => tr(MUSCLE_GROUPS[g].label)).join(', ');
+  document.getElementById('suggested-hint').innerText = trP(
+    'Proposte per %s: tocca l\'esercizio per metterlo in scheda. Parte sempre da ' + DEFAULT_SETS + ' serie da ' + DEFAULT_REPS + ', poi lo regoli il giorno dell\'allenamento.', nomi);
 
   /* organizzato: macchinari e cavi, pesi liberi, corpo libero; poi gruppo e sottogruppo. Ordine dentro il sottogruppo:
      quelli mai scelti prima (la lista congelata qui sopra), poi i multiarticolari */

@@ -49,15 +49,18 @@ function renderOnbResult() {
   /* ETA-04 (decisione del proprietario, D-P26): il metabolismo basale in kcal, misura della BIA inserita dall utente, non si mostra ai minorenni (bmrNascostoPerEta), con o senza coach; il dato resta salvato e analyzeBia non cambia */
   const bmrVisibile = an && !bmrNascostoPerEta(onbData.age) ? an.bmr : null;
   if ((an && (an.bmi || an.fmPerc || an.ffmi || bmrVisibile)) || sb.dati) {
-    const v1 = (x) => x.toFixed(1).replace('.', ',');
+    /* numeri con i decimali della lingua scelta (virgola in italiano, punto in inglese): mai .replace('.', ',') */
+    const nf = (x, d) => Number(x).toLocaleString(LOCALE(), { minimumFractionDigits: d, maximumFractionDigits: d });   /* d decimali fissi */
+    const nm = (x) => Number(x).toLocaleString(LOCALE(), { maximumFractionDigits: 1 });                            /* fino a un decimale */
+    const v1 = (x) => nf(x, 1);
     html += '<div class="res-card"><div class="res-title">La tua composizione</div>' +
-      (an.bmi ? '<div class="res-line"><span>BMI</span><b>' + an.bmi + '</b></div>' : '') +
-      (an.fmPerc ? '<div class="res-line"><span>Massa grassa</span><b>' + an.fmPerc + '%</b></div>' : '') +
-      (an.ffmi ? '<div class="res-line"><span>Indice di massa magra</span><b>' + an.ffmi + '</b></div>' : '') +
+      (an.bmi ? '<div class="res-line"><span>BMI</span><b>' + nm(an.bmi) + '</b></div>' : '') +
+      (an.fmPerc ? '<div class="res-line"><span>Massa grassa</span><b>' + nm(an.fmPerc) + '%</b></div>' : '') +
+      (an.ffmi ? '<div class="res-line"><span>Indice di massa magra</span><b>' + nm(an.ffmi) + '</b></div>' : '') +
       (bmrVisibile ? '<div class="res-line"><span>Metabolismo basale</span><b>' + bmrVisibile + ' kcal</b></div>' : '') +
       (an && an.fmTesto ? '<span class="res-tag ' + an.fmLivello + '">' + an.fmTesto + '</span>' : '') +
       (sb.fa !== null ? '<div class="res-line"><span>Angolo di fase</span><b>' + v1(sb.fa) + '\u00B0 <span class="res-tag ' + (sb.faBassa ? 'att' : 'good') + '" style="margin:0 0 0 6px">' + (sb.faBassa ? 'Sotto la media' : 'Nella norma') + '</span></b></div>' : '') +
-      (sb.rapporto !== null ? '<div class="res-line"><span>Acqua extracellulare / totale</span><b>' + sb.rapporto.toFixed(2).replace('.', ',') + ' <span class="res-tag ' + (sb.ecwAlto ? 'att' : (sb.ecwLimite ? 'mid' : 'good')) + '" style="margin:0 0 0 6px">' + (sb.ecwAlto ? 'Alta' : (sb.ecwLimite ? 'Limite alto' : 'Nella norma')) + '</span></b></div>' : '') +
+      (sb.rapporto !== null ? '<div class="res-line"><span>Acqua extracellulare / totale</span><b>' + nf(sb.rapporto, 2) + ' <span class="res-tag ' + (sb.ecwAlto ? 'att' : (sb.ecwLimite ? 'mid' : 'good')) + '" style="margin:0 0 0 6px">' + (sb.ecwAlto ? 'Alta' : (sb.ecwLimite ? 'Limite alto' : 'Nella norma')) + '</span></b></div>' : '') +
       (sb.dati ? '<div class="pref-note">Il coach usa l’angolo di fase e l’acqua extracellulare solo per essere prudente all’inizio, non per scegliere i carichi. Se un valore è fuori norma, ripeti la misura a digiuno e a riposo.</div>' : '') +
       '</div>';
   }
@@ -73,7 +76,7 @@ function renderOnbResult() {
   html += '<div class="res-card"><div class="res-title">Quando parte</div>';
   if (attivo && s && !s.finito) {
     html += '<div class="consent-li" style="margin-bottom:var(--sp-3);">\u26A0\uFE0F Hai gia un programma in corso: <b>' + escapeHtml(attivo.split) +
-      '</b>, settimana ' + s.numero + ' di ' + s.totale + '.</div>';
+      '</b>, <span>settimana ' + s.numero + ' di ' + s.totale + '</span>.</div>';   /* il punto fuori dallo span: un punto in fondo impedisce al traduttore di trovare la frase */
   }
   html += '<button class="onb-opt ' + (onbData.inizio === 'questa' ? 'on' : '') + '" onclick="onbPick(\'inizio\', \'questa\')">' +
       '<span class="onb-opt-emoji">\u25B6</span><span class="onb-opt-main">' +

@@ -53,7 +53,7 @@ window.deleteSelected = function() {
   selectedIdx = [];
   armedSet = null;
   renderPiano(); renderAllenamento(); renderGruppi(); renderSuggested();
-  showUndo(n + ' esercizi eliminati', () => {
+  showUndo(n + (n === 1 ? ' esercizio eliminato' : ' esercizi eliminati'), () => {
     const d2 = loadData();
     d2[currentDay] = backup;
     saveData(d2);
@@ -82,8 +82,9 @@ window.copyDayTo = function() {
   const data = loadData();
   const src = data[currentDay] || [];
   if (src.length === 0) { alert('Non c e niente da copiare in questo giorno.'); return; }
-  const scelta = prompt('In quale giorno copio ' + getDayTitle(currentDay) + '?\n' +
-    DAYS.map((d, i) => (i + 1) + ') ' + d).join('\n'), '');
+  /* domanda e giorni si traducono qui: nel prompt ogni riga "1) Lunedì" ha un numero davanti e il traduttore da solo non la riconoscerebbe */
+  const scelta = prompt(trP('In quale giorno copio %s?', tr(getDayTitle(currentDay))) + '\n' +
+    DAYS.map((d, i) => (i + 1) + ') ' + tr(d)).join('\n'), '');
   if (scelta === null) return;
   const idx = parseInt(scelta, 10) - 1;
   const target = DAYS[idx];
@@ -91,7 +92,9 @@ window.copyDayTo = function() {
   if (target === currentDay) { alert('E il giorno da cui stai copiando.'); return; }
 
   const backup = JSON.parse(JSON.stringify(data[target] || []));
-  if (backup.length > 0 && !confirm(getDayTitle(target) + ' ha gia ' + backup.length + ' esercizi. Li sostituisco?')) return;
+  if (backup.length > 0 && !confirm(backup.length === 1
+    ? trP('%s ha gia 1 esercizio. Lo sostituisco?', tr(getDayTitle(target)))
+    : trP('%s ha gia ' + backup.length + ' esercizi. Li sostituisco?', tr(getDayTitle(target))))) return;
 
   data[target] = JSON.parse(JSON.stringify(src)).map(e => normalizeExerciseRecord(
     Object.assign({}, e, { completedSets: [], skipped: false })
@@ -175,8 +178,18 @@ document.getElementById('exercise-form').addEventListener('submit', (e) => {
   e.preventDefault();
   const data = loadData();
   const sets = Number(document.getElementById('sets').value) || 0;
+  /* il campo mostra il nome tradotto (handleSelectExercise): se non lo hai toccato si salva la chiave italiana di libreria;
+     se hai scritto a mano il nome tradotto di un esercizio della libreria, torna alla sua chiave; altrimenti e un nome tuo */
+  const inp = document.getElementById('exercise-name');
+  const scritto = inp.value.trim(), chiave = inp.dataset.chiave;
+  let nome = inp.value;
+  if (chiave && (scritto === inp.dataset.visto || scritto === trEs(chiave).trim())) nome = chiave;
+  else {
+    const lib = EXERCISE_LIBRARY.find(x => trEs(x.name).trim().toLowerCase() === scritto.toLowerCase());
+    if (lib) nome = lib.name;
+  }
   const payload = {
-    name: document.getElementById('exercise-name').value,
+    name: nome,
     sets,
     reps: Number(document.getElementById('reps').value) || 0,
     weight: Number(document.getElementById('weight').value) || 0,
@@ -212,7 +225,8 @@ window.startEditExercise = function(idx) {
   const data = loadData();
   const e = data[currentDay][idx];
   if (!e) return;
-  document.getElementById('exercise-name').value = e.name;
+  const inp = document.getElementById('exercise-name');
+  inp.value = inp.dataset.visto = trEs(e.name); inp.dataset.chiave = e.name;
   document.getElementById('sets').value = e.sets;
   document.getElementById('reps').value = e.reps;
   document.getElementById('weight').value = e.weight;
@@ -227,6 +241,8 @@ window.startEditExercise = function(idx) {
 window.cancelEditExercise = function() {
   editingExerciseIdx = null;
   document.getElementById('exercise-form').reset();
+  const inp = document.getElementById('exercise-name');
+  delete inp.dataset.chiave; delete inp.dataset.visto;   /* reset() non tocca i data-* */
   document.getElementById('exercise-select').value = '';
   document.getElementById('sets').value = 3;
   document.getElementById('reps').value = 10;

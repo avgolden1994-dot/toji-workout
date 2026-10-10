@@ -56,7 +56,7 @@ function renderWorkoutDayPicker() {
       ? '\u{1F634} Riposo'
       : (list.length === 0
           ? 'Nessun esercizio \u2014 costruiscilo nel Piano'
-          : list.length + ' esercizi \u2022 ' + totalSets + ' serie' + (doneSets ? ' \u2022 ' + doneSets + ' gia fatte' : ''));
+          : list.length + (list.length === 1 ? ' esercizio' : ' esercizi') + ' \u2022 ' + totalSets + ' serie' + (doneSets ? ' \u2022 ' + doneSets + (doneSets === 1 ? ' gia fatta' : ' gia fatte') : ''));
 
     return '<button class="wday-card ' + (empty ? 'empty' : '') + (i === todayIdx ? ' today' : '') + '" ' +
       'onclick="openWorkoutDay(\'' + d + '\')">' +
@@ -74,7 +74,7 @@ function renderWorkoutDayPicker() {
 window.openWorkoutDay = function(day) {
   const data = loadData();
   if (isRestDay(day) && !specialeAttiva(day)) {
-    if (!confirm(getDayTitle(day) + ' e segnato come riposo. Vuoi allenarti lo stesso?')) return;
+    if (!confirm(trP('%s e segnato come riposo. Vuoi allenarti lo stesso?', tr(getDayTitle(day))))) return;
   }
   if ((data[day] || []).length === 0) {
     alert(trP('Per %s non hai ancora esercizi. Costruisci la scheda nel tab Piano.', tr(getDayTitle(day))));
