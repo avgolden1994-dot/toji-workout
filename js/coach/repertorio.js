@@ -350,7 +350,8 @@ function corpoCoach() {
   if (fase === 'deficit') out.push('Passi: 10-12 mila al giorno, aumentandoli di 500-1000 a settimana. Il cardio non toglie muscolo ne forza.');
   else out.push('Passi: almeno 6-8 mila al giorno. Il cardio non toglie muscolo ne forza, solo un po di esplosivita.');
   if (goals.indexOf('salute') !== -1) out.push(rigaMinutiSalute());
-  out.push('Creatina 3-5 g al giorno: sicura ed efficace con i pesi. Solo un informazione, facoltativa.');
+  /* NUT-01 (onda 5, m5 della revisione dell'onda 4): con il PAR-Q positivo niente creatina: a chi ha dichiarato una condizione di salute un integratore non si suggerisce (guardia che toglie; parlane col medico) */
+  if (!p.parq) out.push('Creatina 3-5 g al giorno: sicura ed efficace con i pesi. Solo un informazione, facoltativa.');
   return out;
 }
 

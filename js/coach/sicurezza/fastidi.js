@@ -92,7 +92,22 @@ function datiNotaFastidio(prog, fastidio) {
   if (fuori.length) parti.push(z.etichetta + ', esclusi per il fastidio: ' + fuori.map(f => f.testo).join(', '));
   if (tenuti.length) parti.push((parti.length ? '' : z.etichetta + ': ') + z.come + ': ' + tenuti.join(', '));
   parti.push((parti.length ? '' : z.etichetta + ': ') + 'se il fastidio supera ' + massimo + '/10 o peggiora, fermati; se non passa, fatti vedere da un medico o da un fisioterapista.');
+  parti.push(FRASE_NON_MEDICO);   /* onda 5: la stessa formula di DEC-03/04 e di dolore-mattina.js, anche qui */
   return { zona: fastidio, tenuti: tenuti, fuori: fuori, testo: parti.join(' — ') };
+}
+/* la formula del rinvio (INT-4, da confermare dal proprietario): un pezzo a sé del testo, tradotto da solo */
+const FRASE_NON_MEDICO = 'Non sono un medico e non faccio diagnosi.';
+
+/* REC-04 (onda 5): la cautela di UN esercizio per chi lo mette al posto di un altro (Macchinario occupato, alternative): la nota per zona vale per la scheda; un esercizio scelto in
+   seduta che carica una zona dichiarata (stress >= stressNominato) porta la sua cautela nella nota del coach («Spalle: da fare nell’ampiezza che non fa male»), così la scheda non mente.
+   '' se non carica nessuna zona, senza fastidi o con REC-04 spenta. Una zona sola (la prima dichiarata che l esercizio carica) */
+function notaCautelaFastidio(nome, fastidi) {
+  if (!fastidiAttivi() || typeof stressArticolare !== 'function') return '';
+  const soglia = sogliaFastidi('stressNominato');
+  const zona = (fastidi || []).find(f => FASTIDI_ZONE[f] && ((stressArticolare(nome, f) || 0) >= soglia));
+  if (!zona) return '';
+  const z = FASTIDI_ZONE[zona];
+  return z.etichetta + ': ' + z.come.replace(/^restano, /, '');
 }
 
 /* è una nota di questo file? (per non ripeterla se riconciliaNote gira due volte) */

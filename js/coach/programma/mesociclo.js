@@ -277,7 +277,9 @@ function controlloOttavaPrincipiante(p) {
   if (!n || piano.controllo || !Array.isArray(piano.settimane) || !p.inizio || !Array.isArray(p.fasi)) return false;   /* le uscite economiche per prime: gira a ogni lettura della settimana */
   const w = piano.settimane[n - 1];
   if (!w || w.fase !== 'controllo' || !pianoAttivo() || !regolaAttiva('PRN-03') || typeof coachAttivo !== 'function' || !coachAttivo()) return false;
-  if (Math.floor(giorniTra(daYmd(p.inizio), lunediDi(new Date())) / 7) + 1 !== n) return false;
+  /* onda 5: la settimana e quella del PROGRAMMA (le pause tolte, CST-01), non del calendario: con una pausa il controllo arriva all'8ª settimana vissuta */
+  const wOggi = typeof settimanaDelGiorno === 'function' ? settimanaDelGiorno(new Date(), p) : Math.floor(giorniTra(daYmd(p.inizio), lunediDi(new Date())) / 7) + 1;
+  if (wOggi !== n) return false;
   const fatica = livelloFatica(), seg = segnaliControlloOttava();
   const senzaDati = !loadHistory().some(h => h.feedback && !h.interrotta) && !storicoProntezza().some(x => x && typeof x.punteggio === 'number');
   const acceso = Object.keys(seg).filter(k => seg[k]);

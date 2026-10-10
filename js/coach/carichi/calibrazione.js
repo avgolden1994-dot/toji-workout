@@ -193,7 +193,11 @@ function faseCalibrazione(r, c) {
   if (u.azione === 'tieni') {
     /* mai oltre +25% in una volta, nemmeno con la progressione di prima (CAR-16): se un passo supera il tetto (manubrio da 3 kg) si sale con le ripetizioni */
     const tetto = sogliaPartenza('calibrazioneTettoSalto');
-    if (u.pesoUltimo > 0 && r.weight > u.pesoUltimo * (1 + tetto) + 1e-9) {
+    /* INT-5d (D-P26): se il +25% non contiene NESSUN peso della griglia sopra il carico (un cavo da 5 kg: +25% e 6,25 kg e il passo e 2,5 kg) la guardia lascia passare esattamente
+       quel passo, come limitaSalitaBase: altrimenti la coppia non sale mai (A1 e m3). Un salto piu grande di un passo resta fermo. */
+    const unPasso = u.pesoUltimo > 0 ? passoUnicoOltreTetto(u.pesoUltimo, c.nome) : null;
+    const passaUnPasso = unPasso !== null && r.weight <= unPasso + 1e-9;
+    if (u.pesoUltimo > 0 && r.weight > u.pesoUltimo * (1 + tetto) + 1e-9 && !passaUnPasso) {
       const salto = Math.round((r.weight / u.pesoUltimo - 1) * 100), passo = Math.round((r.weight - u.pesoUltimo) * 10) / 10;
       r.weight = u.pesoUltimo; r.reps = (Number(c.repsTarget) || r.reps) + 1; r.tipo = 'su';
       r.motivo = '+' + virgola(passo) + ' kg sarebbe un salto del ' + salto + '%: prima una ripetizione in piu (' + r.reps + ')';

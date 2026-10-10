@@ -199,17 +199,22 @@ const PARAM_ANALISI = {
                                  per i dati vecchi con lo scarico gia composto, 24,5 -> 22 -> 20 -> 18 kg, e si risale per gradi) */
 };
 /* p0 = il programma gia letto (chi scorre tutto lo storico lo legge una volta sola) */
+/* la settimana del programma di un giorno: con le pause tolte (CST-01, settimanaDelGiorno in sicurezza/popolazioni.js: onda 5, come settimanaProgramma per oggi); senza quel file il calendario, come prima */
+function settimanaCalendarioOProgramma(d, p) {
+  if (typeof settimanaDelGiorno === 'function') return settimanaDelGiorno(d, p);
+  return Math.floor(giorniTra(daYmd(p.inizio), lunediDi(d)) / 7) + 1;
+}
 function faseDelGiorno(d, p0) {
   const p = p0 || getProgramma();
   if (!regolaAttiva('MES-10') || !p || !p.inizio || !p.fasi || !d) return null;
-  const w = Math.floor(giorniTra(daYmd(p.inizio), lunediDi(d)) / 7);
+  const w = settimanaCalendarioOProgramma(d, p) - 1;
   return w >= 0 && w < p.fasi.length ? p.fasi[w] : null;
 }
 function settimanaDellaSeduta(h) {
   if (h && h.settimana && h.settimana.numero >= 1) return Number(h.settimana.numero);
   const p = getProgramma(), d = h ? dataSessione(h) : null;
   if (!p || !p.inizio || !d) return 0;
-  const w = Math.floor(giorniTra(daYmd(p.inizio), lunediDi(d)) / 7) + 1;
+  const w = settimanaCalendarioOProgramma(d, p);
   return w >= 1 && w <= (p.settimane || 0) ? w : 0;
 }
 /* MES-10: la seduta conta come di scarico nelle analisi. La definizione e una sola, esercizioInScarico (progressivo.js); qui c e solo l interruttore */
@@ -303,6 +308,15 @@ function caricoSalito(da, inc, nome) {
   const s = pesoGriglia(da + 1e-6, nome, { modo: 'su' });
   return s === null ? arrotonda(da + inc) : s;
 }
+/* CAR-18 (INT-5d): il primo peso della griglia sopra `pesoUltimo` quando il tetto del +25% NON contiene nessun peso sopra il carico (cavi e pile da 2,5 kg a 5 kg: +25% = 6,25 kg; manubri
+   da 3 kg: +1 kg e +33%), altrimenti null. E l unico passo che il tetto lascia passare: la stessa scelta di limitaSalitaBase (INT-4) e della guardia della calibrazione (faseCalibrazione) */
+function passoUnicoOltreTetto(pesoUltimo, nome) {
+  if (!(pesoUltimo > 0) || typeof sogliaPartenza !== 'function') return null;
+  const tetto = pesoUltimo * (1 + sogliaPartenza('calibrazioneTettoSalto'));
+  const giu = grigliaAttiva() ? arrotondaAttrezzo(tetto, nome, { modo: 'giu' }) : Math.floor(tetto / 0.5 + 1e-9) * 0.5;
+  if (giu > pesoUltimo + 1e-9) return null;
+  return grigliaAttiva() ? arrotondaAttrezzo(pesoUltimo + 1e-6, nome, { modo: 'su' }) : pesoUltimo + 0.5;
+}
 /* ALG-06 e CAR-18 (INT-4): un aumento della progressione di base non supera +25% in una volta, come la calibrazione e la ripresa dopo lo scarico. La griglia puo rendere il passo molto piu
    grande di quanto voluto (un cavo da 6,5 kg + 2,5 = 9, che la griglia porta a 10: +54%; fuori dal piano non c e il +10% di ALG-05). Si sale al peso della griglia piu alto che sta nel tetto; se
    tra il carico e il tetto non c e nessun peso (manubri da 3 kg: +1 kg e +33%) resta il passo piu piccolo che c e: il peso sale sempre, mai di piu del necessario. `w` = l aumento deciso */
@@ -310,10 +324,9 @@ function limitaSalitaBase(w, pesoUltimo, nome) {
   if (!(pesoUltimo > 0) || !(w > pesoUltimo) || typeof sogliaPartenza !== 'function') return w;
   const tetto = pesoUltimo * (1 + sogliaPartenza('calibrazioneTettoSalto'));
   if (w <= tetto + 1e-9) return w;
-  const giu = grigliaAttiva() ? arrotondaAttrezzo(tetto, nome, { modo: 'giu' }) : Math.floor(tetto / 0.5 + 1e-9) * 0.5;
-  if (giu > pesoUltimo + 1e-9) return giu;
-  const primo = grigliaAttiva() ? arrotondaAttrezzo(pesoUltimo + 1e-6, nome, { modo: 'su' }) : pesoUltimo + 0.5;
-  return Math.min(w, primo);
+  const primo = passoUnicoOltreTetto(pesoUltimo, nome);
+  if (primo !== null) return Math.min(w, primo);
+  return grigliaAttiva() ? arrotondaAttrezzo(tetto, nome, { modo: 'giu' }) : Math.floor(tetto / 0.5 + 1e-9) * 0.5;
 }
 /* ALG-06: una riduzione di `da` del fattore `f`: il peso della griglia piu vicino, almeno il primo sotto `da` se c e (mai sotto la barra o 1 kg), mai sopra `da` */
 function caricoSceso(da, f, nome) {
@@ -351,6 +364,8 @@ function esitoDiLavoro(ex, repsTarget, W) {
 const FRASE_PESO_CAMBIATO = 'Hai cambiato peso a metà seduta: parto dal peso con cui hai fatto più serie';
 /* MES-05 / N10: a cosa serve lo scarico, senza promettere di «ripartire piu forte» (ricerca-mesocicli-periodizzazione-scarichi §5 riga 20, §2 B: Moderata) */
 const FRASE_SCOPO_SCARICO = 'serve a smaltire la fatica accumulata: non fa crescere di più, ma fermarsi del tutto può costare forza';
+/* ALG-19: la ripresa dopo lo scarico di chi ha il RIR fisso continua dalle ripetizioni della seduta di lavoro (numero: # nei dizionari) */
+const FRASE_RIPETIZIONI_RIPRESA = n => 'e dalle ripetizioni raggiunte prima dello scarico (' + n + '): la doppia progressione continua da lì';
 /* AUT-01: il carico (non arrotondato) che un RPE piu basso del bersaglio permette, registro B3: massimale stimato con le ripetizioni in riserva osservate (dentro
    rirAffidabile, al massimo puntiRpeMax punti sopra quelle del bersaglio), poi caricoPer con quelle del bersaglio. Vale circa 1/(30 + ripetizioni + RIR) per punto:
    2,4-2,9% tra 3 e 10 ripetizioni. Epley senza il taglio a 12 ripetizioni efficaci di e1rm (lo stesso di caricoPer): vale fino a 12 ripetizioni e 4 in riserva */
@@ -419,6 +434,18 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase, soloBase) {
      com e e il motore decide. Il RIR in piu lo da rirBersaglio (ripresaDopoScarico), il testo lo scrive testoRir. */
   const scaricoRiuscito = rif > 0 && ultimaDiScarico && e1 === 'ok';
   const tettoRipresa = pesoUltimo > 0 ? caricoInGriglia(pesoUltimo * PARAM_ANALISI.saltoMaxRipresa, nome) : Infinity;
+  /* ALG-19 (onda 5, D-P26; revisione dell onda 4, M1): chi ha il RIR fisso (modalita prudente, over 65, minorenni; la gravidanza e prudente) non ha la rampa del RIR e ALG-05 non
+     ricalcola mai: il peso sale solo con la doppia progressione, che chiede 3-4 sedute in un blocco di 3 settimane di lavoro. Il -5% della ripresa prudente cadeva sullo stesso peso
+     dello scarico «basso» (x0,95) e la progressione ripartiva dal carico scaricato e dalle ripetizioni dello scarico: in 12 settimane il peso non saliva (minorenni 84-89% delle coppie,
+     over 65 36-39%) e il 5% finiva sotto il carico di partenza. Dopo uno scarico programmato e COMPLETATO si riparte dal 100% del riferimento (il -5% resta per i segnali di fatica
+     veri: sonno scarso, prontezza media bassa: ricerca-mesocicli-periodizzazione-scarichi §0 punto 4 «si riprende al 100% del riferimento, 95% se il motivo era una fatica alta non
+     risolta») e dalle ripetizioni dell ultima seduta di lavoro con questo bersaglio (la doppia progressione continua da dove era). Solo programmi v2; gli adulti senza RIR fisso
+     restano identici (salgono gia con la rampa del RIR e ALG-05). */
+  const alg19 = v2 && scaricoRiuscito && (pc.prudente || over65 || pc.minorenne) && regolaAttiva('ALG-19');
+  const lavoro = alg19 ? lista.find(x => !x.eraDiScarico) : null;
+  const fatteLavoro = lavoro ? (lavoro.ex.sets || []).filter(x => x.done) : [];
+  const repsLavoro = fatteLavoro.length ? Math.max(Number(repsTarget) || 0, Math.min.apply(null, fatteLavoro.map(x => Number(x.reps) || 0))) : (Number(repsTarget) || 0);
+  const fatteScala = alg19 && fatteLavoro.length ? fatteLavoro : fatteUltima;   /* le ripetizioni da cui la doppia progressione continua: dopo lo scarico quelle della seduta di lavoro */
 
   /* rientro dopo una pausa su questo esercizio (dopo uno scarico riuscito il calo si applica al riferimento, non al carico di scarico) */
   const giorni = tutte[0] && tutte[0].data ? giorniTra(tutte[0].data, new Date()) : 0;
@@ -431,14 +458,19 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase, soloBase) {
   }
   if (scaricoRiuscito) {
     const pr = storicoProntezza().slice(-3).map(x => x.punteggio).filter(x => typeof x === 'number');
-    const stanco = prudente || (pr.length > 0 && pr.reduce((t, x) => t + x, 0) / pr.length < PARAM_ANALISI.prontezzaRipresa);
+    const stanco = (alg19 ? pc.sonnoMale : prudente) || (pr.length > 0 && pr.reduce((t, x) => t + x, 0) / pr.length < PARAM_ANALISI.prontezzaRipresa);   /* ALG-19: eta e PAR-Q non sono fatica */
     const f = stanco ? PARAM_ANALISI.ripresaPrudente : 1, pieno = caricoInGriglia(rif * f, nome), da = Math.min(pieno, tettoRipresa);
-    if (da > pesoUltimo) {   /* se in scarico si e gia lavorato a quel carico o oltre, la ripresa non c e: vale la progressione normale */
+    /* se in scarico si e gia lavorato a quel carico o oltre, la ripresa non c e: vale la progressione normale. ALG-19 (A1, revisione finale): quando lo scarico
+       arrotondato alla griglia COINCIDE col riferimento (dose «bassa» x0,95 su pile da 2,5 kg, manubri da 2 kg: i principianti) la ripresa c e comunque: si riparte
+       dal riferimento e dalle ripetizioni di lavoro, senza il passo di peso, che arriva la seduta dopo (prima saliva sopra il riferimento con il RIR in piu) */
+    if (da > pesoUltimo || (alg19 && da >= pesoUltimo && da >= pieno)) {
       const perGradi = da < pieno;
-      return { weight: da, reps: repsTarget, sets: sets, tipo: perGradi ? 'su' : 'fermo',
+      const r = { weight: da, reps: alg19 ? repsLavoro : repsTarget, sets: sets, tipo: perGradi ? 'su' : 'fermo',
                motivo: perGradi ? 'Dopo lo scarico si risale per gradi verso il carico di prima: oggi +' + Math.round((da / pesoUltimo - 1) * 100) + '%'
-                 : f < 1 ? 'Dopo lo scarico riparti poco sotto il carico che avevi prima (-' + Math.round((1 - f) * 100) + '%), per prudenza'
+                 : f < 1 && !(alg19 && da >= rif) ? 'Dopo lo scarico riparti poco sotto il carico che avevi prima (-' + Math.round((1 - f) * 100) + '%), per prudenza'
                          : 'Dopo lo scarico riparti dal carico che avevi prima' };
+      if (alg19 && repsLavoro > (Number(repsTarget) || 0)) aggiungiPerche(r, 'ALG-19', FRASE_RIPETIZIONI_RIPRESA(repsLavoro), { forza: 'Convenzione' });
+      return r;
     }
   }
 
@@ -494,7 +526,7 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase, soloBase) {
     }
     /* isolamenti: doppia progressione, prima le ripetizioni fino alla cima del range */
     if (tipoCarico(nome) === 'isolamento') {
-      const repsFatte = Math.min.apply(null, fatteUltima.map(x => Number(x.reps) || 0));
+      const repsFatte = Math.min.apply(null, fatteScala.map(x => Number(x.reps) || 0));   /* ALG-19: dopo lo scarico si continua dalle ripetizioni della seduta di lavoro */
       const cima = (Number(repsTarget) || 0) + 3;
       if (repsFatte < cima) return { weight: pesoUltimo, reps: Math.max(Number(repsTarget) || 0, repsFatte) + 1, sets: sets, tipo: 'su',
         motivo: 'Doppia progressione: una ripetizione in piu (' + (Math.max(Number(repsTarget) || 0, repsFatte) + 1) + ' su ' + cima + '), poi il peso' };
@@ -506,7 +538,7 @@ function caricoProssimoBase(nome, base, repsTarget, setsBase, soloBase) {
        grande dell incremento voluto (il mezzo incremento dei prudenti: +1,25 kg non si caricano sul bilanciere) si passa anche qui prima dalle ripetizioni */
     const salitoA = limitaSalitaBase(caricoSalito(pesoUltimo, inc, nome), pesoUltimo, nome), quanto = griglia ? salitoA - pesoUltimo : inc;
     if (quanto / pesoUltimo > 0.05 || (griglia && quanto > inc + 1e-9)) {
-      const repsFatte = Math.min.apply(null, fatteUltima.map(x => Number(x.reps) || 0));
+      const repsFatte = Math.min.apply(null, fatteScala.map(x => Number(x.reps) || 0));   /* ALG-19: come sopra */
       const tetto = (Number(repsTarget) || 0) + 2;
       if (repsFatte < tetto) {
         return { weight: pesoUltimo, reps: repsFatte + 1, sets: sets, tipo: 'su',
@@ -697,7 +729,7 @@ function carichiDelGiorno(day) {
     e.reps = t.reps;
     e.sets = t.sets;
     e.completedSets = Array.from({ length: t.sets }, () => ({ done: false, reps: t.reps, weight: t.weight, wasBerserk: false }));
-    e.coachNote = (e.stimato && t.tipo === 'nuovo' && MOTIVI_STIMA[e.stimato]) ? MOTIVI_STIMA[e.stimato] : t.motivo;
+    e.coachNote = (e.stimato && t.tipo === 'nuovo' && motivoStimaDi(e.stimato)) ? motivoStimaDi(e.stimato) : t.motivo;   /* B2: la nota di chi ha gli aumenti dimezzati non promette di salire in fretta */
     e.coachTipo = t.tipo;
     if (e.restBase === undefined) e.restBase = e.rest;
     e.rest = e.restBase + (t.piuPausa || 0);

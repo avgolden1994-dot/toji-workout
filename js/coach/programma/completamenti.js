@@ -63,7 +63,7 @@ function secondoDiGambe(sd, sedute, opz, costo) {
 const CUFFIA_ESERCIZI = ['Face Pull', 'Face Pull con Elastico', 'Reverse Pec Deck', 'Alzate Posteriori (Reverse Fly)', 'Y-Raise a Corpo Libero', 'Y-Raise su Panca Inclinata'];
 const CUFFIA_ROTAZIONE = 'Extrarotazione al Cavo';
 const RX_CUFFIA = /face pull|extrarotazione|reverse|alzate posteriori|y-raise/i;
-const NOTA_CUFFIA = 'Con la spalla delicata ho aggiunto un lavoro leggero per la cuffia dei rotatori e per i deltoidi posteriori. Non cura il dolore: se non passa fatti vedere da un medico o da un fisioterapista.';
+const NOTA_CUFFIA = 'Con la spalla delicata ho aggiunto un lavoro leggero per la cuffia dei rotatori e per i deltoidi posteriori. Non cura il dolore: se non passa fatti vedere da un medico o da un fisioterapista. Non sono un medico e non faccio diagnosi.';   /* onda 5: la formula di DEC-03/04 anche qui */
 function copriCuffia(brief, sedute) {
   const c = typeof sogliaSelezione === 'function' ? sogliaSelezione('cuffia') : null;
   const prefs = brief.lavoro.prefs, metodoAttivo = brief.metodo.attivo, note = brief.lavoro.note;

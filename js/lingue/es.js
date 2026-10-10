@@ -2760,7 +2760,7 @@ window.I18N["es"] = {
 "Lavoro o esami sotto pressione": "Trabajo o exámenes bajo presión",
 "Con molto stress il recupero passa da 48 a 96 ore (Stults-Kolehmainen 2014) e la forza cresce meno (Bartholomew 2008): meno serie, stessi carichi, niente tecniche intense.": "Con mucho estrés la recuperación pasa de 48 a 96 horas (Stults-Kolehmainen 2014) y la fuerza crece menos (Bartholomew 2008): menos series, mismas cargas, sin técnicas intensas.",
 "Fine di una relazione": "Fin de una relación",
-"Dopo una rottura molti si allenano di più: va bene, ti dà routine e umore. Niente massimali per qualche settimana e occhio al sonno. Parlarne con qualcuno aiuta più di una serie in più.": "Tras una ruptura muchos entrenan más: está bien, te da rutina y ánimo. Nada de máximos durante unas semanas y ojo al sueño. Hablarlo con alguien ayuda más que una serie extra.",
+"Dopo una rottura molti si allenano di più: va bene, purché resti una routine sostenibile. Niente massimali per qualche settimana e occhio al sonno. Parlarne con qualcuno aiuta più di una serie in più.": "Tras una ruptura muchos entrenan más: está bien, siempre que siga siendo una rutina sostenible. Nada de máximos durante unas semanas y ojo al sueño. Hablarlo con alguien ayuda más que una serie extra.",
 "Un lutto": "Un duelo",
 "Nessuna pressione: sedute brevi quando te la senti, camminare conta. Il programma ti aspetta.": "Sin presión: sesiones cortas cuando te apetezca, caminar cuenta. El programa te espera.",
 "Periodo giù di morale": "Periodo de bajón",
@@ -4241,5 +4241,18 @@ window.I18N["es"] = {
 "Il coach resta in modalità prudente": "El coach se queda en modo prudente",
 "Parlane con l’ostetrica o con il medico: sono loro a dirti come allenarti adesso. Il coach resta in modalità prudente: niente serie al limite, niente tecniche intense e carichi che salgono piano. Non è un parere medico.": "Habla con tu matrona o con tu médico: son ellos quienes te dicen cómo entrenar ahora. El coach se queda en modo prudente: nada de series al límite, nada de técnicas intensas y cargas que suben despacio. No es una opinión médica.",
 "Con la gravidanza o un parto recente la modalità prudente resta accesa: se è cambiato qualcosa, togli prima «Gravidanza o parto recente».": "Con el embarazo o un parto reciente el modo prudente sigue activo: si algo ha cambiado, quita primero «Embarazo o parto reciente».",
-"In dimagrimento il coach tiene i carichi.": "En pérdida de grasa el coach mantiene las cargas."
+"In dimagrimento il coach tiene i carichi.": "En pérdida de grasa el coach mantiene las cargas.",
+"e dalle ripetizioni raggiunte prima dello scarico (#): la doppia progressione continua da lì": "y desde las repeticiones alcanzadas antes de la descarga (#): la doble progresión continúa desde ahí",
+"È per una gravidanza o un parto recente?": "¿Es por un embarazo o un parto reciente?",
+"altre ragioni": "otras razones",
+"il coach accende «Gravidanza o parto recente»: resta prudente finché non la togli in Opzioni › Il coach": "el coach activa «Embarazo o parto reciente»: sigue prudente hasta que la quites en Opciones › El coach",
+"Non sono un medico e non faccio diagnosi.": "No soy médico y no hago diagnósticos.",
+"Con la spalla delicata ho aggiunto un lavoro leggero per la cuffia dei rotatori e per i deltoidi posteriori. Non cura il dolore: se non passa fatti vedere da un medico o da un fisioterapista. Non sono un medico e non faccio diagnosi.": "Como tienes el hombro delicado he añadido un trabajo ligero para el manguito de los rotadores y los deltoides posteriores. No cura el dolor: si no pasa, consulta a un médico o a un fisioterapeuta. No soy médico y no hago diagnósticos.",
+"da fare nell’ampiezza che non fa male": "hazlo en la amplitud que no duele",
+"da fare con discesa lenta e profondità che non fa male": "con bajada lenta y una profundidad que no duele",
+"da fare con la schiena ferma e un carico che non fa male": "con la espalda firme y una carga que no duele",
+"Partenza bassa voluta: impari il movimento": "Inicio bajo a propósito: aprendes el movimiento",
+"Carichi di partenza bassi di proposito: le prime sedute servono a imparare il movimento.": "Las cargas de partida son bajas a propósito: las primeras sesiones sirven para aprender el movimiento.",
+"Hai già segnato «Gravidanza o parto recente»: il coach resta prudente e la bandiera si toglie solo in Opzioni › Il coach, non da questo questionario.": "Ya has marcado «Embarazo o parto reciente»: el coach sigue siendo prudente y la marca solo se quita en Opciones › El coach, no desde este cuestionario.",
+"(modalita prudente)": "(modo prudente)"
 };

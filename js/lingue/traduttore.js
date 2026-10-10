@@ -118,6 +118,10 @@ function trCore(c, d, prof) {
   if (m) { const r = trCore(m[2], d, prof); if (r != null) return m[1] + r; }
   const t = c.match(/^([\s\S]+?)(\s*[^\p{L}\p{N})"”».%]+)$/u);
   if (t) { const r = trCore(t[1], d, prof); if (r != null) return r + t[2]; }
+  /* B1 (revisione finale dell onda 5): un suffisso tra parentesi che ha la sua voce («... (modalita prudente)», «... (aumento prudente: recupero scarso)») si traduce a parte: il resto
+     contiene i separatori (": ", ", ") e spezzato per intero non troverebbe la voce con il suffisso */
+  const par = c.match(/^([\s\S]*\S) (\([^()]+\))$/);
+  if (par && Object.prototype.hasOwnProperty.call(d, par[2])) { const r = trCore(par[1], d, (prof || 0) + 1); if (r != null) return r + ' ' + d[par[2]]; }
   if ((prof || 0) > 3) return null;
   for (const sep of I18N_SEP) {
     if (c.indexOf(sep) === -1) continue;

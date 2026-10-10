@@ -40,6 +40,23 @@ function gravidanzaDaRiportare(profPrima) {
   if (!inGravidanza(profPrima)) return {};
   return Object.assign({ gravidanza: true, parq: true }, profPrima.parqDaGravidanza ? { parqDaGravidanza: true } : {});
 }
+/* REC-12 parte a (onda 5, m5 della revisione dell'onda 4): la gravidanza detta nel QUESTIONARIO (PAR-Q «sì» e «È per una gravidanza o un parto recente?» = sì, onbData.gravidanza)
+   accende la stessa bandiera di Opzioni › Il coach, così creatina, grammi e kcal spariscono subito (guardiaNutrizione) e non solo dopo l'interruttore. La modalità prudente resta
+   accesa: non si segna `parqDaGravidanza`, perché nel questionario non si sa se il PAR-Q positivo ha anche altre ragioni (spenta la bandiera, il PAR-Q resta «sì» finché non si rifà
+   il questionario). Senza la risposta «sì»: niente, il profilo è quello di sempre */
+function gravidanzaDalQuestionario(onb) {
+  const parq = !!onb && (onb.parq === 'si' || onb.parq === true);   /* la domanda si mostra solo con il PAR-Q «sì»: una risposta rimasta da prima, con il PAR-Q poi messo a «no», non vale */
+  return parq && (onb.gravidanza === 'si' || onb.gravidanza === true) ? { gravidanza: true, parq: true } : {};
+}
+
+/* ETA-19 (onda 5): dai 65 anni gli esercizi «da evitare» (over65Evitare in soglie-popolazioni.js) sono l'ultima scelta di un posto della scheda (componiSedute, programma/ricette.js).
+   Ritorna la funzione nome => true se l'esercizio è nell'elenco, o null quando non si applica (sotto i 65 anni, regola spenta, soglia assente): chi la chiama non cambia niente */
+function eserciziDaEvitareOver65(chi) {
+  const E = sogliaPopolazione('over65Evitare');
+  if (!E || !Array.isArray(E.nomi) || !chi || !chi.over65 || !regolaAttiva('ETA-19')) return null;
+  const nomi = E.nomi;
+  return nome => nomi.indexOf(senzaEmoji(nome)) !== -1;
+}
 
 /* B10 (ETA-08 parte a, solo la base): l'over 65 è nella base? Sì nelle prime `settimaneBase` settimane del programma (numero = settimana del programma, 0 o
    assente = non si sa: base), sempre dai `etaSempreBase` anni. Sotto i 65 anni: no */
@@ -176,15 +193,17 @@ function primaSettimanaDelBlocco(p, w) {
    (la prima conta dall'ultima seduta prima dell'inizio del programma, se c'è) fino a oggi: per ogni intervallo di G giorni veri senza sedute, con G <= `nulla` niente, fino a
    `ferma` la settimana resta quella dell'ultima seduta (la rampa non avanza), oltre si riparte dalla prima settimana del blocco. Chi non ha mai fatto una seduta segue il
    calendario, come prima (non c'è una pausa da misurare). Solo programmi v2, con il consenso e la regola accesa; la settimana non va mai sotto 1 e mai oltre quella del calendario */
-function settimaneFermePerPausa(p) {
+function settimaneFermePerPausa(p, fino) {
   const P = sogliaPopolazione('pausa');
   if (!P || !p || !p.inizio || !programmaV2Rientro(p) || !Array.isArray(p.fasi) || typeof sedutePassate !== 'function') return 0;
   if (typeof coachAttivo !== 'function' || !coachAttivo() || !regolaAttiva('CST-01')) return 0;
   const nulla = giorniNulla();
-  return ricordaRientro('ferme', p.inizio + '|' + p.fasi.join(',') + '|' + nulla, () => {
-    const inizio = daYmd(p.inizio), oggi = new Date();
+  /* onda 5 (CST-01 seguito): `fino` = il giorno a cui si guarda (le pause fino a quel giorno; mai oltre oggi: una pausa non e ancora avvenuta). Senza: oggi, come prima */
+  const adesso = new Date(), oggi = fino && giorniTra(fino, adesso) > 0 ? new Date(fino) : adesso;
+  return ricordaRientro('ferme', p.inizio + '|' + p.fasi.join(',') + '|' + nulla + '|' + ymd(oggi), () => {
+    const inizio = daYmd(p.inizio);
     const settCal = d => Math.floor(giorniTra(inizio, lunediDi(d)) / 7) + 1;
-    const tutte = sedutePassate().map(x => x.d);   /* dalla piu recente */
+    const tutte = sedutePassate().map(x => x.d).filter(d => giorniTra(d, oggi) >= 0);   /* dalla piu recente, fino al giorno a cui si guarda */
     const date = tutte.filter(d => giorniTra(inizio, d) >= 0).reverse();   /* le sedute del programma, dalla piu vecchia */
     let ferme = 0, prec = tutte.find(d => giorniTra(inizio, d) < 0) || null, wPrec = 1;
     const intervallo = d => {
@@ -201,6 +220,17 @@ function settimaneFermePerPausa(p) {
     if (giorniTra(inizio, oggi) >= 0) intervallo(oggi);
     return ferme;
   });
+}
+/* CST-01 (onda 5, aperto di onda-4 «controlloOttavaPrincipiante, faseDelGiorno e le sedute vecchie senza settimana leggono ancora il calendario»): la settimana del programma di un GIORNO
+   qualunque, con le pause tolte come fa settimanaProgramma per oggi: settimana del calendario di `d` meno le settimane ferme fino a `d` (per un giorno futuro le pause sono quelle di oggi:
+   il programma continua da qui). La usano faseDelGiorno, settimanaDellaSeduta (regole-ricerca.js), il controllo dell'8ª del principiante (mesociclo.js) e fissaFasiDelloStorico.
+   Puo essere < 1 (prima dell'inizio) o oltre p.settimane (finito): chi la legge controlla. Senza il programma o la data: 0 */
+function settimanaDelGiorno(d, p) {
+  const pr = p || (typeof getProgramma === 'function' ? getProgramma() : null);
+  if (!pr || !pr.inizio || !d) return 0;
+  const giorno = d instanceof Date ? d : new Date(d);
+  if (isNaN(giorno.getTime())) return 0;
+  return Math.floor(giorniTra(daYmd(pr.inizio), lunediDi(giorno)) / 7) + 1 - settimaneFermePerPausa(pr, giorno);
 }
 
 /* ALG-14: la seduta di rientro di questo esercizio (CAR-04) è una delle ultime `sedute`? Allora { prima: carico di lavoro di prima della pausa, ora: carico dell'ultima seduta }.

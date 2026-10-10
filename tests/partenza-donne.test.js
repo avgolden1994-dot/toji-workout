@@ -449,7 +449,9 @@ test('CAR-18: si chiude alla quinta esposizione (salti dopo le prime cinque, la 
   assert.strictEqual(a.g('calibrazioneChiusa')(CE), true);
   /* tetto +25%: da 8 kg il +15% e 1,2 (un passo di 2 kg dei manubri), mai oltre il quarto */
   const piccolo = scenario(a, { nome: '🛡️ Alzate Laterali', base: 3, reps: 12, esp: [{ w: 3, rpe: 6 }] })();
-  assert.strictEqual(piccolo.weight, 3, 'un manubrio da 3 kg: un passo (1 kg) sarebbe +33%: nessun salto, si sale con le ripetizioni');
+  /* INT-5d (D-P26): prima 3 kg («un passo (1 kg) sarebbe +33%: nessun salto, si sale con le ripetizioni») per tutta la calibrazione; il +25% (3,75 kg) non contiene nessun peso della griglia
+     dei manubri (4 kg), la guardia lascia passare UN passo (non due: il caso sotto tiene) */
+  assert.strictEqual(piccolo.weight, 4, 'un manubrio da 3 kg: il +25% non ha nessun peso, si sale di un passo (1 kg): ' + piccolo.motivo);
   const lento = scenario(a, { nome: LAV, base: 8, reps: 10, esp: [{ w: 8, rpe: 6 }] })();
   assert.ok(lento.weight > 8 && lento.weight / 8 <= 1.25 + 1e-9, 'da 8 kg: un passo di 1 kg (+12,5%): ' + lento.weight);
 });

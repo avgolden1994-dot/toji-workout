@@ -78,7 +78,7 @@ function fissaFasiDelloStorico() {
     if (!h || typeof h !== 'object' || (h.settimana && h.settimana.fase)) return;
     const d = dataSessione(h);
     if (!d) return;
-    const w = Math.floor(giorniTra(daYmd(p.inizio), lunediDi(d)) / 7) + 1, fase = w >= 1 && w <= p.fasi.length ? p.fasi[w - 1] : null;
+    const w = typeof settimanaDelGiorno === 'function' ? settimanaDelGiorno(d, p) : Math.floor(giorniTra(daYmd(p.inizio), lunediDi(d)) / 7) + 1, fase = w >= 1 && w <= p.fasi.length ? p.fasi[w - 1] : null;   /* onda 5: con le pause tolte (CST-01) */
     if (typeof fase === 'string' && fase) { h.settimana = { numero: w, fase: fase.slice(0, 20) }; scritte++; }
   });
   if (scritte) localStorage.setItem(historyKey(), JSON.stringify(lista));
@@ -143,6 +143,7 @@ window.applyGeneratedProgram = function() {
     settimane: prog.settimane, split: prog.split.nome, creato: formatNow()
   }, typeof attrezziSalvati === 'function' ? attrezziSalvati(onbData, getProfile() || {}) : {},   /* CAS-01 (W2-T5): attrezzi di casa, kg dei manubri, attrezzi in piu della palestra: solo se dichiarati */
     typeof forzaSalvata === 'function' ? forzaSalvata(onbData, getProfile() || {}, prog.goals) : {},   /* FRZ-01 (INT-2e): «Che forza?» e i punti deboli, solo con la forza come primo obiettivo e solo se detti */
+    typeof gravidanzaDalQuestionario === 'function' ? gravidanzaDalQuestionario(onbData) : {},   /* REC-12 a (onda 5, m5): «È per una gravidanza o un parto recente?» = sì nel questionario accende la bandiera */
     typeof gravidanzaDaRiportare === 'function' ? gravidanzaDaRiportare(profPrima) : {})));   /* INT-4b (B1): il profilo si riscrive da zero a ogni nuovo ciclo e a ogni questionario: la bandiera della gravidanza non si perde */
   /* P3-M: un referto uguale a quello gia nel profilo (nuovoCiclo lo ripassa) e gia nello storico dei referti: non si aggiunge una misura con la data di oggi */
   if (onbData.bia && Object.keys(onbData.bia).some(k => onbData.bia[k]) && JSON.stringify(onbData.bia) !== JSON.stringify(profPrima.bia)) {
