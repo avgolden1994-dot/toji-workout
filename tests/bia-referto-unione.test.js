@@ -1,7 +1,9 @@
-/* Il referto PDF (salvaBiaLetta, js/coach/bia/opzioni.js) non azzera le misure gia salvate per la stessa data.
-   Un campo che il referto non riporta (null o assente) lascia il valore gia salvato per quella data; un campo che il referto
-   riporta vince. La regola sta in un solo posto: aggiungiBia (js/coach/programma/archivio.js). Il bmr (metabolismo basale) e
-   il caso che ha fatto perdere il dato, ma vale per tutti i campi della voce (peso, massa grassa, acqua, muscolo, viscerale...).
+/* Il referto PDF non azzera le misure gia salvate per la stessa data.
+   Chi carica un referto (salvaBiaLetta, js/coach/bia/opzioni.js) e chi fa il questionario con la BIA letta (applyGeneratedProgram,
+   js/coach/programma/alternative.js) chiedono la fusione ad aggiungiBia con { unisci: true } (js/coach/programma/archivio.js):
+   un campo che il referto non riporta (null o assente) lascia il valore gia salvato per quella data; un campo che il referto
+   riporta vince. Il bmr (metabolismo basale) e il caso che ha fatto perdere il dato, ma vale per tutti i campi della voce.
+   Il form a mano di Opzioni › BIA (salvaBiaAgente) NON fonde: quello che c e nel form e quello che si salva (un campo vuoto si toglie).
    Esegue il codice vero dell app in node (vm), senza browser. Lancio: npm test
    Le prove con un valore gia salvato devono FALLIRE sul codice di prima e passare dopo la correzione. */
 'use strict';
@@ -27,6 +29,18 @@ function salvaReferto(storicoPrima, letto) {
   app.ctx.showUndo = () => {};
   app.g('biaLetta = ' + JSON.stringify(letto));
   app.chiama('salvaBiaLetta');
+  return app;
+}
+
+/* il foglio Opzioni › BIA a mano: una misura gia salvata oggi (o nessuna), i campi del form (un campo assente dal form non c e nel DOM) */
+function salvaForm(eta, prima, campi) {
+  const app = caricaApp({ ora: ORA });
+  app.profilo({ age: eta });
+  if (prima) app.scrivi(app.g('biaKey()'), [{ data: OGGI, valori: prima }]);
+  app.ctx.renderAgent = () => {};
+  app.ctx.showUndo = () => {};
+  app.ctx.document = { getElementById: id => (Object.prototype.hasOwnProperty.call(campi, id) ? { value: campi[id] } : null) };
+  app.chiama('salvaBiaAgente');
   return app;
 }
 
@@ -82,4 +96,56 @@ test('storico stampato sul referto: una data gia salvata con bmr non perde il bm
   const settembre = st.find(x => x.data === '2026-09-20');
   assert.strictEqual(settembre.valori.bmr, 1600, 'il bmr di settembre resta');
   assert.strictEqual(settembre.valori.peso, 79, 'il peso dello storico stampato vince');
+});
+
+test('aggiungiBia: senza opzioni la voce si riscrive come prima (un campo che manca si toglie); con { unisci: true } si fonde', () => {
+  const app = caricaApp({ ora: ORA });
+  app.scrivi(app.g('biaKey()'), [{ data: OGGI, valori: { peso: 70, fmPerc: 20, ffm: 56, bmr: 1700 } }]);
+  app.g("aggiungiBia({ peso: 71 }, '" + OGGI + "')");
+  assert.deepStrictEqual(app.json('getBiaStorico()')[0].valori, { peso: 71 }, 'senza opzioni: nessuna fusione');
+  app.scrivi(app.g('biaKey()'), [{ data: OGGI, valori: { peso: 70, fmPerc: 20, ffm: 56, bmr: 1700 } }]);
+  app.g("aggiungiBia({ peso: 71 }, '" + OGGI + "', { unisci: true })");
+  assert.deepStrictEqual(app.json('getBiaStorico()')[0].valori, { peso: 71, fmPerc: 20, ffm: 56, bmr: 1700 }, 'con unisci: i campi mancanti restano');
+});
+
+test('form a mano (Opzioni › BIA): con il bmr di oggi gia salvato, salvare con il campo bmr vuoto toglie il bmr (il form e autorevole)', () => {
+  const app = salvaForm(30, { peso: 70, fmPerc: 20, ffm: 56, bmr: 1700 },
+    { 'ag-peso': '71', 'ag-fm': '', 'ag-ffm': '', 'ag-bmr': '' });
+  const st = app.json('getBiaStorico()');
+  assert.strictEqual(st.length, 1, 'una misura per data');
+  assert.strictEqual(st[0].valori.peso, 71, 'il salvataggio c e stato (peso 71)');
+  assert.ok(!('bmr' in st[0].valori), 'il campo bmr vuoto non deve lasciare il 1700 di prima');
+  assert.ok(!('ffm' in st[0].valori), 'la massa magra vuota non deve lasciare il 56 di prima');
+});
+
+test('form a mano (Opzioni › BIA): salvare con altri campi compilati e bmr 1800 scrive 1800', () => {
+  const app = salvaForm(30, { peso: 70, fmPerc: 20, ffm: 56, bmr: 1700 },
+    { 'ag-peso': '71', 'ag-fm': '19.5', 'ag-ffm': '57.5', 'ag-bmr': '1800' });
+  const v = app.json('getBiaStorico()')[0].valori;
+  assert.strictEqual(v.bmr, 1800, 'il bmr del form vince');
+  assert.strictEqual(v.fmPerc, 19.5, 'la massa grassa del form');
+  assert.strictEqual(v.ffm, 57.5, 'la massa magra del form');
+});
+
+test('ETA-04 (form a mano): un minorenne (15 anni) che salva senza il campo bmr lascia il bmr di oggi com era (1700)', () => {
+  const app = salvaForm(15, { peso: 70, fmPerc: 20, ffm: 56, bmr: 1700 },
+    { 'ag-peso': '71', 'ag-fm': '', 'ag-ffm': '' });
+  const v = app.json('getBiaStorico()')[0].valori;
+  assert.strictEqual(v.peso, 71, 'il salvataggio c e stato (peso 71)');
+  assert.strictEqual(v.bmr, 1700, 'il bmr nascosto ai minorenni non si cancella dal form');
+});
+
+test('questionario con la BIA letta (applyGeneratedProgram): un referto senza bmr non cancella il bmr di oggi, anche per un minorenne', () => {
+  [15, 30].forEach(eta => {
+    const app = caricaApp({ ora: ORA });
+    app.scrivi(app.g('biaKey()'), [{ data: OGGI, valori: { peso: 70, fmPerc: 20, ffm: 56, bmr: 1700 } }]);
+    const risposte = { goals: ['salute'], goal: 'salute', level: 'intermedio', days: 3, minutes: 60, luogo: 'palestra', sonno: 'bene',
+      attrezzi: 'indifferente', sex: 'uomo', age: eta, parq: 'no', freq: 'auto', fastidi: [], bia: { peso: 71, fmPerc: 19.5, ffm: 57.5 } };
+    app.g('onbData = Object.assign(nuovoOnbData(), ' + JSON.stringify(risposte) + ')');
+    try { app.g('applyGeneratedProgram()'); } catch (e) { /* le schermate (DOM finto) possono lamentarsi DOPO aver scritto profilo e programma */ }
+    const st = app.json('getBiaStorico()');
+    assert.strictEqual(st.length, 1, eta + ' anni: una misura per data');
+    assert.strictEqual(st[0].valori.peso, 71, eta + ' anni: il peso del referto vince');
+    assert.strictEqual(st[0].valori.bmr, 1700, eta + ' anni: il bmr di oggi resta');
+  });
 });

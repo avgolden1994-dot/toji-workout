@@ -78,8 +78,8 @@ window.toggleBiaManuale = function() {
 
 window.salvaBiaLetta = function() {
   if (!biaLetta) return;
-  (biaLetta.storico || []).forEach(x => { if (x.data !== biaLetta.data) aggiungiBia(x.valori, x.data); });
-  aggiungiBia(biaLetta, biaLetta.data);
+  (biaLetta.storico || []).forEach(x => { if (x.data !== biaLetta.data) aggiungiBia(x.valori, x.data, { unisci: true }); });
+  aggiungiBia(biaLetta, biaLetta.data, { unisci: true });   /* referto letto: un campo che non riporta lascia quello gia salvato per la data */
   const n = 1 + (biaLetta.storico || []).filter(x => x.data !== biaLetta.data).length;
   biaLetta = null;
   renderBiaSheet();
@@ -91,7 +91,7 @@ window.eliminaBia = function(data) {
   const tolta = st.find(x => x.data === data);
   localStorage.setItem(biaKey(), JSON.stringify(st.filter(x => x.data !== data)));
   renderBiaSheet();
-  showUndo('BIA eliminata', () => { if (tolta) aggiungiBia(tolta.valori, tolta.data); renderBiaSheet(); });
+  showUndo('BIA eliminata', () => { if (tolta) aggiungiBia(tolta.valori, tolta.data); renderBiaSheet(); });   /* ripristino della voce tolta: nessuna fusione */
 };
 
 window.agentBiaPdf = async function(files) {
@@ -133,7 +133,7 @@ window.salvaBiaAgente = function() {
   else { const gia = getBiaStorico().find(x => x.data === ymd(new Date())); if (gia && gia.valori.bmr !== undefined) v.bmr = gia.valori.bmr; }
   if (!v.peso && !v.fmPerc && !v.ffm) { alert('Inserisci almeno peso, massa grassa o massa magra.'); return; }
   if (!v.ffm && v.peso && v.fmPerc) v.ffm = Math.round(v.peso * (1 - v.fmPerc / 100) * 10) / 10;
-  aggiungiBia(v);
+  aggiungiBia(v);   /* form a mano autorevole: nessuna fusione, un campo vuoto si toglie (il bmr dei minorenni e gia ripreso sopra) */
   if (document.getElementById('bia-sheet') && !document.getElementById('bia-sheet').classList.contains('hidden')) renderBiaSheet();
   else renderAgent();
   showUndo('BIA salvata: il coach ne tiene conto');

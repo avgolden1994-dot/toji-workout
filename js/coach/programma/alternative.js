@@ -147,8 +147,9 @@ window.applyGeneratedProgram = function() {
     typeof gravidanzaDaRiportare === 'function' ? gravidanzaDaRiportare(profPrima) : {})));   /* INT-4b (B1): il profilo si riscrive da zero a ogni nuovo ciclo e a ogni questionario: la bandiera della gravidanza non si perde */
   /* P3-M: un referto uguale a quello gia nel profilo (nuovoCiclo lo ripassa) e gia nello storico dei referti: non si aggiunge una misura con la data di oggi */
   if (onbData.bia && Object.keys(onbData.bia).some(k => onbData.bia[k]) && JSON.stringify(onbData.bia) !== JSON.stringify(profPrima.bia)) {
-    (onbData.bia.storico || []).forEach(x => { if (x.data !== onbData.bia.data) aggiungiBia(x.valori, x.data); });
-    aggiungiBia(onbData.bia, onbData.bia.data);
+    /* la BIA del questionario e un referto letto o campi a mano nello stesso passo: si fonde, cosi il questionario non cancella il bmr di oggi (anche di un minorenne, ETA-04) */
+    (onbData.bia.storico || []).forEach(x => { if (x.data !== onbData.bia.data) aggiungiBia(x.valori, x.data, { unisci: true }); });
+    aggiungiBia(onbData.bia, onbData.bia.data, { unisci: true });
   }
   localStorage.setItem(ONB_KEY, '1');
   /* un periodo difficile in corso resta: il nuovo piano parte gia alleggerito */

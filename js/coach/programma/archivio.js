@@ -6,11 +6,13 @@ const progKey = () => 'coach_plus_programma_' + currentMode;
 const biaKey = () => 'coach_plus_bia_' + currentMode;
 window.getProgramma = function() { try { return JSON.parse(localStorage.getItem(progKey()) || 'null'); } catch (e) { return null; } };
 window.getBiaStorico = function() { try { return JSON.parse(localStorage.getItem(biaKey()) || '[]'); } catch (e) { return []; } };
-window.aggiungiBia = function(valori, quando) {
+window.aggiungiBia = function(valori, quando, opzioni) {
   const data = quando || valori.data || ymd(new Date());
   const storico = getBiaStorico();
-  const gia = (storico.find(x => x.data === data) || {}).valori || {};
-  /* un campo che il nuovo valore non riporta (null o assente) lascia quello gia salvato per la stessa data: un referto senza bmr non azzera il bmr */
+  /* la fusione solo se chi chiama la chiede ({ unisci: true }): il referto letto (salvaBiaLetta, il questionario con la BIA letta).
+     Senza, la voce della data si riscrive com era: il form a mano e autorevole, un campo vuoto si toglie */
+  const gia = (opzioni && opzioni.unisci) ? ((storico.find(x => x.data === data) || {}).valori || {}) : {};
+  /* con la fusione, un campo che il nuovo valore non riporta (null o assente) lascia quello gia salvato per la stessa data: un referto senza bmr non azzera il bmr */
   const unito = {};
   ['peso', 'altezza', 'fmPerc', 'fm', 'ffm', 'smm', 'tbw', 'bmr', 'bmi', 'phase', 'ecw', 'proteine', 'minerali', 'viscerale']
     .forEach(k => {
