@@ -190,9 +190,12 @@ Extra: community-risposte ◄ gestione-social; outreach, press-kit ◄ brand + a
 
 ## Decisioni del 2026-10-10
 
-- **Nome**: «3in» = «tre-in» / «three-in», richiama «train» (omofonia solo in inglese; marchio non verificato). Dettagli: `docs/marketing/brand-3in.md` sez. 2 e 8b.
+- **Nome**: «3in» = «tre-in» / «three-in», richiama «train»; la spiegazione si usa SOLO in inglese (riga applicata al footer di `sito-bozza/en/index.html`; la pagina italiana resta invariata); marchio non verificato. Dettagli: `docs/marketing/brand-3in.md` sez. 2 e 8b.
 - **Revisione en e informativa**: utente + Claude, nessun legale (Claude non è consulente legale); informativa minima; controllo su fonte autorevole consigliato.
-- **Lista d'attesa**: «server in UE» ambiguo; scelta aperta tra server proprio e servizio con data center in UE (raccomandato): `docs/marketing/sito-bozza/LEGGIMI.md` sez. 6b.
+- **Lista d'attesa**: DECISO servizio con data center in UE (non server proprio); servizio specifico da scegliere, piani/limiti non verificati: `docs/marketing/sito-bozza/LEGGIMI.md` sez. 6b.
+- **Titolare del trattamento**: l'utente stesso, persona fisica; nome, email e durata da compilare (non inventati); nome ed email diventano pubblici: consigliato indirizzo dedicato.
+- **Handle e dominio**: li controlla l'utente a mano.
+- **Video (`video-brevi-3in`)**: IN ATTESA per ordine dell'utente; la skill non va creata né avviata finché non dice di procedere.
 
 ## Decisioni ancora aperte
 

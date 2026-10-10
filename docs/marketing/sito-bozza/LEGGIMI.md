@@ -106,11 +106,9 @@ Contenuto: landing it + en (testi, alt, meta, OG, informativa), canale sito, tip
 
 **Verdetto: OK per approvazione come bozza dei testi.** **Non pubblicabile così com'è**: mancano titolare, servizio della lista, URL della web app, dominio/hosting, revisione dell'inglese e dell'informativa, e la riconferma privacy della build iOS. Dopo ogni modifica dei testi il controllo va rifatto.
 
-## 6b. Aggiornamenti dalle decisioni del 2026-10-10 (nessuna modifica ai file HTML/CSS)
+## 6b. Aggiornamenti dalle decisioni del 2026-10-10 (modificata solo `en/index.html`: riga sul nome nel footer; CSS invariato)
 
-**Nome «3in» (deciso)**: si legge «tre-in» / «three-in» e richiama l'inglese «train». **Proposta, NON applicata, da approvare** per hero o footer (da ricontrollare con `controllo-pubblicazione` dopo l'approvazione):
-- it: «3in si legge “tre-in” e richiama l'inglese “train”: allenarsi.»
-- en: «3in is read “three-in” and echoes “train”, as in training.»
+**Nome «3in» (deciso: spiegazione SOLO in inglese)**: si legge «three-in» e richiama «train». Applicata alla sola pagina `en/index.html`, nel footer (riga prima di «3in is a training app, not a medical device.», stesso stile `.fondo`, nessun CSS nuovo): «3in is read “three-in” and echoes “train”, as in training.» Scelta del footer e non dell'hero: l'hero resta sul messaggio privacy; la riga è un tocco leggero. **La pagina italiana NON è stata modificata** (nessuna riga sul nome). Esito `controllo-pubblicazione` sulla riga en: Pass n. 1-6 (nessun claim salute/risultati), 7-11, 18-21 (nome corretto), 35-37 (tono neutro, nessun clickbait); Avviso n. 31: l'inglese e l'omofonia vanno rivisti da madrelingua (utente + Claude, nessun legale); rischio «3 inch» e marchio non verificati. Verdetto: OK per approvazione come bozza; **non pubblicata**, serve approvazione esplicita dell'utente su quel testo in inglese. Ricontrollo Playwright (Chromium, server locale) a 360/390/1280 px, scuro e chiaro: nessuno scorrimento orizzontale, nessun elemento fuori schermo, 0 richieste fuori da localhost, HTML ben formato (controllo di tag e id; validatore W3C non disponibile qui). Rigenerate solo le 5 anteprime `anteprime/en-*.webp`.
 Nota: l'omofonia vale per l'inglese; in italiano è meno evidente. Rischio «3 inch» e ricerca marchio non verificati. Dettagli e tagline in `docs/marketing/brand-3in.md` sez. 2 e 8b.
 
 **Lista d'attesa: «facciamo un server in UE» è ambiguo. Due cose diverse:**
@@ -120,7 +118,9 @@ Nota: l'omofonia vale per l'inglese; in italiano è meno evidente. Rischio «3 i
 | Lavoro | Manutenzione, aggiornamenti, sicurezza, backup, monitoraggio | Quasi nullo: si copia l'URL nell'`action` |
 | GDPR | L'utente è titolare **e** gestisce tutto l'impianto (misure di sicurezza, violazioni dei dati, registro) | Titolare resta l'utente; il fornitore è responsabile con DPA, doppia conferma già disponibile |
 | Obiettivo «minimo lavoro e spesa zero» | Contrario | Coerente (opzione A di sez. 5, percorso raccomandato) |
-**Scelta lasciata APERTA all'utente.** Piani, prezzi, limiti, sede reale dei server e DPA dei servizi NON sono verificati: da leggere sul sito del fornitore prima di decidere.
+**DECISO il 2026-10-10: SERVIZIO con data center in UE** (non un server proprio). Il servizio specifico è ancora da scegliere; piani, prezzi, limiti, sede reale dei server e DPA NON sono verificati: da leggere sul sito del fornitore prima di scegliere e prima di compilare `[SERVIZIO LISTA D'ATTESA]` e `[PAESE / GARANZIE PER TRASFERIMENTI FUORI UE]` nell'informativa.
+
+**Titolare del trattamento (deciso): l'utente stesso, persona fisica.** Restano da compilare `[NOME TITOLARE]`, `[EMAIL CONTATTO]` e `[DURATA MASSIMA]` (proposta 12 mesi o fino al lancio): NON sono stati inventati né presi dal contesto. Attenzione: per una persona fisica **nome ed email diventano pubblici** nell'informativa (e quindi esposti a spam e raccolta automatica). Consiglio: un indirizzo dedicato, non personale (es. una casella nuova solo per 3in). Da valutare, **non verificato**, se serva anche un recapito postale nell'informativa e se il solo indirizzo email basti per una persona fisica: chiedere a una fonte autorevole (Garante Privacy) prima della pubblicazione.
 
 **Revisione inglese e informativa privacy**: la fanno l'utente e Claude insieme, senza legale. **Claude non è un consulente legale.** L'informativa va tenuta minima: solo email + lingua; finalità = avviso di lancio; base giuridica = consenso; cancellazione a richiesta; durata della conservazione **da decidere** (proposta in sez. 3: 12 mesi o fino al lancio). Prima della pubblicazione conviene un controllo da una fonte autorevole (Garante Privacy, modello di informativa): **non verificato qui**.
 
@@ -136,11 +136,11 @@ Nota: l'omofonia vale per l'inglese; in italiano è meno evidente. Rischio «3 i
 
 ## 8. Decisioni aperte per l'utente
 
-1. **Significato di «3in»**: DECISO il 2026-10-10 («tre-in»/«three-in», richiama «train»). Resta da approvare la riga di spiegazione per hero/footer (sez. 6b).
-2. **Handle** social (3in, 3in.app, 3in_app, 3inworkout) da verificare a mano.
-3. **Dominio e hosting** (statico gratuito? quale?) → canonical, hreflang, OG, voce «Questo sito» dell'informativa.
-4. **Titolare del trattamento** e email di contatto; durata massima della lista.
-5. **Servizio per la lista d'attesa** (raccomandata opzione A, sez. 5). «Server in UE»: proprio o servizio con data center in UE? Vedi sez. 6b; scelta aperta.
+1. **Significato di «3in»**: DECISO il 2026-10-10, spiegazione SOLO in inglese. Riga applicata al footer di `en/index.html`; la pagina italiana resta invariata. Resta da approvare la riga en (sez. 6b).
+2. **Handle** social (3in, 3in.app, 3in_app, 3inworkout): li controlla l'utente a mano.
+3. **Dominio e hosting** (il dominio lo controlla l'utente a mano; hosting statico gratuito? quale?) → canonical, hreflang, OG, voce «Questo sito» dell'informativa.
+4. **Titolare del trattamento**: DECISO, è l'utente (persona fisica). Da compilare: nome, email di contatto (consigliata dedicata, non personale: diventano pubblici), eventuale recapito postale (da valutare, non verificato), durata massima della lista.
+5. **Servizio per la lista d'attesa**: DECISO servizio con data center in UE (opzione A, sez. 5, non un server proprio). Da scegliere il servizio specifico, leggendo piani, limiti, sede e DPA (non verificati). Vedi sez. 6b.
 6. **Revisione dell'inglese e dell'informativa**: DECISO il 2026-10-10, utente + Claude (nessun legale); controllo su fonte autorevole consigliato prima di pubblicare (sez. 6b).
 7. **URL della web app**: si condivide la PWA già ora? Con o senza Coach IA disattivato?
 8. Riga **«prova Pro di 2 settimane»**: resta fuori finché ASC e docs non sono allineati?

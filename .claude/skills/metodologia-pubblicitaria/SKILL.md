@@ -303,8 +303,11 @@ Data della verifica: 2026-10-05. Da riverificare prima di decisioni di prezzo.
 | - | Modello | Pro: prova 2 settimane (introductory offer Apple, da confermare in ASC); annuale 19,99 € (lancio 6,99 € primo anno, Pay up front); lifetime insieme (39,99 € pieno; lancio 24,99 € via offer code, a tempo/posti limitati); Lifetime Famiglia +30% su 39,99 con Family Sharing; -80% solo recensori/palestre/trainer; codice famiglia -90% abbandonato; tip jar tolta; nessun analytics; StoreKit 2 senza RevenueCat; PWA gratuita per ora (sez. 6-7, scheda `docs/marketing/decisioni-modello-pro.md`) |
 | - | Sequenza | Spesa zero fino al segnale dei 30 giorni: niente codice di acquisto e niente 99 $ prima (sez. 6) |
 | - | Ordine delle skill | Delegato all'agente: vedi `docs/marketing/ROADMAP-SKILL.md` |
-| 10-10 | Nome | «3in» = «tre-in» / «three-in», richiama l'inglese «train»; omofonia solo in inglese; marchio non verificato (`docs/marketing/brand-3in.md` sez. 2 e 8b) |
-| 10-10 | Lista d'attesa | «Server in UE» ambiguo: scelta APERTA tra server proprio (costi, manutenzione, obblighi) e servizio con data center in UE (raccomandato); piani non verificati (`sito-bozza/LEGGIMI.md` sez. 6b) |
+| 10-10 | Nome | «3in» = «tre-in» / «three-in», richiama l'inglese «train»; spiegazione SOLO in inglese (footer di `sito-bozza/en/index.html`, pagina it invariata); marchio non verificato (`docs/marketing/brand-3in.md` sez. 2 e 8b) |
+| 10-10 | Lista d'attesa | DECISO: servizio con data center in UE (non server proprio); servizio specifico da scegliere, piani/limiti non verificati (`sito-bozza/LEGGIMI.md` sez. 6b) |
+| 10-10 | Titolare | L'utente stesso, persona fisica; nome, email, durata da compilare; nome ed email diventano pubblici: consigliato indirizzo dedicato, recapito postale da valutare (non verificato) |
+| 10-10 | Handle e dominio | Li controlla l'utente a mano |
+| 10-10 | Video | `video-brevi-3in` IN ATTESA per ordine dell'utente: non avviare né creare la skill |
 | 10-10 | Revisione en e informativa | Utente + Claude, nessun legale; informativa minima; Claude non è consulente legale; controllo su fonte autorevole (Garante) consigliato |
 
 ### Decisioni aperte (chiedi all'utente, una alla volta)
