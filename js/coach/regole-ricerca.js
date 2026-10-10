@@ -308,6 +308,15 @@ function caricoSalito(da, inc, nome) {
   const s = pesoGriglia(da + 1e-6, nome, { modo: 'su' });
   return s === null ? arrotonda(da + inc) : s;
 }
+/* CAR-18 (INT-5d): il primo peso della griglia sopra `pesoUltimo` quando il tetto del +25% NON contiene nessun peso sopra il carico (cavi e pile da 2,5 kg a 5 kg: +25% = 6,25 kg; manubri
+   da 3 kg: +1 kg e +33%), altrimenti null. E l unico passo che il tetto lascia passare: la stessa scelta di limitaSalitaBase (INT-4) e della guardia della calibrazione (faseCalibrazione) */
+function passoUnicoOltreTetto(pesoUltimo, nome) {
+  if (!(pesoUltimo > 0) || typeof sogliaPartenza !== 'function') return null;
+  const tetto = pesoUltimo * (1 + sogliaPartenza('calibrazioneTettoSalto'));
+  const giu = grigliaAttiva() ? arrotondaAttrezzo(tetto, nome, { modo: 'giu' }) : Math.floor(tetto / 0.5 + 1e-9) * 0.5;
+  if (giu > pesoUltimo + 1e-9) return null;
+  return grigliaAttiva() ? arrotondaAttrezzo(pesoUltimo + 1e-6, nome, { modo: 'su' }) : pesoUltimo + 0.5;
+}
 /* ALG-06 e CAR-18 (INT-4): un aumento della progressione di base non supera +25% in una volta, come la calibrazione e la ripresa dopo lo scarico. La griglia puo rendere il passo molto piu
    grande di quanto voluto (un cavo da 6,5 kg + 2,5 = 9, che la griglia porta a 10: +54%; fuori dal piano non c e il +10% di ALG-05). Si sale al peso della griglia piu alto che sta nel tetto; se
    tra il carico e il tetto non c e nessun peso (manubri da 3 kg: +1 kg e +33%) resta il passo piu piccolo che c e: il peso sale sempre, mai di piu del necessario. `w` = l aumento deciso */
@@ -315,10 +324,9 @@ function limitaSalitaBase(w, pesoUltimo, nome) {
   if (!(pesoUltimo > 0) || !(w > pesoUltimo) || typeof sogliaPartenza !== 'function') return w;
   const tetto = pesoUltimo * (1 + sogliaPartenza('calibrazioneTettoSalto'));
   if (w <= tetto + 1e-9) return w;
-  const giu = grigliaAttiva() ? arrotondaAttrezzo(tetto, nome, { modo: 'giu' }) : Math.floor(tetto / 0.5 + 1e-9) * 0.5;
-  if (giu > pesoUltimo + 1e-9) return giu;
-  const primo = grigliaAttiva() ? arrotondaAttrezzo(pesoUltimo + 1e-6, nome, { modo: 'su' }) : pesoUltimo + 0.5;
-  return Math.min(w, primo);
+  const primo = passoUnicoOltreTetto(pesoUltimo, nome);
+  if (primo !== null) return Math.min(w, primo);
+  return grigliaAttiva() ? arrotondaAttrezzo(tetto, nome, { modo: 'giu' }) : Math.floor(tetto / 0.5 + 1e-9) * 0.5;
 }
 /* ALG-06: una riduzione di `da` del fattore `f`: il peso della griglia piu vicino, almeno il primo sotto `da` se c e (mai sotto la barra o 1 kg), mai sopra `da` */
 function caricoSceso(da, f, nome) {
