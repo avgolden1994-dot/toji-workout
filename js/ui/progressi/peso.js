@@ -29,17 +29,19 @@ function consiglioPeso(t) {
   if (!t) return 'Pesati 2-3 volte a settimana, al mattino: dopo 2 settimane il coach legge la tendenza.';
   const f = faseCorpo();
   const p = t.perc;
+  /* NUT-01 (guardia, P4-C, compone.js): minorenni, over 65 e gravidanza non ricevono calorie ne grammi: il testo prudente al posto del consiglio di cibo (INT-4: anche i consigli sul ritmo del peso: «Ritmo giusto... 0,5-1% a settimana», «Sali in fretta») */
+  const g = guardiaNutrizione({}, getProfile() || {}), cibo = testo => g ? g.testo : testo;
   if (f === 'deficit') {
-    if (p < -1) return 'Scendi più dell 1% a settimana: rischi di perdere muscolo. Aggiungi qualche caloria, soprattutto proteine.';
-    if (p > -0.25) return 'Il peso è quasi fermo: togli 200-300 kcal al giorno o aggiungi passi.';
-    return 'Ritmo giusto per dimagrire tenendo il muscolo (0,5-1% a settimana).';
+    if (p < -1) return cibo('Scendi più dell 1% a settimana: rischi di perdere muscolo. Aggiungi qualche caloria, soprattutto proteine.');
+    if (p > -0.25) return cibo('Il peso è quasi fermo: togli 200-300 kcal al giorno o aggiungi passi.');
+    return cibo('Ritmo giusto per dimagrire tenendo il muscolo (0,5-1% a settimana).');
   }
   if (f === 'massa') {
-    if (p > 0.5) return 'Sali in fretta: oltre lo 0,5% a settimana si accumula soprattutto grasso.';
-    if (p < 0.1) return 'Il peso non sale: aggiungi 200-300 kcal al giorno.';
-    return 'Ritmo giusto per la massa (0,25-0,5% a settimana).';
+    if (p > 0.5) return cibo('Sali in fretta: oltre lo 0,5% a settimana si accumula soprattutto grasso.');
+    if (p < 0.1) return cibo('Il peso non sale: aggiungi 200-300 kcal al giorno.');
+    return cibo('Ritmo giusto per la massa (0,25-0,5% a settimana).');
   }
-  if (Math.abs(p) > 0.5) return 'Il peso si sta muovendo: se vuoi mantenerlo, controlla le calorie.';
+  if (Math.abs(p) > 0.5) return cibo('Il peso si sta muovendo: se vuoi mantenerlo, controlla le calorie.');
   return 'Peso stabile.';
 }
 function graficoPeso(pts, obiettivo) {

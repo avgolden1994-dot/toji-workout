@@ -7,9 +7,10 @@
 'use strict';
 const test = require('node:test'), assert = require('node:assert');
 const { caricaApp } = require('./aiuto-app');
+const { conSoglieSelezione } = require('./aiuto-selezione');   /* W2-T6: le soglie della scelta degli esercizi (SEL-06) anche prima che index.html le citi */
 
 const ORA = '2026-10-05T12:00:00';
-const app = caricaApp({ ora: ORA });
+const app = conSoglieSelezione(caricaApp({ ora: ORA }));
 const senzaEmoji = n => app.g('senzaEmoji')(n);
 const BASE = { goals: ['massa'], level: 'intermedio', days: 4, minutes: 60, luogo: 'palestra', sex: 'F', age: 30, parq: 'no', fastidi: [], sonno: 'bene', attrezzi: 'indifferente', usaProfilo: false };
 const costruisci = p => app.dati(app.chiama('buildProgram', Object.assign({}, BASE, p)));
@@ -92,8 +93,12 @@ test('M5: su una griglia di 324 programmi nessun intermedio o avanzato sano rice
   assert.strictEqual(esperti.length, 54);
   assert.deepStrictEqual(esperti.filter(haScatola).map(x => x.p.seme), [], 'chi puo fare lo squat con un carico non riceve lo squat di avvio');
   /* lo ricevono ancora chi inizia e i prudenti (la progressione verso lo squat carico) */
-  assert.strictEqual(tutti.filter(x => x.p._persona === 'adulto' && x.p.level === 'principiante').filter(haScatola).length, 12);
+  /* W2-T6: 10 e non 12 (con le prime scelte di SEL-06 e la varieta di RID-02 lo squat di avvio resta a 10 principianti su 27: la progressione verso lo squat carico c e ancora) */
+  /* INT-2f: 9 e non 10 (il ripiego della cerniera senza carico non fa piu da variante tra i giorni: cambia il sorteggio degli squat di chi inizia, sempre la progressione verso lo squat carico) */
+  assert.strictEqual(tutti.filter(x => x.p._persona === 'adulto' && x.p.level === 'principiante').filter(haScatola).length, 9);
   /* W2-T2: 130 e non 128 (con la capacita di CAS-06 ai prudenti e ai principianti restano 2 programmi in piu con lo squat di avvio: e la progressione verso lo squat carico) */
+  /* W2-T6: 128 e non 130 (le prime scelte di SEL-06 e la varieta di RID-02 spostano lo squat di avvio dei prudenti: sempre la progressione verso lo squat carico) */
+  /* INT-2f: 130 (la stessa causa: senza il ripiego come variante lo squat di avvio dei prudenti torna a 130, la progressione verso lo squat carico) */
   assert.strictEqual(tutti.filter(x => x.p._persona !== 'adulto').filter(haScatola).length, 130);
   let sedute = 0, conAvvioEAltroSquat = 0, conDueSquat = 0;
   tutti.forEach(x => x.prog.sedute.forEach(sd => {
@@ -110,7 +115,11 @@ test('M5: su una griglia di 324 programmi nessun intermedio o avanzato sano rice
      (RID-01/RID-02, W2-T6). Il numero scende solo se il generatore migliora: si aggiorna con il motivo, mai a mano per far passare la prova */
   /* onda 2c (INT-2b): 41 e non 40: il Front Squat e vietato a chi inizia e ai prudenti (SAF-05, abilita 3: vincoli.js) e in una seduta della griglia il suo posto lo prende uno squat alla macchina
      accanto a un altro (un doppione di scelta, W2-T6); nessuna seduta con lo squat di avvio e un altro squat (sopra, 0) */
-  assert.strictEqual(conDueSquat, 41, 'doppi squat nella griglia: erano 71 sul codice di prima, 45 con la capacita di W2-T2, 40 con il volume per muscolo');
+  /* W2-T6 (ABB-02, SES-03): 1 e non 41. Le sedute hanno al massimo due varianti di squat o di affondo (`squatOltreMax`): con un affondo gia in seduta (il posto dell unilaterale) il secondo squat, che era il doppione
+     di scelta di cui sopra (Hack + Leg Press, Hack + Pendulum, Goblet + Squat a Corpo Libero), non entra piu; la terza variante e la cerniera dell anca o la flessione del ginocchio. Era 41 sul codice di prima.
+     INT-2e: 0 e non 1, ricalcolato sul codice integrato con le righe <script> applicate (W2-T5 con i giorni ad anello e soglie-split.js + W2-T6 con soglie-selezione.js): l unica seduta della griglia
+     che restava con due squat (misurata da T6 senza gli script nuovi in index.html) non l ha piu quando le soglie di T6 sono caricate; il controllo che conta (lo squat di avvio mai con un altro squat) resta a 0 sopra. */
+  assert.strictEqual(conDueSquat, 0, 'doppi squat nella griglia: erano 71 sul codice di prima, 45 con la capacita di W2-T2, 40 con il volume per muscolo, 41 con il Front Squat vietato, 0 con ABB-02 di W2-T6 e i giorni di W2-T5');
 });
 
 /* ============================================================================================================ M3 */
@@ -164,7 +173,7 @@ test('M3: la frase che legge il minorenne dice 2-3 ripetizioni in riserva, mai 0
   assert.ok(/lascia 2–3 ripetizioni in riserva/.test(r.motivo), r.motivo);
   assert.ok(!/lascia 0/.test(r.motivo), r.motivo);
   const adulto = telefono(30, 1.25, null), ra = adulto.dati(adulto.chiama('caricoProssimo', ISOLAMENTO, 8, 12, 3));
-  assert.ok(/lascia 0–0 ripetizioni in riserva/.test(ra.motivo), 'l adulto resta come prima: ' + ra.motivo);
+  assert.ok(/lascia 0 ripetizioni in riserva/.test(ra.motivo) && !/0–0/.test(ra.motivo), "l adulto: un numero solo (m4 della revisione di 3a, prima «lascia 0–0»): " + ra.motivo);
 });
 
 /* ============================================================================================================ minori */
@@ -184,7 +193,11 @@ test('m9: un livello sconosciuto («esperto») non fa lanciare buildProgram: ric
   assert.strictEqual(forma(p('esperto')), forma(p('avanzato')), 'esperto: struttura da avanzato (12 settimane, blocchi da 6, rampa del RIR)');
   assert.strictEqual(forma(p('Principiante assoluto')), forma(p('principiante')));
   assert.strictEqual(forma(p('boh')), forma(p('intermedio')), 'un livello che non si capisce vale intermedio');
-  assert.strictEqual(forma(p(undefined)), forma(p('intermedio')), 'un livello mancante vale intermedio, come prima');
+  /* INT-2e: il livello mancante vale intermedio per la STRUTTURA (settimane, blocco, fasi, rampa del RIR, divisione, numero di sedute); non per quanti esercizi ha ogni seduta: per i carichi di partenza vale principiante (PAR-01, D-P12) e per una
+     donna il bilanciere che partirebbe sotto la barra cede il posto a una variante (PAR-08 a, penalitaPartenza dentro la scelta dei posti): i due programmi scelgono esercizi diversi e strBilancia li bilancia diversamente. Prima la parita del conto degli
+     esercizi per seduta ([6,6,5,8]) era una coincidenza: con la correzione di INT-2e (schemaDi vede le spinte come i dati) intermedio ne ha 6 nella prima seduta e il livello mancante 7 */
+  const struttura = prog => JSON.stringify({ settimane: prog.settimane, blocco: prog.blocco, fasi: prog.fasi, rirSett: prog.rirSett, split: prog.split.nome, sedute: prog.sedute.length });
+  assert.strictEqual(struttura(p(undefined)), struttura(p('intermedio')), 'un livello mancante vale intermedio per la struttura, come prima');
   assert.strictEqual(JSON.stringify(p('esperto').sedute), JSON.stringify(p('avanzato').sedute), 'esperto e avanzato: le stesse sedute (anche il metodo famoso lo sceglie il livello normalizzato)');
   assert.strictEqual(p('esperto').settimane, 12);
   assert.ok(Array.isArray(p('esperto').rirSett), 'la rampa del RIR degli avanzati');

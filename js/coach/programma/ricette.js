@@ -23,7 +23,7 @@ const SLOT_DEF = {
   tirataV: e => schemaDi(e.name) === 'tirataV',
   squat: e => schemaDi(e.name) === 'squat' && e.type === 'compound' && !e.lato && !/sumo/i.test(_n(e)),   /* lo squat sumo e per gli adduttori: non e il fondamentale delle gambe */
   unilaterale: e => (e.group === 'gambe' || e.group === 'glutei') && e.type === 'compound' && !!e.lato,
-  hinge: e => /stacco|good morning|pull-through/i.test(_n(e)),
+  hinge: e => /stacco|good morning|pull-through|hip hinge/i.test(_n(e)),
   staccoTerra: e => /stacco da terra/i.test(_n(e)),   /* B19: lo Starting Strength fa lo stacco da terra, non il rumeno */
   glutSpinta: e => /hip thrust|ponte glutei/i.test(_n(e)),
   isoPetto: e => e.group === 'petto' && e.type !== 'compound',
@@ -65,8 +65,12 @@ const PRIORI = {
   'Estensione Tricipiti sopra la Testa ai Cavi': 3, 'Pushdown con Corda': 2.5, 'Estensione Tricipiti sopra la Testa con Manubrio': 2.5,
   'Croci ai Cavi da Seduto': 3, 'Pectoral Machine (Butterfly)': 2.5, 'Croci ai Cavi dal Basso': 2,
   'Calf Raise in Piedi': 2.5, 'Calf Raise Seduto': 2, 'Calf Raise alla Leg Press': 2,
-  'Plank': 2, 'Pallof Press': 2, 'Dead Bug': 2, 'Crunch al Cavo': 2
+  'Plank': 2, 'Pallof Press': 2, 'Dead Bug': 2, 'Crunch al Cavo': 2,
+  'Hip Hinge a Corpo Libero': -1   /* W2-T6: ripiego (la cerniera dell anca senza carico); INT-2f: consentito solo dove nessuna cerniera con carico lo e (cerniereConCaricoConsentite, motore.js): la varieta tra i giorni (-4) batteva questo -1 e lo portava in 7.449 programmi su 10.800 */
 };
+/* W2-T6: la cerniera dell anca senza carico e un ripiego per le sedute di gambe (SES-03), al massimo nel numero di sedute di RIPETIZIONI_SETTIMANA_MAX e mai come riempitivo di una seduta di tirata o di spinta; INT-2f: solo dove nessuna cerniera con carico e consentita (consentitoCalcolo), 2 serie da 12 (soglia ripiegoCerniera), mai prima di un altro multiarticolare (strRango):
+   con 6 giorni a corpo libero finiva in 4 sedute e i femorali arrivavano a 13 serie frazionarie contro un massimo di 8 (collaudo VOL-02:femorali) */
+const RIPIEGO_HINGE = /^hip hinge a corpo libero$/i;
 const SCHEMI_ATTESI = { fullbody: ['spinta', 'tirata', 'basso'], upper: ['spinta', 'tirata'], lower: ['squat', 'hinge'], legs: ['squat', 'hinge'], push: ['spinta'], pull: ['tirata'] };
 const SLOT_PER_SCHEMA = { spinta: ['spintaO', 'spintaV'], tirata: ['tirataO', 'tirataV'], basso: ['squat', 'hinge', 'glutSpinta'], squat: ['squat'], hinge: ['hinge', 'glutSpinta'] };
 /* un esercizio e adatto a una seduta di quel tipo se allena i suoi muscoli: nelle sedute di tirata solo il bicipite delle braccia e i deltoidi posteriori, in quelle di spinta solo il tricipite e i deltoidi anteriori e laterali */
@@ -108,6 +112,18 @@ function componiSedute(brief, split) {
   const L = brief.lavoro, prefs = L.prefs, nEs = L.nEs, sostituzioni = L.sostituzioni, indiciGiorni = brief.agenda.indiciGiorni;
   const testFisici = brief.test, fattoreVarieta = brief.preferenze.varieta;
   const visti = {};
+  /* SEL-06 / PRI-05 (W2-T6): per chi inizia (e non punta alla forza) il bilanciere pesante non prende piu il bonus del primo posto e i posti si riempiono con le prime scelte della tabella 3.4 della nota dei
+     principianti (macchine, manubri e corpo libero con appoggio: abilita 1); il bilanciere arriva dopo. Senza il file delle soglie (soglie-selezione.js) resta com era */
+  const primeScelte = level === 'principiante' && !metodoAttivo && goals[0] !== 'forza' && typeof sogliaSelezione === 'function' && sogliaSelezione('abilitaMax') !== null && regolaAttiva('SEL-06');
+  /* W2-T6: i due ripieghi senza carico (la cerniera dell anca e il Y-Raise a pancia in giu, per chi non ha attrezzi) sono dei programmi del coach: un metodo famoso ha i suoi esercizi e le sue serie (la Recommended
+     Routine a 3 serie in 60 minuti: con due esercizi in piu il tempo le portava a 2). Escluderli qui vale per ogni passo che li cerca (i posti, i «schemi mancanti» di completaSettimana, strCopri). Con la spalla
+     delicata il Y-Raise resta (PCO-08: il lavoro per la cuffia c e anche con un metodo che non sia «essenziale») */
+  if (metodoAttivo) ['Hip Hinge a Corpo Libero'].concat((prefs.fastidi || []).indexOf('spalle') === -1 ? ['Y-Raise a Corpo Libero'] : []).map(nomeInLibreria).forEach(n => { if (n && (prefs.esclusi || []).indexOf(n) === -1) (prefs.esclusi = prefs.esclusi || []).push(n); });
+  /* PAR-08 (W2-T8, penalitaPartenza): il bilanciere che per questa persona partirebbe sotto la barra da 20 kg vale -3 nel posto; una volta per nome e per programma */
+  const penalita = {};
+  /* il livello che penalitaPartenza legge e quello normalizzato del brief (m9: «esperto», un livello mancante: come il resto del programma), non il campo grezzo */
+  const briefPartenza = { grezzo: { d: Object.assign({}, (brief.grezzo || {}).d, { level: level }), prof0: (brief.grezzo || {}).prof0 } };
+  const penPartenza = (x) => { if (typeof penalitaPartenza !== 'function') return 0; if (penalita[x.name] === undefined) penalita[x.name] = penalitaPartenza(x, briefPartenza) || 0; return penalita[x.name]; };
 
   /* variazione: ogni programma (e ogni ciclo) esce diverso, ma e ripetibile col suo seme */
   const rng = rngDa(brief.seme);
@@ -148,12 +164,12 @@ function componiSedute(brief, split) {
       if (slot === 'glutSpinta' && base.some(y => SLOT_DEF.glutSpinta(y))) return;
       const tutti = EXERCISE_LIBRARY.filter(x => def(x) && !base.some(y => y.name === x.name));
       if (!tutti.length) return;
-      const pesante = (pos === 0 || (metodoAttivo && metodoAttivo.pesanti)) && !cauto && !(metodoAttivo && metodoAttivo.leggeri);   /* leggeri: Gironda, 8x8 con macchine e pesi moderati */
+      const pesante = (pos === 0 || (metodoAttivo && metodoAttivo.pesanti)) && !cauto && !(metodoAttivo && metodoAttivo.leggeri) && !primeScelte;   /* leggeri: Gironda, 8x8 con macchine e pesi moderati; SEL-06: chi inizia senza obiettivo forza non ha il +3 del bilanciere */
       const fisso = pesante && goals[0] === 'forza';
       const prio = (x) => (PRIORI[x.name.replace(EMOJI_TESTA, '')] || 0) + (pesante && tipoCarico(x.name) === 'pesante' ? 3 : 0) - (cauto && tipoCarico(x.name) === 'pesante' ? 3 : 0);
       const migliore = tutti.slice().sort((x, y) => prio(y) - prio(x))[0];
       /* ABB-07: una sola schiena pesante per seduta; non nei metodi essenziali (Starting Strength, StrongLifts, GreySkull: squat e stacco insieme sono il metodo) */
-      const ok = tutti.filter(x => consentito(x.name, prefs) && !(RX_NORDIC.test(senzaEmoji(x.name)) && (usatiSett[x.name] || 0) >= PARAM_NORDIC.sedutePerSettimana) && !(SCHIENA_PESANTE.test(x.name) && pesantiSchiena >= 1 && !(metodoAttivo && metodoAttivo.essenziale)) && !(metodoAttivo && metodoAttivo.leggeri && tipoCarico(x.name) === 'pesante') && !strSquatDoppio(x, base));   /* M5: lo squat di avvio non sta con un altro squat */
+      const ok = tutti.filter(x => consentito(x.name, prefs) && !(RX_NORDIC.test(senzaEmoji(x.name)) && (usatiSett[x.name] || 0) >= PARAM_NORDIC.sedutePerSettimana) && !(SCHIENA_PESANTE.test(x.name) && pesantiSchiena >= 1 && !(metodoAttivo && metodoAttivo.essenziale)) && !(metodoAttivo && metodoAttivo.leggeri && tipoCarico(x.name) === 'pesante') && !strSquatDoppio(x, base) && !squatOltreMax(x, base) && !(RIPIEGO_HINGE.test(senzaEmoji(x.name)) && ((usatiSett[x.name] || 0) >= maxSettimana(x.name) || !/lower|legs|fullbody/.test(tplId))));   /* M5: lo squat di avvio non sta con un altro squat; ABB-02: non tre varianti di squat */
       /* il posto resta senza candidati (fastidi, attrezzi, una schiena pesante gia nella seduta, o il giorno dopo un carico lombare pesante: sotto) */
       const senzaCandidati = () => {
         /* SES-03 (ponte di W0-T2): senza stacchi (schiena dolente, niente bilanciere ne cavi) il posto dell hinge lo prende la spinta d anca con carico (hip thrust):
@@ -180,6 +196,7 @@ function componiSedute(brief, split) {
         if (!fisso) v += rng() * (level === 'principiante' ? 1 : 2.5) * fattoreVarieta;    /* la variazione del coach, dosata sul gusto */
         if (ps.disagio && !fisso && attrezzoDi(senzaEmoji(x.name)) === 'bilanciere') v -= 2;   /* a disagio: meno bilanciere, meno postazioni */
         if (strRidondante(x, base)) v -= 4;   /* ABB-02: non due esercizi che fanno lo stesso lavoro */
+        if (!fisso && !metodoAttivo) v += penPartenza(x);   /* PAR-08: il bilanciere che partirebbe sotto la barra vuota cede il posto alla variante con manubri o macchina (non per la forza ne per un metodo famoso: li il bilanciere resta) */
         if (vietaSchiena && strSchiena(x.name)) v -= 5;   /* ABB-07: due giorni di fila, schiena pesante una volta sola */
         return v;
       };
@@ -195,6 +212,29 @@ function componiSedute(brief, split) {
         else if (slot.replace(/\d$/, '') === 'hinge') { senzaCandidati(); return; }
         else if (slot === 'unilaterale') return;   /* lo stacco rumeno a una gamba (le ginocchia dolenti tolgono gli affondi): il posto non e un fondamentale, resta vuoto */
       }
+      /* SEL-06 (PRI-05, tabella 3.4): chi inizia parte dalle prime scelte, esercizi di abilita 1 (macchine, manubri, corpo libero con appoggio); un esercizio di abilita 2 entra solo dove il posto non ha un esercizio di
+         abilita 1 consentito (altrimenti resterebbe senza spinta, tirata, squat o cerniera dell anca: meglio uno di abilita 2 che nessuno). Non per l obiettivo forza: li il bilanciere resta */
+      let rosa = ordinati;
+      /* l eccezione e la cerniera dell anca con i manubri (lo stacco rumeno con manubri, abilita 2: ricerca-principianti §3.1, «si impara bene con movimenti guidati: pull-through, stacco rumeno con manubri»): le prime scelte
+         della cerniera (pull-through, ponte, hyperextension, hip thrust) hanno i femorali a 0 negli attributi e senza uno stacco i femorali di chi inizia restavano a una seduta sola (collaudo FRQ-01:femorali). Un solo
+         esercizio di abilita 2 per seduta, come chiede PRI-05: gli altri posti restano di abilita 1 */
+      if (primeScelte) { const facili = rosa.filter(x => (livelloAbilita(x.name) || 1) < 2 || (slot === 'hinge' && livelloAbilita(x.name) === 2 && attrezzoDi(x.name) === 'manubri')); if (facili.length) rosa = facili; }
+      /* RID-02 (collaudo, Convenzione): lo stesso esercizio al massimo in due sedute a settimana (RIPETIZIONI_SETTIMANA_MAX): il posto prende un esercizio meno usato se ce n e uno (tra le prime scelte
+         di chi inizia; se anche quelle sono finite, tra tutti): senza variante resta quello di prima. Non per i posti fissi della forza ne per i metodi che ripetono la stessa seduta (ripeti) */
+      if (!fisso && !(metodoAttivo && metodoAttivo.ripeti)) {
+        const fresco = (x) => (usatiSett[x.name] || 0) < maxSettimana(x.name), freschi = rosa.filter(fresco);
+        if (freschi.length) rosa = freschi; else { const tuttiFreschi = ordinati.filter(fresco); if (tuttiFreschi.length) rosa = tuttiFreschi; }
+      }
+      /* ETA-19 (onda 5, sicurezza/popolazioni.js): dopo i 65 anni gli esercizi «da evitare» (stacchi da terra, military press...) sono l'ultima scelta: prima un altro candidato consentito, anche se gia
+         usato due volte nella settimana (RID-02 cede alla sicurezza: con 5-6 sedute e i soli pesi liberi il terzo posto dell hinge prendeva il trap bar, il terzo della spinta verticale il military);
+         se non c e nessun altro restano, e il posto non si perde. Non per i posti fissi della Forza (gli over 65 non hanno il powerlifting: FRZ-02) */
+      const evitare = !fisso && typeof eserciziDaEvitareOver65 === 'function' ? eserciziDaEvitareOver65(chi) : null;
+      if (evitare && rosa.some(x => evitare(x.name))) {
+        const sicuri = rosa.filter(x => !evitare(x.name));
+        if (sicuri.length) rosa = sicuri;
+        else { const tuttiSicuri = ordinati.filter(x => !evitare(x.name)); if (tuttiSicuri.length) rosa = tuttiSicuri; }
+      }
+      ordinati = rosa;
       const scelta = ordinati.find(x => !strRidondante(x, base)) || ordinati[0];
       /* RID-01 (W1-T6): il secondo posto dello stesso tipo (squat2, spintaO2, isoBic2) non diventa un TERZO esercizio che fa lo stesso lavoro di due gia scelti (nemmeno l eccezione dello
          squat o dei glutei ne ammette tre): a corpo libero lo squat, gli affondi e lo squat su scatola finivano nella stessa seduta, tre esercizi solo per i quadricipiti. Il posto resta
@@ -212,7 +252,7 @@ function componiSedute(brief, split) {
       const slots = SLOT_PER_SCHEMA[k];
       const e1 = (x) => slots.some(sl => SLOT_DEF[sl](x) && (sl !== 'glutSpinta' || x.type === 'compound'));
       if (base.some(b => { const x = findExercise(b.name); return x && e1(x); })) return;
-      const cand = EXERCISE_LIBRARY.filter(x => e1(x) && consentito(x.name, prefs) && !base.some(y => y.name === x.name) && !(SCHIENA_PESANTE.test(x.name) && pesantiSchiena >= 1)).sort((a, b) =>
+      const cand = EXERCISE_LIBRARY.filter(x => e1(x) && consentito(x.name, prefs) && !base.some(y => y.name === x.name) && !(SCHIENA_PESANTE.test(x.name) && pesantiSchiena >= 1) && !(RIPIEGO_HINGE.test(senzaEmoji(x.name)) && (usatiSett[x.name] || 0) >= maxSettimana(x.name))).sort((a, b) =>
         ((vietaSchiena && strSchiena(a.name)) - (vietaSchiena && strSchiena(b.name))) || (strRidondante(a, base) - strRidondante(b, base)) || (((usatiSett[a.name] || 0) >= maxSettimana(a.name)) - ((usatiSett[b.name] || 0) >= maxSettimana(b.name))) || ((PRIORI[senzaEmoji(b.name)] || 0) - (cauto && tipoCarico(b.name) === 'pesante' ? 3 : 0)) - ((PRIORI[senzaEmoji(a.name)] || 0) - (cauto && tipoCarico(a.name) === 'pesante' ? 3 : 0)))[0];
       if (!cand) return;
       if (SCHIENA_PESANTE.test(cand.name)) pesantiSchiena++;
@@ -224,7 +264,7 @@ function componiSedute(brief, split) {
        (corpo libero con le ginocchia dolenti, per esempio) si riempie con i muscoli della seduta, poi con il core */
     for (let g = 0; base.length < PARAM_NUMERO_ESERCIZI.min && g < 4; g++) {
       const gruppi = GRUPPI_DELLA_SEDUTA[tplId] || null;
-      const libero = (x) => consentito(x.name, prefs) && !base.some(y => y.name === x.name) && (usatiSett[x.name] || 0) < maxSettimana(x.name) && !(SCHIENA_PESANTE.test(x.name) && pesantiSchiena >= 1) && !(vietaSchiena && strSchiena(x.name)) && !(metodoAttivo && metodoAttivo.leggeri && tipoCarico(x.name) === 'pesante') && !strSquatDoppio(x, base);
+      const libero = (x) => consentito(x.name, prefs) && !(RIPIEGO_HINGE.test(senzaEmoji(x.name)) && !/lower|legs|fullbody/.test(tplId)) && !base.some(y => y.name === x.name) && (usatiSett[x.name] || 0) < maxSettimana(x.name) && !(SCHIENA_PESANTE.test(x.name) && pesantiSchiena >= 1) && !(vietaSchiena && strSchiena(x.name)) && !(metodoAttivo && metodoAttivo.leggeri && tipoCarico(x.name) === 'pesante') && !strSquatDoppio(x, base);
       const punto = (x) => (PRIORI[x.name.replace(EMOJI_TESTA, '')] || 0) - (usatiSett[x.name] ? 2 : 0) - (isTimeBased(x.name) ? 1 : 0) + (x.type === 'compound' && tplId !== 'punti' ? 1 : 0);
       const migliore = (lista) => lista.sort((a, b) => punto(b) - punto(a))[0];
       /* prima un esercizio dei muscoli della seduta che non faccia lo stesso lavoro di uno gia scelto (ABB-02), poi, nella seduta di tirata, la catena posteriore (femorali e glutei

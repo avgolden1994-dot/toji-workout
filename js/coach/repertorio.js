@@ -15,6 +15,8 @@
    - MES-12 il verdetto di ciclo confronta le migliori sedute di carico, con il 3% di soglia: l ultima seduta e sempre di scarico e
      un intermedio che sale dell 1,5% a settimana risultava "in stallo".
    - ETA-04 sotto i 18 anni niente numeri su peso, cibo e integratori (proteine, passi, creatina).
+   Onda 4 (P4-C, guardie del corpo): NUT-01 (solo la guardia) anche per gli over 65 e la gravidanza: niente grammi di proteine, il testo prudente
+   (guardiaNutrizione in compone.js); i g/kg di COR-03 restano «Convenzione» (bia/soglie-bia.js).
    ============================================================ */
 
 /* ---- livello dai numeri (moltiplicatori del peso corporeo) ---- */
@@ -110,8 +112,8 @@ window.livelloStimato = function() {
 /* ---- trovare un equivalente con i 4 criteri ---- */
 function prefsCoach() {
   const p = getProfile() || {};
-  return { luogo: p.luogo || (p.prefs && p.prefs.luogo) || 'palestra', fastidi: p.fastidi || (p.prefs && p.prefs.fastidi) || [], attrezzi: p.attrezzi || (p.prefs && p.prefs.attrezzi) || 'indifferente',
-    attrezziPalestra: p.attrezziPalestra || null, graditi: p.graditi || [], odiati: p.odiati || [] };
+  return Object.assign({ luogo: p.luogo || (p.prefs && p.prefs.luogo) || 'palestra', fastidi: p.fastidi || (p.prefs && p.prefs.fastidi) || [], attrezzi: p.attrezzi || (p.prefs && p.prefs.attrezzi) || 'indifferente',
+    attrezziPalestra: p.attrezziPalestra || null, graditi: p.graditi || [], odiati: p.odiati || [] }, typeof attrezziSalvati === 'function' ? attrezziSalvati(p, null) : {});   /* CAS-01 (W2-T5) */
 }
 function sostituisciNelPiano(da, a, nota) {
   const data = loadData();
@@ -143,7 +145,9 @@ function conAnnulla(testo, fn) {
   fn();
   renderPiano(); renderAllenamento();
   if (document.getElementById('agent-body')) renderAgent();
-  showUndo(testo, () => { if (prima !== null) localStorage.setItem(dataKey(), prima); if (primaAg !== null) localStorage.setItem(AGG_KEY(), primaAg); renderPiano(); renderAllenamento(); if (document.getElementById('agent-body')) renderAgent(); }, 6000);
+  /* una chiave che prima non c era si toglie (INT-3a): prima l annulla la lasciava con il valore di dopo, e P3-B la scriveva prima per aggirarlo */
+  const ripristina = (k, v) => { if (v !== null) localStorage.setItem(k, v); else localStorage.removeItem(k); };
+  showUndo(testo, () => { ripristina(dataKey(), prima); ripristina(AGG_KEY(), primaAg); renderPiano(); renderAllenamento(); if (document.getElementById('agent-body')) renderAgent(); }, 6000);
 }
 window.azioneCoach = function(tipo, nome) {
   const pul = senzaEmoji(nome);
@@ -177,7 +181,16 @@ window.azioneCoach = function(tipo, nome) {
       const ag = aggiustiCoach(); ag.ruotatoBlocco = bloccoCorrente(); salvaAggiusti(ag);
     });
   }
-  if (tipo === 'scarico') conAnnulla('Prossime due sedute di scarico', () => { const ag = aggiustiCoach(); ag.scarico = scaricoReattivo('carico della settimana troppo alto', 2); salvaAggiusti(ag); });   /* scarico deciso dal coach: la voce la fa sicurezza/scarico.js (W1-T3) */
+  if (tipo === 'scarico') {
+    /* MES-07 (P3-B, programmi v2): anche col tocco dell utente lo scarico passa dalle protezioni (non vicino a un altro scarico, non nelle prime settimane del blocco, non se quello del programma e vicino) */
+    const mes07 = typeof valutaScaricoReattivo === 'function' ? valutaScaricoReattivo('S7') : { ok: true };
+    if (!mes07.ok) { showUndo(mes07.perche, null, 6000); return; }
+    conAnnulla('Prossime due sedute di scarico', () => { const ag = aggiustiCoach(); ag.scarico = voceScaricoReattivo('carico della settimana troppo alto', 2); salvaAggiusti(ag); });   /* scarico deciso dal coach: la voce la fa sicurezza/scarico.js (W1-T3) */
+  }
+  /* MES-07: «Non ora» (programmi v2): la proposta di scarico non si ripete per qualche giorno; si annulla */
+  if (tipo === 'scaricoNonOra') {
+    conAnnulla('Va bene, non ora: te lo richiedo più avanti', () => { const ag = aggiustiCoach(); ag.scaricoNonOra = ymd(new Date()); salvaAggiusti(ag); });
+  }
   /* STD-01: il livello cambia solo col tocco dell utente e si annulla (prima: solo in salita e senza annulla) */
   if (tipo === 'livello' || tipo === 'rivediLivello') {
     if (!coachAttivo()) return;
@@ -277,9 +290,12 @@ function azioniCoach() {
     out.push({ testo: 'Nuovo blocco: cambio gli accessori per stimolare il muscolo da angoli diversi. I fondamentali restano uguali.', bottoni: [['Ruota gli accessori', "azioneCoach('ruota', '')"]] });
   /* strain in salita da due settimane con fatica alta */
   const sw = strainSettimane();
+  /* MES-07 (programmi v2): lo strain in salita e il segnale S7 (la fatica dichiarata), non basta da solo: la proposta c e solo se le protezioni e un secondo segnale la permettono, e si puo rimandare («Non ora») */
+  const nonOra = programmaConPiano() && ag.scaricoNonOra && giorniTra(daYmd(ag.scaricoNonOra), new Date()) < (sogliaScarico('reattivoProtezioni') || { nonOraGiorni: 0 }).nonOraGiorni;
   if (sw[0].strain && sw[1].strain && sw[2].strain && sw[0].strain > sw[1].strain && sw[1].strain > sw[2].strain && sw[0].fatica >= 8 && !ag.scarico
-      && !sw.some(x => x.scarico) && !scaricoRecente(PARAM_ANALISI.giorniDopoScarico))
-    out.push({ testo: 'Il carico della settimana sale da due settimane e la fatica e alta (monotonia ' + String(sw[0].monotonia).replace('.', ',') + '): meglio due sedute di scarico.', bottoni: [['Scarico ora', "azioneCoach('scarico', '')"]] });
+      && !sw.some(x => x.scarico) && !scaricoRecente(PARAM_ANALISI.giorniDopoScarico) && !nonOra && (typeof valutaScaricoReattivo !== 'function' || valutaScaricoReattivo('S7').ok))
+    out.push({ testo: 'Il carico della settimana sale da due settimane e la fatica e alta (monotonia ' + String(sw[0].monotonia).replace('.', ',') + '): meglio due sedute di scarico.',
+      bottoni: [['Scarico ora', "azioneCoach('scarico', '')"]].concat(programmaConPiano() ? [['Non ora', "azioneCoach('scaricoNonOra', '')"]] : []) });
   /* livello dai numeri (STD-01): salita solo se l anzianita e le alzate concordano; revisione se un avanzato dichiarato e sotto i numeri di un principiante */
   const l = livelloStimato();
   if (l && l.salita) {
@@ -291,12 +307,20 @@ function azioniCoach() {
   return out;
 }
 
+/* obiettivo salute: i minuti di pesi della settimana e i minuti di attivita aerobica dell OMS (non e una riga di cibo ne di corpo: la guardia NUT-01 la lascia agli over 65) */
+function rigaMinutiSalute() {
+  const min = loadHistory().filter(h => h.minuti && h.id && Date.now() - h.id < 7 * 864e5).reduce((t, h) => t + h.minuti, 0);
+  return 'Questa settimana ' + min + ' minuti di pesi: tra 30 e 60 si hanno gia i massimi benefici per la salute. Aggiungi 150-300 minuti di attivita aerobica moderata (OMS).';
+}
 /* ---- corpo, cardio e alimentazione: solo informazione ---- */
 function corpoCoach() {
   const out = [];
   const p = getProfile() || {};
   /* ETA-04: sotto i 18 anni niente numeri su peso, cibo e integratori (proteine, passi, creatina, ritmo di calo): si rimanda a un adulto e a un medico o dietista */
-  if (regolaAttiva('ETA-04') && Number(p.age) > 0 && Number(p.age) < 18) return ['Alla tua età non do numeri su peso o cibo: sono cose da parlare con un medico o un dietista. Se pensi spesso al peso o salti i pasti, parlane con qualcuno di cui ti fidi.'];
+  if (regolaAttiva('ETA-04') && Number(p.age) > 0 && Number(p.age) < 18) return [TESTO_NUTRIZIONE_MINORENNE];
+  /* NUT-01 (INT-4): minorenni (anche con ETA-04 spenta), over 65 e gravidanza non ricevono ritmo di calo, passi in deficit, creatina ne grammi di proteine: solo il testo prudente, con il rinvio */
+  const guardiaCorpo = guardiaNutrizione({}, p);
+  if (guardiaCorpo) return guardiaCorpo.gruppo === 'over65' && (p.goals || (p.goal ? [p.goal] : [])).indexOf('salute') !== -1 ? [guardiaCorpo.testo, rigaMinutiSalute()] : [guardiaCorpo.testo];
   const goals = p.goals || (p.goal ? [p.goal] : []);
   const fase = faseCorpo(p);   /* OBI-02: una sola fase del corpo per tutta l app (regia/brief.js) */
   const st = getBiaStorico().filter(x => x.valori && x.valori.peso && x.data);
@@ -317,15 +341,17 @@ function corpoCoach() {
   }
   const ffm = st.length ? st[st.length - 1].valori.ffm : null;
   const bw = pesoCorporeo();
-  if (ffm) out.push('Proteine: circa ' + Math.round(ffm * 2.35) + '-' + Math.round(ffm * 2.75) + ' g al giorno (2,35-2,75 g per kg di massa magra). Informazione, non prescrizione.');
-  else if (bw) out.push('Proteine: circa ' + Math.round(bw * (donna ? 1.75 : 2)) + ' g al giorno (' + (donna ? '1,75' : '2') + ' g per kg). Informazione, non prescrizione.');
+  /* NUT-01 (guardia, P4-C, compone.js): over 65 e gravidanza (e un minorenne con ETA-04 spenta) non ricevono grammi di proteine: il testo prudente. Per gli altri adulti i g/kg di COR-03 (soglie-bia.js: «Convenzione», non validati) */
+  const guardia = guardiaNutrizione({}, p), virg = v => String(v).replace('.', ',');
+  const gMin = proteineGKg('proteineMassaMagraMin'), gMax = proteineGKg('proteineMassaMagraMax'), gPeso = proteineGKg(donna ? 'proteinePesoDonna' : 'proteinePesoUomo');
+  if (guardia) out.push(guardia.testo);
+  else if (ffm) out.push('Proteine: circa ' + Math.round(ffm * gMin) + '-' + Math.round(ffm * gMax) + ' g al giorno (' + virg(gMin) + '-' + virg(gMax) + ' g per kg di massa magra). Informazione, non prescrizione.');
+  else if (bw) out.push('Proteine: circa ' + Math.round(bw * gPeso) + ' g al giorno (' + virg(gPeso) + ' g per kg). Informazione, non prescrizione.');
   if (fase === 'deficit') out.push('Passi: 10-12 mila al giorno, aumentandoli di 500-1000 a settimana. Il cardio non toglie muscolo ne forza.');
   else out.push('Passi: almeno 6-8 mila al giorno. Il cardio non toglie muscolo ne forza, solo un po di esplosivita.');
-  if (goals.indexOf('salute') !== -1) {
-    const min = loadHistory().filter(h => h.minuti && h.id && Date.now() - h.id < 7 * 864e5).reduce((t, h) => t + h.minuti, 0);
-    out.push('Questa settimana ' + min + ' minuti di pesi: tra 30 e 60 si hanno gia i massimi benefici per la salute. Aggiungi 150-300 minuti di attivita aerobica moderata (OMS).');
-  }
-  out.push('Creatina 3-5 g al giorno: sicura ed efficace con i pesi. Solo un informazione, facoltativa.');
+  if (goals.indexOf('salute') !== -1) out.push(rigaMinutiSalute());
+  /* NUT-01 (onda 5, m5 della revisione dell'onda 4): con il PAR-Q positivo niente creatina: a chi ha dichiarato una condizione di salute un integratore non si suggerisce (guardia che toglie; parlane col medico) */
+  if (!p.parq) out.push('Creatina 3-5 g al giorno: sicura ed efficace con i pesi. Solo un informazione, facoltativa.');
   return out;
 }
 

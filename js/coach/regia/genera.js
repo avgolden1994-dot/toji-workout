@@ -8,7 +8,7 @@
      1  briefCoach(d, prof0)                regia/brief.js                  chi, obiettivi (D-P6), agenda, preferenze, corpo, mente
      2  vincoliSicurezza(brief)             sicurezza/vincoli.js            i limiti (Sentinella): vietati, serie massime, tecniche ammesse
         risolviMetodo(brief)                regia/brief.js                  il metodo famoso e il tocco (dopo i vincoli: il tocco puo portare al cedimento)
-     3  specialitaStruttura(brief)          qui (smista)                    forza / estetica: oggi nessuna (registraSpecialita)
+     3  specialitaStruttura(brief)          qui (smista)                    forza (specialita/forza.js, W2-T7: { split, sedute }) / estetica: oggi nessuna (registraSpecialita)
      4  pianoMesociclo(brief)               programma/mesociclo.js          settimane, blocchi, scarichi, RIR per settimana
      5  scegliSplit + giorniSettimana       ui/onboarding.js, qui           la divisione e i giorni della settimana
         numeroEsercizi(brief)               volume/tempo.js                 quanti esercizi per seduta
@@ -78,11 +78,82 @@ function riordinaSenzaAdiacenti(tipi, indici) {
   cerca([], tipi.slice());
   return trovato;
 }
+/* PRG-02 (W2-T5; collaudo REC-01): i giorni dipendono da COSA si allena. I giorni fissi di sempre (lunedi-martedi-giovedi-venerdi per 4 sedute, lunedi-martedi-giovedi-venerdi-sabato per 5) mettevano
+   un full body il lunedi e un upper il martedi (frequenza 3 con 4 giorni: schiena, spalle e petto a fondo in due giorni di fila), o un push e un pull consecutivi (5 giorni, push/pull/legs + upper/lower:
+   le spalle). Qui, per 3-5 sedute senza un metodo famoso, se i giorni di sempre hanno due sedute in giorni consecutivi che lavorano lo stesso grande muscolo (seduteInConflitto: tipi uguali o con un
+   grande gruppo in comune, SOGLIE_SPLIT.gruppiDelleSedute), si cerca tra tutte le scelte di giorni (al massimo 4 di fila, ciclico) quella con meno conflitti; a pari conflitti quella che non riordina le sedute, a
+   pari riordino quella piu vicina ai giorni di sempre. Senza conflitti nei giorni di sempre non cambia niente (stesso programma di prima, byte per byte). Con 6 sedute vale l ordine di INT-2d (sotto);
+   con un metodo famoso resta la sua struttura. Il risultato non porta una nota: dice il vero la scheda finale, non il tipo di seduta (una seduta di tirata ha anche lo stacco rumeno). */
+function sogliaSplit(nome) { return typeof SOGLIE_SPLIT !== 'undefined' && SOGLIE_SPLIT[nome] ? SOGLIE_SPLIT[nome].v : null; }
+/* i grandi muscoli che una seduta di questo tipo lavora a fondo (SOGLIE_SPLIT.gruppiDelleSedute); i punti deboli le priorita dichiarate piu le spalle (puntiDeboli); un tipo che non conosco, tutti i grandi
+   muscoli (la scelta prudente) */
+function grandiDellaSeduta(tipo, prefs) {
+  const tabella = sogliaSplit('gruppiDelleSedute') || {};
+  if (tipo === 'punti') {
+    const p = sogliaSplit('puntiDeboli') || {}, out = [];
+    ((prefs && prefs.priorita) || []).concat(['sempre']).forEach(g => (p[g] || []).forEach(x => { if (out.indexOf(x) === -1) out.push(x); }));
+    return out;
+  }
+  return tabella[tipo] || tabella.fullbody || [];
+}
+function seduteInConflitto(a, b, prefs) {
+  if (a === b) return true;
+  const ga = grandiDellaSeduta(a, prefs), gb = grandiDellaSeduta(b, prefs);
+  return ga.some(g => gb.indexOf(g) !== -1);
+}
+/* le coppie di sedute in giorni consecutivi (anche domenica-lunedi) che lavorano lo stesso grande muscolo */
+function conflittiDeiGiorni(tipi, indici, prefs) {
+  let n = 0;
+  for (let i = 0; i < tipi.length; i++) for (let j = i + 1; j < tipi.length; j++) if (giorniAdiacenti(indici[i], indici[j]) && seduteInConflitto(tipi[i], tipi[j], prefs)) n++;
+  return n;
+}
+/* il numero massimo di giorni di allenamento di fila, sulla settimana ad anello (7 se allenano tutti i giorni) */
+function giorniDiFilaCiclici(indici) {
+  const set = DAYS.map((x, i) => indici.indexOf(i) !== -1), riposo = set.indexOf(false);
+  if (riposo === -1) return DAYS.length;
+  let max = 0, corsa = 0;
+  for (let k = 1; k <= DAYS.length; k++) { if (set[(riposo + k) % DAYS.length]) { corsa++; if (corsa > max) max = corsa; } else corsa = 0; }
+  return max;
+}
+/* tutti gli ordini diversi delle sedute (due sedute dello stesso tipo non fanno due ordini) */
+function ordiniDistinti(tipi) {
+  const out = [];
+  const cerca = (ordine, resto) => {
+    if (!resto.length) { out.push(ordine); return; }
+    const provati = {};
+    resto.forEach((t, k) => { if (provati[t]) return; provati[t] = true; cerca(ordine.concat([t]), resto.slice(0, k).concat(resto.slice(k + 1))); });
+  };
+  cerca([], tipi.slice());
+  return out;
+}
+/* { indici, tipi, conflitti } se esiste una scelta con MENO conflitti dei giorni `base` (stesso numero di sedute, al massimo SOGLIE_SPLIT.giorniDiFilaMax giorni di fila); null se i giorni di sempre vanno
+   bene o non c e di meglio. Ordine di preferenza: conflitti, sedute riordinate, distanza dai giorni di sempre; a parita vince la prima trovata (i giorni piu a sinistra): il risultato non dipende dal caso */
+function giorniSenzaConflitti(tipi, base, prefs) {
+  const max = sogliaSplit('giorniDiFilaMax'), n = tipi.length;
+  const c0 = conflittiDeiGiorni(tipi, base, prefs);
+  if (!max || !c0) return null;
+  const ordini = ordiniDistinti(tipi);
+  let migliore = { c: c0, d: 0, s: 0, indici: base, tipi: tipi };
+  for (let mask = 1; mask < (1 << DAYS.length); mask++) {
+    const ind = [];
+    for (let b = 0; b < DAYS.length; b++) if (mask & (1 << b)) ind.push(b);
+    if (ind.length !== n || giorniDiFilaCiclici(ind) > max) continue;
+    const s = ind.reduce((t, x, k) => t + Math.abs(x - base[k]), 0);
+    ordini.forEach(o => {
+      const c = conflittiDeiGiorni(o, ind, prefs);
+      if (c > migliore.c) return;
+      const d = o.reduce((t, x, k) => t + (x !== tipi[k] ? 1 : 0), 0);
+      if (c < migliore.c || (c === migliore.c && (d < migliore.d || (d === migliore.d && s < migliore.s)))) migliore = { c: c, d: d, s: s, indici: ind, tipi: o };
+    });
+  }
+  return migliore.c < c0 ? { indici: migliore.indici, tipi: migliore.tipi, conflitti: migliore.c } : null;
+}
 function giorniSettimana(brief, split) {
   const giorni = brief.agenda.giorni, L = brief.lavoro;
   const sedute = split && Array.isArray(split.giorni) ? Math.min(split.giorni.length, giorni) : giorni;
   let indici = (GIORNI_PER_SEDUTE[sedute] || GIORNI_PER_SEDUTE[giorni] || [0, 2, 4]).slice();
-  if (split && sedute < giorni && brief.chi.livello === 'principiante' && giorni >= 5 && L && L.note && L.note.indexOf(NOTA_PRINCIPIANTE_4_SEDUTE) === -1) L.note.push(NOTA_PRINCIPIANTE_4_SEDUTE);
+  const inizio = sogliaSplit('principianteSedute');   /* PRG-02: chi comincia con 5-6 giorni ha 4 sedute; senza il file delle soglie vale il 5 di sempre */
+  if (split && sedute < giorni && brief.chi.livello === 'principiante' && giorni >= (inizio ? inizio.giorniDa : 5) && L && L.note && L.note.indexOf(NOTA_PRINCIPIANTE_4_SEDUTE) === -1) L.note.push(NOTA_PRINCIPIANTE_4_SEDUTE);
   if (split && sedute === 6) {
     const tipi = split.giorni.slice(0, 6);
     if (tipiAdiacenti(tipi, indici)) {
@@ -91,6 +162,16 @@ function giorniSettimana(brief, split) {
       else { L.split = Object.assign({}, split, { giorni: split.giorni.slice(0, 5) }); indici = GIORNI_PER_SEDUTE[5].slice(); if (L.note.indexOf(NOTA_SEI_GIORNI) === -1) L.note.push(NOTA_SEI_GIORNI); }
     }
     if (indici.length === 6 && L.note.indexOf(NOTA_SEI_GIORNI_DI_FILA) === -1) L.note.push(NOTA_SEI_GIORNI_DI_FILA);
+  }
+  /* PRG-02 (W2-T5): 3-5 sedute senza un metodo famoso: i giorni (e, se serve, l ordine) che non mettono lo stesso grande muscolo in due giorni di fila */
+  const corrente = split && (L.split || split);
+  if (corrente && Array.isArray(corrente.giorni) && indici.length >= 3 && indici.length <= 5 && !(brief.metodo && brief.metodo.attivo) && (typeof regolaAttiva !== 'function' || regolaAttiva('PRG-02'))) {
+    const tipi = corrente.giorni.slice(0, indici.length);
+    const scelta = giorniSenzaConflitti(tipi, indici, L && L.prefs);
+    if (scelta) {
+      indici = scelta.indici;
+      if (scelta.tipi.some((t, k) => t !== tipi[k])) L.split = Object.assign({}, corrente, { giorni: scelta.tipi.concat(corrente.giorni.slice(tipi.length)) });
+    }
   }
   brief.agenda.indiciGiorni = indici;
   return indici;
@@ -154,7 +235,11 @@ function noteDelProgramma(brief) {
   }
   /* PRG-20 (W2-T2, INT-2b): la nota c e solo se almeno una pausa e davvero scesa sotto quella degli uomini (pausePerClasse la scrive in brief.lavoro.pauseDonneAccorciate: mai con il PAR-Q positivo, con la regola spenta o con un metodo che ha le sue pause) */
   if (chi.donna && brief.lavoro.pauseDonneAccorciate) note.push('Pause un po piu corte: le donne recuperano piu in fretta tra una serie e l altra.');
-  if (faseDaObiettivi(brief.obiettivi.lista) === 'deficit') note.push('Passi: 10-12 mila al giorno, aumentandoli di 500-1000 a settimana. Il cardio non toglie muscolo.');
+  if (faseDaObiettivi(brief.obiettivi.lista) === 'deficit') {
+    const guardia = guardiaNutrizione(d, prof0);   /* NUT-01 (INT-4): minorenni, over 65 e gravidanza non ricevono un numero di passi per dimagrire: il testo prudente (una volta sola) */
+    if (!guardia) note.push('Passi: 10-12 mila al giorno, aumentandoli di 500-1000 a settimana. Il cardio non toglie muscolo.');
+    else if (note.indexOf(guardia.testo) === -1) note.push(guardia.testo);
+  }
 }
 
 /* ---- 14. gli esercizi alternativi scelti dall utente (PRG-39): stessi muscoli, stesso posto ---- */
@@ -173,6 +258,8 @@ function chiudiProgramma(brief, sedute) {
   const note = brief.lavoro.note;
   /* B1 (revisione dell onda 0): il tetto del Nordic Curl vale alla fine, qualunque passo abbia aggiunto serie (volume per muscolo, riempimento del tempo, metodo): 3 serie da 3-6 ripetizioni */
   sedute.forEach(sd => sd.esercizi.forEach(e => { if (RX_NORDIC.test(senzaEmoji(e.name))) { e.sets = Math.min(e.sets, PARAM_NORDIC.serieMax); e.reps = Math.min(e.reps, PARAM_NORDIC.ripetizioniMax); } }));
+  /* INT-2f: lo stesso per il ripiego della cerniera dell anca (al massimo 2 serie): qualunque passo abbia aggiunto serie (volume per muscolo, tempo) */
+  sedute.forEach(sd => sd.esercizi.forEach(e => { if (RIPIEGO_HINGE.test(senzaEmoji(e.name))) e.sets = Math.min(e.sets, sogliaVolume('ripiegoCerniera').serieMax); }));
   sedute.forEach(sd => sd.esercizi.forEach(e => { delete e.protetto; delete e.riservaTirataV; }));   /* ABB-03: serviva solo a non tagliare le aggiunte per il tempo */
   /* W0-T7 (decisione del committente, SAF-04): il rematore inverso e l unica tirata orizzontale senza attrezzi e resta anche a casa, con la nota che dice dove farlo e la prudenza sul tavolo */
   if (sedute.some(sd => sd.esercizi.some(e => /rematore inverso/i.test(senzaEmoji(e.name))))) note.push(NOTA_REMATORE_INVERSO);
@@ -202,7 +289,8 @@ const NOTE_REGIONALI = [
   ['Tricipiti: un esercizio diretto', e => strMeta(e).group === 'braccia' && strSub(e) === 'Tricipiti' && strMeta(e).type !== 'compound'],
   ['Core: un esercizio a fine seduta', e => strMeta(e).group === 'core'],
   ['Retto femorale: cresce solo con la leg extension', e => /leg extension/i.test(senzaEmoji(e.name))],
-  ['Spalle larghe: la panca copre', e => /alzate laterali/i.test(senzaEmoji(e.name))]
+  ['Spalle larghe: la panca copre', e => /alzate laterali/i.test(senzaEmoji(e.name))],
+  ['Con la spalla delicata ho aggiunto', e => typeof RX_CUFFIA !== 'undefined' && RX_CUFFIA.test(senzaEmoji(e.name))]   /* PCO-08 (W2-T6): se il taglio per il tempo ha tolto il lavoro per la cuffia la nota non resta */
 ];
 function riconciliaNote(prog) {
   const nomi = [];
@@ -232,13 +320,18 @@ function riconciliaNote(prog) {
   /* INT-2d (M2): la seconda nota dei sei giorni di fila (le 48 ore) solo se la scheda finale le rispetta, anche attraverso il lunedi */
   const k = prog.note.indexOf(NOTA_SEI_GIORNI_DI_FILA);
   if (k !== -1 && recuperoRispettato(prog.sedute) && prog.note.indexOf(NOTA_SEI_GIORNI_48_ORE) === -1) prog.note.splice(k + 1, 0, NOTA_SEI_GIORNI_48_ORE);
+  /* REC-04 (P4-F): con un fastidio dichiarato la nota di ogni zona dice cosa non c e e cosa resta con cautela NELLA scheda finale (js/coach/sicurezza/fastidi.js); sostituisce le note generiche di SCALE_DOLORE */
+  if (typeof applicaNoteFastidi === 'function') applicaNoteFastidi(prog);
   return prog;
 }
 function verificaProgramma(brief, prog) {
   const esiti = [];
   if (typeof validaVolume === 'function') esiti.push(validaVolume(brief, prog.sedute));
+  /* INT-2f: la verifica delle tecniche toglie una coppia non valida (superset) o una tecnica e cambia la durata della seduta: va PRIMA della verifica del tempo, che dice quanto durano le sedute (la nota diceva 63 minuti
+     e la scheda finale 64: tests/tempo.test.js B36). Le note restano nell ordine di prima (volume, tempo, tecniche, sicurezza) */
+  const noteTecniche = typeof validaTecniche === 'function' ? validaTecniche(brief, prog.sedute) : undefined;
   if (typeof validaTempo === 'function') esiti.push(validaTempo(brief, prog.sedute));
-  if (typeof validaTecniche === 'function') esiti.push(validaTecniche(brief, prog.sedute));
+  if (typeof validaTecniche === 'function') esiti.push(noteTecniche);
   if (typeof validaSicurezza === 'function') esiti.push(validaSicurezza(brief, prog.sedute));
   esiti.forEach(r => { if (Array.isArray(r)) r.forEach(t => prog.note.push(t)); });
   return riconciliaNote(prog);
@@ -268,6 +361,7 @@ function generaProgramma(d) {
   split = L.split;                                                      /* 5: con 6 giorni puo aver riordinato o ridotto le sedute (giorni di fila) */
   const sedute = componiSedute(brief, split);                           /* 6 */
   prescriviSerie(brief, sedute);                                        /* 8 */
+  if (spec && typeof spec.sedute === 'function') spec.sedute(brief, sedute);   /* 3: la modalita (forza, W2-T7) scrive le sue alzate dopo la prescrizione, prima dei completamenti */
   completaSettimana(brief, sedute);                                     /* 7 */
   assegnaVolume(brief, sedute);                                         /* 9: volume per muscolo e tetto per seduta */
   /* ABB-04 e ABB-08: tirate non meno delle spinte, il fondamentale non ha meno serie degli altri */

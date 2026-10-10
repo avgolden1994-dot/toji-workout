@@ -22,7 +22,77 @@ const NOTA_FEMORALI_SERVE_FLESSIONE = 'Femorali: squat e hip thrust non li fanno
 function eCernieraFemorali(e) {
   const a = typeof attributi === 'function' ? attributi(e.name) : null;
   if (!a) return /stacco|good morning/i.test(senzaEmoji(e.name));
-  return a.schema === 'hinge' && 'ABC'.indexOf(a.classe) !== -1 && (a.muscoli.femorali || 0) > 0;
+  return a.schema === 'hinge' && 'ABC'.indexOf(a.classe) !== -1 && (a.muscoli.femorali || 0) > 0 && a.attrezzo !== 'corpo';   /* W2-T6: la cerniera dell anca senza carico (Hip Hinge a Corpo Libero) non dispensa dalla nota: i femorali senza leg curl restano meno allenati */
+}
+
+/* M6 (W2-T6, revisione INT-2d; collaudo EQ-03:flessione): lo schema delle gambe di un esercizio dal DATO (attributi: l affondo vale come lo squat, il pull-through ai cavi e una cerniera dell anca che
+   SCHEMI_MOV non riconosce dal nome); senza attributi ricade su schemaDi. null per tutto il resto (spinta d anca, isolamenti, core) */
+function schemaDiGambe(nome) {
+  const a = typeof attributi === 'function' ? attributi(nome) : null, s = a ? a.schema : schemaDi(nome);
+  return s === 'squat' || s === 'affondo' ? 'squat' : (s === 'hinge' ? 'hinge' : null);
+}
+/* un multiarticolare di gambe (non l isolamento, non il core, non l esercizio a tempo) */
+function eMultiDiGambe(e) {
+  const m = findExercise(e.name) || {};
+  return m.type === 'compound' && !isTimeBased(e.name) && schemaDiGambe(e.name) !== null;
+}
+/* ABB-02 (W2-T6, SES-03): x farebbe la terza variante di squat o di affondo della lista (la seduta ne tiene al massimo `squatPerSeduta`, la terza e la cerniera dell anca o la flessione): lo usano i posti della
+   ricetta (ricette.js) e gli esercizi che il solutore del volume aggiunge (volume.js, provaNuovo: il Cossack Squat per gli adduttori finiva dopo uno squat e un affondo). Senza il file delle soglie: mai */
+function squatOltreMax(x, lista) {
+  const tetto = typeof sogliaSelezione === 'function' ? sogliaSelezione('squatPerSeduta') : null;
+  const famiglia = (e) => eMultiDiGambe(e) && schemaDiGambe(e.name) === 'squat';
+  return tetto !== null && regolaAttiva('ABB-02') && famiglia(x) && lista.filter(famiglia).length >= tetto;
+}
+/* M6: a 2 giorni e 30 minuti in palestra la seduta full body ha due multiarticolari di gambe di schema DIVERSO (squat e stacco rumeno) oltre a una spinta e a una tirata: non c e posto per la flessione
+   del ginocchio (leg curl), l unica della settimana (registro B6: una flessione a settimana, Maeo 2021). La flessione vale piu di una seconda cerniera dell anca o di un secondo squat: il piu caro in
+   minuti dei due (non il primo multiarticolare, non un posto fisso o protetto) lascia il posto, purche il suo schema sia anche in un altra seduta (PAT-01). Solo nel full body: nelle sedute lower e legs
+   squat e hinge servono entrambi (SES-03). Ritorna l esercizio da togliere, o null. Lo chiamano completaSettimana (dove mettere la flessione) e scalaDelTempo (tempo.js, quando i minuti non bastano) */
+function secondoDiGambe(sd, sedute, opz, costo) {
+  if (sd.tipo !== 'fullbody' || sd.esercizi.filter(eMultiDiGambe).length < 2) return null;
+  const primo = sd.esercizi.find(e => (findExercise(e.name) || {}).type === 'compound' && !isTimeBased(e.name));
+  const minuti = (lista) => durataSeduta(lista, opz);
+  /* P3-G: `costo` (facoltativo, scalaDelTempo in tempo.js) mette per primo quello che costa meno alla settimana (la frequenza dei muscoli grandi), poi il piu caro in minuti */
+  return sd.esercizi.filter(e => eMultiDiGambe(e) && !e.fisso && !e.protetto && e !== primo && sedute.some(o => o !== sd && o.esercizi.some(x => x !== e && eMultiDiGambe(x) && schemaDiGambe(x.name) === schemaDiGambe(e.name))))
+    .sort((a, b) => (costo ? costo(a) - costo(b) : 0) || minuti(sd.esercizi.filter(x => x !== a)) - minuti(sd.esercizi.filter(x => x !== b)))[0] || null;
+}
+
+/* PCO-08 (W2-T6; Cressey, ricerca-metodi-coach-pratici H-08; collaudo SAF-06): con la spalla dolente dichiarata la settimana ha lavoro per la cuffia dei rotatori e per i deltoidi posteriori, 1-2 volte, leggero e
+   che non carica la spalla (stress 0): le serie dirette dei deltoidi posteriori (face pull, alzate posteriori, reverse pec deck: credito pieno) sono almeno `serieMinime`; se mancano entra il primo esercizio della
+   lista che l utente puo fare e, con `seduteDueVolte` o piu sedute, la rotazione esterna al cavo in un altra seduta (non piu di due esercizi aggiunti). Non cura il dolore: la nota rimanda al medico. Un metodo essenziale
+   (Starting Strength...) ha la sua struttura. Senza il file delle soglie (soglie-selezione.js) non fa niente. Ritorna quanti esercizi ha aggiunto */
+const CUFFIA_ESERCIZI = ['Face Pull', 'Face Pull con Elastico', 'Reverse Pec Deck', 'Alzate Posteriori (Reverse Fly)', 'Y-Raise a Corpo Libero', 'Y-Raise su Panca Inclinata'];
+const CUFFIA_ROTAZIONE = 'Extrarotazione al Cavo';
+const RX_CUFFIA = /face pull|extrarotazione|reverse|alzate posteriori|y-raise/i;
+const NOTA_CUFFIA = 'Con la spalla delicata ho aggiunto un lavoro leggero per la cuffia dei rotatori e per i deltoidi posteriori. Non cura il dolore: se non passa fatti vedere da un medico o da un fisioterapista. Non sono un medico e non faccio diagnosi.';   /* onda 5: la formula di DEC-03/04 anche qui */
+function copriCuffia(brief, sedute) {
+  const c = typeof sogliaSelezione === 'function' ? sogliaSelezione('cuffia') : null;
+  const prefs = brief.lavoro.prefs, metodoAttivo = brief.metodo.attivo, note = brief.lavoro.note;
+  if (!c || (prefs.fastidi || []).indexOf('spalle') === -1 || (metodoAttivo && metodoAttivo.essenziale) || !regolaAttiva('PCO-08')) return 0;
+  const diretteDietro = (e) => { const a = typeof attributi === 'function' ? attributi(e.name) : null; return a && a.muscoli && a.muscoli.deltoide_posteriore >= 1 && RX_CUFFIA.test(senzaEmoji(e.name)) && !isTimeBased(e.name) ? e.sets : 0; };
+  const serie = () => sedute.reduce((t, sd) => t + sd.esercizi.reduce((a, e) => a + diretteDietro(e), 0), 0);
+  const nEs = brief.lavoro.nEs;
+  const ammessi = (nomi) => nomi.map(nomeInLibreria).filter(n => n && consentito(n, prefs) && !(typeof esercizioCaricaIlFastidio === 'function' && esercizioCaricaIlFastidio(n, prefs.fastidi)));
+  let aggiunti = 0;
+  const aggiungi = (nome, usate) => {
+    /* la seduta di tirata (pull, upper, full body, punti deboli) con meno esercizi che non ha gia un lavoro dietro e non e gia stata usata; il lavoro dietro sta con le tirate, non con le spinte */
+    const idonee = sedute.filter(s => /pull|upper|fullbody|punti/.test(s.tipo) && usate.indexOf(s) === -1 && !s.esercizi.some(e => RX_CUFFIA.test(senzaEmoji(e.name))));
+    /* INT-2f: se ogni seduta e gia oltre nEs + 1 (il ponte dei femorali ha aggiunto il leg curl a chi ha la cerniera senza carico) il lavoro per la cuffia entra comunque nella piu corta: e una salvaguardia (SAF-06) e non si rinuncia
+       a causa del numero di esercizi; il tetto di esercizi e il tempo tolgono prima altro (il lavoro aggiunto e protetto) */
+    const sd = idonee.filter(s => s.esercizi.length <= nEs + 1).sort((a, b) => a.esercizi.length - b.esercizi.length)[0] || idonee.sort((a, b) => a.esercizi.length - b.esercizi.length)[0];
+    if (!sd) return null;
+    const m = findExercise(nome) || {};
+    sd.esercizi.push({ name: nome, sets: c.serieAggiunte, reps: isTimeBased(nome) ? (m.reps || 30) : (m.reps && m.reps > 8 ? m.reps : 15), weight: m.weight || 0, rest: 60, protetto: true, cuffia: 'aggiunto' });   /* cuffia: il solutore del volume non lo toglie (volume.js, rimovibile); 'aggiunto' = messo da PCO-08, 'ricetta' = c era gia */
+    aggiunti++;
+    return sd;
+  };
+  const usate = [];
+  /* il lavoro per i deltoidi posteriori che la ricetta ha gia (un reverse pec deck, un face pull) e quello che la regola chiede: non lo tolgono ne il tempo ne il solutore del volume (prima lo toglievano e la settimana restava senza: collaudo SAF-06) */
+  if (serie() >= c.serieMinime) sedute.forEach(sd => sd.esercizi.forEach(e => { if (diretteDietro(e)) { e.protetto = true; e.cuffia = 'ricetta'; } }));
+  if (serie() < c.serieMinime) { const nome = ammessi(CUFFIA_ESERCIZI)[0]; const sd = nome ? aggiungi(nome, usate) : null; if (sd) usate.push(sd); }
+  /* con abbastanza sedute la rotazione esterna (la cuffia vera) in un altra seduta: Cressey la vuole una o due volte a settimana */
+  if (aggiunti && sedute.length >= c.seduteDueVolte && aggiunti < c.eserciziMax) { const nome = ammessi([CUFFIA_ROTAZIONE])[0]; const sd = nome ? aggiungi(nome, usate) : null; if (sd) usate.push(sd); }
+  if (aggiunti) note.push(NOTA_CUFFIA);
+  return aggiunti;
 }
 
 /* completaSettimana(brief, sedute): vedi sopra. Scrive le note nell ordine in cui le scrivevano i passi di buildProgram (brief.lavoro.note). */
@@ -105,7 +175,7 @@ function completaSettimana(brief, sedute) {
     const ponte = !FLESSIONI_GINOCCHIO.filter(n => !RX_NORDIC.test(n)).some(n => nomeInLibreria(n) && consentito(nomeInLibreria(n), prefs))
       ? ((level === 'principiante' || cauto) ? ['Ponte Glutei', 'Ponte Glutei a una Gamba'] : ['Ponte Glutei a una Gamba', 'Ponte Glutei']).map(nomeInLibreria).filter(n => n && consentito(n, prefs))[0] : null;
     sedute.filter(sd => /lower|legs|fullbody/.test(sd.tipo)).forEach(sd => {
-      if (sd.esercizi.some(e => SLOT_DEF.hinge(e) || eFlessione(e)) || sd.esercizi.length > nEs + 1) return;
+      if (sd.esercizi.some(e => eCernieraFemorali(e) || eFlessione(e)) || sd.esercizi.length > nEs + 1) return;   /* INT-2f: solo una cerniera che allena i femorali (credito > 0: lo stacco, il rumeno, il good morning) dispensa dal leg curl: non il pull-through (femorali 0) ne la cerniera senza carico (2 serie x 0,5 = 1 serie frazionaria: sotto 1,5 la seduta non conta per la frequenza, FRQ-01) */
       /* W0-T7: non il giorno dopo un altra seduta dello stesso grande muscolo, e non oltre il tetto di serie per muscolo in una seduta (REC-01, SES-01) */
       const nome = flessioni.filter(n => !sd.esercizi.some(e => e.name === n) && usi(n) < maxSettimana(n) && recuperoOk(sd, sedute, n, setsFlessione)).sort((a, b) => usi(a) - usi(b))[0];
       if (nome) {
@@ -125,7 +195,13 @@ function completaSettimana(brief, sedute) {
       /* INT-2b (registro B6, collaudo EQ-03:flessione): se ogni seduta di gambe e gia oltre nEs + 1 (le famiglie dei glutei, gli schemi mancanti: a 30 minuti con l obiettivo glutei) la flessione entra
          comunque nella piu corta sotto il tetto di esercizi (EXN-02): decide la scala del tempo, che tiene l unica flessione della settimana e toglie prima un doppione dello schema (scalaDelTempo) */
       const maxEs = level === 'principiante' ? PARAM_NUMERO_ESERCIZI.maxSedutaPrincipiante : PARAM_NUMERO_ESERCIZI.maxSeduta;
-      let sd = gambe.find(x => x.esercizi.length <= nEs + 1 && recOk(x)) || gambe.find(x => x.esercizi.length < maxEs && recOk(x)) || null;
+      /* M6 (W2-T6): se ogni seduta di gambe e gia piena (30 minuti: 4 esercizi) la flessione va dove prende il posto del secondo di gambe e la seduta resta piu corta (secondoDiGambe): la scala del tempo
+         (scalaDelTempo) lo toglie quando serve; nella seduta con un solo multiarticolare di gambe dovrebbe togliere una spinta o una tirata, o rinunciare alla flessione */
+      const piene = gambe.every(x => x.esercizi.length >= nEs);
+      const opzT = typeof opzioniTempo === 'function' && typeof durataSeduta === 'function' ? opzioniTempo(brief) : null;
+      const dopoLo = (x) => { const via = secondoDiGambe(x, sedute, opzT); return via ? durataSeduta(x.esercizi.filter(y => y !== via).concat([{ name: flessioni[0], sets: setsFlessione, reps: 12, rest: 75 }]), opzT) : Infinity; };
+      let sd = (piene && opzT ? gambe.filter(x => x.esercizi.length <= nEs + 1 && recOk(x) && isFinite(dopoLo(x))).sort((a, b) => dopoLo(a) - dopoLo(b))[0] : null) ||
+        gambe.find(x => x.esercizi.length <= nEs + 1 && recOk(x)) || gambe.find(x => x.esercizi.length < maxEs && recOk(x)) || null;
       if (!sd) {   /* ogni seduta di gambe e al tetto di esercizi, o di serie per muscolo (SES-01 contato prima del volume, con 4 serie per esercizio: a casa coi manubri i glutei sono gia a 11): la flessione
                       prende il posto del secondo esercizio di schema squat (la hack, gli affondi o lo squat a corpo libero dopo il primo), mai del fondamentale ne di un posto fisso */
         for (const x of gambe) {
@@ -167,6 +243,8 @@ function completaSettimana(brief, sedute) {
       if (nuovo) { const e = curl[curl.length - 1]; e.name = nuovo; e.weight = (findExercise(nuovo) || {}).weight || e.weight; note.push('Bicipite: un curl su panca inclinata, con il muscolo allungato, per crescere in tutta la lunghezza.'); }
     }
   }
+  /* PCO-08: la spalla dolente ha il suo lavoro per la cuffia e per i deltoidi posteriori (prima di strCopri: quello che aggiunge conta) */
+  copriCuffia(brief, sedute);
   /* ABB-03: ogni settimana nessun buco (polpacci, deltoidi posteriori, core, braccia dirette) */
   strCopri({ sedute: sedute, goals: goals, level: level, days: Number(giorni) || 3, prefs: prefs, nEs: nEs, note: note, metodoAttivo: metodoAttivo });
   (prefs.fastidi || []).forEach(f => { if (SCALE_DOLORE[f]) note.push(SCALE_DOLORE[f]); });
@@ -237,9 +315,10 @@ function ordinaSedute(brief, sedute) {
      salvo il muscolo che l utente ha messo in priorita (ABB-10). Le ricette full body hanno la spinta verticale prima dello squat */
   if (!metodoAttivo) sedute.forEach(sd => {
     if (sd.tipo === 'punti') return;
-    const piccolo = (e) => { const m = findExercise(e.name) || {}; return m.type === 'compound' && !isTimeBased(e.name) && (m.group === 'spalle' || m.group === 'braccia') && prefs.priorita.indexOf(m.group) === -1; };
-    /* W1-T6: anche la spinta d anca (hip thrust, ponte con carico) e un multiarticolare del gluteo, le gambe: una famiglia dei glutei aggiunta a una seduta full body non resta dopo la military */
-    const basso = (e) => { const m = findExercise(e.name) || {}; return m.type === 'compound' && !isTimeBased(e.name) && (schemaDi(e.name) === 'squat' || schemaDi(e.name) === 'hinge' || SLOT_DEF.glutSpinta(m)); };
+    const piccolo = (e) => strPiccoloMulti(e) && prefs.priorita.indexOf(strMeta(e).group) === -1;
+    /* W1-T6: anche la spinta d anca (hip thrust, ponte con carico) e un multiarticolare del gluteo, le gambe: una famiglia dei glutei aggiunta a una seduta full body non resta dopo la military;
+       W2-T6: e il pull-through ai cavi, una cerniera dell anca per dato (strBassoMulti, struttura-pro.js) */
+    const basso = strBassoMulti;
     sd.esercizi.slice().filter(piccolo).forEach(a => {
       let ultimo = -1;
       sd.esercizi.forEach((x, i) => { if (basso(x)) ultimo = i; });

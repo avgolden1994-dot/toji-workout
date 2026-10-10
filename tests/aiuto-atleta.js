@@ -121,20 +121,68 @@ function atletaVirtuale(opz) {
    L atleta DENTRO L APP VERA (tests/aiuto-app.js): stima di partenza (stimaCaricoIniziale), piano con il segno `stimato`, caricoProssimo di ogni seduta (cioe tutta la
    catena: progressione, CAR-18, aggiusti, RIC, INT), la seduta che l atleta svolge e il suo storico, esposizione dopo esposizione, ogni tre giorni.
    opz: sesso 'F'|'M', livello, pesoCorpo, seme, esercizi (nomi della libreria con una àncora), esposizioni (6), rumoreRpe, quotaSenzaRpe, senzaCar18 (toglie la fase 15:
-   serve a confrontare con la sola progressione di prima). Ritorna { atleta, nomi, reg: { nome: { start, esp: [{ w, tipo, motivo, giusto, cap, cap0, rirPrima, completa }] } } }.
+   serve a confrontare con la sola progressione di prima); P3-A: programma ('v1' | 'v2' | null), luogo e manubriKg (a casa con i manubri e il manubrio piu pesante dichiarato,
+   CAS-01: valgono anche per la stima di partenza). Lo storico salva anche obiettivo.base (il bersaglio del piano, come termina-e-cardio.js da P3-A).
+   Ritorna { atleta, nomi, reg: { nome: { start, esp: [{ w, reps, tipo, motivo, giusto, cap, cap0, rirPrima, completa }] } }, manubriKg, programma }.
    `giusto` = il carico con cui farebbe le ripetizioni con 3,5 in riserva (il RIR bersaglio dei principianti), `cap` = il massimo con cui ne ha ancora (RIR bersaglio della seduta - 1)
    (la «capacita al RIR bersaglio - 1» di D.8.9), `cap0` = il massimo con cui finisce le ripetizioni (RIR 0). Una prescrizione sopra `cap` e piu pesante del bersaglio di oltre un RIR. */
 const CONTROLLO = ['💪 Chest Press Machine', '🏹 Lat Machine', '🦵 Leg Press', '🦵 Squat con Bilanciere', '🦵 Goblet Squat', '🏹 Rematore con Manubrio'];
 const GIORNI_PIANO = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì'];
+
+/* ---------------------------------------------------------------------------------------------------------------------------------
+   Bilancia essenziale (P3-A, coach v2): i due file nuovi (js/coach/carichi/soglie-progressione.js e attrezzi.js) entrano in index.html con l integrazione
+   dell onda (docs/in-arrivo/P3-A.json). Prima di allora, e dopo, una prova che parla della bilancia li carica da sola se mancano: cosi passa con e senza le righe
+   <script>. Se i file non ci sono ancora (prima della correzione) non carica niente: la prova gira sul codice di prima e fallisce dove deve. */
+const FILE_BILANCIA_V2 = ['js/coach/carichi/soglie-progressione.js', 'js/coach/carichi/attrezzi.js'];
+function conBilanciaV2(app) {
+  const fs = require('fs'), path = require('path');
+  if (app.g('typeof arrotondaAttrezzo') !== 'undefined') return app;
+  FILE_BILANCIA_V2.forEach(f => { const p = path.join(__dirname, '..', f); if (fs.existsSync(p)) require('vm').runInContext(fs.readFileSync(p, 'utf8'), app.ctx, { filename: f }); });
+  return app;
+}
+/* La griglia di base dei pesi (PAR-04, la stessa della partenza: tests/partenza-donne.test.js D.8.4), scritta qui A MANO e non presa dal coach (la prova non misura il
+   coach con il coach): manubri e corpo libero a passi di 1 kg sotto i 10 kg e di 2 kg da 10 kg; bilanciere, macchine e cavi a passi di 2,5 kg (1,25 kg per lato), il
+   bilanciere mai sotto la barra (20 kg, o il peso di libreria se e piu leggero). `tetto` = il manubrio piu pesante dichiarato (CAS-01): e un peso vero, quindi e
+   in griglia anche se non e sui passi (12,5 kg). */
+function inGrigliaBase(app, nome, kg, tetto) {
+  if (!(kg > 0)) return kg === 0;
+  if (tetto > 0 && Math.abs(kg - tetto) < 1e-9) return true;
+  const att = app.chiama('attrezzoDi', nome);
+  if (att === 'manubri' || att === 'corpo') return kg < 10 ? Number.isInteger(kg) && kg >= 1 : Math.abs(kg / 2 - Math.round(kg / 2)) < 1e-9;
+  if (Math.abs(kg / 2.5 - Math.round(kg / 2.5)) > 1e-9) return false;
+  if (att === 'bilanciere') { const m = app.json('findExercise(' + JSON.stringify(nome) + ')') || {}; return kg >= Math.min(20, Number(m.weight) || 20) - 1e-9; }
+  return true;
+}
+/* il programma salvato della simulazione: 'v1' (come lo salvava la v1: fasi e settimane, nessuna versione) o 'v2' (prog.versione = 2 con il piano del mesociclo
+   di un programma vero per lo stesso profilo, generato una volta per sesso e livello); null = nessun programma (come le prove D.8.9 di W2-T8) */
+const _PIANI_V2 = {};
+function programmaSimulato(app, tipo, o, inizio) {
+  if (!tipo) return null;
+  const fasi = Array.from({ length: 12 }, (_, i) => i === 11 ? 'scarico' : 'carico');
+  const p = { creato: inizio, inizio: inizio, settimane: 12, blocco: 12, fasi: fasi, goals: ['massa'] };
+  if (tipo !== 'v2') return p;
+  const k = o.sesso + '|' + o.livello;
+  if (!(k in _PIANI_V2)) {
+    const prog = app.dati(app.chiama('buildProgram', { level: o.livello, days: 4, goals: ['massa'], minutes: 60, luogo: 'palestra', sex: o.sesso, age: 30, weight: o.pesoCorpo, seme: 7 }));
+    _PIANI_V2[k] = prog && prog.versione === 2 ? { piano: prog.piano, settimane: prog.settimane, blocco: prog.blocco, fasi: prog.fasi } : null;
+  }
+  const v = _PIANI_V2[k];
+  return Object.assign(p, v ? { settimane: v.settimane, blocco: v.blocco, fasi: v.fasi, piano: v.piano } : {}, { versione: 2 });
+}
 function simulaNellApp(app, opz) {
-  const o = Object.assign({ sesso: 'F', livello: 'principiante', pesoCorpo: 65, seme: 1, esercizi: CONTROLLO, esposizioni: 6, rumoreRpe: 1, quotaSenzaRpe: 0.3, senzaCar18: false }, opz || {});
+  const o = Object.assign({ sesso: 'F', livello: 'principiante', pesoCorpo: 65, seme: 1, esercizi: CONTROLLO, esposizioni: 6, rumoreRpe: 1, quotaSenzaRpe: 0.3, senzaCar18: false,
+    programma: null, luogo: null, manubriKg: null }, opz || {});
   const atleta = atletaVirtuale({ sesso: o.sesso, livello: o.livello, pesoCorpo: o.pesoCorpo, seme: o.seme, rumoreRpe: o.rumoreRpe, quotaSenzaRpe: o.quotaSenzaRpe });
   Object.keys(app.store).forEach(k => delete app.store[k]);
   app.consenso(true);
   if (o.senzaCar18) app.g('FASI_PUNTI.carico = FASI_PUNTI.carico.filter(f => f.codice !== "CAR-18")');
-  app.profilo({ level: o.livello, sex: o.sesso, age: 30, weight: o.pesoCorpo, goals: ['massa'] });
+  /* P3-A: a casa con i manubri e il manubrio piu pesante dichiarato (CAS-01), facoltativi; il programma salvato v1 o v2 (facoltativo) */
+  const casa = o.luogo ? { luogo: o.luogo, manubriKg: o.manubriKg || undefined } : {};
+  app.profilo(Object.assign({ level: o.livello, sex: o.sesso, age: 30, weight: o.pesoCorpo, goals: ['massa'] }, casa));
+  const P = programmaSimulato(app, o.programma, o, '2026-10-05');
+  if (P) app.programma(P);
   const nomi = o.esercizi.filter(n => atleta.haAncora(n));
-  const ctxCorpo = 'contestoCarichi({ sex: ' + JSON.stringify(o.sesso) + ', level: ' + JSON.stringify(o.livello) + ', age: 30, weight: ' + o.pesoCorpo + ' }, {})';
+  const ctxCorpo = 'contestoCarichi(' + JSON.stringify(Object.assign({ sex: o.sesso, level: o.livello, age: 30, weight: o.pesoCorpo }, casa)) + ', {})';
   const reg = {}, dati = {};
   nomi.forEach((n, i) => {
     const s = app.g('(() => { const c = ' + ctxCorpo + '; c.storico = null; return stimaCaricoIniziale(' + JSON.stringify(n) + ', c); })()');
@@ -149,14 +197,14 @@ function simulaNellApp(app, opz) {
     const voci = nomi.map(n => ({ n: n, r: app.dati(app.chiama('caricoProssimo', n, reg[n].base, reg[n].reps, reg[n].sets)), rir: app.json('rirBersaglio(' + JSON.stringify(n) + ')') }));
     const prima = voci.map(v => ({ giusto: atleta.caricoGiusto(v.n, reg[v.n].reps, 3.5), cap: atleta.caricoAlRir(v.n, reg[v.n].reps, (v.rir[0] + v.rir[1]) / 2 - 1), cap0: atleta.caricoAlRir(v.n, reg[v.n].reps, 0) }));
     const fatte = atleta.eseguiSeduta(voci.map(v => ({ nome: v.n, weight: v.r.weight, reps: v.r.reps, sets: v.r.sets })));
-    fatte.forEach((f, i) => reg[voci[i].n].esp.push({ w: voci[i].r.weight, tipo: voci[i].r.tipo, motivo: voci[i].r.motivo, giusto: prima[i].giusto, cap: prima[i].cap, cap0: prima[i].cap0,
+    fatte.forEach((f, i) => reg[voci[i].n].esp.push({ w: voci[i].r.weight, reps: voci[i].r.reps, tipo: voci[i].r.tipo, motivo: voci[i].r.motivo, giusto: prima[i].giusto, cap: prima[i].cap, cap0: prima[i].cap0,
       rirPrima: f.rirPrima, completa: f.completa, senzaRpe: f.senzaRpe }));
     storia.unshift({ id: app.ora(), day: 'Lunedì', date: app.g('formatNow()'), minuti: 50, prontezza: 80, exercises: [],
       sessione: fatte.map((f, i) => ({ name: f.nome, rest: 90, sets: f.serie.map(x => ({ weight: x[0], reps: x[1], done: x[2], wasBerserk: false, rpe: x[3] })),
-        obiettivo: { reps: voci[i].r.reps, sets: voci[i].r.sets, rir: voci[i].rir, coachTipo: voci[i].r.tipo } })) });
+        obiettivo: { reps: voci[i].r.reps, base: reg[voci[i].n].reps, sets: voci[i].r.sets, rir: voci[i].rir, coachTipo: voci[i].r.tipo } })) });   /* base: il bersaglio del piano (P3-A, ALG-05) */
     app.storia(storia);
   }
-  return { atleta: atleta, nomi: nomi, reg: reg };
+  return { atleta: atleta, nomi: nomi, reg: reg, manubriKg: casa.manubriKg || null, programma: o.programma };
 }
 /* il riassunto di D.8.9 su tante atlete: `risultati` = elenco di simulaNellApp(...). Esposizioni per arrivare entro ±10% del carico giusto (99 = mai nelle esposizioni
    simulate), prescrizioni sopra la capacita al RIR bersaglio - 1 (`sopra`) e oltre il massimo, cioe che non finisce le ripetizioni (`oltre`): la prima esposizione a parte
@@ -177,4 +225,5 @@ function riassunto(risultati) {
     primoSopra: q.primo.sopra / q.primo.n, primoOltre: q.primo.oltre / q.primo.n, dopoSopra: q.dopo.sopra / q.dopo.n, dopoOltre: q.dopo.oltre / q.dopo.n, pc: pc };
 }
 
-module.exports = { atletaVirtuale, ancora, nomiConAncora, ANCORE_DONNE_KG65, SINONIMI_ANCORE, RAPPORTO_UOMO_DONNA, SCALA_LIVELLO, mulberry32, simulaNellApp, riassunto, CONTROLLO };
+module.exports = { atletaVirtuale, ancora, nomiConAncora, ANCORE_DONNE_KG65, SINONIMI_ANCORE, RAPPORTO_UOMO_DONNA, SCALA_LIVELLO, mulberry32, simulaNellApp, riassunto, CONTROLLO,
+  conBilanciaV2, inGrigliaBase, FILE_BILANCIA_V2 };

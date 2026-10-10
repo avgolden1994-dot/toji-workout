@@ -16,13 +16,13 @@ const ONB_KEY = 'tz_onboarded';
 const PROFILE_KEY = () => 'coach_plus_profile_' + currentMode;
 
 let onbStep = 0;
-let onbData = { goals: [], goal: null, level: null, days: null, minutes: null, luogo: null, fastidi: [], sonno: null, attrezzi: null, parq: null, sex: null, age: null, height: null, weight: null, bia: null };
+let onbData = { goals: [], goal: null, level: null, days: null, minutes: null, luogo: null, fastidi: [], sonno: null, attrezzi: null, parq: null, gravidanza: null, sex: null, age: null, height: null, weight: null, bia: null };
 
 const ONB_GOALS = [
   { id: 'massa',   emoji: ico('manubrio'), name: 'Massa muscolare', desc: '8-12 ripetizioni, carichi progressivi' },
   { id: 'dimagrimento', emoji: '\u{1F525}', name: 'Dimagrimento', desc: 'forza + cardio, ripetizioni medio-alte' },
   { id: 'forza',   emoji: ico('bilanciere'), name: 'Forza', desc: '2-6 ripetizioni, recuperi lunghi' },
-  { id: 'ricomposizione', emoji: '\u2696\uFE0F', name: 'Ricomposizione', desc: 'meno grasso, piu muscolo insieme' },
+  { id: 'ricomposizione', emoji: '\u2696\uFE0F', name: 'Ricomposizione', desc: 'più muscolo, meno grasso: quello che molti chiamano tonificare' }   /* OBI-07 */,
   { id: 'salute',  emoji: '\u2764\uFE0F', name: 'Salute e forma', desc: 'movimento costante, senza estremi' },
   { id: 'glutei',  emoji: '\u2728', name: 'Glutei', desc: 'quattro famiglie di esercizi, 9-15 serie a settimana' }
 ];
@@ -139,12 +139,16 @@ window.startOnboarding = function(force) {
 };
 
 function nuovoOnbData() {
+  const salvato = (typeof getProfile === 'function' && getProfile()) || {};   /* P3-M: sesso, peso, altezza, salute e fastidi non si perdono rifacendo il questionario (decidono prudenza ed esclusioni) */
   return { inizio: undefined, goals: [], goal: null, level: null, days: null, minutes: null,
-           luogo: null, fastidi: [], sonno: null, attrezzi: null, parq: null, priorita: [],
-           sex: null, age: ((typeof getProfile === 'function' && getProfile()) || {}).age || null, height: null, weight: null, bia: null,   /* ETA-01: chi rifa il programma ha gia detto l eta */
+           luogo: null, fastidi: (salvato.fastidi || []).slice(), sonno: null, attrezzi: null, parq: salvato.parq ? 'si' : null, gravidanza: null, priorita: [],
+           sex: salvato.sex || null, age: ((typeof getProfile === 'function' && getProfile()) || {}).age || null, height: salvato.height || null, weight: salvato.weight || null, bia: null,   /* ETA-01: chi rifa il programma ha gia detto l eta */
            psico: Object.assign({}, ((typeof getProfile === 'function' && getProfile()) || {}).psico || {}),
            test: Object.assign({}, ((typeof getProfile === 'function' && getProfile()) || {}).test || {}),
-           freq: ((typeof getProfile === 'function' && getProfile()) || {}).freq || null };
+           freq: ((typeof getProfile === 'function' && getProfile()) || {}).freq || null,
+           attrezziPalestra: ((typeof getProfile === 'function' && getProfile()) || {}).attrezziPalestra, attrezziCasa: ((typeof getProfile === 'function' && getProfile()) || {}).attrezziCasa,   /* CAS-01 (W2-T5): chi rifa il programma ritrova quello che ha dichiarato */
+           manubriKg: ((typeof getProfile === 'function' && getProfile()) || {}).manubriKg, extraPalestra: ((typeof getProfile === 'function' && getProfile()) || {}).extraPalestra,
+           forzaTipo: ((typeof getProfile === 'function' && getProfile()) || {}).forzaTipo, puntiDeboli: (((typeof getProfile === 'function' && getProfile()) || {}).puntiDeboli || []).slice() };   /* FRZ-01 (INT-2e): chi rifa il programma ritrova «Che forza?» */
 }
 
 window.onbSkipAll = function() {
@@ -204,6 +208,8 @@ window.onbSetEta = function(v) {
   if (msg) msg.textContent = (e.ok || testo === '') ? '' : e.messaggio;
   const next = document.getElementById('onb-next');
   if (next) next.disabled = !onbStepValid();
+  const sonno = document.getElementById('onb-sonno-bene-desc');   /* ETA-05: per un minorenne «Bene» e 8 ore o piu */
+  if (sonno) sonno.textContent = descSonnoBene(onbData.age);
 };
 
 /* Fino a tre obiettivi: il primo scelto guida il programma, gli altri lo
@@ -246,6 +252,19 @@ const ONB_PARQ = [
   { id: 'no', emoji: '\u2705', name: 'No, nessuno', desc: 'si procede normalmente' },
   { id: 'si', emoji: '\u26A0', name: 'Sì, almeno uno', desc: 'coach prudente, e senti il medico prima di sforzi intensi' }
 ];
+/* REC-12 parte a (onda 5, m5 della revisione dell'onda 4): con il PAR-Q «sì» si chiede se la ragione è una gravidanza o un parto recente: «sì» accende la bandiera di Opzioni › Il coach
+   (profilo.gravidanza, gravidanzaDalQuestionario in sicurezza/popolazioni.js), che tiene la modalità prudente e toglie creatina, grammi e kcal. Prima la bandiera si accendeva solo in Opzioni */
+const ONB_GRAVIDANZA = [
+  { id: 'no', emoji: '\u2705', name: 'No', desc: 'altre ragioni' },
+  { id: 'si', emoji: '\u{1F930}', name: 'Sì', desc: 'il coach accende «Gravidanza o parto recente»: resta prudente finché non la togli in Opzioni › Il coach' }
+];
+/* A2 (revisione finale dell'onda 5): con la bandiera già accesa il questionario rifatto non fa più la domanda (rispondere «No» non la spegneva: resta accesa per gravidanzaDaRiportare) e dice dove si toglie */
+const TESTO_GRAVIDANZA_GIA_ACCESA = 'Hai già segnato «Gravidanza o parto recente»: il coach resta prudente e la bandiera si toglie solo in Opzioni › Il coach, non da questo questionario.';
+function htmlDomandaGravidanzaOnb() {
+  if (typeof inGravidanza === 'function' && typeof getProfile === 'function' && inGravidanza(getProfile())) return '<div class="pref-note" id="onb-gravidanza-accesa">' + TESTO_GRAVIDANZA_GIA_ACCESA + '</div>';
+  if (onbData.parq !== 'si') return '';
+  return '<div class="aw-sec">È per una gravidanza o un parto recente?</div>' + ONB_GRAVIDANZA.map(g => optHtml('gravidanza', g)).join('');
+}
 const PARQ_DOMANDE = ['problemi al cuore o pressione alta', 'dolore al petto a riposo o sotto sforzo', 'capogiri o svenimenti', 'problemi a ossa o articolazioni che peggiorano col movimento', 'farmaci per cuore o pressione', 'gravidanza o parto recente', 'un medico ti ha sconsigliato lo sforzo'];
 const ONB_SONNO = [
   { id: 'bene', emoji: '\u{1F60C}', name: 'Bene', desc: 'dormo 7 ore o piu, stress sotto controllo' },
@@ -261,6 +280,112 @@ const ONB_ATTREZZI = [
 function chip(sel, onclick, testo) {
   return '<button class="aw-group ' + (sel ? 'on' : '') + '" onclick="' + onclick + '">' + testo + '</button>';
 }
+
+/* ---- W2-T5: avvisi e domande che cambiano davvero il programma ---- */
+/* OBI-01: massa e dimagrimento insieme chiedono cose opposte. Avviso, non blocco: nessun cambio senza un tocco dell utente («Usa la ricomposizione»). Cosa fa il coach se li tieni tutti e due e vero:
+   il primo che hai scelto guida il programma (schemaMisto) e la fase del corpo e il deficit (faseDaObiettivi, OBI-02), con la nota dei passi */
+const TESTO_AVVISO_MASSA_DIMAGRIMENTO = 'Costruire muscolo e perdere grasso insieme funziona bene se inizi o riparti, molto meno se sei già allenato: hanno bisogno di cose opposte. Scegli una fase alla volta, oppure la ricomposizione.';
+const TESTO_AVVISO_MASSA_DIMAGRIMENTO_SE_RESTANO = 'Se li tieni entrambi, il primo che hai scelto guida il programma e passi e cardio seguono il dimagrimento.';
+function htmlAvvisoObiettivi(goals) {
+  const g = goals || [];
+  if (g.indexOf('massa') === -1 || g.indexOf('dimagrimento') === -1 || (typeof regolaAttiva === 'function' && !regolaAttiva('OBI-01'))) return '';
+  /* due blocchi, non uno: il traduttore cerca ogni frase intera */
+  return '<div class="onb-note onb-avviso" id="onb-avviso-obiettivi">' + TESTO_AVVISO_MASSA_DIMAGRIMENTO + '</div>' +
+    '<div class="onb-note">' + TESTO_AVVISO_MASSA_DIMAGRIMENTO_SE_RESTANO + '</div>' +
+    '<button class="set-row-btn" onclick="onbUsaRicomposizione()">Usa la ricomposizione</button>';
+}
+/* la scelta esplicita dell utente: massa e dimagrimento diventano la ricomposizione, nel posto del primo dei due (gli altri obiettivi restano) */
+window.onbUsaRicomposizione = function() {
+  const g = onbData.goals, i = Math.min(g.indexOf('massa'), g.indexOf('dimagrimento'));
+  if (i < 0 || g.indexOf('massa') === -1 || g.indexOf('dimagrimento') === -1) return;
+  onbData.goals = g.filter(x => x !== 'massa' && x !== 'dimagrimento');
+  if (onbData.goals.indexOf('ricomposizione') === -1) onbData.goals.splice(Math.min(i, onbData.goals.length), 0, 'ricomposizione');
+  onbData.goal = onbData.goals[0] || null;
+  renderOnb();
+};
+/* OBI-07: chi sceglie la ricomposizione legge cosa vuol dire «tonificare» (un po piu di muscolo e meno grasso) e che serve il carico che sale, non solo tante ripetizioni (ACSM 2026, Schoenfeld 2017) */
+const TESTO_TONIFICARE = 'Tonificare vuol dire un po’ più di muscolo e meno grasso: per farlo servono pesi che salgono piano piano, non solo tante ripetizioni.';
+function htmlNotaTonificare(goals) {
+  return (goals || []).indexOf('ricomposizione') === -1 ? '' : '<div class="onb-note" id="onb-nota-tonificare">' + TESTO_TONIFICARE + '</div>';
+}
+/* PRG-02: chi comincia con 5 o 6 giorni ha 4 sedute: glielo dice il passo dei giorni (e la nota del programma, con la stessa frase) */
+function htmlAvvisoGiorni(livello, giorni) {
+  const s = typeof sogliaSplit === 'function' ? sogliaSplit('principianteSedute') : null;
+  if (!s || livello !== 'principiante' || !(Number(giorni) >= s.giorniDa) || typeof NOTA_PRINCIPIANTE_4_SEDUTE === 'undefined') return '';
+  return '<div class="onb-note" id="onb-avviso-giorni">' + NOTA_PRINCIPIANTE_4_SEDUTE + '</div>';
+}
+/* ETA-05: «Bene» per il sonno vuol dire 7 ore o piu per un adulto e 8 ore o piu per un minorenne (13-17 anni) */
+function descSonnoBene(eta) {
+  const o = typeof sogliaSplit === 'function' ? sogliaSplit('oreSonnoBene') : null;
+  if (!o) return ONB_SONNO[0].desc;
+  return etaPerProgramma(eta).motivo === 'minorenne' ? 'dormo ' + o.minorenne + ' ore o più, stress sotto controllo' : 'dormo ' + o.adulto + ' ore o piu, stress sotto controllo';
+}
+/* CAS-01 (D-P3): la domanda sugli attrezzi, di palestra o di casa. Facoltativa: senza risposta il coach si comporta come prima (palestra completa; a casa solo cio che non chiede un attrezzo da dichiarare).
+   I nomi dei campi sono quelli del brief (regia/brief.js: attrezziCasa, manubriKg, extraPalestra; attrezziPalestra com era) */
+const ONB_ATTREZZI_NOMI = { sbarra: 'Sbarra', panca: 'Panca', elastico: 'Elastici', kettlebell: 'Kettlebell', anelli: 'Anelli' };
+/* INT-2g (revisione 2f): l ultimo attrezzo acceso della palestra non si toglie, in onboarding e in Opzioni: un elenco vuoto vale «palestra completa» (consentito) e i chip riapparirebbero accesi.
+   Chi in palestra non trova niente di tutto questo si allena a corpo libero */
+const NOTA_ULTIMO_ATTREZZO = 'Ne serve almeno uno acceso. Se in palestra non c’è niente di tutto questo, scegli «Corpo libero» come luogo.';
+function onbAttrezziPalestra() { return onbData.attrezziPalestra !== undefined ? onbData.attrezziPalestra : (((typeof getProfile === 'function' && getProfile()) || {}).attrezziPalestra || null); }
+function htmlAttrezziOnboarding() {
+  const luogo = onbData.luogo;
+  if (typeof regolaAttiva === 'function' && !regolaAttiva('CAS-01')) return '';
+  if (luogo === 'palestra') {
+    const lista = onbAttrezziPalestra(), extra = Array.isArray(onbData.extraPalestra) ? onbData.extraPalestra : [];
+    const nessuno = Array.isArray(onbData.extraPalestra) && !onbData.extraPalestra.length;
+    return '<div class="aw-sec">Cosa c’è nella tua palestra?</div>' +
+      '<div class="pref-note">Togli quello che non trovi (facoltativo): sono tutti accesi. Se non tocchi niente, il coach pensa a una palestra completa.</div>' +
+      '<div class="aw-groups">' + ATTREZZI_PALESTRA.map(a => chip(!lista || !lista.length || lista.indexOf(a[0]) !== -1, 'onbToggleAttrezzoPalestra(\'' + a[0] + '\')', a[1])).join('') + '</div>' +
+      (lista && lista.length === 1 ? '<div class="onb-note" id="onb-avviso-ultimo-attrezzo">' + NOTA_ULTIMO_ATTREZZO + '</div>' : '') +   /* INT-2g: l ultimo chip acceso non si toglie */
+      '<div class="pref-note">Altro, se c’è: tocca quello che trovi. Se non c’è niente di tutto questo, tocca «Nessuno di questi».</div>' +
+      '<div class="aw-groups">' + ATTREZZI_EXTRA_PALESTRA_IDS.map(k => chip(extra.indexOf(k) !== -1, 'onbToggleExtraPalestra(\'' + k + '\')', ONB_ATTREZZI_NOMI[k])).join('') +
+      chip(nessuno, 'onbNessunoExtraPalestra()', 'Nessuno di questi') + '</div>';
+  }
+  if (luogo === 'manubri' || luogo === 'corpo') {
+    const casa = Array.isArray(onbData.attrezziCasa) ? onbData.attrezziCasa : [], nessuno = Array.isArray(onbData.attrezziCasa) && !onbData.attrezziCasa.length, conManubri = luogo === 'manubri';
+    return '<div class="aw-sec">Cosa hai in casa?</div>' +
+      '<div class="pref-note">Tocca quello che hai (facoltativo). Pavimento, una sedia robusta e un gradino li do per scontati. Se tocchi qualcosa, scelgo gli esercizi solo con quello (e con i manubri, se ti alleni con quelli); ' +
+      (conManubri ? 'se non rispondi, penso ai manubri e a una panca, ma non a sbarra, elastici, kettlebell e anelli: se la panca non ce l’hai, tocca «Solo i manubri».' : 'se non rispondi, non conto su sbarra, elastici, kettlebell e anelli.') + '</div>' +
+      '<div class="aw-groups">' + ATTREZZI_CASA_IDS.filter(k => k !== 'manubri').map(k => chip(casa.indexOf(k) !== -1, 'onbToggleAttrezzoCasa(\'' + k + '\')', ONB_ATTREZZI_NOMI[k])).join('') +
+      chip(nessuno, 'onbNessunoAttrezzoCasa()', conManubri ? 'Solo i manubri' : 'Nessuno di questi') + '</div>' +
+      (conManubri ? '<div class="onb-fields"><label class="onb-field"><span>Manubrio più pesante (kg)</span><input type="number" inputmode="decimal" id="onb-manubri-kg" min="1" max="100" step="0.5" value="' + (onbData.manubriKg || '') + '" oninput="onbSetManubriKg(this.value)"></label><span></span></div>' +
+        '<div class="pref-note">Quanto pesa, a mano, il manubrio più pesante che hai (per i regolabili, il carico massimo di uno). Serve a non proporti carichi di partenza più pesanti di così.</div>' : '');
+  }
+  return '';
+}
+/* FRZ-01 (INT-2e, W2-T7): «Che forza?» (forza generale o powerlifting) solo se il primo obiettivo e la forza; con il powerlifting anche «Dove ti blocchi?». Facoltative: senza risposta il programma di
+   forza e quello di sempre. I valori sono quelli che legge modalitaForzaDa (forzaTipo: 'generale' | 'powerlifting') e forzaPuntiDeboli (puntiDeboli); i testi stanno in specialita/forza.js */
+function htmlForzaOnboarding(goals) {
+  if (!goals || goals[0] !== 'forza' || typeof FORZA_TIPI_TESTI === 'undefined' || (typeof regolaAttiva === 'function' && !regolaAttiva('FRZ-02'))) return '';
+  const pl = String(onbData.forzaTipo || '') === 'powerlifting';
+  return '<div id="onb-forza"><div class="aw-sec">Che forza?</div>' +
+    '<div class="pref-note">Facoltativo: senza risposta il programma di forza resta quello di sempre.</div>' +
+    FORZA_TIPI_TESTI.map(t => optHtml('forzaTipo', { id: t[0], emoji: ico('bilanciere'), name: t[1], desc: t[2] })).join('') +
+    (pl ? '<div class="onb-note" id="onb-forza-requisiti">' + FORZA_NOTA_REQUISITI + '</div>' +
+      '<div class="aw-sec">Dove ti blocchi?</div><div class="pref-note">' + FORZA_NOTA_PUNTI + '</div>' +
+      '<div class="aw-groups">' + Object.keys(FORZA_PUNTI_TESTI).map(k => chip((onbData.puntiDeboli || []).indexOf(k) !== -1, 'onbTogglePuntoDebole(\'' + k + '\')', FORZA_PUNTI_TESTI[k])).join('') + '</div>' : '') + '</div>';
+}
+window.onbTogglePuntoDebole = function(k) { onbData.puntiDeboli = forzaCambiaPunto(onbData.puntiDeboli, k); renderOnb(); };
+function onbCambiaLista(lista, id) {
+  const l = (Array.isArray(lista) ? lista : []).slice(), i = l.indexOf(id);
+  if (i === -1) l.push(id); else l.splice(i, 1);
+  return l;
+}
+window.onbToggleAttrezzoPalestra = function(id) {
+  const tutti = ATTREZZI_PALESTRA.map(a => a[0]), l = onbCambiaLista(onbAttrezziPalestra() && onbAttrezziPalestra().length ? onbAttrezziPalestra() : tutti, id);
+  if (!l.length) { renderOnb(); return; }   /* INT-2g: l ultimo non si toglie (la nota sotto i chip dice perche): [] varrebbe palestra completa */
+  onbData.attrezziPalestra = l.length === tutti.length ? null : l;   /* tutti = palestra completa = nessun elenco, come in Opzioni */
+  renderOnb();
+};
+window.onbToggleExtraPalestra = function(id) { onbData.extraPalestra = onbCambiaLista(onbData.extraPalestra, id); renderOnb(); };
+window.onbToggleAttrezzoCasa = function(id) { onbData.attrezziCasa = onbCambiaLista(onbData.attrezziCasa, id); renderOnb(); };
+/* INT-2f: «Nessuno di questi» (palestra) e «Solo i manubri» / «Nessuno di questi» (casa): la risposta `[]` e un tocco, non un tocca-e-ritocca; un secondo tocco toglie la risposta (null = non risposto, come prima) */
+window.onbNessunoExtraPalestra = function() { onbData.extraPalestra = Array.isArray(onbData.extraPalestra) && !onbData.extraPalestra.length ? null : []; renderOnb(); };
+window.onbNessunoAttrezzoCasa = function() { onbData.attrezziCasa = Array.isArray(onbData.attrezziCasa) && !onbData.attrezziCasa.length ? null : []; renderOnb(); };
+window.onbSetManubriKg = function(v) {   /* senza ridisegnare il passo (il campo perderebbe il fuoco), come l eta */
+  const n = Number(String(v === undefined || v === null ? '' : v).replace(',', '.'));
+  onbData.manubriKg = String(v).trim() === '' || !isFinite(n) || n <= 0 ? null : n;
+};
 
 function renderOnb() {
   const body = document.getElementById('onb-body');
@@ -283,7 +408,8 @@ function renderOnb() {
           '<span class="onb-opt-desc">' + g.desc + '</span></span>' +
           '<span class="goal-rank">' + (pos !== -1 ? (pos === 0 ? '1\u00B0 \u2022 guida' : (pos + 1) + '\u00B0') : '') + '</span></button>';
       }).join('') +
-      '<div class="onb-note">' + onbData.goals.length + ' di 3 scelti</div>';
+      '<div class="onb-note">' + onbData.goals.length + ' di 3 scelti</div>' +
+      htmlAvvisoObiettivi(onbData.goals) + htmlNotaTonificare(onbData.goals) + htmlForzaOnboarding(onbData.goals);
   } else if (onbStep === 1) {
     body.innerHTML = '<div class="onb-q">Da quanto ti alleni?</div>' +
       '<div class="onb-why">Ai principianti conviene il full body, perche ogni muscolo viene stimolato piu volte. Chi ha piu esperienza regge una divisione piu spinta. Decide anche quanto dura il programma.</div>' +
@@ -294,10 +420,10 @@ function renderOnb() {
       [2, 3, 4, 5, 6].map(n => optHtml('days', {
         id: n, emoji: '\u{1F4C5}', name: n + ' giorni',
         desc: n <= 2 ? 'il minimo per avere risultati' : (n <= 4 ? 'la fascia piu sostenibile' : 'richiede buon recupero')
-      })).join('');
+      })).join('') + htmlAvvisoGiorni(onbData.level, onbData.days);
   } else if (onbStep === 3) {
     body.innerHTML = '<div class="onb-q">Quanto dura una seduta?</div>' +
-      '<div class="onb-why">Sotto la mezz ora lo stimolo rischia di essere scarso, oltre i novanta minuti il recupero peggiora. Decido quanti esercizi metterti in base a questo.</div>' +
+      '<div class="onb-why">Con pochi minuti conta cosa metti: pochi esercizi completi, in coppia dove si può. Oltre i novanta minuti il recupero peggiora. Decido quanti esercizi metterti in base a questo.</div>' +
       [30, 45, 60, 75, 90].map(n => optHtml('minutes', {
         id: n, emoji: '\u23F1\uFE0F', name: n + ' minuti',
         desc: n <= 30 ? 'seduta breve e densa' : (n >= 90 ? 'il massimo consigliabile' : 'durata equilibrata')
@@ -314,12 +440,13 @@ function renderOnb() {
       '<div class="aw-sec">Dove ti alleni?</div>' +
       '<div class="pref-note">Cosi non ti propongo esercizi che non puoi fare.</div>' +
       ONB_LUOGHI.map(g => optHtml('luogo', g)).join('') +
+      htmlAttrezziOnboarding() +
       '<div class="aw-sec">Hai fastidi in qualche zona?</div>' +
       '<div class="pref-note">Evito gli esercizi che la caricano di piu. Non sostituisce il parere di un medico.</div>' +
       '<div class="aw-groups">' + ONB_FASTIDI.map(f => chip(onbData.fastidi.indexOf(f.id) !== -1, 'onbToggleFastidio(\'' + f.id + '\')', (f.fig ? '<span class="chip-fig">' + muscleFigure(f.fig) + '</span>' : f.emoji) + ' ' + f.name)).join('') + '</div>' +
       '<div class="aw-sec">Come dormi e quanto stress hai?</div>' +
       '<div class="pref-note">Il recupero decide quanto volume reggi e quanto in fretta aumentare i carichi.</div>' +
-      ONB_SONNO.map(g => optHtml('sonno', g)).join('') +
+      ONB_SONNO.map(g => optHtml('sonno', g.id === 'bene' ? Object.assign({}, g, { desc: descSonnoBene(onbData.age), idDesc: 'onb-sonno-bene-desc' }) : g)).join('') +
       '<div class="aw-sec">Cosa preferisci usare?</div>' +
       '<div class="pref-note">Quando un esercizio va sostituito, scelgo nella direzione che preferisci.</div>' +
       ONB_ATTREZZI.map(g => optHtml('attrezzi', g)).join('') +
@@ -335,7 +462,8 @@ function renderOnb() {
         '<div class="aw-groups">' + t.o.concat([['dopo', 'Lo faccio dopo']]).map(o => chip(((onbData.test || {})[t.k] || 'dopo') === o[0], 'onbSetTest(\'' + t.k + '\',\'' + o[0] + '\')', o[1])).join('') + '</div></div>').join('') +
       '<div class="aw-sec">Salute: hai uno di questi?</div>' +
       '<div class="pref-note">' + PARQ_DOMANDE.join(' · ') + '.</div>' +
-      ONB_PARQ.map(g => optHtml('parq', g)).join('');
+      ONB_PARQ.map(g => optHtml('parq', g)).join('') +
+      htmlDomandaGravidanzaOnb();
   } else if (onbStep === 5) {
     body.innerHTML = renderBiaStep();
     setTimeout(bindBiaInputs, 0);
@@ -354,7 +482,7 @@ function optHtml(campo, o) {
     (typeof o.id === 'number' ? o.id : "'" + o.id + "'") + ')">' +
     '<span class="onb-opt-emoji">' + o.emoji + '</span>' +
     '<span class="onb-opt-main"><span class="onb-opt-name">' + o.name + '</span>' +
-    '<span class="onb-opt-desc">' + o.desc + '</span></span>' +
+    '<span class="onb-opt-desc"' + (o.idDesc ? ' id="' + o.idDesc + '"' : '') + '>' + o.desc + '</span></span>' +
     '<span class="pick-check">' + (sel ? '\u2713' : '') + '</span></button>';
 }
 
@@ -364,8 +492,11 @@ function optHtml(campo, o) {
    letti restano sempre modificabili a mano prima di essere usati. */
 function renderBiaStep() {
   const b = onbData.bia || {};
+  /* ETA-04: ai minorenni il metabolismo basale in kcal non si mostra (riepilogo e campo a mano); il dato resta in onbData.bia */
+  const bmrNascosto = bmrNascostoPerEta(onbData.age);
   const letti = ['peso', 'fmPerc', 'ffm', 'tbw', 'bmr', 'smm', 'phase', 'altezza']
-    .filter(k => b[k] !== undefined && b[k] !== null);
+    .filter(k => b[k] !== undefined && b[k] !== null)
+    .filter(k => !(k === 'bmr' && bmrNascosto));
   const etichette = { peso: 'Peso', altezza: 'Altezza', fmPerc: 'Massa grassa', ffm: 'Massa magra',
                       tbw: 'Acqua totale', bmr: 'Metabolismo basale', smm: 'Massa muscolare', phase: 'Angolo di fase' };
   const unita = { peso: ' kg', altezza: ' cm', fmPerc: '%', ffm: ' kg', tbw: ' L', bmr: ' kcal', smm: ' kg', phase: '\u00B0' };
@@ -409,7 +540,7 @@ function renderBiaStep() {
           biaField('fmPerc', 'Massa grassa (%)', b.fmPerc) +
           biaField('ffm', 'Massa magra (kg)', b.ffm) +
           biaField('tbw', 'Acqua totale (L)', b.tbw) +
-          biaField('bmr', 'Metabolismo basale (kcal)', b.bmr) +
+          (bmrNascosto ? '' : biaField('bmr', 'Metabolismo basale (kcal)', b.bmr)) +
         '</div>'
       : '') +
 

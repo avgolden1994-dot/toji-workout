@@ -71,10 +71,12 @@ const SOGLIE_PARTENZA = {
     v: { livelli: ['principiante'], donneConFattore: true },
     forza: 'Decisione', fonte: 'registro coach v2 D-P1 e B22 (la calibrazione vale per tutti i principianti; il fattore basso solo per le donne fino all’intermedio); piano D.1', regole: ['CAR-18']
   },
-  /* CAR-18: prime esposizioni contate dallo storico; alla quarta la calibrazione si chiude comunque */
+  /* CAR-18: prime esposizioni contate dallo storico; alla quinta la calibrazione si chiude comunque (INT-3a: era la quarta). Con AUT-01 (P3-A, registro B3) chi comincia usa l RPE solo per
+     frenare, tranne in calibrazione: senza la quinta esposizione le donne che partono molto sotto il loro carico giusto non ci arrivavano in sei sedute (D.8.9, 500 donne principianti
+     con un programma v2: «mai» 4,2% con quattro esposizioni, 1,8% prima di AUT-01, 1,6% con cinque; ripetizioni non finite alla sesta seduta 13,4% con quattro e 10,9% con cinque) */
   calibrazioneEsposizioni: {
-    v: 4,
-    forza: 'Convenzione', fonte: 'piano D.5; ricerca-donne-carichi-iniziali §3.6 (prime 3-4 esposizioni)', regole: ['CAR-18']
+    v: 5,
+    forza: 'Provvisoria', fonte: 'piano D.5; ricerca-donne-carichi-iniziali §3.6 (prime 3-4 esposizioni: la quinta e una misura dell INT-3a, atleta virtuale D.8.9, docs/coach-v2-decisioni.md D-P24); da rivedere con dati veri', regole: ['CAR-18']
   },
   /* CAR-18: RPE a cui il carico è giusto (stop al primo RPE da questo in su, ricerca-donne §3.6) e tolleranza: dentro ±tolleranza la calibrazione si chiude.
      Lo scarto (bersaglio meno RPE segnato) sceglie la riga della tabella; la scala dell app parte da 6 (6 = facile, quattro o più ripetizioni di riserva) */

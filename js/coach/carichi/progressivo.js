@@ -15,6 +15,9 @@
    - la BIA puo frenare: se la massa magra cala, niente aumenti
    Usa SOLO i dati dell utente, quindi funziona solo con il consenso.
    ============================================================ */
+/* arrotondamento numerico (0,5 kg se non si dice il passo). ALG-06 (P3-A): il CARICO di un esercizio va sulla griglia del suo attrezzo con
+   arrotondaAttrezzo(kg, nome, { modo }) (carichi/attrezzi.js; caricoInGriglia, caricoSalito, caricoSceso in regole-ricerca.js): questa resta per chi
+   non e ancora passato (prontezza.js, dolore-mattina.js: la fase 'carico' 95 riporta in griglia i carichi della catena) e come ripiego con ALG-06 spenta */
 function arrotonda(x, passo) { return Math.round(x / (passo || 0.5)) * (passo || 0.5); }
 
 function incrementoPer(nome) {
@@ -64,8 +67,11 @@ function ultimeSessioni(nome, n, opz) { return sedutePerEsercizio(nome, n, opz).
    se e di meno di GIORNI_CARICO_RIFERIMENTO giorni (0 se non c e). Lo scarico si calcola su questo e mai sul carico di un altro
    scarico (60 → 54 → 48,5 → 43,5 kg), e dopo lo scarico si riparte da qui. */
 const GIORNI_CARICO_RIFERIMENTO = 28;
-function caricoRiferimento(nome) {
-  const t = sedutePerEsercizio(nome, 6, { senzaScarico: true }).find(x => (x.ex.sets || []).some(s => s.done));
+function caricoRiferimento(nome, base) {
+  /* base (ALG-05, stesso esercizio con ripetizioni diverse nella settimana: revisione di 3a, M1): il bersaglio di oggi; il riferimento e l ultima seduta di lavoro CON LO STESSO
+     bersaglio (a 10 ripetizioni con 8 kg non dice cosa fare con 10 kg a 6), altrimenti l ultima seduta di lavoro */
+  const fatte = sedutePerEsercizio(nome, 12, { senzaScarico: true }).filter(x => (x.ex.sets || []).some(s => s.done));
+  const t = (Number(base) > 0 && fatte.find(x => Math.abs(Number((x.ex.obiettivo || {}).base) - Number(base)) < 1e-9)) || fatte[0];
   if (!t) return 0;
   const d = dataSessione(t.h);
   if (d && giorniTra(d, new Date()) > GIORNI_CARICO_RIFERIMENTO) return 0;
@@ -94,13 +100,17 @@ function esito(ex, repsTarget) {
 
 /* Settimana corrente del programma (1..N) e la sua fase. PRN-03 (INT-2d, B1): alla settimana del controllo di un programma da principiante a 12 settimane la
    prima lettura decide il controllo (controlloOttavaPrincipiante, programma/mesociclo.js: con il consenso, una volta sola, annullabile) e scrive la fase nel
-   programma salvato; la settimana di scarico che ne esce porta la dose fissata dal controllo (`doseFissa`, la legge caricoProssimoBase) e il suo motivo */
+   programma salvato; la settimana di scarico che ne esce porta la dose fissata dal controllo (`doseFissa`, la legge caricoProssimoBase) e il suo motivo.
+   CST-01 (W4-T2, P4-S; soglie di MES-15, registro B20): nei programmi v2, con il consenso, il calendario si ferma durante una pausa: le settimane della pausa non contano
+   (settimaneFermePerPausa, sicurezza/popolazioni.js: 7-13 giorni senza sedute = si rifà la settimana dell ultima seduta, 14 o piu = la prima del blocco). Senza quel file,
+   con un programma v1 o con la regola spenta, la settimana e quella del calendario, come prima */
 window.settimanaProgramma = function() {
   let p = getProgramma();
   if (!p) return null;
   if (typeof controlloOttavaPrincipiante === 'function' && controlloOttavaPrincipiante(p)) p = getProgramma();
   const giorni = giorniTra(daYmd(p.inizio), lunediDi(new Date()));
-  const w = Math.floor(giorni / 7) + 1;
+  const ferme = typeof settimaneFermePerPausa === 'function' ? settimaneFermePerPausa(p) : 0;
+  const w = Math.floor(giorni / 7) + 1 - ferme;
   if (w < 1 || w > p.settimane) return { numero: w, fase: null, finito: w > p.settimane, totale: p.settimane };
   const out = { numero: w, fase: p.fasi[w - 1], finito: false, totale: p.settimane };
   const c = p.piano && p.piano.controllo;

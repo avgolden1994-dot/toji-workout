@@ -26,7 +26,8 @@ function strMeta(e) { return findExercise(e.name) || {}; }
 function strSub(e) { const d = dettaglioEsercizio(e.name); return d ? d.sub : ''; }
 function strSchiena(nome) { return schienaLombare(nome); }   /* ABB-07 / REC-02: il dato dell esercizio, non due espressioni sul nome (W1-T6) */
 
-/* ABB-01: 0 multiarticolari (prima i pesanti), 1 isolamenti dei grandi muscoli, 2 dei piccoli, 3 core */
+/* ABB-01: 0 multiarticolari (prima i pesanti), 1 isolamenti dei grandi muscoli, 2 dei piccoli, 3 core. INT-2f (revisione 2e, maggiore 3): l alzata del giorno della modalita Forza (e.alzata, specialita/forza.js) viene prima di tutto (rango -1):
+   strOrdina e richiamata dopo forzaSedute e metteva davanti il Military Press o il Rematore con Bilanciere */
 function strTier(e) {
   const m = strMeta(e);
   if (m.group === 'core') return 3;
@@ -34,7 +35,7 @@ function strTier(e) {
   if (['petto', 'schiena', 'gambe', 'glutei'].indexOf(m.group) !== -1 && strSub(e) !== 'Polpacci' && strSub(e) !== 'Adduttori' && strSub(e) !== 'Medio gluteo') return 1;
   return 2;
 }
-function strRango(e) { const t = strTier(e); return t * 10 + (t === 0 && tipoCarico(e.name) !== 'pesante' ? 1 : 0); }
+function strRango(e) { if (e.alzata) return -1; const t = strTier(e); return t * 10 + (t === 0 && tipoCarico(e.name) !== 'pesante' ? 1 : 0) + (t === 0 && RIPIEGO_HINGE.test(senzaEmoji(e.name)) ? 2 : 0); }   /* INT-2f: la cerniera senza carico (ripiego) mai prima di un altro multiarticolare */
 /* ordina una lista di esercizi (con almeno `name`); i giorni dei punti deboli restano nell ordine di priorita dell utente */
 /* ABB-10: a parita di tipo, il muscolo prioritario per primo (principio della priorita di Arnold: si allena per primo cio che si vuole far crescere;
    la forza e il lavoro migliorano di piu negli esercizi fatti all inizio, Nunes 2021) */
@@ -42,7 +43,8 @@ window.strOrdina = function(lista, tipoGiorno, priorita) {
   if (tipoGiorno === 'punti') return lista;
   const pos = new Map(lista.map((e, i) => [e, i]));
   const prio = (e) => ((priorita || []).indexOf(strMeta(e).group) !== -1 ? 0 : 1);
-  return lista.sort((a, b) => strRango(a) - strRango(b) || prio(a) - prio(b) || pos.get(a) - pos.get(b));
+  /* INT-2f: tra due alzate vale l ordine del piano (la pesante per prima: stacco pesante, poi panca leggera), non la priorita dichiarata (il petto passava davanti allo stacco pesante) */
+  return lista.sort((a, b) => strRango(a) - strRango(b) || (a.alzata && b.alzata ? 0 : prio(a) - prio(b)) || pos.get(a) - pos.get(b));
 };
 
 /* ABB-02: due esercizi dello stesso gruppo, della stessa parte e dello stesso tipo fanno lo stesso lavoro.
@@ -87,7 +89,8 @@ function strSerie(sedute, filtro) {
 /* ABB-09: gli stacchi da terra costano molta fatica per lo stimolo che danno (rapporto stimolo/fatica, Israetel, Helms): al massimo 3 serie */
 const STR_FATICA = /Stacco da Terra|Stacco Sumo|Stacco con Trap Bar|Good Morning/;
 const STR_TIRATE_ALTE = /face pull|reverse|alzate posteriori|y-raise/i;
-function strEspinta(e) { const s = schemaDi(e.name); return s === 'spintaO' || s === 'spintaV'; }
+/* INT-2e (ABB-04): il Landmine Press e una spinta verticale per i dati (attributo schema) ma non per SCHEMI_MOV (la regex): strBilancia non lo contava e il collaudo si (come completamenti.js lo conta per gli schemi mancanti) */
+function strEspinta(e) { const s = schemaDi(e.name); return s === 'spintaO' || s === 'spintaV' || /landmine press/i.test(senzaEmoji(e.name)); }
 /* W0-T7: il pullover coi manubri (riserva della tirata verticale a casa, CAS-14, D-P11) e una tirata a tutti gli effetti dell equilibrio (come nel collaudo): schemaDi non lo conta (SCHEMI_RISERVA) */
 function strEtirata(e) { const s = schemaDi(e.name); return s === 'tirataO' || s === 'tirataV' || STR_TIRATE_ALTE.test(senzaEmoji(e.name)) || SCHEMI_RISERVA.test(senzaEmoji(e.name)); }
 
@@ -122,7 +125,7 @@ window.strCopri = function(c) {
         'Polpacci: squat e stacchi li allenano poco, un esercizio dedicato a settimana.', 3, 15);
     else proteggi(e => /calf raise/i.test(senzaEmoji(e.name)));
     if (sedute.some(sd => sd.esercizi.some(strEspinta)) && !ha(STR_TIRATE_ALTE))
-      aggiungi(['Reverse Pec Deck', 'Face Pull', 'Alzate Posteriori (Reverse Fly)', 'Y-Raise su Panca Inclinata'], tipoDi(/pull|upper|fullbody|punti/),
+      aggiungi(['Reverse Pec Deck', 'Face Pull', 'Alzate Posteriori (Reverse Fly)', 'Y-Raise su Panca Inclinata', 'Y-Raise a Corpo Libero'], tipoDi(/pull|upper|fullbody|punti/),
         'Deltoidi posteriori: le spinte lavorano la parte davanti della spalla, qui si bilancia il dietro.', 2, 15);
     else proteggi(e => STR_TIRATE_ALTE.test(senzaEmoji(e.name)));
   }
@@ -256,6 +259,10 @@ function strAntagonisti(a, b) {
   return (ua === 'Bicipiti' && ub === 'Tricipiti') || (ua === 'Tricipiti' && ub === 'Bicipiti') || (ua === 'Quadricipiti' && ub === 'Femorali') || (ua === 'Femorali' && ub === 'Quadricipiti');
 }
 function strPuoSuperserie(e) { return !isTimeBased(e.name) && strMeta(e).group !== 'core' && tipoCarico(e.name) !== 'pesante'; }
+/* ORD-03 (W2-T6; ACSM 2009: grandi gruppi prima dei piccoli): un multiarticolare di spalle o braccia e «piccolo», uno di gambe o di glutei (squat, affondo, cerniera dell anca anche al cavo, spinta d anca)
+   e «basso». Li usano ordinaSedute (completamenti.js) e strSuperserie: una coppia che porta il partner subito dopo il primo non lo mette prima di un multiarticolare di gambe che lo precedeva */
+window.strPiccoloMulti = function(e) { const m = strMeta(e); return m.type === 'compound' && !isTimeBased(e.name) && (m.group === 'spalle' || m.group === 'braccia'); };
+window.strBassoMulti = function(e) { const m = strMeta(e); return m.type === 'compound' && !isTimeBased(e.name) && (eMultiDiGambe(e) || SLOT_DEF.glutSpinta(m)); };
 /* mette in coppia (adiacenti, il secondo col segno `superset`) gli antagonisti; ritorna quante coppie */
 window.strSuperserie = function(sd, max) {
   const es = sd.esercizi;
@@ -266,7 +273,8 @@ window.strSuperserie = function(sd, max) {
     let j = -1;
     for (let k = i + 1; k <= Math.min(es.length - 1, i + 3); k++) {
       /* stesso numero di serie (W0-T7, collaudo DUR-01): il modello del tempo conta tanti giri quanti ne fa l esercizio con piu serie, e una coppia 5+2 sovrastima i minuti */
-      if (strPuoSuperserie(es[k]) && strAntagonisti(es[i], es[k]) && strTier(es[i]) === strTier(es[k]) && es[i].sets === es[k].sets) { j = k; break; }
+      if (strPuoSuperserie(es[k]) && strAntagonisti(es[i], es[k]) && strTier(es[i]) === strTier(es[k]) && es[i].sets === es[k].sets &&
+        !(k > i + 1 && strPiccoloMulti(es[k]) && es.slice(i + 1, k).some(strBassoMulti))) { j = k; break; }   /* ORD-03: non scavalca un multiarticolare di gambe */
     }
     if (j === -1) continue;
     if (j > i + 1) es.splice(i + 1, 0, es.splice(j, 1)[0]);

@@ -219,7 +219,9 @@ test('REC-04 ponte (B13/B33): con le ginocchia dolenti restano i quadricipiti, a
     n++;
     const nomi = [].concat(...p.sedute.map(s => s.esercizi.map(e => e.name)));
     assert.ok(nomi.some(x => app.g('bersaglioDi')(x) === 'quadricipiti'), luogo + '/' + level + '/' + days + '/' + minutes + ': nessun quadricipite in ' + nomi.map(pulito).join(', '));
-    assert.ok(p.note.some(x => /^Ginocchia:/.test(x)), 'la nota delle ginocchia nel programma');
+    /* P4-F (REC-04): la nota generica di SCALE_DOLORE («Ginocchia: prima delle gambe leg extension isometrica...») lascia il posto alla nota vera della zona, che comincia con «Ginocchia, esclusi...»
+       e nomina gli esercizi che restano (tests/fastidi.test.js): qui basta che la nota delle ginocchia ci sia */
+    assert.ok(p.note.some(x => /^Ginocchia(, esclusi per il fastidio|: restano|: se il fastidio supera)/.test(x)), 'la nota delle ginocchia nel programma');
   }))));
   assert.strictEqual(n, 72);
   assert.deepStrictEqual(app.errori, []);

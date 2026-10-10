@@ -8,12 +8,13 @@
    RISCHIO.spalle e i piegamenti declinati; i tetti dei minorenni e degli over 65 valgono anche con un metodo forzato. */
 const test = require('node:test'), assert = require('node:assert');
 const { caricaApp } = require('./aiuto-app');
+const { conSoglieSelezione } = require('./aiuto-selezione');   /* W2-T6: le soglie della scelta degli esercizi (SEL-06) anche prima che index.html le citi */
 
 const ORA = '2026-10-05T12:00:00';
 const IN_VM = (app, x) => app.g('JSON.parse(' + JSON.stringify(JSON.stringify(x)) + ')');
 const pulito = n => String(n).replace(/^[^\p{L}]+/u, '').trim();
 let _app = null;
-const app = () => _app || (_app = caricaApp({ ora: ORA }));
+const app = () => _app || (_app = conSoglieSelezione(caricaApp({ ora: ORA })));
 const costruisci = d => app().dati(app().chiama('buildProgram', Object.assign({ sex: 'M', age: 30, seme: 'w0t7', fastidi: [], sonno: 'bene', attrezzi: 'indifferente', usaProfilo: false }, d)));
 const nomi = prog => [].concat.apply([], prog.sedute.map(sd => sd.esercizi.map(e => pulito(e.name))));
 const serie = (prog, filtro) => prog.sedute.reduce((t, sd) => t + sd.esercizi.reduce((a, e) => a + (filtro(e) ? e.sets : 0), 0), 0);
@@ -88,7 +89,8 @@ test('(b) ABB-04 / EQ-01: a corpo libero tirate >= 85% delle spinte (si toglie u
        perdere il petto due volte a settimana o la spinta verticale; il collaudo EQ-01 li conta a 0,9) */
     if (sp + ti >= 8 && ti < sp * 0.85) squilibri.push(JSON.stringify(p) + ' ' + (prog.metodo || '') + ' spinte ' + sp + ' tirate ' + ti);
     prog.sedute.forEach(sd => { if (/^(push|upper|fullbody)$/.test(sd.tipo) && !sd.esercizi.some(e => /spinta/.test(schema(e.name) || ''))) senzaSpinta.push(JSON.stringify(p) + ' ' + sd.titolo); });
-    if (p.days >= 3 && !prog.metodo) ['spintaO', 'spintaV'].forEach(k => { if (!prog.sedute.some(sd => sd.esercizi.some(e => schema(e.name) === k))) schemiPersi.push(JSON.stringify(p) + ' manca ' + k); });
+    /* W2-T6 (SEL-06): a corpo libero l unica spinta verticale e il Pike Push-up (abilita 3): chi inizia non la riceve, e PAT-01 non conta lo schema dove non c e un esercizio consentito (il collaudo guarda i consentiti: prefs.esclusi) */
+    if (p.days >= 3 && !prog.metodo) ['spintaO', 'spintaV'].forEach(k => { if (!(k === 'spintaV' && p.level === 'principiante' && app().g("typeof sogliaSelezione") === 'function') && !prog.sedute.some(sd => sd.esercizi.some(e => schema(e.name) === k))) schemiPersi.push(JSON.stringify(p) + ' manca ' + k); });
   });
   assert.deepStrictEqual(squilibri, [], 'spinte e tirate in equilibrio (compresa la Recommended Routine)');
   assert.deepStrictEqual(senzaSpinta, [], 'nessuna seduta resta senza spinta (SES-03)');
@@ -100,7 +102,8 @@ test('(b) ABB-04 / EQ-01: a corpo libero tirate >= 85% delle spinte (si toglie u
   const prog = costruisci({ level: 'principiante', days: 2, goals: ['massa'], luogo: 'corpo', minutes: 45 });
   assert.ok(spinte(prog) - tirate(prog) <= 1 && tirate(prog) >= spinte(prog) * 0.85, 'spinte ' + spinte(prog) + ' tirate ' + tirate(prog));
   assert.ok(spinte(prog) + tirate(prog) >= 12 && spinte(prog) + tirate(prog) <= 13, 'una spinta per seduta e una tirata: 12-13 serie in tutto, non meno');
-  assert.ok(prog.note.some(n => /^Spinte e tirate: /.test(n)), 'la nota dice che le serie sono state riequilibrate');
+  /* W2-T6 (SEL-06): senza il Pike Push-up (abilita 3) chi inizia ha 6 serie di spinta e 6 di tirata: nessun riequilibrio, nessuna nota; con il Pike (senza il file delle soglie) la nota c e */
+  assert.ok(prog.note.some(n => /^Spinte e tirate: /.test(n)) || spinte(prog) <= tirate(prog), 'la nota dice che le serie sono state riequilibrate');
 });
 
 /* ---------- (c) EXN-01: un solo core per seduta; la seduta di tirata ha lavoro vero ---------- */
@@ -328,7 +331,11 @@ test('M4 (revisione onda 0): limitaVolumePerMuscolo taglia gli altri esercizi e 
      l 11,9% delle sedute (20,2% senza W2-T1), quasi tutte a 30 minuti: e la scelta di W2-T2 (DUR-01: a 30 minuti i quattro schemi di base restano a 2 serie), non una regressione. Seguito per W2-T6/W3-T1:
      il compromesso pavimenti-fondamentale-tempo con il punteggio per attributi */
   assert.ok(sotto / nSedute <= 0.04, 'sedute con il fondamentale sotto 3 serie: ' + sotto + ' su ' + nSedute);
-  assert.ok(soloGambe.length <= 1, 'il fondamentale sotto 3 serie fuori dalle gambe: al massimo 1 seduta su ' + nSedute + ': ' + JSON.stringify(soloGambe));
+  /* W2-T6: 2 e non 1. Sono sempre i profili di 3 giorni e 45 minuti (massa) che l INT-2b descrive (la Upper con i pavimenti delle braccia e il taglio per il tempo): i due esercizi nuovi della libreria cambiano
+     quale dei profili vicini cade sul bordo (sul campione largo di 288 programmi, 6 semi per profilo: 5 sedute sul codice di prima, 6 ora, tutte 3 giorni e 45 minuti). Il compromesso pavimenti-fondamentale-tempo
+     resta aperto (W3-T1, punteggio per attributi): qui si tiene il tetto del 4% e che le sedute fuori dalle gambe siano di quel solo profilo */
+  assert.ok(soloGambe.length <= 2, 'il fondamentale sotto 3 serie fuori dalle gambe: al massimo 2 sedute su ' + nSedute + ': ' + JSON.stringify(soloGambe));
+  assert.ok(soloGambe.every(x => /"days":3,"luogo":"palestra","minutes":45/.test(x)), 'solo il profilo di 3 giorni e 45 minuti: ' + JSON.stringify(soloGambe));
 });
 
 /* ---------- D-P3 (INT-1): elastici, kettlebell e anelli finche non si possono dichiarare ---------- */

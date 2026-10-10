@@ -62,8 +62,8 @@ function tastoOccupato(ev) {
 /* attrezzi e fastidi dell utente: solo con il consenso ai dati, come il resto del coach */
 function prefsOccupato() {
   const p = (coachAttivo() && getProfile()) || {};
-  return { luogo: p.luogo || 'palestra', fastidi: (p.fastidi || []).filter(f => f !== 'nessuno'),
-    attrezziPalestra: p.attrezziPalestra || null, graditi: p.graditi || [], odiati: p.odiati || [] };
+  return Object.assign({ luogo: p.luogo || 'palestra', fastidi: (p.fastidi || []).filter(f => f !== 'nessuno'),
+    attrezziPalestra: p.attrezziPalestra || null, graditi: p.graditi || [], odiati: p.odiati || [] }, typeof attrezziSalvati === 'function' ? attrezziSalvati(p, null) : {});   /* CAS-01 (W2-T5) */
 }
 /* Stesso muscolo bersaglio (non solo stesso gruppo: un curl non diventa un pushdown).
    In ordine: stesso movimento, stesso tipo (multiarticolare o isolamento), attrezzo DIVERSO
@@ -169,9 +169,12 @@ window.sostituisciOggi = function(idx, i) {
   const fatte = ult ? ult.sets.filter(x => x.done) : [];
   const pp = fatte.length ? null : pesoPartenza(nuovo.name);
   const peso = fatte.length ? (Number(fatte[fatte.length - 1].weight) || 0) : pp.peso;
+  /* REC-04 (onda 5): la nota per zona della scheda non vale per l esercizio scelto qui: se carica una zona dichiarata porta la sua cautela nella nota del coach (sicurezza/fastidi.js) */
+  const cautela = typeof notaCautelaFastidio === 'function' ? notaCautelaFastidio(nuovo.name, prefsOccupato().fastidi) : '';
+  const nota = [pp && pp.stimato ? pp.motivo : '', cautela].filter(Boolean).join(' \u2022 ');
   list[idx] = normalizeExerciseRecord({ name: nuovo.name, sets: cur.sets, reps: reps, weight: peso, rest: nuovo.rest,
     superset: cur.superset, addedBy: cur.addedBy, sostituito: orig, sostituitoIl: ymd(new Date()),
-    stimato: pp && pp.stimato ? pp.fonte : undefined, coachNote: pp && pp.stimato ? pp.motivo : undefined, coachTipo: pp && pp.stimato ? 'nuovo' : undefined });
+    stimato: pp && pp.stimato ? pp.fonte : undefined, coachNote: nota || undefined, coachTipo: nota ? 'nuovo' : undefined });
   saveData(data);
   dopoSceltaOccupato(idx);
   showUndo(trP('%s al posto di %s, solo per oggi', trEs(nuovo.name), trEs(orig.name)), () => {

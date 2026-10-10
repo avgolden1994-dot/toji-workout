@@ -20,6 +20,24 @@ function categoriaDi(nome) {
   return Object.keys(CATEGORIE).find(k => CATEGORIE[k].gruppi.indexOf(m.group) !== -1) || null;
 }
 
+/* La seduta di oggi come sara quando si apre (INT-3a: prima la scheda Oggi contava le serie del piano salvato, 23 e 65 minuti alla settimana 1 contro le 18 e 54 della seduta):
+   per ogni esercizio carico, ripetizioni, serie e pausa che da la catena dei carichi (caricoProssimo con la voce del piano, come carichiDelGiorno quando si apre la seduta: rampa di
+   MES-03, scarico di MES-05, rientro di RIC-05, prima volta di INT-04), la durata con la stessa stima del generatore (CAS-05, B36: riscaldamento, cambi, lati, coppie) e quanti carichi salgono.
+   Senza consenso (o se la catena non risponde) l esercizio resta come sta nel piano. */
+function stimaSeduta(lista) {
+  let alzati = 0;
+  const esercizi = lista.map(e => {
+    if (!coachAttivo()) return e;
+    try {
+      const t = caricoProssimo(e.name, e.weight, e.repsBase !== undefined ? e.repsBase : e.reps, e.setsBase !== undefined ? e.setsBase : e.sets, e);
+      if (t.tipo === 'su') alzati++;
+      if (!(t.sets > 0)) return e;
+      return Object.assign({}, e, { weight: t.weight, reps: t.reps, sets: t.sets, rest: (e.restBase !== undefined ? e.restBase : e.rest) + (t.piuPausa || 0) });
+    } catch (err) { return e; }
+  });
+  return { esercizi: esercizi, serie: esercizi.reduce((a, e) => a + e.sets, 0), minuti: Math.round(durataSeduta(esercizi)), alzati: alzati };
+}
+
 /* Serie previste (settimana tipo) e fatte (storico dal lunedi a oggi) */
 window.obiettiviSettimana = function() {
   const out = {};
@@ -27,7 +45,11 @@ window.obiettiviSettimana = function() {
   const data = loadData();
   DAYS.forEach(d => {
     if (isRestDay(d)) return;
-    (data[d] || []).forEach(e => { const c = categoriaDi(e.name); if (c) out[c].previste += Number(e.setsBase || e.sets) || 0; });
+    /* le serie previste sono quelle del piano di questa settimana (rampa di MES-03, scarico di MES-05: serieDelPianoQuestaSettimana), non il picco: INT-3a, P3-B */
+    (data[d] || []).forEach(e => {
+      const c = categoriaDi(e.name), picco = Number(e.setsBase || e.sets) || 0;
+      if (c) out[c].previste += typeof serieDelPianoQuestaSettimana === 'function' ? serieDelPianoQuestaSettimana(e.name, picco) : picco;
+    });
   });
   const lun = lunediDi(new Date());
   loadHistory().forEach(h0 => {
@@ -105,13 +127,9 @@ window.renderOggi = function() {
     html += '<div class="og-wname">Niente in programma</div><div class="og-muted">Per oggi non c’è una scheda.</div>' +
       '<button class="btn-start-workout" onclick="switchTab(\'allenamento\')">Scegli un allenamento</button>';
   } else {
-    const serie = lista.reduce((a, e) => a + e.sets, 0);
-    const minuti = Math.round(durataSeduta(lista));   /* CAS-05, B36: la stessa stima del generatore (riscaldamento, cambi, lati, coppie), non piu 30 s + pausa a serie senza gli 8 minuti fissi */
-    let alzati = 0;
-    if (coachAttivo()) lista.forEach(e => {
-      try { if (caricoProssimo(e.name, e.weight, e.repsBase !== undefined ? e.repsBase : e.reps, e.setsBase !== undefined ? e.setsBase : e.sets).tipo === 'su') alzati++; } catch (err) {}
-    });
-    const anteprima = lista.map(e =>
+    const stima = stimaSeduta(lista);
+    const serie = stima.serie, minuti = stima.minuti, alzati = stima.alzati;
+    const anteprima = stima.esercizi.map(e =>
       '<div class="og-ex"><span class="og-exfig">' + (findExercise(e.name) ? muscleFigure(findExercise(e.name).group) : '') + '</span>' +
       '<span class="og-exname">' + escapeHtml(e.name.replace(EMOJI_TESTA, '')) + '</span>' +
       '<span class="og-exsr">' + e.sets + ' \u00D7 ' + e.reps + (isTimeBased(e.name) ? ' s' : '') + (perLato(e.name) ? ' <span>per lato</span>' : '') + (e.weight ? ' \u2022 ' + e.weight + ' kg' : '') + '</span></div>').join('') +

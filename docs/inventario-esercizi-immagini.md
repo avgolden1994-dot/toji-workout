@@ -6,9 +6,9 @@ Generato con uno script node che legge `EXERCISE_LIBRARY` (`js/dati/libreria-ese
 
 | Voce | Valore |
 |---|---|
-| Esercizi nel catalogo (`EXERCISE_LIBRARY`) | 169 totali (140 + 29 nuovi di W1-T5; dei 140: 139 nel branch + 1 da altro branch) |
+| Esercizi nel catalogo (`EXERCISE_LIBRARY`) | 171 totali (140 + 29 nuovi di W1-T5 + 2 di W2-T6; dei 140: 139 nel branch + 1 da altro branch) |
 | Con immagine (campo presente e file esistente) | 19 |
-| Senza immagine (mancanti) | 150 su 169 (121 + i 29 di W1-T5, che escono senza disegno per scelta: D-P2) |
+| Senza immagine (mancanti) | 152 su 171 (121 + i 29 di W1-T5 + i 2 di W2-T6, che escono senza disegno per scelta: D-P2) |
 | Di cui non ancora presenti in questo branch | 1 (n. 140 Squat Sumo, da `claude/hopeful-thompson-uthd8f`) |
 | File in `esercizi/` | 20 (tutti SVG) |
 | File orfani (non referenziati) | 1 (`ex-02-panca-inclinata-su-a.svg`) |
@@ -361,6 +361,8 @@ Controlli: file referenziati ma assenti = 0; voci di mappa non presenti in libre
 | 167 | Face Pull con Elastico | Spalle | `img/face-pull-con-elastico.png` |
 | 168 | Scrollate con Manubri | Spalle | `img/scrollate-con-manubri.png` |
 | 169 | Suitcase Carry | Core | `img/suitcase-carry.png` |
+| 170 | Hip Hinge a Corpo Libero | Glutei | `img/hip-hinge-a-corpo-libero.png` |
+| 171 | Y-Raise a Corpo Libero | Spalle | `img/y-raise-a-corpo-libero.png` |
 
 Rinviati, non in libreria (il nome è preso per altro da una regex del generatore, vedi `docs/in-arrivo/w1-t5.json`): Reverse Nordic, Wrist Curl, Reverse Wrist Curl, Reverse Crunch (dati completi nel commit 494225b).
 

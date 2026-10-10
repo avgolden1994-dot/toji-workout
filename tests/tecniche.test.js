@@ -103,7 +103,10 @@ test('MAV-01: la matrice tecnica x classe x persona x vincolo: cifre e booleani 
   assert.deepStrictEqual(Array.from(new Set(righe.filter(r => r.pn === 'principiante' && r.ok).map(r => r.t))).sort(), ['picco', 'superserie', 'tempo']);
   /* gli over 65: potenza e cluster solo su macchina guidata (C); la superserie solo tra macchine e cavi */
   assert.strictEqual(conta(r => r.pn === 'over65' && (r.t === 'potenza' || r.t === 'cluster') && r.es.classe !== 'C'), 0);
-  assert.ok(conta(r => r.pn === 'over65' && r.t === 'potenza' && r.es.classe === 'C' && r.vn === 'base') > 0, 'la potenza sulle macchine guidate c e');
+  /* P4-S (ETA-08 parte a, D-P21 n. 5): con sicurezza/popolazioni.js la potenza c'e solo dopo le 8 settimane di base, e nessun vincolo di questa matrice e dopo la base (nessuna
+     settimana = la generazione, scarico alla 4a, prima settimana): qui non compare; la potenza dopo la base e provata in tests/popolazioni.test.js */
+  if (app().g("typeof potenzaAmmessaOver65 === 'function'")) assert.strictEqual(conta(r => r.t === 'potenza'), 0, 'nessuna potenza nella base (P4-S)');
+  else assert.ok(conta(r => r.pn === 'over65' && r.t === 'potenza' && r.es.classe === 'C' && r.vn === 'base') > 0, 'la potenza sulle macchine guidate c e');
   righe.filter(r => r.pn === 'over65' && r.t === 'superserie' && r.ok).forEach(r => assert.ok(['macchina', 'cavo'].indexOf(attr(r.es.nome).attrezzo) !== -1, 'over 65 in superserie: ' + r.es.nome));
   assert.strictEqual(conta(r => r.t === 'potenza' && r.pn !== 'over65'), 0, 'la potenza e solo degli over 65');
   /* dai 50 ai 64 anni le tecniche verso il cedimento solo sugli isolamenti (D, E): mai sui multiarticolari liberi */
@@ -280,7 +283,9 @@ test('i programmi veri: 360 profili con seme fisso: nessuna tecnica dove non dev
   });
   assert.deepStrictEqual(colpe, []);
   assert.strictEqual(programmi().length, 360);
-  assert.ok(conTecnica > 100 && drop > 10 && myo > 5 && parziali > 20 && amrap > 0 && backoff > 0 && cluster > 5 && potenza > 5, 'il campione contiene tutte le tecniche: ' + JSON.stringify({ conTecnica, drop, myo, parziali, amrap, backoff, cluster, potenza }));
+  /* P4-S (ETA-08 parte a, D-P21 n. 5): con sicurezza/popolazioni.js i programmi nuovi degli over 65 non hanno la potenza (la base); senza, compare come prima */
+  const p4s = app().g("typeof potenzaAmmessaOver65 === 'function'");
+  assert.ok(conTecnica > 100 && drop > 10 && myo > 5 && parziali > 20 && amrap > 0 && backoff > 0 && cluster > 5 && (p4s ? potenza === 0 : potenza > 5), 'il campione contiene tutte le tecniche: ' + JSON.stringify({ conTecnica, drop, myo, parziali, amrap, backoff, cluster, potenza }));
 });
 
 test('i programmi veri: il budget non e mai superato (intermedio 1 per seduta e 2 a settimana, avanzato 2 e 6, gli altri 0) e una tecnica sullo stesso esercizio una volta a settimana', () => {

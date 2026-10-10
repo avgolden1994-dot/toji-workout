@@ -14,7 +14,11 @@
    - serieMaxEsercizio: chi inizia e i prudenti fanno al massimo COACH_PARAMETRI.serieMaxPrudente serie per esercizio (CAS-14, femorali, riempimento);
    - gruppiTecniche: le tecniche al cedimento (G2, G2b, G3) mai a chi inizia, ai minorenni, agli over 65 e in modalita prudente (MAV-02, MAV-03:
      Convenzione, prudenza); la superserie antagonista (G1b) vale per tutti. La matrice completa delle tecniche per persona e di W2-T3 (MAV-01).
-   modifiche e rirMin restano vuoti: li riempiono i task che li possiedono (dolore, popolazioni: W4-T1, W4-T2). tettoCarico 1 = nessun tetto.
+   modifiche e rirMin restano vuoti: li riempiono i task che li possiedono (dolore: W4-T1). tettoCarico 1 = nessun tetto.
+   Popolazioni (W4-T2, P4-S): i limiti che dipendono dalla SETTIMANA del programma (la base di 8 settimane degli over 65, il rientro dopo una pausa) non stanno nel programma,
+   che si ripete uguale ogni settimana, ma in sicurezza/popolazioni.js: il pavimento delle ripetizioni in riserva a ogni seduta (pavimentoRirPopolazioni, letto da rirBersaglio),
+   la potenza solo dopo la base (potenzaAmmessaOver65, letto dal cancello delle tecniche: nella generazione e la base) e i tetti della fase 'carico' 90. La gravidanza
+   (inGravidanza, REC-12 a) arriva qui come modalita prudente (chi.parq: la bandiera in Opzioni la tiene accesa), quindi con tutti i vincoli dei prudenti.
    Le fonti e le regole dei singoli numeri sono dove sono sempre state (ricette.js, tecniche.js, parametri.js): qui si decide solo CHI e vincolato.
    ============================================================ */
 function vincoliSicurezza(brief) {
@@ -37,6 +41,19 @@ function vincoliSicurezza(brief) {
   ['Front Squat', 'Tirate al Mento (Upright Row)', 'Ab Wheel'].map(nomeInLibreria).forEach(n => {
     if (n && (chi.cauto || chi.principiante)) vincoli.vietati[n] = 'abilita 3: non per i prudenti ne per chi inizia (SEL-06, collaudo SAF-05)';
   });
+  /* SEL-06 (W2-T6; assorbe PRI-05): abilita <= livello. Chi inizia e i prudenti (over 65, PAR-Q positivo, minorenni) non ricevono esercizi di abilita 3 (attributo `abilita` di attributi-esercizi.js: Affondi
+     Bulgari, Sissy Squat, Pike Push-up, Piegamenti Declinati, Dip, Trazioni libere, Stacco da Terra, Good Morning, Mountain Climber...): i tre elenchi di sopra erano a mano, il collaudo SAF-05 ne vedeva
+     uno solo (Pike) e una scheda per chi inizia a corpo libero aveva quattro esercizi di abilita 3 insieme. Un metodo famoso scelto dall utente (d.metodo: Starting Strength, StrongLifts...) porta i suoi
+     esercizi (lo Stacco da Terra): la regola non lo svuota. Si legge il dato, non il nome; senza il file delle soglie (soglie-selezione.js) resta quello di prima */
+  const abMax = typeof sogliaSelezione === 'function' ? sogliaSelezione('abilitaMax') : null;
+  const metodoDellUtente = !!(brief.grezzo && brief.grezzo.d && brief.grezzo.d.metodo && brief.grezzo.d.metodo !== 'coach');
+  if (abMax && (chi.principiante || chi.cauto) && !metodoDellUtente && typeof attributi === 'function' && regolaAttiva('SEL-06')) {
+    const massimo = chi.cauto ? abMax.prudente : abMax.principiante;
+    EXERCISE_LIBRARY.forEach(e => {
+      const a = attributi(e.name);
+      if (a && a.abilita > massimo && !vincoli.vietati[e.name]) vincoli.vietati[e.name] = 'abilita ' + a.abilita + ': non per chi inizia ne per i prudenti (SEL-06, collaudo SAF-05)';
+    });
+  }
   /* INT-2a (M5 della revisione dell onda 1): gli esercizi di avvio (attributo soloAvvio: Squat su Scatola, Sit-to-Stand dalla Panca) sono la progressione verso lo squat carico:
      li ricevono chi inizia e i prudenti. Prima, senza nessuna regola, lo Squat su Scatola entrava in 951 programmi su 1800 di una griglia di prova, anche degli avanzati,
      al posto di uno squat con un carico. Si legge l attributo, non il nome */

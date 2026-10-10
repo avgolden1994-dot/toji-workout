@@ -110,8 +110,10 @@ const VOLUME_IMPORTANZA = { petto: 1, dorsali: 1, quadricipiti: 1, femorali: 1, 
   addome: 0.35, adduttori: 0.25, abduttori: 0.25, deltoide_anteriore: 1 };
 /* pesi del solutore: dicono solo in che ordine prova le mosse (non sono soglie del coach). Per ogni serie e per bersaglio:
    sotto il mantenimento 4, fino al minimo 2,5, fino al bersaglio 1,5 (i prioritari valgono 1,4 volte), oltre il bersaglio niente (il tempo è un tetto), oltre il massimo -3;
-   tutto diviso per max(8, bersaglio): contano i deficit RELATIVI, senza che un muscolo piccolo pesi più di uno grande. */
-const VOLUME_PESI = { mantenimento: 4, minimo: 2.5, bersaglio: 1.5, importanzaPriorita: 1.4, eccesso: 3, direttePavimento: 3, riferimentoMin: 8, frequenza: 0.35, morbidoSeduta: 0.1, duroSeduta: 1, equilibrio: 0.2, recupero: 0.3, soglia: 0.004, sogliaScambio: 0.01, giriMax: 160 };
+   tutto diviso per max(8, bersaglio): contano i deficit RELATIVI, senza che un muscolo piccolo pesi più di uno grande.
+   P3-G: dolente = quanto costa una serie di un esercizio che carica una zona dolente dichiarata (stress >= 1, esercizioCaricaIlFastidio): a parità di volume il solutore toglie prima quella e non la sceglie
+   per le serie in più (una serie nella fascia vale 1,5 / 10 = 0,15: la cautela non toglie una serie che serve). */
+const VOLUME_PESI = { mantenimento: 4, minimo: 2.5, bersaglio: 1.5, importanzaPriorita: 1.4, eccesso: 3, direttePavimento: 3, riferimentoMin: 8, frequenza: 0.35, morbidoSeduta: 0.1, duroSeduta: 1, equilibrio: 0.2, recupero: 0.3, dolente: 0.03, soglia: 0.004, sogliaScambio: 0.01, giriMax: 160 };
 
 /* volume della settimana per scopo (come tipoObiettivoDi di tempo.js: tre tipi) */
 function volumeTipo(goals) { const g = goals[0]; return g === 'forza' ? 'forza' : ((g === 'salute' || g === 'dimagrimento') ? 'generale' : 'ipertrofia'); }
@@ -268,7 +270,9 @@ function volumeMotore(brief, sedute, b, opz) {
       w0: imp * PS.mantenimento / ref, w1: imp * PS.minimo / ref, w2: imp * PS.bersaglio / ref, w4: PS.eccesso / ref, wd: imp * PS.direttePavimento / ref };
   });
   const frequenzaOk = nS >= 2 && b.giorni >= 3;
-  const freqU = frequenzaOk ? VOLUME_FREQUENZA_UNITA.map(u => iU[u]) : [];
+  /* P3-G (FRQ-01): la frequenza delle unità grandi e delle braccia (almeno 2 sedute che contano) vale anche con 2 giorni: due full body sono due sedute, e prima il solutore non la guardava (i tagli
+     lasciavano lo squat o la spinta in una seduta sola: FRQ-01:quadricipiti a 2 giorni e 30 minuti, FRQ-01:tricipiti) */
+  const freqU = nS >= 2 ? VOLUME_FREQUENZA_UNITA.map(u => iU[u]) : [];
   /* la frequenza si conta col più severo dei due conteggi, gli attributi e il credito di prima (creditoSerie): una seduta «conta» solo se vale per tutti e due (FRQ-01) */
   const GRUPPO_DI_PRIMA = { petto: 'petto', dorsali: 'schiena', quadricipiti: 'quadricipiti', femorali: 'femorali', grande_gluteo: 'glutei', bicipiti: 'bicipiti', tricipiti: 'tricipiti' };
   const freqG = freqU.map(i => GRUPPO_DI_PRIMA[U[i]]);
@@ -283,7 +287,26 @@ function volumeMotore(brief, sedute, b, opz) {
   GR.forEach((g, h) => { iG[g] = h; });
   const sommaG = GR.map(g => VOLUME_GRUPPI_SOMMA.indexOf(g) !== -1);
   const G = sedute.map(() => new Array(nG).fill(0));   /* serie per gruppo del recupero e per seduta, indicizzate come GR (INT-2b: niente chiavi di testo nel ciclo caldo) */
-  let PUSH = 0, PULL = 0, SCHIENA = 0;
+  let PUSH = 0, PULL = 0, SCHIENA = 0, TV = 0, TO = 0, DOL = 0;   /* TV, TO: serie di tirata verticale e orizzontale della settimana (pianiTirata); DOL: serie che caricano una zona dolente */
+  const fastidiDich = (prefs && prefs.fastidi) || [];
+  const pianiT = sogliaVolume('pianiTirata');
+  /* il piano di tirata di un esercizio, come lo conta il collaudo EQ-02: 1 verticale (multiarticolare per i dorsali, o il pullover di riserva: schema tirataV negli attributi), 2 orizzontale (multiarticolare per lo spessore), 0 altro */
+  const pianoTirata = (nome) => {
+    if (isTimeBased(nome)) return 0;
+    const m = findExercise(nome) || {}, bers = bersaglioDi(nome);
+    if (m.type === 'compound') return bers === 'dorsali' ? 1 : (bers === 'schiena_spessore' ? 2 : 0);
+    const a = typeof attributi === 'function' ? attributi(nome) : null;
+    return bers === 'dorsali' && a && a.schema === 'tirataV' ? 1 : 0;
+  };
+  /* P3-G (EQ-02): una mossa su una tirata non porta il piano piu povero sotto la quota (o piu sotto): non toglie serie al piano in minoranza, non ne aggiunge a quello in maggioranza. Un piano che non c e
+     (nessuna tirata verticale possibile) non blocca le altre */
+  const pianiOk = (pt, d) => {
+    const v = TV + (pt === 1 ? d : 0), o = TO + (pt === 2 ? d : 0), t = v + o;
+    if (t < pianiT.serieMin || Math.min(v, o) >= pianiT.quota * t - 1e-9) return true;
+    const minoranza = v < o ? 1 : 2, nMin = Math.min(v, o);
+    if (pt === minoranza) return d > 0;
+    return d < 0 || (nMin === 0 && (minoranza === 1 ? TV : TO) === 0);
+  };
   const SCHIENA_S = sedute.map(() => 0);   /* le serie di schiena (dorsali e spessore insieme) per seduta: il tetto duro di 11 vale per il gruppo, come nel collaudo (SES-01) */
   const giorno = sedute.map(sd => giornoSeduta(sd));
   const consecutive = [], vicini = sedute.map(() => []);
@@ -317,6 +340,7 @@ function volumeMotore(brief, sedute, b, opz) {
     if (!comp && prefs && prefs.fastidi && prefs.fastidi.length && typeof esercizioCaricaIlFastidio === 'function' && esercizioCaricaIlFastidio(e.name, prefs.fastidi)) c = Math.min(c, sogliaVolume('serieMaxIsolamentoConFastidio'));
     if (typeof STR_FATICA !== 'undefined' && STR_FATICA.test(e.name)) c = Math.min(c, 3);        /* ABB-09 */
     if (typeof RX_NORDIC !== 'undefined' && RX_NORDIC.test(senzaEmoji(e.name))) c = Math.min(c, PARAM_NORDIC.serieMax);   /* B1 */
+    if (typeof RIPIEGO_HINGE !== 'undefined' && RIPIEGO_HINGE.test(senzaEmoji(e.name))) c = Math.min(c, sogliaVolume('ripiegoCerniera').serieMax);   /* INT-2f: il ripiego al massimo 2 serie */
     return c;
   };
   const nuovoRec = (s, e, fond) => {
@@ -327,7 +351,8 @@ function volumeMotore(brief, sedute, b, opz) {
     GR.forEach((g, h) => { const v = VOLUME_GRUPPI_RECUPERO[g].map(u => cr[u] || 0), c0 = sommaG[h] ? v.reduce((t, x) => t + x, 0) : Math.max.apply(null, v), c = Math.max(c0, sommaG[h] ? 0 : (vecchio[g] || 0)); if (c > 0) gr.push([h, c]); });
     const tempo = !isTimeBased(e.name);
     return { s: s, e: e, cr: crv, gr: gr, leg: vecchio, push: tempo && strEspinta(e), pull: tempo && strEtirata(e), tm: tempoSerie(e), sets0: e.sets, cap: capSerie(e), fond: !!fond, min: Math.min(e.sets, fond ? 3 : 2), bloccato: false,
-      sch: Math.max(cr.dorsali || 0, cr.schiena_spessore || 0),
+      sch: Math.max(cr.dorsali || 0, cr.schiena_spessore || 0), pt: pianoTirata(e.name),
+      dol: fastidiDich.length && typeof esercizioCaricaIlFastidio === 'function' && esercizioCaricaIlFastidio(e.name, fastidiDich) ? 1 : 0,
       comp: tempo && (findExercise(e.name) || {}).type === 'compound', pes: tipoCarico(e.name) === 'pesante' };   /* ABB-08: multiarticolare (non a tempo) e carico pesante */
   };
   const muovi = (r, d) => {
@@ -360,6 +385,8 @@ function volumeMotore(brief, sedute, b, opz) {
     }
     if (r.push) PUSH += d;
     if (r.pull) PULL += d;
+    if (r.pt === 1) TV += d; else if (r.pt === 2) TO += d;
+    if (r.dol) DOL += d;
     SCHIENA += r.sch * d; SCHIENA_S[s] += r.sch * d;
   };
   sedute.forEach((sd, s) => {
@@ -392,6 +419,16 @@ function volumeMotore(brief, sedute, b, opz) {
     return !(dopo > 2 && dopo > f.e.sets);
   };
 
+  /* P3-G (FRQ-01, collaudo: una seduta conta da serieMinSeduta serie frazionarie): la frequenza di un unità è la somma delle quote delle sue `seduteMin` sedute MIGLIORI (quota di una seduta = min(1, serie
+     frazionarie / serieMinSeduta)), non di tutte. Prima tre sedute da 1 serie frazionaria (un rematore da 2 serie per seduta: 0,67 ciascuna) valevano 2 sedute piene, il solutore non vedeva il buco e il
+     collaudo non contava nessuna seduta (FRQ-01:bicipiti, FRQ-01:tricipiti) */
+  const quoteFreq = new Array(nS).fill(0);
+  const frequenzaMigliori = (quota) => {
+    for (let s = 0; s < nS; s++) quoteFreq[s] = quota(s);
+    let n = 0;
+    for (let k = 0; k < seduteMin && k < nS; k++) { let m = -1, j = -1; for (let s = 0; s < nS; s++) if (quoteFreq[s] > m) { m = quoteFreq[s]; j = s; } n += m; quoteFreq[j] = -1; }
+    return n;
+  };
   /* ---- utilità ---- */
   const utilita = () => {
     let r = 0;
@@ -413,7 +450,7 @@ function volumeMotore(brief, sedute, b, opz) {
     /* oltre il tetto duro (SES-01) una serie costa quanto un muscolo sotto il minimo: uno stato di partenza fuori tetto si ripara (le sedute senza unità sopra il tetto morbido non aggiungono niente: si saltano) */
     for (let s = 0; s < nS; s++) { if (sopraMorbido[s] === 0) continue; for (let i = 0; i < nU; i++) { const o = S[s][i] - P[i].capMorbido; if (o > 0) { r -= o * PS.morbidoSeduta; const d = S[s][i] - P[i].capDuro; if (d > 0) r -= d * PS.duroSeduta; } } }
     for (let k = 0; k < freqU.length; k++) {
-      if (freqSporca[k]) { const i = freqU[k], g = freqG[k]; let n = 0; for (let s = 0; s < nS; s++) n += Math.min(1, Math.min(S[s][i], g ? (GL[s][g] || 0) : 99) / serieMinSeduta); nFreq[k] = n; freqSporca[k] = false; }
+      if (freqSporca[k]) { const i = freqU[k], g = freqG[k]; nFreq[k] = frequenzaMigliori(s => Math.min(1, Math.min(S[s][i], g ? (GL[s][g] || 0) : 99) / serieMinSeduta)); freqSporca[k] = false; }
       r += PS.frequenza * Math.min(seduteMin, nFreq[k]);
     }
     for (let k = 0; k < dirU.length; k++) {
@@ -421,6 +458,7 @@ function volumeMotore(brief, sedute, b, opz) {
       r += PS.frequenza * Math.min(seduteMin, nDir[k]);
     }
     if (PUSH + PULL >= minBilancio && PULL < rapportoTirate * PUSH) r -= (rapportoTirate * PUSH - PULL) * PS.equilibrio;
+    if (DOL > 0) r -= DOL * PS.dolente;   /* P3-G: la cautela con le zone dolenti dichiarate */
     if (sopraGruppo > 0) for (let s = 0; s < nS; s++) for (let h = 0; h < nG; h++) if (!sommaG[h] && G[s][h] > tettoGruppo) r -= (G[s][h] - tettoGruppo) * PS.duroSeduta;
     if (recuperoAttivo > 0) for (let k = 0; k < consecutive.length; k++) for (let h = 0; h < nG; h++) {   /* REC-01: due sedute in giorni consecutivi non hanno entrambe 4 serie frazionarie dello stesso grande muscolo */
       const m = Math.min(G[consecutive[k][0]][h], G[consecutive[k][1]][h]);
@@ -449,6 +487,7 @@ function volumeMotore(brief, sedute, b, opz) {
         for (let j = 0; j < vic.length; j++) if (G[vic[j]][h] >= minRec) return false;
       }
     } else if (!intero && e.sets + d < r.min) return false;
+    if (r.pt && !pianiOk(r.pt, d)) return false;   /* P3-G: EQ-02, i due piani di tirata */
     if ((r.push || r.pull) && !senzaEquilibrio) {   /* ABB-04: spinte e tirate non peggiorano uno squilibrio e non ne creano */
       const prima = squilibrio(), pu = PUSH + (r.push ? d : 0), pl = PULL + (r.pull ? d : 0);
       const dopoSq = (pu + pl >= minBilancio && pl < rapportoTirate * pu) ? rapportoTirate * pu - pl : 0;
@@ -500,9 +539,12 @@ function volumeMotore(brief, sedute, b, opz) {
   const femoraleSeduta = (e) => /leg curl|nordic|stacco|good morning|pull-through/i.test(senzaEmoji(e.name));   /* come SLOT_DEF.hinge e la flessione del ginocchio del collaudo */
   const rimovibile = (r, senzaVolume, senzaEquilibrio) => {
     const sd = sedute[r.s];
-    if (r.e.fisso || r.fond || sd.esercizi.length <= 3 || !consente(r, -r.e.sets, true, senzaEquilibrio)) return false;
+    if (r.e.fisso || r.e.cuffia || r.fond || sd.esercizi.length <= 3 || !consente(r, -r.e.sets, true, senzaEquilibrio)) return false;   /* PCO-08 (W2-T6): il lavoro per la cuffia che la spalla dolente chiede (copriCuffia) non si toglie per il volume */
     const att = typeof attributi === 'function' ? attributi(r.e.name) : null;
     if (att && att.soloAvvio) return false;   /* lo squat di avvio (Squat su Scatola, Sit-to-Stand) lo toglie la progressione, non il volume (M5) */
+    /* INT-3a (ABB-03, trovato da tests/browser/coerenza-schede.js): l unico esercizio di core della settimana resta. La sostituzione (senzaVolume) lo toglieva per far posto a un isolamento
+       (Pallof Press fuori dal giorno upper di un avanzato con l obiettivo glutei) e il core restava coperto solo dai crediti dei multiarticolari: la settimana non aveva piu un esercizio per il tronco */
+    if ((findExercise(r.e.name) || {}).group === 'core' && !sedute.some(o => o.esercizi.some(x => x !== r.e && (findExercise(x.name) || {}).group === 'core'))) return false;
     const cat = categoria(r.e);
     if (cat) {   /* la seduta tiene gli schemi del suo tipo (SES-03) e la settimana tiene ogni schema (PAT-01) */
       const k = classeSeduta(cat, sd.tipo);
@@ -530,7 +572,7 @@ function volumeMotore(brief, sedute, b, opz) {
     if (sd.tipo === 'punti' && x.type === 'compound') return null;   /* il giorno dei punti deboli tiene l ordine di priorità: un multiarticolare in coda sarebbe dopo gli isolamenti (ORD-01, ORD-02) */
     if (usoSettimana(x.name) >= maxSettimana(x.name)) return null;
     if (typeof adattoAllaSeduta === 'function' && !adattoAllaSeduta(x, sd.tipo)) return null;
-    if (strRidondante(x, sd.esercizi) || strSquatDoppio(x, sd.esercizi)) return null;
+    if (strRidondante(x, sd.esercizi) || strSquatDoppio(x, sd.esercizi) || squatOltreMax(x, sd.esercizi)) return null;   /* ABB-02 (W2-T6): non la terza variante di squat o di affondo */
     const bers = bersaglioDi(x.name), stessi = sd.esercizi.filter(e => bersaglioDi(e.name) === bers && (findExercise(e.name) || {}).type === x.type && !isTimeBased(e.name)).length;
     if (bers && !isTimeBased(x.name) && stessi >= (((x.type === 'isolation' && (bers === 'bicipiti' || bers === 'tricipiti')) || (x.type === 'compound' && (bers === 'quadricipiti' || bers === 'grande_gluteo'))) ? 2 : 1)) return null;   /* RID-01 */
     if (x.group === 'core' && sd.esercizi.some(e => (findExercise(e.name) || {}).group === 'core')) return null;
@@ -647,12 +689,14 @@ function volumeMotore(brief, sedute, b, opz) {
     }).sort((a, c) => (W[iU[a]] / (P[iU[a]].target || 1)) - (W[iU[c]] / (P[iU[c]].target || 1))).slice(0, 4);
     /* con la seduta già piena (8 esercizi, 6 per chi inizia) l esercizio nuovo prende il posto di quello che costa meno al volume */
     const donatori = {};
-    const donatore = (s) => {
-      if (donatori[s] !== undefined) return donatori[s];
+    const donatore = (s, largo) => {
+      const k = s + (largo ? 'L' : '');
+      if (donatori[k] !== undefined) return donatori[k];
       let mig = null;
-      recs.forEach(r => { if (r.s !== s || !rimovibile(r)) return; const sets = r.e.sets; muovi(r, -sets); const du = utilita() - u0; muovi(r, sets); if (!mig || du > mig.du) mig = { r: r, du: du }; });
-      return (donatori[s] = mig ? mig.r : null);
+      recs.forEach(r => { if (r.s !== s || (largo && r.comp) || !rimovibile(r, largo)) return; const sets = r.e.sets; muovi(r, -sets); const du = utilita() - u0; muovi(r, sets); if (!mig || du > mig.du) mig = { r: r, du: du }; });   /* P3-G: il donatore largo e solo un isolamento (un isolamento al posto di un altro): un multiarticolare non lascia il posto a un curl */
+      return (donatori[k] = mig ? mig.r : null);
     };
+    const servonoDirette = (u) => { const i = iU[u]; return dirU.indexOf(i) !== -1 && sedute.filter((sd, s) => SD[s][i] >= 1).length < Math.min(seduteMin, nS); };
     /* INT-2b (velocità): le serie da togliere agli altri esercizi per far posto in una seduta al limite dei minuti dipendono dallo stato della seduta (il donatore tolto, le serie già
        tolte), non dal candidato: la k-esima scelta è la stessa per ogni esercizio nuovo provato nella stessa seduta. Si calcola una volta e si allunga solo quando ne servono di più */
     const tolteDi = {};
@@ -678,7 +722,7 @@ function volumeMotore(brief, sedute, b, opz) {
           const n = provaNuovo(s, x);
           if (!n) continue;
           provati++;
-          const don = n.pieno ? donatore(s) : null;
+          const don = n.pieno ? (donatore(s) || (servonoDirette(u) && SD[s][iU[u]] < 1 ? donatore(s, true) : null)) : null;
           if (n.pieno && !don) continue;
           const dt = 2 * n.r.tm + 1 - (don ? don.e.sets * don.tm + 1 : 0);   /* due serie e un cambio di esercizio (un minuto), meno quelle dell esercizio tolto */
           const sets = don ? don.e.sets : 0;

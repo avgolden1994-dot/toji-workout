@@ -117,7 +117,8 @@ test('briefCoach: la forma di B.2 (versione 2, seme, chi, obiettivi, agenda, pre
   assert.strictEqual(b.obiettivi.primo, 'salute');
   assert.strictEqual(b.obiettivi.fase, 'massa');   /* la fase guarda tutti gli obiettivi: nessun dimagrimento, il primo tra ricomposizione e massa = massa (anche se la massa e il secondo) */
   assert.strictEqual(b.obiettivi.modalita, 'generale');
-  assert.deepStrictEqual(b.agenda, { giorni: 3, minuti: 45, luogo: 'manubri', attrezziPalestra: null, passiPalestra: null, freqScelta: '2', indiciGiorni: null });
+  /* W2-T5 (CAS-01): il brief ha tre campi in piu, null se l utente non ha detto niente (regia/brief.js: attrezziCasa, manubriKg, extraPalestra); i campi di prima sono quelli di prima (contratto con W2-T6: solo aggiunte) */
+  assert.deepStrictEqual(b.agenda, { giorni: 3, minuti: 45, luogo: 'manubri', attrezziPalestra: null, passiPalestra: null, freqScelta: '2', indiciGiorni: null, attrezziCasa: null, manubriKg: null, extraPalestra: null });
   assert.deepStrictEqual(b.preferenze.priorita, ['spalle']);
   assert.deepStrictEqual(b.sicurezza.fastidi, ['ginocchia'], 'nessuno non e un fastidio');
   assert.strictEqual(b.sicurezza.vincoli, null, 'i vincoli li riempie vincoliSicurezza(brief)');
@@ -179,9 +180,15 @@ test('vincoliSicurezza: oggi le regole di prima: Nordic Curl, serie massime, tec
   const unaGamba = app().g("nomeInLibreria('Stacco Rumeno a una Gamba')");
   /* Onda 2c (SAF-05 del collaudo, tolleranza zero): anche Front Squat, Tirate al Mento e Ab Wheel (abilita 3) sono vietati a chi inizia e ai prudenti */
   const abilita3 = ['Front Squat', 'Tirate al Mento (Upright Row)', 'Ab Wheel'].map(n => app().g("nomeInLibreria('" + n + "')"));
+  /* W2-T6 (SEL-06): con il file delle soglie (soglie-selezione.js) la Sentinella vieta a chi inizia e ai prudenti OGNI esercizio di abilita 3 del dato (attributi-esercizi.js), non solo i tre elenchi a mano di prima;
+     senza il file restano i cinque di prima */
+  const conSoglie = app().g("typeof sogliaSelezione") === 'function';
+  const abilita3Dato = conSoglie ? app().json("EXERCISE_LIBRARY.filter(e => (attributi(e.name) || {}).abilita > 2).map(e => e.name)") : [];
+  const attesi = [nordic, unaGamba].concat(abilita3).concat(abilita3Dato.filter(n => [nordic, unaGamba].concat(abilita3).indexOf(n) === -1));
   [{ level: 'principiante' }, { age: 70 }, { age: 16 }, { parq: 'si' }].forEach(d => {
     const r = v(Object.assign({ level: 'avanzato' }, d));
-    assert.deepStrictEqual(Object.keys(r.vietati), [nordic, unaGamba].concat(abilita3), 'Nordic Curl, Stacco Rumeno a una Gamba e i tre di abilita 3 vietati per ' + stringa(d));
+    assert.deepStrictEqual(Object.keys(r.vietati).sort(), attesi.slice().sort(), 'Nordic Curl, Stacco Rumeno a una Gamba, i tre di abilita 3 di prima' + (conSoglie ? ' e ogni esercizio di abilita 3 del dato' : '') + ' vietati per ' + stringa(d));
+    assert.deepStrictEqual(Object.keys(r.vietati).slice(0, 5), [nordic, unaGamba].concat(abilita3), 'in testa i cinque di prima, nell ordine di prima');
   });
   assert.deepStrictEqual(Object.keys(v({ level: 'avanzato', fastidi: ['ginocchia'] }).vietati).sort(), [nordic].concat(avvio).sort(), 'Nordic Curl vietato per le ginocchia dolenti (e gli esercizi di avvio, come per ogni avanzato)');
   [{ level: 'principiante' }, { age: 70 }, { age: 16 }, { parq: 'si' }].forEach(d => {
@@ -194,7 +201,7 @@ test('vincoliSicurezza: oggi le regole di prima: Nordic Curl, serie massime, tec
   assert.deepStrictEqual(v({}).rirMin, {});
   /* i vincoli arrivano a consentito(): prefs.esclusi li legge */
   const p = costruisci({ level: 'principiante' });
-  assert.deepStrictEqual(p.prefs.esclusi, [nordic, unaGamba].concat(abilita3));
+  assert.deepStrictEqual(p.prefs.esclusi.slice().sort(), attesi.slice().sort());
   assert.ok(!p.sedute.some(sd => sd.esercizi.some(e => /nordic|front squat|tirate al mento|ab wheel/i.test(e.name))));
 });
 
@@ -225,7 +232,9 @@ test('specialitaStruttura: oggi nessuna (null); un task dopo registra la sua mod
     const b2 = app().g('(() => { const b = briefCoach(' + stringa(BASE) + ', {}); b.obiettivi.modalita = "prova"; return b; })()');
     assert.strictEqual(app().dati(app().chiama('specialitaStruttura', b2)).split.nome, 'Prova');
   } finally { app().g("delete SPECIALITA_STRUTTURA.prova"); }
-  assert.strictEqual(app().g('Object.keys(SPECIALITA_STRUTTURA).length'), 0);
+  /* W2-T7: la modalita Forza (specialita/forza.js) si registra al caricamento, quindi dopo l'integrazione il registro non e piu vuoto ma ha solo lei (l'estetica e di W5-T4);
+     la prova «oggi nessuna» fotografava l'algoritmo di prima. Con la modalita «generale» del brief la risposta resta null */
+  assert.deepStrictEqual(app().json('Object.keys(SPECIALITA_STRUTTURA)'), app().g('typeof SPEC_FORZA') === 'undefined' ? [] : ['forza']);
 });
 
 test('giorniSettimana e scegliSplit: i giorni di sempre (2 = lunedi e giovedi, 6 = lunedi-mercoledi e venerdi-domenica) e la divisione dal livello e dalla frequenza', () => {

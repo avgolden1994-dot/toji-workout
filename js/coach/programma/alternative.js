@@ -54,14 +54,47 @@ function renderAlternative() {
     '<button class="btn-start-workout" onclick="applicaAlternative()">Applica le scelte</button>' +
     '<button class="set-row-btn" onclick="rimescolaAlternative()">Rimescola tutto</button>';
 }
+/* P3-M (D-P23): rifare il programma azzera il piano, non i progressi. Un esercizio gia svolto (con il consenso) compare nel piano nuovo con il suo carico di lavoro (caricoRiferimento: l ultima
+   seduta non di scarico, entro 28 giorni; altrimenti l ultimo carico usato), non con la stima di partenza che applicaPartenze fa dal corpo e dagli altri esercizi (era il 20% sopra l ultimo carico
+   di una donna di 52 anni: il Piano mostrava un peso che nessuno aveva sollevato). Chi decide la progressione e sempre caricoProssimo all apertura della seduta, che per un esercizio con
+   lo storico non guarda questo peso. Senza storico (o a tempo, o a corpo libero) resta la stima. */
+function caricoDelloStorico(e) {
+  if (!coachAttivo()) return e;
+  const u = pesoUltimoDi(e.name), kg = caricoRiferimento(e.name) || (u ? u.weight : 0);
+  return kg > 0 ? Object.assign({}, e, { weight: kg }) : e;
+}
+/* P3-M (D-P23): la fase di una seduta vecchia (carico, scarico...) che la voce non ha scritto si ricava dal programma di adesso (faseSedutaSalvata, progressivo.js: «finche il programma c e»).
+   Rifare il programma lo butta, e con lui il fatto che quella seduta era di scarico: la proposta di carico ripartirebbe dal peso dello scarico (82 kg di stacco rumeno diventavano 66,5 kg).
+   Prima di sostituire il programma si scrive sulle voci che non l hanno la settimana e la fase (la stessa etichetta che scrive la fine seduta, MES-09, e che normalizeHistoryEntry conserva):
+   nient altro cambia nel record, e dove il programma non sa niente (seduta fuori dalle sue settimane) non si scrive niente. Idempotente. Solo con il consenso. */
+function fissaFasiDelloStorico() {
+  const p = getProgramma();
+  if (!coachAttivo() || !p || !p.inizio || !Array.isArray(p.fasi)) return;
+  let lista = null;
+  try { lista = JSON.parse(localStorage.getItem(historyKey()) || 'null'); } catch (e) { return; }
+  if (!Array.isArray(lista)) return;
+  let scritte = 0;
+  lista.forEach(h => {
+    if (!h || typeof h !== 'object' || (h.settimana && h.settimana.fase)) return;
+    const d = dataSessione(h);
+    if (!d) return;
+    const w = typeof settimanaDelGiorno === 'function' ? settimanaDelGiorno(d, p) : Math.floor(giorniTra(daYmd(p.inizio), lunediDi(d)) / 7) + 1, fase = w >= 1 && w <= p.fasi.length ? p.fasi[w - 1] : null;   /* onda 5: con le pause tolte (CST-01) */
+    if (typeof fase === 'string' && fase) { h.settimana = { numero: w, fase: fase.slice(0, 20) }; scritte++; }
+  });
+  if (scritte) localStorage.setItem(historyKey(), JSON.stringify(lista));
+}
 window.applyGeneratedProgram = function() {
+  /* INT-4b (B1): con la bandiera della gravidanza accesa la modalita prudente non si spegne nemmeno rispondendo «no» al PAR-Q del questionario rifatto: il programma nuovo e quello di chi e prudente */
+  if (typeof inGravidanza === 'function' && inGravidanza(getProfile() || {})) onbData.parq = true;
   const prog = buildProgram(onbData);
+  fissaFasiDelloStorico();   /* P3-M: prima di sostituire il programma */
+  const profPrima = getProfile() || {};   /* il profilo di prima di questa creazione (P3-M: quello che il questionario non chiede si conserva) */
   const data = loadData();
   const titles = loadTitles();
 
   DAYS.forEach(g => { data[g] = []; });
   prog.sedute.forEach(s => {
-    data[s.giorno] = s.esercizi.map(e => normalizeExerciseRecord(Object.assign({}, e, { completedSets: [] })));
+    data[s.giorno] = s.esercizi.map(e => normalizeExerciseRecord(Object.assign({}, caricoDelloStorico(e), { completedSets: [] })));
     titles[s.giorno] = s.titolo;
   });
   saveData(data);
@@ -96,9 +129,9 @@ window.applyGeneratedProgram = function() {
      e cardio. Un programma salvato dalla v1 non ha questi campi (nessun `piano`): chi li legge ricade sul comportamento di prima (rirPianoSettimana ritorna null) */
   if (prog.versione === 2) Object.assign(salvato, { versione: 2, piano: prog.piano || null, volume: prog.volume || null, perche: prog.perche || [], modalita: prog.modalita || 'generale', cardio: prog.cardio || null });
   localStorage.setItem(progKey(), JSON.stringify(salvato));
-  localStorage.setItem(PROFILE_KEY(), JSON.stringify({
+  localStorage.setItem(PROFILE_KEY(), JSON.stringify(Object.assign({
     goal: prog.goals[0], goals: prog.goals, level: onbData.level, days: onbData.days, minutes: onbData.minutes,
-    prefs: prog.prefs, sex: onbData.sex, age: onbData.age, bia: onbData.bia, parq: onbData.parq === 'si' || onbData.parq === true,
+    prefs: prog.prefs, sex: onbData.sex, age: onbData.age, bia: onbData.bia || profPrima.bia || onbData.bia, parq: onbData.parq === 'si' || onbData.parq === true,
     weight: onbData.weight, height: onbData.height, luogo: onbData.luogo, fastidi: onbData.fastidi, sonno: onbData.sonno, attrezzi: onbData.attrezzi,
     priorita: onbData.priorita || [], attrezziPalestra: onbData.attrezziPalestra !== undefined ? onbData.attrezziPalestra : ((getProfile() || {}).attrezziPalestra || null),
     graditi: onbData.graditi || (getProfile() || {}).graditi || [], odiati: onbData.odiati || (getProfile() || {}).odiati || [], cicloTraccia: (getProfile() || {}).cicloTraccia || false,
@@ -108,10 +141,15 @@ window.applyGeneratedProgram = function() {
     esigenza: (getProfile() || {}).esigenza || null,
     orario: onbData.orario || (getProfile() || {}).orario || '', fase: onbData.fase || (getProfile() || {}).fase || '', cicli: onbData.cicli || 0, bloccoTipo: onbData.bloccoTipo || 'ipertrofia',
     settimane: prog.settimane, split: prog.split.nome, creato: formatNow()
-  }));
-  if (onbData.bia && Object.keys(onbData.bia).some(k => onbData.bia[k])) {
-    (onbData.bia.storico || []).forEach(x => { if (x.data !== onbData.bia.data) aggiungiBia(x.valori, x.data); });
-    aggiungiBia(onbData.bia, onbData.bia.data);
+  }, typeof attrezziSalvati === 'function' ? attrezziSalvati(onbData, getProfile() || {}) : {},   /* CAS-01 (W2-T5): attrezzi di casa, kg dei manubri, attrezzi in piu della palestra: solo se dichiarati */
+    typeof forzaSalvata === 'function' ? forzaSalvata(onbData, getProfile() || {}, prog.goals) : {},   /* FRZ-01 (INT-2e): «Che forza?» e i punti deboli, solo con la forza come primo obiettivo e solo se detti */
+    typeof gravidanzaDalQuestionario === 'function' ? gravidanzaDalQuestionario(onbData) : {},   /* REC-12 a (onda 5, m5): «È per una gravidanza o un parto recente?» = sì nel questionario accende la bandiera */
+    typeof gravidanzaDaRiportare === 'function' ? gravidanzaDaRiportare(profPrima) : {})));   /* INT-4b (B1): il profilo si riscrive da zero a ogni nuovo ciclo e a ogni questionario: la bandiera della gravidanza non si perde */
+  /* P3-M: un referto uguale a quello gia nel profilo (nuovoCiclo lo ripassa) e gia nello storico dei referti: non si aggiunge una misura con la data di oggi */
+  if (onbData.bia && Object.keys(onbData.bia).some(k => onbData.bia[k]) && JSON.stringify(onbData.bia) !== JSON.stringify(profPrima.bia)) {
+    /* la BIA del questionario e un referto letto o campi a mano nello stesso passo: si fonde, cosi il questionario non cancella il bmr di oggi (anche di un minorenne, ETA-04) */
+    (onbData.bia.storico || []).forEach(x => { if (x.data !== onbData.bia.data) aggiungiBia(x.valori, x.data, { unisci: true }); });
+    aggiungiBia(onbData.bia, onbData.bia.data, { unisci: true });
   }
   localStorage.setItem(ONB_KEY, '1');
   /* un periodo difficile in corso resta: il nuovo piano parte gia alleggerito */

@@ -9,6 +9,7 @@
 const test = require('node:test'), assert = require('node:assert');
 const fs = require('fs'), path = require('path'), vm = require('vm');
 const { caricaApp } = require('./aiuto-app');
+const { conSoglieSelezione } = require('./aiuto-selezione');   /* W2-T6: le soglie della scelta degli esercizi (SEL-06) anche prima che index.html le citi */
 const { simulaNellApp, riassunto, mulberry32, CONTROLLO } = require('./aiuto-atleta');
 
 const R = path.join(__dirname, '..');
@@ -18,7 +19,7 @@ const REGOLE_NUOVE = ["PAR-06", "PAR-07", "PAR-08", "PAR-09", "CAR-18", "CAR-19"
 
 /* l app vera, con i file di W2-T8 anche se index.html non li ha ancora (l integrazione li aggiunge) e le regole nuove spegnibili */
 function nuovaApp(opz) {
-  const a = caricaApp(Object.assign({ ora: LUNEDI }, opz || {}));
+  const a = conSoglieSelezione(caricaApp(Object.assign({ ora: LUNEDI }, opz || {})));
   const html = fs.readFileSync(path.join(R, 'index.html'), 'utf8');
   FILE_NUOVI.forEach(f => { if (html.indexOf('src="' + f + '"') === -1) vm.runInContext(fs.readFileSync(path.join(R, f), 'utf8'), a.ctx, { filename: f }); });
   REGOLE_NUOVE.forEach(c => a.g('REGOLE_SPEGNIBILI.indexOf(' + JSON.stringify(c) + ') === -1 && REGOLE_SPEGNIBILI.push(' + JSON.stringify(c) + ')'));
@@ -214,14 +215,17 @@ test('D.8.4: nessun carico fuori dalla griglia dell attrezzo; mai un bilanciere 
   assert.ok(barraVuota > 0, 'di controllo: in forza (e per il gradito) il bilanciere resta e parte dalla barra vuota (' + barraVuota + ')');
 });
 
-test('D.8.5 PAR-08: in 200 profili di donne principianti, se il bilanciere partirebbe sotto la soglia il posto ha una variante con lo stesso bersaglio', () => {
+test('D.8.5 PAR-08: in 200 profili di donne, se il bilanciere partirebbe sotto la soglia il posto ha una variante con lo stesso bersaglio', () => {
   const a = nuovaApp();
   let scambi = 0, panche = 0;
-  profiliDonne(200, 21, { level: 'principiante', luogo: 'palestra' }).forEach(p => {
+  /* W2-T6 (SEL-06): le principianti senza la forza come primo obiettivo non ricevono piu il bilanciere (sul codice di prima: 318 esercizi col bilanciere e 685 scambi in 200 programmi, ora 0 e 0: partono dalle macchine e dai manubri,
+     abilita 1); lo scambio di PAR-08 si prova sulle intermedie (lo sconto di PAR-06 arriva fino al livello intermedio), 11 scambi su 200 */
+  profiliDonne(200, 21, { level: 'intermedio', luogo: 'palestra' }).forEach(p => {
     const prog = a.dati(a.chiama('buildProgram', p));
-    const ctx = CTX(p.sex, 'principiante', p.weight);
+    const ctx = CTX(p.sex, 'intermedio', p.weight);
     prog.sostituzioni.forEach(s => {
-      assert.strictEqual(a.json('bersaglioDi(' + JSON.stringify(s.a) + ')'), a.json('bersaglioDi(' + JSON.stringify(s.da) + ')'), p.seme + ': ' + s.da + ' -> ' + s.a + ' stesso bersaglio');
+      /* W2-T6 (SEL-06): la lista delle sostituzioni ha anche i posti dove il primo della classifica e vietato a chi inizia per la sua abilita (Affondi Bulgari -> Affondi Inversi): lo stesso bersaglio vale per gli scambi del bilanciere (PAR-08) */
+      if (a.chiama('attrezzoDi', s.da) === 'bilanciere') assert.strictEqual(a.json('bersaglioDi(' + JSON.stringify(s.a) + ')'), a.json('bersaglioDi(' + JSON.stringify(s.da) + ')'), p.seme + ': ' + s.da + ' -> ' + s.a + ' stesso bersaglio');
       if (a.chiama('attrezzoDi', s.da) === 'bilanciere' && a.chiama('attrezzoDi', s.a) !== 'bilanciere') scambi++;
     });
     prog.sedute.forEach(sd => sd.esercizi.forEach(e => {
@@ -259,7 +263,8 @@ test('PAR-09: le principianti partono da piegamenti inclinati e da trazioni assi
   const base = { goals: ['massa'], level: 'principiante', days: 3, minutes: 60, luogo: 'palestra', sex: 'F', age: 30, weight: 60, fastidi: [], sonno: 'bene', attrezzi: 'indifferente', parq: 'no', usaProfilo: false };
   let completi = 0, facilitati = 0, uomini = 0, intermedie = 0;
   for (let i = 0; i < 60; i++) {
-    const p = Object.assign({}, base, { seme: 'par09-' + i, goals: [['massa', 'salute', 'ricomposizione'][i % 3]] });
+    /* W2-T6 (SEL-06): in palestra chi inizia non riceve piu le trazioni libere (abilita 3) e parte dalle macchine: il posto non ha piu bisogno dello scambio. Lo scambio resta dove ci sono i piegamenti a terra: un programma su due a corpo libero */
+    const p = Object.assign({}, base, { seme: 'par09-' + i, goals: [['massa', 'salute', 'ricomposizione'][i % 3]], luogo: i % 2 ? 'palestra' : 'corpo' });
     const prog = a.dati(a.chiama('buildProgram', p));
     const nomi = prog.sedute.map(sd => sd.esercizi.map(e => e.name)).reduce((t, x) => t.concat(x), []);
     assert.ok(!nomi.some(n => /Piegamenti a Terra|Trazioni alla Sbarra/.test(n)), p.seme + ': nessun piegamento a terra o trazione completa per una principiante');
@@ -428,9 +433,9 @@ test('CAR-18: PAR-Q, sonno scarso o da 65 anni dimezzano i salti; i principianti
   assert.strictEqual(senza.weight, 82.5);
 });
 
-test('CAR-18: si chiude alla quarta esposizione (salti dopo le prime quattro, la quinta prescrizione e chiusa); mai oltre +25% e mai un salto piu grosso di un passo che gia lo supera', () => {
+test('CAR-18: si chiude alla quinta esposizione (salti dopo le prime cinque, la sesta prescrizione e chiusa; INT-3a: erano quattro); mai oltre +25% e mai un salto piu grosso di un passo che gia lo supera', () => {
   const a = nuovaApp();
-  /* sei esposizioni sempre «facili»: la calibrazione decide il carico delle esposizioni 2-5, poi la progressione di prima */
+  /* sei esposizioni sempre «facili»: la calibrazione decide il carico delle esposizioni 2-6, poi la progressione di prima */
   let w = 40; const esp = [], motivi = [];
   for (let t = 0; t < 6; t++) {
     const r = scenario(a, { base: 40, esp: esp.slice() })();
@@ -439,11 +444,14 @@ test('CAR-18: si chiude alla quarta esposizione (salti dopo le prime quattro, la
     w = r.weight;
   }
   const salti = motivi.map(m => /^Calibrazione: RPE/.test(m));
-  assert.deepStrictEqual(salti, [false, true, true, true, true, false], 'esposizioni 1..6: salti dopo le esposizioni 1-4 (' + motivi.map(m => m.slice(0, 40)).join(' | ') + ')');
+  assert.deepStrictEqual(salti, [false, true, true, true, true, true], 'esposizioni 1..6: salti dopo le esposizioni 1-5 (prima 1-4: INT-3a) (' + motivi.map(m => m.slice(0, 40)).join(' | ') + ')');
+  scenario(a, { base: 40, esp: esp.slice() })();   /* con sei esposizioni nello storico la calibrazione e chiusa (con cinque decide ancora la quinta) */
   assert.strictEqual(a.g('calibrazioneChiusa')(CE), true);
   /* tetto +25%: da 8 kg il +15% e 1,2 (un passo di 2 kg dei manubri), mai oltre il quarto */
   const piccolo = scenario(a, { nome: '🛡️ Alzate Laterali', base: 3, reps: 12, esp: [{ w: 3, rpe: 6 }] })();
-  assert.strictEqual(piccolo.weight, 3, 'un manubrio da 3 kg: un passo (1 kg) sarebbe +33%: nessun salto, si sale con le ripetizioni');
+  /* INT-5d (D-P26): prima 3 kg («un passo (1 kg) sarebbe +33%: nessun salto, si sale con le ripetizioni») per tutta la calibrazione; il +25% (3,75 kg) non contiene nessun peso della griglia
+     dei manubri (4 kg), la guardia lascia passare UN passo (non due: il caso sotto tiene) */
+  assert.strictEqual(piccolo.weight, 4, 'un manubrio da 3 kg: il +25% non ha nessun peso, si sale di un passo (1 kg): ' + piccolo.motivo);
   const lento = scenario(a, { nome: LAV, base: 8, reps: 10, esp: [{ w: 8, rpe: 6 }] })();
   assert.ok(lento.weight > 8 && lento.weight / 8 <= 1.25 + 1e-9, 'da 8 kg: un passo di 1 kg (+12,5%): ' + lento.weight);
 });
@@ -604,7 +612,10 @@ test('D.8.9: 500 atlete principianti: il carico giusto in poche esposizioni (med
   assert.ok(donne.mai <= 0.03, 'chi non arriva nelle sei esposizioni: ' + donne.pc(donne.mai) + '%');
   /* la calibrazione migliora la progressione di prima, non la peggiora: piu in fretta e con meno carichi sopra la capacita dopo la prima esposizione */
   assert.ok(donne.p95 < prima.p95 || donne.mai < prima.mai, 'piu in fretta della sola CAR-16');
-  assert.ok(donne.dopoSopra < prima.dopoSopra && donne.dopoOltre < prima.dopoOltre, 'meno prescrizioni sopra la capacita dopo la prima esposizione: ' + donne.pc(donne.dopoSopra) + '% contro ' + prima.pc(prima.dopoSopra) + '%');
+  /* INT-4: la sola CAR-16 ha ora il tetto +25% della progressione di base (limitaSalitaBase, regole-ricerca.js): le prescrizioni sopra la capacita dopo la prima esposizione scendono da 21,8% (15% oltre il
+     massimo) a 14,3% (6,8%), quindi il confronto relativo con quel braccio non vale piu (la calibrazione ha 15,4% e 7,8%, circa un punto sopra, e arriva al carico giusto molto prima: p95 5 contro 99,
+     «mai» 1,6% contro 9,9%). Prima di INT-4 la prova diceva «meno di CAR-16»: 16,3% e 9,6% contro 21,8% e 15%. Resta il confronto con il numero di prima: la calibrazione non peggiora (16,3% e 9,6% a origin/main) */
+  assert.ok(donne.dopoSopra <= 0.163 && donne.dopoOltre <= 0.096, 'non peggio di prima dopo la prima esposizione: ' + donne.pc(donne.dopoSopra) + '% (16,3%) e ' + donne.pc(donne.dopoOltre) + '% (9,6%)');
   /* la partenza (la tabella D.3, una decisione dell utente) ha le sue code: poche atlete molto sotto la media sono gia al limite alla prima seduta; il tetto di prudenza e questo */
   assert.ok(donne.primoOltre <= 0.05, 'alla prima esposizione le ripetizioni previste non si finiscono nel ' + donne.pc(donne.primoOltre) + '% dei casi');
   assert.ok(donne.dopoOltre <= 0.12, 'dalla seconda in poi le ripetizioni previste non si finiscono nel ' + donne.pc(donne.dopoOltre) + '% dei casi');

@@ -13,7 +13,10 @@ let ultimaChiusuraSeduta = 0;
    dentro `sessione`, che normalizeHistoryEntry lascia com e. */
 function obiettivoSeduta(e) {
   const reps = Number(e.reps), serie = Number(e.sets);
-  const o = { reps: reps > 0 ? reps : undefined, sets: serie > 0 ? serie : undefined, tecnica: e.tecnicaSeduta || e.tecnica || undefined, coachTipo: e.coachTipo || undefined };
+  /* base (P3-A, ALG-05): il bersaglio di ripetizioni del PIANO (repsBase), non quello di oggi che la doppia progressione ha gia alzato: serve a sapere se il
+     bersaglio e cambiato davvero (stesso esercizio con ripetizioni diverse in due giorni, cambio di blocco) */
+  const base = Number(e.repsBase) > 0 ? Number(e.repsBase) : reps;
+  const o = { reps: reps > 0 ? reps : undefined, base: base > 0 ? base : undefined, sets: serie > 0 ? serie : undefined, tecnica: e.tecnicaSeduta || e.tecnica || undefined, coachTipo: e.coachTipo || undefined };
   if (coachAttivo() && !isTimeBased(e.name)) {
     try { const r = rirBersaglio(e.name); if (Array.isArray(r)) o.rir = [r[0], r[1]]; } catch (err) {}
   }

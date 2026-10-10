@@ -1,0 +1,317 @@
+/* Popolazioni e rientro dopo una pausa: base degli over 65, gravidanza, calendario fermo, rampa e risalita del rientro (ETA-08 a, REC-12 a, CST-01, CST-02, CAR-04, ALG-14)
+   (3in, parte di coach; ordine di caricamento: vedi index.html) */
+
+/* ============================================================
+   POPOLAZIONI E RIENTRO (coach v2, W4-T2 = pacchetto P4-S snello; registro B10, B20, C.2; numeri in sicurezza/soglie-popolazioni.js)
+   Tutte salvaguardie che TOLGONO o RIDUCONO (registro C.3): nessuna alza lo stimolo a una popolazione vulnerabile.
+   - Over 65 (ETA-08 parte a, SOLO la base di B10): nelle prime 8 settimane del programma, e sempre dai 75 anni, mai sotto 3 ripetizioni in riserva; dopo la base
+     mai sotto 3 sui pesi liberi e sul core (classi A, B, E, F) e mai sotto 2 su macchine e cavi (C, D): pavimentoRirPopolazioni, che rirBersaglio applica per ultima.
+     Oggi gli over 65 restano comunque a 3-4 (rirBersaglioPerLivello): il «dopo la base» che li porterebbe a 2-3 sulle macchine (ETA-08 parte a) NON c'è, escluso per
+     scelta del proprietario; la parte b (pesi liberi pesanti, 6-12 ripetizioni, 70-85%) è bloccata (registro C.2 n. 9). Niente «potenza» nella base, dai 75 anni e
+     con il PAR-Q positivo (potenzaAmmessaOver65, la legge il cancello delle tecniche: chiude D-P21 n. 5); mai sotto 8 ripetizioni (fase 90: lo schema 5×3 di CAR-07).
+   - Gravidanza o parto recente (REC-12 parte a): la bandiera `profilo.gravidanza` (Opzioni › Il coach) tiene accesa la modalità prudente (PAR-Q) e il coach non scende
+     sotto 3 ripetizioni in riserva. inGravidanza(profilo) è la funzione da usare per le guardie degli altri sotto-coach (corpo e nutrizione: P4-C).
+     La parte b (esercizi da evitare, posizione supina, ripresa dopo il parto, pavimento pelvico) è bloccata (registro C.2 n. 4): qui non c'è.
+   - Rientro dopo una pausa, una catena sola (registro B20; MES-15), solo nei programmi v2 e con il consenso:
+       giorni veri dall'ultima seduta   <= 6 nulla · 7-13 la rampa non avanza · 14-27 si riparte dalla prima settimana del blocco · >= 28 nuovo blocco (stessa settimana di
+                                        ripartenza, carichi di CAR-04 più bassi)
+       CST-01  il calendario si ferma: settimanaProgramma toglie le settimane della pausa (settimaneFermePerPausa, calcolate dallo storico: niente da salvare né da annullare)
+       CAR-04  carico per esercizio -10/-20/-30/-50% (rientroDopoPausa): oltre i 65 anni, in una pausa vera (più di 6 giorni senza sedute), i giorni contano doppi
+       CST-02  serie: la prima seduta -25% (RIC-05, regole-nuove.js, con la stessa soglia: 14 giorni contati), la seconda -10% (fase 90), poi il piano; +1 ripetizione in
+               riserva nelle due sedute (rirExtraRientro), non a chi è già a 3-4
+       ALG-14  dopo la seduta del rientro il carico risale fino a quello di prima, al massimo del 5% a seduta (2,5% a chi comincia, ai prudenti e oltre i 65 anni) (fase 90)
+     I programmi salvati prima della v2 restano come prima: 14 giorni veri per le serie, giorni veri per i carichi, calendario che scorre.
+   ============================================================ */
+
+/* una soglia di soglie-popolazioni.js (undefined se il file non c'è); le soglie si leggono solo durante l'esecuzione */
+function sogliaPopolazione(nome) {
+  return typeof SOGLIE_POPOLAZIONI !== 'undefined' && SOGLIE_POPOLAZIONI[nome] ? SOGLIE_POPOLAZIONI[nome].v : undefined;
+}
+
+/* REC-12 parte a: gravidanza o parto recente, dichiarato in Opzioni › Il coach (profilo.gravidanza). Senza profilo: no. È la funzione per tutte le guardie
+   (nessun numero di nutrizione, nessun cedimento, nessuna tecnica intensa); la bandiera tiene accesa anche la modalità prudente (setGravidanzaCoach). */
+function inGravidanza(profilo) {
+  return !!(profilo && profilo.gravidanza === true);
+}
+
+/* INT-4b (B1): il profilo si riscrive da zero (applyGeneratedProgram: nuovo ciclo, «Rifai il programma», questionario rifatto): i campi della gravidanza del profilo di prima vanno riportati, con
+   la modalità prudente accesa (e il ricordo che l'ha accesa la bandiera, perché spenta la bandiera torni la risposta di prima). Senza bandiera: niente, il profilo è quello di sempre */
+function gravidanzaDaRiportare(profPrima) {
+  if (!inGravidanza(profPrima)) return {};
+  return Object.assign({ gravidanza: true, parq: true }, profPrima.parqDaGravidanza ? { parqDaGravidanza: true } : {});
+}
+/* REC-12 parte a (onda 5, m5 della revisione dell'onda 4): la gravidanza detta nel QUESTIONARIO (PAR-Q «sì» e «È per una gravidanza o un parto recente?» = sì, onbData.gravidanza)
+   accende la stessa bandiera di Opzioni › Il coach, così creatina, grammi e kcal spariscono subito (guardiaNutrizione) e non solo dopo l'interruttore. La modalità prudente resta
+   accesa: non si segna `parqDaGravidanza`, perché nel questionario non si sa se il PAR-Q positivo ha anche altre ragioni (spenta la bandiera, il PAR-Q resta «sì» finché non si rifà
+   il questionario). Senza la risposta «sì»: niente, il profilo è quello di sempre */
+function gravidanzaDalQuestionario(onb) {
+  const parq = !!onb && (onb.parq === 'si' || onb.parq === true);   /* la domanda si mostra solo con il PAR-Q «sì»: una risposta rimasta da prima, con il PAR-Q poi messo a «no», non vale */
+  return parq && (onb.gravidanza === 'si' || onb.gravidanza === true) ? { gravidanza: true, parq: true } : {};
+}
+
+/* ETA-19 (onda 5): dai 65 anni gli esercizi «da evitare» (over65Evitare in soglie-popolazioni.js) sono l'ultima scelta di un posto della scheda (componiSedute, programma/ricette.js).
+   Ritorna la funzione nome => true se l'esercizio è nell'elenco, o null quando non si applica (sotto i 65 anni, regola spenta, soglia assente): chi la chiama non cambia niente */
+function eserciziDaEvitareOver65(chi) {
+  const E = sogliaPopolazione('over65Evitare');
+  if (!E || !Array.isArray(E.nomi) || !chi || !chi.over65 || !regolaAttiva('ETA-19')) return null;
+  const nomi = E.nomi;
+  return nome => nomi.indexOf(senzaEmoji(nome)) !== -1;
+}
+
+/* B10 (ETA-08 parte a, solo la base): l'over 65 è nella base? Sì nelle prime `settimaneBase` settimane del programma (numero = settimana del programma, 0 o
+   assente = non si sa: base), sempre dai `etaSempreBase` anni. Sotto i 65 anni: no */
+function inBaseOver65(eta, numero) {
+  const O = sogliaPopolazione('over65');
+  if (!O || !(Number(eta) >= O.eta)) return false;
+  if (Number(eta) >= O.etaSempreBase) return true;
+  const n = Number(numero) || ((typeof settimanaProgramma === 'function' ? settimanaProgramma() : null) || {}).numero || 0;
+  return !(n > O.settimaneBase);
+}
+
+/* B10 e D-P21 n. 5: la «potenza» (salita veloce, solo su macchina: MAV-03) per un over 65 è ammessa solo dopo la base, mai con il PAR-Q positivo. `settimana` = { numero }
+   della settimana del programma; null (la generazione: il programma si ripete dalla settimana 1) = la base. P = personaTecniche(brief) */
+function potenzaAmmessaOver65(P, settimana) {
+  if (!P || !P.over65 || P.parq || P.minore) return false;
+  const n = settimana && Number(settimana.numero) >= 1 ? Number(settimana.numero) : 0;
+  if (!n) return false;
+  const eta = Number(P.eta) || (sogliaPopolazione('over65') || {}).eta;
+  return !inBaseOver65(eta, n);
+}
+
+/* ETA-08 a e REC-12 a: il pavimento delle ripetizioni in riserva delle popolazioni, applicato per ultimo da rirBersaglio. r = [min, max]; sett = settimana del
+   programma (come rirBersaglio). Solo alza: [2, 3] diventa [3, 4], [3, 4] resta. Over 65: nella base 3 su tutto; dopo la base 3 sui pesi liberi e sul core, 2 su
+   macchine e cavi (classi C e D, attributo di attributi-esercizi.js). Gravidanza: 3. Gli altri: com'era */
+function pavimentoRirPopolazioni(r, nome, sett) {
+  if (!Array.isArray(r) || r.length < 2) return r;
+  const p = (typeof getProfile === 'function' ? getProfile() : null) || {}, eta = Number(p.age) || 0;
+  const O = sogliaPopolazione('over65'), R = sogliaPopolazione('rirOver65');
+  let min = 0;
+  if (inGravidanza(p)) min = sogliaPopolazione('rirGravidanza') || 0;
+  if (O && R && eta >= O.eta) {
+    const classe = typeof classeTecnica === 'function' ? classeTecnica(nome) : null;
+    min = Math.max(min, inBaseOver65(eta, sett) ? R.base : (classe === 'C' || classe === 'D' ? R.macchine : R.liberi));
+  }
+  return min > 0 && r[0] < min ? [min, Math.max(r[1], min + 1)] : r;
+}
+
+/* ------------------------------------------------------------------------------------------------ il rientro dopo una pausa (B20) */
+function programmaV2Rientro(p) {
+  const pr = p || (typeof getProgramma === 'function' ? getProgramma() : null);
+  return !!(pr && Number(pr.versione) >= 2);
+}
+/* lo storico delle sedute vere cambia solo quando si salva una seduta: i calcoli che lo scorrono si ricordano finché storico, programma e giorno restano gli stessi */
+const MEMORIA_RIENTRO = {};
+function ricordaRientro(spazio, extra, fn) {
+  let grezzo = '';
+  try { grezzo = localStorage.getItem(historyKey()) || ''; } catch (e) { grezzo = ''; }
+  const chiave = ymd(new Date()) + '|' + extra;
+  const m = MEMORIA_RIENTRO[spazio];
+  if (m && m.grezzo === grezzo && m.chiave === chiave) return m.v;
+  const v = fn();
+  MEMORIA_RIENTRO[spazio] = { grezzo: grezzo, chiave: chiave, v: v };
+  return v;
+}
+/* quante sedute a settimana ha il programma di adesso (i giorni del piano con esercizi e non di riposo); 0 se non si sa */
+function seduteAllaSettimana() {
+  if (typeof DAYS === 'undefined' || typeof loadData !== 'function') return 0;
+  const d = loadData() || {};
+  return DAYS.filter(g => (d[g] || []).length && !(typeof isRestDay === 'function' && isRestDay(g))).length;
+}
+/* B20 e MES-15, relativi alla frequenza (INT-4): i giorni senza sedute fino a cui non c è nessuna pausa. `pausa.nulla` (6) per chi si allena 3 volte a settimana o più; con 2 sedute a
+   settimana una seduta saltata (7 giorni) non è una pausa; con 1 seduta a settimana 7 giorni tra due sedute sono normali e una seduta saltata (14) è una pausa vera (`pausaPerFrequenza`) */
+function giorniNulla() {
+  const P = sogliaPopolazione('pausa'), F = sogliaPopolazione('pausaPerFrequenza'), n = seduteAllaSettimana();
+  if (!P) return 6;
+  if (!F || !(n > 0)) return P.nulla;
+  return Math.max(P.nulla, (1 + F.seduteSaltate) * Math.ceil(F.giorniSettimana / n) - 1);
+}
+/* B20: oltre i 65 anni i giorni di una pausa VERA (più di `giorniNulla()` giorni senza nessuna seduta: 6, e 13 o 7 per chi fa 1 o 2 sedute a settimana) contano doppi; con il ritmo normale restano quelli veri.
+   gEsercizio = giorni dall'ultima volta con l'esercizio (o della pausa), gPausa = giorni senza nessuna seduta, over65 = vale il conteggio doppio */
+function giorniContatiPausa(gEsercizio, gPausa, over65) {
+  const P = sogliaPopolazione('pausa'), D = sogliaPopolazione('giorniDoppiOver65');
+  const g = Number(gEsercizio) || 0;
+  if (!over65 || !P || !D || !(Number(gPausa) > giorniNulla())) return g;
+  return g * D.fattore;
+}
+/* il conteggio doppio vale per questa persona adesso? (over 65, programma v2, consenso) */
+function giorniDoppiAttivi() {
+  const O = sogliaPopolazione('over65');
+  return !!(O && programmaV2Rientro() && typeof coachAttivo === 'function' && coachAttivo() && profiloCoach().eta >= O.eta);
+}
+/* CAR-04 (B20): i giorni di pausa di un esercizio come li conta il rientro (rientroDopoPausa, regole-ricerca.js): oltre i 65 anni, in una pausa vera, doppi */
+function giorniPausaContati(g) {
+  if (!giorniDoppiAttivi()) return Number(g) || 0;
+  return giorniContatiPausa(g, giorniDallUltimaSeduta(), true);
+}
+/* RIC-05 e CST-02: i giorni del rientro del piano (rientroPiano, regole-nuove.js): 0 se non c'è rientro, altrimenti i giorni veri della pausa.
+   Programmi v1 o CST-02 spenta: 14 giorni veri, come prima; v2: la stessa soglia con i giorni contati (doppi oltre i 65 anni in una pausa vera) */
+function giorniRientroPiano() {
+  const g = giorniDallUltimaSeduta(), S = sogliaPopolazione('rientroSerie');
+  if (!S) return g >= 14 ? g : 0;   /* senza le soglie: la regola di prima (RIC-05) */
+  const c = regolaAttiva('CST-02') && giorniDoppiAttivi() ? giorniContatiPausa(g, g, true) : g;
+  return c >= S.giorni ? g : 0;
+}
+/* CST-02: a che seduta del rientro siamo. { seduta: 1 (oggi è la prima dopo la pausa), 2 (la seconda), 0 (nessun rientro), giorni (la pausa, veri), doppi (contati doppi) }.
+   Una pausa conta se i giorni contati arrivano alla soglia delle serie (14). La seconda seduta: l'ultima seduta era la prima dopo la pausa e da allora nessuna pausa vera */
+function statoRientro() {
+  const S = sogliaPopolazione('rientroSerie'), P = sogliaPopolazione('pausa');
+  if (!S || !P || typeof sedutePassate !== 'function') return { seduta: 0, giorni: 0, doppi: false };
+  const doppi = giorniDoppiAttivi();
+  return ricordaRientro('stato', String(doppi) + '|' + giorniNulla(), () => {
+    const s = sedutePassate(), oggi = new Date();
+    if (!s.length) return { seduta: 0, giorni: 0, doppi: false };
+    const conta = g => doppi ? giorniContatiPausa(g, g, true) : g;
+    const g0 = giorniTra(s[0].d, oggi);
+    if (conta(g0) >= S.giorni) return { seduta: 1, giorni: g0, doppi: doppi && conta(g0) !== g0 };
+    const prima = s.find(x => giorniTra(x.d, s[0].d) > 0);
+    if (prima && g0 <= giorniNulla()) {
+      const g1 = giorniTra(prima.d, s[0].d);
+      if (conta(g1) >= S.giorni) return { seduta: 2, giorni: g1, doppi: doppi && conta(g1) !== g1 };
+    }
+    return { seduta: 0, giorni: g0, doppi: false };
+  });
+}
+/* CST-02: una ripetizione in riserva in più nelle prime due sedute dopo la pausa (programmi v2, consenso). Non a chi è già a 3-4: modalità prudente, over 65, minorenni, gravidanza */
+function rirExtraRientro(nome) {
+  if (!programmaV2Rientro() || typeof coachAttivo !== 'function' || !coachAttivo() || !regolaAttiva('CST-02') || isTimeBased(nome)) return 0;
+  const pc = profiloCoach(), O = sogliaPopolazione('over65'), S = sogliaPopolazione('rientroSerie');
+  if (!S || pc.prudente || pc.minorenne || (O && pc.eta >= O.eta) || inGravidanza(getProfile())) return 0;
+  const st = statoRientro();
+  return st.seduta === 1 || st.seduta === 2 ? S.rirPiu : 0;
+}
+
+/* CST-01 (MES-15): la prima settimana del blocco in cui cadeva la settimana `w` (una settimana di scarico o di controllo: la prima del blocco dopo) */
+function primaSettimanaDelBlocco(p, w) {
+  const f = p && Array.isArray(p.fasi) ? p.fasi : [];
+  if (!(w >= 1) || w > f.length) return w;
+  if (f[w - 1] !== 'carico') return Math.min(w + 1, f.length);
+  let i = w - 1;
+  while (i > 0 && f[i - 1] === 'carico') i--;
+  return i + 1;
+}
+/* CST-01: quante settimane del calendario non contano perché c'è stata una pausa (si tolgono dalla settimana di settimanaProgramma). Dallo storico, seduta dopo seduta
+   (la prima conta dall'ultima seduta prima dell'inizio del programma, se c'è) fino a oggi: per ogni intervallo di G giorni veri senza sedute, con G <= `nulla` niente, fino a
+   `ferma` la settimana resta quella dell'ultima seduta (la rampa non avanza), oltre si riparte dalla prima settimana del blocco. Chi non ha mai fatto una seduta segue il
+   calendario, come prima (non c'è una pausa da misurare). Solo programmi v2, con il consenso e la regola accesa; la settimana non va mai sotto 1 e mai oltre quella del calendario */
+function settimaneFermePerPausa(p, fino) {
+  const P = sogliaPopolazione('pausa');
+  if (!P || !p || !p.inizio || !programmaV2Rientro(p) || !Array.isArray(p.fasi) || typeof sedutePassate !== 'function') return 0;
+  if (typeof coachAttivo !== 'function' || !coachAttivo() || !regolaAttiva('CST-01')) return 0;
+  const nulla = giorniNulla();
+  /* onda 5 (CST-01 seguito): `fino` = il giorno a cui si guarda (le pause fino a quel giorno; mai oltre oggi: una pausa non e ancora avvenuta). Senza: oggi, come prima */
+  const adesso = new Date(), oggi = fino && giorniTra(fino, adesso) > 0 ? new Date(fino) : adesso;
+  return ricordaRientro('ferme', p.inizio + '|' + p.fasi.join(',') + '|' + nulla + '|' + ymd(oggi), () => {
+    const inizio = daYmd(p.inizio);
+    const settCal = d => Math.floor(giorniTra(inizio, lunediDi(d)) / 7) + 1;
+    const tutte = sedutePassate().map(x => x.d).filter(d => giorniTra(d, oggi) >= 0);   /* dalla piu recente, fino al giorno a cui si guarda */
+    const date = tutte.filter(d => giorniTra(inizio, d) >= 0).reverse();   /* le sedute del programma, dalla piu vecchia */
+    let ferme = 0, prec = tutte.find(d => giorniTra(inizio, d) < 0) || null, wPrec = 1;
+    const intervallo = d => {
+      const wCal = Math.max(1, settCal(d) - ferme);
+      if (!prec) return wCal;
+      const G = giorniTra(prec, d);
+      let w = wCal;
+      if (G > P.ferma) w = Math.min(wCal, primaSettimanaDelBlocco(p, wPrec));
+      else if (G > nulla && p.fasi[wPrec - 1] !== 'scarico') w = Math.min(wCal, wPrec);   /* INT-4b (m2): una pausa breve dopo una seduta della settimana di scarico non la fa rifare: lo scarico e gia riposo */
+      ferme += wCal - w;
+      return w;
+    };
+    date.forEach(d => { wPrec = intervallo(d); prec = d; });
+    if (giorniTra(inizio, oggi) >= 0) intervallo(oggi);
+    return ferme;
+  });
+}
+/* CST-01 (onda 5, aperto di onda-4 «controlloOttavaPrincipiante, faseDelGiorno e le sedute vecchie senza settimana leggono ancora il calendario»): la settimana del programma di un GIORNO
+   qualunque, con le pause tolte come fa settimanaProgramma per oggi: settimana del calendario di `d` meno le settimane ferme fino a `d` (per un giorno futuro le pause sono quelle di oggi:
+   il programma continua da qui). La usano faseDelGiorno, settimanaDellaSeduta (regole-ricerca.js), il controllo dell'8ª del principiante (mesociclo.js) e fissaFasiDelloStorico.
+   Puo essere < 1 (prima dell'inizio) o oltre p.settimane (finito): chi la legge controlla. Senza il programma o la data: 0 */
+function settimanaDelGiorno(d, p) {
+  const pr = p || (typeof getProgramma === 'function' ? getProgramma() : null);
+  if (!pr || !pr.inizio || !d) return 0;
+  const giorno = d instanceof Date ? d : new Date(d);
+  if (isNaN(giorno.getTime())) return 0;
+  return Math.floor(giorniTra(daYmd(pr.inizio), lunediDi(giorno)) / 7) + 1 - settimaneFermePerPausa(pr, giorno);
+}
+
+/* ALG-14: la seduta di rientro di questo esercizio (CAR-04) è una delle ultime `sedute`? Allora { prima: carico di lavoro di prima della pausa, ora: carico dell'ultima seduta }.
+   La pausa di allora si conta come la contava il rientro (giorni dell'esercizio, doppi oltre i 65 anni in una pausa vera) */
+function rientroRecente(nome, R) {
+  const s = sessioniConData(nome, R.sedute + 3), tutte = sedutePassate(), doppi = giorniDoppiAttivi();   /* qualche seduta in piu: se l ultima di prima era di scarico si cerca quella di lavoro */
+  for (let k = 0; k < Math.min(R.sedute, s.length - 1); k++) {
+    const dopo = s[k], prima = s[k + 1];
+    if (!dopo.data || !prima.data || s.slice(0, k + 1).some(x => x.eraDiScarico)) return null;
+    const gEs = giorniTra(prima.data, dopo.data);
+    const prec = tutte.find(x => giorniTra(x.d, dopo.data) > 0);
+    const gPausa = prec ? giorniTra(prec.d, dopo.data) : gEs;
+    if (!rientroDopoPausa(gEs, giorniContatiPausa(gEs, gPausa, doppi))) continue;
+    /* INT-4b (M2): il carico di prima e quello di LAVORO: se l ultima seduta prima della pausa era di scarico (la pausa segue la settimana di scarico) si risale a quello della seduta di lavoro
+       prima, come fa CAR-04 con il carico di riferimento; prima si puntava al carico dello scarico e gli over 65 restavano a 0,75-0,90 del carico di prima */
+    const lavoro = s.slice(k + 1).find(x => !x.eraDiScarico) || prima;
+    const W0 = caricoDiLavoro(lavoro.ex), W = caricoDiLavoro(s[0].ex);
+    return W0 > 0 && W > 0 ? { prima: W0, ora: W } : null;
+  }
+  return null;
+}
+
+/* il primo pezzo del motivo di caricoProssimoBase dice come sale la progressione di base («prima una ripetizione in più», «+2,5 kg sarebbe un salto del 9%», «Arrivato a 10 ripetizioni»):
+   quando ALG-14 decide il peso quel pezzo non e piu vero e si toglie, il resto (RIR, rientro, serie) resta */
+function senzaMotivoDellaProgressione(motivo) {
+  const pezzi = String(motivo || '').split(' \u2022 ');
+  if (pezzi.length && /sarebbe un salto|prima una ripetizione|Arrivato a|Tutte le serie complete|Ultima serie con|Serie facili|Doppia progressione|Cima del range|Aumento dimezzato|passo più piccolo/i.test(pezzi[0])) pezzi.shift();
+  return pezzi.join(' \u2022 ');
+}
+
+/* frasi del motivo (tradotte: docs/in-arrivo/P4-S.json; i numeri vengono dalle soglie e nel dizionario sono #) */
+const FRASI_POPOLAZIONI = {
+  giorniDoppi: () => 'dai ' + sogliaPopolazione('over65').eta + ' anni i giorni di pausa contano doppi',
+  ripetizioniOver65: () => 'dai ' + sogliaPopolazione('over65').eta + ' anni restano almeno ' + sogliaPopolazione('ripetizioniMinOver65').minimo + ' ripetizioni: invece dello schema 5×3, carico -' +
+    Math.round((1 - sogliaPopolazione('ripetizioniMinOver65').caloStallo) * 100) + '% e si ricostruisce',
+  secondaSeduta: () => 'seconda seduta dopo la pausa: serie -' + Math.round((1 - sogliaPopolazione('rientroSerie').seconda) * 100) + '%, poi il piano di sempre',
+  rirRientro: () => 'dopo la pausa, per due sedute, una ripetizione in riserva in più',
+  risalita: (kg, piu, perc) => 'dopo la pausa si risale verso il carico di prima (' + fmtKg(kg) + ' kg): +' + fmtKg(piu) + ' kg, circa il ' + perc + '% in più'
+};
+
+/* Fase 90 della catena 'carico' (SEN, regia/fasi.js): i tetti delle popolazioni e la rampa del rientro. Dopo RIC (60) e INT (70), prima della griglia (95), che riporta il
+   carico sui pesi veri. Solo alza la prudenza, tranne ALG-14, che riporta verso il carico che c'era prima della pausa e mai oltre */
+function fasePopolazioni(r, c) {
+  if (!r || !c || isTimeBased(c.nome)) return r;
+  const pc = profiloCoach(), O = sogliaPopolazione('over65'), over65 = !!(O && pc.eta >= O.eta);
+  /* ETA-08 a (B10): dai 65 anni mai sotto 8 ripetizioni con un carico. L'unica fase che scende sotto è lo schema 5×3 del secondo stallo dei principianti con la forza
+     (CAR-07): per un over 65 diventa il -5% dei principianti con le ripetizioni del piano (PCO-01, riga del principiante) */
+  const minRip = sogliaPopolazione('ripetizioniMinOver65');
+  if (over65 && minRip && Number(r.weight) > 0 && Number(r.reps) < minRip.minimo && Number(c.repsTarget) >= minRip.minimo) {
+    r.reps = Number(c.repsTarget);
+    if (Number(c.setsBase) > 0) r.sets = Math.min(r.sets, Number(c.setsBase));
+    r.weight = caricoSceso(Number(r.weight), minRip.caloStallo, c.nome); r.tipo = 'giu';
+    aggiungiPerche(r, 'ETA-08', FRASI_POPOLAZIONI.ripetizioniOver65());
+  }
+  if (r.tipo === 'scarico' || !programmaV2Rientro() || typeof coachAttivo !== 'function' || !coachAttivo()) return r;
+  const st = statoRientro(), S = sogliaPopolazione('rientroSerie');
+  /* CAR-04 e RIC-05 (B20): il motivo dice perché un over 65 rientra con meno giorni di pausa */
+  if (st.doppi && st.seduta === 1 && /(^|• )[Rr]ientro dopo /.test(String(r.motivo || ''))) aggiungiPerche(r, 'CAR-04', FRASI_POPOLAZIONI.giorniDoppi());
+  if (S && regolaAttiva('CST-02') && (st.seduta === 1 || st.seduta === 2)) {
+    /* CST-02: la seconda seduta dopo la pausa ha il 10% di serie in meno (la prima ha il -25% di RIC-05); mai sotto 2. Con 3-4 serie il 10% arrotondato non toglie niente */
+    if (st.seduta === 2 && r.sets > 2) {
+      const n = Math.max(2, Math.round(r.sets * S.seconda));
+      if (n < r.sets) { r.sets = n; aggiungiPerche(r, 'CST-02', FRASI_POPOLAZIONI.secondaSeduta()); }
+    }
+    if (rirExtraRientro(c.nome) > 0) aggiungiPerche(r, 'CST-02', FRASI_POPOLAZIONI.rirRientro());
+  }
+  /* ALG-14: dopo la seduta del rientro, se la progressione sale, si risale fino al carico di prima, al massimo del 5% a seduta (2,5% a chi comincia, prudenti, minorenni, over 65) */
+  const R = sogliaPopolazione('risalita');
+  if (R && regolaAttiva('ALG-14') && r.tipo === 'su' && Number(r.weight) > 0) {
+    const rr = rientroRecente(c.nome, R);
+    if (rr && rr.ora < rr.prima) {
+      const lento = pc.livello === 'principiante' || pc.prudente || pc.minorenne || over65 || inGravidanza(getProfile());
+      const passo = lento ? R.passoPrudente : R.passo;
+      const w = Math.min(rr.prima, caricoSalito(rr.ora, rr.ora * passo, c.nome));
+      if (w > Number(r.weight) + 1e-9) {
+        r.weight = w; r.reps = Number(c.repsTarget) || r.reps;
+        r.motivo = senzaMotivoDellaProgressione(r.motivo);   /* INT-4b (m3): il peso lo decide ALG-14, non «prima una ripetizione in più» della progressione di base */
+        aggiungiPerche(r, 'ALG-14', FRASI_POPOLAZIONI.risalita(rr.prima, w - rr.ora, Math.round((w / rr.ora - 1) * 100)));
+      }
+    }
+  }
+  return r;
+}
+registraFase('carico', 90, 'SEN', fasePopolazioni);

@@ -57,13 +57,13 @@ test('B1: la dose dello scarico del controllo e la «bassa» del registro e si c
   storiaTre(a, [FB(10), FB(10), FB(8)]);
   const r = a.dati(a.chiama('caricoProssimo', 'Leg Press', 60, 10, 3));
   assert.strictEqual(r.tipo, 'scarico');
-  assert.strictEqual(r.weight, 57, '60 kg x 0,95 (e non x 0,9 della fatica alta)');
+  assert.strictEqual(r.weight, 57.5, '60 kg x 0,95 = 57 (e non x 0,9 della fatica alta): griglia della macchina a passi di 2,5 kg = 57,5 (ALG-06, P3-A)');
   assert.strictEqual(r.sets, 2, '3 serie x 0,65 = 1,95 -> 2');
   assert.ok(/volume -35%/.test(r.motivo), r.motivo);
   /* la seduta di scarico e fatta: la prossima della stessa settimana parte ancora da 60 kg, non da 57 */
   a.storia([a.seduta(0, [{ nome: 'Leg Press', serie: [[57, 10, true], [57, 10, true]] }], { feedback: FB(6), settimana: { numero: 8, fase: 'scarico' } })].concat(a.leggi(a.chiave('historyKey'))));
   const r2 = a.dati(a.chiama('caricoProssimo', 'Leg Press', 60, 10, 3));
-  assert.strictEqual(r2.weight, 57, 'stesso carico di riferimento (60 kg), non 54');
+  assert.strictEqual(r2.weight, 57.5, 'stesso carico di riferimento (60 kg), non 54');
 });
 
 test('B1: con fatica bassa e nessun segnale la settimana 8 continua come carico, e lo dice', () => {
@@ -226,7 +226,9 @@ test('M1: su 1.543 profili della matrice del collaudo nessuna nota del volume, d
     tutti.forEach(e => { if (e.tecnica === 'drop' && ['D', 'E'].indexOf(classe(e.name)) === -1) falso(p, 'drop set su ' + e.name + ' (classe ' + classe(e.name) + ')'); });
   });
   /* il controllo non e vuoto: le note ci sono, e il campione le esercita tutte */
-  assert.ok(viste.pocoTempo >= 100 && viste.tempo >= 20 && viste.struttura >= 20 && viste.drop >= 20 && viste.potenza >= 20 && viste.quattroSedute >= 20 && viste.mesociclo >= 100, JSON.stringify(viste));
+  /* P4-S (ETA-08 parte a, D-P21 n. 5): con sicurezza/popolazioni.js la potenza (e la sua nota) non c'e nei programmi nuovi degli over 65; senza, come prima */
+  const p4s = a.g("typeof potenzaAmmessaOver65 === 'function'");
+  assert.ok(viste.pocoTempo >= 100 && viste.tempo >= 20 && viste.struttura >= 20 && viste.drop >= 20 && (p4s ? viste.potenza === 0 : viste.potenza >= 20) && viste.quattroSedute >= 20 && viste.mesociclo >= 100, JSON.stringify(viste));
   assert.deepStrictEqual(falsi, [], 'note false: ' + falsi.join('\n'));
 });
 
@@ -312,7 +314,11 @@ test('M7: con un fastidio dichiarato nessun isolamento che carica quella zona va
     { goals: ['ricomposizione'], level: 'avanzato', days: 4, minutes: 60, luogo: 'palestra', fastidi: ['ginocchia'], seme: 'f388' },
     { goals: ['ricomposizione'], level: 'avanzato', days: 4, minutes: 90, luogo: 'palestra', fastidi: ['ginocchia'], seme: 'f412' },
     { goals: ['massa'], level: 'avanzato', days: 5, minutes: 75, luogo: 'palestra', fastidi: ['spalle'], seme: 'sp1' },
-    { goals: ['massa'], level: 'intermedio', days: 4, minutes: 60, luogo: 'palestra', fastidi: ['spalle', 'schiena'], seme: 'sp2' }
+    { goals: ['massa'], level: 'intermedio', days: 4, minutes: 60, luogo: 'palestra', fastidi: ['spalle', 'schiena'], seme: 'sp2' },
+    /* P4-F (REC-04): con le eccezioni per le ginocchia (Squat su Scatola, Step-up Basso, Sit-to-Stand) il sorteggio dei posti cambia: f388 non ha piu la Leg Extension e f412 ne ha 3 serie, e i quattro
+       isolamenti della prova scendevano a 3 («la prova non e vuota»). Due profili in piu con le ginocchia dolenti, avanzati, che la Leg Extension a 4 serie la hanno: il tetto di 4 si prova ancora */
+    { goals: ['massa'], level: 'avanzato', days: 4, minutes: 90, luogo: 'palestra', fastidi: ['ginocchia'], seme: 'm7-1' },
+    { goals: ['massa'], level: 'avanzato', days: 4, minutes: 90, luogo: 'palestra', fastidi: ['ginocchia'], seme: 'm7-2' }
   ].map(p => Object.assign({}, base, p));
   let isolamenti = 0;
   profili.forEach(p => { const serie = a.json('__f(' + JSON.stringify(p) + ')'); isolamenti += serie.length; assert.ok(serie.every(n => n <= 4), JSON.stringify(p.goals) + ' ' + p.level + ' ' + p.fastidi + ': isolamenti che caricano la zona a ' + serie.join(', ') + ' serie'); });

@@ -10,7 +10,8 @@
    INT-02 esigenza di partenza: 120% senza bandiere, 100% con una, 95% con due o con un angolo molto basso.
    INT-03 con due bandiere: una ripetizione in riserva in piu (le stime del RIR sbagliano gia di circa una ripetizione).
    INT-04 prima volta con un esercizio: una serie in meno (min 2) e una ripetizione in riserva in piu: le prime sedute
-          fanno piu indolenzimento (effetto della seduta ripetuta) e il carico di partenza e una stima.
+          fanno piu indolenzimento (effetto della seduta ripetuta) e il carico di partenza e una stima. Non si somma alla rampa del volume
+          (MES-03): se le serie sono gia sotto il picco la serie in meno non c e (INT-3a); la ripetizione in riserva in piu resta.
    INT-05 dopo le prime due sedute del programma il coach confronta serie fatte, sforzo (RPE) e prontezza
           con quanto previsto e fissa l esigenza (90-130%) subito, senza aspettare il lunedi.
    Onda 0 del coach v2 (W0-T4):
@@ -94,6 +95,10 @@ window.rirExtraIntensita = function(nome) {
    dopo i carichi (10), gli aggiusti (50) e RIC (60); prima era un involucro di caricoProssimo. */
 function primaVoltaUnaSerieInMeno(r, c) {
   if (!r || r.tipo !== 'nuovo' || isTimeBased(c.nome) || !regolaAttiva('INT-04')) return r;
+  /* INT-3a: la rampa del volume (MES-03, fase 40: le prime settimane hanno gia meno serie del picco) e questa regola dicono la stessa cosa, le prime sedute fanno piu indolenzimento:
+     non si sommano (alla settimana 1 un esercizio da 4 serie scendeva a 3 per la rampa e a 2 per la prima volta). Se un altra fase ha gia tolto serie, questa non ne toglie altre;
+     il RIR in piu della prima volta resta (rirExtraIntensita). Mai sotto 2 serie. */
+  if (Number(c.setsBase) > 0 && r.sets < Number(c.setsBase)) return r;
   if (r.sets > 2) {
     r.sets = Math.max(2, r.sets - 1);
     r.motivo += ' • prima volta: una serie in meno, le prime sedute fanno più indolenzimento';

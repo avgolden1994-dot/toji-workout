@@ -9,7 +9,7 @@
 
    A CHI: gli esercizi del piano con carico stimato (e.stimato, scritto da applicaPartenze e da pesoPartenza) di tutti i principianti, uomini compresi (D-P1),
    e delle donne intermedie con il fattore di partenza bassa attivo. Non ai minorenni (una regola che alza i carichi non li spinge). Solo col consenso.
-   PER QUANTO: le prime 4 esposizioni (sedute con l esercizio, dallo storico) e finche non «si chiude»: i salti si decidono dopo le esposizioni 1-4, alla quinta e chiusa comunque.
+   PER QUANTO: le prime 5 esposizioni (sedute con l esercizio, dallo storico) e finche non «si chiude»: i salti si decidono dopo le esposizioni 1-5, alla sesta e chiusa comunque (INT-3a: erano 4; vedi soglie-partenza.js).
    COME: lo scarto = RPE bersaglio (8: il carico e giusto, stop al primo RPE 8) meno l RPE segnato; l RPE e quello piu alto tra le serie segnate (la serie piu dura:
    con il tocco a 3 scelte di W3-T3, D-P16, e la sola prima serie), corretto da rirBias. La scala dell app parte da 6 (facile = quattro o piu ripetizioni di
    riserva): 6 vale come scarto 2. Con tutte le serie fatte alle ripetizioni previste:
@@ -193,7 +193,11 @@ function faseCalibrazione(r, c) {
   if (u.azione === 'tieni') {
     /* mai oltre +25% in una volta, nemmeno con la progressione di prima (CAR-16): se un passo supera il tetto (manubrio da 3 kg) si sale con le ripetizioni */
     const tetto = sogliaPartenza('calibrazioneTettoSalto');
-    if (u.pesoUltimo > 0 && r.weight > u.pesoUltimo * (1 + tetto) + 1e-9) {
+    /* INT-5d (D-P26): se il +25% non contiene NESSUN peso della griglia sopra il carico (un cavo da 5 kg: +25% e 6,25 kg e il passo e 2,5 kg) la guardia lascia passare esattamente
+       quel passo, come limitaSalitaBase: altrimenti la coppia non sale mai (A1 e m3). Un salto piu grande di un passo resta fermo. */
+    const unPasso = u.pesoUltimo > 0 ? passoUnicoOltreTetto(u.pesoUltimo, c.nome) : null;
+    const passaUnPasso = unPasso !== null && r.weight <= unPasso + 1e-9;
+    if (u.pesoUltimo > 0 && r.weight > u.pesoUltimo * (1 + tetto) + 1e-9 && !passaUnPasso) {
       const salto = Math.round((r.weight / u.pesoUltimo - 1) * 100), passo = Math.round((r.weight - u.pesoUltimo) * 10) / 10;
       r.weight = u.pesoUltimo; r.reps = (Number(c.repsTarget) || r.reps) + 1; r.tipo = 'su';
       r.motivo = '+' + virgola(passo) + ' kg sarebbe un salto del ' + salto + '%: prima una ripetizione in piu (' + r.reps + ')';
