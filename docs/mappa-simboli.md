@@ -746,7 +746,7 @@ _nessun nome globale_
 - `SLOT_PRIORITA` js/ui/onboarding.js:91 costante ← nessun altro file — nel file: ricettaPunti
 - `ricettaPunti()` js/ui/onboarding.js:93 funzione ← js/coach/programma/ricette.js:154 componiSedute · js/coach/programma/soglie-split.js:28 SOGLIE_SPLIT (html)
 - `schemeFor()` js/ui/onboarding.js:101 funzione ← js/coach/catalogo-regole.js:39 COACH_REGOLE (html) · js/coach/programma/motore.js:213 schemaMisto · js/coach/volume/serie-ripetizioni.js:51 prescriviSeduta · tests/genera-stadi.test.js:260 (html) · tests/generatore-onda0.test.js:54 (html), 64 (html) · tests/tempo.test.js:330 (html)
-- `PARAM_ETA` js/ui/onboarding.js:120 costante ← js/coach/sicurezza/tecnica-adatta.js:68 personaTecniche · js/coach/regia/brief.js:79 chiDa, 136 briefCoach · js/coach/specialita/forza.js:132 SPEC_FORZA · js/coach/carichi/partenza.js:226 stimaCaricoIniziale · js/coach/carichi/calibrazione.js:49 personaCalibrazione · js/coach/regole-ricerca.js:64 profiloCoach · js/coach/regole-nuove.js:70 regoleRicAlCarico · js/ui/opzioni/il-coach.js:20 paginaCoach · js/coach/compone.js:35 guardiaNutrizione, 83 sceltaMetodo · js/coach/esigenza.js:26 esigenzaEsclusa — nel file: etaPerProgramma, renderOnb
+- `PARAM_ETA` js/ui/onboarding.js:120 costante ← js/coach/sicurezza/tecnica-adatta.js:68 personaTecniche · js/coach/regia/brief.js:79 chiDa, 136 briefCoach · js/coach/specialita/forza.js:132 SPEC_FORZA · js/ui/onboarding-risultato.js:50 renderOnbResult · js/coach/carichi/partenza.js:226 stimaCaricoIniziale · js/coach/carichi/calibrazione.js:49 personaCalibrazione · js/coach/regole-ricerca.js:64 profiloCoach · js/coach/regole-nuove.js:70 regoleRicAlCarico · js/ui/opzioni/il-coach.js:20 paginaCoach · js/coach/compone.js:35 guardiaNutrizione, 83 sceltaMetodo · js/coach/esigenza.js:26 esigenzaEsclusa — nel file: etaPerProgramma, renderOnb
 - `MSG_ETA_SOTTO_MINIMO` js/ui/onboarding.js:121 costante ← js/coach/regia/brief.js:136 briefCoach — nel file: etaPerProgramma
 - `MSG_ETA_MANCANTE` js/ui/onboarding.js:122 costante ← nessun altro file — nel file: etaPerProgramma
 - `etaPerProgramma()` js/ui/onboarding.js:123 funzione ← js/coach/repertorio.js:535 nuovoCiclo · js/ui/opzioni/il-coach.js:129 setCoach — nel file: onbNext, onbStepValid, onbSetEta, descSonnoBene, renderOnb
@@ -759,7 +759,7 @@ _nessun nome globale_
 - `onbStepValid()` js/ui/onboarding.js:178 funzione ← tests/generatore-onda0.test.js:309 (html) — nel file: onbNext, onbSetEta, renderOnb
 - `ONB_FREQ` js/ui/onboarding.js:187 costante ← js/ui/opzioni/il-coach.js:31 paginaCoach — nel file: renderOnb
 - `onbSetTest()` js/ui/onboarding.js:193 funzione window ← nessun altro file — nel file: renderOnb
-- `onbPick()` js/ui/onboarding.js:198 funzione window ← js/ui/onboarding-risultato.js:76 renderOnbResult (html) — nel file: optHtml
+- `onbPick()` js/ui/onboarding.js:198 funzione window ← js/ui/onboarding-risultato.js:79 renderOnbResult (html) — nel file: optHtml
 - `onbSetEta()` js/ui/onboarding.js:203 funzione window ← tests/split.test.js:347 (html), 349 (html) — nel file: renderOnb
 - `onbToggleGoal()` js/ui/onboarding.js:217 funzione window ← nessun altro file — nel file: renderOnb
 - `onbTogglePriorita()` js/ui/onboarding.js:225 funzione window ← nessun altro file — nel file: renderOnb
@@ -818,7 +818,7 @@ _nessun nome globale_
 - `handleBiaPdf()` js/coach/bia/lettore.js:213 funzione window ← js/ui/onboarding.js:560 bindBiaInputs
 - `applyBiaValues()` js/coach/bia/lettore.js:237 funzione window ← nessun altro file — nel file: handleBiaPdf
 - `TESTO_BIA_GRASSO_BASSO` js/coach/bia/lettore.js:267 costante ← nessun altro file — nel file: analyzeBia
-- `analyzeBia()` js/coach/bia/lettore.js:268 funzione window ← js/ui/onboarding-risultato.js:7 renderOnbResult · js/coach/compone.js:44 fattoreFisico
+- `analyzeBia()` js/coach/bia/lettore.js:268 funzione window ← js/ui/onboarding-risultato.js:7 renderOnbResult · js/coach/compone.js:44 fattoreFisico · tests/bmr-minorenni.test.js:58 (html)
 
 ### `js/coach/programma/motore.js`
 
@@ -1318,7 +1318,7 @@ _nessun nome globale_
 
 ### `js/ui/onboarding-risultato.js`
 
-- `renderOnbResult()` js/ui/onboarding-risultato.js:5 funzione ← js/ui/onboarding.js:473 renderOnb · tests/revisione-onda1.test.js:181 (html)
+- `renderOnbResult()` js/ui/onboarding-risultato.js:5 funzione ← js/ui/onboarding.js:473 renderOnb · tests/bmr-minorenni.test.js:20 risultato (html) · tests/revisione-onda1.test.js:181 (html)
 
 ## js/coach
 
