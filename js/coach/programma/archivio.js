@@ -8,12 +8,18 @@ window.getProgramma = function() { try { return JSON.parse(localStorage.getItem(
 window.getBiaStorico = function() { try { return JSON.parse(localStorage.getItem(biaKey()) || '[]'); } catch (e) { return []; } };
 window.aggiungiBia = function(valori, quando) {
   const data = quando || valori.data || ymd(new Date());
-  const pulito = {};
+  const storico = getBiaStorico();
+  const gia = (storico.find(x => x.data === data) || {}).valori || {};
+  /* un campo che il nuovo valore non riporta (null o assente) lascia quello gia salvato per la stessa data: un referto senza bmr non azzera il bmr */
+  const unito = {};
   ['peso', 'altezza', 'fmPerc', 'fm', 'ffm', 'smm', 'tbw', 'bmr', 'bmi', 'phase', 'ecw', 'proteine', 'minerali', 'viscerale']
-    .forEach(k => { if (valori[k] !== undefined && valori[k] !== null) pulito[k] = valori[k]; });
+    .forEach(k => {
+      const v = (valori[k] !== undefined && valori[k] !== null) ? valori[k] : gia[k];
+      if (v !== undefined && v !== null) unito[k] = v;
+    });
   /* una misura per data: ricaricando lo stesso referto non si duplica */
-  const st = getBiaStorico().filter(x => x.data !== data);
-  st.push({ data: data, valori: pulito });
+  const st = storico.filter(x => x.data !== data);
+  st.push({ data: data, valori: unito });
   st.sort((a, b) => a.data < b.data ? -1 : 1);
   localStorage.setItem(biaKey(), JSON.stringify(st));
 };
