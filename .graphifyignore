@@ -3,10 +3,17 @@
 agent/
 .claude/
 esercizi/
+esercizi-bozze/
 node_modules/
 skills-lock.json
 package-lock.json
 *.png
+*.jpg
+*.jpeg
+*.webp
+*.svg
+*.gif
+*.ico
 # file generati che ripetono il codice: nel grafo sarebbero solo rumore
 # (indice e mappa restano da leggere come documenti, vedi CLAUDE.md)
 docs/indice-codice.md
