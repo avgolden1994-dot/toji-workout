@@ -106,6 +106,24 @@ Contenuto: landing it + en (testi, alt, meta, OG, informativa), canale sito, tip
 
 **Verdetto: OK per approvazione come bozza dei testi.** **Non pubblicabile così com'è**: mancano titolare, servizio della lista, URL della web app, dominio/hosting, revisione dell'inglese e dell'informativa, e la riconferma privacy della build iOS. Dopo ogni modifica dei testi il controllo va rifatto.
 
+## 6b. Aggiornamenti dalle decisioni del 2026-10-10 (nessuna modifica ai file HTML/CSS)
+
+**Nome «3in» (deciso)**: si legge «tre-in» / «three-in» e richiama l'inglese «train». **Proposta, NON applicata, da approvare** per hero o footer (da ricontrollare con `controllo-pubblicazione` dopo l'approvazione):
+- it: «3in si legge “tre-in” e richiama l'inglese “train”: allenarsi.»
+- en: «3in is read “three-in” and echoes “train”, as in training.»
+Nota: l'omofonia vale per l'inglese; in italiano è meno evidente. Rischio «3 inch» e ricerca marchio non verificati. Dettagli e tagline in `docs/marketing/brand-3in.md` sez. 2 e 8b.
+
+**Lista d'attesa: «facciamo un server in UE» è ambiguo. Due cose diverse:**
+| | Server PROPRIO in UE (VPS) | SERVIZIO con data center in UE (newsletter/form) |
+|---|---|---|
+| Costi | Mensili (non verificati qui) | Piano gratuito possibile (limiti NON verificati) |
+| Lavoro | Manutenzione, aggiornamenti, sicurezza, backup, monitoraggio | Quasi nullo: si copia l'URL nell'`action` |
+| GDPR | L'utente è titolare **e** gestisce tutto l'impianto (misure di sicurezza, violazioni dei dati, registro) | Titolare resta l'utente; il fornitore è responsabile con DPA, doppia conferma già disponibile |
+| Obiettivo «minimo lavoro e spesa zero» | Contrario | Coerente (opzione A di sez. 5, percorso raccomandato) |
+**Scelta lasciata APERTA all'utente.** Piani, prezzi, limiti, sede reale dei server e DPA dei servizi NON sono verificati: da leggere sul sito del fornitore prima di decidere.
+
+**Revisione inglese e informativa privacy**: la fanno l'utente e Claude insieme, senza legale. **Claude non è un consulente legale.** L'informativa va tenuta minima: solo email + lingua; finalità = avviso di lancio; base giuridica = consenso; cancellazione a richiesta; durata della conservazione **da decidere** (proposta in sez. 3: 12 mesi o fino al lancio). Prima della pubblicazione conviene un controllo da una fonte autorevole (Garante Privacy, modello di informativa): **non verificato qui**.
+
 ## 7. Cosa NON ho verificato
 
 - Prezzi, limiti, sede dei server, DPA e tracciamento predefinito dei servizi di newsletter; condizioni di Google Forms.
@@ -118,12 +136,12 @@ Contenuto: landing it + en (testi, alt, meta, OG, informativa), canale sito, tip
 
 ## 8. Decisioni aperte per l'utente
 
-1. **Significato di «3in»**: la pagina non lo spiega. Va spiegato?
+1. **Significato di «3in»**: DECISO il 2026-10-10 («tre-in»/«three-in», richiama «train»). Resta da approvare la riga di spiegazione per hero/footer (sez. 6b).
 2. **Handle** social (3in, 3in.app, 3in_app, 3inworkout) da verificare a mano.
 3. **Dominio e hosting** (statico gratuito? quale?) → canonical, hreflang, OG, voce «Questo sito» dell'informativa.
 4. **Titolare del trattamento** e email di contatto; durata massima della lista.
-5. **Servizio per la lista d'attesa** (raccomandata opzione A, sez. 5).
-6. **Revisione dell'inglese** (e dell'informativa) da parte di chi?
+5. **Servizio per la lista d'attesa** (raccomandata opzione A, sez. 5). «Server in UE»: proprio o servizio con data center in UE? Vedi sez. 6b; scelta aperta.
+6. **Revisione dell'inglese e dell'informativa**: DECISO il 2026-10-10, utente + Claude (nessun legale); controllo su fonte autorevole consigliato prima di pubblicare (sez. 6b).
 7. **URL della web app**: si condivide la PWA già ora? Con o senza Coach IA disattivato?
 8. Riga **«prova Pro di 2 settimane»**: resta fuori finché ASC e docs non sono allineati?
 9. Segnalazioni sull'app (fuori dal perimetro di questo lavoro, nessuna modifica fatta): (a) il titolo del cedimento «MODALITÀ BERSERK / BERSERK MODE» richiama il titolo di un manga, simile al rischio già tolto con «Toji»: valutare un nome neutro; (b) in inglese la nota del coach «+5 kg sarebbe un salto del 7%: …» resta in parte in italiano (stringa mancante nel dizionario `js/lingue/en.js`).

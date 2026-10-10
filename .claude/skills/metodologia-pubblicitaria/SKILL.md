@@ -303,6 +303,9 @@ Data della verifica: 2026-10-05. Da riverificare prima di decisioni di prezzo.
 | - | Modello | Pro: prova 2 settimane (introductory offer Apple, da confermare in ASC); annuale 19,99 € (lancio 6,99 € primo anno, Pay up front); lifetime insieme (39,99 € pieno; lancio 24,99 € via offer code, a tempo/posti limitati); Lifetime Famiglia +30% su 39,99 con Family Sharing; -80% solo recensori/palestre/trainer; codice famiglia -90% abbandonato; tip jar tolta; nessun analytics; StoreKit 2 senza RevenueCat; PWA gratuita per ora (sez. 6-7, scheda `docs/marketing/decisioni-modello-pro.md`) |
 | - | Sequenza | Spesa zero fino al segnale dei 30 giorni: niente codice di acquisto e niente 99 $ prima (sez. 6) |
 | - | Ordine delle skill | Delegato all'agente: vedi `docs/marketing/ROADMAP-SKILL.md` |
+| 10-10 | Nome | «3in» = «tre-in» / «three-in», richiama l'inglese «train»; omofonia solo in inglese; marchio non verificato (`docs/marketing/brand-3in.md` sez. 2 e 8b) |
+| 10-10 | Lista d'attesa | «Server in UE» ambiguo: scelta APERTA tra server proprio (costi, manutenzione, obblighi) e servizio con data center in UE (raccomandato); piani non verificati (`sito-bozza/LEGGIMI.md` sez. 6b) |
+| 10-10 | Revisione en e informativa | Utente + Claude, nessun legale; informativa minima; Claude non è consulente legale; controllo su fonte autorevole (Garante) consigliato |
 
 ### Decisioni aperte (chiedi all'utente, una alla volta)
 
@@ -312,7 +315,7 @@ Data della verifica: 2026-10-05. Da riverificare prima di decisioni di prezzo.
 | 1b | Aperte sul Pro (prezzo del lifetime CHIUSO il 2026-10-05): **durata della prova** da confermare in App Store Connect; **irreversibilità di Family Sharing**; **limiti di riscatti per codice**; **Schedule 2** | Vedi scheda sez. 4 e 7 |
 | 7 | Soglie a gradini (sez. 5): approvi 50/100/10%? | Sono mie stime |
 | 8 | Strumento di analytics anonimo | Verifica del fornitore, "Data Not Collected" |
-| 9 | Livello di inglese dell'utente (revisione en); revisione madrelingua de | Pubblicazione in en senza revisione |
+| 9 | Livello di inglese dell'utente; revisione madrelingua de (la revisione en è utente + Claude dal 10-10, non madrelingua) | Pubblicazione in en senza revisione esterna |
 
 ### Come usare questa skill
 

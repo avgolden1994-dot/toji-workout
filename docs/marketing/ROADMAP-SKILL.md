@@ -188,9 +188,15 @@ Extra: community-risposte ◄ gestione-social; outreach, press-kit ◄ brand + a
 6. **Modello**: **decisione chiusa nell'impianto** (scheda `docs/marketing/decisioni-modello-pro.md`): Pro con prova di 2 settimane (introductory offer Apple, da confermare in ASC), annuale 19,99 € (lancio 6,99 € il primo anno via offer code «Pay up front», poi 19,99 €; netti 13,93 / 4,87), lifetime insieme (39,99 € pieno; lancio 24,99 € via offer code, a tempo/posti limitati; netti 27,86 / 17,41), «Lifetime Famiglia» +30% su 39,99 = 51,99 con Family Sharing (lifetime singolo senza), codici -80% solo per recensori/palestre/trainer in numero limitato, codice famiglia -90% abbandonato, tip jar tolta, nessun analytics, StoreKit 2 senza RevenueCat, PWA gratuita per ora, spesa zero fino al segnale dei 30 giorni. Perimetro Pro e netti in `metodologia-pubblicitaria` sez. 6 (offer code in sez. 7).
 7. **Ordine delle skill**: delegato all'agente, vedi in cima.
 
+## Decisioni del 2026-10-10
+
+- **Nome**: «3in» = «tre-in» / «three-in», richiama «train» (omofonia solo in inglese; marchio non verificato). Dettagli: `docs/marketing/brand-3in.md` sez. 2 e 8b.
+- **Revisione en e informativa**: utente + Claude, nessun legale (Claude non è consulente legale); informativa minima; controllo su fonte autorevole consigliato.
+- **Lista d'attesa**: «server in UE» ambiguo; scelta aperta tra server proprio e servizio con data center in UE (raccomandato): `docs/marketing/sito-bozza/LEGGIMI.md` sez. 6b.
+
 ## Decisioni ancora aperte
 
 1. **Modello Pro: impianto deciso il 2026-10-05**; restano da allineare i docs del repo (elenco in `docs/marketing/decisioni-modello-pro.md` sez. 6, non eseguito), privacy store («Data Not Collected», senza SDK di terzi), ASO e offer code. Finché i docs non sono allineati, nessun testo su prezzi o gratuità viene pubblicato. Aperti: **durata della prova** da confermare in App Store Connect; **irreversibilità di Family Sharing**; **limiti di riscatti per codice**; **Schedule 2**.
-2. Conferma del livello di inglese dell'utente e disponibilità di madrelingua per la revisione de (en da confermare).
-3. Strumento per la lista d'attesa e luogo di hosting (GitHub Pages sì/no); dominio.
+2. Livello di inglese dell'utente e madrelingua per la revisione de (la revisione en è utente + Claude dal 10-10).
+3. Strumento per la lista d'attesa (server proprio o servizio con data center in UE) e luogo di hosting (GitHub Pages sì/no); dominio.
 4. Verifica manuale della disponibilità dell'handle «3in» sulle tre piattaforme.

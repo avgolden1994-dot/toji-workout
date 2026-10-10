@@ -14,7 +14,8 @@
 Cosa risulta dal repo (verificato con grep):
 - «3in» è il nome pubblico deciso il 2026-10-05 (`docs/piano-lancio-appstore.md` D7, `docs/checklist-appstore/01-decisioni.md` D7a) e sostituisce «Toji Workout» per eliminare il rischio legato a un personaggio protetto.
 - È già in `manifest.json` (`name`, `short_name`), in `index.html` (`<title>`, `apple-mobile-web-app-title`) e in `js/core/costanti.js:15`.
-- **Nessun documento spiega il significato**. Non lo invento: è la domanda aperta n. 1 (sez. 11). Letture possibili da confermare o scartare: «3 in 1» (allenamento, calendario, coach: la `description` del manifest elenca proprio tre cose), «three in» (tre sedute a settimana), pronuncia «trein»/«three-in». Finché non c'è risposta, i contenuti **non spiegano** il nome.
+- **DECISO dall'utente (2026-10-10)**: «3in» si legge **«tre-in»** (it) / **«three-in»** (en) e richiama l'inglese **«train»** (allenarsi). Nel repo nessun documento precedente spiegava il significato; questa è la fonte. Le letture «3 in 1» e «tre sedute a settimana» sono scartate.
+- **Nota onesta**: l'omofonia «3in / train» funziona in inglese; in italiano è meno evidente (chi legge «tre-in» non sente «train» da solo). Il rischio di confusione con «3 inch» (sez. 9) resta. La ricerca marchio **non è verificata**. Per questo il gioco sul nome (sez. 8b) è un tocco leggero, non il perno del messaggio.
 
 ## 3. Pubblico e posizionamento
 
@@ -118,6 +119,35 @@ Tutte e tre sono disegnate a mano in SVG: forme geometriche (tracciati e rettang
 | Niente account. Solo allenamento. | No account. Just training. |
 | Allenati. Il resto resta qui. | Train. Everything else stays here. |
 
+## 8b. Gioco sul nome «tre-in / train» (BOZZA, non pubblicare)
+
+**Pronuncia**: it «tre-in» (/tre in/); en «three-in» (/θriː ɪn/), che si avvicina a «train» (/treɪn/) solo in pronuncia rapida o approssimata. Il gioco regge meglio in inglese.
+
+**Tagline it** (esito `controllo-pubblicazione` per riga; tutte senza claim medici né promesse di risultati)
+| # | Testo | Esito |
+|---|---|---|
+| 1 | «3in. Si legge “tre-in”, richiama “train”.» | OK |
+| 2 | «Tre-in: ti alleni, il resto resta qui.» | OK (riserva n. 7: «il resto resta qui» vale se la build iOS conferma i dati sul telefono) |
+| 3 | «Dì “tre-in”. Pensa “train”.» | OK |
+| 4 | «Tre-in: allenarsi, in breve.» | Da correggere: «in breve» non si aggancia al nome e suona vago. Proposta: «Tre-in. Allenarsi e basta.» (evitare varianti con «in breve tempo»: suggeriscono rapidità di risultato) |
+| 5 | «Tre-in. Niente account, solo train.» | OK (riserva n. 7; mescola it/en di proposito, leggibile solo se il pubblico conosce «train») |
+
+**Tagline en**
+| # | Testo | Esito |
+|---|---|---|
+| 1 | «3in. Say “three-in”. Think “train”.» | OK |
+| 2 | «Three-in. Time to train.» | OK |
+| 3 | «Say it out loud: three-in. Now go train.» | OK |
+| 4 | «Three-in, as in train.» | OK (lieve ambiguità col treno: va accompagnata da immagini di palestra) |
+| 5 | «Three-in. No account. Just train.» | OK (riserva n. 7) |
+
+**Spiegare il nome in una riga (bio / footer)**
+- it: «3in si legge “tre-in” e richiama l'inglese “train”: allenarsi.»
+- en: «3in is read “three-in” and echoes “train”, as in training.»
+Esito: OK (n. 21 nome corretto, n. 30 inglese da far rivedere, n. 31 revisione madrelingua come per le altre frasi en).
+
+Resta valido il resto della checklist sez. 10: pubblicazione solo con approvazione esplicita di QUEL testo in QUELLA lingua; inglese da rivedere; omofonia da verificare con madrelingua.
+
 ## 9. Rischi su nome e marchio (da controllare a mano)
 
 - **Marchio**: ricerca «3in» e varianti in UIBM, EUIPO/TMview, USPTO, classi 9 (software), 41 (allenamento), 42 — **non verificabile da qui**; un nome di 3 caratteri con cifra ha alta probabilità di conflitti o di essere debole come marchio. Valutare un consulto.
@@ -150,9 +180,9 @@ Contenuto: bio sez. 7 e tagline sez. 8, it+en, organico. Pass: n. 1-5, 8, 12-13,
 
 ## 11. Domande aperte per l'utente
 
-1. Cosa significa «3in» (o come si pronuncia)? Va spiegato nei contenuti o resta un nome e basta?
+1. ~~Significato di «3in»~~ DECISO il 2026-10-10 (sez. 2). Resta aperto: scegli le tagline e la riga di spiegazione della sez. 8b (nessuna è approvata) e se il nome va spiegato nei contenuti.
 2. Logo: approvi A + B (avatar) come proposto, oppure preferisci C o una variante?
 3. L'icona App Store sarà B (stessa geometria del marchio) o l'asset Quiver previsto? Il marchio deve adattarsi all'icona o viceversa?
 4. Quale handle hai trovato libero (3in, 3in.app, 3in_app, 3inworkout) e su quali piattaforme?
 5. «In arrivo su iPhone» va bene nelle bio, o preferisci non citare la piattaforma finché non c'è una data?
-6. Chi rivede l'inglese prima della pubblicazione?
+6. ~~Chi rivede l'inglese~~ DECISO il 2026-10-10: l'utente e Claude insieme, nessun legale né madrelingua esterno (resta la limitazione: non è una revisione madrelingua).
