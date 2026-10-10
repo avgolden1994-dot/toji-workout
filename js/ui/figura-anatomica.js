@@ -196,7 +196,7 @@ function volLabel(v) {
   const lvl = volLevel(v.sets);
   if (!lvl) return '';
   const gg = v.days === 1 ? '1 giorno' : v.days + ' giorni';
-  const ind = v.indirette ? ' \u2022 +' + String(Math.round(v.indirette * 2) / 2).replace('.', ',') + ' indirette' : '';
+  const ind = v.indirette ? ' \u2022 +' + numeroLingua(Math.round(v.indirette * 2) / 2) + ' indirette' : '';
   /* oltre ~11 serie per muscolo nella stessa seduta il guadagno cala (Remmert 2025) */
   const tetto = v.maxSeduta > 11 ? ' \u2014 troppe in un giorno: dividile' : '';
   if (lvl === 'high') return v.sets + ' serie \u2022 ' + gg + ind + ' \u2014 carico alto' + tetto;

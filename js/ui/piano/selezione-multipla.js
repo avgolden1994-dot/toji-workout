@@ -227,6 +227,7 @@ window.startEditExercise = function(idx) {
   if (!e) return;
   const inp = document.getElementById('exercise-name');
   inp.value = inp.dataset.visto = trEs(e.name); inp.dataset.chiave = e.name;
+  document.getElementById('exercise-select').value = '';   /* un menu rimasto su un altro esercizio non deve poi cancellare la chiave di questo */
   document.getElementById('sets').value = e.sets;
   document.getElementById('reps').value = e.reps;
   document.getElementById('weight').value = e.weight;

@@ -55,15 +55,14 @@ function graficoPeso(pts, obiettivo) {
   const t0 = daYmd(p[0].data).getTime(), t1 = daYmd(p[p.length - 1].data).getTime();
   const X = (d) => p.length === 1 ? W / 2 : padX + (daYmd(d).getTime() - t0) / Math.max(1, t1 - t0) * (W - 2 * padX);
   const Y = (v) => padT + (max - v) / (max - min) * (H - padT - padB);
-  const f1 = (v) => (Math.round(v * 10) / 10 + 0).toLocaleString(LOCALE(), { maximumFractionDigits: 1 });   /* decimali della lingua; + 0 evita -0 */
   const giorno = (d) => daYmd(d).toLocaleDateString(LOCALE(), { day: 'numeric', month: 'short' });
   return '<svg class="peso-svg" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Andamento del peso">' +
     '<line x1="0" x2="' + W + '" y1="' + (H - padB) + '" y2="' + (H - padB) + '" class="exg-axis"></line>' +
     (obiettivo ? '<line x1="0" x2="' + W + '" y1="' + Y(obiettivo).toFixed(1) + '" y2="' + Y(obiettivo).toFixed(1) + '" class="peso-ob"></line>' +
-      '<text x="' + (W - 2) + '" y="' + (Y(obiettivo) - 4).toFixed(1) + '" text-anchor="end" class="exg-lbl">' + f1(obiettivo) + '</text>' : '') +
+      '<text x="' + (W - 2) + '" y="' + (Y(obiettivo) - 4).toFixed(1) + '" text-anchor="end" class="exg-lbl">' + numeroLingua(obiettivo) + '</text>' : '') +
     (p.length > 1 ? '<polyline points="' + p.map(x => X(x.data).toFixed(1) + ',' + Y(x.kg).toFixed(1)).join(' ') + '" class="peso-line"></polyline>' : '') +
     p.map((x, i) => '<circle cx="' + X(x.data).toFixed(1) + '" cy="' + Y(x.kg).toFixed(1) + '" r="' + (i === p.length - 1 ? 4 : 2.4) + '" class="peso-pt"></circle>').join('') +
-    '<text x="' + X(p[p.length - 1].data).toFixed(1) + '" y="' + (Y(p[p.length - 1].kg) - 8).toFixed(1) + '" text-anchor="' + (p.length === 1 ? 'middle' : 'end') + '" class="exg-lbl">' + f1(p[p.length - 1].kg) + '</text>' +
+    '<text x="' + X(p[p.length - 1].data).toFixed(1) + '" y="' + (Y(p[p.length - 1].kg) - 8).toFixed(1) + '" text-anchor="' + (p.length === 1 ? 'middle' : 'end') + '" class="exg-lbl">' + numeroLingua(p[p.length - 1].kg) + '</text>' +
     '<text x="' + (p.length === 1 ? W / 2 : padX) + '" y="' + (H - 4) + '" text-anchor="' + (p.length === 1 ? 'middle' : 'start') + '" class="exg-lbl" data-no-tr>' + giorno(p[0].data) + '</text>' +
     (p.length > 1 ? '<text x="' + (W - padX) + '" y="' + (H - 4) + '" text-anchor="end" class="exg-lbl" data-no-tr>' + giorno(p[p.length - 1].data) + '</text>' : '') +
     '</svg>' + (p.length === 1 ? '<div class="sr-note">Primo punto: dal prossimo peso vedi la linea.</div>' : '');
@@ -80,11 +79,10 @@ function renderPesoCard() {
     const sett = (ob - ult.kg) / t.settimana;
     if (sett < 104) eta = '<span>Di questo passo arrivi all obiettivo verso</span> <span data-no-tr>' + piuGiorni(new Date(), Math.round(sett * 7)).toLocaleDateString(LOCALE(), { day: 'numeric', month: 'long' }) + '</span>.';
   } else if (ob && ult && Math.abs(ob - ult.kg) < 0.3) eta = 'Obiettivo raggiunto.';
-  const f1 = (v) => (Math.round(v * 10) / 10 + 0).toLocaleString(LOCALE(), { maximumFractionDigits: 1 });   /* decimali della lingua; + 0 evita -0 */
   box.innerHTML = '<div class="section-title">Peso corporeo</div>' +
-    '<div id="pg-peso-grafico"><div class="peso-top"><div><b class="peso-big">' + (ult ? f1(ult.kg) : '–') + '</b> kg' +
-      (t ? '<small> • <span data-no-tr>' + (t.settimana > 0 ? '+' : '') + f1(t.settimana) + '</span> <span>kg/sett</span></small>' : '') + '</div>' +
-      (ob ? '<div class="og-muted">Obiettivo <b>' + f1(ob) + '</b> kg</div>' : '') + '</div>' +
+    '<div id="pg-peso-grafico"><div class="peso-top"><div><b class="peso-big">' + (ult ? numeroLingua(ult.kg) : '–') + '</b> kg' +
+      (t ? '<small> • <span data-no-tr>' + (t.settimana > 0 ? '+' : '') + numeroLingua(t.settimana) + '</span> <span>kg/sett</span></small>' : '') + '</div>' +
+      (ob ? '<div class="og-muted">Obiettivo <b>' + numeroLingua(ob) + '</b> kg</div>' : '') + '</div>' +
     graficoPeso(pts, ob) + '</div>' + htmlPesate(pts, ob) +
     '<div class="peso-in"><input type="number" inputmode="decimal" step="0.1" id="peso-in" placeholder="Peso di oggi (kg)" aria-label="Peso di oggi in kg">' +
       '<button class="set-tool-btn" onclick="registraPeso()">Registra</button></div>' +

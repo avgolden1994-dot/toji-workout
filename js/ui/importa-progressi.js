@@ -173,7 +173,7 @@ function mostraAnteprimaImport(r, nomeFile) {
       (nuoviEs.length ? '<div class="res-line"><span>Nuovi esercizi personalizzati</span><b>' + nuoviEs.length + '</b></div>' : '') + '</div>' : '') +
     (nuove.length ? '<div class="res-card"><div class="res-title">Anteprima</div>' + nuove.slice(0, 8).map(x =>
       '<div class="imp-s"><b data-no-tr>' + fmt(x.quando) + '</b>' + (x.titolo ? ' · <span data-no-tr>' + escapeHtml(x.titolo) + '</span>' : '') +
-      '<div class="imp-e" data-no-tr>' + x.es.map(e => escapeHtml(trEs(e.name)) + ' ' + e.sets.length + '×' + (e.sets[0] ? e.sets[0].reps : '') + (e.sets[0] && e.sets[0].weight ? ' · ' + String(e.sets[0].weight).replace('.', ',') + ' kg' : '')).join(' · ') + '</div></div>').join('') +
+      '<div class="imp-e" data-no-tr>' + x.es.map(e => escapeHtml(trEs(e.name)) + ' ' + e.sets.length + '×' + (e.sets[0] ? e.sets[0].reps : '') + (e.sets[0] && e.sets[0].weight ? ' · ' + numeroLingua(e.sets[0].weight, 2) + ' kg' : '')).join(' · ') + '</div></div>').join('') +
       (nuove.length > 8 ? '<div class="sr-note">' + tr('e altri # allenamenti').replace('#', nuove.length - 8) + '</div>' : '') + '</div>' : '') +
     (nuoviEs.length ? '<div class="res-card"><div class="res-title">Esercizi personalizzati</div><div class="consent-li" data-no-tr>' + escapeHtml(nuoviEs.slice(0, 30).join(', ')) + '</div>' +
       '<div class="sr-note">Restano con il nome che hai scritto: li vedi nello storico e nelle statistiche.</div></div>' : '') +

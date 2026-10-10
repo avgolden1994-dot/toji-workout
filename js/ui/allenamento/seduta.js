@@ -39,8 +39,7 @@ function controllaRecord(ex, set) {
   const ora = e1rm(set.weight, set.reps);
   if (prima > 0 && ora > prima && ora > (ex.recordSeduta || 0)) {
     ex.recordSeduta = ora;
-    const n1 = x => Number(x).toLocaleString(LOCALE(), { maximumFractionDigits: 1 });   /* 93,3 o 93.3 secondo la lingua */
-    showUndo('\u{1F3C6} Nuovo record: ' + n1(set.weight) + ' kg \u00D7 ' + set.reps + ' (1RM stimato ' + n1(ora) + ' kg)');
+    showUndo('\u{1F3C6} Nuovo record: ' + numeroLingua(set.weight) + ' kg \u00D7 ' + set.reps + ' (1RM stimato ' + numeroLingua(ora) + ' kg)');
   }
 }
 
@@ -117,11 +116,10 @@ window.renderPlates = function() {
   const vis = document.getElementById('plate-vis');
   const txt = document.getElementById('plate-txt');
   if (r.impossibile) { vis.innerHTML = ''; txt.innerText = 'Il carico e sotto il peso del bilanciere.'; return; }
-  const nk = x => Number(x).toLocaleString(LOCALE(), { maximumFractionDigits: 2 });   /* 1,25 o 1.25 secondo la lingua: solo da mostrare */
   vis.innerHTML = '<div class="pl-bar"></div>' + r.dischi.map(d =>
-    '<div class="pl-disc" style="height:' + (24 + d * 2.2) + 'px;background:' + COLORE_DISCO[d] + '" title="' + nk(d) + ' kg"></div>').join('') + '<div class="pl-end"></div>';
+    '<div class="pl-disc" style="height:' + (24 + d * 2.2) + 'px;background:' + COLORE_DISCO[d] + '" title="' + numeroLingua(d, 2) + ' kg"></div>').join('') + '<div class="pl-end"></div>';
   txt.innerText = r.dischi.length
-    ? trP('Per lato: %s kg', r.dischi.map(nk).join(' + ')) + (r.resto ? ' ' + trP('(restano %s kg per lato)', nk(r.resto)) : '')
+    ? trP('Per lato: %s kg', r.dischi.map(d => numeroLingua(d, 2)).join(' + ')) + (r.resto ? ' ' + trP('(restano %s kg per lato)', numeroLingua(r.resto, 2)) : '')
     : tr('Solo il bilanciere.');
 };
 
@@ -154,7 +152,7 @@ function renderAllenamento() {
   const data = loadData();
   const list = data[currentDay] || [];
   const container = document.getElementById('allenamento-list');
-  const rpeTesto = RPE_VALORI.map(v => Number(v).toLocaleString(LOCALE()));   /* 6,5 o 6.5 secondo la lingua; il value resta col punto */
+  const rpeTesto = RPE_VALORI.map(v => numeroLingua(v));   /* 6,5 o 6.5 secondo la lingua; il value resta col punto */
   if (list.length === 0) {
     container.innerHTML = '<span class="muted">Nessun esercizio pianificato. Aggiungine uno dal tab Piano.</span>';
   } else {
@@ -166,9 +164,9 @@ function renderAllenamento() {
             ${dettaglioEsercizio(e.name) ? `<div class="ex-focus">${escapeHtml(etichettaAttrezzo(e.name))} \u2022 <span>Focus</span>: ${escapeHtml(focusEsercizio(e.name))}</div>` : ''}
             <div class="ex-data">Recupero ${e.rest} s${infoEsercizio(e.name)}</div>
             ${htmlSostituito(e)}
-            ${e.coachNote && coachAttivo() ? `<span class="coach-badge-set ${e.coachTipo || ''}"><b>Coach ·</b> ${escapeHtml(e.coachNote)}</span>` : ''}
+            ${e.coachNote && coachAttivo() ? `<span class="coach-badge-set ${e.coachTipo || ''}"><b>Coach ·</b> ${escapeHtml(notaVarianteCoach(e.coachNote))}</span>` : ''}
             ${coachAttivo() && (e.tecnicaSeduta || e.tecnica) && TECNICHE[e.tecnicaSeduta || e.tecnica] ? `<span class="tecnica-badge">${escapeHtml(TECNICHE[e.tecnicaSeduta || e.tecnica])}</span>` : ''}
-            ${e.recordSeduta ? `<span class="pr-badge">\u{1F3C6} Record! 1RM stimato ${Number(e.recordSeduta).toLocaleString(LOCALE(), { maximumFractionDigits: 1 })} kg</span>` : ''}
+            ${e.recordSeduta ? `<span class="pr-badge">\u{1F3C6} Record! 1RM stimato ${numeroLingua(e.recordSeduta)} kg</span>` : ''}
             ${ultimaVoltaTesto(e.name) ? `<span class="last-time">${escapeHtml(ultimaVoltaTesto(e.name))}</span>` : ''}
             ${e.note ? `<div class="plan-note">📝 ${escapeHtml(e.note)}</div>` : ''}
           </div>

@@ -20,7 +20,7 @@ function testoScheda() {
   let t = T(s.titolo) + '\n';
   s.giorni.forEach(g => {
     t += '\n' + T(g.giorno) + (g.titolo !== g.giorno ? ' — ' + T(g.titolo) : '') + '\n';
-    g.es.forEach(e => { t += '• ' + T(e.nome) + ': ' + e.sets + '×' + e.reps + (e.tempo ? ' s' : '') + (e.lato ? ' ' + T('per lato') : '') + (e.kg ? ' • ' + String(e.kg).replace('.', ',') + ' kg' : '') + ' • ' + T('recupero') + ' ' + e.rest + ' s\n'; });
+    g.es.forEach(e => { t += '• ' + T(e.nome) + ': ' + e.sets + '×' + e.reps + (e.tempo ? ' s' : '') + (e.lato ? ' ' + T('per lato') : '') + (e.kg ? ' • ' + numeroLingua(e.kg, 2) + ' kg' : '') + ' • ' + T('recupero') + ' ' + e.rest + ' s\n'; });
   });
   return t;
 }
@@ -38,7 +38,7 @@ window.stampaScheda = function() {
     'table{width:100%;border-collapse:collapse}td,th{padding:5px 4px;border-bottom:1px solid #eee;text-align:left}th{font-size:11px;color:#666;font-weight:600}td.n{text-align:right;white-space:nowrap}.box{display:inline-block;width:34px;height:14px;border:1px solid #bbb;margin-left:2px}' +
     '.sub{color:#666;font-size:11px}@page{margin:12mm}</style></head><body><h1>' + T(s.titolo) + '</h1><div class="sub">' + new Date().toLocaleDateString(LOCALE()) + '</div>' +
     s.giorni.map(g => '<h2>' + T(g.giorno) + (g.titolo !== g.giorno ? ' — ' + T(g.titolo) : '') + '</h2><table><tr><th>' + T('Esercizio') + '</th><th>' + T('Serie') + '</th><th>kg</th><th>' + T('Recupero') + '</th><th>' + T('Note') + '</th></tr>' +
-      g.es.map(e => '<tr><td>' + (e.ss ? '↳ ' : '') + T(e.nome) + (e.lato ? ' <span class="sub">(' + T('per lato') + ')</span>' : '') + '</td><td class="n">' + e.sets + ' × ' + e.reps + (e.tempo ? ' s' : '') + '</td><td class="n">' + (e.kg ? String(e.kg).replace('.', ',') : '–') + '</td><td class="n">' + e.rest + ' s</td><td>' + '<span class="box"></span>'.repeat(Math.min(6, e.sets)) + '</td></tr>').join('') + '</table>').join('') +
+      g.es.map(e => '<tr><td>' + (e.ss ? '↳ ' : '') + T(e.nome) + (e.lato ? ' <span class="sub">(' + T('per lato') + ')</span>' : '') + '</td><td class="n">' + e.sets + ' × ' + e.reps + (e.tempo ? ' s' : '') + '</td><td class="n">' + (e.kg ? numeroLingua(e.kg, 2) : '–') + '</td><td class="n">' + e.rest + ' s</td><td>' + '<span class="box"></span>'.repeat(Math.min(6, e.sets)) + '</td></tr>').join('') + '</table>').join('') +
     '</body></html>';
   let fr = document.getElementById('print-frame');
   if (fr) fr.remove();

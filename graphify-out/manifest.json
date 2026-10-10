@@ -6,9 +6,9 @@
     "semantic_hash": "f96e7a2cf6c7f4bcf60e0a277d2c7e54"
   },
   "js/coach/agente-consigli.js": {
-    "mtime": 1791631287.8272812,
-    "seen": 1791635608.5082448,
-    "ast_hash": "69bb910f43fe88cc48d1adeb33df6f39",
+    "mtime": 1791635852.180281,
+    "seen": 1791637447.0946665,
+    "ast_hash": "581ee2a59ddd00498c52803b12feaf2c",
     "semantic_hash": ""
   },
   "js/coach/bia/lettore.js": {
@@ -42,8 +42,8 @@
     "semantic_hash": ""
   },
   "js/coach/catalogo-regole.js": {
-    "mtime": 1791634721.2047505,
-    "seen": 1791635608.5082755,
+    "mtime": 1791636039.1927204,
+    "seen": 1791637447.0958931,
     "ast_hash": "e0c83ecc1dc83a3538de9c478b147578",
     "semantic_hash": ""
   },
@@ -54,8 +54,8 @@
     "semantic_hash": ""
   },
   "js/coach/dolore-mattina.js": {
-    "mtime": 1791629479.9608705,
-    "seen": 1791635608.508279,
+    "mtime": 1791636595.3407078,
+    "seen": 1791637447.0959628,
     "ast_hash": "c7fd515e8ea253ab7aaa81c68f1e9e0f",
     "semantic_hash": ""
   },
@@ -66,9 +66,9 @@
     "semantic_hash": ""
   },
   "js/coach/intensita.js": {
-    "mtime": 1791366859.044622,
-    "seen": 1791635608.508282,
-    "ast_hash": "071b8ee8dd375d703f9e8efc541d3c31",
+    "mtime": 1791635852.1783335,
+    "seen": 1791637447.0959957,
+    "ast_hash": "5f45ae3f3d896b07448620fca2802579",
     "semantic_hash": ""
   },
   "js/coach/metodi-epoca-oro.js": {
@@ -168,9 +168,9 @@
     "semantic_hash": ""
   },
   "js/coach/repertorio.js": {
-    "mtime": 1791631146.8432627,
-    "seen": 1791635608.5083249,
-    "ast_hash": "a7a61e957023470dfc23f0eed4fc74f6",
+    "mtime": 1791635852.1795385,
+    "seen": 1791637447.0967457,
+    "ast_hash": "6422e96edf3f1372240e58cf4e7f22c9",
     "semantic_hash": ""
   },
   "js/coach/stato.js": {
@@ -264,9 +264,9 @@
     "semantic_hash": ""
   },
   "js/core/utility.js": {
-    "mtime": 1791630981.1848361,
-    "seen": 1791635608.5083692,
-    "ast_hash": "8802365e39f02fcebd7b8839957e568b",
+    "mtime": 1791635814.9407256,
+    "seen": 1791637447.0982254,
+    "ast_hash": "1d02c8679961a86e2a04b322b7c7d94e",
     "semantic_hash": ""
   },
   "js/dati/dettagli-esercizi.js": {
@@ -324,15 +324,15 @@
     "semantic_hash": "472603cb0f41a1e3705f568e81731a10"
   },
   "js/lingue/de.js": {
-    "mtime": 1791634710.2807508,
-    "seen": 1791635608.508381,
-    "ast_hash": "072e9f99852a725ae93e3a98be58a3da",
+    "mtime": 1791636026.2807207,
+    "seen": 1791637447.098482,
+    "ast_hash": "02f18accda0e21c84308c4e962ef6c3e",
     "semantic_hash": ""
   },
   "js/lingue/en.js": {
-    "mtime": 1791634710.2607508,
-    "seen": 1791635608.5083818,
-    "ast_hash": "3d5d132a57a7bdbea70fce96193f301e",
+    "mtime": 1791636026.2727208,
+    "seen": 1791637447.0984843,
+    "ast_hash": "5178fe8dad91e2dbe60ad4feaf3dc48b",
     "semantic_hash": ""
   },
   "js/lingue/es.js": {
@@ -366,9 +366,9 @@
     "semantic_hash": ""
   },
   "js/ui/allenamento/seduta.js": {
-    "mtime": 1791631137.6044905,
-    "seen": 1791635608.5083895,
-    "ast_hash": "7ab4a813da8c1cf423c0d15c0b937f54",
+    "mtime": 1791635878.2035038,
+    "seen": 1791637447.0986261,
+    "ast_hash": "a5de0719add2aafcc5ef5203e1549be2",
     "semantic_hash": ""
   },
   "js/ui/allenamento/sessione.js": {
@@ -438,9 +438,9 @@
     "semantic_hash": ""
   },
   "js/ui/figura-anatomica.js": {
-    "mtime": 1791631125.6178138,
-    "seen": 1791635608.5084043,
-    "ast_hash": "b1709404531013124b27b2f0f7aa0a1f",
+    "mtime": 1791635914.8184144,
+    "seen": 1791637447.099007,
+    "ast_hash": "f7f8ce2c9fd0a7f70c189d235e79b14b",
     "semantic_hash": ""
   },
   "js/ui/fogli.js": {
@@ -474,10 +474,10 @@
     "semantic_hash": ""
   },
   "js/ui/importa-progressi.js": {
-    "mtime": 1791366859.1187758,
-    "seen": 1791635608.5084121,
-    "ast_hash": "df291945e55dec6a5264ae2f2f8f3732",
-    "semantic_hash": "df291945e55dec6a5264ae2f2f8f3732"
+    "mtime": 1791635914.8188765,
+    "seen": 1791637447.0992248,
+    "ast_hash": "4e973d7a912cfca262673a91b0dfe682",
+    "semantic_hash": ""
   },
   "js/ui/lavoro-cronometro.js": {
     "mtime": 1791366859.1187758,
@@ -504,9 +504,9 @@
     "semantic_hash": ""
   },
   "js/ui/musica/player-web.js": {
-    "mtime": 1791630854.4708154,
-    "seen": 1791635608.5084171,
-    "ast_hash": "9644712dfd8fb0c6ecc87ff2162fcebf",
+    "mtime": 1791635979.6752899,
+    "seen": 1791637447.099385,
+    "ast_hash": "ba540a06868b96f9b2c3fcc3ca01071c",
     "semantic_hash": ""
   },
   "js/ui/oggi.js": {
@@ -516,9 +516,9 @@
     "semantic_hash": ""
   },
   "js/ui/onboarding-risultato.js": {
-    "mtime": 1791630932.767035,
-    "seen": 1791635608.508419,
-    "ast_hash": "b456deafef52b19ffcf859771f5df712",
+    "mtime": 1791635865.2278845,
+    "seen": 1791637447.0994217,
+    "ast_hash": "71a0402804c932ea73b29e45b960bd07",
     "semantic_hash": ""
   },
   "js/ui/onboarding.js": {
@@ -564,9 +564,9 @@
     "semantic_hash": ""
   },
   "js/ui/piano/selezione-multipla.js": {
-    "mtime": 1791630996.0722291,
-    "seen": 1791635608.5084267,
-    "ast_hash": "f295d1520235a3f19a87b878f515f465",
+    "mtime": 1791635721.9527278,
+    "seen": 1791637447.0996118,
+    "ast_hash": "8a5f04e97d8edc021767c06d576bec26",
     "semantic_hash": ""
   },
   "js/ui/progressi/foto.js": {
@@ -576,21 +576,21 @@
     "semantic_hash": ""
   },
   "js/ui/progressi/pagine.js": {
-    "mtime": 1791630943.3391554,
-    "seen": 1791635608.5084288,
-    "ast_hash": "7d71af7f216f9c9963b18b64c77d865b",
+    "mtime": 1791635878.2016847,
+    "seen": 1791637447.0996408,
+    "ast_hash": "d48dab09bd91aa397e8cfc8b09bd7db6",
     "semantic_hash": ""
   },
   "js/ui/progressi/peso.js": {
-    "mtime": 1791630943.3395727,
-    "seen": 1791635608.5084298,
-    "ast_hash": "fb5d29a94c72d6d389f5a8b950ba7480",
+    "mtime": 1791635878.2027664,
+    "seen": 1791637447.099643,
+    "ast_hash": "db6880346bf266e588c82126cccf7f30",
     "semantic_hash": ""
   },
   "js/ui/progressi/riepilogo.js": {
-    "mtime": 1791630943.3399556,
-    "seen": 1791635608.5084305,
-    "ast_hash": "195fee2c45c4dfba4e677d32a293339d",
+    "mtime": 1791635878.2043238,
+    "seen": 1791637447.0996447,
+    "ast_hash": "07bfeece140614609e4b65b6c9a938d3",
     "semantic_hash": ""
   },
   "js/ui/riposo-settimane.js": {
@@ -600,9 +600,9 @@
     "semantic_hash": ""
   },
   "js/ui/scheda-quattro-sezioni.js": {
-    "mtime": 1791366859.1238136,
-    "seen": 1791635608.5084324,
-    "ast_hash": "93884b46a76bc991ab7592b1ae386719",
+    "mtime": 1791635914.8175316,
+    "seen": 1791637447.0996718,
+    "ast_hash": "79c8f47237b695745f1fe4f5a11ed39d",
     "semantic_hash": ""
   },
   "js/ui/schede-esercizio.js": {
@@ -624,28 +624,28 @@
     "semantic_hash": ""
   },
   "js/ui/stampa-scheda.js": {
-    "mtime": 1791366859.1238136,
-    "seen": 1791635608.5084364,
-    "ast_hash": "af137da8fdaafc960b3b1e2b80cac0bc",
-    "semantic_hash": "af137da8fdaafc960b3b1e2b80cac0bc"
+    "mtime": 1791635914.817845,
+    "seen": 1791637447.0997465,
+    "ast_hash": "78b0f6bb85a5a3e052f31e745017accc",
+    "semantic_hash": ""
   },
   "js/ui/statistiche-grafico.js": {
-    "mtime": 1791366859.1238136,
-    "seen": 1791635608.5084379,
-    "ast_hash": "68e159f53071213807510ce91386da99",
-    "semantic_hash": "68e159f53071213807510ce91386da99"
+    "mtime": 1791635878.2040153,
+    "seen": 1791637447.0997481,
+    "ast_hash": "460fc90034923eee9d479bf366be81f6",
+    "semantic_hash": ""
   },
   "js/ui/statistiche.js": {
-    "mtime": 1791631938.4580946,
-    "seen": 1791635608.5084388,
-    "ast_hash": "75487312c754eb210278d895fb1e9caa",
+    "mtime": 1791635859.1727245,
+    "seen": 1791637447.09975,
+    "ast_hash": "ae0470f6692795737bdf24ac32a46c57",
     "semantic_hash": ""
   },
   "js/ui/storico.js": {
-    "mtime": 1791366859.1238136,
-    "seen": 1791635608.5084395,
-    "ast_hash": "5558e458ff5680d2afc7b241455c77f9",
-    "semantic_hash": "5558e458ff5680d2afc7b241455c77f9"
+    "mtime": 1791635914.8171077,
+    "seen": 1791637447.0997515,
+    "ast_hash": "9a502e519752380a96760e9a623a9e44",
+    "semantic_hash": ""
   },
   "manifest.json": {
     "mtime": 1791366859.1238136,
@@ -660,9 +660,9 @@
     "semantic_hash": ""
   },
   "sw.js": {
-    "mtime": 1791634718.6047506,
-    "seen": 1791635608.5084426,
-    "ast_hash": "4b6dd05165bed403ca67d3c4a1cf42ab",
+    "mtime": 1791636038.9327204,
+    "seen": 1791637447.0997941,
+    "ast_hash": "2a9898f30e7c82b3e3b33d510e7c03ba",
     "semantic_hash": ""
   },
   "tests/avvio.test.js": {
@@ -1230,8 +1230,8 @@
     "semantic_hash": ""
   },
   "docs/soglie-coach.md": {
-    "mtime": 1791634721.4327507,
-    "seen": 1791635608.5085874,
+    "mtime": 1791636039.4207203,
+    "seen": 1791637447.1033673,
     "ast_hash": "3c91a24aa0ad032f471eb929ae8ce38f",
     "semantic_hash": ""
   },

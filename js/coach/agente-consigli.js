@@ -41,7 +41,7 @@ function consigliCoach2(hist) {
     if (g < 28) {
       const sett = Math.max(1, Math.ceil((g + 1) / 7));
       const media = Math.round(vere.length / sett * 10) / 10;
-      out.push('\u{1F4C5} Primo mese: conta esserci, non il volume. Stai facendo ' + decimaleLingua(media) + ' sedute a settimana' + (media >= 2 ? ': ottimo, continua cosi.' : ': punta ad almeno 2.'));
+      out.push('\u{1F4C5} Primo mese: conta esserci, non il volume. Stai facendo ' + numeroLingua(media) + ' sedute a settimana' + (media >= 2 ? ': ottimo, continua cosi.' : ': punta ad almeno 2.'));
     }
   }
   /* plateau per esercizio */
@@ -74,7 +74,7 @@ function consigliCoach2(hist) {
     const ora = caricoSett(0), prec = [1, 2, 3].map(caricoSett).filter(x => x > 0);
     if (ora && prec.length >= 2) {
       const media = prec.reduce((t, x) => t + x, 0) / prec.length;
-      if (ora > media * 1.5) out.push('⚠ Questa settimana il carico (fatica x minuti) e ' + decimaleLingua(Math.round(ora / media * 10) / 10) + ' volte la media delle precedenti: dormi bene e non aggiungere lavoro extra.');
+      if (ora > media * 1.5) out.push('⚠ Questa settimana il carico (fatica x minuti) e ' + numeroLingua(ora / media) + ' volte la media delle precedenti: dormi bene e non aggiungere lavoro extra.');
     }
   }
   return out;
@@ -105,12 +105,12 @@ function consigliAgente() {
     const a = st[0].valori, b = st[st.length - 1].valori;
     if (a.ffm && b.ffm) {
       const d = b.ffm - a.ffm;
-      if (d >= 0.5) out.push('\u{1F4C8} Massa magra +' + decimaleLingua(Math.round(d * 10) / 10) + ' kg dalla prima BIA: il programma sta funzionando.');
+      if (d >= 0.5) out.push('\u{1F4C8} Massa magra +' + numeroLingua(d) + ' kg dalla prima BIA: il programma sta funzionando.');
       if (d <= -1) out.push('\u{1F6D1} Massa magra in calo: carichi fermi finche non si stabilizza. Controlla sonno e proteine; se stai dimagrendo, un deficit troppo forte costa muscolo.');
     }
     if (a.fmPerc && b.fmPerc && goals.indexOf('dimagrimento') !== -1) {
       if (b.fmPerc >= a.fmPerc) out.push('\u{1F525} La massa grassa non scende: aggiungi cardio leggero e recuperi piu brevi. L alimentazione conta piu dell allenamento, qui.');
-      else out.push('\u2705 Massa grassa -' + decimaleLingua(Math.round((a.fmPerc - b.fmPerc) * 10) / 10) + ' punti: nella direzione giusta.');   /* sempre col meno: la chiave del dizionario e una sola (-#) */
+      else out.push('\u2705 Massa grassa -' + numeroLingua(a.fmPerc - b.fmPerc) + ' punti: nella direzione giusta.');   /* sempre col meno: la chiave del dizionario e una sola (-#) */
     }
   } else if (st.length === 1) {
     out.push('\u{1F4CA} Hai una sola BIA: rifalla tra 4-6 settimane, nelle stesse condizioni (mattino, a digiuno), cosi posso confrontare.');

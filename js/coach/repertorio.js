@@ -19,10 +19,8 @@
    (guardiaNutrizione in compone.js); i g/kg di COR-03 restano «Convenzione» (bia/soglie-bia.js).
    ============================================================ */
 
-/* Un numero con decimali dentro una frase che si mostra subito (mai salvata): il segno decimale della lingua scelta, virgola per it/es/de e punto per l inglese.
-   Il traduttore (tr) sostituisce i numeri cosi come sono scritti (nella chiave diventano #): se il segno e quello giusto gia qui, la frase esce giusta in ogni lingua.
+/* I numeri con decimali dentro una frase che si mostra subito si scrivono con numeroLingua (core/utility.js): il segno decimale della lingua scelta.
    Non per i testi salvati (coachNote, aggiusti, motivi dei carichi): congelerebbero la lingua del momento in cui sono nati. */
-function decimaleLingua(v) { return String(v).replace('.', lingua() === 'en' ? '.' : ','); }
 
 /* ---- livello dai numeri (moltiplicatori del peso corporeo) ---- */
 const STANDARD_FORZA = {
@@ -107,8 +105,7 @@ window.livelloStimato = function() {
   let livello = 'principiante';
   if (mesi >= 6 && freq >= 2) livello = 'intermedio';
   if (mesi >= 24 && freq >= 3 && diff >= 0.5) livello = 'avanzato';
-  const f1 = (v) => decimaleLingua(Math.round(v * 10) / 10);
-  const testo = Math.round(mesi) + ' <span>mesi regolari</span> · ' + f1(freq) + ' <span>sedute a settimana</span> · <span>difficoltà</span> ' +
+  const testo = Math.round(mesi) + ' <span>mesi regolari</span> · ' + numeroLingua(freq) + ' <span>sedute a settimana</span> · <span>difficoltà</span> ' +
     '<span>' + (diff >= 0.6 ? 'alta' : (diff >= 0.35 ? 'media' : 'bassa')) + '</span>';
   const prop = proposteLivello(livello);
   return { livello: livello, mesi: mesi, freq: freq, sedute: sed.length, difficolta: diff, testo: testo, dettaglio: [], salita: prop.salita, revisione: prop.revisione, standard: prop.standard };
@@ -132,6 +129,12 @@ function sostituisciNelPiano(da, a, nota) {
   }));
   saveData(data);
   return n;
+}
+/* le note salvate prima della revisione dei testi («...: X dava dolore», «...: X era fermo», «...al posto di X») si mostrano nella forma nuova, che il traduttore riconosce; il salvato non si tocca */
+function notaVarianteCoach(t) {
+  return String(t == null ? '' : t)
+    .replace(/^(Variante scelta dal coach): (.*[^ \u2014]) (dava dolore|era fermo)$/, '$1: $2 \u2014 $3')
+    .replace(/^(Variante scelta dal coach al posto di) (.+)$/, '$1: $2');
 }
 function cambiaSerieNelPiano(nome, fattore) {
   const data = loadData();
@@ -299,7 +302,7 @@ function azioniCoach() {
   const nonOra = programmaConPiano() && ag.scaricoNonOra && giorniTra(daYmd(ag.scaricoNonOra), new Date()) < (sogliaScarico('reattivoProtezioni') || { nonOraGiorni: 0 }).nonOraGiorni;
   if (sw[0].strain && sw[1].strain && sw[2].strain && sw[0].strain > sw[1].strain && sw[1].strain > sw[2].strain && sw[0].fatica >= 8 && !ag.scarico
       && !sw.some(x => x.scarico) && !scaricoRecente(PARAM_ANALISI.giorniDopoScarico) && !nonOra && (typeof valutaScaricoReattivo !== 'function' || valutaScaricoReattivo('S7').ok))
-    out.push({ testo: 'Il carico della settimana sale da due settimane e la fatica e alta (monotonia ' + decimaleLingua(sw[0].monotonia) + '): meglio due sedute di scarico.',
+    out.push({ testo: 'Il carico della settimana sale da due settimane e la fatica e alta (monotonia ' + numeroLingua(sw[0].monotonia, 2) + '): meglio due sedute di scarico.',
       bottoni: [['Scarico ora', "azioneCoach('scarico', '')"]].concat(programmaConPiano() ? [['Non ora', "azioneCoach('scaricoNonOra', '')"]] : []) });
   /* livello dai numeri (STD-01): salita solo se l anzianita e le alzate concordano; revisione se un avanzato dichiarato e sotto i numeri di un principiante */
   const l = livelloStimato();
@@ -335,8 +338,8 @@ function corpoCoach() {
     const sett = Math.max(1, giorniTra(daYmd(a.data), daYmd(b.data)) / 7);
     const perc = (b.valori.peso - a.valori.peso) / a.valori.peso * 100 / sett;
     const v = Math.round(perc * 100) / 100;
-    if (fase === 'deficit') out.push(v < -1 ? 'Stai calando ' + decimaleLingua(Math.abs(v)) + '% del peso a settimana: troppo in fretta, rischi di perdere muscolo. L ideale e 0,5-1%.' :
-      (v <= -0.5 ? 'Calo di ' + decimaleLingua(Math.abs(v)) + '% a settimana: ritmo ideale per salvare il muscolo.' : 'Il peso scende poco (' + decimaleLingua(v) + '% a settimana): in deficit l ideale e 0,5-1%.'));
+    if (fase === 'deficit') out.push(v < -1 ? 'Stai calando ' + numeroLingua(Math.abs(v), 2) + '% del peso a settimana: troppo in fretta, rischi di perdere muscolo. L ideale e 0,5-1%.' :
+      (v <= -0.5 ? 'Calo di ' + numeroLingua(Math.abs(v), 2) + '% a settimana: ritmo ideale per salvare il muscolo.' : 'Il peso scende poco (' + numeroLingua(v, 2) + '% a settimana): in deficit l ideale e 0,5-1%.'));
   }
   if (fase === 'ricomposizione') {
     const bf = st.length ? st[st.length - 1].valori.fmPerc : null;
@@ -347,11 +350,11 @@ function corpoCoach() {
   const ffm = st.length ? st[st.length - 1].valori.ffm : null;
   const bw = pesoCorporeo();
   /* NUT-01 (guardia, P4-C, compone.js): over 65 e gravidanza (e un minorenne con ETA-04 spenta) non ricevono grammi di proteine: il testo prudente. Per gli altri adulti i g/kg di COR-03 (soglie-bia.js: «Convenzione», non validati) */
-  const guardia = guardiaNutrizione({}, p), virg = decimaleLingua;
+  const guardia = guardiaNutrizione({}, p);
   const gMin = proteineGKg('proteineMassaMagraMin'), gMax = proteineGKg('proteineMassaMagraMax'), gPeso = proteineGKg(donna ? 'proteinePesoDonna' : 'proteinePesoUomo');
   if (guardia) out.push(guardia.testo);
-  else if (ffm) out.push('Proteine: circa ' + Math.round(ffm * gMin) + '-' + Math.round(ffm * gMax) + ' g al giorno (' + virg(gMin) + '-' + virg(gMax) + ' g per kg di massa magra). Informazione, non prescrizione.');
-  else if (bw) out.push('Proteine: circa ' + Math.round(bw * gPeso) + ' g al giorno (' + virg(gPeso) + ' g per kg). Informazione, non prescrizione.');
+  else if (ffm) out.push('Proteine: circa ' + Math.round(ffm * gMin) + '-' + Math.round(ffm * gMax) + ' g al giorno (' + numeroLingua(gMin, 2) + '-' + numeroLingua(gMax, 2) + ' g per kg di massa magra). Informazione, non prescrizione.');
+  else if (bw) out.push('Proteine: circa ' + Math.round(bw * gPeso) + ' g al giorno (' + numeroLingua(gPeso, 2) + ' g per kg). Informazione, non prescrizione.');
   if (fase === 'deficit') out.push('Passi: 10-12 mila al giorno, aumentandoli di 500-1000 a settimana. Il cardio non toglie muscolo ne forza.');
   else out.push('Passi: almeno 6-8 mila al giorno. Il cardio non toglie muscolo ne forza, solo un po di esplosivita.');
   if (goals.indexOf('salute') !== -1) out.push(rigaMinutiSalute());

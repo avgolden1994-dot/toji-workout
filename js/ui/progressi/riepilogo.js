@@ -20,7 +20,7 @@ function aggiornaProssima() {
   if (!p) { el.innerHTML = sedutaAperta() ? '<b>Tutte le serie fatte</b>: puoi terminare' : ''; return; }
   const t = isTimeBased(p.e.name);
   el.innerHTML = '<span>Prossima</span> <b>' + escapeHtml(senzaEmoji(p.e.name)) + '</b> <span data-no-tr>• ' + (p.si + 1) + '/' + p.e.completedSets.length + ' • ' +
-    p.s.reps + (t ? ' s' : '') + (p.s.weight ? ' × ' + Number(p.s.weight).toLocaleString(LOCALE(), { maximumFractionDigits: 2 }) + ' kg' : '') + '</span>';
+    p.s.reps + (t ? ' s' : '') + (p.s.weight ? ' × ' + numeroLingua(p.s.weight, 2) + ' kg' : '') + '</span>';
 }
 function htmlProssimaSeduta() {
   const oggi = new Date();

@@ -94,12 +94,12 @@ function paneGrafico(sed) {
     '<line x1="' + pad + '" y1="' + (H - pad) + '" x2="' + (W - pad) + '" y2="' + (H - pad) + '" class="exg-axis"></line>' +
     (ultimi.length > 1 ? '<polyline points="' + punti + '" class="exg-line"></polyline>' : '') +
     ultimi.map((s, i) => '<circle cx="' + x(i).toFixed(1) + '" cy="' + y(val(s)).toFixed(1) + '" r="3.5" class="exg-dot"></circle>').join('') +
-    '<text x="' + pad + '" y="12" class="exg-lbl">' + String(max).replace('.', ',') + unita + '</text>' +
+    '<text x="' + pad + '" y="12" class="exg-lbl">' + numeroLingua(max) + unita + '</text>' +
     '<text x="' + pad + '" y="' + (H - 3) + '" class="exg-lbl">' + d0.toLocaleDateString(LOCALE(), { day: 'numeric', month: 'short' }) + '</text>' +
     (ultimi.length > 1 ? '<text x="' + (W - pad) + '" y="' + (H - 3) + '" text-anchor="end" class="exg-lbl">' + d1.toLocaleDateString(LOCALE(), { day: 'numeric', month: 'short' }) + '</text>' : '') +
     '</svg>' +
     (ultimi.length === 1 ? '<div class="exg-diff">Primo punto: dalla prossima seduta vedi la linea.</div>'
-      : '<div class="exg-diff ' + (diff > 0 ? 'su' : (diff < 0 ? 'giu' : '')) + '">' + (diff > 0 ? '+' : '') + String(diff).replace('.', ',') + unita + ' <span>dalla prima seduta del grafico</span></div>');
+      : '<div class="exg-diff ' + (diff > 0 ? 'su' : (diff < 0 ? 'giu' : '')) + '">' + (diff > 0 ? '+' : '') + numeroLingua(diff) + unita + ' <span>dalla prima seduta del grafico</span></div>');
 }
 
 function paneRecord(sed) {

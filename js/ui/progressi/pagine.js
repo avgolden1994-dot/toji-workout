@@ -23,11 +23,10 @@ function renderPgTiles() {
   const box = document.getElementById('pg-tiles');
   if (!box) return;
   const pts = pesiTutti(), ult = pts[pts.length - 1];
-  const f1 = (v) => (Math.round(v * 10) / 10 + 0).toLocaleString(LOCALE(), { maximumFractionDigits: 1 });   /* decimali della lingua; + 0 evita -0 */
   const fp = fotoPromemoria();
   const n = loadHistory().length;
   const sub = {
-    peso: (ult ? '<span data-no-tr>' + f1(ult.kg) + ' kg</span>' : '<span>' + (fp.dovuta ? 'foto da fare' : 'Peso e foto ogni 2 settimane') + '</span>'),
+    peso: (ult ? '<span data-no-tr>' + numeroLingua(ult.kg) + ' kg</span>' : '<span>' + (fp.dovuta ? 'foto da fare' : 'Peso e foto ogni 2 settimane') + '</span>'),
     stats: '<span>Frequenza e report</span>',
     storico: '<span>' + n + (n === 1 ? ' allenamento' : ' allenamenti') + '</span>'
   };
@@ -58,8 +57,7 @@ window.chiudiPagProgressi = function() {
 let pesateTutte = false;
 function htmlPesate(pts, ob) {
   if (!pts.length) return '';
-  const f1 = (v) => (Math.round(v * 10) / 10 + 0).toLocaleString(LOCALE(), { maximumFractionDigits: 1 });   /* decimali della lingua; + 0 evita -0 */
-  const sg = (v) => (v > 0 ? '+' : '') + f1(v);
+  const sg = (v) => (v > 0 ? '+' : '') + numeroLingua(v);
   const dt = (x) => daYmd(x.data).toLocaleDateString(LOCALE(), { day: 'numeric', month: 'short' });
   const primo = pts[0], ult = pts[pts.length - 1];
   let h = '';
@@ -99,7 +97,7 @@ function htmlPesate(pts, ob) {
     righe = Object.keys(m).sort().map(k => m[k]);
   }
   h += '<div class="pw-list">' + righe.map(r => '<div class="pw-row"><span><span data-no-tr>' + dt(r.x) + '</span>' + (r.t ? ' · <span>' + r.t + '</span>' : '') + '</span>' +
-    '<b data-no-tr>' + f1(r.x.kg) + (r.d !== null && Math.abs(r.d) >= 0.05 ? ' <small class="' + (ob && Math.sign(r.d) === Math.sign(ob - r.x.kg + r.d) ? 'su' : (ob ? 'giu' : '')) + '">' + sg(r.d) + '</small>' : '') + '</b></div>').join('') + '</div>' +
+    '<b data-no-tr>' + numeroLingua(r.x.kg) + (r.d !== null && Math.abs(r.d) >= 0.05 ? ' <small class="' + (ob && Math.sign(r.d) === Math.sign(ob - r.x.kg + r.d) ? 'su' : (ob ? 'giu' : '')) + '">' + sg(r.d) + '</small>' : '') + '</b></div>').join('') + '</div>' +
     (pts.length > 6 ? '<button class="set-row-btn" onclick="pesateTutte = !pesateTutte; renderPesoCard();">' + (pesateTutte ? 'Solo le date che contano' : 'Tutte le pesate (' + pts.length + ')') + '</button>' : '');
   return h;
 }

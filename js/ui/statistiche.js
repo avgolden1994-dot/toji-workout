@@ -225,7 +225,6 @@ function reportBloccoHtml(i, nome) {
   const r = calcolaBlocco(i);
   const d = (x) => x.toLocaleDateString(LOCALE(), { day: 'numeric', month: 'short' });
   const fmt = (n) => Math.round(n).toLocaleString(LOCALE());
-  const nl = (x) => Number(x).toLocaleString(LOCALE(), { maximumFractionDigits: 2, useGrouping: false });   /* carichi e percentuali con i decimali della lingua */
   if (r.vuoto) return '<div class="dv-empty">Nessun allenamento in queste 4 settimane.</div>';
   const b = r.blocco;
   const delta = (a, p) => {
@@ -242,7 +241,7 @@ function reportBloccoHtml(i, nome) {
 
   html += '<div class="pg-kpis st-kpis">' +
     '<div class="pg-kpi"><b>' + r.sessioni + '</b><span>allenamenti' + (r.programmati ? ' su ' + r.programmati : '') + '</span>' + (i > 0 ? delta(r.sessioni, r.sessioniPrec) : '') + '</div>' +
-    '<div class="pg-kpi"><b>' + (r.mediaInc === null ? '–' : (r.mediaInc > 0 ? '+' : '') + nl(r.mediaInc) + '%') + '</b><span>carichi medi</span></div>' +
+    '<div class="pg-kpi"><b>' + (r.mediaInc === null ? '–' : (r.mediaInc > 0 ? '+' : '') + numeroLingua(r.mediaInc, 2) + '%') + '</b><span>carichi medi</span></div>' +
   '</div>';
 
   if (b.inCorso) html += '<div class="onb-note">Blocco ancora in corso: il report si completa a fine settimana ' + (i * 4 + 4) + '.</div>';
@@ -264,9 +263,9 @@ function reportBloccoHtml(i, nome) {
       const cls = inc === null ? '' : (inc > 0 ? 'su' : (inc < 0 ? 'giu' : ''));
       html += '<div class="st-row"><span class="st-name">' + escapeHtml(e.name.replace(EMOJI_TESTA, '')) +
         '<span class="st-bar"><i class="' + cls + '" style="width:' + Math.min(100, Math.abs(inc || 0) / maxInc * 100) + '%"></i></span></span>' +
-        '<span>' + nl(e.primo) + '</span><span><b>' + nl(e.ultimo) + '</b></span>' +
-        '<span class="st-inc ' + cls + '">' + (inc === null ? '–' : (inc > 0 ? '+' : '') + nl(inc) + '%') + '</span>' +
-        '<span>' + nl(e.rpe80) + '</span></div>';
+        '<span>' + numeroLingua(e.primo, 2) + '</span><span><b>' + numeroLingua(e.ultimo, 2) + '</b></span>' +
+        '<span class="st-inc ' + cls + '">' + (inc === null ? '–' : (inc > 0 ? '+' : '') + numeroLingua(inc, 2) + '%') + '</span>' +
+        '<span>' + numeroLingua(e.rpe80, 2) + '</span></div>';
     });
   });
   html += '</div>';
@@ -278,7 +277,7 @@ function reportBloccoHtml(i, nome) {
   const note = [];
   note.push(saliti.length === 1 ? '1 esercizio su ' + r.esercizi.length + ' è migliorato.' : saliti.length + ' esercizi su ' + r.esercizi.length + ' sono migliorati.');
   /* il nome dell esercizio resta italiano nei dati: si traduce solo qui, per la vista (trEs) */
-  if (saliti.length) { const m = saliti.slice().sort((a, b2) => b2.incremento - a.incremento)[0]; note.push(trP('Miglior progresso: %s +' + nl(m.incremento) + '%.', trEs(m.name))); }
+  if (saliti.length) { const m = saliti.slice().sort((a, b2) => b2.incremento - a.incremento)[0]; note.push(trP('Miglior progresso: %s +' + numeroLingua(m.incremento, 2) + '%.', trEs(m.name))); }
   if (fermi.length) note.push(fermi.length + (fermi.length === 1 ? ' esercizio è fermo' : ' esercizi sono fermi') + ': nel prossimo blocco punta a una ripetizione in più per serie prima di aumentare il carico.');
   if (scesi.length) note.push(scesi.length + (scesi.length === 1 ? ' esercizio è calato' : ' esercizi sono calati') + ': controlla recupero, sonno ed esecuzione.');
   if (r.nuovi) note.push(r.nuovi + (r.nuovi === 1 ? ' esercizio nuovo' : ' esercizi nuovi') + ' in questo blocco: entreranno nel confronto dal prossimo.');
@@ -309,7 +308,6 @@ window.renderStats = function() {
   }
 
   const d = (x) => x.toLocaleDateString(LOCALE(), { day: 'numeric', month: 'short' });
-  const nl = (x) => Number(x).toLocaleString(LOCALE(), { maximumFractionDigits: 2, useGrouping: false });   /* carichi e percentuali con i decimali della lingua */
   html += '<div class="st-head">' +
     '<div class="st-title">' + periodoTitolo(statsPeriodo) + (nome ? ' \u2014 ' + escapeHtml(nome) : '') + '</div>' +
     '<div class="st-sub">' + d(s.primo) + ' \u2013 ' + d(s.ultimo) + '</div></div>';
@@ -342,9 +340,9 @@ window.renderStats = function() {
       html += '<div class="st-row">' +
         '<span class="st-name">' + escapeHtml(e.name.replace(EMOJI_TESTA, '')) +
           '<span class="st-bar"><i class="' + cls + '" style="width:' + Math.min(100, Math.abs(inc || 0) / maxInc * 100) + '%"></i></span></span>' +
-        '<span>' + nl(e.primo) + '</span><span><b>' + nl(e.ultimo) + '</b></span>' +
-        '<span class="st-inc ' + cls + '">' + (inc === null ? '\u2013' : (inc > 0 ? '+' : '') + nl(inc) + '%') + '</span>' +
-        '<span>' + nl(e.rpe80) + '</span></div>';
+        '<span>' + numeroLingua(e.primo, 2) + '</span><span><b>' + numeroLingua(e.ultimo, 2) + '</b></span>' +
+        '<span class="st-inc ' + cls + '">' + (inc === null ? '\u2013' : (inc > 0 ? '+' : '') + numeroLingua(inc, 2) + '%') + '</span>' +
+        '<span>' + numeroLingua(e.rpe80, 2) + '</span></div>';
     });
   });
   html += '</div>';
@@ -355,8 +353,8 @@ window.renderStats = function() {
   const migliore = saliti.slice().sort((a, b) => b.incremento - a.incremento)[0];
   const media = saliti.length ? Math.round(saliti.reduce((a, e) => a + e.incremento, 0) / saliti.length * 10) / 10 : 0;
   const sintesi = [];
-  sintesi.push((saliti.length === 1 ? '1 esercizio su ' + s.esercizi.length + ' è migliorato' : saliti.length + ' esercizi su ' + s.esercizi.length + ' sono migliorati') + (media ? ', in media +' + nl(media) + '%' : '') + '.');
-  if (migliore) sintesi.push(trP('Il salto piu grande: %s +' + nl(migliore.incremento) + '%.', trEs(migliore.name)));
+  sintesi.push((saliti.length === 1 ? '1 esercizio su ' + s.esercizi.length + ' è migliorato' : saliti.length + ' esercizi su ' + s.esercizi.length + ' sono migliorati') + (media ? ', in media +' + numeroLingua(media, 2) + '%' : '') + '.');
+  if (migliore) sintesi.push(trP('Il salto piu grande: %s +' + numeroLingua(migliore.incremento, 2) + '%.', trEs(migliore.name)));
   if (scesi.length) sintesi.push(scesi.length + (scesi.length === 1 ? ' esercizio è calato' : ' esercizi sono calati') + ': spesso vuol dire che hai cambiato esecuzione, ripetizioni o attrezzo. Vale la pena guardarli.');
   if (s.volume.length >= 2) {
     const v0 = s.volume[0], v1 = s.volume[s.volume.length - 1];
