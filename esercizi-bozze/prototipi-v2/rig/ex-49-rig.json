@@ -1,0 +1,172 @@
+{
+ "id": "e49",
+ "parts": "ex-49-parts.svg",
+ "label": "Tirate al Mento (frontale)",
+ "viewBox": [
+  792.8,
+  82,
+  173.3,
+  130
+ ],
+ "duration": 5.4,
+ "timeline": {
+  "bottomHold": 6,
+  "top": 40,
+  "topHold": 46,
+  "bottom": 95,
+  "easeUp": [
+   0.47,
+   0,
+   0.53,
+   1
+  ],
+  "easeDown": [
+   0.42,
+   0,
+   0.58,
+   1
+  ],
+  "keys": 10
+ },
+ "layers": [
+  "legs",
+  {
+   "node": "delL",
+   "pivot": [
+    866.3,
+    116
+   ],
+   "rotate": "uaL*0.2",
+   "scale": [
+    1,
+    0.45
+   ],
+   "scaleOrigin": [
+    866.3,
+    110.7
+   ],
+   "translate": [
+    0,
+    -1.5
+   ]
+  },
+  {
+   "node": "delR",
+   "pivot": [
+    892.6,
+    116
+   ],
+   "rotate": "uaR*0.2",
+   "scale": [
+    1,
+    0.45
+   ],
+   "scaleOrigin": [
+    892.6,
+    110.7
+   ],
+   "translate": [
+    0,
+    -1.5
+   ]
+  },
+  "torso",
+  {
+   "node": "uaL",
+   "pivot": [
+    866.3,
+    116
+   ],
+   "translate": [
+    0,
+    -1.5
+   ],
+   "ik2": {
+    "elbow": [
+     865.6,
+     132.8
+    ],
+    "wrist": [
+     865.6,
+     148.5
+    ],
+    "target": "bar",
+    "side": "L",
+    "foreshorten": 0.75
+   },
+   "children": [
+    {
+     "node": "faL",
+     "pivot": [
+      865.6,
+      132.8
+     ],
+     "aim": {
+      "from": [
+       865.6,
+       132.8
+      ],
+      "to": [
+       865.6,
+       148.5
+      ],
+      "target": "bar",
+      "maxStretch": 1.08
+     }
+    }
+   ]
+  },
+  {
+   "node": "uaR",
+   "pivot": [
+    892.6,
+    116
+   ],
+   "translate": [
+    0,
+    -1.5
+   ],
+   "ik2": {
+    "elbow": [
+     893.4,
+     132.8
+    ],
+    "wrist": [
+     893.6,
+     148.5
+    ],
+    "target": "bar",
+    "side": "R",
+    "foreshorten": 0.75
+   },
+   "children": [
+    {
+     "node": "faR",
+     "pivot": [
+      893.4,
+      132.8
+     ],
+     "aim": {
+      "from": [
+       893.4,
+       132.8
+      ],
+      "to": [
+       893.6,
+       148.5
+      ],
+      "target": "bar",
+      "maxStretch": 1.08
+     }
+    }
+   ]
+  },
+  {
+   "node": "bar",
+   "translate": [
+    0,
+    -44
+   ]
+  }
+ ]
+}

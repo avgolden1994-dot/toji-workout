@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="790.5 77.5 173.3 130" fill="none" role="img" aria-label="Alzate Laterali (frontale)">
+<!-- PROTOTIPO R&D: ibrido = tween rigido da un solo disegno (START) + movimenti secondari (spalle che salgono di 0.9 u in alto, deltoide che si contrae, respiro 0.8% scalato attorno alla vita) + tempo asimmetrico (salita 1.8 s, pausa 0.3 s, discesa 2.6 s, pausa 0.6 s). -->
+<style>
+.mv{transform-box:view-box;transform-origin:0 0;animation:5.4s infinite linear}
+.br{animation-name:br}.sh{animation-name:sh}.aL{animation-name:aL}.aR{animation-name:aR}.hL{animation-name:hL}.hR{animation-name:hR}.cL{animation-name:cL}.cR{animation-name:cR}
+@keyframes aL{0%{transform:translate(866px,108.5px) rotate(0deg) translate(-866px,-108.5px)}6%{transform:translate(866px,108.5px) rotate(0deg) translate(-866px,-108.5px);animation-timing-function:cubic-bezier(.47,0,.53,1)}40%{transform:translate(866px,108.5px) rotate(80deg) translate(-866px,-108.5px)}46%{transform:translate(866px,108.5px) rotate(80deg) translate(-866px,-108.5px);animation-timing-function:cubic-bezier(.42,0,.58,1)}95%{transform:translate(866px,108.5px) rotate(0deg) translate(-866px,-108.5px)}100%{transform:translate(866px,108.5px) rotate(0deg) translate(-866px,-108.5px)}}
+@keyframes aR{0%{transform:translate(889px,108.5px) rotate(0deg) translate(-889px,-108.5px)}6%{transform:translate(889px,108.5px) rotate(0deg) translate(-889px,-108.5px);animation-timing-function:cubic-bezier(.47,0,.53,1)}40%{transform:translate(889px,108.5px) rotate(-80deg) translate(-889px,-108.5px)}46%{transform:translate(889px,108.5px) rotate(-80deg) translate(-889px,-108.5px);animation-timing-function:cubic-bezier(.42,0,.58,1)}95%{transform:translate(889px,108.5px) rotate(0deg) translate(-889px,-108.5px)}100%{transform:translate(889px,108.5px) rotate(0deg) translate(-889px,-108.5px)}}
+@keyframes hL{0%{transform:translate(860.46px,144.89px) rotate(0deg) translate(-860.46px,-144.89px)}6%{transform:translate(860.46px,144.89px) rotate(0deg) translate(-860.46px,-144.89px);animation-timing-function:cubic-bezier(.47,0,.53,1)}40%{transform:translate(860.46px,144.89px) rotate(-80deg) translate(-860.46px,-144.89px)}46%{transform:translate(860.46px,144.89px) rotate(-80deg) translate(-860.46px,-144.89px);animation-timing-function:cubic-bezier(.42,0,.58,1)}95%{transform:translate(860.46px,144.89px) rotate(0deg) translate(-860.46px,-144.89px)}100%{transform:translate(860.46px,144.89px) rotate(0deg) translate(-860.46px,-144.89px)}}
+@keyframes hR{0%{transform:translate(893.77px,144.89px) rotate(0deg) translate(-893.77px,-144.89px)}6%{transform:translate(893.77px,144.89px) rotate(0deg) translate(-893.77px,-144.89px);animation-timing-function:cubic-bezier(.47,0,.53,1)}40%{transform:translate(893.77px,144.89px) rotate(80deg) translate(-893.77px,-144.89px)}46%{transform:translate(893.77px,144.89px) rotate(80deg) translate(-893.77px,-144.89px);animation-timing-function:cubic-bezier(.42,0,.58,1)}95%{transform:translate(893.77px,144.89px) rotate(0deg) translate(-893.77px,-144.89px)}100%{transform:translate(893.77px,144.89px) rotate(0deg) translate(-893.77px,-144.89px)}}
+@keyframes cL{0%{transform:translate(866px,108.5px) rotate(0deg) translate(-866px,-108.5px) translate(867.2px,108.4px) scale(1,1) translate(-867.2px,-108.4px)}6%{transform:translate(866px,108.5px) rotate(0deg) translate(-866px,-108.5px) translate(867.2px,108.4px) scale(1,1) translate(-867.2px,-108.4px);animation-timing-function:cubic-bezier(.47,0,.53,1)}40%{transform:translate(866px,108.5px) rotate(44deg) translate(-866px,-108.5px) translate(867.2px,108.4px) scale(1.1,0.9) translate(-867.2px,-108.4px)}46%{transform:translate(866px,108.5px) rotate(44deg) translate(-866px,-108.5px) translate(867.2px,108.4px) scale(1.1,0.9) translate(-867.2px,-108.4px);animation-timing-function:cubic-bezier(.42,0,.58,1)}95%{transform:translate(866px,108.5px) rotate(0deg) translate(-866px,-108.5px) translate(867.2px,108.4px) scale(1,1) translate(-867.2px,-108.4px)}100%{transform:translate(866px,108.5px) rotate(0deg) translate(-866px,-108.5px) translate(867.2px,108.4px) scale(1,1) translate(-867.2px,-108.4px)}}
+@keyframes cR{0%{transform:translate(889px,108.5px) rotate(0deg) translate(-889px,-108.5px) translate(887.3px,108.4px) scale(1,1) translate(-887.3px,-108.4px)}6%{transform:translate(889px,108.5px) rotate(0deg) translate(-889px,-108.5px) translate(887.3px,108.4px) scale(1,1) translate(-887.3px,-108.4px);animation-timing-function:cubic-bezier(.47,0,.53,1)}40%{transform:translate(889px,108.5px) rotate(-44deg) translate(-889px,-108.5px) translate(887.3px,108.4px) scale(1.1,0.9) translate(-887.3px,-108.4px)}46%{transform:translate(889px,108.5px) rotate(-44deg) translate(-889px,-108.5px) translate(887.3px,108.4px) scale(1.1,0.9) translate(-887.3px,-108.4px);animation-timing-function:cubic-bezier(.42,0,.58,1)}95%{transform:translate(889px,108.5px) rotate(0deg) translate(-889px,-108.5px) translate(887.3px,108.4px) scale(1,1) translate(-887.3px,-108.4px)}100%{transform:translate(889px,108.5px) rotate(0deg) translate(-889px,-108.5px) translate(887.3px,108.4px) scale(1,1) translate(-887.3px,-108.4px)}}
+@keyframes sh{0%{transform:translate(0px,0px)}14.5%{transform:translate(0px,0px);animation-timing-function:cubic-bezier(.45,0,.55,1)}40%{transform:translate(0px,-0.9px)}46%{transform:translate(0px,-0.9px);animation-timing-function:cubic-bezier(.45,0,.55,1)}80.3%{transform:translate(0px,0px)}100%{transform:translate(0px,0px)}}
+@keyframes br{0%{transform:translate(877.5px,127.5px) scale(1,1.008) translate(-877.5px,-127.5px)}6%{transform:translate(877.5px,127.5px) scale(1,1.008) translate(-877.5px,-127.5px);animation-timing-function:cubic-bezier(.45,0,.55,1)}40%{transform:translate(877.5px,127.5px) scale(1,1) translate(-877.5px,-127.5px)}46%{transform:translate(877.5px,127.5px) scale(1,1) translate(-877.5px,-127.5px);animation-timing-function:cubic-bezier(.45,0,.55,1)}95%{transform:translate(877.5px,127.5px) scale(1,1.008) translate(-877.5px,-127.5px)}100%{transform:translate(877.5px,127.5px) scale(1,1.008) translate(-877.5px,-127.5px)}}
+@media (prefers-reduced-motion:reduce){.mv{animation:none!important}}
+</style>
+<ellipse cx="877.2" cy="202.6" rx="22" ry="2.4" fill="#000" fill-opacity=".15"/>
+<path d="m865.9 188.47c0.07 1.69 -0.04 4.39 -0.19 5.44l3.86 0.26c-0.15 -1.46 -0.19 -4.27 -0.07 -5.7h-3.6z" fill="#D2B8A3"/>
+<path d="m884.46 188.47c0.11 1.69 0.11 4.27 -0.04 5.47l4.13 0.11c-0.3 -1.57 -0.41 -4.13 -0.34 -5.59h-3.75z" fill="#D2B8A3"/>
+<path d="m869.73 127.58c-2.59 4.2 -4.42 11.55 -4.42 19.13s1.39 16.46 1.39 18.9c0 1.43 -2.03 4.5 -2.1 8.96 -0.04 4.46 1.05 12.71 1.31 14.51h3.75c0.45 -3.6 2.44 -10.2 2.85 -14.17 0.34 -3.45 -0.07 -6.53 -0.07 -7.61 1.39 -6 4.31 -18.38 4.5 -24.11h0.49c0.26 5.74 2.93 18.11 4.46 24.11 0 1.24 -0.56 4.31 -0.15 7.76 0.53 4.2 2.48 10.65 2.74 14.03h3.79c0.38 -3.41 1.46 -10.39 1.43 -14.7 -0.04 -4.54 -1.91 -7.5 -1.91 -8.77 0 -2.59 1.5 -11.47 1.5 -19.01 0 -7.58 -1.91 -14.81 -4.35 -19.01h-15.19z" fill="#5B5B5D"/>
+<path d="m867.21 164.81c0.41 2.48 3.67 2.74 4.91 0.79 -1.76 1.31 -3.41 0.82 -4.91 -0.79z" fill="#201E1E" opacity=".45"/>
+<path d="m887.2 164.66c-0.86 2.4 -3.86 2.81 -4.91 1.01 1.99 1.09 3.6 0.49 4.91 -1.01z" fill="#201E1E" opacity=".45"/>
+<path d="m867.21 193.09c-2.59 0 -4.39 6.26 -4.39 7.61 0 1.61 2.74 1.91 4.5 1.91 2.03 0 3.49 -0.67 3.49 -2.7 0 -3.04 -1.28 -6.83 -3.6 -6.83z" fill="#201E1E"/>
+<path d="m886.94 193.09c-2.48 0 -3.86 4.99 -3.86 7.31 0 1.95 1.69 2.36 4.13 2.36 2.48 0 4.35 -0.41 4.35 -2.17 0 -2.93 -2.03 -7.5 -4.61 -7.5z" fill="#201E1E"/>
+<g class="mv br">
+<path d="m873.92 82.95c-0.98 0.71 -2.85 3.26 -2.4 8.21 0.49 4.99 0.75 11.29 0.11 13.65l3.38 1.35 5.14 0.3 3.26 -0.64c0.53 -2.4 1.01 -9 0.64 -14.96 -0.34 -6 -1.99 -10.01 -5.51 -9.94 -3 0.04 -4.2 1.46 -4.61 2.03z" fill="#201E1E"/>
+<path d="m869.84 122.21c0.15 1.95 0.07 4.09 -0.11 5.36 4.2 2.21 11.66 1.88 15.19 0 -0.22 -1.61 -0.34 -3.56 -0.26 -5.36 -4.95 -0.6 -9.79 -0.56 -14.81 0z" fill="#D2B8A3"/>
+<path d="m871.94 103.58c-1.95 2.7 -4.09 6.9 -4.09 9.94 0 3.07 1.84 6.9 2.21 8.92 5.03 -0.49 10.24 -0.49 14.59 0 0.56 -2.59 2.1 -6.19 2.1 -9.11 0 -3.11 -2.17 -7.24 -3.79 -9.75l-5.29 -0.49 -5.74 0.49z" fill="#5B5B5D"/>
+<path d="m874.15 99.41c0 1.57 -0.07 3.19 -2.21 4.16 0.04 3.56 1.95 6.64 5.55 6.64 3.98 0 5.36 -3.3 5.44 -6.64 -1.84 -0.86 -2.14 -2.44 -2.1 -4.16h-6.67z" fill="#D2B8A3"/>
+<path d="m873.21 91.24c-0.41 5.17 1.5 9.68 4.31 9.68 3.26 0 5.14 -4.76 4.91 -9.68 -0.11 -2.63 -2.03 -4.2 -4.76 -4.2s-4.27 1.76 -4.46 4.2z" fill="#D2B8A3"/>
+<path d="m873.02 91.09c0.67 -1.61 2.14 -2.59 4.54 -2.59 2.74 0 4.27 1.35 4.8 2.85 0.3 -3.11 -1.24 -6.86 -4.91 -6.79 -3.79 0.07 -4.76 3.98 -4.42 6.53z" fill="#201E1E"/>
+<circle cx="874.59" cy="92.29" r="0.62" fill="#201E1E"/>
+<path d="m873.1 91.58c0.71 -0.53 2.06 -0.56 2.85 -0.15" stroke="#201E1E" stroke-width="0.51" stroke-linecap="round"/>
+<circle cx="879.91" cy="92.29" r="0.62" fill="#201E1E"/>
+<path d="m878.84 91.54c0.79 -0.41 2.1 -0.34 2.7 0.04" stroke="#201E1E" stroke-width="0.51" stroke-linecap="round"/>
+<path d="m877.52 97.16c-0.38 0 -0.86 -0.11 -1.13 -0.3l-0.11 0.26c0.49 0.56 1.95 0.56 2.44 0l-0.07 -0.26c-0.26 0.19 -0.71 0.3 -1.13 0.3z" fill="#F08D66"/>
+<g class="mv sh">
+<g class="mv aL">
+<path d="m871.9 103.76c-1.91 0.49 -5.55 0.82 -6.94 2.96 -1.43 2.14 -1.76 6.71 -2.06 10.46 -0.19 3.11 -0.11 6.53 -0.94 7.8 -2.29 3.83 -1.57 11.93 -2.03 14.47 -0.34 1.95 -1.54 3.52 -2.03 4.2s-0.19 1.69 0.75 1.99c0.9 0.34 3.38 0.53 3.9 0.11s0.49 -2.03 0.04 -3.41c-0.41 -1.31 0.56 -4.76 2.21 -8.21 1.5 -3.07 1.84 -6.26 1.8 -8.21 0.9 -3.49 1.91 -8.21 2.63 -10.72 1.01 -3.86 2.66 -8.29 2.66 -11.44z" fill="#fdba8c"/>
+<g class="mv hL">
+<ellipse cx="856.74" cy="145.16" rx="2.43" ry="3.14" fill="#201E1E"/>
+<ellipse cx="864.26" cy="144.75" rx="1.94" ry="3.14" fill="#201E1E"/>
+<ellipse cx="865.28" cy="144.86" rx="1.48" ry="2.49" fill="#8a919c"/>
+<rect x="857.67" y="143.7" width="5.57" height="2.38" fill="#8a919c"/>
+</g>
+</g>
+<g class="mv aR">
+<path d="m883.71 103.76c1.95 0.49 5.4 0.94 6.67 3.19 1.31 2.4 1.73 6.79 1.76 10.39 0.07 3 -0.11 6.26 0.71 7.65 2.1 3.71 0.71 11.7 1.73 15.07 0.53 1.84 1.54 3.11 1.99 3.9 0.41 0.79 0.19 1.76 -0.75 1.99 -0.94 0.26 -3.15 0.19 -3.6 -0.34 -0.41 -0.49 -0.3 -2.06 -0.11 -3.41 0.22 -1.61 -1.57 -6.19 -3.07 -10.09 -1.05 -2.93 -1.28 -5.55 -1.16 -7.2 -0.9 -3.75 -1.8 -8.1 -2.36 -10.65 -0.75 -4.05 -1.8 -7.35 -1.8 -10.5z" fill="#fdba8c"/>
+<g class="mv hR">
+<ellipse cx="897.74" cy="145.16" rx="2.35" ry="3.14" fill="#201E1E"/>
+<ellipse cx="889.6" cy="144.75" rx="1.94" ry="3.14" fill="#201E1E"/>
+<ellipse cx="888.81" cy="144.86" rx="1.35" ry="2.49" fill="#8a919c"/>
+<rect x="891.1" y="143.7" width="5.33" height="2.38" fill="#8a919c"/>
+</g>
+</g>
+<g class="mv cL">
+<path d="m870.77 103.84c-4.35 0.86 -7.61 2.93 -6.98 9.11 3.04 -0.9 5.93 -5.78 6.98 -9.11z" fill="#fb8b3c"/>
+</g>
+<g class="mv cR">
+<path d="m883.71 103.84c1.09 3.67 3.67 8.18 6.94 9.15 0.86 -5.78 -1.54 -8.21 -6.94 -9.15z" fill="#fb8b3c"/>
+</g>
+</g>
+</g>
+</svg>

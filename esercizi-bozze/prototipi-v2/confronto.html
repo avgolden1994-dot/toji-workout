@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Confronto animazioni</title>
+<style>
+:root{--bg:#f4f3f0;--card:#fff;--ink:#1d1d1f;--muted:#6b6b70;--line:#dddbd6;--ok:#1e8a3a;--ko:#b3261e;--warn:#9a6700;--accent:#1f5fbf}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17181a;--card:#222326;--ink:#ececee;--muted:#a3a3a8;--line:#36373b;--ok:#5cc777;--ko:#ff8a80;--warn:#e3b341;--accent:#8ab4ff}}
+:root[data-theme="dark"]{--bg:#17181a;--card:#222326;--ink:#ececee;--muted:#a3a3a8;--line:#36373b;--ok:#5cc777;--ko:#ff8a80;--warn:#e3b341;--accent:#8ab4ff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1180px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:1.5rem;margin:.2em 0 .3em}
+h2{font-size:1.15rem;margin:2em 0 .6em;padding-top:.6em;border-top:1px solid var(--line)}
+p{max-width:75ch}
+.muted{color:var(--muted)}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-bottom:1px solid var(--line)}
+.bar button{font:inherit;padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.bar button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);font-weight:600}
+.bar input[type=range]{flex:1 1 220px;min-width:160px}
+.bar output{font-variant-numeric:tabular-nums;min-width:4.5em}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.card.win{outline:2px solid var(--ok)}
+.stage{background:#fff;aspect-ratio:300/165;display:flex;align-items:center;justify-content:center}
+.stage object{width:100%;height:100%;pointer-events:none}
+.meta{padding:10px 12px 12px;display:flex;flex-direction:column;gap:4px}
+.meta b{font-size:.98rem}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.3px;text-transform:uppercase;padding:1px 7px;border-radius:99px;border:1px solid currentColor;width:max-content}
+.tag.ok{color:var(--ok)}.tag.ko{color:var(--ko)}.tag.warn{color:var(--warn)}
+.nums{display:grid;grid-template-columns:auto auto;gap:0 10px;font-size:.84rem;font-variant-numeric:tabular-nums}
+.nums span:nth-child(odd){color:var(--muted)}
+.why{font-size:.84rem;color:var(--muted)}
+figure{margin:12px 0}
+figure img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
+figcaption{font-size:.84rem;color:var(--muted)}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;font-size:.86rem;font-variant-numeric:tabular-nums;min-width:640px}
+th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:right}
+th:first-child,td:first-child{text-align:left}
+thead th{color:var(--muted);font-weight:600}
+code{font-size:.88em}
+</style>
+</head>
+<body>
+<main>
+<h1>Animazioni fluide: confronto delle tecniche</h1>
+<p class="muted">Prototipi R&amp;D costruiti sulle immagini attuali di ex-50 (Alzate Laterali) ed ex-49 (Tirate al Mento). I disegni sono piccoli e compressi: conta il confronto relativo. I numeri vengono da render deterministici a 60 fps in Chromium (dettagli in <code>docs/ricerca-animazione-fluida.md</code>).</p>
+
+<div class="bar" role="group" aria-label="Controlli di riproduzione">
+  <button id="play" aria-pressed="true">Riproduci</button>
+  <button data-speed="1" aria-pressed="true">1x</button>
+  <button data-speed="0.5" aria-pressed="false">0.5x</button>
+  <button data-speed="0.25" aria-pressed="false">0.25x</button>
+  <input id="scrub" type="range" min="0" max="5400" step="10" value="0" aria-label="Posizione nel ciclo">
+  <output id="clock">0.00 s</output>
+  <span id="note" class="muted" style="font-size:.8rem"></span>
+</div>
+
+<h2>ex-50 Alzate Laterali</h2>
+<div class="grid" id="g50"></div>
+<figure><img src="img/striscia-ex50.png" alt="Fotogrammi agli stessi istanti per cinque tecniche: il crossfade mostra braccia e manubri doppi e semitrasparenti, il rig mostra un solo braccio pieno in ogni istante." loading="lazy"><figcaption>Stessi istanti della salita per cinque tecniche. Crossfade (5 o 9 pose): braccia e manubri doppi e trasparenti. Morph: niente fantasmi ma il braccio si accorcia come nella bozza. Due master: doppio braccio al cambio e un cuneo di pelle sul petto (posa END della bozza incoerente). Rig: un solo braccio pieno, lunghezza costante.</figcaption></figure>
+<figure><img src="img/metriche-ex50.png" alt="Grafici di variazione tra fotogrammi, pixel fantasma e area del braccio pieno su un ciclo." loading="lazy"><figcaption>Sopra: variazione tra fotogrammi (curva liscia = moto continuo; denti = scatti). Al centro: quota di pixel mescolati (fantasmi). Sotto: area del braccio disegnato pieno rispetto a START (1 = braccio solido e di misura costante).</figcaption></figure>
+
+<h2>ex-49 Tirate al Mento</h2>
+<div class="grid" id="g49"></div>
+<figure><img src="img/striscia-ex49.png" alt="Fotogrammi agli stessi istanti: il crossfade rende grigio il busto e raddoppia il bilanciere; il rig mantiene busto nero e un solo bilanciere." loading="lazy"><figcaption>Nel crossfade attuale anche busto e testa stanno nei gruppi in dissolvenza: a meta' transizione la canotta diventa grigia e il bilanciere e' doppio. Il rig tiene busto e testa fermi e muove braccio, avambraccio e bilanciere con perni veri.</figcaption></figure>
+<figure><img src="img/metriche-ex49.png" alt="Grafici delle metriche per ex-49." loading="lazy"><figcaption>Nel rig l'area dell'avambraccio cala volutamente: in alto l'avambraccio e' in scorcio (0.75) e in parte coperto dalle mani.</figcaption></figure>
+
+<h2>Tabella delle misure</h2>
+<div class="tablewrap"><table id="tab"><thead><tr><th>Prototipo</th><th>KB</th><th>Fantasmi medi</th><th>Fantasmi p95</th><th>Indice di scatto</th><th>Salto max</th><th>Braccio pieno</th><th>CPU ms/s</th></tr></thead><tbody></tbody></table></div>
+<p class="muted" style="font-size:.84rem">Fantasmi: quota dei pixel interni alle parti mobili con un colore che non esiste nelle pose pulite (mescolato), esclusi i bordi antialias. Indice di scatto: media di |variazione della differenza tra fotogrammi| divisa per la differenza media (0.02 = moto continuo). Salto max: il peggior cambio improvviso (oltre 0.5 = scatto visibile). CPU: tempo del thread principale per secondo di animazione con CPU rallentata 6x, immagine come <code>&lt;img&gt;</code> 360x198 px a DPR 3.</p>
+</main>
+<script>
+const V = [
+ {g:'g50', f:'ex-50-baseline.svg', t:'Crossfade 5 pose (attuale)', v:'ko', vt:'scartata', why:'Dissolvenza tra disegni diversi: braccia doppie e trasparenti per quasi tutta la corsa.', kb:11.3, gh:50.9, g95:93.3, j:.081, jm:.96, so:'0.00-1.00', cpu:229},
+ {g:'g50', f:'ex-50-crossfade-9.svg', t:'Crossfade 9 pose (4 sintetiche)', v:'ko', vt:'scartata', why:'Piu\' pose non tolgono i fantasmi (anzi 52%) e il file pesa 4 volte tanto.', kb:43.4, gh:52.3, g95:92.9, j:.085, jm:.97, so:'0.00-1.00', cpu:270},
+ {g:'g50', f:'ex-50-morph-smil.svg', t:'Morph dei contorni (SMIL d)', v:'ko', vt:'scartata', why:'Niente fantasmi, ma servono contorni ricampionati e il braccio si accorcia come nella bozza; pesante.', kb:88.2, gh:0.1, g95:0.4, j:.034, jm:.64, so:'0.49-1.00', cpu:460},
+ {g:'g50', f:'ex-50-flipbook-24.svg', t:'Flip-book 24 fps (controllo)', v:'ko', vt:'scartata', why:'Stessi disegni perfetti del rig ma a scatti: indice di scatto 30 volte piu\' alto.', kb:20.2, gh:0.1, g95:0.1, j:.682, jm:1.70, so:'0.98-1.01', cpu:192},
+ {g:'g50', f:'ex-50-tween-2master.svg', t:'Due master (START + END)', v:'ko', vt:'scartata qui', why:'Il braccio END della bozza e\' lungo il 57% di quello START: al cambio si vede il doppio braccio.', kb:12.9, gh:2.9, g95:34.3, j:.045, jm:1.96, so:'1.00-1.89', cpu:382},
+ {g:'g50', f:'ex-50-tween-rigid.svg', t:'Tween rigido, un disegno', v:'ok', vt:'ok', why:'Braccio START ruotato attorno alla spalla, manubrio contro-ruotato, deltoide al 55%.', kb:8.9, gh:0.2, g95:0.4, j:.022, jm:.07, so:'0.99-1.02', cpu:326},
+ {g:'g50', f:'ex-50-hybrid.svg', t:'Ibrido: rig + movimenti secondari', v:'ok', vt:'ok', why:'Come il tween, piu\' spalle che salgono, deltoide che si contrae, tempo salita 1.8 s / discesa 2.6 s.', kb:10.7, gh:0.4, g95:0.5, j:.027, jm:.10, so:'0.98-1.02', cpu:326},
+ {g:'g50', f:'ex-50-rig.svg', t:'Rig generato dallo strumento', v:'ok', vt:'vincitore', why:'Uscita di rig-anim.js da rig/ex-50-rig.json: viewBox 0 0, classi con prefisso.', kb:12.8, gh:0.3, g95:0.5, j:.023, jm:.08, so:'0.98-1.02', cpu:326, win:true},
+ {g:'g49', f:'ex-49-baseline.svg', t:'Crossfade 5 pose (attuale)', v:'ko', vt:'scartata', why:'Anche busto e testa in dissolvenza: canotta grigia, bilanciere doppio.', kb:16.1, gh:40.7, g95:84.0, j:.152, jm:1.51, so:'0.00-1.29', cpu:236},
+ {g:'g49', f:'ex-49-tween-ik.svg', t:'Rig a due segmenti (prototipo)', v:'ok', vt:'ok', why:'Braccio con curva di easing, avambraccio che punta al polso con scorcio 0.75-1.05.', kb:37.1, gh:0.2, g95:0.5, j:.027, jm:.10, so:'0.57-1.00', cpu:308},
+ {g:'g49', f:'ex-49-rig.svg', t:'Rig generato dallo strumento', v:'ok', vt:'vincitore', why:'Stesso rig da rig/ex-49-rig.json: keyframe densi solo sull\'avambraccio.', kb:19.7, gh:0.4, g95:0.8, j:.027, jm:.10, so:'0.55-1.00', cpu:333, win:true}
+];
+const objs = [];
+for (const v of V) {
+  const c = document.createElement('article');
+  c.className = 'card' + (v.win ? ' win' : '');
+  c.innerHTML = `<div class="stage"><object type="image/svg+xml" data="${v.f}" aria-label="${v.t}"></object></div>
+  <div class="meta"><b>${v.t}</b><span class="tag ${v.v}">${v.vt}</span><span class="why">${v.why}</span>
+  <div class="nums"><span>file</span><span>${v.kb} KB</span><span>fantasmi</span><span>${v.gh}% (p95 ${v.g95}%)</span><span>indice di scatto</span><span>${v.j.toFixed(3)}</span><span>CPU</span><span>${v.cpu ? v.cpu + ' ms/s' : '-'}</span></div></div>`;
+  document.getElementById(v.g).appendChild(c);
+  objs.push(c.querySelector('object'));
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td>${v.f}</td><td>${v.kb}</td><td>${v.gh}%</td><td>${v.g95}%</td><td>${v.j.toFixed(3)}</td><td>${v.jm.toFixed(2)}</td><td>${v.so}</td><td>${v.cpu ?? '-'}</td>`;
+  document.querySelector('#tab tbody').appendChild(tr);
+}
+// shared clock: works when the page is served over http(s) (same origin); on file:// the SVGs just play
+const DUR = 5400; let speed = 1, playing = true, t = 0, driven = false, last = performance.now();
+const docs = () => objs.map(o => { try { return o.contentDocument; } catch (e) { return null; } }).filter(Boolean);
+function apply() {
+  for (const d of docs()) {
+    const s = d.documentElement;
+    if (s.pauseAnimations) { s.pauseAnimations(); s.setCurrentTime(t / 1000); }
+    d.getAnimations().forEach(a => { a.pause(); a.currentTime = t; });
+  }
+  scrub.value = Math.round(t); clock.value = (t / 1000).toFixed(2) + ' s';
+}
+function take() {
+  if (!docs().length) { note.textContent = 'Controlli disponibili aprendo la pagina via http (es. GitHub Pages): da file:// le animazioni girano a velocita\' normale.'; return false; }
+  driven = true; return true;
+}
+function loop(now) { const dt = now - last; last = now; if (driven && playing) { t = (t + dt * speed) % DUR; apply(); } requestAnimationFrame(loop); }
+requestAnimationFrame(loop);
+const scrub = document.getElementById('scrub'), clock = document.getElementById('clock'), note = document.getElementById('note');
+document.querySelectorAll('[data-speed]').forEach(b => b.addEventListener('click', () => {
+  if (!take()) return; speed = +b.dataset.speed;
+  document.querySelectorAll('[data-speed]').forEach(x => x.setAttribute('aria-pressed', x === b));
+}));
+document.getElementById('play').addEventListener('click', e => {
+  if (!take()) return; playing = !playing; e.target.textContent = playing ? 'Riproduci' : 'In pausa'; e.target.setAttribute('aria-pressed', playing);
+});
+scrub.addEventListener('input', () => { if (!take()) return; playing = false; const pb = document.getElementById('play'); pb.textContent = 'In pausa'; pb.setAttribute('aria-pressed', 'false'); t = +scrub.value; apply(); });
+</script>
+</body>
+</html>

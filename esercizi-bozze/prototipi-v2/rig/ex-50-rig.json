@@ -1,0 +1,117 @@
+{
+ "id": "e50",
+ "parts": "ex-50-parts.svg",
+ "label": "Alzate Laterali (frontale)",
+ "viewBox": [
+  790.5,
+  77.5,
+  173.3,
+  130
+ ],
+ "duration": 5.4,
+ "timeline": {
+  "bottomHold": 6,
+  "top": 40,
+  "topHold": 46,
+  "bottom": 95,
+  "easeUp": [
+   0.47,
+   0,
+   0.53,
+   1
+  ],
+  "easeDown": [
+   0.42,
+   0,
+   0.58,
+   1
+  ],
+  "keys": 10
+ },
+ "layers": [
+  "lower",
+  "upper",
+  {
+   "node": "shoulders",
+   "empty": true,
+   "translate": [
+    0,
+    -0.9
+   ],
+   "window": [
+    0.25,
+    1
+   ],
+   "children": [
+    {
+     "node": "armL",
+     "pivot": [
+      866,
+      108.5
+     ],
+     "rotate": 80,
+     "children": [
+      {
+       "node": "dbL",
+       "pivot": [
+        860.46,
+        144.89
+       ],
+       "rotate": -80
+      }
+     ]
+    },
+    {
+     "node": "armR",
+     "pivot": [
+      889,
+      108.5
+     ],
+     "rotate": -80,
+     "children": [
+      {
+       "node": "dbR",
+       "pivot": [
+        893.77,
+        144.89
+       ],
+       "rotate": 80
+      }
+     ]
+    },
+    {
+     "node": "delL",
+     "pivot": [
+      866,
+      108.5
+     ],
+     "rotate": "armL*0.55",
+     "scale": [
+      1.1,
+      0.9
+     ],
+     "scaleOrigin": [
+      867.2,
+      108.4
+     ]
+    },
+    {
+     "node": "delR",
+     "pivot": [
+      889,
+      108.5
+     ],
+     "rotate": "armR*0.55",
+     "scale": [
+      1.1,
+      0.9
+     ],
+     "scaleOrigin": [
+      887.8,
+      108.4
+     ]
+    }
+   ]
+  }
+ ]
+}
