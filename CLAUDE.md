@@ -11,10 +11,11 @@ Linee guida per Claude Code su questo repository (toji-workout).
 
 ## Model routing
 
-- Opus 5.5: architecture, hard bugs, review
-- Sonnet 5.5: edits, tests, docs, refactors (also use Sonnet 5.5 for easier tasks)
-- Haiku 4.5: lookups and summaries
-- Pass `model` on every Agent call
+- Haiku 5.5: simple things (lookups, summaries, listings, small mechanical edits)
+- Sonnet 5.5: intermediate tasks, corrections (edits, fixes, tests, docs, refactors)
+- Opus 5.5: difficult tasks and architecture (hard bugs, design, review)
+- Fable 5.1: structure and super-difficult tasks
+- Pass `model` on every Agent call (`haiku`, `sonnet`, `opus`, `fable`)
 
 ## Project context & code search
 
