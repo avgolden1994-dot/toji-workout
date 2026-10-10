@@ -46,9 +46,8 @@ function renderOnbResult() {
   html += '<button class="set-row-btn" id="onb-alternative" onclick="apriAlternative()">Esercizi alternativi</button>' +
     '<div class="sr-note">Scegli tu, esercizio per esercizio, tra alternative che allenano lo stesso muscolo.</div>';
   const sb = statoBia(onbData, {});   /* INT-01: angolo di fase e acqua extracellulare, per la prudenza iniziale */
-  /* ETA-04 (decisione del proprietario, D-P26): il metabolismo basale in kcal, misura della BIA inserita dall utente, non si mostra ai minorenni (eta > 0 e sotto i 18, come in esigenza.js), con o senza coach; il dato resta salvato e analyzeBia non cambia */
-  const minorenne = Number(onbData.age) > 0 && Number(onbData.age) < PARAM_ETA.maggiorenne;
-  const bmrVisibile = an && !minorenne ? an.bmr : null;
+  /* ETA-04 (decisione del proprietario, D-P26): il metabolismo basale in kcal, misura della BIA inserita dall utente, non si mostra ai minorenni (bmrNascostoPerEta), con o senza coach; il dato resta salvato e analyzeBia non cambia */
+  const bmrVisibile = an && !bmrNascostoPerEta(onbData.age) ? an.bmr : null;
   if ((an && (an.bmi || an.fmPerc || an.ffmi || bmrVisibile)) || sb.dati) {
     const v1 = (x) => x.toFixed(1).replace('.', ',');
     html += '<div class="res-card"><div class="res-title">La tua composizione</div>' +
