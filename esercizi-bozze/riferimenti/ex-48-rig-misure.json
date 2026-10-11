@@ -1,0 +1,341 @@
+{
+ "nota": "Misure per il rig di ex-48 dalla bozza scelta esercizi-bozze/ex-48-donna-start-a.svg (canvas 0 0 1000 1000). Lato SINISTRO dell'immagine (braccio destro di lei); il lato destro e' lo specchio x' = 1000 - x. Indici degli elementi = ordine nel documento delle foglie path,rect,circle,ellipse,polygon,polyline,line,text,image,use (come querySelectorAll). Vedi docs/prompt-esercizi/ex-48-valutazione-start.md.",
+ "bozza": "esercizi-bozze/ex-48-donna-start-a.svg",
+ "perni": {
+  "spalla": [
+   400.0,
+   323.0
+  ],
+  "spalla_tolleranza_px": 8,
+  "gomito": [
+   292.0,
+   431.0
+  ],
+  "gomito_raggio_px": 22,
+  "presa": [
+   285.5,
+   257.5
+  ]
+ },
+ "lunghezze_px": {
+  "braccio_spalla_gomito": 152.7,
+  "gomito_centro_presa": 173.6,
+  "rapporto": 1.137
+ },
+ "start": {
+  "angolo_gomito": 47.1,
+  "braccio_sotto_orizzontale": 45.0,
+  "inclinazione_avambraccio": 2.1
+ },
+ "end_165": {
+  "avanzamento": 1.0,
+  "presa_y": 20.4,
+  "gomito": [
+   326.6,
+   189.0
+  ],
+  "angolo_gomito": 165.0,
+  "rot_braccio": 106.3,
+  "rot_avambraccio": -11.6,
+  "inclinazione_avambraccio": 13.7,
+  "corsa_carrello_px": -237.1
+ },
+ "percorso_10_passi": [
+  {
+   "avanzamento": 0.0,
+   "presa_y": 257.5,
+   "gomito": [
+    292.0,
+    431.0
+   ],
+   "angolo_gomito": 47.1,
+   "rot_braccio": 0.0,
+   "rot_avambraccio": 0.0,
+   "inclinazione_avambraccio": 2.1
+  },
+  {
+   "avanzamento": 0.1,
+   "presa_y": 233.8,
+   "gomito": [
+    272.4,
+    406.9
+   ],
+   "angolo_gomito": 52.3,
+   "rot_braccio": 11.7,
+   "rot_avambraccio": 6.5,
+   "inclinazione_avambraccio": -4.3
+  },
+  {
+   "avanzamento": 0.2,
+   "presa_y": 210.1,
+   "gomito": [
+    259.0,
+    381.7
+   ],
+   "angolo_gomito": 58.6,
+   "rot_braccio": 22.4,
+   "rot_avambraccio": 10.9,
+   "inclinazione_avambraccio": -8.8
+  },
+  {
+   "avanzamento": 0.3,
+   "presa_y": 186.4,
+   "gomito": [
+    251.0,
+    356.5
+   ],
+   "angolo_gomito": 65.9,
+   "rot_braccio": 32.3,
+   "rot_avambraccio": 13.6,
+   "inclinazione_avambraccio": -11.5
+  },
+  {
+   "avanzamento": 0.4,
+   "presa_y": 162.6,
+   "gomito": [
+    247.5,
+    332.1
+   ],
+   "angolo_gomito": 74.0,
+   "rot_braccio": 41.6,
+   "rot_avambraccio": 14.8,
+   "inclinazione_avambraccio": -12.6
+  },
+  {
+   "avanzamento": 0.5,
+   "presa_y": 138.9,
+   "gomito": [
+    248.0,
+    308.4
+   ],
+   "angolo_gomito": 83.0,
+   "rot_braccio": 50.5,
+   "rot_avambraccio": 14.6,
+   "inclinazione_avambraccio": -12.5
+  },
+  {
+   "avanzamento": 0.6,
+   "presa_y": 115.2,
+   "gomito": [
+    251.9,
+    285.6
+   ],
+   "angolo_gomito": 93.0,
+   "rot_braccio": 59.2,
+   "rot_avambraccio": 13.3,
+   "inclinazione_avambraccio": -11.2
+  },
+  {
+   "avanzamento": 0.7,
+   "presa_y": 91.5,
+   "gomito": [
+    259.5,
+    263.2
+   ],
+   "angolo_gomito": 104.4,
+   "rot_braccio": 68.1,
+   "rot_avambraccio": 10.8,
+   "inclinazione_avambraccio": -8.6
+  },
+  {
+   "avanzamento": 0.8,
+   "presa_y": 67.8,
+   "gomito": [
+    271.3,
+    240.8
+   ],
+   "angolo_gomito": 117.8,
+   "rot_braccio": 77.5,
+   "rot_avambraccio": 6.9,
+   "inclinazione_avambraccio": -4.7
+  },
+  {
+   "avanzamento": 0.9,
+   "presa_y": 44.1,
+   "gomito": [
+    289.4,
+    217.7
+   ],
+   "angolo_gomito": 134.9,
+   "rot_braccio": 88.6,
+   "rot_avambraccio": 0.9,
+   "inclinazione_avambraccio": 1.3
+  },
+  {
+   "avanzamento": 1.0,
+   "presa_y": 20.4,
+   "gomito": [
+    326.6,
+    189.0
+   ],
+   "angolo_gomito": 165.0,
+   "rot_braccio": 106.3,
+   "rot_avambraccio": -11.6,
+   "inclinazione_avambraccio": 13.7
+  }
+ ],
+ "taglio_gomito": {
+  "retta_per": [
+   292.0,
+   431.0
+  ],
+  "direzione": [
+   0.365,
+   -0.931
+  ],
+  "pezzo_avambraccio": "semipiano che contiene la presa",
+  "cerchio_copertura": {
+   "centro": "perno del gomito (si muove con il braccio)",
+   "r": 23,
+   "fill": "#E8BDA4",
+   "stroke": "#624A42",
+   "stroke_width": 2.857,
+   "ordine": "sotto i due pezzi"
+  }
+ },
+ "gruppi_sinistra": {
+  "braccio_intero_da_tagliare": 82,
+  "braccio": [
+   83,
+   84,
+   85,
+   132
+  ],
+  "avambraccio": [
+   131
+  ],
+  "deltoide": [
+   80
+  ],
+  "toppa_pelle_spalla": [
+   81
+  ],
+  "mano": [
+   126,
+   127,
+   128,
+   129,
+   130
+  ],
+  "carrello": [
+   10,
+   11,
+   12,
+   13,
+   118,
+   119,
+   122,
+   123,
+   124,
+   125,
+   144,
+   145,
+   146,
+   147,
+   148,
+   149,
+   150
+  ]
+ },
+ "gruppi_destra": {
+  "braccio_intero_da_tagliare": 88,
+  "braccio": [
+   89,
+   90,
+   91,
+   143
+  ],
+  "avambraccio": [
+   142
+  ],
+  "deltoide": [
+   86
+  ],
+  "toppa_pelle_spalla": [
+   87
+  ],
+  "mano": [
+   137,
+   138,
+   139,
+   140,
+   141
+  ],
+  "carrello": [
+   17,
+   18,
+   19,
+   20,
+   120,
+   121,
+   133,
+   134,
+   135,
+   136,
+   151,
+   152,
+   153,
+   154,
+   155,
+   156,
+   157
+  ]
+ },
+ "macchina": {
+  "da_alzare": [
+   9,
+   14,
+   15,
+   16,
+   21,
+   22,
+   23
+  ],
+  "spostamento_su_px": 165,
+  "montanti_nuovi": [
+   {
+    "x": [
+     231.2,
+     272.6
+    ],
+    "y": [
+     -161.2,
+     350
+    ]
+   },
+   {
+    "x": [
+     727.4,
+     770.5
+    ],
+    "y": [
+     -161.2,
+     350
+    ]
+   }
+  ],
+  "stile_montante": {
+   "fill": "#828D98",
+   "stroke": "#2E3136",
+   "stroke_width": 2.857
+  },
+  "traversa_dopo": [
+   -139.8,
+   -107.9
+  ],
+  "cima_carrello_a_fine_corsa": -66.1,
+  "spazio_carrello_traversa_px": 41.8
+ },
+ "viewBox": {
+  "bozza": "0 0 1000 1000",
+  "inviluppo_movimento": "170 -175 660 1160",
+  "scala_figura_rispetto_alla_bozza": 0.862,
+  "alternativa_senza_traversa": "170 -100 660 1085"
+ },
+ "da_non_togliere": "lacci delle scarpe 50-57 e 62-69 (crea-riferimento.js li toglie come 'decorazioni')",
+ "ordine_da_correggere": "costole delle impugnature 144 e 151 sopra i pugni: metterle sotto i pugni o toglierle",
+ "colori_da_correggere": {
+  "tricipite_83_89": "#EF8944 -> #fdba8c (ombra #E9A272)",
+  "deltoide_80_86": "#EF8944 -> #fb8b3c (ombra #D96A22)"
+ }
+}

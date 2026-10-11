@@ -118,15 +118,15 @@ Schema visivo (non e' un prompt e non va allegato in Quiver): \`esercizi-bozze/r
 
 Allineato a \`docs/ricerca-animazione-fluida.md\`: l'animazione e' un rig che muove **un solo disegno START diviso in parti**. END serve solo come riferimento per angoli e ampiezza.
 
-1. **START, il disegno principale.** Genera 4 varianti e salvale come \`esercizi-bozze/ex-48-shoulder-press-machine-start-{a,b,c,d}.svg\`. Controllo §7.1 del metodo piu' la lista "Controllo delle 4 varianti di START" qui sotto. L'agente sceglie la variante.
+1. **START, il disegno principale.** Genera 4 varianti e salvale come \`esercizi-bozze/ex-48-donna-start-{a,b,c,d}.svg\`. Controllo §7.1 del metodo piu' la lista "Controllo delle 4 varianti di START" qui sotto. L'agente sceglie la variante.
 2. L'agente crea il riferimento e legge \`controlli_v2\` nel JSON (poi guarda il PNG):
 
    \`\`\`
    PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers NODE_PATH=/opt/node-tools/node_modules \\
      node esercizi-bozze/riferimenti/crea-riferimento.js <start scelta> --png esercizi-bozze/riferimenti/ex-48-start.png --size 1024
    \`\`\`
-3. **END, il riferimento per il rig**: una generazione, basta una variante buona (\`…-end-{a,b}.svg\`). Se Quiver permette di allegare un'immagine, allega \`ex-48-start.png\` e incolla **in testa** la riga REF. Lo stile puo' essere meno curato: END non finisce nel disegno animato. Usa **lo stesso modello** di START (vedi l'avviso sul ritiro di Arrow 1.x nel metodo, §6).
-4. **MID, 25%, 75%: di riserva.** Con il rig non servono. Si generano solo se il controllo del rig (\`verifica-rig.js\` o controllo a occhio alla massima ampiezza) mostra un problema che serve vedere disegnato (\`…-mid-\`, \`…-q1-\`, \`…-q3-\`).
+3. **END, il riferimento per il rig**: una generazione, basta una variante buona (\`ex-48-donna-end-{a,b}.svg\`). Se Quiver permette di allegare un'immagine, allega \`ex-48-start.png\` e incolla **in testa** la riga REF. Lo stile puo' essere meno curato: END non finisce nel disegno animato. Usa **lo stesso modello** di START (vedi l'avviso sul ritiro di Arrow 1.x nel metodo, §6).
+4. **MID, 25%, 75%: di riserva.** Con il rig non servono. Si generano solo se il controllo del rig (\`verifica-rig.js\` o controllo a occhio alla massima ampiezza) mostra un problema che serve vedere disegnato (\`ex-48-donna-mid-…\`, \`ex-48-donna-q1-…\`, \`ex-48-donna-q3-…\`).
 5. Se una posa fallisce: rigenera **solo quella**, con la correzione di una riga (sotto) in coda al prompt.
 
 Costo previsto: 2 generazioni (START, END), piu' un eventuale rifacimento mirato. Ripiego: se END fallisce due volte, il rig usa gli angoli della tabella, riportati sulle lunghezze di braccio e avambraccio misurate in START (la corsa della macchina e' nota).

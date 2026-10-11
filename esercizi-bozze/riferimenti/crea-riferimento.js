@@ -7,7 +7,10 @@
        node esercizi-bozze/riferimenti/crea-riferimento.js <bozza.svg> [--png out.png] [--json out.json] [--size 1024]
 
    Cosa fa:
-   - toglie (solo nella copia in memoria) fondo, ombre a terra, scritte/etichette e tratti decorativi chiari;
+   - toglie (solo nella copia in memoria) fondo, ombre a terra, scritte/etichette e tratti decorativi chiari ISOLATI;
+     un tratto chiaro disegnato sopra una forma piena (lacci bianchi delle scarpe, cuciture, riflessi) e' un dettaglio
+     del disegno e resta: si toglie solo se la maggior parte dei suoi punti non poggia su nessuna forma piena tenuta
+     e disegnata prima (tratti vaganti sullo sfondo vuoto, come i #F2F2F2 spessi o i #E5E7EB di ex-48 d e c);
      le scritte possono essere <text> oppure tracciati (Quiver disegna "START", "25%"... come path scuri:
      una parola = un path con piu' sottotracciati, oppure lettere separate in fila) -> "scritte_tracciate";
    - le ombre sono solo forme basse e larghe (almeno il 12% del lato) nella parte bassa del canvas, chiare o
@@ -55,6 +58,26 @@ const size = parseInt(opt('--size') || '1024', 10);
     const tolti = { fondo: 0, ombre: 0, scritte: 0, scritte_tracciate: 0, decorazioni: 0 };
     const testi = [];
     const contenuto = [];
+    // forme piene tenute finora (l'ordine del documento e' l'ordine di disegno: sono quelle sotto il tratto in esame) e
+    // prova "tratto sopra una forma piena": campiona il tratto in N punti e li cerca dentro il riempimento (isPointInFill)
+    // di una di quelle forme; basta la meta' dei punti. Se non si puo' misurare (nessuna lunghezza) vale "isolato".
+    const piene = [];
+    const dentroForma = (c, q) => {
+      try { c.inv = c.inv || c.el.getScreenCTM().inverse(); return c.el.isPointInFill(q.matrixTransform(c.inv)); } catch (e) { return false; }
+    };
+    const sopraForma = (el, N = 11) => {
+      if (typeof el.getTotalLength !== 'function') return false;
+      try {
+        const L = el.getTotalLength(), M = el.getScreenCTM();
+        if (!(L > 0) || !M) return false;
+        let dentro = 0;
+        for (let i = 0; i < N; i++) {
+          const p = el.getPointAtLength(L * (i + 0.5) / N), q = new DOMPoint(p.x, p.y).matrixTransform(M);
+          if (piene.some(c => dentroForma(c, q))) dentro++;
+        }
+        return dentro >= N / 2;
+      } catch (e) { return false; }
+    };
     for (const el of leaves) {
       const cs = getComputedStyle(el), b = box(el), f = rgb(cs.fill), s = rgb(cs.stroke);
       const a = opac(el) * parseFloat(cs.fillOpacity || '1');
@@ -65,11 +88,16 @@ const size = parseInt(opt('--size') || '1024', 10);
       else if (b.w >= 0.12 * lato0 && b.h < 0.25 * b.w && b.y + b.h / 2 > vb.y + 0.6 * vb.height && f && sat(f) < 0.12 &&
                (a < 0.45 || lum(f) > 0.65) && el.tagName !== 'rect') tipo = 'ombre';
       // tratti decorativi: solo contorno, grigio chiaro e (tratteggiato o semitrasparente o quasi bianco);
-      // un grigio pieno come #C2C3C6 resta: puo' essere una barra o un cavo
+      // un grigio pieno come #C2C3C6 resta: puo' essere una barra o un cavo. Resta anche ogni tratto chiaro disegnato
+      // sopra una forma piena (lacci bianchi delle scarpe, cuciture, riflessi): si toglie solo quello isolato
       else if ((!f || f.a === 0) && s && sat(s) < 0.15 && lum(s) > 0.7 &&
-               ((cs.strokeDasharray && cs.strokeDasharray !== 'none') || opac(el) * parseFloat(cs.strokeOpacity || '1') < 0.6 || lum(s) > 0.86)) tipo = 'decorazioni';
+               ((cs.strokeDasharray && cs.strokeDasharray !== 'none') || opac(el) * parseFloat(cs.strokeOpacity || '1') < 0.6 || lum(s) > 0.86) &&
+               !sopraForma(el)) tipo = 'decorazioni';
       else if (f && lum(f) > 0.85 && sat(f) < 0.1 && a < 0.5) tipo = 'decorazioni';
-      if (tipo === 'contenuto') contenuto.push({ el, b, fill: cs.fill, f, a });
+      if (tipo === 'contenuto') {
+        contenuto.push({ el, b, fill: cs.fill, f, a });
+        if (cs.fill !== 'none' && typeof el.isPointInFill === 'function' && a * (f ? f.a : 1) > 0.5) piene.push({ el, inv: null });
+      }
       else { tolti[tipo]++; el.style.display = 'none'; }
     }
     // scritte disegnate come tracciati: forme scure piccole e isolate, cioe' il loro gruppo (forme scure piccole che si
