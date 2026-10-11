@@ -321,7 +321,10 @@ Il rig pesa circa 13-20 KB. Le pose intermedie sono geometria vera: **non si com
 
 ## 9. Cambiamenti nella pipeline (alto livello)
 
-1. Nomi dei file: `esercizi-bozze/ex-NN-slug-<posa>-{a..d}.svg`, con posa = `start`, `end`, oppure le riserve `mid`, `q1`, `q3`. Il riferimento va in `esercizi-bozze/riferimenti/ex-NN-start.png`.
+1. Nomi dei file delle bozze (metodo v2): `esercizi-bozze/ex-NN-<donna|uomo>-<posa>-<lettera>.svg`.
+   - `NN` = numero dell'esercizio. `donna` = esercizio pari, `uomo` = esercizio dispari (stessa regola della scheda personaggio, sezione 4). `posa` = `start`, `end`, oppure le riserve `mid`, `q1`, `q3`. `lettera` = la variante di Quiver, da `a` a `d`.
+   - Esempi: da `ex-48-donna-start-a.svg` a `ex-48-donna-start-d.svg`, `ex-48-donna-end-a.svg`, `ex-49-uomo-start-a.svg`. Lo slug dell'esercizio non e' piu' nel nome: lo identifica il numero.
+   - Il riferimento resta `esercizi-bozze/riferimenti/ex-NN-start.png`. Le bozze del metodo v1 (fino a ex-50, `ex-NN-slug-a.svg`) mantengono i loro nomi: non vanno rinominate.
 2. Pulizia di START, come prima. Non serve piu' dividere le figure per colonne.
 3. Palette per materiale, con base e ombra. Mai pelle verso arancione. I gradienti diventano il loro colore medio.
 4. Divisione di START in parti con id (busto, testa, gambe, braccio, avambraccio, mano o attrezzo, deltoide). Se Quiver ha unito due segmenti: taglio con `clipPath` e cerchio di copertura al giunto (piano B della ricerca).

@@ -381,6 +381,8 @@ Formato SVG vettoriale (nessun PNG/WebP); peso medio 22.9 KB, totale 1117.6 KB (
 
 `ex-NN-slug-esercizio.svg`, NN a due cifre progressivo (01-09), slug minuscolo senza accenti con trattini, in italiano. Il nome esercizio e' associato in `IMMAGINI_ESERCIZI` (chiave = nome senza emoji). Suffissi `-a` / `-su-a` indicano i fotogrammi sorgente. Ripiego storico: `img/<slug>.png`.
 
+Nota: le bozze del metodo v2 si chiamano `ex-NN-donna|uomo-posa-lettera.svg`, come descritto in `docs/metodo-immagini-v2.md`; l'SVG animato finale in `esercizi/` mantiene `ex-NN-slug.svg`.
+
 ### Style guide per nuovi prompt
 
 Illustrazioni vettoriali di una figura umana che esegue l'esercizio, in due pose (fine corsa basso e alto) sovrapposte e alternate in dissolvenza (loop CSS). Il tratto e' scuro e sottile su fondo trasparente/chiaro, con riempimenti piatti in grigi freddi per attrezzi e panche e carnagione calda per la figura; nessun testo.
